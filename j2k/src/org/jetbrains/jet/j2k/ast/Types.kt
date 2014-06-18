@@ -17,7 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ConverterSettings
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 fun Type.isUnit(): Boolean = this == Type.Unit
 
@@ -59,26 +59,26 @@ abstract class Type() : Element() {
     }
 
     object Empty : NotNullType() {
-        override fun toKotlinImpl(commentConverter: CommentConverter): String = "UNRESOLVED_TYPE"
+        override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "UNRESOLVED_TYPE"
     }
 
     object Unit: NotNullType() {
-        override fun toKotlinImpl(commentConverter: CommentConverter) = "Unit"
+        override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = "Unit"
     }
 
-    override fun equals(other: Any?): Boolean = other is Type && other.toKotlin(CommentConverter.Dummy) == this.toKotlin(CommentConverter.Dummy)
+    override fun equals(other: Any?): Boolean = other is Type && other.toKotlin(CommentsAndSpaces.None) == this.toKotlin(CommentsAndSpaces.None)
 
-    override fun hashCode(): Int = toKotlin(CommentConverter.Dummy).hashCode()
+    override fun hashCode(): Int = toKotlin(CommentsAndSpaces.None).hashCode()
 
-    override fun toString(): String = toKotlin(CommentConverter.Dummy)
+    override fun toString(): String = toKotlin(CommentsAndSpaces.None)
 }
 
 class ClassType(val `type`: Identifier, val typeArgs: List<Element>, nullability: Nullability, settings: ConverterSettings)
   : MayBeNullableType(nullability, settings) {
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
-        var params = if (typeArgs.isEmpty()) "" else typeArgs.map { it.toKotlin(commentConverter) }.makeString(", ", "<", ">")
-        return `type`.toKotlin(commentConverter) + params + isNullableStr
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+        var params = if (typeArgs.isEmpty()) "" else typeArgs.map { it.toKotlin(commentsAndSpaces) }.makeString(", ", "<", ">")
+        return `type`.toKotlin(commentsAndSpaces) + params + isNullableStr
     }
 
 
@@ -89,12 +89,12 @@ class ClassType(val `type`: Identifier, val typeArgs: List<Element>, nullability
 class ArrayType(val elementType: Type, nullability: Nullability, settings: ConverterSettings)
   : MayBeNullableType(nullability, settings) {
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
         if (elementType is PrimitiveType) {
-            return elementType.toKotlin(commentConverter) + "Array" + isNullableStr
+            return elementType.toKotlin(commentsAndSpaces) + "Array" + isNullableStr
         }
 
-        return "Array<" + elementType.toKotlin(commentConverter) + ">" + isNullableStr
+        return "Array<" + elementType.toKotlin(commentsAndSpaces) + ">" + isNullableStr
     }
 
     override fun toNotNullType(): Type = ArrayType(elementType, Nullability.NotNull, settings)
@@ -102,21 +102,21 @@ class ArrayType(val elementType: Type, nullability: Nullability, settings: Conve
 }
 
 class InProjectionType(val bound: Type) : NotNullType() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String = "in " + bound.toKotlin(commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "in " + bound.toKotlin(commentsAndSpaces)
 }
 
 class OutProjectionType(val bound: Type) : NotNullType() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String = "out " + bound.toKotlin(commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "out " + bound.toKotlin(commentsAndSpaces)
 }
 
 class StarProjectionType() : NotNullType() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String = "*"
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "*"
 }
 
 class PrimitiveType(val `type`: Identifier) : NotNullType() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String = `type`.toKotlin(commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = `type`.toKotlin(commentsAndSpaces)
 }
 
 class VarArgType(val `type`: Type) : NotNullType() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String = `type`.toKotlin(commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = `type`.toKotlin(commentsAndSpaces)
 }

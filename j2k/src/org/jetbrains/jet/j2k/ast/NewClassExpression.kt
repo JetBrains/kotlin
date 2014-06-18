@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class NewClassExpression(
         val name: Element,
@@ -25,18 +25,18 @@ class NewClassExpression(
         val anonymousClass: AnonymousClassBody? = null
 ) : Expression() {
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
         val callOperator = if (qualifier.isNullable) "!!." else "."
-        val qualifier = if (qualifier.isEmpty) "" else qualifier.toKotlin(commentConverter) + callOperator
-        val appliedArguments = arguments.toKotlin(commentConverter, ", ")
+        val qualifier = if (qualifier.isEmpty) "" else qualifier.toKotlin(commentsAndSpaces) + callOperator
+        val appliedArguments = arguments.toKotlin(commentsAndSpaces, ", ")
         return if (anonymousClass != null) {
             if (anonymousClass.extendsTrait)
-                "object : " + qualifier + name.toKotlin(commentConverter) + anonymousClass.toKotlin(commentConverter)
+                "object : " + qualifier + name.toKotlin(commentsAndSpaces) + anonymousClass.toKotlin(commentsAndSpaces)
             else
-                "object : " + qualifier + name.toKotlin(commentConverter) + "(" + appliedArguments + ")" + anonymousClass.toKotlin(commentConverter)
+                "object : " + qualifier + name.toKotlin(commentsAndSpaces) + "(" + appliedArguments + ")" + anonymousClass.toKotlin(commentsAndSpaces)
         }
         else{
-            qualifier + name.toKotlin(commentConverter) + "(" + appliedArguments + ")"
+            qualifier + name.toKotlin(commentsAndSpaces) + "(" + appliedArguments + ")"
         }
     }
 }

@@ -17,10 +17,9 @@
 package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class Trait(name: Identifier,
-            comments: MemberComments,
             annotations: Annotations,
             modifiers: Set<Modifier>,
             typeParameterList: TypeParameterList,
@@ -28,12 +27,12 @@ class Trait(name: Identifier,
             baseClassParams: List<Expression>,
             implementsTypes: List<Type>,
             body: ClassBody
-) : Class(name, comments, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {
+) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {
 
     override val keyword: String
         get() = "trait"
 
-    override fun primaryConstructorSignatureToKotlin(commentConverter: CommentConverter) = ""
+    override fun primaryConstructorSignatureToKotlin(commentsAndSpaces: CommentsAndSpaces) = ""
 
     override fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()

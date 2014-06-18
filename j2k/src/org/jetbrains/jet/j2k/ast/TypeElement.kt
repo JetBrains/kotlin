@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class TypeElement(val `type`: Type) : Element() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = `type`.toKotlin(commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = `type`.toKotlin(commentsAndSpaces)
 }

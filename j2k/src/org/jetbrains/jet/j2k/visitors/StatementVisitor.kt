@@ -45,7 +45,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 result = MethodCallExpression.buildNotNull(null, "assert", listOf(condition, description))
             }
             else {
-                result = MethodCallExpression.build(null, "assert", listOf(condition), listOf(), false, LambdaExpression(null, StatementList(listOf(description))))
+                result = MethodCallExpression.build(null, "assert", listOf(condition), listOf(), false, LambdaExpression(null, Block(listOf(description), LBrace(), RBrace())))
             }
         }
     }
@@ -117,11 +117,8 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 && loopVar.getNameIdentifier() != null
                 && onceWritableIterator) {
             val end = converter.convertExpression((condition as PsiBinaryExpression).getROperand())
-            val endExpression = if (operationTokenType == JavaTokenType.LT)
-                BinaryExpression(end, Identifier("1"), "-")
-            else
-                end
-            result = ForeachWithRangeStatement(Identifier(loopVar.getName()!!),
+            val endExpression = if (operationTokenType == JavaTokenType.LT) BinaryExpression(end, LiteralExpression("1"), "-") else end
+            result = ForeachWithRangeStatement(loopVar.declarationIdentifier(),
                                                  converter.convertExpression(loopVar.getInitializer()),
                                                  endExpression,
                                                  converter.convertStatement(body),
@@ -131,12 +128,12 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
             var forStatements = ArrayList<Statement>()
             forStatements.add(converter.convertStatement(initialization))
             val bodyAndUpdate = listOf(converter.convertStatement(body),
-                                       Block(listOf(converter.convertStatement(update))))
+                                       Block(listOf(converter.convertStatement(update)), LBrace(), RBrace()))
             forStatements.add(WhileStatement(
                     if (condition == null) LiteralExpression("true") else converter.convertExpression(condition),
-                    Block(bodyAndUpdate),
+                    Block(bodyAndUpdate, LBrace(), RBrace()),
                     statement.isInSingleLine()))
-            result = Block(forStatements)
+            result = Block(forStatements, LBrace(), RBrace())
         }
     }
 
@@ -269,13 +266,12 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                     }}
                 }
 
-                var bodyConverted = converterForBody.convertBlock(tryBlock)
-                var statementList = bodyConverted.statementList
+                var block = converterForBody.convertBlock(tryBlock)
                 var expression: Expression = Expression.Empty
                 for (variable in variables.reverse()) {
-                    val lambda = LambdaExpression(Identifier.toKotlin(variable.getName()!!), statementList)
+                    val lambda = LambdaExpression(Identifier.toKotlin(variable.getName()!!), block)
                     expression = MethodCallExpression.build(converter.convertExpression(variable.getInitializer()), "use", listOf(), listOf(), false, lambda)
-                    statementList = StatementList(listOf(expression))
+                    block = Block(listOf(expression), LBrace(), RBrace())
                 }
 
                 if (catchesConverted.isEmpty() && finallyConverted.isEmpty) {
@@ -283,8 +279,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                     return
                 }
 
-                bodyConverted = Block(StatementList(listOf(wrapResultStatement(expression))), true)
-                result = TryStatement(bodyConverted, catchesConverted, finallyConverted)
+                result = TryStatement(Block(listOf(wrapResultStatement(expression)), LBrace(), RBrace(), true), catchesConverted, finallyConverted)
                 return
             }
         }

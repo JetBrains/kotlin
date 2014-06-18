@@ -16,11 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class Enum(
         name: Identifier,
-        comments: MemberComments,
         annotations: Annotations,
         modifiers: Set<Modifier>,
         typeParameterList: TypeParameterList,
@@ -28,20 +27,19 @@ class Enum(
         baseClassParams: List<Expression>,
         implementsTypes: List<Type>,
         body: ClassBody
-) : Class(name, comments, annotations, modifiers, typeParameterList,
+) : Class(name, annotations, modifiers, typeParameterList,
           extendsTypes, baseClassParams, implementsTypes, body) {
 
-    override fun primaryConstructorSignatureToKotlin(commentConverter: CommentConverter): String
-        = body.primaryConstructor?.signatureToKotlin(commentConverter) ?: ""
+    override fun primaryConstructorSignatureToKotlin(commentsAndSpaces: CommentsAndSpaces): String
+        = body.primaryConstructor?.signatureToKotlin(commentsAndSpaces) ?: ""
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
-        return commentsToKotlin(commentConverter) +
-                annotations.toKotlin(commentConverter) +
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+        return annotations.toKotlin(commentsAndSpaces) +
                 modifiersToKotlin() +
-                "enum class " + name.toKotlin(commentConverter) +
-                primaryConstructorSignatureToKotlin(commentConverter) +
-                typeParameterList.toKotlin(commentConverter) +
-                implementTypesToKotlin(commentConverter) +
-                body.toKotlin(this, commentConverter)
+                "enum class " + name.toKotlin(commentsAndSpaces) +
+                primaryConstructorSignatureToKotlin(commentsAndSpaces) +
+                typeParameterList.toKotlin(commentsAndSpaces) +
+                implementTypesToKotlin(commentsAndSpaces) +
+                body.toKotlin(this, commentsAndSpaces)
     }
 }

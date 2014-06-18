@@ -17,11 +17,10 @@
 package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 open class Class(
         val name: Identifier,
-        comments: MemberComments,
         annotations: Annotations,
         modifiers: Set<Modifier>,
         val typeParameterList: TypeParameterList,
@@ -29,37 +28,36 @@ open class Class(
         val baseClassParams: List<Expression>,
         val implementsTypes: List<Type>,
         val body: ClassBody
-) : Member(comments, annotations, modifiers) {
+) : Member(annotations, modifiers) {
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String =
-            commentsToKotlin(commentConverter) +
-            annotations.toKotlin(commentConverter) +
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String =
+            annotations.toKotlin(commentsAndSpaces) +
             modifiersToKotlin() +
-            keyword + " " + name.toKotlin(commentConverter) +
-            typeParameterList.toKotlin(commentConverter) +
-            primaryConstructorSignatureToKotlin(commentConverter) +
-            implementTypesToKotlin(commentConverter) +
-            typeParameterList.whereToKotlin(commentConverter).withPrefix(" ") +
-            body.toKotlin(this, commentConverter)
+            keyword + " " + name.toKotlin(commentsAndSpaces) +
+            typeParameterList.toKotlin(commentsAndSpaces) +
+            primaryConstructorSignatureToKotlin(commentsAndSpaces) +
+            implementTypesToKotlin(commentsAndSpaces) +
+            typeParameterList.whereToKotlin(commentsAndSpaces).withPrefix(" ") +
+            body.toKotlin(this, commentsAndSpaces)
 
     protected open val keyword: String
         get() = "class"
 
-    protected open fun primaryConstructorSignatureToKotlin(commentConverter: CommentConverter): String
-            = body.primaryConstructor?.signatureToKotlin(commentConverter) ?: "()"
+    protected open fun primaryConstructorSignatureToKotlin(commentsAndSpaces: CommentsAndSpaces): String
+            = body.primaryConstructor?.signatureToKotlin(commentsAndSpaces) ?: "()"
 
-    private fun baseClassSignatureWithParams(commentConverter: CommentConverter): List<String> {
+    private fun baseClassSignatureWithParams(commentsAndSpaces: CommentsAndSpaces): List<String> {
         if (keyword.equals("class") && extendsTypes.size() == 1) {
-            val baseParams = baseClassParams.toKotlin(commentConverter, ", ")
-            return arrayListOf(extendsTypes[0].toKotlin(commentConverter) + "(" + baseParams + ")")
+            val baseParams = baseClassParams.toKotlin(commentsAndSpaces, ", ")
+            return arrayListOf(extendsTypes[0].toKotlin(commentsAndSpaces) + "(" + baseParams + ")")
         }
-        return extendsTypes.map { it.toKotlin(commentConverter) }
+        return extendsTypes.map { it.toKotlin(commentsAndSpaces) }
     }
 
-    protected fun implementTypesToKotlin(commentConverter: CommentConverter): String {
+    protected fun implementTypesToKotlin(commentsAndSpaces: CommentsAndSpaces): String {
         val allTypes = ArrayList<String>()
-        allTypes.addAll(baseClassSignatureWithParams(commentConverter))
-        allTypes.addAll(implementsTypes.map { it.toKotlin(commentConverter) })
+        allTypes.addAll(baseClassSignatureWithParams(commentsAndSpaces))
+        allTypes.addAll(implementsTypes.map { it.toKotlin(commentsAndSpaces) })
         return if (allTypes.size() == 0)
             ""
         else

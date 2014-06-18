@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
-open class ExpressionList(val expressions: List<Expression>) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String = expressions.map { it.toKotlin(commentConverter) }.makeString(", ")
+class ExpressionList(val expressions: List<Expression>) : Expression() {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = expressions.map { it.toKotlin(commentsAndSpaces) }.makeString(", ")
 
     override val isEmpty: Boolean
         get() = expressions.isEmpty()

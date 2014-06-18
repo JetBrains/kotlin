@@ -21,27 +21,25 @@ import java.util.ArrayList
 
 open class Field(
         val identifier: Identifier,
-        comments: MemberComments,
         annotations: Annotations,
         modifiers: Set<Modifier>,
         val `type`: Type,
         val initializer: Element,
         val isVal: Boolean,
         private val hasWriteAccesses: Boolean
-) : Member(comments, annotations, modifiers) {
+) : Member(annotations, modifiers) {
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
-        val declaration = commentsToKotlin(commentConverter) +
-                annotations.toKotlin(commentConverter) +
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+        val declaration = annotations.toKotlin(commentsAndSpaces) +
                 modifiersToKotlin() +
                 (if (isVal) "val " else "var ") +
-                identifier.toKotlin(commentConverter) +
+                identifier.toKotlin(commentsAndSpaces) +
                 " : " +
-                `type`.toKotlin(commentConverter)
+                `type`.toKotlin(commentsAndSpaces)
         return if (initializer.isEmpty)
-            declaration + (if (isVal && hasWriteAccesses) "" else " = " + getDefaultInitializer(this).toKotlin(commentConverter))
+            declaration + (if (isVal && hasWriteAccesses) "" else " = " + getDefaultInitializer(this).toKotlin(commentsAndSpaces))
         else
-            declaration + " = " + initializer.toKotlin(commentConverter)
+            declaration + " = " + initializer.toKotlin(commentsAndSpaces)
     }
 
     private fun modifiersToKotlin(): String {

@@ -16,26 +16,26 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
-open class ArrayWithoutInitializationExpression(val `type`: ArrayType, val expressions: List<Expression>) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+class ArrayWithoutInitializationExpression(val `type`: ArrayType, val expressions: List<Expression>) : Expression() {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
         fun getConstructorName(`type`: ArrayType, hasInit: Boolean): String {
             return when (`type`.elementType) {
                 is PrimitiveType ->
-                    `type`.toNotNullType().toKotlin(commentConverter)
+                    `type`.toNotNullType().toKotlin(commentsAndSpaces)
                 is ArrayType ->
                     if (hasInit)
-                        `type`.toNotNullType().toKotlin(commentConverter)
+                        `type`.toNotNullType().toKotlin(commentsAndSpaces)
                     else
-                        "arrayOfNulls<" + `type`.elementType.toKotlin(commentConverter) + ">"
+                        "arrayOfNulls<" + `type`.elementType.toKotlin(commentsAndSpaces) + ">"
                 else ->
-                    "arrayOfNulls<" + `type`.elementType.toKotlin(commentConverter) + ">"
+                    "arrayOfNulls<" + `type`.elementType.toKotlin(commentsAndSpaces) + ">"
             }
         }
 
         fun oneDim(`type`: ArrayType, size: Expression, init: String = ""): String {
-            return getConstructorName(`type`, !init.isEmpty()) + "(" + size.toKotlin(commentConverter) + init.withPrefix(", ") + ")"
+            return getConstructorName(`type`, !init.isEmpty()) + "(" + size.toKotlin(commentsAndSpaces) + init.withPrefix(", ") + ")"
         }
 
         fun constructInnerType(hostType: ArrayType, expressions: List<Expression>): String {

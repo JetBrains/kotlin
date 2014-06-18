@@ -16,21 +16,47 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
+import com.intellij.psi.PsiElement
+
+fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?): TElement {
+    assignPrototypeInfos(if (prototype != null) listOf(PrototypeInfo(prototype, true)) else listOf())
+    return this
+}
+
+fun <TElement: Element> TElement.assignPrototypes(prototypes: List<PsiElement>, inheritBlankLinesBefore: Boolean): TElement {
+    assignPrototypeInfos(prototypes.map { PrototypeInfo(it, inheritBlankLinesBefore) })
+    return this
+}
+
+fun <TElement: Element> TElement.assignPrototypesFrom(element: Element): TElement {
+    assignPrototypeInfos(element.prototypes)
+    return this
+}
+
+data class PrototypeInfo(val element: PsiElement, val inheritBlankLinesBefore: Boolean)
 
 abstract class Element {
-    public fun toKotlin(commentConverter: CommentConverter): String = toKotlinImpl(commentConverter)
+    public var prototypes: List<PrototypeInfo> = listOf()
+        private set
 
-    protected abstract fun toKotlinImpl(commentConverter: CommentConverter): String
+    public fun assignPrototypeInfos(prototypes: List<PrototypeInfo>) {
+        this.prototypes = prototypes
+    }
+
+    public fun toKotlin(commentsAndSpaces: CommentsAndSpaces): String {
+        return if (isEmpty) // do not insert comment and spaces for empty elements to avoid multiple blank lines
+            ""
+        else
+            commentsAndSpaces.wrapElement({ toKotlinImpl(commentsAndSpaces) }, prototypes)
+    }
+
+    protected abstract fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String
 
     public open val isEmpty: Boolean get() = false
 
     object Empty : Element() {
-        override fun toKotlinImpl(commentConverter: CommentConverter) = ""
+        override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = ""
         override val isEmpty: Boolean get() = true
     }
-}
-
-class Comment(val text: String) : Element() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = text
 }

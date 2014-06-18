@@ -20,39 +20,39 @@ import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.jet.j2k.Converter
 import com.intellij.psi.PsiTypeParameterList
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element() {
     fun hasWhere(): Boolean = extendsTypes.size() > 1
 
-    fun whereToKotlin(commentConverter: CommentConverter): String {
+    fun whereToKotlin(commentsAndSpaces: CommentsAndSpaces): String {
         if (hasWhere()) {
-            return name.toKotlin(commentConverter) + " : " + extendsTypes[1].toKotlin(commentConverter)
+            return name.toKotlin(commentsAndSpaces) + " : " + extendsTypes[1].toKotlin(commentsAndSpaces)
         }
 
         return ""
     }
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
         if (extendsTypes.size() > 0) {
-            return name.toKotlin(commentConverter) + " : " + extendsTypes[0].toKotlin(commentConverter)
+            return name.toKotlin(commentsAndSpaces) + " : " + extendsTypes[0].toKotlin(commentsAndSpaces)
         }
 
-        return name.toKotlin(commentConverter)
+        return name.toKotlin(commentsAndSpaces)
     }
 }
 
 class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
         return if (parameters.isNotEmpty())
-            parameters.map { it.toKotlin(commentConverter) }.makeString(", ", "<", ">")
+            parameters.map { it.toKotlin(commentsAndSpaces) }.makeString(", ", "<", ">")
         else
             ""
     }
 
-    fun whereToKotlin(commentConverter: CommentConverter): String {
+    fun whereToKotlin(commentsAndSpaces: CommentsAndSpaces): String {
         if (hasWhere()) {
-            val wheres = parameters.map { it.whereToKotlin(commentConverter) }
+            val wheres = parameters.map { it.whereToKotlin(commentsAndSpaces) }
             return "where " + wheres.makeString(", ")
         }
         return ""

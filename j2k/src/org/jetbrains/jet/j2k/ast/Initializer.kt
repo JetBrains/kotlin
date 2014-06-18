@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
-class Initializer(val block: Block, modifiers: Set<Modifier>) : Member(MemberComments.Empty, Annotations.Empty, modifiers) {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
-        return block.toKotlin(commentConverter)
+class Initializer(val block: Block, modifiers: Set<Modifier>) : Member(Annotations.Empty, modifiers) {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+        return block.toKotlin(commentsAndSpaces)
     }
 }

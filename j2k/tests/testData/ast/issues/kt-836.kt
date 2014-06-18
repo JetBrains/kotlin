@@ -9,7 +9,6 @@ public class Language(protected var code: String) : Serializable {
     }
 }
 
-
 class Base() {
     fun test() {
     }

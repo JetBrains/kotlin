@@ -17,114 +17,115 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class ArrayAccessExpression(val expression: Expression, val index: Expression, val lvalue: Boolean) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = operandToKotlin(expression, commentConverter) +
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = operandToKotlin(expression, commentsAndSpaces) +
             (if (!lvalue && expression.isNullable) "!!" else "") +
-            "[" + index.toKotlin(commentConverter) + "]"
+            "[" + index.toKotlin(commentsAndSpaces) + "]"
 }
 
 class AssignmentExpression(val left: Expression, val right: Expression, val op: String) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = operandToKotlin(left, commentConverter) + " " + op + " " + operandToKotlin(right, commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = operandToKotlin(left, commentsAndSpaces) + " " + op + " " + operandToKotlin(right, commentsAndSpaces)
 }
 
 class BangBangExpression(val expr: Expression) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = operandToKotlin(expr, commentConverter) + "!!"
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = operandToKotlin(expr, commentsAndSpaces) + "!!"
 }
 
 class BinaryExpression(val left: Expression, val right: Expression, val op: String) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = operandToKotlin(left, commentConverter, false) + " " + op + " " + operandToKotlin(right, commentConverter, true)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = operandToKotlin(left, commentsAndSpaces, false) + " " + op + " " + operandToKotlin(right, commentsAndSpaces, true)
 }
 
 class IsOperator(val expression: Expression, val typeElement: TypeElement) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = operandToKotlin(expression, commentConverter) + " is " + typeElement.`type`.toNotNullType().toKotlin(commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = operandToKotlin(expression, commentsAndSpaces) + " is " + typeElement.`type`.toNotNullType().toKotlin(commentsAndSpaces)
 }
 
 class TypeCastExpression(val `type`: Type, val expression: Expression) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = operandToKotlin(expression, commentConverter) + " as " + `type`.toKotlin(commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = operandToKotlin(expression, commentsAndSpaces) + " as " + `type`.toKotlin(commentsAndSpaces)
 }
 
 class LiteralExpression(val literalText: String) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = literalText
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = literalText
 }
 
 class ParenthesizedExpression(val expression: Expression) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = "(" + expression.toKotlin(commentConverter) + ")"
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = "(" + expression.toKotlin(commentsAndSpaces) + ")"
 }
 
 class PrefixOperator(val op: String, val expression: Expression) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = op + operandToKotlin(expression, commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = op + operandToKotlin(expression, commentsAndSpaces)
 
     override val isNullable: Boolean
         get() = expression.isNullable
 }
 
 class PostfixOperator(val op: String, val expression: Expression) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = operandToKotlin(expression, commentConverter) + op
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = operandToKotlin(expression, commentsAndSpaces) + op
 }
 
 class ThisExpression(val identifier: Identifier) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = "this" + identifier.withPrefix("@", commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = "this" + identifier.withPrefix("@", commentsAndSpaces)
 }
 
 class SuperExpression(val identifier: Identifier) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = "super" + identifier.withPrefix("@", commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = "super" + identifier.withPrefix("@", commentsAndSpaces)
 }
 
 class QualifiedExpression(val qualifier: Expression, val identifier: Expression) : Expression() {
     override val isNullable: Boolean
         get() = identifier.isNullable
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
         if (!qualifier.isEmpty) {
-            return operandToKotlin(qualifier, commentConverter) + (if (qualifier.isNullable) "!!." else ".") + identifier.toKotlin(commentConverter)
+            return operandToKotlin(qualifier, commentsAndSpaces) + (if (qualifier.isNullable) "!!." else ".") + identifier.toKotlin(commentsAndSpaces)
         }
 
-        return identifier.toKotlin(commentConverter)
+        return identifier.toKotlin(commentsAndSpaces)
     }
 }
 
 class PolyadicExpression(val expressions: List<Expression>, val token: String) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
-        val expressionsWithConversions = expressions.map { it.toKotlin(commentConverter) }
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+        val expressionsWithConversions = expressions.map { it.toKotlin(commentsAndSpaces) }
         return expressionsWithConversions.makeString(" " + token + " ")
     }
 }
 
-class LambdaExpression(val arguments: String?, val statementList: StatementList) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
-        val statementsText = statementList.toKotlin(commentConverter).trim()
-        if (arguments != null) {
+class LambdaExpression(val arguments: String?, val block: Block) : Expression() {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+        val statementsText = block.statements.toKotlin(commentsAndSpaces, "\n").trim()
+        val innerBody = if (arguments != null) {
             val br = if (statementsText.indexOf('\n') < 0 && statementsText.indexOf('\r') < 0) " " else "\n"
-            return "{ $arguments ->$br$statementsText }"
+            "$arguments ->$br$statementsText"
         }
         else {
-            return "{ $statementsText }"
+            statementsText
         }
+        return block.lBrace.toKotlin(commentsAndSpaces) + " " + innerBody + " " + block.rBrace.toKotlin(commentsAndSpaces)
     }
 }
 
 class StarExpression(val methodCall: MethodCallExpression) : Expression() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = "*" + methodCall.toKotlin(commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = "*" + methodCall.toKotlin(commentsAndSpaces)
 }
 
 fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean) : MethodCallExpression {
     val elementType = arrayType.elementType
     val createArrayFunction = if (elementType is PrimitiveType)
-            (elementType.toNotNullType().toKotlin(CommentConverter.Dummy) + "Array").decapitalize()
+            (elementType.toNotNullType().toKotlin(CommentsAndSpaces.None) + "Array").decapitalize()
         else if (needExplicitType)
-            arrayType.toNotNullType().toKotlin(CommentConverter.Dummy).decapitalize()
+            arrayType.toNotNullType().toKotlin(CommentsAndSpaces.None).decapitalize()
         else
             "array"
 
     val doubleOrFloatTypes = setOf("double", "float", "java.lang.double", "java.lang.float")
-    val afterReplace = arrayType.toNotNullType().toKotlin(CommentConverter.Dummy).replace("Array", "").toLowerCase().replace(">", "").replace("<", "").replace("?", "")
+    val afterReplace = arrayType.toNotNullType().toKotlin(CommentsAndSpaces.None).replace("Array", "").toLowerCase().replace(">", "").replace("<", "").replace("?", "")
 
     fun explicitConvertIfNeeded(initializer: Expression): Expression {
         if (doubleOrFloatTypes.contains(afterReplace)) {
             if (initializer is LiteralExpression) {
-                if (!initializer.toKotlin(CommentConverter.Dummy).contains(".")) {
+                if (!initializer.toKotlin(CommentsAndSpaces.None).contains(".")) {
                     return LiteralExpression(initializer.literalText + ".0")
                 }
             }

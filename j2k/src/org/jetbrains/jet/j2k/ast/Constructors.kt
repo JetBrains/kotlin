@@ -19,52 +19,51 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.Converter
 import java.util.HashSet
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 abstract class Constructor(
         converter: Converter,
-        comments: MemberComments,
         annotations: Annotations,
         modifiers: Set<Modifier>,
         parameterList: ParameterList,
         block: Block
-) : Function(converter, Identifier.Empty, comments, annotations, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
+) : Function(converter, Identifier.Empty, annotations, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
 
 class PrimaryConstructor(converter: Converter,
-                         comments: MemberComments,
                          annotations: Annotations,
                          modifiers: Set<Modifier>,
                          parameterList: ParameterList,
                          block: Block)
-  : Constructor(converter, comments, annotations, modifiers, parameterList, block) {
+  : Constructor(converter, annotations, modifiers, parameterList, block) {
 
-    public fun signatureToKotlin(commentConverter: CommentConverter): String {
+    public fun signatureToKotlin(commentsAndSpaces: CommentsAndSpaces): String {
         val accessModifier = modifiers.accessModifier()
         val modifiersString = if (accessModifier != null && accessModifier != Modifier.PUBLIC) " " + accessModifier.toKotlin() else ""
-        return modifiersString + "(" + parameterList.toKotlin(commentConverter) + ")"
+        return modifiersString + "(" + parameterList.toKotlin(commentsAndSpaces) + ")"
     }
 
-    public fun bodyToKotlin(commentConverter: CommentConverter): String = block!!.toKotlin(commentConverter)
+    public fun bodyToKotlin(commentsAndSpaces: CommentsAndSpaces): String = block!!.toKotlin(commentsAndSpaces)
 }
 
 class SecondaryConstructor(converter: Converter,
-                         comments: MemberComments,
                          annotations: Annotations,
                          modifiers: Set<Modifier>,
                          parameterList: ParameterList,
                          block: Block)
-  : Constructor(converter, comments, annotations, modifiers, parameterList, block) {
+  : Constructor(converter, annotations, modifiers, parameterList, block) {
 
-    public fun toInitFunction(containingClass: Class): Function {
+    public fun toFactoryFunction(containingClass: Class?): Function {
         val modifiers = HashSet(modifiers)
         val statements = ArrayList(block?.statements ?: listOf())
         statements.add(ReturnStatement(tempValIdentifier))
-        val block = Block(statements)
+        val block = Block(statements, block?.lBrace ?: LBrace(), block?.rBrace ?: RBrace())
         val typeParameters = ArrayList<TypeParameter>()
-        typeParameters.addAll(containingClass.typeParameterList.parameters)
-        return Function(converter, Identifier("create"), comments, annotations, modifiers,
-                        ClassType(containingClass.name, typeParameters, Nullability.NotNull, converter.settings),
-                        TypeParameterList(typeParameters), parameterList, block, false)
+        if (containingClass != null) {
+            typeParameters.addAll(containingClass.typeParameterList.parameters)
+        }
+        return Function(converter, Identifier("create"), annotations, modifiers,
+                        ClassType(containingClass?.name ?: Identifier.Empty, typeParameters, Nullability.NotNull, converter.settings),
+                        TypeParameterList(typeParameters), parameterList, block, false).assignPrototypesFrom(this)
     }
 
     class object {

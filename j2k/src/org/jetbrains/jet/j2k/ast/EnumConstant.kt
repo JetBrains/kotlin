@@ -16,23 +16,22 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class EnumConstant(
         identifier: Identifier,
-        members: MemberComments,
         annotations: Annotations,
         modifiers: Set<Modifier>,
         `type`: Type,
         params: Element
-) : Field(identifier, members, annotations, modifiers, `type`.toNotNullType(), params, true, false) {
+) : Field(identifier, annotations, modifiers, `type`.toNotNullType(), params, true, false) {
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
-        if (initializer.toKotlin(commentConverter).isEmpty()) {
-            return annotations.toKotlin(commentConverter) + identifier.toKotlin(commentConverter)
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+        if (initializer.toKotlin(commentsAndSpaces).isEmpty()) {
+            return annotations.toKotlin(commentsAndSpaces) + identifier.toKotlin(commentsAndSpaces)
         }
 
-        return annotations.toKotlin(commentConverter) + identifier.toKotlin(commentConverter) + " : " + `type`.toKotlin(commentConverter) + "(" + initializer.toKotlin(commentConverter) + ")"
+        return annotations.toKotlin(commentsAndSpaces) + identifier.toKotlin(commentsAndSpaces) + " : " + `type`.toKotlin(commentsAndSpaces) + "(" + initializer.toKotlin(commentsAndSpaces) + ")"
     }
 
 

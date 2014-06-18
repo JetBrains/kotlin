@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class Parameter(val identifier: Identifier,
                 val `type`: Type,
@@ -29,10 +29,10 @@ class Parameter(val identifier: Identifier,
         Var
     }
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
         val builder = StringBuilder()
 
-        builder.append(annotations.toKotlin(commentConverter))
+        builder.append(annotations.toKotlin(commentsAndSpaces))
         builder.append(modifiers.toKotlin())
 
         if (`type` is VarArgType) {
@@ -45,7 +45,7 @@ class Parameter(val identifier: Identifier,
             VarValModifier.Val -> builder.append("val ")
         }
 
-        builder.append(identifier.toKotlin(commentConverter)).append(": ").append(`type`.toKotlin(commentConverter))
+        builder.append(identifier.toKotlin(commentsAndSpaces)).append(": ").append(`type`.toKotlin(commentsAndSpaces))
         return builder.toString()
     }
 }

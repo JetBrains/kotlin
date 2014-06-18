@@ -18,12 +18,11 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 open class Function(
         val converter: Converter,
         val name: Identifier,
-        comments: MemberComments,
         annotations: Annotations,
         modifiers: Set<Modifier>,
         val `type`: Type,
@@ -31,7 +30,7 @@ open class Function(
         val parameterList: ParameterList,
         var block: Block?,
         val isInTrait: Boolean
-) : Member(comments, annotations, modifiers) {
+) : Member(annotations, modifiers) {
 
     private fun modifiersToKotlin(): String {
         val resultingModifiers = ArrayList<Modifier>()
@@ -56,14 +55,13 @@ open class Function(
         return resultingModifiers.toKotlin()
     }
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
-        return commentsToKotlin(commentConverter) +
-                annotations.toKotlin(commentConverter) +
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+        return annotations.toKotlin(commentsAndSpaces) +
                 modifiersToKotlin() +
-                "fun ${typeParameterList.toKotlin(commentConverter).withSuffix(" ")}${name.toKotlin(commentConverter)}" +
-                "(${parameterList.toKotlin(commentConverter)})" +
-                (if (!`type`.isUnit()) " : " + `type`.toKotlin(commentConverter) + " " else " ") +
-                typeParameterList.whereToKotlin(commentConverter) +
-                block?.toKotlin(commentConverter)
+                "fun ${typeParameterList.toKotlin(commentsAndSpaces).withSuffix(" ")}${name.toKotlin(commentsAndSpaces)}" +
+                "(${parameterList.toKotlin(commentsAndSpaces)})" +
+                (if (!`type`.isUnit()) " : " + `type`.toKotlin(commentsAndSpaces) + " " else " ") +
+                typeParameterList.whereToKotlin(commentsAndSpaces) +
+                block?.toKotlin(commentsAndSpaces)
     }
 }

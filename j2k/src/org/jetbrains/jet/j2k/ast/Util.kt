@@ -16,65 +16,20 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
-fun List<Element>.toKotlin(commentConverter: CommentConverter, separator: String, prefix: String = "", postfix: String = ""): String
-        = if (isNotEmpty()) map { it.toKotlin(commentConverter) }.makeString(separator, prefix, postfix) else ""
+fun List<Element>.toKotlin(commentsAndSpaces: CommentsAndSpaces, separator: String, prefix: String = "", postfix: String = ""): String {
+    val texts = map { it.toKotlin(commentsAndSpaces) }.filter { it.isNotEmpty() }
+    return if (texts.isNotEmpty()) texts.makeString(separator, prefix, postfix) else ""
+}
 
 fun String.withSuffix(suffix: String): String = if (isEmpty()) "" else this + suffix
 fun String.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + this
-fun Expression.withPrefix(prefix: String, commentConverter: CommentConverter): String = if (isEmpty) "" else prefix + toKotlin(commentConverter)
+fun Expression.withPrefix(prefix: String, commentsAndSpaces: CommentsAndSpaces): String = if (isEmpty) "" else prefix + toKotlin(commentsAndSpaces)
 
-open class WhiteSpaceSeparatedElementList(
-        val elements: List<Element>,
-        val minimalWhiteSpace: WhiteSpace,
-        val ensureSurroundedByWhiteSpace: Boolean = true
-) {
-    val nonEmptyElements = elements.filter { !it.isEmpty }
-
-    fun isEmpty() = nonEmptyElements.all { it is WhiteSpace }
-
-    fun toKotlin(commentConverter: CommentConverter): String {
-        if (isEmpty()) return ""
-        return nonEmptyElements.surroundWithWhiteSpaces().insertAndMergeWhiteSpaces().map { it.toKotlin(commentConverter) }.makeString("")
-    }
-
-    private fun List<Element>.surroundWithWhiteSpaces(): List<Element>
-            = if (ensureSurroundedByWhiteSpace) listOf(minimalWhiteSpace) + this + listOf(minimalWhiteSpace) else this
-
-
-    // ensure that there is whitespace between non-whitespace elements
-    // choose maximum among subsequent whitespaces
-    // all resulting whitespaces are at least minimal whitespace
-    private fun List<Element>.insertAndMergeWhiteSpaces(): List<Element> {
-        var currentWhiteSpace: WhiteSpace? = null
-        val result = ArrayList<Element>()
-        for (i in 0..lastIndex) {
-            val element = get(i)
-            if (element is WhiteSpace) {
-                if (currentWhiteSpace == null || element > currentWhiteSpace!!) {
-                    currentWhiteSpace = if (element > minimalWhiteSpace) element else minimalWhiteSpace
-                }
-            }
-            else {
-                if (i != 0) { //do not insert whitespace before first element
-                    result.add(currentWhiteSpace ?: minimalWhiteSpace)
-                }
-                result.add(element)
-                currentWhiteSpace = null
-            }
-        }
-        if (currentWhiteSpace != null) {
-            result.add(currentWhiteSpace!!)
-        }
-        return result
-    }
-}
-
-fun Expression.operandToKotlin(operand: Expression, commentConverter: CommentConverter, parenthesisForSamePrecedence: Boolean = false): String {
+fun Expression.operandToKotlin(operand: Expression, commentsAndSpaces: CommentsAndSpaces, parenthesisForSamePrecedence: Boolean = false): String {
     val parentPrecedence = precedence() ?: throw IllegalArgumentException("Unknown precendence for $this")
-    val kotlinCode = operand.toKotlin(commentConverter)
+    val kotlinCode = operand.toKotlin(commentsAndSpaces)
     val operandPrecedence = operand.precedence() ?: return kotlinCode
     val needParenthesis = parentPrecedence < operandPrecedence || parentPrecedence == operandPrecedence && parenthesisForSamePrecedence
     return if (needParenthesis) "($kotlinCode)" else kotlinCode

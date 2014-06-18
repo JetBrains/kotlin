@@ -11,7 +11,6 @@ public class Test private(private val myName: String, private var a: Boolean, pr
             return __
         }
 
-
         fun foo(n: String): String {
             return ""
         }

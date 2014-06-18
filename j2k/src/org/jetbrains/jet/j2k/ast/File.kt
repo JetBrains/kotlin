@@ -16,20 +16,18 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
-
-class FileMemberList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine, false)
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class PackageStatement(val packageName: String) : Element() {
-    override fun toKotlinImpl(commentConverter: CommentConverter): String = "package " + packageName
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "package " + packageName
 }
 
 class File(
-        val body: FileMemberList,
+        val elements: List<Element>,
         val mainFunction: String
 ) : Element() {
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String {
-        return body.toKotlin(commentConverter) + mainFunction
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+        return elements.toKotlin(commentsAndSpaces, "\n") + mainFunction
     }
 }

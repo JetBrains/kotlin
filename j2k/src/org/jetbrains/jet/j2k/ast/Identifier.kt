@@ -16,8 +16,13 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
+import com.intellij.psi.PsiNameIdentifierOwner
 
+fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
+    val name = getName()
+    return if (name != null) Identifier(name, false).assignPrototype(getNameIdentifier()!!) else Identifier.Empty
+}
 
 class Identifier(
         val name: String,
@@ -36,7 +41,7 @@ class Identifier(
         return name
     }
 
-    override fun toKotlinImpl(commentConverter: CommentConverter): String = toKotlin()
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = toKotlin()
 
     private fun quote(str: String): String = "`" + str + "`"
 

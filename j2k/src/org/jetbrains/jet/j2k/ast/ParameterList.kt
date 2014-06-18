@@ -16,10 +16,9 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentConverter
+import org.jetbrains.jet.j2k.CommentsAndSpaces
 
-
-open class ParameterList(val parameters: List<Parameter>) : Element() {
-    override fun toKotlinImpl(commentConverter: CommentConverter) = parameters.map { it.toKotlin(commentConverter) }.makeString(", ")
+class ParameterList(val parameters: List<Parameter>) : Element() {
+    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = parameters.map { it.toKotlin(commentsAndSpaces) }.makeString(", ")
 }
 
