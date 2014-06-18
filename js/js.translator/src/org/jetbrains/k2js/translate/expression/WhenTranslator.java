@@ -130,7 +130,6 @@ public final class WhenTranslator extends AbstractTranslator {
     private JsNode translateEntryExpression(@NotNull JetWhenEntry entry) {
         JetExpression expressionToExecute = entry.getExpression();
         assert expressionToExecute != null : "WhenEntry should have whenExpression to execute.";
-        expressionToExecute = JetPsiFactory.wrapInABlock(expressionToExecute);
         return Translation.translateExpression(expressionToExecute, context());
     }
 
