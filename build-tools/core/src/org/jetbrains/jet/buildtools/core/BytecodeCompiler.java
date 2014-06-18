@@ -42,6 +42,7 @@ import java.util.List;
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ENABLE_INLINE;
+import static org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil.loadModuleDescriptions;
 
 
 /**
@@ -230,8 +231,9 @@ public class BytecodeCompiler {
             @Nullable String[] externalAnnotationsPath, boolean enableInline
     ) {
         try {
-            List<Module> modules = CompileEnvironmentUtil.loadModuleDescriptions(getKotlinPathsForAntTask(), module,
-                                                                                MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
+            CompileEnvironmentUtil.ModuleScriptData moduleScriptData =
+                    loadModuleDescriptions(getKotlinPathsForAntTask(), module, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
+            List<Module> modules = moduleScriptData.getModules();
             List<String> sourcesRoots = new ArrayList<String>();
             for (Module m : modules) {
                 sourcesRoots.addAll(m.getSourceFiles());

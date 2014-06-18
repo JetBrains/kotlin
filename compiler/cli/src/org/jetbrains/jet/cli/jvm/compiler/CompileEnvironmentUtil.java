@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.StandardFileSystems;
@@ -80,32 +81,38 @@ public class CompileEnvironmentUtil {
     }
 
     @NotNull
-    public static List<Module> loadModuleDescriptions(KotlinPaths paths, String moduleDefinitionFile, MessageCollector messageCollector) {
+    public static ModuleScriptData loadModuleDescriptions(KotlinPaths paths, String moduleDefinitionFile, MessageCollector messageCollector) {
         File file = new File(moduleDefinitionFile);
         if (!file.exists()) {
             messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, NO_LOCATION);
-            return Collections.emptyList();
+            return new ModuleScriptData(Collections.<Module>emptyList(), null);
         }
         String extension = FileUtilRt.getExtension(moduleDefinitionFile);
         if ("ktm".equalsIgnoreCase(extension)) {
             return loadModuleScript(paths, moduleDefinitionFile, messageCollector);
         }
         if ("xml".equalsIgnoreCase(extension)) {
-            return ContainerUtil.map(
-                    ModuleXmlParser.parse(moduleDefinitionFile, messageCollector),
+            Pair<List<ModuleDescription>, String> moduleDescriptionsAndIncrementalCacheDir =
+                    ModuleXmlParser.parseModuleDescriptionsAndIncrementalCacheDir(moduleDefinitionFile, messageCollector);
+            List<ModuleDescription> moduleDescriptions = moduleDescriptionsAndIncrementalCacheDir.first;
+            String incrementalCacheDir = moduleDescriptionsAndIncrementalCacheDir.second;
+            List<Module> modules = ContainerUtil.map(
+                    moduleDescriptions,
                     new Function<ModuleDescription, Module>() {
                         @Override
                         public Module fun(ModuleDescription description) {
                             return new DescriptionToModuleAdapter(description);
                         }
-                    });
+                    }
+            );
+            return new ModuleScriptData(modules, incrementalCacheDir);
         }
         messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, NO_LOCATION);
-        return Collections.emptyList();
+        return new ModuleScriptData(Collections.<Module>emptyList(), null);
     }
 
     @NotNull
-    private static List<Module> loadModuleScript(KotlinPaths paths, String moduleScriptFile, MessageCollector messageCollector) {
+    private static ModuleScriptData loadModuleScript(KotlinPaths paths, String moduleScriptFile, MessageCollector messageCollector) {
         CompilerConfiguration configuration = new CompilerConfiguration();
         File runtimePath = paths.getRuntimePath();
         if (runtimePath.exists()) {
@@ -143,7 +150,7 @@ public class CompileEnvironmentUtil {
         if (modules.isEmpty()) {
             throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
         }
-        return modules;
+        return new ModuleScriptData(modules, null);
     }
 
     private static List<Module> runDefineModules(KotlinPaths paths, ClassFileFactory factory) {
@@ -324,7 +331,30 @@ public class CompileEnvironmentUtil {
         return result;
     }
 
-    static class DescriptionToModuleAdapter implements Module {
+    public static class ModuleScriptData {
+        @Nullable
+        private final String incrementalCacheDir;
+
+        @NotNull
+        public List<Module> getModules() {
+            return modules;
+        }
+
+        @Nullable
+        public String getIncrementalCacheDir() {
+            return incrementalCacheDir;
+        }
+
+        @NotNull
+        private final List<Module> modules;
+
+        ModuleScriptData(@NotNull List<Module> modules, @Nullable String incrementalCacheDir) {
+            this.incrementalCacheDir = incrementalCacheDir;
+            this.modules = modules;
+        }
+    }
+
+    private static class DescriptionToModuleAdapter implements Module {
         private final ModuleDescription description;
 
         public DescriptionToModuleAdapter(ModuleDescription description) {
@@ -359,11 +389,6 @@ public class CompileEnvironmentUtil {
         @Override
         public List<String> getAnnotationsRoots() {
             return description.getAnnotationsRoots();
-        }
-
-        @Nullable
-        public String getIncrementalCacheDir() {
-            return description.getIncrementalCacheDir();
         }
     }
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.cli.common.modules;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +48,10 @@ public class ModuleXmlParser {
     public static final String EXTERNAL_ANNOTATIONS = "externalAnnotations";
 
     @NotNull
-    public static List<ModuleDescription> parse(@NotNull String xmlFile, @NotNull MessageCollector messageCollector) {
+    public static Pair<List<ModuleDescription>, String> parseModuleDescriptionsAndIncrementalCacheDir(
+            @NotNull String xmlFile,
+            @NotNull MessageCollector messageCollector
+    ) {
         FileInputStream stream = null;
         try {
             stream = new FileInputStream(xmlFile);
@@ -56,7 +60,7 @@ public class ModuleXmlParser {
         }
         catch (FileNotFoundException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
-            return Collections.emptyList();
+            return Pair.create(Collections.<ModuleDescription>emptyList(), null);
         }
         finally {
             StreamUtil.closeStream(stream);
@@ -64,7 +68,8 @@ public class ModuleXmlParser {
     }
 
     private final MessageCollector messageCollector;
-    private final List<ModuleDescription> result = new SmartList<ModuleDescription>();
+    private String incrementalCacheDir;
+    private final List<ModuleDescription> descriptions = new SmartList<ModuleDescription>();
     private DefaultHandler currentState;
 
     private ModuleXmlParser(@NotNull MessageCollector messageCollector) {
@@ -75,7 +80,7 @@ public class ModuleXmlParser {
         this.currentState = currentState;
     }
 
-    private List<ModuleDescription> parse(@NotNull InputStream xml) {
+    private Pair<List<ModuleDescription>, String> parse(@NotNull InputStream xml) {
         try {
             setCurrentState(initial);
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -86,7 +91,7 @@ public class ModuleXmlParser {
                     return currentState;
                 }
             });
-            return result;
+            return Pair.create(descriptions, incrementalCacheDir);
         }
         catch (ParserConfigurationException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
@@ -97,7 +102,7 @@ public class ModuleXmlParser {
         catch (IOException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
         }
-        return Collections.emptyList();
+        return Pair.create(Collections.<ModuleDescription>emptyList(), null);
     }
 
     private final DefaultHandler initial = new DefaultHandler() {
@@ -107,6 +112,7 @@ public class ModuleXmlParser {
                 throw createError(qName);
             }
 
+            incrementalCacheDir = attributes.getValue(INCREMENTAL_CACHE);
             setCurrentState(insideModules);
         }
     };
@@ -120,8 +126,7 @@ public class ModuleXmlParser {
 
             setCurrentState(new InsideModule(
                     getAttribute(attributes, NAME, qName),
-                    getAttribute(attributes, OUTPUT_DIR, qName),
-                    attributes.getValue(INCREMENTAL_CACHE)
+                    getAttribute(attributes, OUTPUT_DIR, qName)
             ));
         }
 
@@ -136,12 +141,11 @@ public class ModuleXmlParser {
     private class InsideModule extends DefaultHandler {
 
         private final ModuleDescription.Impl moduleDescription;
-        private InsideModule(String name, String outputDir, String incrementalCacheDir) {
+        private InsideModule(String name, String outputDir) {
             this.moduleDescription = new ModuleDescription.Impl();
             this.moduleDescription.setName(name);
             this.moduleDescription.setOutputDir(outputDir);
-            this.moduleDescription.setIncrementalCacheDir(incrementalCacheDir);
-            result.add(moduleDescription);
+            descriptions.add(moduleDescription);
         }
 
         @Override

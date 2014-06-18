@@ -64,7 +64,7 @@ public class KotlinBuilderModuleScriptGenerator {
     )
             throws IOException
     {
-        KotlinModuleDescriptionBuilder builder = FACTORY.create();
+        KotlinModuleDescriptionBuilder builder = FACTORY.create(getIncrementalCacheDir(context).getAbsolutePath());
 
         boolean noSources = true;
 
@@ -91,7 +91,6 @@ public class KotlinBuilderModuleScriptGenerator {
             builder.addModule(
                     target.getId(),
                     outputDir.getAbsolutePath(),
-                    getIncrementalCacheDir(context).getAbsolutePath(),
                     getKotlinModuleDependencies(context, target),
                     sourceFiles,
                     target.isTests(),

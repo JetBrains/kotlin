@@ -168,10 +168,9 @@ public class K2JvmTranslatingCompiler implements TranslatingCompiler {
         if (!tests) {
             outputDirectoriesToFilter.add(moduleOutputDirectory);
         }
-        CharSequence script = KotlinModuleScriptBuilderFactory.INSTANCE.create().addModule(
+        CharSequence script = KotlinModuleScriptBuilderFactory.INSTANCE.create(null).addModule(
                 moduleName,
                 moduleOutputDirectory.getAbsolutePath(),
-                null,
                 getDependencyProvider(chunk, tests, mainOutput),
                 sourceFiles,
                 tests,

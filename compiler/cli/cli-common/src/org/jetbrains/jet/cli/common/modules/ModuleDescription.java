@@ -42,9 +42,6 @@ public interface ModuleDescription {
     @NotNull
     List<String> getAnnotationsRoots();
 
-    @Nullable
-    String getIncrementalCacheDir();
-
     class Impl implements ModuleDescription {
 
         private String name;
@@ -52,7 +49,6 @@ public interface ModuleDescription {
         private final List<String> sources = new SmartList<String>();
         private final List<String> classpath = new SmartList<String>();
         private final List<String> annotations = new SmartList<String>();
-        private String incrementalCacheDir;
 
         public void setName(String name) {
             this.name = name;
@@ -72,10 +68,6 @@ public interface ModuleDescription {
 
         public void addAnnotationPath(String path) {
             annotations.add(path);
-        }
-
-        public void setIncrementalCacheDir(String incrementalCacheDir) {
-            this.incrementalCacheDir = incrementalCacheDir;
         }
 
         @NotNull
@@ -106,12 +98,6 @@ public interface ModuleDescription {
         @Override
         public List<String> getAnnotationsRoots() {
             return annotations;
-        }
-
-        @Nullable
-        @Override
-        public String getIncrementalCacheDir() {
-            return incrementalCacheDir;
         }
 
         @Override

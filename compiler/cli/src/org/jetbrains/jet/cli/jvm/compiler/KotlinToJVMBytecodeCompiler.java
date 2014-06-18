@@ -169,14 +169,6 @@ public class KotlinToJVMBytecodeCompiler {
             configuration.add(JVMConfigurationKeys.MODULE_IDS, module.getModuleName());
         }
 
-        Module anyModule = chunk.get(0);
-        if (anyModule instanceof CompileEnvironmentUtil.DescriptionToModuleAdapter) {
-            String incrementalCacheDir = ((CompileEnvironmentUtil.DescriptionToModuleAdapter) anyModule).getIncrementalCacheDir();
-            if (incrementalCacheDir != null) {
-                configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR, new File(incrementalCacheDir));
-            }
-        }
-
         return configuration;
     }
 

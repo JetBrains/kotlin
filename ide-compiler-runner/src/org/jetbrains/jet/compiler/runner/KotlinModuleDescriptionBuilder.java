@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.compiler.runner;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +28,6 @@ public interface KotlinModuleDescriptionBuilder {
     KotlinModuleDescriptionBuilder addModule(
             String moduleName,
             String outputDir,
-            String incrementalCacheDir,
             DependencyProvider dependencyProvider,
             List<File> sourceFiles,
             boolean tests,

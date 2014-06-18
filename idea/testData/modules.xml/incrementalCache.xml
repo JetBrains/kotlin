@@ -1,0 +1,6 @@
+<modules incrementalCache="/path/to/incremental/cache">
+    <!-- Module script for production -->
+    <module name="name" outputDir="output">
+        <sources path="s1"/>
+    </module>
+</modules>

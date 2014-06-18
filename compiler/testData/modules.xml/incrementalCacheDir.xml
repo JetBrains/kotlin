@@ -1,0 +1,10 @@
+<modules incrementalCache="/incremental/cache/dir">
+  <module name="name" outputDir="out">
+    <sources path="foo"/>
+    <classpath path="bar"/>
+  </module>
+  <module name="name2" outputDir="out2">
+    <sources path="2foo"/>
+    <classpath path="2bar"/>
+  </module>
+</modules>

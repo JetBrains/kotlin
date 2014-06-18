@@ -32,7 +32,7 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
     private KotlinModuleScriptBuilderFactory() {}
 
     @Override
-    public KotlinModuleDescriptionBuilder create() {
+    public KotlinModuleDescriptionBuilder create(String incrementalCacheDir) {
         return new Builder();
     }
 
@@ -54,7 +54,6 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
         public KotlinModuleDescriptionBuilder addModule(
                 String moduleName,
                 String outputDir,
-                String incrementalCacheDir,
                 DependencyProvider dependencyProvider,
                 List<File> sourceFiles,
                 boolean tests,

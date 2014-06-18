@@ -125,7 +125,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
             if (arguments.module != null) {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
-                List<Module> modules = CompileEnvironmentUtil.loadModuleDescriptions(paths, arguments.module, sanitizedCollector);
+                CompileEnvironmentUtil.ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(
+                        paths, arguments.module, sanitizedCollector);
+                if (moduleScript.getIncrementalCacheDir() != null) {
+                    configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR, new File(moduleScript.getIncrementalCacheDir()));
+                }
 
                 if (outputDir != null) {
                     messageCollector.report(CompilerMessageSeverity.WARNING, "The '-output' option is ignored because '-module' is specified",
@@ -133,7 +137,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 }
 
                 File directory = new File(arguments.module).getAbsoluteFile().getParentFile();
-                KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
+                KotlinToJVMBytecodeCompiler.compileModules(configuration, moduleScript.getModules(),
                                                                       directory, jar,
                                                                       arguments.includeRuntime);
             }

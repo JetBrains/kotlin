@@ -36,8 +36,8 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
     private KotlinModuleXmlBuilderFactory() {}
 
     @Override
-    public KotlinModuleDescriptionBuilder create() {
-        return new Builder();
+    public KotlinModuleDescriptionBuilder create(String incrementalCacheDir) {
+        return new Builder(incrementalCacheDir);
     }
 
     @Override
@@ -50,15 +50,19 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
         private final Printer p = new Printer(xml);
         private boolean done = false;
 
-        {
-            openTag(p, MODULES);
+        public Builder(String incrementalCacheDir) {
+            if (incrementalCacheDir == null) {
+                openTag(p, MODULES);
+            }
+            else {
+                openTag(p, MODULES + " " + INCREMENTAL_CACHE + "=\"" + getEscapedPath(new File(incrementalCacheDir)) + "\"");
+            }
         }
 
         @Override
         public KotlinModuleDescriptionBuilder addModule(
                 String moduleName,
                 String outputDir,
-                String incrementalCacheDir,
                 DependencyProvider dependencyProvider,
                 List<File> sourceFiles,
                 boolean tests,
@@ -75,9 +79,8 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
 
             p.println("<", MODULE, " ",
                       NAME, "=\"", escapeXml(moduleName), "\" ",
-                      OUTPUT_DIR, "=\"", getEscapedPath(new File(outputDir)), "\"",
-                      incrementalCacheDir != null ? " " + INCREMENTAL_CACHE + "=\"" + getEscapedPath(new File(incrementalCacheDir)) + "\" " : "",
-                      ">");
+                      OUTPUT_DIR, "=\"", getEscapedPath(new File(outputDir)), "\">"
+            );
             p.pushIndent();
 
             for (File sourceFile : sourceFiles) {

@@ -17,6 +17,6 @@
 package org.jetbrains.jet.compiler.runner;
 
 public interface KotlinModuleDescriptionBuilderFactory {
-    KotlinModuleDescriptionBuilder create();
+    KotlinModuleDescriptionBuilder create(String incrementalCacheDir);
     String getFileExtension();
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.modules.xml;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,7 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
     protected void doTest(String xmlPath) throws IOException {
         File txtFile = new File(FileUtil.getNameWithoutExtension(xmlPath) + ".txt");
 
-        List<ModuleDescription> result = ModuleXmlParser.parse(xmlPath, new MessageCollector() {
+        Pair<List<ModuleDescription>, String> result = ModuleXmlParser.parseModuleDescriptionsAndIncrementalCacheDir(xmlPath, new MessageCollector() {
             @Override
             public void report(
                     @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
@@ -46,7 +47,11 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
         });
 
         StringBuilder sb = new StringBuilder();
-        for (ModuleDescription description : result) {
+        if (result.second != null) {
+            sb.append("incrementalCacheDir=").append(result.second).append("\n\n");
+        }
+
+        for (ModuleDescription description : result.first) {
             sb.append(description).append("\n");
         }
 

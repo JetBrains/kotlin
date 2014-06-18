@@ -1,0 +1,12 @@
+incrementalCacheDir=/incremental/cache/dir
+
+name
+	outputDir=out
+	sources=[foo]
+	classpath=[bar]
+	annotations=[]
+name2
+	outputDir=out2
+	sources=[2foo]
+	classpath=[2bar]
+	annotations=[]
