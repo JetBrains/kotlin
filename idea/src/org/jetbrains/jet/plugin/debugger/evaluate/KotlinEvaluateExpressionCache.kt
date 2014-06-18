@@ -39,6 +39,7 @@ import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.codegen.AsmUtil
+import org.apache.log4j.Logger
 
 class KotlinEvaluateExpressionCache(val project: Project) {
 
@@ -49,6 +50,8 @@ class KotlinEvaluateExpressionCache(val project: Project) {
             }, false)
 
     class object {
+        private val LOG = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
+
         fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinEvaluateExpressionCache>())!!
 
         fun getOrCreateCompiledData(
@@ -70,8 +73,9 @@ class KotlinEvaluateExpressionCache(val project: Project) {
                 if (answer != null) return@synchronized answer
 
                 val newCompiledData = create(codeFragment, sourcePosition)
-                cache.putValue(text, newCompiledData)
+                LOG.debug("Compile bytecode for ${codeFragment.getText()}")
 
+                cache.putValue(text, newCompiledData)
                 return@synchronized newCompiledData
             }
         }

@@ -20,26 +20,38 @@ LineBreakpoint created at clearCache.kt:189
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! clearCache.ClearCachePackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 clearCache.kt:11
+Compile bytecode for a
 clearCache.kt:19
+Compile bytecode for a
 clearCache.kt:30
+Compile bytecode for i
 clearCache.kt:30
 clearCache.kt:41
+Compile bytecode for i
 clearCache.kt:41
 clearCache.kt:51
+Compile bytecode for o.test()
 clearCache.kt:59
 clearCache.kt:77
+Compile bytecode for c.size()
 clearCache.kt:85
 clearCache.kt:94
 clearCache.kt:104
 clearCache.kt:112
+Compile bytecode for c.size()
 clearCache.kt:123
+Compile bytecode for c.get(0)
 clearCache.kt:132
 clearCache.kt:142
+Compile bytecode for o.test()
 clearCache.kt:150
 clearCache.kt:168
+Compile bytecode for obj.test()
 clearCache.kt:173
 clearCache.kt:180
+Compile bytecode for o.test()
 clearCache.kt:188
+Compile bytecode for o.test()
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

@@ -2,6 +2,10 @@ LineBreakpoint created at imports.kt:10
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! imports.ImportsPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 imports.kt:9
+Compile bytecode for Collections.emptyList<String>()
+Compile bytecode for ArrayList<Int>()
+Compile bytecode for HashSet<Int>()
+Compile bytecode for JHashMap<Int, Int>()
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0
