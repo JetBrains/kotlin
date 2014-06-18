@@ -40,8 +40,9 @@ public final class WhenTranslator extends AbstractTranslator {
         WhenTranslator translator = new WhenTranslator(expression, context);
 
         if (BindingUtils.isStatement(context.bindingContext(), expression)) {
-            translator.translateAsStatement(context.dynamicContext().jsBlock().getStatements());
-            return null;
+            JsBlock jsBlock = new JsBlock();
+            translator.translateAsStatement(jsBlock.getStatements());
+            return jsBlock;
         }
 
         return translator.translateAsExpression();
@@ -129,6 +130,7 @@ public final class WhenTranslator extends AbstractTranslator {
     private JsNode translateEntryExpression(@NotNull JetWhenEntry entry) {
         JetExpression expressionToExecute = entry.getExpression();
         assert expressionToExecute != null : "WhenEntry should have whenExpression to execute.";
+        expressionToExecute = JetPsiFactory.wrapInABlock(expressionToExecute);
         return Translation.translateExpression(expressionToExecute, context());
     }
 
