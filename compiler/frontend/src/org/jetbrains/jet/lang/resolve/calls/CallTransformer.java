@@ -102,18 +102,22 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             assert candidate.getDescriptor() instanceof VariableDescriptor;
 
             boolean hasReceiver = candidate.getReceiverArgument().exists();
-            Call variableCall = stripCallArguments(task);
+            Call variableCall = stripCallArguments(task.call);
+            ResolutionCandidate<CallableDescriptor> variableCandidate = getVariableCallCandidate(candidate, variableCall);
             if (!hasReceiver) {
                 CallCandidateResolutionContext<CallableDescriptor> context = CallCandidateResolutionContext.create(
-                        ResolvedCallImpl.create(candidate, candidateTrace, task.tracing, task.dataFlowInfoForArguments), task, candidateTrace, task.tracing, variableCall);
+                        ResolvedCallImpl.create(variableCandidate, candidateTrace, task.tracing, task.dataFlowInfoForArguments), task, candidateTrace, task.tracing, variableCall);
                 return Collections.singleton(context);
             }
             CallCandidateResolutionContext<CallableDescriptor> contextWithReceiver = createContextWithChainedTrace(
-                    candidate, variableCall, candidateTrace, task, ReceiverValue.NO_RECEIVER);
+                    variableCandidate, variableCall, candidateTrace, task, ReceiverValue.NO_RECEIVER);
 
             Call variableCallWithoutReceiver = stripReceiver(variableCall);
             ResolutionCandidate<CallableDescriptor> candidateWithoutReceiver = ResolutionCandidate.create(
-                    candidate.getCall(), candidate.getDescriptor(), candidate.getThisObject(), ReceiverValue.NO_RECEIVER,
+                    variableCandidate.getCall(),
+                    variableCandidate.getDescriptor(),
+                    variableCandidate.getThisObject(),
+                    ReceiverValue.NO_RECEIVER,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, false);
 
             CallCandidateResolutionContext<CallableDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
@@ -131,8 +135,22 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             return CallCandidateResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call, receiverValue);
         }
 
-        private Call stripCallArguments(@NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
-            return new DelegatingCall(task.call) {
+        @NotNull
+        private ResolutionCandidate<CallableDescriptor> getVariableCallCandidate(
+                @NotNull ResolutionCandidate<CallableDescriptor> candidate,
+                @NotNull Call variableCall
+        ) {
+            return ResolutionCandidate.create(
+                    variableCall,
+                    candidate.getDescriptor(),
+                    candidate.getThisObject(),
+                    candidate.getReceiverArgument(),
+                    candidate.getExplicitReceiverKind(),
+                    candidate.isSafeCall());
+        }
+
+        private Call stripCallArguments(@NotNull Call call) {
+            return new DelegatingCall(call) {
                 @Override
                 public JetValueArgumentList getValueArgumentList() {
                     return null;
@@ -159,6 +177,15 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                 @Override
                 public JetTypeArgumentList getTypeArgumentList() {
                     return null;
+                }
+
+                @NotNull
+                @Override
+                public JetElement getCallElement() {
+                    JetExpression calleeExpression = getCalleeExpression();
+                    assert calleeExpression != null : "No callee expression: " + getCallElement().getText();
+
+                    return calleeExpression;
                 }
             };
         }
