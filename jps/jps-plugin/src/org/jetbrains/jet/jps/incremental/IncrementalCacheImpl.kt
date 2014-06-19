@@ -19,7 +19,6 @@ package org.jetbrains.jet.jps.incremental
 import java.io.File
 import com.intellij.util.io.PersistentMap
 import com.intellij.util.io.PersistentHashMap
-import com.intellij.util.io.KeyDescriptor
 import java.io.DataOutput
 import com.intellij.util.io.IOUtil
 import java.io.DataInput
@@ -42,15 +41,12 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     class object {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
-        val PACKAGE_SOURCES = "package-sources.tab"
+        val PACKAGE_PARTS = "package-parts.tab"
     }
 
     private val protoMap = ProtoMap()
     private val constantsMap = ConstantsMap()
-
-    // Format of serialization to string: <module id> <path separator> <source file path>  -->  <package part JVM internal name>
-    private val packageSourcesData: PersistentHashMap<String, String>
-            = PersistentHashMap(File(baseDir, PACKAGE_SOURCES), EnumeratorStringDescriptor(), EnumeratorStringDescriptor())
+    private val packagePartMap = PackagePartMap()
 
     public fun saveFileToCache(moduleId: String, sourceFiles: Collection<File>, file: File): Boolean {
         val fileBytes = file.readBytes()
@@ -76,7 +72,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         }
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
             assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
-            putPackagePartSourceData(moduleId, sourceFiles.first(), className)
+            packagePartMap.putPackagePartSourceData(moduleId, sourceFiles.first(), className)
             return constantsMap.process(className, fileBytes)
         }
 
@@ -84,41 +80,11 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     }
 
     public fun clearCacheForRemovedFile(moduleId: String, sourceFile: File) {
-        packageSourcesData.remove(getKeyForPackagePart(moduleId, sourceFile))
-    }
-
-    private fun getKeyForPackagePart(moduleId: String, sourceFile: File): String {
-        return moduleId + File.pathSeparator + sourceFile.getAbsolutePath()
-    }
-
-    private fun putPackagePartSourceData(moduleId: String, sourceFile: File, className: JvmClassName) {
-        packageSourcesData.put(getKeyForPackagePart(moduleId, sourceFile), className.getInternalName())
+        packagePartMap.remove(moduleId, sourceFile)
     }
 
     public override fun getRemovedPackageParts(moduleId: String, compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
-        val result = HashSet<String>()
-
-        packageSourcesData.processKeysWithExistingMapping { key ->
-            if (key!!.startsWith(moduleId + File.pathSeparator)) {
-                val sourceFile = File(key.substring(moduleId.length + 1))
-
-                val packagePartClassName = packageSourcesData[key]!!
-                if (!sourceFile.exists()) {
-                    result.add(packagePartClassName)
-                }
-                else {
-                    val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getFqNameForClassNameWithoutDollars().parent()
-                    val currentPackageFqName = compiledSourceFilesToFqName[sourceFile]
-                    if (currentPackageFqName != null && currentPackageFqName != previousPackageFqName.asString()) {
-                        result.add(packagePartClassName)
-                    }
-                }
-            }
-
-            true
-        }
-
-        return result
+        return packagePartMap.getRemovedPackageParts(moduleId, compiledSourceFilesToFqName)
     }
 
     public override fun getPackageData(moduleId: String, fqName: String): ByteArray? {
@@ -128,7 +94,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     public fun close() {
         protoMap.close()
         constantsMap.close()
-        packageSourcesData.close()
+        packagePartMap.close()
     }
 
     private inner class ProtoMap {
@@ -258,6 +224,57 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
         private enum class Kind {
             INT FLOAT LONG DOUBLE STRING
+        }
+    }
+
+    private inner class PackagePartMap {
+        // Format of serialization to string: <module id> <path separator> <source file path>  -->  <package part JVM internal name>
+        private val map: PersistentHashMap<String, String> = PersistentHashMap(
+                File(baseDir, PACKAGE_PARTS),
+                EnumeratorStringDescriptor(),
+                EnumeratorStringDescriptor()
+        )
+
+        private fun getKey(moduleId: String, sourceFile: File): String {
+            return moduleId + File.pathSeparator + sourceFile.getAbsolutePath()
+        }
+
+        public fun putPackagePartSourceData(moduleId: String, sourceFile: File, className: JvmClassName) {
+            map.put(getKey(moduleId, sourceFile), className.getInternalName())
+        }
+
+        public fun remove(moduleId: String, sourceFile: File) {
+            map.remove(getKey(moduleId, sourceFile))
+        }
+
+        public fun getRemovedPackageParts(moduleId: String, compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
+            val result = HashSet<String>()
+
+            map.processKeysWithExistingMapping { key ->
+                if (key!!.startsWith(moduleId + File.pathSeparator)) {
+                    val sourceFile = File(key.substring(moduleId.length + 1))
+
+                    val packagePartClassName = map[key]!!
+                    if (!sourceFile.exists()) {
+                        result.add(packagePartClassName)
+                    }
+                    else {
+                        val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getFqNameForClassNameWithoutDollars().parent()
+                        val currentPackageFqName = compiledSourceFilesToFqName[sourceFile]
+                        if (currentPackageFqName != null && currentPackageFqName != previousPackageFqName.asString()) {
+                            result.add(packagePartClassName)
+                        }
+                    }
+                }
+
+                true
+            }
+
+            return result
+        }
+
+        public fun close() {
+            map.close()
         }
     }
 }
