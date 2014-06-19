@@ -34,7 +34,7 @@ public class LazyJavaPackageFragmentProvider(
         private val _module: ModuleDescriptor
 ) : JavaPackageFragmentProvider {
 
-    val c = LazyJavaResolverContext(
+    private val c = LazyJavaResolverContext(
             this,
             FragmentClassResolver(),
             outerContext.storageManager,
