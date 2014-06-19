@@ -18,19 +18,8 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
-
-import java.util.Collection;
-import java.util.Collections;
 
 public interface ClassDataFinder {
     @Nullable
     ClassData findClassData(@NotNull ClassId classId);
-
-    @ReadOnly
-    @NotNull
-    Collection<Name> getClassNames(@NotNull FqName packageName);
 }

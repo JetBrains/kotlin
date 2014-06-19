@@ -45,8 +45,4 @@ public class JavaClassDataFinder(
         val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, KotlinClassHeader.Kind.CLASS) ?: return null
         return JavaProtoBufUtil.readClassDataFrom(data)
     }
-
-    override fun getClassNames(packageName: FqName): Collection<Name> {
-        return Collections.emptyList()
-    }
 }

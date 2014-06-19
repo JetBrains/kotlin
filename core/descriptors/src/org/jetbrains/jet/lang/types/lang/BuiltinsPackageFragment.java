@@ -48,14 +48,40 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
 
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
-        BuiltInsClassDataFinder builtInsClassDataFinder = new BuiltInsClassDataFinder(storageManager);
+        Function0<Collection<Name>> classNames = new Function0<Collection<Name>>() {
+            @Override
+            @NotNull
+            public Collection<Name> invoke() {
+                InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(getFqName()));
+
+                try {
+                    DataInputStream data = new DataInputStream(in);
+                    try {
+                        int size = data.readInt();
+                        List<Name> result = new ArrayList<Name>(size);
+                        for (int i = 0; i < size; i++) {
+                            result.add(nameResolver.getName(data.readInt()));
+                        }
+                        return result;
+                    }
+                    finally {
+                        data.close();
+                    }
+                }
+                catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        };
+
+        BuiltInsClassDataFinder builtInsClassDataFinder = new BuiltInsClassDataFinder();
         DeserializationContext deserializationContext = new DeserializationContext(
                 storageManager, module, builtInsClassDataFinder,
                 // TODO: support annotations
                 AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider,
                 new ClassDeserializer(storageManager, builtInsClassDataFinder), nameResolver
         );
-        members = new DeserializedPackageMemberScope(this, loadPackage(), deserializationContext);
+        members = new DeserializedPackageMemberScope(this, loadPackage(), deserializationContext, classNames);
     }
 
     @NotNull
@@ -116,37 +142,6 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
     }
 
     private class BuiltInsClassDataFinder implements ClassDataFinder {
-        private final NotNullLazyValue<Collection<Name>> classNames;
-
-        public BuiltInsClassDataFinder(@NotNull StorageManager storageManager) {
-            // TODO: support annotations
-            classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
-                @Override
-                @NotNull
-                public Collection<Name> invoke() {
-                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(getFqName()));
-
-                    try {
-                        DataInputStream data = new DataInputStream(in);
-                        try {
-                            int size = data.readInt();
-                            List<Name> result = new ArrayList<Name>(size);
-                            for (int i = 0; i < size; i++) {
-                                result.add(nameResolver.getName(data.readInt()));
-                            }
-                            return result;
-                        }
-                        finally {
-                            data.close();
-                        }
-                    }
-                    catch (IOException e) {
-                        throw new IllegalStateException(e);
-                    }
-                }
-            });
-        }
-
         @Nullable
         @Override
         public ClassData findClassData(@NotNull ClassId classId) {
@@ -171,12 +166,6 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
             catch (IOException e) {
                 throw new IllegalStateException(e);
             }
-        }
-
-        @NotNull
-        @Override
-        public Collection<Name> getClassNames(@NotNull FqName packageName) {
-            return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? classNames.invoke() : Collections.<Name>emptyList();
         }
     }
 }

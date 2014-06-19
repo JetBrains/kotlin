@@ -72,7 +72,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
                 createDummyPackageFragment(packageFqName),
                 JavaProtoBufUtil.readPackageDataFrom(annotationData),
                 deserializationContext
-        )
+        ) { listOf() }
         return membersScope.getAllDescriptors()
     }
 
@@ -125,10 +125,6 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
                 return null
             }
             return JavaProtoBufUtil.readClassDataFrom(data)
-        }
-
-        override fun getClassNames(packageName: FqName): Collection<Name> {
-            return Collections.emptyList()
         }
     }
 
