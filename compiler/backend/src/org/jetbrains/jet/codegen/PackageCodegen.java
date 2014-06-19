@@ -352,7 +352,7 @@ public class PackageCodegen {
     }
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        JetFile file = (JetFile) classOrObject.getContainingFile();
+        JetFile file = classOrObject.getContainingJetFile();
         Type packagePartType = PackagePartClassUtils.getPackagePartType(file);
         CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
