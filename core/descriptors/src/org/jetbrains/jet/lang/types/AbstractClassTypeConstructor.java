@@ -59,9 +59,8 @@ public abstract class AbstractClassTypeConstructor implements TypeConstructor {
 
     public static int hashCode(@NotNull TypeConstructor me) {
         ClassifierDescriptor descriptor = me.getDeclarationDescriptor();
-        if (descriptor instanceof ClassDescriptor && !ErrorUtils.isError(descriptor)) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            return DescriptorUtils.getFqName(classDescriptor).hashCode();
+        if (descriptor instanceof ClassDescriptor && hasMeaningfulFqName(descriptor)) {
+            return DescriptorUtils.getFqName(descriptor).hashCode();
         }
         return System.identityHashCode(me);
     }
