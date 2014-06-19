@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
@@ -90,7 +89,7 @@ public class PackageCodegen {
 
                 String className = AsmUtil.internalNameByFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
                 ClassBuilder v = PackageCodegen.this.state.getFactory()
-                        .newVisitor(Type.getObjectType(className), getPackageFilesWithCallables(files));
+                        .newVisitor(Type.getObjectType(className), PackagePartClassUtils.getPackageFilesWithCallables(files));
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
                               className,
@@ -114,7 +113,7 @@ public class PackageCodegen {
             return null;
         }
 
-        List<JetFile> packageFilesWithCallables = getPackageFilesWithCallables(packageFiles);
+        List<JetFile> packageFilesWithCallables = PackagePartClassUtils.getPackageFilesWithCallables(packageFiles);
         return packageFilesWithCallables.size() == 1 ? packageFilesWithCallables.get(0) : null;
     }
 
@@ -356,21 +355,6 @@ public class PackageCodegen {
         Type packagePartType = PackagePartClassUtils.getPackagePartType(file);
         CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
-    }
-
-    @NotNull
-    public static List<JetFile> getPackageFilesWithCallables(@NotNull Collection<JetFile> packageFiles) {
-        return ContainerUtil.filter(packageFiles, new Condition<JetFile>() {
-            @Override
-            public boolean value(JetFile packageFile) {
-                for (JetDeclaration declaration : packageFile.getDeclarations()) {
-                    if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
     }
 
     public void done() {

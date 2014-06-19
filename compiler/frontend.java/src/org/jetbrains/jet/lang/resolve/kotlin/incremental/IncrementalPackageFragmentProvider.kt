@@ -79,10 +79,8 @@ public class IncrementalPackageFragmentProvider(
             fqNameToPackageFragment[fqName] = IncrementalPackageFragment(fqName)
         }
 
-        for (source in sourceFiles) {
-            if (source.getDeclarations().any { it is JetProperty || it is JetNamedFunction }) {
-                createPackageFragment(source.getPackageFqName())
-            }
+        for (source in PackagePartClassUtils.getPackageFilesWithCallables(sourceFiles)) {
+            createPackageFragment(source.getPackageFqName())
         }
 
         for (fqName in incrementalCache.getPackagesWithRemovedFiles(moduleId, sourceFiles)) {

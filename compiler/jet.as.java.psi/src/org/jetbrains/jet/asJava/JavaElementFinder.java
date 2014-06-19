@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 
@@ -141,7 +142,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
     private void findPackageClass(FqName qualifiedName, GlobalSearchScope scope, List<PsiClass> answer) {
         Collection<JetFile> filesForPackage = lightClassGenerationSupport.findFilesForPackage(qualifiedName, scope);
-        if (!shouldGeneratePackageClass(filesForPackage)) return;
+        if (PackagePartClassUtils.getPackageFilesWithCallables(filesForPackage).isEmpty()) return;
 
         KotlinLightClassForPackage lightClass = KotlinLightClassForPackage.create(psiManager, qualifiedName, scope, filesForPackage);
         if (lightClass == null) return;
@@ -153,18 +154,6 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
                 answer.add(new FakeLightClassForFileOfPackage(psiManager, lightClass, file));
             }
         }
-    }
-
-    private static boolean shouldGeneratePackageClass(@NotNull Collection<JetFile> packageFiles) {
-        for (JetFile file : packageFiles) {
-            for (JetDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     @NotNull

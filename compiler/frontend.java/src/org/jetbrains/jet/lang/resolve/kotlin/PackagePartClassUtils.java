@@ -16,17 +16,25 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.org.objectweb.asm.Type;
+
+import java.util.Collection;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
@@ -69,5 +77,20 @@ public class PackagePartClassUtils {
     public static FqName getPackagePartFqName(@NotNull DeserializedCallableMemberDescriptor callable) {
         FqName packageFqName = ((PackageFragmentDescriptor) callable.getContainingDeclaration()).getFqName();
         return packageFqName.child(BaseDescriptorLoader.getPackagePartClassName(callable));
+    }
+
+    @NotNull
+    public static List<JetFile> getPackageFilesWithCallables(@NotNull Collection<JetFile> packageFiles) {
+        return ContainerUtil.filter(packageFiles, new Condition<JetFile>() {
+            @Override
+            public boolean value(JetFile packageFile) {
+                for (JetDeclaration declaration : packageFile.getDeclarations()) {
+                    if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 }
