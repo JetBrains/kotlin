@@ -446,8 +446,7 @@ public class JetTypeMapper {
                     invokeOpcode = INVOKEINTERFACE;
                 }
                 else {
-                    boolean isPrivateFunInvocation = isCallInsideSameClassAsDeclared(functionDescriptor, context) &&
-                                                     functionDescriptor.getVisibility() == Visibilities.PRIVATE;
+                    boolean isPrivateFunInvocation = functionDescriptor.getVisibility() == Visibilities.PRIVATE;
                     invokeOpcode = superCall || isPrivateFunInvocation ? INVOKESPECIAL : INVOKEVIRTUAL;
                 }
 
