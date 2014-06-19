@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class Initializer(val block: Block, modifiers: Set<Modifier>) : Member(Annotations.Empty, modifiers) {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        return block.toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(block)
     }
 }

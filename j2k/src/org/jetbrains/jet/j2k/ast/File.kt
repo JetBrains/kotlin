@@ -16,10 +16,13 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.CodeBuilder
+import org.jetbrains.jet.j2k.append
 
 class PackageStatement(val packageName: String) : Element() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "package " + packageName
+    override fun generateCode(builder: CodeBuilder) {
+        builder append "package " append packageName
+    }
 }
 
 class File(
@@ -27,7 +30,7 @@ class File(
         val mainFunction: String
 ) : Element() {
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        return elements.toKotlin(commentsAndSpaces, "\n") + mainFunction
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(elements, "\n").append(mainFunction)
     }
 }

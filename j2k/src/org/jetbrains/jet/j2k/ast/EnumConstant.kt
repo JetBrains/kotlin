@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class EnumConstant(
         identifier: Identifier,
@@ -26,12 +26,13 @@ class EnumConstant(
         params: Element
 ) : Field(identifier, annotations, modifiers, `type`.toNotNullType(), params, true, false) {
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        if (initializer.toKotlin(commentsAndSpaces).isEmpty()) {
-            return annotations.toKotlin(commentsAndSpaces) + identifier.toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        if (initializer.isEmpty) {
+            builder append annotations append identifier
+            return
         }
 
-        return annotations.toKotlin(commentsAndSpaces) + identifier.toKotlin(commentsAndSpaces) + " : " + `type`.toKotlin(commentsAndSpaces) + "(" + initializer.toKotlin(commentsAndSpaces) + ")"
+        builder append annotations append identifier append " : " append `type` append "(" append initializer append ")"
     }
 
 

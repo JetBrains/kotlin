@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class ReferenceElement(val reference: Identifier, val types: List<Type>) : Element() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = reference.toKotlin(commentsAndSpaces) + types.toKotlin(commentsAndSpaces, ", ", "<", ">")
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(reference).append(types, ", ", "<", ">")
+    }
 }

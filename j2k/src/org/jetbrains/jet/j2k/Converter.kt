@@ -59,8 +59,12 @@ public class Converter private(val project: Project, val settings: ConverterSett
     fun withStatementVisitor(factory: (Converter) -> StatementVisitor): Converter
             = Converter(project, settings, conversionScope, State(typeConverter, state.methodReturnType, state.expressionVisitorFactory, factory))
 
-    public fun elementToKotlin(element: PsiElement): String
-            = convertTopElement(element)?.toKotlin(CommentsAndSpaces(element)) ?: ""
+    public fun elementToKotlin(element: PsiElement): String {
+        val converted = convertTopElement(element) ?: return ""
+        val builder = CodeBuilder(element)
+        builder.append(converted)
+        return builder.result
+    }
 
     private fun convertTopElement(element: PsiElement?): Element? = when(element) {
         is PsiJavaFile -> convertFile(element)
@@ -519,7 +523,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     fun convertParameter(parameter: PsiParameter,
                                 nullability: Nullability = Nullability.Default,
                                 varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
-                                modifiers: Collection<Modifier> = listOf()): Parameter {
+                                modifiers: List<Modifier> = listOf()): Parameter {
         var `type` = typeConverter.convertVariableType(parameter)
         when (nullability) {
             Nullability.NotNull -> `type` = `type`.toNotNullType()

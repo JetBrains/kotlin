@@ -17,7 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 open class Class(
         val name: Identifier,
@@ -30,41 +30,38 @@ open class Class(
         val body: ClassBody
 ) : Member(annotations, modifiers) {
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String =
-            annotations.toKotlin(commentsAndSpaces) +
-            modifiersToKotlin() +
-            keyword + " " + name.toKotlin(commentsAndSpaces) +
-            typeParameterList.toKotlin(commentsAndSpaces) +
-            primaryConstructorSignatureToKotlin(commentsAndSpaces) +
-            implementTypesToKotlin(commentsAndSpaces) +
-            typeParameterList.whereToKotlin(commentsAndSpaces).withPrefix(" ") +
-            body.toKotlin(this, commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations)
+        appendModifiers(builder).append(keyword).append(" ").append(name).append(typeParameterList)
+        appendPrimaryConstructorSignature(builder)
+        appendBaseTypes(builder)
+        typeParameterList.appendWhere(builder)
+        body.append(builder, this)
+    }
 
     protected open val keyword: String
         get() = "class"
 
-    protected open fun primaryConstructorSignatureToKotlin(commentsAndSpaces: CommentsAndSpaces): String
-            = body.primaryConstructor?.signatureToKotlin(commentsAndSpaces) ?: "()"
+    protected open fun appendPrimaryConstructorSignature(builder: CodeBuilder) {
+        body.primaryConstructor?.appendSignature(builder) ?: builder.append("()")
+    }
 
-    private fun baseClassSignatureWithParams(commentsAndSpaces: CommentsAndSpaces): List<String> {
+    protected fun appendBaseTypes(builder: CodeBuilder) {
+        builder.append(baseClassSignatureWithParams(builder) + implementsTypes.map { { builder.append(it) } }, ", ", ":")
+    }
+
+    private fun baseClassSignatureWithParams(builder: CodeBuilder): List<() -> CodeBuilder> {
         if (keyword.equals("class") && extendsTypes.size() == 1) {
-            val baseParams = baseClassParams.toKotlin(commentsAndSpaces, ", ")
-            return arrayListOf(extendsTypes[0].toKotlin(commentsAndSpaces) + "(" + baseParams + ")")
+            return listOf({
+                              builder append extendsTypes[0] append "("
+                              builder.append(baseClassParams, ", ")
+                              builder append ")"
+                          })
         }
-        return extendsTypes.map { it.toKotlin(commentsAndSpaces) }
+        return extendsTypes.map { { builder.append(it) } }
     }
 
-    protected fun implementTypesToKotlin(commentsAndSpaces: CommentsAndSpaces): String {
-        val allTypes = ArrayList<String>()
-        allTypes.addAll(baseClassSignatureWithParams(commentsAndSpaces))
-        allTypes.addAll(implementsTypes.map { it.toKotlin(commentsAndSpaces) })
-        return if (allTypes.size() == 0)
-            ""
-        else
-            " : " + allTypes.makeString(", ")
-    }
-
-    protected open fun modifiersToKotlin(): String {
+    protected open fun appendModifiers(builder: CodeBuilder): CodeBuilder {
         val modifierList = ArrayList<Modifier>()
 
         modifiers.accessModifier()?.let { modifierList.add(it) }
@@ -80,6 +77,6 @@ open class Class(
             modifierList.add(Modifier.INNER)
         }
 
-        return modifierList.toKotlin()
+        return builder.append(modifierList)
     }
 }

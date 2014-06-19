@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class ExpressionList(val expressions: List<Expression>) : Expression() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = expressions.map { it.toKotlin(commentsAndSpaces) }.makeString(", ")
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(expressions, ", ")
+    }
 
     override val isEmpty: Boolean
         get() = expressions.isEmpty()

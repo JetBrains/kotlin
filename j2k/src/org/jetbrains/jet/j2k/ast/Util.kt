@@ -16,23 +16,23 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
-
-fun List<Element>.toKotlin(commentsAndSpaces: CommentsAndSpaces, separator: String, prefix: String = "", postfix: String = ""): String {
-    val texts = map { it.toKotlin(commentsAndSpaces) }.filter { it.isNotEmpty() }
-    return if (texts.isNotEmpty()) texts.makeString(separator, prefix, postfix) else ""
-}
+import org.jetbrains.jet.j2k.*
 
 fun String.withSuffix(suffix: String): String = if (isEmpty()) "" else this + suffix
 fun String.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + this
-fun Expression.withPrefix(prefix: String, commentsAndSpaces: CommentsAndSpaces): String = if (isEmpty) "" else prefix + toKotlin(commentsAndSpaces)
 
-fun Expression.operandToKotlin(operand: Expression, commentsAndSpaces: CommentsAndSpaces, parenthesisForSamePrecedence: Boolean = false): String {
-    val parentPrecedence = precedence() ?: throw IllegalArgumentException("Unknown precendence for $this")
-    val kotlinCode = operand.toKotlin(commentsAndSpaces)
-    val operandPrecedence = operand.precedence() ?: return kotlinCode
-    val needParenthesis = parentPrecedence < operandPrecedence || parentPrecedence == operandPrecedence && parenthesisForSamePrecedence
-    return if (needParenthesis) "($kotlinCode)" else kotlinCode
+fun CodeBuilder.appendWithPrefix(element: Element, prefix: String): CodeBuilder = if (!element.isEmpty) this append prefix append element else this
+fun CodeBuilder.appendWithSuffix(element: Element, suffix: String): CodeBuilder = if (!element.isEmpty) this append element append suffix else this
+
+fun CodeBuilder.appendOperand(expression: Expression, operand: Expression, parenthesisForSamePrecedence: Boolean = false): CodeBuilder {
+    val parentPrecedence = expression.precedence() ?: throw IllegalArgumentException("Unknown precendence for $this")
+    val operandPrecedence = operand.precedence()
+    val needParenthesis = operandPrecedence != null &&
+            (parentPrecedence < operandPrecedence || parentPrecedence == operandPrecedence && parenthesisForSamePrecedence)
+    if (needParenthesis) append("(")
+    append(operand)
+    if (needParenthesis) append(")")
+    return this
 }
 
 private fun Expression.precedence(): Int? {

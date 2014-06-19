@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class TypeElement(val `type`: Type) : Element() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = `type`.toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(`type`)
+    }
 }

@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class ParameterList(val parameters: List<Parameter>) : Element() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = parameters.map { it.toKotlin(commentsAndSpaces) }.makeString(", ")
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(parameters, ", ")
+    }
 }
 

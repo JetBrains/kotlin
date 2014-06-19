@@ -17,45 +17,37 @@
 package org.jetbrains.jet.j2k.ast
 
 import com.intellij.psi.PsiTypeParameter
-import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.*
 import com.intellij.psi.PsiTypeParameterList
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.CommentsAndSpaces
 
 class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element() {
     fun hasWhere(): Boolean = extendsTypes.size() > 1
 
-    fun whereToKotlin(commentsAndSpaces: CommentsAndSpaces): String {
+    fun whereToKotlin(builder: CodeBuilder) {
         if (hasWhere()) {
-            return name.toKotlin(commentsAndSpaces) + " : " + extendsTypes[1].toKotlin(commentsAndSpaces)
+            builder append name append " : " append extendsTypes[1]
         }
-
-        return ""
     }
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        if (extendsTypes.size() > 0) {
-            return name.toKotlin(commentsAndSpaces) + " : " + extendsTypes[0].toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder append name
+        if (extendsTypes.isNotEmpty()) {
+            builder append " : " append extendsTypes[0]
         }
-
-        return name.toKotlin(commentsAndSpaces)
     }
 }
 
 class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        return if (parameters.isNotEmpty())
-            parameters.map { it.toKotlin(commentsAndSpaces) }.makeString(", ", "<", ">")
-        else
-            ""
+    override fun generateCode(builder: CodeBuilder) {
+        if (parameters.isNotEmpty()) builder.append(parameters, ", ", "<", ">")
     }
 
-    fun whereToKotlin(commentsAndSpaces: CommentsAndSpaces): String {
+    fun appendWhere(builder: CodeBuilder): CodeBuilder {
         if (hasWhere()) {
-            val wheres = parameters.map { it.whereToKotlin(commentsAndSpaces) }
-            return "where " + wheres.makeString(", ")
+            builder.append( parameters.map { { it.whereToKotlin(builder) } }, ", ", " where ", "")
         }
-        return ""
+        return builder
     }
 
 

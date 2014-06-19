@@ -16,31 +16,46 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>, val brackets: Boolean) : Element() {
-    private fun surroundWithBrackets(text: String) = if (brackets) "[$text]" else text
+    private fun CodeBuilder.surroundWithBrackets(action: () -> Unit) {
+        if (brackets) append("[")
+        action()
+        if (brackets) append("]")
+    }
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+    override fun generateCode(builder: CodeBuilder) {
         if (arguments.isEmpty()) {
-            return surroundWithBrackets(name.toKotlin(commentsAndSpaces))
+            builder.surroundWithBrackets { builder.append(name) }
+            return
         }
 
-        val argsText = arguments.map {
-            if (it.first != null)
-                it.first!!.toKotlin(commentsAndSpaces) + " = " + it.second.toKotlin(commentsAndSpaces)
-            else
-                it.second.toKotlin(commentsAndSpaces)
-        }.makeString(", ")
-        return surroundWithBrackets(name.toKotlin(commentsAndSpaces) + "(" + argsText + ")")
+        builder.surroundWithBrackets {
+            builder.append(name)
+                    .append("(")
+                    .append(arguments.map {
+                        {
+                            if (it.first != null) {
+                                builder append it.first!! append " = " append it.second
+                            }
+                            else {
+                                builder append it.second
+                            }
+                        }
+                    }, ", ")
+                    .append(")")
+        }
     }
 }
 
 class Annotations(val annotations: List<Annotation>, val newLines: Boolean) : Element() {
     private val br = if (newLines) "\n" else " "
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        return if (annotations.isNotEmpty()) annotations.map { it.toKotlin(commentsAndSpaces) }.makeString(br) + br else ""
+    override fun generateCode(builder: CodeBuilder) {
+        if (annotations.isNotEmpty()) {
+            builder.append(annotations, br, "", br)
+        }
     }
 
     fun plus(other: Annotations) = Annotations(annotations + other.annotations, newLines || other.newLines)

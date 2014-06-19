@@ -737,9 +737,19 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/comments"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
-        @TestMetadata("Comments.java")
+        @TestMetadata("comments.java")
         public void testComments() throws Exception {
-            doTest("j2k/tests/testData/ast/comments/Comments.java");
+            doTest("j2k/tests/testData/ast/comments/comments.java");
+        }
+        
+        @TestMetadata("fieldWithEndOfLineComment.java")
+        public void testFieldWithEndOfLineComment() throws Exception {
+            doTest("j2k/tests/testData/ast/comments/fieldWithEndOfLineComment.java");
+        }
+        
+        @TestMetadata("fieldsInitializedFromParams.java")
+        public void testFieldsInitializedFromParams() throws Exception {
+            doTest("j2k/tests/testData/ast/comments/fieldsInitializedFromParams.java");
         }
         
     }

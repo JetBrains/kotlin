@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.CodeBuilder
 
 class DummyStringExpression(val string: String) : Expression() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = string
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(string)
+    }
 }

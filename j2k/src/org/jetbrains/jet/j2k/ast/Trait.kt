@@ -17,7 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.CodeBuilder
 
 class Trait(name: Identifier,
             annotations: Annotations,
@@ -32,12 +32,12 @@ class Trait(name: Identifier,
     override val keyword: String
         get() = "trait"
 
-    override fun primaryConstructorSignatureToKotlin(commentsAndSpaces: CommentsAndSpaces) = ""
+    override fun appendPrimaryConstructorSignature(builder: CodeBuilder) { }
 
-    override fun modifiersToKotlin(): String {
+    override fun appendModifiers(builder: CodeBuilder): CodeBuilder {
         val modifierList = ArrayList<Modifier>()
         modifiers.accessModifier()?.let { modifierList.add(it) }
-        return modifierList.toKotlin()
+        return builder.append(modifierList)
     }
 
 }

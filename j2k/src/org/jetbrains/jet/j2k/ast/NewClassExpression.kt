@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class NewClassExpression(
         val name: Element,
@@ -25,18 +25,23 @@ class NewClassExpression(
         val anonymousClass: AnonymousClassBody? = null
 ) : Expression() {
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        val callOperator = if (qualifier.isNullable) "!!." else "."
-        val qualifier = if (qualifier.isEmpty) "" else qualifier.toKotlin(commentsAndSpaces) + callOperator
-        val appliedArguments = arguments.toKotlin(commentsAndSpaces, ", ")
-        return if (anonymousClass != null) {
-            if (anonymousClass.extendsTrait)
-                "object : " + qualifier + name.toKotlin(commentsAndSpaces) + anonymousClass.toKotlin(commentsAndSpaces)
-            else
-                "object : " + qualifier + name.toKotlin(commentsAndSpaces) + "(" + appliedArguments + ")" + anonymousClass.toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        if (anonymousClass != null) {
+            builder.append("object:")
         }
-        else{
-            qualifier + name.toKotlin(commentsAndSpaces) + "(" + appliedArguments + ")"
+
+        if (!qualifier.isEmpty) {
+            builder.append(qualifier).append(if (qualifier.isNullable) "!!." else ".")
+        }
+
+        builder.append(name)
+
+        if (anonymousClass == null || !anonymousClass.extendsTrait) {
+            builder.append("(").append(arguments, ", ").append(")")
+        }
+
+        if (anonymousClass != null) {
+            builder.append(anonymousClass)
         }
     }
 }

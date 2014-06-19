@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 abstract class Member(val annotations: Annotations, val modifiers: Set<Modifier>) : Element()
 
@@ -28,37 +28,33 @@ class ClassBody (
         val lBrace: LBrace,
         val rBrace: RBrace) {
 
-    fun toKotlin(containingClass: Class?, commentsAndSpaces: CommentsAndSpaces): String {
-        val builder = StringBuilder()
-        builder.append(normalMembers.toKotlin(commentsAndSpaces, "\n"))
+    fun append(builder: CodeBuilder, containingClass: Class?) {
+        if (normalMembers.isEmpty() && classObjectMembers.isEmpty() && secondaryConstructors.isEmpty() && (primaryConstructor?.block?.isEmpty ?: true)) return
 
-        val primaryConstructor = primaryConstructorBodyToKotlin(commentsAndSpaces)
-        if (primaryConstructor.isNotEmpty() && builder.length() > 0) {
-            builder.append("\n\n") // blank line before constructor body
-        }
-        builder.append(primaryConstructor)
+        builder append " " append lBrace append "\n"
 
-        val classObject = classObjectToKotlin(containingClass, commentsAndSpaces)
-        if (classObject.isNotEmpty() && builder.length() > 0) {
-            builder.append("\n\n") // blank line before class object
-        }
-        builder.append(classObject)
+        builder.append(normalMembers, "\n")
+        var notEmpty = normalMembers.isNotEmpty()
 
-        return if (builder.length() > 0)
-            " " + lBrace.toKotlin(commentsAndSpaces) + "\n" + builder + "\n" + rBrace.toKotlin(commentsAndSpaces)
-        else
-            ""
+        notEmpty = appendPrimaryConstructorBody(builder, notEmpty) || notEmpty
+
+        appendClassObject(builder, containingClass, notEmpty)
+
+        builder append "\n" append rBrace
     }
 
-    private fun primaryConstructorBodyToKotlin(commentsAndSpaces: CommentsAndSpaces): String {
+    private fun appendPrimaryConstructorBody(builder: CodeBuilder, blankLineBefore: Boolean): Boolean {
         val constructor = primaryConstructor
-        if (constructor == null || constructor.block?.isEmpty ?: true) return ""
-        return constructor.bodyToKotlin(commentsAndSpaces)
+        if (constructor == null || constructor.block?.isEmpty ?: true) return false
+        if (blankLineBefore) builder.append("\n\n")
+        constructor.appendBody(builder)
+        return true
     }
 
-    private fun classObjectToKotlin(containingClass: Class?, commentsAndSpaces: CommentsAndSpaces): String {
-        if (secondaryConstructors.isEmpty() && classObjectMembers.isEmpty()) return ""
+    private fun appendClassObject(builder: CodeBuilder, containingClass: Class?, blankLineBefore: Boolean) {
+        if (secondaryConstructors.isEmpty() && classObjectMembers.isEmpty()) return
+        if (blankLineBefore) builder.append("\n\n")
         val factoryFunctions = secondaryConstructors.map { it.toFactoryFunction(containingClass) }
-        return "class object {\n" + (factoryFunctions + classObjectMembers).toKotlin(commentsAndSpaces, "\n") + "\n}"
+        builder.append(factoryFunctions + classObjectMembers, "\n", "class object {\n", "\n}")
     }
 }

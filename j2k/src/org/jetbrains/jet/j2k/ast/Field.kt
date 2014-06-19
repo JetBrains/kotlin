@@ -29,20 +29,24 @@ open class Field(
         private val hasWriteAccesses: Boolean
 ) : Member(annotations, modifiers) {
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        val declaration = annotations.toKotlin(commentsAndSpaces) +
-                modifiersToKotlin() +
-                (if (isVal) "val " else "var ") +
-                identifier.toKotlin(commentsAndSpaces) +
-                " : " +
-                `type`.toKotlin(commentsAndSpaces)
-        return if (initializer.isEmpty)
-            declaration + (if (isVal && hasWriteAccesses) "" else " = " + getDefaultInitializer(this).toKotlin(commentsAndSpaces))
-        else
-            declaration + " = " + initializer.toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations)
+                .appendModifiers()
+                .append(if (isVal) "val " else "var ")
+                .append(identifier)
+                .append(" : ")
+                .append(`type`)
+
+        var initializerToUse = initializer
+        if (initializerToUse.isEmpty && !(isVal && hasWriteAccesses)) {
+            initializerToUse = getDefaultInitializer(this)
+        }
+        if (!initializerToUse.isEmpty) {
+            builder append "=" append initializerToUse
+        }
     }
 
-    private fun modifiersToKotlin(): String {
+    private fun CodeBuilder.appendModifiers(): CodeBuilder {
         val modifierList = ArrayList<Modifier>()
         if (modifiers.contains(Modifier.ABSTRACT)) {
             modifierList.add(Modifier.ABSTRACT)
@@ -50,6 +54,6 @@ open class Field(
 
         modifiers.accessModifier()?.let { modifierList.add(it) }
 
-        return modifierList.toKotlin()
+        return append(modifierList)
     }
 }

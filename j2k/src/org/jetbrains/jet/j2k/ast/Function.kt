@@ -17,8 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 open class Function(
         val converter: Converter,
@@ -32,7 +31,7 @@ open class Function(
         val isInTrait: Boolean
 ) : Member(annotations, modifiers) {
 
-    private fun modifiersToKotlin(): String {
+    private fun CodeBuilder.appendModifiers(): CodeBuilder {
         val resultingModifiers = ArrayList<Modifier>()
         val isOverride = modifiers.contains(Modifier.OVERRIDE)
         if (isOverride) {
@@ -52,16 +51,27 @@ open class Function(
             resultingModifiers.add(Modifier.OPEN)
         }
 
-        return resultingModifiers.toKotlin()
+        return append(resultingModifiers)
     }
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        return annotations.toKotlin(commentsAndSpaces) +
-                modifiersToKotlin() +
-                "fun ${typeParameterList.toKotlin(commentsAndSpaces).withSuffix(" ")}${name.toKotlin(commentsAndSpaces)}" +
-                "(${parameterList.toKotlin(commentsAndSpaces)})" +
-                (if (!`type`.isUnit()) " : " + `type`.toKotlin(commentsAndSpaces) + " " else " ") +
-                typeParameterList.whereToKotlin(commentsAndSpaces) +
-                block?.toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations)
+                .appendModifiers()
+                .append(" fun ")
+                .appendWithSuffix(typeParameterList, " ")
+                .append(name)
+                .append("(")
+                .append(parameterList)
+                .append(")")
+
+        if (!`type`.isUnit()) {
+            builder append ":" append `type`
+        }
+
+        typeParameterList.appendWhere(builder)
+
+        if (block != null) {
+            builder append " " append block!!
+        }
     }
 }

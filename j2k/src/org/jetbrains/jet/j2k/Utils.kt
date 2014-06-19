@@ -64,7 +64,7 @@ fun getDefaultInitializer(field: Field): Expression {
     }
 
     if (t is PrimitiveType) {
-        when(t.`type`.name) {
+        when(t.name.name) {
             "Boolean" -> return LiteralExpression("false")
             "Char" -> return LiteralExpression("' '")
             "Double" -> return MethodCallExpression.buildNotNull(LiteralExpression("0"), OperatorConventions.DOUBLE.toString())

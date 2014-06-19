@@ -17,7 +17,8 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ConverterSettings
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.CodeBuilder
+import org.jetbrains.jet.j2k.append
 
 class LocalVariable(
         private val identifier: Identifier,
@@ -29,17 +30,17 @@ class LocalVariable(
         private val settings: ConverterSettings
 ) : Element() {
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        val start = annotations.toKotlin(commentsAndSpaces) + if (isVal) "val" else "var"
-        return if (initializer.isEmpty) {
-            "$start ${identifier.toKotlin(commentsAndSpaces)} : ${typeCalculator().toKotlin(commentsAndSpaces)}"
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations).append(if (isVal) "val " else "var ")
+        if (initializer.isEmpty) {
+            builder append identifier append ":" append typeCalculator()
         }
         else {
             val shouldSpecifyType = settings.specifyLocalVariableTypeByDefault
             if (shouldSpecifyType)
-                "$start ${identifier.toKotlin(commentsAndSpaces)} : ${typeCalculator().toKotlin(commentsAndSpaces)} = ${initializer.toKotlin(commentsAndSpaces)}"
+                builder append identifier append ":" append typeCalculator() append "=" append initializer
             else
-                "$start ${identifier.toKotlin(commentsAndSpaces)} = ${initializer.toKotlin(commentsAndSpaces)}"
+                builder append identifier append "=" append initializer
         }
     }
 }

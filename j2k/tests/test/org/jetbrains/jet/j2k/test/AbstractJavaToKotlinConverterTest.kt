@@ -145,7 +145,7 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
 
     private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {
         val result = statementToKotlin("final Object o =" + code + "}", settings, project)
-        return result.replaceFirst("val o : Any\\? =", "").replaceFirst("val o : Any = ", "").replaceFirst("val o = ", "").trim()
+        return result.replaceFirst("val o:Any\\?=", "").replaceFirst("val o:Any=", "").replaceFirst("val o=", "").trim()
     }
 
     override fun getProjectJDK(): Sdk? {

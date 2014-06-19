@@ -16,8 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.ConverterSettings
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 fun Type.isUnit(): Boolean = this == Type.Unit
 
@@ -59,42 +58,45 @@ abstract class Type() : Element() {
     }
 
     object Empty : NotNullType() {
-        override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "UNRESOLVED_TYPE"
+        override fun generateCode(builder: CodeBuilder) {
+            builder.append("UNRESOLVED_TYPE")
+        }
     }
 
     object Unit: NotNullType() {
-        override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = "Unit"
+        override fun generateCode(builder: CodeBuilder) {
+            builder.append("Unit")
+        }
     }
 
-    override fun equals(other: Any?): Boolean = other is Type && other.toKotlin(CommentsAndSpaces.None) == this.toKotlin(CommentsAndSpaces.None)
+    override fun equals(other: Any?): Boolean = other is Type && other.canonicalCode() == this.canonicalCode()
 
-    override fun hashCode(): Int = toKotlin(CommentsAndSpaces.None).hashCode()
+    override fun hashCode(): Int = canonicalCode().hashCode()
 
-    override fun toString(): String = toKotlin(CommentsAndSpaces.None)
+    override fun toString(): String = canonicalCode()
 }
 
-class ClassType(val `type`: Identifier, val typeArgs: List<Element>, nullability: Nullability, settings: ConverterSettings)
+class ClassType(val name: Identifier, val typeArgs: List<Element>, nullability: Nullability, settings: ConverterSettings)
   : MayBeNullableType(nullability, settings) {
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        var params = if (typeArgs.isEmpty()) "" else typeArgs.map { it.toKotlin(commentsAndSpaces) }.makeString(", ", "<", ">")
-        return `type`.toKotlin(commentsAndSpaces) + params + isNullableStr
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(name).append(typeArgs, ", ", "<", ">").append(isNullableStr)
     }
 
-
-    override fun toNotNullType(): Type = ClassType(`type`, typeArgs, Nullability.NotNull, settings)
-    override fun toNullableType(): Type = ClassType(`type`, typeArgs, Nullability.Nullable, settings)
+    override fun toNotNullType(): Type = ClassType(name, typeArgs, Nullability.NotNull, settings)
+    override fun toNullableType(): Type = ClassType(name, typeArgs, Nullability.Nullable, settings)
 }
 
 class ArrayType(val elementType: Type, nullability: Nullability, settings: ConverterSettings)
   : MayBeNullableType(nullability, settings) {
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+    override fun generateCode(builder: CodeBuilder) {
         if (elementType is PrimitiveType) {
-            return elementType.toKotlin(commentsAndSpaces) + "Array" + isNullableStr
+            builder append elementType append "Array" append isNullableStr
         }
-
-        return "Array<" + elementType.toKotlin(commentsAndSpaces) + ">" + isNullableStr
+        else {
+            builder append "Array<" append elementType append ">" append isNullableStr
+        }
     }
 
     override fun toNotNullType(): Type = ArrayType(elementType, Nullability.NotNull, settings)
@@ -102,21 +104,31 @@ class ArrayType(val elementType: Type, nullability: Nullability, settings: Conve
 }
 
 class InProjectionType(val bound: Type) : NotNullType() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "in " + bound.toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder append "in " append bound
+    }
 }
 
 class OutProjectionType(val bound: Type) : NotNullType() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "out " + bound.toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder append "out " append bound
+    }
 }
 
 class StarProjectionType() : NotNullType() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = "*"
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("*")
+    }
 }
 
-class PrimitiveType(val `type`: Identifier) : NotNullType() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = `type`.toKotlin(commentsAndSpaces)
+class PrimitiveType(val name: Identifier) : NotNullType() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(name)
+    }
 }
 
 class VarArgType(val `type`: Type) : NotNullType() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = `type`.toKotlin(commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(`type`)
+    }
 }

@@ -16,21 +16,19 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class Block(val statements: List<Statement>, val lBrace: LBrace, val rBrace: RBrace, val notEmpty: Boolean = false) : Statement() {
     override val isEmpty: Boolean
         get() = !notEmpty && statements.all { it.isEmpty }
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
+    override fun generateCode(builder: CodeBuilder) {
         if (statements.all { it.isEmpty }) {
-            return if (isEmpty) "" else lBrace.toKotlin(commentsAndSpaces) + rBrace.toKotlin(commentsAndSpaces)
+            if (!isEmpty) builder.append(lBrace).append(rBrace)
+            return
         }
-        return lBrace.toKotlin(commentsAndSpaces) +
-                "\n" +
-                statements.toKotlin(commentsAndSpaces, "\n") +
-                "\n" +
-                rBrace.toKotlin(commentsAndSpaces)
+
+        builder.append(lBrace).append(statements, "\n", "\n", "\n").append(rBrace)
     }
 
     class object {
@@ -40,9 +38,13 @@ class Block(val statements: List<Statement>, val lBrace: LBrace, val rBrace: RBr
 
 // we use LBrace and RBrace elements to better handle comments around them
 class LBrace() : Element() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = "{"
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("{")
+    }
 }
 
 class RBrace() : Element() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = "}"
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("}")
+    }
 }

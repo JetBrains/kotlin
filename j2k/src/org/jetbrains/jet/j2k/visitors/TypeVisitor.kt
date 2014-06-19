@@ -51,7 +51,7 @@ class TypeVisitor(private val converter: TypeConverter, private val classesToImp
         if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0) {
             val starParamList = ArrayList<Type>()
             if (resolvedClassTypeParams.size() == 1) {
-                if ((resolvedClassTypeParams.single() as ClassType).`type`.name == "Any") {
+                if ((resolvedClassTypeParams.single() as ClassType).name.name == "Any") {
                     starParamList.add(StarProjectionType())
                     return ClassType(identifier, starParamList, Nullability.Default, converter.settings)
                 }

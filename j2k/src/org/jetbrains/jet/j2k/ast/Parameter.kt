@@ -16,24 +16,21 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class Parameter(val identifier: Identifier,
                 val `type`: Type,
                 val varVal: Parameter.VarValModifier,
                 val annotations: Annotations,
-                val modifiers: Collection<Modifier>) : Element() {
+                val modifiers: List<Modifier>) : Element() {
     public enum class VarValModifier {
         None
         Val
         Var
     }
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        val builder = StringBuilder()
-
-        builder.append(annotations.toKotlin(commentsAndSpaces))
-        builder.append(modifiers.toKotlin())
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations).append(modifiers)
 
         if (`type` is VarArgType) {
             assert(varVal == VarValModifier.None)
@@ -45,7 +42,6 @@ class Parameter(val identifier: Identifier,
             VarValModifier.Val -> builder.append("val ")
         }
 
-        builder.append(identifier.toKotlin(commentsAndSpaces)).append(": ").append(`type`.toKotlin(commentsAndSpaces))
-        return builder.toString()
+        builder.append(identifier).append(":").append(`type`)
     }
 }

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 
 class Enum(
         name: Identifier,
@@ -30,16 +30,16 @@ class Enum(
 ) : Class(name, annotations, modifiers, typeParameterList,
           extendsTypes, baseClassParams, implementsTypes, body) {
 
-    override fun primaryConstructorSignatureToKotlin(commentsAndSpaces: CommentsAndSpaces): String
-        = body.primaryConstructor?.signatureToKotlin(commentsAndSpaces) ?: ""
+    override fun appendPrimaryConstructorSignature(builder: CodeBuilder) {
+        body.primaryConstructor?.appendSignature(builder)
+    }
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        return annotations.toKotlin(commentsAndSpaces) +
-                modifiersToKotlin() +
-                "enum class " + name.toKotlin(commentsAndSpaces) +
-                primaryConstructorSignatureToKotlin(commentsAndSpaces) +
-                typeParameterList.toKotlin(commentsAndSpaces) +
-                implementTypesToKotlin(commentsAndSpaces) +
-                body.toKotlin(this, commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        builder append annotations
+        appendModifiers(builder) append "enum class " append name
+        appendPrimaryConstructorSignature(builder)
+        builder append typeParameterList
+        appendBaseTypes(builder)
+        body.append(builder, this)
     }
 }

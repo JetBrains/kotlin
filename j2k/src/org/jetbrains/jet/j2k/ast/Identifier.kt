@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.CodeBuilder
 import com.intellij.psi.PsiNameIdentifierOwner
 
 fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
@@ -41,7 +41,9 @@ class Identifier(
         return name
     }
 
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String = toKotlin()
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(toKotlin())
+    }
 
     private fun quote(str: String): String = "`" + str + "`"
 

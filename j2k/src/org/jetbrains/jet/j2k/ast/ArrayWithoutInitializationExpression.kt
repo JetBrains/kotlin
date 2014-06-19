@@ -16,41 +16,51 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.CodeBuilder
+import org.jetbrains.jet.j2k.append
 
 class ArrayWithoutInitializationExpression(val `type`: ArrayType, val expressions: List<Expression>) : Expression() {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String {
-        fun getConstructorName(`type`: ArrayType, hasInit: Boolean): String {
-            return when (`type`.elementType) {
-                is PrimitiveType ->
-                    `type`.toNotNullType().toKotlin(commentsAndSpaces)
-                is ArrayType ->
-                    if (hasInit)
-                        `type`.toNotNullType().toKotlin(commentsAndSpaces)
-                    else
-                        "arrayOfNulls<" + `type`.elementType.toKotlin(commentsAndSpaces) + ">"
-                else ->
-                    "arrayOfNulls<" + `type`.elementType.toKotlin(commentsAndSpaces) + ">"
+    override fun generateCode(builder: CodeBuilder) {
+        fun appendConstructorName(`type`: ArrayType, hasInit: Boolean): CodeBuilder = when (`type`.elementType) {
+            is PrimitiveType -> builder.append(`type`.toNotNullType())
+
+            is ArrayType ->
+                if (hasInit) {
+                    builder.append(`type`.toNotNullType())
+                }
+                else {
+                    builder.append("arrayOfNulls<").append(`type`.elementType).append(">")
+                }
+
+            else -> builder.append("arrayOfNulls<").append(`type`.elementType).append(">")
+        }
+
+        fun oneDim(`type`: ArrayType, size: Expression, init: (() -> Unit)? = null): CodeBuilder {
+            appendConstructorName(`type`, init != null).append("(").append(size)
+            if (init != null) {
+                builder.append(", ")
+                init()
             }
+            return builder.append(")")
         }
 
-        fun oneDim(`type`: ArrayType, size: Expression, init: String = ""): String {
-            return getConstructorName(`type`, !init.isEmpty()) + "(" + size.toKotlin(commentsAndSpaces) + init.withPrefix(", ") + ")"
-        }
-
-        fun constructInnerType(hostType: ArrayType, expressions: List<Expression>): String {
+        fun constructInnerType(hostType: ArrayType, expressions: List<Expression>): CodeBuilder {
             if (expressions.size() == 1) {
                 return oneDim(hostType, expressions[0])
             }
 
             val innerType = hostType.elementType
             if (expressions.size() > 1 && innerType is ArrayType) {
-                return oneDim(hostType, expressions[0], "{" + constructInnerType(innerType, expressions.subList(1, expressions.size())) + "}")
+                return oneDim(hostType, expressions[0], {
+                    builder.append("{")
+                    constructInnerType(innerType, expressions.subList(1, expressions.size()))
+                    builder.append("}")
+                })
             }
 
-            return getConstructorName(hostType, expressions.size() != 0)
+            return appendConstructorName(hostType, expressions.isNotEmpty())
         }
 
-        return constructInnerType(`type`, expressions)
+        constructInnerType(`type`, expressions)
     }
 }

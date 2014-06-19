@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.*
 import com.intellij.psi.PsiElement
 
 fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?): TElement {
@@ -36,6 +36,12 @@ fun <TElement: Element> TElement.assignPrototypesFrom(element: Element): TElemen
 
 data class PrototypeInfo(val element: PsiElement, val inheritBlankLinesBefore: Boolean)
 
+fun Element.canonicalCode(): String {
+    val builder = CodeBuilder(null)
+    builder.append(this)
+    return builder.result
+}
+
 abstract class Element {
     public var prototypes: List<PrototypeInfo> = listOf()
         private set
@@ -44,19 +50,13 @@ abstract class Element {
         this.prototypes = prototypes
     }
 
-    public fun toKotlin(commentsAndSpaces: CommentsAndSpaces): String {
-        return if (isEmpty) // do not insert comment and spaces for empty elements to avoid multiple blank lines
-            ""
-        else
-            commentsAndSpaces.wrapElement({ toKotlinImpl(commentsAndSpaces) }, prototypes)
-    }
-
-    protected abstract fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces): String
+    /** This method should not be used anywhere except for CodeBuilder! Use CodeBuilder.append instead. */
+    public abstract fun generateCode(builder: CodeBuilder)
 
     public open val isEmpty: Boolean get() = false
 
     object Empty : Element() {
-        override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = ""
+        override fun generateCode(builder: CodeBuilder) { }
         override val isEmpty: Boolean get() = true
     }
 }

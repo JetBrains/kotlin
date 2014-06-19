@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.CodeBuilder
 
 enum class Modifier(val name: String) {
     PUBLIC: Modifier("public")
@@ -36,7 +36,13 @@ fun Collection<Modifier>.accessModifier(): Modifier? {
     return firstOrNull { ACCESS_MODIFIERS.contains(it) }
 }
 
-fun Collection<Modifier>.toKotlin(): String
-        = if (isNotEmpty()) map { it.toKotlin() }.makeString(" ") + " " else ""
+fun CodeBuilder.append(modifiers: List<Modifier>): CodeBuilder {
+    if (!modifiers.isEmpty()) {
+        for (modifier in modifiers) {
+            append(modifier.toKotlin()).append(" ")
+        }
+    }
+    return this
+}
 
 

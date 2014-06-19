@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.CommentsAndSpaces
+import org.jetbrains.jet.j2k.CodeBuilder
 
 class AnonymousClassBody(body: ClassBody, val extendsTrait: Boolean)
 : Class(Identifier.Empty, Annotations.Empty, setOf(), TypeParameterList.Empty, listOf(), listOf(), listOf(), body) {
-    override fun toKotlinImpl(commentsAndSpaces: CommentsAndSpaces) = body.toKotlin(null, commentsAndSpaces)
+    override fun generateCode(builder: CodeBuilder) {
+        body.append(builder, null)
+    }
 }
