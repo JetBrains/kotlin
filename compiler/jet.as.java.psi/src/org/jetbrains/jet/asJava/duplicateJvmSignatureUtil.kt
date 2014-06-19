@@ -73,7 +73,9 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
 class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnostics: Diagnostics) : Diagnostics by jvmDiagnostics {
 
     private fun alreadyReported(psiElement: PsiElement): Boolean {
-        return otherDiagnostics.forElement(psiElement).any { it.getFactory() in setOf<DiagnosticFactory<*>>(CONFLICTING_OVERLOADS, REDECLARATION, NOTHING_TO_OVERRIDE) }
+        val higherPriority = setOf<DiagnosticFactory<*>>(
+                CONFLICTING_OVERLOADS, REDECLARATION, NOTHING_TO_OVERRIDE, MANY_IMPL_MEMBER_NOT_IMPLEMENTED)
+        return otherDiagnostics.forElement(psiElement).any { it.getFactory() in higherPriority }
                 || psiElement is JetPropertyAccessor && alreadyReported(psiElement.getParent()!!)
     }
 
