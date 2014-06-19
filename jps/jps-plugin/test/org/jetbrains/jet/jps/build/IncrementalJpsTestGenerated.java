@@ -96,9 +96,9 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/topLevelFunctionSameSignature/");
     }
     
-    @TestMetadata("topLevelMembersInTwoPackages")
-    public void testTopLevelMembersInTwoPackages() throws Exception {
-        doTest("jps-plugin/testData/incremental/topLevelMembersInTwoPackages/");
+    @TestMetadata("topLevelMembersInTwoFiles")
+    public void testTopLevelMembersInTwoFiles() throws Exception {
+        doTest("jps-plugin/testData/incremental/topLevelMembersInTwoFiles/");
     }
     
 }
