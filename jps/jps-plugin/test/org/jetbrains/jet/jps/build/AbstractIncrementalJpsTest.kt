@@ -57,6 +57,10 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
     }
 
+    private fun initialMake(): String {
+        return buildGetLog()
+    }
+
     private fun make(): String {
         return buildGetLog()
     }
@@ -134,7 +138,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         addModule("module", array(getAbsolutePath("src")), null, null, addJdk("my jdk"))
         AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject!!)
 
-        make()
+        initialMake()
 
         val modifications = getModificationsToPerform()
         val logs = ArrayList<String>()
