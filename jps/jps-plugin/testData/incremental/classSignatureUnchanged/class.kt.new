@@ -1,0 +1,8 @@
+package test
+
+// swapped functions
+class Klass {
+    fun bar() = ":("
+
+    fun foo() = ":)"
+}
