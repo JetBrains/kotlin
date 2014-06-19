@@ -794,6 +794,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/usagesInCallArgs.kt");
                 }
                 
+                @TestMetadata("variableAsFunction.kt")
+                public void testVariableAsFunction() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/variableAsFunction.kt");
+                }
+                
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes")

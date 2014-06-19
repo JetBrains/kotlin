@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetUserType
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 
 data class ExtractionOptions(val inferUnitTypeForUnusedValues: Boolean) {
     class object {
@@ -102,7 +103,9 @@ class ExtractionData(
                 if (ref !is JetSimpleNameExpression) continue
 
                 val resolvedCallKey = (ref.getParent() as? JetThisExpression) ?: ref
-                val resolvedCall = context[BindingContext.RESOLVED_CALL, resolvedCallKey]
+                val resolvedCall = context[BindingContext.RESOLVED_CALL, resolvedCallKey]?.let {
+                    (it as? VariableAsFunctionResolvedCall)?.functionCall ?: it
+                }
 
                 val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
                 if (descriptor == null) continue

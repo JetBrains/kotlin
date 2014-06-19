@@ -379,15 +379,10 @@ private fun ExtractionData.inferParametersInfo(
 
             val extractParameter = extractThis || extractLocalVar
             if (extractParameter) {
-                val parameterType =
-                        if (hasThisReceiver) {
-                            when (descriptorToExtract) {
-                                is ClassDescriptor -> descriptorToExtract.getDefaultType()
-                                is CallableDescriptor -> descriptorToExtract.getReceiverParameter()?.getType()
-                                else -> null
-                            } ?: DEFAULT_PARAMETER_TYPE
-                        }
-                        else bindingContext[BindingContext.EXPRESSION_TYPE, originalRef] ?: DEFAULT_PARAMETER_TYPE
+                val parameterType = when {
+                    receiver.exists() -> receiver.getType()
+                    else -> bindingContext[BindingContext.EXPRESSION_TYPE, originalRef] ?: DEFAULT_PARAMETER_TYPE
+                }
 
                 if (!parameterType.processTypeIfExtractable(bindingContext, typeParameters, nonDenotableTypes)) continue
 
