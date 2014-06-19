@@ -26,6 +26,8 @@ abstract class MapJsTest {
     val KEYS = array("zero", "one", "two", "three").toList()
     val VALUES = array(0, 1, 2, 3).toList()
 
+    val SPECIAL_NAMES = array("__proto__", "constructor", "toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable")
+
     test fun getOrElse() {
         val data = emptyMap()
         val a = data.getOrElse("foo"){2}
@@ -244,6 +246,42 @@ abstract class MapJsTest {
 
         assertEquals(KEYS.toNormalizedList(), actualKeys.toNormalizedList())
         assertEquals(VALUES.toNormalizedList(), actualValues.toNormalizedList())
+    }
+
+    test fun specialNamesNotContainsInEmptyMap() {
+        val map = emptyMap()
+
+        for (key in SPECIAL_NAMES) {
+            assertFalse(map.containsKey(key), "unexpected key: $key")
+        }
+    }
+
+    test fun specialNamesNotContainsInNonEmptyMap() {
+        val map = createTestMap()
+
+        for (key in SPECIAL_NAMES) {
+            assertFalse(map.containsKey(key), "unexpected key: $key")
+        }
+    }
+
+    test fun putAndGetSpecialNamesToMap() {
+        val map = createTestMutableMap()
+        var value = 0
+
+        for (key in SPECIAL_NAMES) {
+            assertFalse(map.containsKey(key), "unexpected key: $key")
+
+            map.put(key, value)
+            assertTrue(map.containsKey(key), "key not found: $key")
+
+            val actualValue = map.get(key)
+            assertEquals(value, actualValue, "wrong value fo key: $key")
+
+            map.remove(key)
+            assertFalse(map.containsKey(key), "unexpected key after remove: $key")
+
+            value += 3
+        }
     }
 
     /*

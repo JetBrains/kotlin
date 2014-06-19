@@ -508,7 +508,7 @@
     Kotlin.PrimitiveHashMap = Kotlin.createClassNow(Kotlin.Map,
         function () {
             this.$size = 0;
-            this.map = {};
+            this.map = Object.create(null);
         }, {
             size: function () {
                 return this.$size;
@@ -517,12 +517,14 @@
                 return this.$size === 0;
             },
             containsKey_za3rmp$: function (key) {
+                // TODO: should process "__proto__" separately?
                 return this.map[key] !== undefined;
             },
             containsValue_za3rmp$: function (value) {
                 var map = this.map;
                 for (var key in map) {
-                    if (map.hasOwnProperty(key) && map[key] === value) {
+                    //noinspection JSUnfilteredForInLoop
+                    if (map[key] === value) {
                         return true;
                     }
                 }
@@ -555,19 +557,17 @@
             putAll_za3j1t$: function (fromMap) {
                 var map = fromMap.map;
                 for (var key in map) {
-                    if (map.hasOwnProperty(key)) {
-                        this.map[key] = map[key];
-                        this.$size++;
-                    }
+                    //noinspection JSUnfilteredForInLoop
+                    this.map[key] = map[key];
+                    this.$size++;
                 }
             },
             entrySet: function () {
                 var result = new Kotlin.ComplexHashSet();
                 var map = this.map;
                 for (var key in map) {
-                    if (map.hasOwnProperty(key)) {
-                        result.add_za3rmp$(new Entry(key, map[key]));
-                    }
+                    //noinspection JSUnfilteredForInLoop
+                    result.add_za3rmp$(new Entry(key, map[key]));
                 }
 
                 return result;
@@ -576,9 +576,8 @@
                 var result = new Kotlin.PrimitiveHashSet();
                 var map = this.map;
                 for (var key in map) {
-                    if (map.hasOwnProperty(key)) {
-                        result.add_za3rmp$(key);
-                    }
+                    //noinspection JSUnfilteredForInLoop
+                    result.add_za3rmp$(key);
                 }
 
                 return result;
