@@ -121,6 +121,9 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
                 KotlinClassHeader.Kind.CLASS -> {
                     return putData(moduleId, classFqName, data)
                 }
+                else -> {
+                    throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}")
+                }
             }
         }
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
@@ -173,8 +176,7 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
 
         packageSourcesData.processKeysWithExistingMapping { key ->
             if (key!!.startsWith(moduleId + File.pathSeparator)) {
-                val indexOf = key.indexOf(File.pathSeparator)
-                val sourceFile = File(key.substring(indexOf + 1))
+                val sourceFile = File(key.substring(moduleId.length + 1))
 
                 val packagePartClassName = packageSourcesData[key]!!
                 if (!sourceFile.exists()) {
