@@ -24,8 +24,8 @@ import kotlin.properties.Delegates
 
 public class ClassDeserializer(val storageManager: StorageManager, val classDataFinder: ClassDataFinder) {
     private val classes = storageManager.createMemoizedFunctionWithNullableValues {
-        (classId: ClassId) ->
-        val classData = classDataFinder.findClassData(classId)
+        (key: ClassKey) ->
+        val classData = key.classData ?: classDataFinder.findClassData(key.classId)
         if (classData != null) {
             DeserializedClassDescriptor(context, classData)
         }
@@ -36,5 +36,22 @@ public class ClassDeserializer(val storageManager: StorageManager, val classData
 
     var context: DeserializationGlobalContext by Delegates.notNull()
 
-    public fun deserializeClass(classId: ClassId): ClassDescriptor? = classes(classId)
+    public fun deserializeClass(classId: ClassId): ClassDescriptor? = classes(ClassKey(classId, null))
+
+    //needed to avoid calling ClassDataFinder#findClassData() if it is already computed at call site
+    public fun deserializeClass(classData: ClassData): ClassDescriptor? = classes(ClassKey(classData.readId(), classData))
+
+    private inner class ClassKey(val classId: ClassId, val classData: ClassData?) {
+        override fun equals(other: Any?): Boolean {
+            return other is ClassKey && classId == other.classId
+        }
+
+        override fun hashCode(): Int {
+            return classId.hashCode()
+        }
+    }
+
+    private fun ClassData.readId(): ClassId {
+        return getNameResolver().getClassId(getClassProto().getFqName())
+    }
 }

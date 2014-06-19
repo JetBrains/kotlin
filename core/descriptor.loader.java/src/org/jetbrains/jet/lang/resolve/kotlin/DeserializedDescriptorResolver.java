@@ -58,10 +58,7 @@ public final class DeserializedDescriptorResolver {
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
-            ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
-            NameResolver nameResolver = classData.getNameResolver();
-            ClassId classId = nameResolver.getClassId(classData.getClassProto().getFqName());
-            return context.getClassDeserializer().deserializeClass(classId);
+            return context.getClassDeserializer().deserializeClass(JavaProtoBufUtil.readClassDataFrom(data));
         }
         return null;
     }
