@@ -105,4 +105,8 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
     public void testIfWithOneStmWhen() throws Exception {
         fooBoxTest();
     }
+
+    public void testWhenWithOneStmWhen() throws Exception {
+        fooBoxTest();
+    }
 }
