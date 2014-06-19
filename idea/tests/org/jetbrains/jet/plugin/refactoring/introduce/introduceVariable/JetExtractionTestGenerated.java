@@ -651,7 +651,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/parameters")
-        @InnerTestClasses({Parameters.ExtractSuper.class, Parameters.ExtractThis.class, Parameters.Misc.class, Parameters.NonDenotableTypes.class})
+        @InnerTestClasses({Parameters.ExtractSuper.class, Parameters.ExtractThis.class, Parameters.It.class, Parameters.Misc.class, Parameters.NonDenotableTypes.class})
         public static class Parameters extends AbstractJetExtractionTest {
             public void testAllFilesPresentInParameters() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -724,6 +724,34 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("implicitThisInMember.kt")
                 public void testImplicitThisInMember() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitThisInMember.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/refactoring/extractFunction/parameters/it")
+            public static class It extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInIt() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/parameters/it"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("innerIt.kt")
+                public void testInnerIt() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/innerIt.kt");
+                }
+                
+                @TestMetadata("lambdaWithIt.kt")
+                public void testLambdaWithIt() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/lambdaWithIt.kt");
+                }
+                
+                @TestMetadata("outerIt.kt")
+                public void testOuterIt() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/outerIt.kt");
+                }
+                
+                @TestMetadata("simpleIt.kt")
+                public void testSimpleIt() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/simpleIt.kt");
                 }
                 
             }
@@ -839,6 +867,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 suite.addTestSuite(Parameters.class);
                 suite.addTestSuite(ExtractSuper.class);
                 suite.addTestSuite(ExtractThis.class);
+                suite.addTestSuite(It.class);
                 suite.addTestSuite(Misc.class);
                 suite.addTestSuite(NonDenotableTypes.class);
                 return suite;

@@ -133,8 +133,8 @@ private fun List<Instruction>.analyzeControlFlow(
 ): Pair<ControlFlow, ErrorMessage?> {
     fun isCurrentFunctionReturn(expression: JetReturnExpression): Boolean {
         val functionDescriptor = expression.getTargetFunctionDescriptor(bindingContext)
-        val function = functionDescriptor?.let { BindingContextUtils.descriptorToDeclaration(bindingContext, it) }
-        return function == pseudocode.getCorrespondingElement()
+        val currentDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, pseudocode.getCorrespondingElement()]
+        return currentDescriptor == functionDescriptor
     }
 
     val exitPoints = getExitPoints()
@@ -461,13 +461,14 @@ private fun ExtractionData.inferParametersInfo(commonParent: PsiElement,
 }
 
 private fun ExtractionData.checkLocalDeclarationsWithNonLocalUsages(
+        pseudocode: Pseudocode,
         localInstructions: List<Instruction>,
         bindingContext: BindingContext
 ): ErrorMessage? {
     // todo: non-locally used declaration can be turned into the output value
 
     val declarations = ArrayList<JetNamedDeclaration>()
-    localInstructions.firstOrNull()?.owner?.traverse(TraversalOrder.FORWARD) { instruction ->
+    pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
         if (instruction !in localInstructions) {
             PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, bindingContext)?.let { descriptor ->
                 val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor, bindingContext)
@@ -562,7 +563,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         )
     }
 
-    checkLocalDeclarationsWithNonLocalUsages(localInstructions, bindingContext)?.let { messages.add(it) }
+    checkLocalDeclarationsWithNonLocalUsages(pseudocode, localInstructions, bindingContext)?.let { messages.add(it) }
     checkDeclarationsMovingOutOfScope(controlFlow)?.let { messages.add(it) }
 
     val functionNameValidator =

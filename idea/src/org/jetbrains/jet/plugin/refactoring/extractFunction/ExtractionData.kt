@@ -46,6 +46,11 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.lang.resolve.BindingContextUtils
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 
 data class ExtractionOptions(val inferUnitTypeForUnusedValues: Boolean) {
     class object {
@@ -96,9 +101,18 @@ class ExtractionData(
 
     val originalStartOffset = originalElements.first?.let { e -> e.getTextRange()!!.getStartOffset() }
 
+    private val itFakeDeclaration by Delegates.lazy { JetPsiFactory.createParameter(project, "it", null) }
+
     val refOffsetToDeclaration by Delegates.lazy {
+        fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
+            if (!(descriptor is ValueParameterDescriptor && (context[BindingContext.AUTO_CREATED_IT, descriptor] ?: false))) return false
+            val function = BindingContextUtils.descriptorToDeclaration(context, descriptor.getContainingDeclaration()) as? JetFunctionLiteral
+            return function == null || !function.isInsideOf(originalElements)
+        }
+
         if (originalStartOffset != null) {
             val resultMap = HashMap<Int, ResolveResult>()
+
             for ((ref, context) in JetFileReferencesResolver.resolve(originalFile, getExpressions())) {
                 if (ref !is JetSimpleNameExpression) continue
 
@@ -111,7 +125,7 @@ class ExtractionData(
                 if (descriptor == null) continue
 
                 val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor, context) as? PsiNamedElement
-                if (declaration == null) continue
+                        ?: if (isExtractableIt(descriptor, context)) itFakeDeclaration else continue
 
                 val offset = ref.getTextRange()!!.getStartOffset() - originalStartOffset
                 resultMap[offset] = ResolveResult(ref, declaration, descriptor, resolvedCall)
