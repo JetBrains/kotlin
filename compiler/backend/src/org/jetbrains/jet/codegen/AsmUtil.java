@@ -169,6 +169,12 @@ public class AsmUtil {
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         int flags = getCommonCallableFlags(functionDescriptor);
 
+        for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
+            if (flagAnnotation.hasAnnotation(functionDescriptor.getOriginal())) {
+                flags |= flagAnnotation.getJvmFlag();
+            }
+        }
+
         if (functionDescriptor.getModality() == Modality.FINAL && !(functionDescriptor instanceof ConstructorDescriptor)) {
             DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
             if (!(containingDeclaration instanceof ClassDescriptor) ||

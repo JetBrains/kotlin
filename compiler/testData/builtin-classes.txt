@@ -141,6 +141,7 @@ public final class ByteProgression : kotlin.Progression<kotlin.Byte> {
         public open override /*1*/ fun <get-increment>(): kotlin.Int
     public open override /*1*/ val start: kotlin.Byte
         public open override /*1*/ fun <get-start>(): kotlin.Byte
+    public final fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ByteIterator
 }
 
@@ -170,6 +171,7 @@ public final class ByteRange : kotlin.Range<kotlin.Byte>, kotlin.Progression<kot
     public open override /*2*/ val start: kotlin.Byte
         public open override /*2*/ fun <get-start>(): kotlin.Byte
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Byte): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ByteIterator
     
     public class object <class-object-for-ByteRange> {
@@ -259,6 +261,7 @@ public final class CharProgression : kotlin.Progression<kotlin.Char> {
         public open override /*1*/ fun <get-increment>(): kotlin.Int
     public open override /*1*/ val start: kotlin.Char
         public open override /*1*/ fun <get-start>(): kotlin.Char
+    public final fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.CharIterator
 }
 
@@ -288,6 +291,7 @@ public final class CharRange : kotlin.Range<kotlin.Char>, kotlin.Progression<kot
     public open override /*2*/ val start: kotlin.Char
         public open override /*2*/ fun <get-start>(): kotlin.Char
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Char): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.CharIterator
     
     public class object <class-object-for-CharRange> {
@@ -404,6 +408,7 @@ public final class DoubleProgression : kotlin.Progression<kotlin.Double> {
         public open override /*1*/ fun <get-increment>(): kotlin.Double
     public open override /*1*/ val start: kotlin.Double
         public open override /*1*/ fun <get-start>(): kotlin.Double
+    public final fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.DoubleIterator
 }
 
@@ -430,6 +435,7 @@ public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression
     public open override /*2*/ val start: kotlin.Double
         public open override /*2*/ fun <get-start>(): kotlin.Double
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Double): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.DoubleIterator
     
     public class object <class-object-for-DoubleRange> {
@@ -627,6 +633,7 @@ public final class FloatProgression : kotlin.Progression<kotlin.Float> {
         public open override /*1*/ fun <get-increment>(): kotlin.Float
     public open override /*1*/ val start: kotlin.Float
         public open override /*1*/ fun <get-start>(): kotlin.Float
+    public final fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.FloatIterator
 }
 
@@ -653,6 +660,7 @@ public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<k
     public open override /*2*/ val start: kotlin.Float
         public open override /*2*/ fun <get-start>(): kotlin.Float
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Float): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.FloatIterator
     
     public class object <class-object-for-FloatRange> {
@@ -887,6 +895,7 @@ public final class IntProgression : kotlin.Progression<kotlin.Int> {
         public open override /*1*/ fun <get-increment>(): kotlin.Int
     public open override /*1*/ val start: kotlin.Int
         public open override /*1*/ fun <get-start>(): kotlin.Int
+    public final fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.IntIterator
 }
 
@@ -916,6 +925,7 @@ public final class IntRange : kotlin.Range<kotlin.Int>, kotlin.Progression<kotli
     public open override /*2*/ val start: kotlin.Int
         public open override /*2*/ fun <get-start>(): kotlin.Int
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.IntIterator
     
     public class object <class-object-for-IntRange> {
@@ -1054,6 +1064,7 @@ public final class LongProgression : kotlin.Progression<kotlin.Long> {
         public open override /*1*/ fun <get-increment>(): kotlin.Long
     public open override /*1*/ val start: kotlin.Long
         public open override /*1*/ fun <get-start>(): kotlin.Long
+    public final fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.LongIterator
 }
 
@@ -1083,6 +1094,7 @@ public final class LongRange : kotlin.Range<kotlin.Long>, kotlin.Progression<kot
     public open override /*2*/ val start: kotlin.Long
         public open override /*2*/ fun <get-start>(): kotlin.Long
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Long): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.LongIterator
     
     public class object <class-object-for-LongRange> {
@@ -1245,6 +1257,7 @@ public trait Range</*0*/ T : kotlin.Comparable<T>> {
     public abstract val start: T
         public abstract fun <get-start>(): T
     public abstract fun contains(/*0*/ item: T): kotlin.Boolean
+    public open fun isEmpty(): kotlin.Boolean
 }
 
 public trait Set</*0*/ out E> : kotlin.Collection<E> {
@@ -1345,6 +1358,7 @@ public final class ShortProgression : kotlin.Progression<kotlin.Short> {
         public open override /*1*/ fun <get-increment>(): kotlin.Int
     public open override /*1*/ val start: kotlin.Short
         public open override /*1*/ fun <get-start>(): kotlin.Short
+    public final fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ShortIterator
 }
 
@@ -1374,6 +1388,7 @@ public final class ShortRange : kotlin.Range<kotlin.Short>, kotlin.Progression<k
     public open override /*2*/ val start: kotlin.Short
         public open override /*2*/ fun <get-start>(): kotlin.Short
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Short): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ShortIterator
     
     public class object <class-object-for-ShortRange> {

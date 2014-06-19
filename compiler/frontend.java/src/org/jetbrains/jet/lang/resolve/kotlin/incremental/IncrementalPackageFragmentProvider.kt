@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers
 import org.jetbrains.jet.descriptors.serialization.DescriptorFinder
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
@@ -45,12 +44,13 @@ import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.descriptors.serialization.PackageData
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,
         val module: ModuleDescriptor,
         val storageManager: StorageManager,
-        val deserializers: Deserializers,
+        val deserializationContext: DeserializationGlobalContextForJava,
         val incrementalCache: IncrementalCache,
         val moduleId: String,
         val javaDescriptorResolver: JavaDescriptorResolver
@@ -124,7 +124,7 @@ public class IncrementalPackageFragmentProvider(
         }
 
         private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(
-                storageManager, this@IncrementalPackageFragment, deserializers, descriptorFinder, packageData
+                this@IncrementalPackageFragment, packageData, deserializationContext
         ) {
             override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
                 return allMemberProtos

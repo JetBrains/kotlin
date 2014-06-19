@@ -23,5 +23,7 @@ public trait Range<T : Comparable<T>> {
 
     public fun contains(item: T): Boolean
 
+    public fun isEmpty(): Boolean = start > end
+
     override fun toString(): String = "$start..$end"
 }

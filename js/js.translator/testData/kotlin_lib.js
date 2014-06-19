@@ -543,6 +543,9 @@
             },
             iterator: function () {
                 return new Kotlin.RangeIterator(this.start, this.end, this.increment);
+            },
+            isEmpty: function () {
+                return this.start > this.end;
             }
     });
 
@@ -554,6 +557,9 @@
         }, {
         iterator: function () {
             return new Kotlin.RangeIterator(this.start, this.end, this.increment);
+        },
+        isEmpty: function() {
+            return this.increment > 0 ? this.start > this.end : this.start < this.end;
         }
     });
 

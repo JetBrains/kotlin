@@ -56,6 +56,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
             new ImportPath("java.lang.*"),
             new ImportPath("kotlin.*"),
+            new ImportPath("kotlin.jvm.*"),
             new ImportPath("kotlin.io.*"),
             new ImportPath("kotlin.reflect.*")
     );
@@ -153,7 +154,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                     module.addFragmentProvider(
                             DependencyKind.SOURCES,
                             new IncrementalPackageFragmentProvider(
-                                    files, module, globalContext.getStorageManager(), injector.getDescriptorDeserializers(),
+                                    files, module, globalContext.getStorageManager(), injector.getDeserializationGlobalContextForJava(),
                                     incrementalCache, moduleId, injector.getJavaDescriptorResolver()
                             )
                     );

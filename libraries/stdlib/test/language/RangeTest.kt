@@ -18,6 +18,8 @@ public class RangeTest {
 
         assertFalse(10 in range)
         assertFalse(9000 in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun byteRange() {
@@ -34,6 +36,8 @@ public class RangeTest {
 
         assertFalse(10.toByte() in range)
         assertFalse(111.toByte() in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun shortRange() {
@@ -50,22 +54,26 @@ public class RangeTest {
 
         assertFalse(10.toShort() in range)
         assertFalse(239.toShort() in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun longRange() {
-        val range = -5.toLong()..9.toLong()
-        assertFalse(-10000000.toLong() in range)
-        assertFalse(-6.toLong() in range)
+        val range = -5L..9L
+        assertFalse(-10000000L in range)
+        assertFalse(-6L in range)
 
-        assertTrue(-5.toLong() in range)
-        assertTrue(-4.toLong() in range)
-        assertTrue(0.toLong() in range)
-        assertTrue(3.toLong() in range)
-        assertTrue(8.toLong() in range)
-        assertTrue(9.toLong() in range)
+        assertTrue(-5L in range)
+        assertTrue(-4L in range)
+        assertTrue(0L in range)
+        assertTrue(3L in range)
+        assertTrue(8L in range)
+        assertTrue(9L in range)
 
-        assertFalse(10.toLong() in range)
-        assertFalse(10000000.toLong() in range)
+        assertFalse(10L in range)
+        assertFalse(10000000L in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun charRange() {
@@ -82,6 +90,8 @@ public class RangeTest {
 
         assertFalse('z' in range)
         assertFalse('\u1000' in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun doubleRange() {
@@ -100,24 +110,94 @@ public class RangeTest {
         assertFalse(3.15 in range)
         assertFalse(10.0 in range)
         assertFalse(1e200 in range)
+
+        assertFalse(range.isEmpty())
     }
 
     test fun floatRange() {
-        val range = -1.0.toFloat()..3.14159.toFloat()
-        assertFalse(-1e30.toFloat() in range)
-        assertFalse(-100.0.toFloat() in range)
-        assertFalse(-1.00001.toFloat() in range)
+        val range = -1.0f..3.14159f
+        assertFalse(-1e30f in range)
+        assertFalse(-100.0f in range)
+        assertFalse(-1.00001f in range)
 
-        assertTrue(-1.0.toFloat() in range)
-        assertTrue(-0.99999.toFloat() in range)
-        assertTrue(0.0.toFloat() in range)
-        assertTrue(1.5.toFloat() in range)
-        assertTrue(3.1415.toFloat() in range)
-        assertTrue(3.14159.toFloat() in range)
+        assertTrue(-1.0f in range)
+        assertTrue(-0.99999f in range)
+        assertTrue(0.0f in range)
+        assertTrue(1.5f in range)
+        assertTrue(3.1415f in range)
+        assertTrue(3.14159f in range)
 
-        assertFalse(3.15.toFloat() in range)
-        assertFalse(10.0.toFloat() in range)
-        assertFalse(1e30.toFloat() in range)
+        assertFalse(3.15f in range)
+        assertFalse(10.0f in range)
+        assertFalse(1e30f in range)
+
+        assertFalse(range.isEmpty())
+    }
+
+    test fun isEmpty() {
+        assertTrue((2..1).isEmpty())
+        assertTrue((2L..0L).isEmpty())
+        assertTrue((1.toShort()..-1.toShort()).isEmpty())
+        assertTrue((0.toByte()..-1.toByte()).isEmpty())
+        assertTrue((0f..-3.14f).isEmpty())
+        assertTrue((-2.72..-3.14).isEmpty())
+        assertTrue(('z'..'x').isEmpty())
+
+        assertTrue((1 downTo 2).isEmpty())
+        assertTrue((0L downTo 2L).isEmpty())
+        assertFalse((2 downTo 1).isEmpty())
+        assertFalse((2L downTo 0L).isEmpty())
+        assertTrue(('a' downTo 'z').isEmpty())
+        assertTrue(('z'..'a' step 2).isEmpty())
+
+        assertTrue(("range".."progression").isEmpty())
+    }
+
+    test fun emptyEquals() {
+        assertTrue(IntRange.EMPTY == IntRange.EMPTY)
+        assertEquals(IntRange.EMPTY, IntRange.EMPTY)
+        assertEquals(0L..42L, 0L..42L)
+        assertEquals(3 downTo 0, 3 downTo 0)
+
+        assertEquals(2..1, 1..0)
+        assertEquals(2L..1L, 1L..0L)
+        assertEquals(2.toShort()..1.toShort(), 1.toShort()..0.toShort())
+        assertEquals(2.toByte()..1.toByte(), 1.toByte()..0.toByte())
+        assertEquals(0f..-3.14f, 3.14f..0f)
+        assertEquals(-2.0..-3.0, 3.0..2.0)
+        assertEquals('b'..'a', 'c'..'b')
+
+        assertTrue(1 downTo 2 == 2 downTo 3)
+        assertTrue(-1L downTo 0L == -2L downTo -1L)
+        assertEquals(-1f downTo 1f, -2f downTo 2f)
+        assertEquals(-4.0 downTo -3.0, -2.0 downTo -1.0)
+        assertEquals('j'..'a' step 4, 'u'..'q' step 2)
+
+        assertFalse(0..1 == IntRange.EMPTY)
+        assertFalse(1f downTo 2f == 2f downTo 1f)
+
+        assertEquals("range".."progression", "hashcode".."equals")
+        assertFalse(("aa".."bb") == ("aaa".."bbb"))
+    }
+
+    test fun emptyHashCode() {
+        assertEquals((0..42).hashCode(), (0..42).hashCode())
+        assertEquals((1.23..4.56).hashCode(), (1.23..4.56).hashCode())
+
+        assertEquals((0..-1).hashCode(), IntRange.EMPTY.hashCode())
+        assertEquals((2L..1L).hashCode(), (1L..0L).hashCode())
+        assertEquals((0.toShort()..-1.toShort()).hashCode(), (42.toShort()..0.toShort()).hashCode())
+        assertEquals((0.toByte()..-1.toByte()).hashCode(), (42.toByte()..0.toByte()).hashCode())
+        assertEquals((0f..-3.14f).hashCode(), (2.39f..1.41f).hashCode())
+        assertEquals((0.0..-10.0).hashCode(), (10.0..0.0).hashCode())
+        assertEquals(('z'..'x').hashCode(), ('l'..'k').hashCode())
+
+        assertEquals((1 downTo 2).hashCode(), (2 downTo 3).hashCode())
+        assertEquals((1L downTo 2L).hashCode(), (2L downTo 3L).hashCode())
+        assertEquals((1.0 downTo 2.0).hashCode(), (2.0 downTo 3.0).hashCode())
+        assertEquals(('a' downTo 'b').hashCode(), ('c' downTo 'd').hashCode())
+
+        assertEquals(("range".."progression").hashCode(), ("hashcode".."equals").hashCode())
     }
 
     test fun comparableRange() {
@@ -131,5 +211,7 @@ public class RangeTest {
 
         assertFalse("item" in range)
         assertFalse("trail" in range)
+
+        assertFalse(range.isEmpty())
     }
 }

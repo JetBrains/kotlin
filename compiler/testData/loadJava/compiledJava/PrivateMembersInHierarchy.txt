@@ -1,0 +1,19 @@
+package test
+
+public open class PrivateMembersInHierarchy : java.lang.Object {
+    public constructor PrivateMembersInHierarchy()
+
+    public open class Sub : test.PrivateMembersInHierarchy.Super {
+        public constructor Sub()
+        private final var field: kotlin.Int
+        invisible_fake final override /*1*/ /*fake_override*/ var field2: kotlin.Int
+        private open fun method(): kotlin.Unit
+    }
+
+    public open class Super : java.lang.Object {
+        public constructor Super()
+        private final var field: kotlin.Int
+        private final var field2: kotlin.Int
+        private open fun method(): kotlin.Unit
+    }
+}

@@ -90,7 +90,7 @@ public class JetFromJavaDescriptorHelper {
     public static ClassKind getCompiledClassKind(@NotNull PsiClass psiClass) {
         ClassData classData = getClassData(psiClass);
         if (classData == null) return null;
-        return DescriptorDeserializer.classKind(Flags.CLASS_KIND.get(classData.getClassProto().getFlags()));
+        return SerializationPackage.classKind(Flags.CLASS_KIND.get(classData.getClassProto().getFlags()));
     }
 
 

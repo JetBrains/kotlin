@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.REDECLARATION;
+import static org.jetbrains.jet.lang.resolve.ScriptHeaderResolver.resolveScriptDeclarations;
 
 public class DeclarationResolver {
     @NotNull
@@ -53,8 +54,6 @@ public class DeclarationResolver {
     private ImportsResolver importsResolver;
     @NotNull
     private DescriptorResolver descriptorResolver;
-    @NotNull
-    private ScriptHeaderResolver scriptHeaderResolver;
     @NotNull
     private BindingTrace trace;
 
@@ -79,13 +78,6 @@ public class DeclarationResolver {
         this.trace = trace;
     }
 
-    // SCRIPT: inject script header resolver
-    @Inject
-    public void setScriptHeaderResolver(@NotNull ScriptHeaderResolver scriptHeaderResolver) {
-        this.scriptHeaderResolver = scriptHeaderResolver;
-    }
-
-
 
     public void process(@NotNull TopDownAnalysisContext c) {
         resolveAnnotationConstructors(c);
@@ -94,7 +86,7 @@ public class DeclarationResolver {
         resolveFunctionAndPropertyHeaders(c);
 
         // SCRIPT: Resolve script declarations
-        scriptHeaderResolver.resolveScriptDeclarations(c);
+        resolveScriptDeclarations(c);
 
         createFunctionsForDataClasses(c);
         importsResolver.processMembersImports(c);

@@ -108,7 +108,7 @@ public class DescriptorDeserializersStorage {
                         result = new ArrayList<AnnotationDescriptor>();
                         memberAnnotations.put(paramSignature, result);
                     }
-                    return AnnotationDescriptorDeserializer.resolveAnnotation(className, result, classResolver);
+                    return AnnotationDescriptorLoader.resolveAnnotation(className, result, classResolver);
                 }
             }
 
@@ -123,7 +123,7 @@ public class DescriptorDeserializersStorage {
                 @Nullable
                 @Override
                 public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className) {
-                    return AnnotationDescriptorDeserializer.resolveAnnotation(className, result, classResolver);
+                    return AnnotationDescriptorLoader.resolveAnnotation(className, result, classResolver);
                 }
 
                 @Override

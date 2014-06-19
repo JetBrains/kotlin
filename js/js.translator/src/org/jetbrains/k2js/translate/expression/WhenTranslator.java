@@ -40,8 +40,9 @@ public final class WhenTranslator extends AbstractTranslator {
         WhenTranslator translator = new WhenTranslator(expression, context);
 
         if (BindingUtils.isStatement(context.bindingContext(), expression)) {
-            translator.translateAsStatement(context.dynamicContext().jsBlock().getStatements());
-            return null;
+            JsBlock jsBlock = new JsBlock();
+            translator.translateAsStatement(jsBlock.getStatements());
+            return jsBlock;
         }
 
         return translator.translateAsExpression();

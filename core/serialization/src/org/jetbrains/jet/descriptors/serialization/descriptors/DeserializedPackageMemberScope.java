@@ -18,7 +18,11 @@ package org.jetbrains.jet.descriptors.serialization.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
+import org.jetbrains.jet.descriptors.serialization.PackageData;
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -26,40 +30,40 @@ import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.storage.StorageManager;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class DeserializedPackageMemberScope extends DeserializedMemberScope {
-    private final DescriptorFinder descriptorFinder;
 
     private final FqName packageFqName;
+    private final DeserializationContext context;
 
     public DeserializedPackageMemberScope(
-            @NotNull StorageManager storageManager,
             @NotNull PackageFragmentDescriptor packageDescriptor,
-            @NotNull Deserializers deserializers,
-            @NotNull DescriptorFinder descriptorFinder,
-            @NotNull PackageData packageData
+            @NotNull ProtoBuf.Package proto,
+            @NotNull DeserializationContext context
     ) {
-        super(storageManager, packageDescriptor,
-              DescriptorDeserializer.create(storageManager, packageDescriptor, packageData.getNameResolver(), descriptorFinder, deserializers),
-              packageData.getPackageProto().getMemberList());
-        this.descriptorFinder = descriptorFinder;
+        super(context.withTypes(packageDescriptor), proto.getMemberList());
+        this.context = context;
         this.packageFqName = packageDescriptor.getFqName();
     }
 
+    public DeserializedPackageMemberScope(
+            @NotNull PackageFragmentDescriptor packageDescriptor,
+            @NotNull PackageData packageData,
+            @NotNull DeserializationGlobalContext context
+    ) {
+        this(packageDescriptor, packageData.getPackageProto(), context.withNameResolver(packageData.getNameResolver()));
+    }
     @Nullable
     @Override
     protected ClassDescriptor getClassDescriptor(@NotNull Name name) {
-        return descriptorFinder.findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
+        return context.getDescriptorFinder().findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
     }
 
     @Override
     protected void addAllClassDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
-        for (Name className : descriptorFinder.getClassNames(packageFqName)) {
+        for (Name className : context.getDescriptorFinder().getClassNames(packageFqName)) {
             ClassDescriptor classDescriptor = getClassDescriptor(className);
 
             if (classDescriptor != null) {

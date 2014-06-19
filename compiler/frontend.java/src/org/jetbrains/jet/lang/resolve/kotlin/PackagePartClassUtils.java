@@ -72,6 +72,6 @@ public class PackagePartClassUtils {
     @NotNull
     public static FqName getPackagePartFqName(@NotNull DeserializedCallableMemberDescriptor callable) {
         FqName packageFqName = ((PackageFragmentDescriptor) callable.getContainingDeclaration()).getFqName();
-        return packageFqName.child(BaseDescriptorDeserializer.getPackagePartClassName(callable));
+        return packageFqName.child(BaseDescriptorLoader.getPackagePartClassName(callable));
     }
 }

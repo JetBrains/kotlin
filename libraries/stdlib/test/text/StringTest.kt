@@ -62,4 +62,10 @@ class StringTest {
         assertEquals("4321", "1234".reverse())
         assertEquals("", "".reverse())
     }
+
+    test fun indices() {
+        assertEquals(0..4, "abcde".indices)
+        assertEquals(0..0, "a".indices)
+        assertEquals(IntRange.EMPTY, "".indices)
+    }
 }

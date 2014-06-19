@@ -17,6 +17,8 @@ public open class ModalityOfFakeOverrides : java.util.AbstractList<kotlin.String
     public open override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun listIterator(): kotlin.MutableListIterator<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<kotlin.String>
+    invisible_fake open override /*1*/ /*fake_override*/ fun outOfBoundsMsg(/*0*/ p0: kotlin.Int): kotlin.String?
+    invisible_fake open override /*1*/ /*fake_override*/ fun rangeCheckForAdd(/*0*/ p0: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ index: kotlin.Int): kotlin.String
     public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean

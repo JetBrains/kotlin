@@ -93,7 +93,7 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
     @Override
     public boolean shouldCreateStub(ASTNode node) {
         PsiElement psi = node.getPsi();
-        if (ArrayUtil.contains(psi.getClass(), ALWAYS_CREATE_STUB_FOR)) {
+        if (ArrayUtil.contains(psi.getClass(), (Object[]) ALWAYS_CREATE_STUB_FOR)) {
             return true;
         }
         if (psi instanceof JetDeclaration) {

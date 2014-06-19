@@ -189,8 +189,10 @@ public class PropertyCodegen {
     private FieldVisitor generateBackingField(JetNamedDeclaration element, PropertyDescriptor propertyDescriptor, boolean isDelegate, JetType jetType, Object defaultValue) {
         int modifiers = getDeprecatedAccessFlag(propertyDescriptor);
 
-        if (propertyDescriptor.getOriginal().getAnnotations().findAnnotation(AnnotationCodegen.VOLATILE_FQ_NAME) != null) {
-            modifiers |= ACC_VOLATILE;
+        for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.FIELD_FLAGS) {
+            if (flagAnnotation.hasAnnotation(propertyDescriptor.getOriginal())) {
+                modifiers |= flagAnnotation.getJvmFlag();
+            }
         }
 
         if (kind == OwnerKind.PACKAGE) {

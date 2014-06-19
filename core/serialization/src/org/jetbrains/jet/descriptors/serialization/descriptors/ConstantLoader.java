@@ -23,10 +23,8 @@ import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
-import static org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers.AnnotatedCallableKind;
-
-public interface ConstantDeserializer {
-    ConstantDeserializer UNSUPPORTED = new ConstantDeserializer() {
+public interface ConstantLoader {
+    ConstantLoader UNSUPPORTED = new ConstantLoader() {
         @Nullable
         @Override
         public CompileTimeConstant<?> loadPropertyConstant(

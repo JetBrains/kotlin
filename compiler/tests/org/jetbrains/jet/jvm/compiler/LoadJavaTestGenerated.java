@@ -64,6 +64,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/PackageLocalVisibility.java");
         }
         
+        @TestMetadata("PrivateMembers.java")
+        public void testPrivateMembers() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/PrivateMembers.java");
+        }
+        
+        @TestMetadata("PrivateMembersInHierarchy.java")
+        public void testPrivateMembersInHierarchy() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/PrivateMembersInHierarchy.java");
+        }
+        
         @TestMetadata("RawTypeWithUpperBound.java")
         public void testRawTypeWithUpperBound() throws Exception {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/RawTypeWithUpperBound.java");
@@ -2978,6 +2988,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClass.kt");
             }
             
+            @TestMetadata("PrivateClassMembers.kt")
+            public void testPrivateClassMembers() throws Exception {
+                doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClassMembers.kt");
+            }
+            
             @TestMetadata("PrivateTopLevelFun.kt")
             public void testPrivateTopLevelFun() throws Exception {
                 doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelFun.kt");
@@ -3165,6 +3180,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     public static class KotlinAgainstCompiledJavaWithKotlin extends AbstractLoadJavaTest {
         public void testAllFilesPresentInKotlinAgainstCompiledJavaWithKotlin() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin"), Pattern.compile("^(.+)\\.kt$"), false);
+        }
+        
+        @TestMetadata("InheritJavaField.kt")
+        public void testInheritJavaField() throws Exception {
+            doTestKotlinAgainstCompiledJavaWithKotlin("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/InheritJavaField.kt");
         }
         
         @TestMetadata("InheritParameterName.kt")

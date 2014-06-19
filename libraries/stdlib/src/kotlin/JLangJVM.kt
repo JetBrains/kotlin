@@ -24,9 +24,6 @@ public annotation class throws(vararg val exceptionClasses: Class<out Throwable>
 
 [Intrinsic("kotlin.javaClass.function")] fun <reified T> javaClass() : Class<T> = null as Class<T>
 
-Retention(RetentionPolicy.SOURCE)
-public annotation class volatile
-
 [Intrinsic("kotlin.synchronized")] public fun <R> synchronized(lock: Any, block: () -> R): R = block()
 
 public fun <T : Annotation> T.annotationType() : Class<out T> =

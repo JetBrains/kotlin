@@ -125,7 +125,6 @@
     <target name="init">
         <mkdir dir="${kotlin-home}"/>
         <mkdir dir="${kotlin-home}/lib"/>
-        <mkdir dir="${kotlin-home}/lib/tools"/>
     </target>
 
     <target name="prepareDist">

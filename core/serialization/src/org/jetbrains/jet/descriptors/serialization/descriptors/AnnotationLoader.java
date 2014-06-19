@@ -23,10 +23,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 
-import static org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers.AnnotatedCallableKind;
-
-public interface AnnotationDeserializer {
-    AnnotationDeserializer UNSUPPORTED = new AnnotationDeserializer() {
+public interface AnnotationLoader {
+    AnnotationLoader UNSUPPORTED = new AnnotationLoader() {
         @NotNull
         @Override
         public Annotations loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {

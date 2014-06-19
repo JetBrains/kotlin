@@ -1,0 +1,15 @@
+package test
+
+public final class InheritJavaField : test.Super {
+    public constructor InheritJavaField()
+    public final override /*1*/ /*fake_override*/ var field: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var privateField: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun method(): kotlin.Int
+}
+
+public open class Super : java.lang.Object {
+    public constructor Super()
+    public final var field: kotlin.Int
+    private final var privateField: kotlin.Int
+    public open fun method(): kotlin.Int
+}

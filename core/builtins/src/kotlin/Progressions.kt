@@ -29,10 +29,14 @@ public class ByteProgression(
 
     override fun iterator(): ByteIterator = ByteProgressionIterator(start, end, increment)
 
-    override fun equals(other: Any?): Boolean =
-        other is ByteProgression && start == other.start && end == other.end && increment == other.increment
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
-    override fun hashCode(): Int = 31 * (31 * start.toInt() + end) + increment
+    override fun equals(other: Any?): Boolean =
+        other is ByteProgression && (isEmpty() && other.isEmpty() ||
+        start == other.start && end == other.end && increment == other.increment)
+
+    override fun hashCode(): Int =
+        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end) + increment)
 
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
@@ -48,10 +52,14 @@ public class CharProgression(
 
     override fun iterator(): CharIterator = CharProgressionIterator(start, end, increment)
 
-    override fun equals(other: Any?): Boolean =
-        other is CharProgression && start == other.start && end == other.end && increment == other.increment
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
-    override fun hashCode(): Int = 31 * (31 * start.toInt() + end) + increment
+    override fun equals(other: Any?): Boolean =
+        other is CharProgression && (isEmpty() && other.isEmpty() ||
+        start == other.start && end == other.end && increment == other.increment)
+
+    override fun hashCode(): Int =
+        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end) + increment)
 
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
@@ -67,10 +75,14 @@ public class ShortProgression(
 
     override fun iterator(): ShortIterator = ShortProgressionIterator(start, end, increment)
 
-    override fun equals(other: Any?): Boolean =
-        other is ShortProgression && start == other.start && end == other.end && increment == other.increment
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
-    override fun hashCode(): Int = 31 * (31 * start.toInt() + end) + increment
+    override fun equals(other: Any?): Boolean =
+        other is ShortProgression && (isEmpty() && other.isEmpty() ||
+        start == other.start && end == other.end && increment == other.increment)
+
+    override fun hashCode(): Int =
+        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end) + increment)
 
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
@@ -86,10 +98,14 @@ public class IntProgression(
 
     override fun iterator(): IntIterator = IntProgressionIterator(start, end, increment)
 
-    override fun equals(other: Any?): Boolean =
-        other is IntProgression && start == other.start && end == other.end && increment == other.increment
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
-    override fun hashCode(): Int = 31 * (31 * start + end) + increment
+    override fun equals(other: Any?): Boolean =
+        other is IntProgression && (isEmpty() && other.isEmpty() ||
+        start == other.start && end == other.end && increment == other.increment)
+
+    override fun hashCode(): Int =
+        if (isEmpty()) -1 else (31 * (31 * start + end) + increment)
 
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
@@ -105,10 +121,14 @@ public class LongProgression(
 
     override fun iterator(): LongIterator = LongProgressionIterator(start, end, increment)
 
-    override fun equals(other: Any?): Boolean =
-        other is LongProgression && start == other.start && end == other.end && increment == other.increment
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
-    override fun hashCode(): Int = (31 * (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))) + (increment xor (increment ushr 32))).toInt()
+    override fun equals(other: Any?): Boolean =
+        other is LongProgression && (isEmpty() && other.isEmpty() ||
+        start == other.start && end == other.end && increment == other.increment)
+
+    override fun hashCode(): Int =
+        if (isEmpty()) -1 else (31 * (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))) + (increment xor (increment ushr 32))).toInt()
 
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
@@ -125,10 +145,14 @@ public class FloatProgression(
 
     override fun iterator(): FloatIterator = FloatProgressionIterator(start, end, increment)
 
-    override fun equals(other: Any?): Boolean =
-        other is FloatProgression && java.lang.Float.compare(start, other.start) == 0 && java.lang.Float.compare(end, other.end) == 0 && java.lang.Float.compare(increment, other.increment) == 0
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
-    override fun hashCode(): Int = 31 * (31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end)) + java.lang.Float.floatToIntBits(increment)
+    override fun equals(other: Any?): Boolean =
+        other is FloatProgression && (isEmpty() && other.isEmpty() ||
+        java.lang.Float.compare(start, other.start) == 0 && java.lang.Float.compare(end, other.end) == 0 && java.lang.Float.compare(increment, other.increment) == 0)
+
+    override fun hashCode(): Int =
+        if (isEmpty()) -1 else (31 * (31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end)) + java.lang.Float.floatToIntBits(increment))
 
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
@@ -145,10 +169,14 @@ public class DoubleProgression(
 
     override fun iterator(): DoubleIterator = DoubleProgressionIterator(start, end, increment)
 
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
+
     override fun equals(other: Any?): Boolean =
-        other is DoubleProgression && java.lang.Double.compare(start, other.start) == 0 && java.lang.Double.compare(end, other.end) == 0 && java.lang.Double.compare(increment, other.increment) == 0
+        other is DoubleProgression && (isEmpty() && other.isEmpty() ||
+        java.lang.Double.compare(start, other.start) == 0 && java.lang.Double.compare(end, other.end) == 0 && java.lang.Double.compare(increment, other.increment) == 0)
 
     override fun hashCode(): Int {
+        if (isEmpty()) return -1
         var temp = java.lang.Double.doubleToLongBits(start)
         var result = (temp xor (temp ushr 32))
         temp = java.lang.Double.doubleToLongBits(end)
