@@ -277,8 +277,8 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                     /*not-null assertions*/false, false,
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
                     /*to generate inline flag on methods*/true,
-                    null
-            );
+                    null,
+                    null);
             state.beforeCompile();
 
             bindingContext = state.getBindingContext();

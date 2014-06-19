@@ -100,6 +100,9 @@ public class IncrementalPackageFragmentProvider(
 
 
     public inner class IncrementalPackageFragment(fqName: FqName) : PackageFragmentDescriptorImpl(module, fqName) {
+        public val moduleId: String
+            get() = this@IncrementalPackageFragmentProvider.moduleId
+
         val descriptorFinder = object : DescriptorFinder {
             override fun findClass(classId: ClassId): ClassDescriptor? =
                     javaDescriptorResolver.resolveClass(DeserializedResolverUtils.kotlinFqNameToJavaFqName(classId.asSingleFqName()))

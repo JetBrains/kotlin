@@ -125,10 +125,10 @@ public class PackageCodegen {
         }
 
         // TODO rewrite it to something more robust when module system is implemented
-        for (PackageFragmentDescriptor anotherFragment : state.getModule().getPackageFragmentProvider()
-                .getPackageFragments(fqName)) {
-            if (anotherFragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
-                return anotherFragment;
+        for (PackageFragmentDescriptor fragment : state.getModule().getPackageFragmentProvider().getPackageFragments(fqName)) {
+            if (fragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment &&
+                ((IncrementalPackageFragmentProvider.IncrementalPackageFragment) fragment).getModuleId().equals(state.getModuleId())) {
+                return fragment;
             }
         }
         return null;

@@ -328,13 +328,19 @@ public class KotlinToJVMBytecodeCompiler {
                 : IncrementalPackage.getPackagesWithRemovedFiles(
                         incrementalCacheProvider.getIncrementalCache(incrementalCacheDir), moduleId, environment.getSourceFiles());
         GenerationState generationState = new GenerationState(
-                environment.getProject(), ClassBuilderFactories.BINARIES, Progress.DEAF,
-                exhaust.getModuleDescriptor(), exhaust.getBindingContext(), sourceFiles,
+                environment.getProject(),
+                ClassBuilderFactories.BINARIES,
+                Progress.DEAF,
+                exhaust.getModuleDescriptor(),
+                exhaust.getBindingContext(),
+                sourceFiles,
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
-                packagesWithRemovedFiles);
+                packagesWithRemovedFiles,
+                moduleId
+        );
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
         return generationState;
     }
