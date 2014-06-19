@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetIfExpression extends JetExpressionImpl {
     public JetIfExpression(@NotNull ASTNode node) {
@@ -36,6 +38,16 @@ public class JetIfExpression extends JetExpressionImpl {
         return findExpressionUnder(JetNodeTypes.CONDITION);
     }
 
+    @Nullable @IfNotParsed
+    public PsiElement getLeftParenthesis() {
+        return findChildByType(JetTokens.LPAR);
+    }
+
+    @Nullable @IfNotParsed
+    public PsiElement getRightParenthesis() {
+        return findChildByType(JetTokens.RPAR);
+    }
+
     @Nullable
     public JetExpression getThen() {
         return findExpressionUnder(JetNodeTypes.THEN);
@@ -44,5 +56,10 @@ public class JetIfExpression extends JetExpressionImpl {
     @Nullable
     public JetExpression getElse() {
         return findExpressionUnder(JetNodeTypes.ELSE);
+    }
+
+    @Nullable
+    public PsiElement getElseKeyword() {
+        return findChildByType(JetTokens.ELSE_KEYWORD);
     }
 }

@@ -290,6 +290,7 @@
     <typedHandler implementation="org.jetbrains.jet.plugin.editor.KotlinTypedHandler"/>
     <enterHandlerDelegate implementation="org.jetbrains.jet.plugin.editor.KotlinEnterHandler"
                           id="KotlinEnterHandler" order="before EnterBetweenBracesHandler"/>
+    <lang.smartEnterProcessor language="jet" implementationClass="org.jetbrains.jet.plugin.editor.KotlinSmartEnterHandler"/>
     <backspaceHandlerDelegate implementation="org.jetbrains.jet.plugin.editor.KotlinBackspaceHandler"/>
 
     <copyPastePostProcessor implementation="org.jetbrains.jet.plugin.conversion.copy.ConvertJavaCopyPastePostProcessor"/>
