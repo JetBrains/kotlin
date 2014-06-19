@@ -55,18 +55,14 @@ public class PackagePartClassUtils {
     }
 
     @NotNull
-    public static FqName getPackagePartFqName(@NotNull JetFile file) {
-        return getPackagePartFqName(getPackageClassFqName(file.getPackageFqName()), file.getVirtualFile());
-    }
-
-    @NotNull
     public static Type getPackagePartType(@NotNull JetFile file) {
         return Type.getObjectType(getPackagePartInternalName(file));
     }
 
     @NotNull
     public static String getPackagePartInternalName(@NotNull JetFile file) {
-        return JvmClassName.byFqNameWithoutInnerClasses(getPackagePartFqName(file)).getInternalName();
+        FqName fqName = getPackagePartFqName(getPackageClassFqName(file.getPackageFqName()), file.getVirtualFile());
+        return JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName();
     }
 
     @NotNull
