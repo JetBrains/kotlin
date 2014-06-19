@@ -103,15 +103,6 @@ public class IncrementalPackageFragmentProvider(
         public val moduleId: String
             get() = this@IncrementalPackageFragmentProvider.moduleId
 
-        val descriptorFinder = object : DescriptorFinder {
-            override fun findClass(classId: ClassId): ClassDescriptor? =
-                    javaDescriptorResolver.resolveClass(DeserializedResolverUtils.kotlinFqNameToJavaFqName(classId.asSingleFqName()))
-
-            override fun getClassNames(packageName: FqName): Collection<Name> {
-                return Collections.emptySet()
-            }
-        }
-
         val _memberScope: NotNullLazyValue<JetScope> = storageManager.createLazyValue {
             val packageDataBytes = incrementalCache.getPackageData(moduleId, fqName)
             if (packageDataBytes == null) {
