@@ -1,0 +1,5 @@
+// OPTIMIZE_IMPORTS
+import java.sql.Date
+import java.sql.ResultSet
+
+class A(val d: Date, val rs: ResultSet)
