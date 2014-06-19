@@ -30,14 +30,13 @@ import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.descriptors.serialization.BitEncoding
 import org.jetbrains.jet.utils.intellij.*
 import java.util.Arrays
-import com.intellij.util.io.IntInlineKeyDescriptor
 import org.jetbrains.org.objectweb.asm.*
 import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
-import java.util.TreeMap
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache
+import java.util.HashMap
 
 public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
     class object {
@@ -45,8 +44,8 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
         val CONSTANTS_MAP = "constants.tab"
         val PACKAGE_SOURCES = "package-sources.tab"
 
-        private fun getConstantsHash(bytes: ByteArray): Int {
-            val result = TreeMap<String, Any>() // keys order should defined to check hash of a map
+        private fun getConstantsMap(bytes: ByteArray): Map<String, Any> {
+            val result = HashMap<String, Any>()
 
             ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
                 override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
@@ -57,13 +56,13 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
                 }
             }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
 
-            return result.hashCode()
+            return result
         }
     }
 
     private val protoData: PersistentMap<ClassOrPackageId, ByteArray>
-    private val constantsData: PersistentHashMap<String, Int>
-            = PersistentHashMap(File(baseDir, CONSTANTS_MAP), EnumeratorStringDescriptor(), IntInlineKeyDescriptor())
+    private val constantsData: PersistentHashMap<String, Map<String, Any>>
+            = PersistentHashMap(File(baseDir, CONSTANTS_MAP), EnumeratorStringDescriptor(), ConstantsMapExternalizer())
 
     // Format of serialization to string: <module id> <path separator> <source file path>  -->  <package part JVM internal name>
     private val packageSourcesData: PersistentHashMap<String, String>
@@ -129,7 +128,7 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
             assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
             putPackagePartSourceData(moduleId, sourceFiles.first(), className)
-            return putConstantsData(className, getConstantsHash(fileBytes))
+            return putConstantsData(className, getConstantsMap(fileBytes))
         }
 
         return false
@@ -149,14 +148,14 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
         return true
     }
 
-    private fun putConstantsData(packagePartClass: JvmClassName, constantsHash: Int): Boolean {
+    private fun putConstantsData(packagePartClass: JvmClassName, constantsMap: Map<String, Any>): Boolean {
         val key = packagePartClass.getInternalName()
 
-        val oldHash = constantsData[key]
-        if (oldHash == constantsHash) {
+        val oldMap = constantsData[key]
+        if (oldMap == constantsMap) {
             return false
         }
-        constantsData.put(key, constantsHash)
+        constantsData.put(key, constantsMap)
         return true
     }
 
@@ -206,4 +205,62 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
 
     private data class ClassOrPackageId(val moduleId: String, val fqName: FqName) {
     }
+
+    private class ConstantsMapExternalizer: DataExternalizer<Map<String, Any>> {
+        override fun save(out: DataOutput, map: Map<String, Any>?) {
+            out.writeInt(map!!.size)
+            for (name in map.keySet().toSortedList()) {
+                IOUtil.writeString(name, out)
+                val value = map[name]!!
+                when (value) {
+                    is Int -> {
+                        out.writeByte(Kind.INT.ordinal())
+                        out.writeInt(value)
+                    }
+                    is Float -> {
+                        out.writeByte(Kind.FLOAT.ordinal())
+                        out.writeFloat(value)
+                    }
+                    is Long -> {
+                        out.writeByte(Kind.LONG.ordinal())
+                        out.writeLong(value)
+                    }
+                    is Double -> {
+                        out.writeByte(Kind.DOUBLE.ordinal())
+                        out.writeDouble(value)
+                    }
+                    is String -> {
+                        out.writeByte(Kind.STRING.ordinal())
+                        IOUtil.writeString(value, out)
+                    }
+                    else -> throw IllegalStateException("Unexpected constant class: ${value.javaClass}")
+                }
+            }
+        }
+
+        override fun read(`in`: DataInput): Map<String, Any>? {
+            val size = `in`.readInt()
+            val map = HashMap<String, Any>(size)
+
+            for (i in size.indices) {
+                val name = IOUtil.readString(`in`)!!
+
+                val kind = Kind.values()[`in`.readByte().toInt()]
+                val value = when (kind) {
+                    Kind.INT -> `in`.readInt()
+                    Kind.FLOAT -> `in`.readFloat()
+                    Kind.LONG -> `in`.readLong()
+                    Kind.DOUBLE -> `in`.readDouble()
+                    Kind.STRING -> IOUtil.readString(`in`)!!
+                }
+                map[name] = value
+            }
+
+            return map
+        }
+
+        private enum class Kind {
+            INT FLOAT LONG DOUBLE STRING
+        }
+   }
 }
