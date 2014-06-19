@@ -33,6 +33,7 @@ import org.jetbrains.jet.JetTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.test.util.trimIndent
 import org.jetbrains.jet.j2k.FilesConversionScope
 
 abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
@@ -161,33 +162,5 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
     private fun String.removeLastLine(): String {
         val lastNewLine = lastIndexOf('\n')
         return if (lastNewLine == -1) "" else substring(0, lastNewLine)
-    }
-
-    private fun String.trimIndent(): String {
-        val lines = split('\n')
-
-        val firstNonEmpty = lines.firstOrNull { !it.trim().isEmpty() }
-        if (firstNonEmpty == null) {
-            return this
-        }
-
-        val trimmedPrefix = firstNonEmpty.takeWhile { ch -> ch.isWhitespace() }
-        if (trimmedPrefix.isEmpty()) {
-            return this
-        }
-
-        return lines.map { line ->
-            if (line.trim().isEmpty()) {
-                ""
-            }
-            else {
-                if (!line.startsWith(trimmedPrefix)) {
-                    throw IllegalArgumentException(
-                            """Invalid line "$line", ${trimmedPrefix.size} whitespace character are expected""")
-                }
-
-                line.substring(trimmedPrefix.length)
-            }
-        }.makeString(separator = "\n")
     }
 }
