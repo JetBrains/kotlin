@@ -447,6 +447,21 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/simpleEvalExpr.kt");
                 }
                 
+                @TestMetadata("trailingLambdaEmptyArgList.kt")
+                public void testTrailingLambdaEmptyArgList() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaEmptyArgList.kt");
+                }
+                
+                @TestMetadata("trailingLambdaNoArgList.kt")
+                public void testTrailingLambdaNoArgList() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNoArgList.kt");
+                }
+                
+                @TestMetadata("trailingLambdaNonEmptyArgList.kt")
+                public void testTrailingLambdaNonEmptyArgList() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNonEmptyArgList.kt");
+                }
+                
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues")

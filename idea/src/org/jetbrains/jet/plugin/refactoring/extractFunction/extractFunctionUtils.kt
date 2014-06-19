@@ -71,6 +71,7 @@ import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
+import com.intellij.psi.PsiWhiteSpace
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -811,6 +812,27 @@ fun ExtractionDescriptor.generateFunction(
         }
     }
 
+    fun insertCall(anchor: PsiElement, wrappedCall: JetExpression) {
+        val firstExpression = extractionData.getExpressions().firstOrNull()
+        val enclosingCall = firstExpression?.getParent() as? JetCallExpression
+        if (enclosingCall == null || firstExpression !in enclosingCall.getFunctionLiteralArguments()) {
+            anchor.replace(wrappedCall)
+            return
+        }
+
+        val argumentListExt = JetPsiFactory.createCallArguments(project, "(${wrappedCall.getText()})")
+        val argumentList = enclosingCall.getValueArgumentList()
+        if (argumentList == null) {
+            (anchor.getPrevSibling() as? PsiWhiteSpace)?.let { it.delete() }
+            anchor.replace(argumentListExt)
+            return
+        }
+
+        val newArgText = (argumentList.getArguments() + argumentListExt.getArguments()).map { it.getText() }.joinToString(", ", "(", ")")
+        argumentList.replace(JetPsiFactory.createCallArguments(project, newArgText))
+        anchor.delete()
+    }
+
     fun makeCall(function: JetNamedFunction): JetNamedFunction {
         val anchor = extractionData.originalElements.first
         if (anchor == null) return function
@@ -849,7 +871,7 @@ fun ExtractionDescriptor.generateFunction(
             else ->
                 JetPsiFactory.createExpression(project, callText)
         }
-        anchor.replace(wrappedCall)
+        insertCall(anchor, wrappedCall)
 
         return function
     }
