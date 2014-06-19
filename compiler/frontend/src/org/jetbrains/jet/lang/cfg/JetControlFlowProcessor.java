@@ -555,16 +555,12 @@ public class JetControlFlowProcessor {
                 @NotNull AccessTarget target,
                 @Nullable PseudoValue rightValue,
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
-                @NotNull JetExpression parentExpression) {
+                @NotNull JetExpression parentExpression
+        ) {
             VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), left, false);
             if (descriptor != null) {
-                builder.write(
-                        parentExpression,
-                        left,
-                        rightValue != null ? rightValue : createSyntheticValue(parentExpression),
-                        target,
-                        receiverValues
-                );
+                PseudoValue rValue = rightValue != null ? rightValue : createSyntheticValue(parentExpression);
+                builder.write(parentExpression, left, rValue, target, receiverValues);
             }
         }
 
@@ -1142,15 +1138,21 @@ public class JetControlFlowProcessor {
                 builder.declareVariable(entry);
 
                 ResolvedCall<FunctionDescriptor> resolvedCall = trace.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
-                PseudoValue writtenValue = resolvedCall != null
-                                           ? builder.call(
-                                                entry,
-                                                entry,
-                                                resolvedCall,
-                                                getReceiverValues(initializer, resolvedCall, false),
-                                                Collections.<PseudoValue, ValueParameterDescriptor>emptyMap()
-                                            ).getOutputValue()
-                                           : createSyntheticValue(entry, initializer);
+
+                PseudoValue writtenValue;
+                if (resolvedCall != null) {
+                    writtenValue = builder.call(
+                            entry,
+                            entry,
+                            resolvedCall,
+                            getReceiverValues(initializer, resolvedCall, false),
+                            Collections.<PseudoValue, ValueParameterDescriptor>emptyMap()
+                    ).getOutputValue();
+                }
+                else {
+                    writtenValue = createSyntheticValue(entry, initializer);
+                }
+
                 if (generateWriteForEntries) {
                     generateInitializer(entry, writtenValue != null ? writtenValue : createSyntheticValue(entry));
                 }

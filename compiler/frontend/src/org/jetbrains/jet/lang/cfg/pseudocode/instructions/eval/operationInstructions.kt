@@ -107,16 +107,11 @@ public class MagicInstruction(
         inputValues: List<PseudoValue>,
         val expectedTypes: Map<PseudoValue, TypePredicate>
 ) : OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
-    override fun accept(visitor: InstructionVisitor) {
-        visitor.visitMagic(this)
-    }
+    override fun accept(visitor: InstructionVisitor) = visitor.visitMagic(this)
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitMagic(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitMagic(this)
 
-    override fun createCopy() =
-            MagicInstruction(element, lexicalScope, synthetic, inputValues, expectedTypes).setResult(resultValue)
+    override fun createCopy() = MagicInstruction(element, lexicalScope, synthetic, inputValues, expectedTypes).setResult(resultValue)
 
     override fun toString() = renderInstruction("magic", render(element))
 
@@ -141,16 +136,11 @@ class MergeInstruction private(
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>
 ): OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
-    override fun accept(visitor: InstructionVisitor) {
-        visitor.visitMerge(this)
-    }
+    override fun accept(visitor: InstructionVisitor) = visitor.visitMerge(this)
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitMerge(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitMerge(this)
 
-    override fun createCopy() =
-            MergeInstruction(element, lexicalScope, inputValues).setResult(resultValue)
+    override fun createCopy() = MergeInstruction(element, lexicalScope, inputValues).setResult(resultValue)
 
     override fun toString() = renderInstruction("merge", render(element))
 
