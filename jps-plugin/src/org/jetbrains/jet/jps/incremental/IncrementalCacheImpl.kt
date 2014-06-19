@@ -38,7 +38,7 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache
 import java.util.HashMap
 
-public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
+public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     class object {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
@@ -60,48 +60,13 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
         }
     }
 
-    private val protoData: PersistentMap<ClassOrPackageId, ByteArray>
+    private val protoMap = ProtoMap()
     private val constantsData: PersistentHashMap<String, Map<String, Any>>
             = PersistentHashMap(File(baseDir, CONSTANTS_MAP), EnumeratorStringDescriptor(), ConstantsMapExternalizer())
 
     // Format of serialization to string: <module id> <path separator> <source file path>  -->  <package part JVM internal name>
     private val packageSourcesData: PersistentHashMap<String, String>
             = PersistentHashMap(File(baseDir, PACKAGE_SOURCES), EnumeratorStringDescriptor(), EnumeratorStringDescriptor())
-
-    ;{
-        protoData = PersistentHashMap(File(baseDir, PROTO_MAP), object : KeyDescriptor<ClassOrPackageId> {
-            override fun save(out: DataOutput, value: ClassOrPackageId?) {
-                IOUtil.writeString(value!!.moduleId, out)
-                IOUtil.writeString(value.fqName.asString(), out)
-            }
-
-            override fun read(`in`: DataInput): ClassOrPackageId {
-                val module = IOUtil.readString(`in`)!!
-                val fqName = FqName(IOUtil.readString(`in`)!!)
-                return ClassOrPackageId(module, fqName)
-            }
-
-            override fun getHashCode(value: ClassOrPackageId?): Int {
-                return value?.hashCode() ?: -1
-            }
-
-            override fun isEqual(val1: ClassOrPackageId?, val2: ClassOrPackageId?): Boolean {
-                return val1 == val2
-            }
-        }, object : DataExternalizer<ByteArray> {
-            override fun save(out: DataOutput, value: ByteArray?) {
-                out.writeInt(value!!.size)
-                out.write(value)
-            }
-
-            override fun read(`in`: DataInput): ByteArray {
-                val length = `in`.readInt()
-                val buf = ByteArray(length)
-                `in`.readFully(buf)
-                return buf
-            }
-        })
-    }
 
     public fun saveFileToCache(moduleId: String, sourceFiles: Collection<File>, file: File): Boolean {
         val fileBytes = file.readBytes()
@@ -115,10 +80,10 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
             val data = BitEncoding.decodeBytes(annotationDataEncoded)
             when (header.kind) {
                 KotlinClassHeader.Kind.PACKAGE_FACADE -> {
-                    return putData(moduleId, classFqName.parent(), data)
+                    return protoMap.put(moduleId, classFqName.parent(), data)
                 }
                 KotlinClassHeader.Kind.CLASS -> {
-                    return putData(moduleId, classFqName, data)
+                    return protoMap.put(moduleId, classFqName, data)
                 }
                 else -> {
                     throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}")
@@ -136,16 +101,6 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
 
     public fun clearCacheForRemovedFile(moduleId: String, sourceFile: File) {
         packageSourcesData.remove(getKeyForPackagePart(moduleId, sourceFile))
-    }
-
-    private fun putData(moduleId: String, fqName: FqName, data: ByteArray): Boolean {
-        val id = ClassOrPackageId(moduleId, fqName)
-        val oldData = protoData[id]
-        if (Arrays.equals(data, oldData)) {
-            return false
-        }
-        protoData.put(id, data)
-        return true
     }
 
     private fun putConstantsData(packagePartClass: JvmClassName, constantsMap: Map<String, Any>): Boolean {
@@ -194,16 +149,43 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
     }
 
     public override fun getPackageData(moduleId: String, fqName: String): ByteArray? {
-        return protoData[ClassOrPackageId(moduleId, FqName(fqName))]
+        return protoMap[moduleId, fqName]
     }
 
     public fun close() {
-        protoData.close()
+        protoMap.close()
         constantsData.close()
         packageSourcesData.close()
     }
 
-    private data class ClassOrPackageId(val moduleId: String, val fqName: FqName) {
+    private inner class ProtoMap {
+        private val map: PersistentMap<String, ByteArray> = PersistentHashMap(
+                File(baseDir, PROTO_MAP),
+                EnumeratorStringDescriptor(),
+                ByteArrayExternalizer
+        )
+
+        private fun getKeyString(moduleId: String, fqName: FqName): String {
+            return moduleId + ":" + fqName
+        }
+
+        public fun put(moduleId: String, fqName: FqName, data: ByteArray): Boolean {
+            val key = getKeyString(moduleId, fqName)
+            val oldData = map[key]
+            if (Arrays.equals(data, oldData)) {
+                return false
+            }
+            map.put(key, data)
+            return true
+        }
+
+        public fun get(moduleId: String, fqName: String): ByteArray? {
+            return map[getKeyString(moduleId, FqName(fqName))]
+        }
+
+        public fun close() {
+            map.close()
+        }
     }
 
     private class ConstantsMapExternalizer: DataExternalizer<Map<String, Any>> {
@@ -263,4 +245,18 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
             INT FLOAT LONG DOUBLE STRING
         }
    }
+}
+
+private object ByteArrayExternalizer: DataExternalizer<ByteArray> {
+    override fun save(out: DataOutput, value: ByteArray?) {
+        out.writeInt(value!!.size)
+        out.write(value)
+    }
+
+    override fun read(`in`: DataInput): ByteArray {
+        val length = `in`.readInt()
+        val buf = ByteArray(length)
+        `in`.readFully(buf)
+        return buf
+    }
 }
