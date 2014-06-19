@@ -334,6 +334,8 @@ public class CompileEnvironmentUtil {
     public static class ModuleScriptData {
         @Nullable
         private final String incrementalCacheDir;
+        @NotNull
+        private final List<Module> modules;
 
         @NotNull
         public List<Module> getModules() {
@@ -345,10 +347,7 @@ public class CompileEnvironmentUtil {
             return incrementalCacheDir;
         }
 
-        @NotNull
-        private final List<Module> modules;
-
-        ModuleScriptData(@NotNull List<Module> modules, @Nullable String incrementalCacheDir) {
+        private ModuleScriptData(@NotNull List<Module> modules, @Nullable String incrementalCacheDir) {
             this.incrementalCacheDir = incrementalCacheDir;
             this.modules = modules;
         }
