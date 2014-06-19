@@ -43,26 +43,10 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
         val PACKAGE_SOURCES = "package-sources.tab"
-
-        private fun getConstantsMap(bytes: ByteArray): Map<String, Any> {
-            val result = HashMap<String, Any>()
-
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
-                override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-                    if (value != null) {
-                        result[name] = value
-                    }
-                    return null
-                }
-            }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
-
-            return result
-        }
     }
 
     private val protoMap = ProtoMap()
-    private val constantsData: PersistentHashMap<String, Map<String, Any>>
-            = PersistentHashMap(File(baseDir, CONSTANTS_MAP), EnumeratorStringDescriptor(), ConstantsMapExternalizer())
+    private val constantsMap = ConstantsMap()
 
     // Format of serialization to string: <module id> <path separator> <source file path>  -->  <package part JVM internal name>
     private val packageSourcesData: PersistentHashMap<String, String>
@@ -93,7 +77,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
             assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
             putPackagePartSourceData(moduleId, sourceFiles.first(), className)
-            return putConstantsData(className, getConstantsMap(fileBytes))
+            return constantsMap.process(className, fileBytes)
         }
 
         return false
@@ -101,17 +85,6 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
     public fun clearCacheForRemovedFile(moduleId: String, sourceFile: File) {
         packageSourcesData.remove(getKeyForPackagePart(moduleId, sourceFile))
-    }
-
-    private fun putConstantsData(packagePartClass: JvmClassName, constantsMap: Map<String, Any>): Boolean {
-        val key = packagePartClass.getInternalName()
-
-        val oldMap = constantsData[key]
-        if (oldMap == constantsMap) {
-            return false
-        }
-        constantsData.put(key, constantsMap)
-        return true
     }
 
     private fun getKeyForPackagePart(moduleId: String, sourceFile: File): String {
@@ -154,7 +127,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
     public fun close() {
         protoMap.close()
-        constantsData.close()
+        constantsMap.close()
         packageSourcesData.close()
     }
 
@@ -188,7 +161,49 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         }
     }
 
-    private class ConstantsMapExternalizer: DataExternalizer<Map<String, Any>> {
+    private inner class ConstantsMap {
+        private val map: PersistentHashMap<String, Map<String, Any>> = PersistentHashMap(
+                File(baseDir, CONSTANTS_MAP),
+                EnumeratorStringDescriptor(),
+                ConstantsMapExternalizer
+        )
+
+        private fun getConstantsMap(bytes: ByteArray): Map<String, Any> {
+            val result = HashMap<String, Any>()
+
+            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
+                    if (value != null) {
+                        result[name] = value
+                    }
+                    return null
+                }
+            }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+
+            return result
+        }
+
+        public fun process(packagePartClass: JvmClassName, bytes: ByteArray): Boolean {
+            return put(packagePartClass, getConstantsMap(bytes))
+        }
+
+        private fun put(packagePartClass: JvmClassName, constantsMap: Map<String, Any>): Boolean {
+            val key = packagePartClass.getInternalName()
+
+            val oldMap = map[key]
+            if (oldMap == constantsMap) {
+                return false
+            }
+            map.put(key, constantsMap)
+            return true
+        }
+
+        public fun close() {
+            map.close()
+        }
+    }
+
+    private object ConstantsMapExternalizer: DataExternalizer<Map<String, Any>> {
         override fun save(out: DataOutput, map: Map<String, Any>?) {
             out.writeInt(map!!.size)
             for (name in map.keySet().toSortedList()) {
@@ -244,7 +259,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         private enum class Kind {
             INT FLOAT LONG DOUBLE STRING
         }
-   }
+    }
 }
 
 private object ByteArrayExternalizer: DataExternalizer<ByteArray> {
