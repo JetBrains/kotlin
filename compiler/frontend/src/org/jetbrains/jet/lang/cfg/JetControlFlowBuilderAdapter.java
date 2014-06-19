@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -82,12 +81,6 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     @Override
     public MergeInstruction merge(@NotNull JetExpression expression, @NotNull List<PseudoValue> inputValues) {
         return getDelegateBuilder().merge(expression, inputValues);
-    }
-
-    @NotNull
-    @Override
-    public ReadValueInstruction readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
-        return getDelegateBuilder().readThis(expression, parameterDescriptor);
     }
 
     @NotNull

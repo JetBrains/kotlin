@@ -288,13 +288,13 @@ public class JetControlFlowProcessor {
         public void visitThisExpressionVoid(@NotNull JetThisExpression expression, CFPContext context) {
             ResolvedCall<?> resolvedCall = getResolvedCall(expression);
             if (resolvedCall == null) {
-                builder.readThis(expression, null);
+                createNonSyntheticValue(expression);
                 return;
             }
 
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
             if (resultingDescriptor instanceof ReceiverParameterDescriptor) {
-                builder.readThis(expression, (ReceiverParameterDescriptor) resultingDescriptor);
+                builder.readVariable(expression, expression, resolvedCall, getReceiverValues(expression, resolvedCall, true));
             }
 
             copyValue(expression, expression.getInstanceReference());

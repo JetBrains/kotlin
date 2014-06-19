@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.*;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -446,12 +445,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             MergeInstruction instruction = MergeInstruction.object$.create(expression, getCurrentScope(), inputValues, valueFactory);
             add(instruction);
             return instruction;
-        }
-
-        @NotNull
-        @Override
-        public ReadValueInstruction readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
-            return read(expression);
         }
 
         @NotNull

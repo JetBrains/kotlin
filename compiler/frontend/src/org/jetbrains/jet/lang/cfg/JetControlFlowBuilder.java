@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -126,8 +125,6 @@ public interface JetControlFlowBuilder {
             @NotNull List<PseudoValue> inputValues
     );
 
-    @NotNull
-    ReadValueInstruction readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor);
     @NotNull
     ReadValueInstruction readVariable(
             @NotNull JetElement instructionElement,
