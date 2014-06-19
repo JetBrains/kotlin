@@ -224,7 +224,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         try {
             for (ModuleBuildTarget target : chunk.getTargets()) {
                 for (String file : dirtyFilesHolder.getRemovedFiles(target)) {
-                    cache.clearPackagePartSourceData(target.getId(), new File(file));
+                    cache.clearCacheForRemovedFile(target.getId(), new File(file));
                 }
             }
 

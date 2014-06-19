@@ -135,6 +135,10 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
         return false
     }
 
+    public fun clearCacheForRemovedFile(moduleId: String, sourceFile: File) {
+        packageSourcesData.remove(getKeyForPackagePart(moduleId, sourceFile))
+    }
+
     private fun putData(moduleId: String, fqName: FqName, data: ByteArray): Boolean {
         val id = ClassOrPackageId(moduleId, fqName)
         val oldData = protoData[id]
@@ -156,19 +160,12 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
         return true
     }
 
-    private fun putPackagePartSourceData(moduleId: String, sourceFile: File, className: JvmClassName?) {
-        val key = moduleId + File.pathSeparator + sourceFile.getAbsolutePath()
-
-        if (className != null) {
-            packageSourcesData.put(key, className.getInternalName())
-        }
-        else {
-            packageSourcesData.remove(key)
-        }
+    private fun getKeyForPackagePart(moduleId: String, sourceFile: File): String {
+        return moduleId + File.pathSeparator + sourceFile.getAbsolutePath()
     }
 
-    public fun clearPackagePartSourceData(moduleId: String, sourceFile: File) {
-        putPackagePartSourceData(moduleId, sourceFile, null)
+    private fun putPackagePartSourceData(moduleId: String, sourceFile: File, className: JvmClassName) {
+        packageSourcesData.put(getKeyForPackagePart(moduleId, sourceFile), className.getInternalName())
     }
 
     public override fun getRemovedPackageParts(moduleId: String, compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
