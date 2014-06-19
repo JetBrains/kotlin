@@ -188,10 +188,9 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
             boolean haveRemovedFiles = false;
             for (ModuleBuildTarget target : chunk.getTargets()) {
-                if (processedTargetsWithRemoved.add(target)) {
-                    if (!dirtyFilesHolder.getRemovedFiles(target).isEmpty()) {
+                if (!dirtyFilesHolder.getRemovedFiles(target).isEmpty()) {
+                    if (processedTargetsWithRemoved.add(target)) {
                         haveRemovedFiles = true;
-                        break;
                     }
                 }
             }
