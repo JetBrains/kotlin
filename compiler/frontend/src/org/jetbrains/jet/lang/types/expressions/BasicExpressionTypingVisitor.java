@@ -378,8 +378,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (labelName != null) {
             LabelResolver.LabeledReceiverResolutionResult resolutionResult =
                     LabelResolver.INSTANCE.resolveThisOrSuperLabel(expression, context, Name.identifier(labelName));
-            if (onlyClassReceivers && resolutionResult.success()) {
-                if (!isDeclaredInClass(resolutionResult.getReceiverParameterDescriptor())) {
+            if (resolutionResult.success()) {
+                ReceiverParameterDescriptor receiverParameterDescriptor = resolutionResult.getReceiverParameterDescriptor();
+                recordThisOrSuperCallInTraceAndCallExtension(context, receiverParameterDescriptor, expression);
+                if (onlyClassReceivers && !isDeclaredInClass(receiverParameterDescriptor)) {
                     return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(NO_RECEIVER_PARAMETER);
                 }
             }
@@ -402,7 +404,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (result != NO_RECEIVER_PARAMETER) {
                 context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), result.getContainingDeclaration());
                 recordThisOrSuperCallInTraceAndCallExtension(context, result, expression);
-
             }
             return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(result);
         }
