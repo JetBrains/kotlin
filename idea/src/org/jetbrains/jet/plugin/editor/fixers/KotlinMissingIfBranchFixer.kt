@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.plugin.formatter.JetBlock
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 
-object KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+public class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is JetIfExpression) return
         val ifExpression = element as JetIfExpression

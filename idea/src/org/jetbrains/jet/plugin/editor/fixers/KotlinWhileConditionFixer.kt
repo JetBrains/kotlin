@@ -16,13 +16,15 @@
 
 package org.jetbrains.jet.plugin.editor.fixers
 
+import org.jetbrains.jet.lang.psi.JetIfExpression
 import com.intellij.psi.PsiElement
-import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.editor.Document
+import org.jetbrains.jet.lang.psi.JetWhileExpression
 
-val PsiElement.range: TextRange get() = getTextRange()!!
-val TextRange.start: Int get() = getStartOffset()
-val TextRange.end: Int get() = getEndOffset()
-
-fun PsiElement.startLine(doc: Document): Int = doc.getLineNumber(range.start)
-fun PsiElement?.isWithCaret(caret: Int) = this?.getTextRange()?.contains(caret) == true
+public class KotlinWhileConditionFixer: MissingConditionFixer<JetWhileExpression>() {
+    override val keyword = "while"
+    override fun getElement(element: PsiElement?) = element as? JetWhileExpression
+    override fun getCondition(element: JetWhileExpression) = element.getCondition()
+    override fun getLeftParenthesis(element: JetWhileExpression) = element.getLeftParenthesis()
+    override fun getRightParenthesis(element: JetWhileExpression) = element.getRightParenthesis()
+    override fun getBody(element: JetWhileExpression) = element.getBody()
+}

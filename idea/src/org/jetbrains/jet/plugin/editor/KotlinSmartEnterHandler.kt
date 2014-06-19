@@ -29,21 +29,26 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrIfStatement
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.jet.plugin.editor.fixers.KotlinWhileConditionFixer
+import org.jetbrains.jet.plugin.editor.fixers.KotlinMissingWhileBodyFixer
+import org.jetbrains.jet.lang.psi.JetWhileExpression
+import org.jetbrains.jet.plugin.editor.fixers.isWithCaret
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.JetNodeTypes
 
 public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     {
         addFixers(
-                KotlinMissingIfBranchFixer,
-                KotlinIfConditionFixer
+                KotlinIfConditionFixer(),
+                KotlinMissingIfBranchFixer(),
+
+                KotlinWhileConditionFixer(),
+                KotlinMissingWhileBodyFixer()
         )
 
-        addEnterProcessors(KotlinPlainEnterProcessor)
+        addEnterProcessors(KotlinPlainEnterProcessor())
     }
 
     override fun getStatementAtCaret(editor: Editor?, psiFile: PsiFile?): PsiElement? {
@@ -99,16 +104,16 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     private fun PsiElement.isJetStatement() =
         getParent() is JetBlockExpression || (getParent()?.getNode()?.getElementType() in IF_BRANCHES_CONTAINERS)
 
-    object KotlinPlainEnterProcessor : SmartEnterProcessorWithFixers.FixEnterProcessor() {
-        private fun getControlStatementBlock(caret: Int, element: PsiElement): JetBlockExpression? {
-            if (element is JetDeclarationWithBody) return element.getBodyExpression() as? JetBlockExpression
-            if (element is JetIfExpression) {
-                if (element.getThen()?.getTextRange()?.contains(caret) == true) {
-                    return element.getThen() as? JetBlockExpression
+    class KotlinPlainEnterProcessor : SmartEnterProcessorWithFixers.FixEnterProcessor() {
+        private fun getControlStatementBlock(caret: Int, element: PsiElement): JetExpression? {
+            when (element) {
+                is JetDeclarationWithBody -> return element.getBodyExpression()
+                is JetIfExpression -> {
+                    if (element.getThen().isWithCaret(caret)) return element.getThen()
+                    if (element.getElse().isWithCaret(caret)) return element.getElse()
                 }
-
-                if (element.getElse()?.getTextRange()?.contains(caret) == true) {
-                    return element.getElse() as? JetBlockExpression
+                is JetWhileExpression -> {
+                    if (element.getBody()?.getTextRange()?.contains(caret) == true) return element.getBody()
                 }
             }
 
@@ -116,7 +121,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
         }
 
         override fun doEnter(atCaret: PsiElement, file: PsiFile?, editor: Editor, modified: Boolean): Boolean {
-            val block = getControlStatementBlock(editor.getCaretModel().getOffset(), atCaret)
+            val block = getControlStatementBlock(editor.getCaretModel().getOffset(), atCaret) as? JetBlockExpression
             if (block != null) {
                 val firstElement = block.getFirstChild()?.getNextSibling()
 

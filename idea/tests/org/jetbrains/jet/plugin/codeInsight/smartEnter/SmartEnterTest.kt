@@ -266,6 +266,100 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             """
     )
 
+
+    fun testWhile() = doFunTest(
+            """
+            while <caret>
+            """
+            ,
+            """
+            while (<caret>) {
+            }
+            """
+    )
+
+    fun testWhile2() = doFunTest(
+            """
+            while<caret>
+            """
+            ,
+            """
+            while (<caret>) {
+            }
+            """
+    )
+
+    fun testWhile3() = doFunTest(
+            """
+            while (<caret>
+            """
+            ,
+            """
+            while (<caret>) {
+            }
+            """
+    )
+
+    fun testWhile4() = doFunTest(
+            """
+            while (true<caret>) {
+            }
+            """
+            ,
+            """
+            while (true) {
+                <caret>
+            }
+            """
+    )
+
+    fun testWhile5() = doFunTest(
+            """
+            while (true) {<caret>
+            """
+            ,
+            """
+            while (true) {
+                <caret>
+            }
+            """
+    )
+
+    fun testWhile6() = doFunTest(
+            """
+            while (true<caret>) {
+                println()
+            }
+            """
+            ,
+            """
+            while (true) {
+                <caret>
+                println()
+            }
+            """
+    )
+
+    fun testWhile7() = doFunTest(
+            """
+            while ()<caret>
+            """,
+            """
+            while (<caret>) {
+            }
+            """
+    )
+
+    fun testWhileSingle() = doFunTest(
+            """
+            <caret>while    (true) println()
+            """,
+            """
+            while (true) println()
+            <caret>
+            """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----${this.trimIndent()}//----"

@@ -24,37 +24,11 @@ import org.jetbrains.jet.lang.psi.JetIfExpression
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange
 
-object KotlinIfConditionFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
-    override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
-        if (element !is JetIfExpression) return
-        val ifExpression = element as JetIfExpression
-
-        val doc = editor.getDocument()
-        val lParen = ifExpression.getLeftParenthesis()
-        val rParen = ifExpression.getRightParenthesis()
-        val condition = ifExpression.getCondition()
-
-        if (condition == null) {
-            if (lParen == null || rParen == null) {
-                var stopOffset = doc.getLineEndOffset(doc.getLineNumber(ifExpression.range.start))
-                val then = ifExpression.getThen()
-                if (then != null) {
-                    stopOffset = Math.min(stopOffset, then.range.start)
-                }
-
-                stopOffset = Math.min(stopOffset, ifExpression.range.end)
-
-                doc.replaceString(ifExpression.range.start, stopOffset, "if ()")
-                processor.registerUnresolvedError(ifExpression.range.start + "if (".length())
-            }
-            else {
-                processor.registerUnresolvedError(lParen.range.end)
-            }
-        }
-        else {
-            if (rParen == null) {
-                doc.insertString(condition.range.end, ")")
-            }
-        }
-    }
+public class KotlinIfConditionFixer : MissingConditionFixer<JetIfExpression>() {
+    override val keyword = "if"
+    override fun getElement(element: PsiElement?) = element as? JetIfExpression
+    override fun getCondition(element: JetIfExpression) = element.getCondition()
+    override fun getLeftParenthesis(element: JetIfExpression) = element.getLeftParenthesis()
+    override fun getRightParenthesis(element: JetIfExpression) = element.getRightParenthesis()
+    override fun getBody(element: JetIfExpression) = element.getThen()
 }
