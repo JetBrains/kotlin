@@ -2855,6 +2855,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/classObjectCopiedField.kt");
                 }
                 
+                @TestMetadata("classObjectCopiedFieldObject.kt")
+                public void testClassObjectCopiedFieldObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/classObjectCopiedFieldObject.kt");
+                }
+                
                 @TestMetadata("dataClassCopy.kt")
                 public void testDataClassCopy() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/dataClassCopy.kt");

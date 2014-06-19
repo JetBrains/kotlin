@@ -7,7 +7,7 @@ trait B {
 }
 
 class C {
-    class <!CANNOT_INFER_VISIBILITY!>object<!> : A, B {
+    <!CANNOT_INFER_VISIBILITY!>class object<!> : A, B {
         fun bar() = null
     }
 }

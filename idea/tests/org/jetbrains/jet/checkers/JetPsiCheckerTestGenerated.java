@@ -440,10 +440,23 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     }
     
     @TestMetadata("idea/testData/checker/duplicateJvmSignature")
-    @InnerTestClasses({DuplicateJvmSignature.FunctionAndProperty.class, DuplicateJvmSignature.TraitImpl.class})
+    @InnerTestClasses({DuplicateJvmSignature.Fields.class, DuplicateJvmSignature.FunctionAndProperty.class, DuplicateJvmSignature.TraitImpl.class})
     public static class DuplicateJvmSignature extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/checker/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("idea/testData/checker/duplicateJvmSignature/fields")
+        public static class Fields extends AbstractJetPsiCheckerTest {
+            public void testAllFilesPresentInFields() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/checker/duplicateJvmSignature/fields"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("classObjectCopiedFieldObject.kt")
+            public void testClassObjectCopiedFieldObject() throws Exception {
+                doTest("idea/testData/checker/duplicateJvmSignature/fields/classObjectCopiedFieldObject.kt");
+            }
+            
         }
         
         @TestMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty")
@@ -510,6 +523,7 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("DuplicateJvmSignature");
             suite.addTestSuite(DuplicateJvmSignature.class);
+            suite.addTestSuite(Fields.class);
             suite.addTestSuite(FunctionAndProperty.class);
             suite.addTestSuite(TraitImpl.class);
             return suite;

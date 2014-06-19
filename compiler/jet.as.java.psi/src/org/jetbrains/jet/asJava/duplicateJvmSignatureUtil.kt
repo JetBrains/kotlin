@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory.*
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
+import org.jetbrains.jet.lang.psi.JetClassObject
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
     fun doGetDiagnostics(): Diagnostics? {
@@ -46,19 +47,20 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
                 return getDiagnosticsForClass(parentClass)
             }
         }
-
-        if (parent is JetFile) {
-            if (element is JetClassOrObject) {
-                return getDiagnosticsForClass(element)
-            }
-            return getDiagnosticsForPackage(parent as JetFile)
+        if (element is JetClassOrObject) {
+            return getDiagnosticsForClass(element)
         }
 
-        if (parent is JetClassBody) {
-            val parentsParent = parent?.getParent()
+        when (parent) {
+            is JetFile -> {
+                return getDiagnosticsForPackage(parent as JetFile)
+            }
+            is JetClassBody -> {
+                val parentsParent = parent?.getParent()
 
-            if (parentsParent is JetClassOrObject) {
-                return getDiagnosticsForClass(parentsParent)
+                if (parentsParent is JetClassOrObject) {
+                    return getDiagnosticsForClass(parentsParent)
+                }
             }
         }
         return null
@@ -124,7 +126,6 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
             .flatMap { forElement(it) }
     }
 }
-
 
 private fun ConflictingJvmDeclarationsData.higherThan(other: ConflictingJvmDeclarationsData): Boolean {
     return when (other.classOrigin.originKind) {

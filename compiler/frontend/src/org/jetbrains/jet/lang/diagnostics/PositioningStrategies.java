@@ -99,7 +99,14 @@ public class PositioningStrategies {
                 return markElement(nameIdentifier);
             }
             if (element instanceof JetObjectDeclaration) {
-                return markElement(((JetObjectDeclaration) element).getObjectKeyword());
+                PsiElement objectKeyword = ((JetObjectDeclaration) element).getObjectKeyword();
+                PsiElement parent = element.getParent();
+                if (parent instanceof JetClassObject) {
+                    PsiElement classKeyword = ((JetClassObject) parent).getClassKeywordNode();
+                    PsiElement start = classKeyword == null ? objectKeyword : classKeyword;
+                    return markRange(new TextRange(start.getTextRange().getStartOffset(), objectKeyword.getTextRange().getEndOffset()));
+                }
+                return markElement(objectKeyword);
             }
             return markElement(element);
         }
