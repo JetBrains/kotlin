@@ -6,5 +6,5 @@ fun Z.foo(): Int {
 }
 
 fun Z.i(): Int {
-    return a + a
+    return this.a + a
 }

@@ -47,6 +47,11 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         doTest("idea/testData/shortenRefs/JavaStaticMethod.kt");
     }
     
+    @TestMetadata("noShortening.kt")
+    public void testNoShortening() throws Exception {
+        doTest("idea/testData/shortenRefs/noShortening.kt");
+    }
+    
     @TestMetadata("idea/testData/shortenRefs/constructor")
     public static class Constructor extends AbstractShortenRefsTest {
         public void testAllFilesPresentInConstructor() throws Exception {
