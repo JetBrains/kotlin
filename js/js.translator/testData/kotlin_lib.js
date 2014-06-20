@@ -546,6 +546,11 @@
             },
             isEmpty: function () {
                 return this.start > this.end;
+            },
+            equals_za3rmp$: function(other) {
+                if (other == null)
+                    return false;
+                return this.start === other.start && this.end === other.end && this.increment === other.increment;
             }
     });
 
