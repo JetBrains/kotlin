@@ -3,7 +3,7 @@ class X() {
         return super.hashCode()
     }
 
-    override fun equals(other: Any?): Boolean {
+    override fun equals(o: Any?): Boolean {
         return super.equals(o)
     }
 

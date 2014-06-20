@@ -1326,6 +1326,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/function/overrideObject2.java");
         }
         
+        @TestMetadata("overrideObject3.java")
+        public void testOverrideObject3() throws Exception {
+            doTest("j2k/tests/testData/ast/function/overrideObject3.java");
+        }
+        
         @TestMetadata("ownGenericParam.java")
         public void testOwnGenericParam() throws Exception {
             doTest("j2k/tests/testData/ast/function/ownGenericParam.java");
@@ -2004,6 +2009,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/nullability/FieldInitializedWithNull.java");
         }
         
+        @TestMetadata("IndirectOverride.java")
+        public void testIndirectOverride() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/IndirectOverride.java");
+        }
+        
         @TestMetadata("MethodInvokedWithNullArg.java")
         public void testMethodInvokedWithNullArg() throws Exception {
             doTest("j2k/tests/testData/ast/nullability/MethodInvokedWithNullArg.java");
@@ -2067,6 +2077,16 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("NullableVariableDotAccess.java")
         public void testNullableVariableDotAccess() throws Exception {
             doTest("j2k/tests/testData/ast/nullability/NullableVariableDotAccess.java");
+        }
+        
+        @TestMetadata("OverrideWithInheritanceLoop.java")
+        public void testOverrideWithInheritanceLoop() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/OverrideWithInheritanceLoop.java");
+        }
+        
+        @TestMetadata("Overrides.java")
+        public void testOverrides() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/Overrides.java");
         }
         
         @TestMetadata("ParameterComparedWithNull.java")

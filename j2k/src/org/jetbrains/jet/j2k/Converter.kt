@@ -330,23 +330,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
             }
 
             var params = convertParameterList(method.getParameterList())
-
-            // if we override equals from Object, change parameter type to nullable
-            if (isOverride && method.getName() == "equals") {
-                val superSignatures = method.getHierarchicalMethodSignature().getSuperSignatures()
-                val overridesMethodFromObject = superSignatures.any {
-                    it.getMethod().getContainingClass()?.getQualifiedName() == JAVA_LANG_OBJECT
-                }
-                if (overridesMethodFromObject) {
-                    val correctedParameter = Parameter(Identifier("other"),
-                                                       ClassType(Identifier("Any"), listOf(), Nullability.Nullable, settings),
-                                                       Parameter.VarValModifier.None,
-                                                       params.parameters.single().annotations,
-                                                       Modifiers.Empty)
-                    params = ParameterList(listOf(correctedParameter))
-                }
-            }
-
             val typeParameterList = convertTypeParameterList(method.getTypeParameterList())
             val block = convertBlock(method.getBody())
             return Function(this, method.declarationIdentifier(), annotations, modifiers, returnType, typeParameterList, params, block, containingClass?.isInterface() ?: false)

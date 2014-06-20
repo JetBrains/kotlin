@@ -25,6 +25,7 @@ import java.util.HashSet
 import org.jetbrains.jet.j2k.ast.Import
 import org.jetbrains.jet.j2k.ast.ImportList
 import org.jetbrains.jet.j2k.ast.assignPrototype
+import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 
 class TypeConverter(val settings: ConverterSettings, val conversionScope: ConversionScope) {
     private val nullabilityCache = HashMap<PsiElement, Nullability>()
@@ -72,6 +73,19 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
 
         var nullability = variable.nullabilityFromAnnotations()
 
+        if (nullability == Nullability.Default && variable is PsiParameter) {
+            val scope = variable.getDeclarationScope()
+            if (scope is PsiMethod) {
+                val paramIndex = scope.getParameterList().getParameters().indexOf(variable)
+                assert(paramIndex >= 0)
+                val superSignatures = scope.getHierarchicalMethodSignature().getSuperSignatures()
+                nullability = superSignatures.map { signature ->
+                    val params = signature.getMethod().getParameterList().getParameters()
+                    if (paramIndex < params.size) variableNullability(params[paramIndex]) else Nullability.Default
+                }.firstOrNull { it != Nullability.Default } ?: Nullability.Default
+            }
+        }
+
         if (nullability == Nullability.Default) {
             val initializer = variable.getInitializer()
             if (initializer != null) {
@@ -85,7 +99,17 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
             }
         }
 
-        if (!conversionScope.contains(variable)) return nullability // do not analyze usages of fields out of our conversion scope
+        if (!conversionScope.contains(variable)) { // do not analyze usages out of our conversion scope
+            if (variable is PsiParameter) {
+                // Object.equals corresponds to Any.equals which has nullable parameter:
+                val scope = variable.getDeclarationScope()
+                if (scope is PsiMethod && scope.getName() == "equals" && scope.getContainingClass()?.getQualifiedName() == JAVA_LANG_OBJECT) {
+                    return Nullability.Nullable
+                }
+            }
+
+            return nullability
+        }
 
         if (nullability == Nullability.Default) {
             val scope = searchScope(variable)
@@ -132,6 +156,11 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
 
     private fun methodNullabilityNoCache(method: PsiMethod): Nullability {
         var nullability = method.nullabilityFromAnnotations()
+
+        if (nullability == Nullability.Default) {
+            val superSignatures = method.getHierarchicalMethodSignature().getSuperSignatures()
+            nullability = superSignatures.map { methodNullability(it.getMethod()) }.firstOrNull { it != Nullability.Default } ?: Nullability.Default
+        }
 
         if (!conversionScope.contains(method)) return nullability // do not analyze body and usages of methods out of our conversion scope
 

@@ -1,5 +1,10 @@
 package javaApi;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.Override;
+import java.lang.String;
+
 public @interface Anon1 {
     String[] value();
     String[] stringArray();
@@ -42,4 +47,12 @@ public @interface Anon8 {
 
 public enum E {
     A, B, C
+}
+
+class Base {
+    public @Nullable String foo(@Nullable String s) { return s; }
+}
+
+class Derived extends Base {
+    public String foo(String s) { return s; }
 }
