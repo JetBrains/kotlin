@@ -1,8 +1,9 @@
 == foo ==
-fun foo(i: Int = 1) = i + 2
+fun foo(i: Int = 1, j: Int) = i + j
 ---------------------
-1       <v0>   NEW()          
-i       <v2>   NEW()          
-2       <v3>   NEW()          
-i + 2   <v4>   NEW(<v2>, <v3>)
+1            <v0>   NEW()          
+i: Int = 1   <v2>   NEW(<v0>, <v1>)
+i            <v4>   NEW()          
+j            <v5>   NEW()          
+i + j        <v6>   NEW(<v4>, <v5>)
 =====================

@@ -981,7 +981,17 @@ public class JetControlFlowProcessor {
                 generateInstructions(defaultValue);
                 builder.bindLabel(skipDefaultValue);
             }
-            generateInitializer(parameter, createSyntheticValue(parameter));
+            generateInitializer(parameter, computePseudoValueForParameter(parameter));
+        }
+
+        @NotNull
+        private PseudoValue computePseudoValueForParameter(@NotNull JetParameter parameter) {
+            PseudoValue syntheticValue = createSyntheticValue(parameter);
+            PseudoValue defaultValue = builder.getBoundValue(parameter.getDefaultValue());
+            if (defaultValue == null) {
+                return syntheticValue;
+            }
+            return builder.merge(parameter, Lists.newArrayList(defaultValue, syntheticValue)).getOutputValue();
         }
 
         @Override

@@ -1,5 +1,5 @@
 == foo ==
-fun foo(i: Int = 1) = i + 2
+fun foo(i: Int = 1, j: Int) = i + j
 ---------------------
 L0:
   1 <START>
@@ -8,11 +8,15 @@ L0:
     r(1) -> <v0>
 L2 [after default value for parameter i]:
     magic(i: Int = 1) -> <v1>                         PREV:[jmp?(L2 [after default value for parameter i]), r(1) -> <v0>]
-    w(i|<v1>)
-    r(i) -> <v2>
-    r(2) -> <v3>
-    mark(i + 2)
-    call(+, plus|<v2>, <v3>) -> <v4>
+    merge(i: Int = 1|<v0>, <v1>) -> <v2>
+    w(i|<v2>)
+    v(j: Int)
+    magic(j: Int) -> <v3>
+    w(j|<v3>)
+    r(i) -> <v4>
+    r(j) -> <v5>
+    mark(i + j)
+    call(+, plus|<v4>, <v5>) -> <v6>
 L1:
     <END>                                             NEXT:[<SINK>]
 error:

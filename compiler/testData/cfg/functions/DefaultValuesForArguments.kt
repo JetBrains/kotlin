@@ -1,1 +1,1 @@
-fun foo(i: Int = 1) = i + 2
+fun foo(i: Int = 1, j: Int) = i + j
