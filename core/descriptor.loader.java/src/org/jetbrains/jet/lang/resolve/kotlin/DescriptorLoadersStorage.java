@@ -33,13 +33,13 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
 
-public class DescriptorDeserializersStorage {
+public class DescriptorLoadersStorage {
     private ErrorReporter errorReporter;
     private ModuleDescriptor module;
 
     private final MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Storage> storage;
 
-    public DescriptorDeserializersStorage(@NotNull StorageManager storageManager) {
+    public DescriptorLoadersStorage(@NotNull StorageManager storageManager) {
         this.storage = storageManager.createMemoizedFunction(
                 new Function1<KotlinJvmBinaryClass, Storage>() {
                     @NotNull

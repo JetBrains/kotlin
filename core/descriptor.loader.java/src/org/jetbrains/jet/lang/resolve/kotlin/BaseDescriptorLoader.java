@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
-import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage.MemberSignature;
+import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
 
@@ -41,13 +41,13 @@ public abstract class BaseDescriptorLoader {
     protected KotlinClassFinder kotlinClassFinder;
     protected ErrorReporter errorReporter;
 
-    protected DescriptorDeserializersStorage storage;
+    protected DescriptorLoadersStorage storage;
 
     public abstract void setKotlinClassFinder(@NotNull KotlinClassFinder kotlinClassFinder);
 
     public abstract void setErrorReporter(@NotNull ErrorReporter errorReporter);
 
-    public abstract void setStorage(@NotNull DescriptorDeserializersStorage storage);
+    public abstract void setStorage(@NotNull DescriptorLoadersStorage storage);
 
     @Nullable
     protected static MemberSignature getCallableSignature(

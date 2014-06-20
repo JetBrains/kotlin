@@ -68,7 +68,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.JavaClassDataFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorLoader;
-import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage;
+import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage;
 import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorLoader;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -129,7 +129,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final JavaClassDataFinder javaClassDataFinder;
     private final AnnotationDescriptorLoader annotationDescriptorLoader;
-    private final DescriptorDeserializersStorage descriptorDeserializersStorage;
+    private final DescriptorLoadersStorage descriptorLoadersStorage;
     private final ConstantDescriptorLoader constantDescriptorLoader;
     
     public InjectorForTopDownAnalyzerForJvm(
@@ -191,7 +191,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
-        this.descriptorDeserializersStorage = new DescriptorDeserializersStorage(storageManager);
+        this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager);
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
@@ -324,14 +324,14 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         annotationDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
         annotationDescriptorLoader.setModule(moduleDescriptor);
-        annotationDescriptorLoader.setStorage(descriptorDeserializersStorage);
+        annotationDescriptorLoader.setStorage(descriptorLoadersStorage);
 
-        descriptorDeserializersStorage.setErrorReporter(traceBasedErrorReporter);
-        descriptorDeserializersStorage.setModule(moduleDescriptor);
+        descriptorLoadersStorage.setErrorReporter(traceBasedErrorReporter);
+        descriptorLoadersStorage.setModule(moduleDescriptor);
 
         constantDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
         constantDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
-        constantDescriptorLoader.setStorage(descriptorDeserializersStorage);
+        constantDescriptorLoader.setStorage(descriptorLoadersStorage);
 
         javaClassFinder.initialize();
 

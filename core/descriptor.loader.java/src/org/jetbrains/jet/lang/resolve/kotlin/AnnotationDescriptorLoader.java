@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage.MemberSignature;
+import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaFqNameToKotlinFqName;
 
 public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements AnnotationLoader {
@@ -60,7 +60,7 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
 
     @Inject
     @Override
-    public void setStorage(@NotNull DescriptorDeserializersStorage storage) {
+    public void setStorage(@NotNull DescriptorLoadersStorage storage) {
         this.storage = storage;
     }
 

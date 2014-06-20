@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
-import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage
+import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage
 import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorLoader
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
@@ -95,10 +95,10 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     }
     private val storageManager = LockBasedStorageManager.NO_LOCKS
 
-    private val deserializerStorage = DescriptorDeserializersStorage(storageManager);
+    private val loadersStorage = DescriptorLoadersStorage(storageManager);
     {
-        deserializerStorage.setModule(moduleDescriptor)
-        deserializerStorage.setErrorReporter(LOGGING_REPORTER)
+        loadersStorage.setModule(moduleDescriptor)
+        loadersStorage.setErrorReporter(LOGGING_REPORTER)
     }
 
     private val annotationLoader = AnnotationDescriptorLoader();
@@ -106,14 +106,14 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         annotationLoader.setModule(moduleDescriptor)
         annotationLoader.setKotlinClassFinder(localClassFinder)
         annotationLoader.setErrorReporter(LOGGING_REPORTER)
-        annotationLoader.setStorage(deserializerStorage)
+        annotationLoader.setStorage(loadersStorage)
     }
 
     private val constantLoader = ConstantDescriptorLoader();
     {
         constantLoader.setKotlinClassFinder(localClassFinder)
         constantLoader.setErrorReporter(LOGGING_REPORTER)
-        constantLoader.setStorage(deserializerStorage)
+        constantLoader.setStorage(loadersStorage)
     }
 
     private val classDataFinder = object : ClassDataFinder {

@@ -28,12 +28,12 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 
 import javax.inject.Inject;
 
-import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage.MemberSignature;
+import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
 
 public class ConstantDescriptorLoader extends BaseDescriptorLoader implements ConstantLoader {
     @Inject
     @Override
-    public void setStorage(@NotNull DescriptorDeserializersStorage storage) {
+    public void setStorage(@NotNull DescriptorLoadersStorage storage) {
         this.storage = storage;
     }
 
