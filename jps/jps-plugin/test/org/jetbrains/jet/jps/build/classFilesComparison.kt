@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass
 
 fun File.hash() = Files.hash(this, Hashing.crc32())
 
-fun getDirectoryString(dir: File, interestingPaths: List<String>, ignore: (File) -> Boolean): String {
+fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
     val buf = StringBuilder()
     val p = Printer(buf)
 
@@ -52,10 +52,6 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>, ignore: (File)
 
         val children = listFiles!!.toList().sortBy { it.getName() }.sortBy { it.isDirectory() }
         for (child in children) {
-            if (ignore(child)) {
-                continue
-            }
-
             if (child.isDirectory()) {
                 p.println(child.name)
                 addDirContent(child)
@@ -82,10 +78,10 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>, ignore: (File)
     return buf.toString()
 }
 
-fun getAllRelativePaths(dir: File, ignore: (File) -> Boolean): Set<String> {
+fun getAllRelativePaths(dir: File): Set<String> {
     val result = HashSet<String>()
     FileUtil.processFilesRecursively(dir) {
-        if (it!!.isFile() && !ignore(it)) {
+        if (it!!.isFile()) {
             result.add(FileUtil.getRelativePath(dir, it)!!)
         }
 
@@ -95,16 +91,16 @@ fun getAllRelativePaths(dir: File, ignore: (File) -> Boolean): Set<String> {
     return result
 }
 
-fun assertEqualDirectories(expected: File, actual: File, ignore: (File) -> Boolean) {
-    val pathsInExpected = getAllRelativePaths(expected, ignore)
-    val pathsInActual = getAllRelativePaths(actual, ignore)
+fun assertEqualDirectories(expected: File, actual: File) {
+    val pathsInExpected = getAllRelativePaths(expected)
+    val pathsInActual = getAllRelativePaths(actual)
 
     val changedPaths = Sets.intersection(pathsInExpected, pathsInActual)
             .filter { !Arrays.equals(File(expected, it).readBytes(), File(actual, it).readBytes()) }
             .sort()
 
-    val expectedString = getDirectoryString(expected, changedPaths, ignore)
-    val actualString = getDirectoryString(actual, changedPaths, ignore)
+    val expectedString = getDirectoryString(expected, changedPaths)
+    val actualString = getDirectoryString(actual, changedPaths)
 
     assertEquals(expectedString, actualString)
 }

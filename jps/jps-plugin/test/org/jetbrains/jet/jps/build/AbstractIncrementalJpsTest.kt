@@ -111,7 +111,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
         rebuild()
 
-        assertEqualDirectories(outDir, outAfterMake, { it.name == "script.xml" })
+        assertEqualDirectories(outDir, outAfterMake)
 
         FileUtil.delete(outAfterMake)
     }
