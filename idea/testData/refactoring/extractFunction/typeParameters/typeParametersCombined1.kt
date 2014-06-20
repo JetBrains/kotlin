@@ -1,3 +1,6 @@
+// PARAM_TYPES: A<T>
+// PARAM_TYPES: A.B<U>
+// PARAM_TYPES: V, Data
 open class Data(val x: Int)
 
 // SIBLING:

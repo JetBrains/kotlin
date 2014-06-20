@@ -1,3 +1,5 @@
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int, Number, Comparable<Int>, Any
 fun bar(a: Int): Int {
     println(a)
     return a + 10

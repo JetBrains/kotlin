@@ -1,3 +1,4 @@
+// PARAM_TYPES: Data<T>
 class Data<T>(val t: Int)
 
 // SIBLING:

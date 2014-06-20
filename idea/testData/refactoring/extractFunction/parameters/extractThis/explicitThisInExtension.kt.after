@@ -1,3 +1,4 @@
+// PARAM_TYPES: Z
 class Z(val a: Int)
 
 // SIBLING:

@@ -1,0 +1,35 @@
+//PARAM_TYPES: C, B
+trait A {
+    fun doA()
+}
+
+open class AImpl: A {
+    override fun doA() {
+        throw UnsupportedOperationException()
+    }
+}
+
+trait B {
+    fun doB()
+}
+
+class C: AImpl(), B {
+    override fun doA() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun doB() {
+        throw UnsupportedOperationException()
+    }
+
+    fun doC() {
+        throw UnsupportedOperationException()
+    }
+}
+
+// SIBLING:
+fun foo(c: C) {
+    c.doA()
+    <selection>c.doB()</selection>
+    c.doC()
+}

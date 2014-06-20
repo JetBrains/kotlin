@@ -1,3 +1,4 @@
+// PARAM_TYPES: kotlin.Int, Number, Comparable<Int>, Any
 // SIBLING:
 fun main(args: Array<String>) {
     val (a, b) = Data(1, 2)

@@ -70,17 +70,11 @@ public class KotlinParameterTablePanel extends JPanel {
         }
 
         public String getTypeAsString() {
-            return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getOriginalParameter().getParameterType());
+            return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getOriginalParameter().getParameterTypeCandidates().get(0));
         }
 
         public Parameter toParameter() {
-            return new Parameter(
-                    originalParameter.getArgumentText(),
-                    name,
-                    originalParameter.getMirrorVarName(),
-                    originalParameter.getParameterType(),
-                    originalParameter.getReceiverCandidate()
-            );
+            return originalParameter.copy(name);
         }
     }
 

@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory.FunctionBuilder
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
@@ -56,14 +55,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.WriteValueInstruction
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.CallInstruction
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.JetElementInstruction
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.OperationInstruction
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.ReadValueInstruction
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*
@@ -72,6 +64,7 @@ import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.jet.lang.resolve.OverridingUtil
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -325,13 +318,57 @@ private fun JetType.processTypeIfExtractable(
     }
 }
 
-private fun ExtractionData.inferParametersInfo(commonParent: PsiElement,
-                                               localInstructions: List<Instruction>,
-                                               bindingContext: BindingContext,
-                                               replacementMap: MutableMap<Int, Replacement>,
-                                               parameters: MutableSet<Parameter>,
-                                               typeParameters: MutableSet<TypeParameter>,
-                                               nonDenotableTypes: MutableSet<JetType>): ErrorMessage? {
+private class MutableParameter(
+        override val argumentText: String,
+        override val name: String,
+        override val mirrorVarName: String?,
+        override val receiverCandidate: Boolean
+): Parameter {
+    // All modifications happen in the same thread
+    private var writable: Boolean = true
+    private val defaultTypes = HashSet<JetType>()
+    private val typePredicates = HashSet<TypePredicate>()
+
+    fun addDefaultType(jetType: JetType) {
+        assert(writable, "Can't add type to non-writable parameter $name")
+        defaultTypes.add(jetType)
+    }
+
+    fun addTypePredicate(predicate: TypePredicate) {
+        assert(writable, "Can't add type predicate to non-writable parameter $name")
+        typePredicates.add(predicate)
+    }
+
+    override val parameterTypeCandidates: List<JetType> by Delegates.lazy {
+        writable = false
+        listOf(parameterType) + TypeUtils.getAllSupertypes(parameterType).filter(and(typePredicates))
+    }
+
+    override val parameterType: JetType by Delegates.lazy {
+        writable = false
+        CommonSupertypes.commonSupertype(defaultTypes)
+    }
+
+    override fun copy(name: String): Parameter = DelegatingParameter(this, name)
+}
+
+private class DelegatingParameter(
+        val original: Parameter,
+        override val name: String
+): Parameter by original {
+    override fun copy(name: String): Parameter = DelegatingParameter(original, name)
+}
+
+private fun ExtractionData.inferParametersInfo(
+        commonParent: PsiElement,
+        pseudocode: Pseudocode,
+        localInstructions: List<Instruction>,
+        bindingContext: BindingContext,
+        replacementMap: MutableMap<Int, Replacement>,
+        parameters: MutableSet<Parameter>,
+        typeParameters: MutableSet<TypeParameter>,
+        nonDenotableTypes: MutableSet<JetType>
+): ErrorMessage? {
     val varNameValidator = JetNameValidatorImpl(
             commonParent.getParentByType(javaClass<JetExpression>()),
             originalElements.first,
@@ -339,7 +376,9 @@ private fun ExtractionData.inferParametersInfo(commonParent: PsiElement,
     )
     val modifiedVarDescriptors = localInstructions.getModifiedVarDescriptors(bindingContext)
 
-    val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, Parameter>()
+    val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, MutableParameter>()
+
+    val valueUsageMap = pseudocode.collectValueUsages()
 
     for (refInfo in getBrokenReferencesInfo(createTemporaryCodeBlock())) {
         val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
@@ -397,57 +436,40 @@ private fun ExtractionData.inferParametersInfo(commonParent: PsiElement,
             if (extractParameter) {
                 val parameterType = when {
                     receiver.exists() -> receiver.getType()
-                    else -> bindingContext[BindingContext.EXPRESSION_TYPE, originalRef] ?: DEFAULT_PARAMETER_TYPE
+                    else -> bindingContext[BindingContext.AUTOCAST, originalRef]
+                            ?: bindingContext[BindingContext.EXPRESSION_TYPE, originalRef]
+                            ?: DEFAULT_PARAMETER_TYPE
                 }
 
                 if (!parameterType.processTypeIfExtractable(bindingContext, typeParameters, nonDenotableTypes)) continue
 
-                val existingParameter = extractedDescriptorToParameter[descriptorToExtract]
-                val parameter: Parameter =
-                        if (existingParameter != null) {
-                            if (!JetTypeChecker.INSTANCE.equalTypes(existingParameter.parameterType, parameterType)) {
-                                val newParameter = existingParameter.copy(
-                                        parameterType = CommonSupertypes.commonSupertype(listOf(existingParameter.parameterType, parameterType))
-                                )
+                val parameterTypePredicate =
+                        pseudocode.getElementValue(originalRef)?.let { getExpectedTypePredicate(it, valueUsageMap, bindingContext) } ?: AllTypes
 
-                                extractedDescriptorToParameter[descriptorToExtract] = newParameter
-
-                                for ((offset, replacement) in replacementMap) {
-                                    if (replacement is ParameterReplacement && replacement.parameter == existingParameter) {
-                                        replacementMap[offset] = replacement.copy(newParameter)
-                                    }
-                                }
-
-                                newParameter
+                val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
+                    val parameterName =
+                            if (extractThis) {
+                                JetNameSuggester.suggestNames(parameterType, varNameValidator, null).first()
                             }
-                            else existingParameter
-                        }
-                        else {
-                            val parameterName =
-                                    if (extractThis) {
-                                        JetNameSuggester.suggestNames(parameterType, varNameValidator, null).first()
-                                    }
-                                    else originalDeclaration.getName()!!
+                            else originalDeclaration.getName()!!
 
-                            val mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors)
-                                varNameValidator.validateName(parameterName)!!
-                            else null
+                    val mirrorVarName =
+                            if (descriptorToExtract in modifiedVarDescriptors) varNameValidator.validateName(parameterName)!! else null
 
-                            val argumentText =
-                                    if (hasThisReceiver && extractThis)
-                                        "this@${parameterType.getConstructor().getDeclarationDescriptor()!!.getName().asString()}"
-                                    else
-                                        (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = ${getCodeFragmentText()}")
+                    val argumentText =
+                            if (hasThisReceiver && extractThis)
+                                "this@${parameterType.getConstructor().getDeclarationDescriptor()!!.getName().asString()}"
+                            else
+                                (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = ${getCodeFragmentText()}")
 
-                            val parameter = Parameter(argumentText, parameterName, mirrorVarName, parameterType, extractThis)
+                    MutableParameter(argumentText, parameterName, mirrorVarName, extractThis)
+                }
 
-                            extractedDescriptorToParameter[descriptorToExtract] = parameter
-
-                            parameter
-                        }
+                parameter.addDefaultType(parameterType)
+                parameter.addTypePredicate(parameterTypePredicate)
 
                 replacementMap[refInfo.offsetInBody] =
-                if (hasThisReceiver && extractThis) AddPrefixReplacement(parameter) else RenameReplacement(parameter)
+                        if (hasThisReceiver && extractThis) AddPrefixReplacement(parameter) else RenameReplacement(parameter)
             }
         }
     }
@@ -543,7 +565,9 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val parameters = HashSet<Parameter>()
     val typeParameters = HashSet<TypeParameter>()
     val nonDenotableTypes = HashSet<JetType>()
-    val parameterError = inferParametersInfo(commonParent, localInstructions, bindingContext, replacementMap, parameters, typeParameters, nonDenotableTypes)
+    val parameterError = inferParametersInfo(
+            commonParent, pseudocode, localInstructions, bindingContext, replacementMap, parameters, typeParameters, nonDenotableTypes
+    )
     if (parameterError != null) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(parameterError))
     }
@@ -624,7 +648,7 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
         if (diagnostics.any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
         || (currentDescriptor != null
         && !ErrorUtils.isError(currentDescriptor)
-        && !compareDescriptors(currentDescriptor, resolveResult.descriptor))) {
+        && !comparePossiblyOverridingDescriptors(currentDescriptor, resolveResult.descriptor))) {
             conflicts.putValue(
                     currentRefExpr,
                     JetRefactoringBundle.message(
@@ -647,6 +671,15 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
     }
 
     return ExtractionDescriptorWithConflicts(this, conflicts)
+}
+
+private fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDescriptor?, originalDescriptor: DeclarationDescriptor?): Boolean {
+    if (compareDescriptors(currentDescriptor, originalDescriptor)) return true
+    if (originalDescriptor is CallableDescriptor) {
+        if (!OverridingUtil.traverseOverridenDescriptors(originalDescriptor) { !compareDescriptors(currentDescriptor, it) }) return true
+    }
+
+    return false
 }
 
 fun ExtractionDescriptor.getFunctionText(

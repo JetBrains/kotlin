@@ -1,3 +1,4 @@
+// PARAM_TYPES: V
 open class Data(val x: Int)
 trait DataEx
 

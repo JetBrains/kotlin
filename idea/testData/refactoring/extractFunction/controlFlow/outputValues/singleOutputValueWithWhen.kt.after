@@ -1,3 +1,5 @@
+// PARAM_TYPES: kotlin.Int, Comparable<Int>
+// PARAM_TYPES: kotlin.Int
 // SIBLING:
 fun foo(a: Int): Int {
     var b: Int = 1

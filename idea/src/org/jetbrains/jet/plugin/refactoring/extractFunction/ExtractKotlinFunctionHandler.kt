@@ -59,7 +59,8 @@ public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boole
             editor: Editor,
             file: JetFile,
             elements: List<PsiElement>,
-            targetSibling: PsiElement
+            targetSibling: PsiElement,
+            preprocessor: ((ExtractionDescriptor) -> Unit)? = null
     ) {
         val project = file.getProject()
 
@@ -83,7 +84,7 @@ public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boole
 
                         dialog.getCurrentDescriptor()
                     }
-
+            preprocessor?.invoke(descriptor)
             project.executeWriteCommand(EXTRACT_FUNCTION) { descriptor.generateFunction() }
         }
 

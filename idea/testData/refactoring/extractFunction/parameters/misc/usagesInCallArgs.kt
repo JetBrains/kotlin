@@ -1,3 +1,7 @@
+// PARAM_TYPES: A
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
 // SIBLING:
 public class A() {
     fun bar(a: Int, b: Int): Int {

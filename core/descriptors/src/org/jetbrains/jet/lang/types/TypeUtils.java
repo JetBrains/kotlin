@@ -376,9 +376,13 @@ public class TypeUtils {
     }
 
     private static void collectImmediateSupertypes(@NotNull JetType type, @NotNull Collection<JetType> result) {
+        boolean isNullable = type.isNullable();
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
         for (JetType supertype : type.getConstructor().getSupertypes()) {
-            result.add(substitutor.substitute(supertype, Variance.INVARIANT));
+            JetType substitutedType = substitutor.substitute(supertype, Variance.INVARIANT);
+            if (substitutedType != null) {
+                result.add(makeNullableIfNeeded(substitutedType, isNullable));
+            }
         }
     }
 
