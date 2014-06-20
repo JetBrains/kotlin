@@ -1381,99 +1381,151 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection")
-    @InnerTestClasses({Reflection.InsideLambda.class, Reflection.Lambda.class})
+    @InnerTestClasses({Reflection.Enclosing.class, Reflection.GenericSignature.class, Reflection.Mapping.class})
     public static class Reflection extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInReflection() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
-        @TestMetadata("kt5112.kt")
-        public void testKt5112() throws Exception {
-            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/kt5112.kt");
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing")
+        @InnerTestClasses({Enclosing.InsideLambda.class, Enclosing.Lambda.class})
+        public static class Enclosing extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInEnclosing() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection/enclosing"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda")
+            public static class InsideLambda extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInInsideLambda() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("classInLambda.kt")
+                public void testClassInLambda() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda/classInLambda.kt");
+                }
+                
+                @TestMetadata("objectInLambda.kt")
+                public void testObjectInLambda() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda/objectInLambda.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda")
+            public static class Lambda extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInLambda() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("lambdaInConstructor.kt")
+                public void testLambdaInConstructor() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInConstructor.kt");
+                }
+                
+                @TestMetadata("lambdaInFunction.kt")
+                public void testLambdaInFunction() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInFunction.kt");
+                }
+                
+                @TestMetadata("lambdaInLambda.kt")
+                public void testLambdaInLambda() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLambda.kt");
+                }
+                
+                @TestMetadata("lambdaInLocalClass.kt")
+                public void testLambdaInLocalClass() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLocalClass.kt");
+                }
+                
+                @TestMetadata("lambdaInLocalFunction.kt")
+                public void testLambdaInLocalFunction() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLocalFunction.kt");
+                }
+                
+                @TestMetadata("lambdaInMemberFunction.kt")
+                public void testLambdaInMemberFunction() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInMemberFunction.kt");
+                }
+                
+                @TestMetadata("lambdaInMemberFunctionInLocalClass.kt")
+                public void testLambdaInMemberFunctionInLocalClass() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInMemberFunctionInLocalClass.kt");
+                }
+                
+                @TestMetadata("lambdaInMemberFunctionInNestedClass.kt")
+                public void testLambdaInMemberFunctionInNestedClass() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInMemberFunctionInNestedClass.kt");
+                }
+                
+                @TestMetadata("lambdaInObjectExpression.kt")
+                public void testLambdaInObjectExpression() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInObjectExpression.kt");
+                }
+                
+                @TestMetadata("lambdaInPackage.kt")
+                public void testLambdaInPackage() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInPackage.kt");
+                }
+                
+                @TestMetadata("lambdaInPropertyGetter.kt")
+                public void testLambdaInPropertyGetter() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInPropertyGetter.kt");
+                }
+                
+                @TestMetadata("lambdaInPropertySetter.kt")
+                public void testLambdaInPropertySetter() throws Exception {
+                    doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInPropertySetter.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Enclosing");
+                suite.addTestSuite(Enclosing.class);
+                suite.addTestSuite(InsideLambda.class);
+                suite.addTestSuite(Lambda.class);
+                return suite;
+            }
         }
         
-        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/insideLambda")
-        public static class InsideLambda extends AbstractBlackBoxCodegenTest {
-            public void testAllFilesPresentInInsideLambda() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection/insideLambda"), Pattern.compile("^(.+)\\.kt$"), true);
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/genericSignature")
+        public static class GenericSignature extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInGenericSignature() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection/genericSignature"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
-            @TestMetadata("classInLambda.kt")
-            public void testClassInLambda() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/insideLambda/classInLambda.kt");
-            }
-            
-            @TestMetadata("objectInLambda.kt")
-            public void testObjectInLambda() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/insideLambda/objectInLambda.kt");
+            @TestMetadata("kt5112.kt")
+            public void testKt5112() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/genericSignature/kt5112.kt");
             }
             
         }
         
-        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/lambda")
-        public static class Lambda extends AbstractBlackBoxCodegenTest {
-            public void testAllFilesPresentInLambda() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping")
+        public static class Mapping extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInMapping() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection/mapping"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
-            @TestMetadata("lambdaInConstructor.kt")
-            public void testLambdaInConstructor() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInConstructor.kt");
+            @TestMetadata("extensionProperty.kt")
+            public void testExtensionProperty() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/mapping/extensionProperty.kt");
             }
             
-            @TestMetadata("lambdaInFunction.kt")
-            public void testLambdaInFunction() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInFunction.kt");
+            @TestMetadata("memberProperty.kt")
+            public void testMemberProperty() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/mapping/memberProperty.kt");
             }
             
-            @TestMetadata("lambdaInLambda.kt")
-            public void testLambdaInLambda() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInLambda.kt");
+            @TestMetadata("package.kt")
+            public void testPackage() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/mapping/package.kt");
             }
             
-            @TestMetadata("lambdaInLocalClass.kt")
-            public void testLambdaInLocalClass() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInLocalClass.kt");
-            }
-            
-            @TestMetadata("lambdaInLocalFunction.kt")
-            public void testLambdaInLocalFunction() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInLocalFunction.kt");
-            }
-            
-            @TestMetadata("lambdaInMemberFunction.kt")
-            public void testLambdaInMemberFunction() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInMemberFunction.kt");
-            }
-            
-            @TestMetadata("lambdaInMemberFunctionInLocalClass.kt")
-            public void testLambdaInMemberFunctionInLocalClass() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInMemberFunctionInLocalClass.kt");
-            }
-            
-            @TestMetadata("lambdaInMemberFunctionInNestedClass.kt")
-            public void testLambdaInMemberFunctionInNestedClass() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInMemberFunctionInNestedClass.kt");
-            }
-            
-            @TestMetadata("lambdaInObjectExpression.kt")
-            public void testLambdaInObjectExpression() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInObjectExpression.kt");
-            }
-            
-            @TestMetadata("lambdaInPackage.kt")
-            public void testLambdaInPackage() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInPackage.kt");
-            }
-            
-            @TestMetadata("lambdaInPropertyGetter.kt")
-            public void testLambdaInPropertyGetter() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInPropertyGetter.kt");
-            }
-            
-            @TestMetadata("lambdaInPropertySetter.kt")
-            public void testLambdaInPropertySetter() throws Exception {
-                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/lambda/lambdaInPropertySetter.kt");
+            @TestMetadata("topLevelProperty.kt")
+            public void testTopLevelProperty() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/mapping/topLevelProperty.kt");
             }
             
         }
@@ -1481,8 +1533,9 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Reflection");
             suite.addTestSuite(Reflection.class);
-            suite.addTestSuite(InsideLambda.class);
-            suite.addTestSuite(Lambda.class);
+            suite.addTest(Enclosing.innerSuite());
+            suite.addTestSuite(GenericSignature.class);
+            suite.addTestSuite(Mapping.class);
             return suite;
         }
     }

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package kotlin.reflect.jvm.internal
+package kotlin.jvm.internal
 
-import kotlin.reflect.KPackage
+import java.lang.annotation.*
 
-class KPackageImpl(val jClass: Class<*>) : KPackage
+Retention(RetentionPolicy.RUNTIME)
+public annotation class Intrinsic(val value: String)
