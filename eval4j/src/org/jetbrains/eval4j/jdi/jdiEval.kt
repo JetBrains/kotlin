@@ -138,7 +138,7 @@ class JDIEval(
         val _class = fieldDesc.ownerType.asReferenceType()
         val field = _class.fieldByName(fieldDesc.name)
         if (field == null) {
-            throwEvalException(NoSuchFieldError("Field not found: $fieldDesc"))
+            throwBrokenCodeException(NoSuchFieldError("Field not found: $fieldDesc"))
         }
         return field
     }
@@ -146,7 +146,7 @@ class JDIEval(
     private fun findStaticField(fieldDesc: FieldDescription): jdi.Field {
         val field = findField(fieldDesc)
         if (!field.isStatic()) {
-            throwEvalException(NoSuchFieldError("Field is not static: $fieldDesc"))
+            throwBrokenCodeException(NoSuchFieldError("Field is not static: $fieldDesc"))
         }
         return field
     }
@@ -160,12 +160,12 @@ class JDIEval(
         val field = findStaticField(fieldDesc)
 
         if (field.isFinal()) {
-            throwEvalException(NoSuchFieldError("Can't modify a final field: $field"))
+            throwBrokenCodeException(NoSuchFieldError("Can't modify a final field: $field"))
         }
 
         val _class = field.declaringType()
         if (_class !is jdi.ClassType) {
-            throwEvalException(NoSuchFieldError("Can't a field in a non-class: $field"))
+            throwBrokenCodeException(NoSuchFieldError("Can't a field in a non-class: $field"))
         }
 
         val jdiValue = newValue.asJdiValue(vm, field.`type`().asType())
@@ -181,7 +181,7 @@ class JDIEval(
             else -> _class.methodsByName(methodDesc.name, methodDesc.desc)
         }
         if (method.isEmpty()) {
-            throwEvalException(NoSuchMethodError("Method not found: $methodDesc"))
+            throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
         }
         return method[0]
     }
@@ -189,10 +189,10 @@ class JDIEval(
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
         val method = findMethod(methodDesc)
         if (!method.isStatic()) {
-            throwEvalException(NoSuchMethodError("Method is not static: $methodDesc"))
+            throwBrokenCodeException(NoSuchMethodError("Method is not static: $methodDesc"))
         }
         val _class = method.declaringType()
-        if (_class !is jdi.ClassType) throwEvalException(NoSuchMethodError("Static method is a non-class type: $method"))
+        if (_class !is jdi.ClassType) throwBrokenCodeException(NoSuchMethodError("Static method is a non-class type: $method"))
 
         val args = mapArguments(arguments, method.safeArgumentTypes())
         val result = mayThrow { _class.invokeMethod(thread, method, args, invokePolicy) }
@@ -276,5 +276,8 @@ fun <T> mayThrow(f: () -> T): T {
     }
     catch (e: jdi.InvocationException) {
         throw ThrownFromEvaluatedCodeException(e.exception().asValue())
+    }
+    catch (e: Throwable) {
+        throwBrokenCodeException(e)
     }
 }

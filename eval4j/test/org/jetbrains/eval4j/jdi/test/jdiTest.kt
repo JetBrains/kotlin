@@ -29,6 +29,7 @@ import java.io.File
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.eval4j.test.getTestName
+import com.sun.jdi.ObjectReference
 
 val DEBUGEE_CLASS = javaClass<Debugee>()
 
@@ -133,13 +134,13 @@ fun suite(): TestSuite {
                 }
 
                 try {
-                    if (value is ExceptionThrown) {
-                        val str = value.exception.jdiObj.callToString()
-                        System.err.println("Exception: $str")
-                    }
-
                     if (expected is ValueReturned && value is ValueReturned && value.result is ObjectValue) {
                         assertEquals(expected.result.obj().toString(), value.result.jdiObj.callToString())
+                    }
+                    else if (expected is ExceptionThrown && value is ExceptionThrown) {
+                        val valueObj = value.exception.obj()
+                        val actual = if (valueObj is ObjectReference) valueObj.callToString() else valueObj.toString()
+                        assertEquals(expected.exception.obj().toString(), actual)
                     }
                     else {
                         assertEquals(expected, value)

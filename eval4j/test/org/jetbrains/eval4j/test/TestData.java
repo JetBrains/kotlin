@@ -710,6 +710,27 @@ class TestData extends BaseTestData {
 
     private String invokeSpecialPrivateFun(String s) { return "Base"; }
 
+    static Throwable exception1() {
+        throw new IllegalStateException();
+    }
+
+    static void exception2() {
+        new ExceptionsTest().f1();
+    }
+
+    static void exceptionClassCast() {
+        ExceptionsTest.Derived test = (ExceptionsTest.Derived) new ExceptionsTest.Base();
+    }
+
+    static class ExceptionsTest {
+        void f1() {
+            throw new IllegalStateException();
+        }
+
+        static class Base {}
+        static class Derived extends Base {}
+    }
+
     public TestData() {
     }
 }

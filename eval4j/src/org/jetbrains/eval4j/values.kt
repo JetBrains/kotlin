@@ -130,3 +130,7 @@ fun <T: Any> T?.checkNull(): T {
 fun throwEvalException(e: Throwable): Nothing {
     throw ThrownFromEvalException(e)
 }
+
+fun throwBrokenCodeException(e: Throwable): Nothing {
+    throw BrokenCode(e)
+}

@@ -45,7 +45,13 @@ fun suite(): TestSuite = buildTestSuite {
                             ),
                             REFLECTION_EVAL
                     )
-                    assertEquals(expected, value)
+                    
+                    if (expected is ExceptionThrown && value is ExceptionThrown) {
+                        assertEquals(expected.exception.toString(), value.exception.toString())
+                    }
+                    else {
+                        assertEquals(expected.toString(), value.toString())
+                    }
                 }
             }
 
