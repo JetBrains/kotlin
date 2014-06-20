@@ -1451,6 +1451,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/commasAndWhitespaces.kt");
                 }
                 
+                @TestMetadata("commentsInDeadCode.kt")
+                public void testCommentsInDeadCode() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/commentsInDeadCode.kt");
+                }
+                
                 @TestMetadata("deadCallInInvokeCall.kt")
                 public void testDeadCallInInvokeCall() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCallInInvokeCall.kt");

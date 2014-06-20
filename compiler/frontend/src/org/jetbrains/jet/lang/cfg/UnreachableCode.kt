@@ -26,6 +26,7 @@ import com.intellij.psi.PsiWhiteSpace
 import java.util.ArrayList
 import org.jetbrains.jet.lexer.JetTokens
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.PsiComment
 
 trait UnreachableCode {
     val elements: Set<JetElement>
@@ -70,7 +71,9 @@ class UnreachableCodeImpl(
     }
 
     fun List<PsiElement>.removeReachableElementsWithMeaninglessSiblings(): List<PsiElement> {
-        fun PsiElement.isMeaningless() = this is PsiWhiteSpace || this.getNode()?.getElementType() == JetTokens.COMMA
+        fun PsiElement.isMeaningless() = this is PsiWhiteSpace
+                || this.getNode()?.getElementType() == JetTokens.COMMA
+                || this is PsiComment
 
         val childrenToRemove = HashSet<PsiElement>()
         fun collectSiblingsIfMeaningless(elementIndex: Int, direction: Int) {
