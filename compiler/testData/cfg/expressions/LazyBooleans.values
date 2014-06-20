@@ -17,7 +17,7 @@ fun lazyBooleans(a : Boolean, b : Boolean) : Unit {
     14
 }
 ---------------------
-a                                                                                                             <v2>    NEW()
+a                                                                                                             <v2>    NEW()            
 1                                                                                                             <v3>    NEW()            
 { 1 }                                                                                                         <v3>    COPY             
 2                                                                                                             <v4>    NEW()            
@@ -26,23 +26,25 @@ if (a) { 1 } else { 2 }                                                         
 3                                                                                                             <v6>    NEW()            
 a                                                                                                             <v7>    NEW()            
 b                                                                                                             <v8>    NEW()            
-5                                                                                                             <v9>    NEW()            
-6                                                                                                             <v10>   NEW()            
-if (a && b) 5 else 6                                                                                          <v11>   NEW(<v9>, <v10>) 
-7                                                                                                             <v12>   NEW()            
-a                                                                                                             <v13>   NEW()            
-b                                                                                                             <v14>   NEW()            
-8                                                                                                             <v15>   NEW()            
-9                                                                                                             <v16>   NEW()            
-if (a || b) 8 else 9                                                                                          <v17>   NEW(<v15>, <v16>)
-10                                                                                                            <v18>   NEW()            
-a                                                                                                             <v19>   NEW()            
-11                                                                                                            <v20>   NEW()            
-if (a) 11                                                                                                     <v20>   COPY             
-12                                                                                                            <v21>   NEW()            
-a                                                                                                             <v22>   NEW()            
-13                                                                                                            <v23>   NEW()            
-if (a) else 13                                                                                                <v23>   COPY             
-14                                                                                                            <v24>   NEW()            
-{ if (a) { 1 } else { 2 } 3 if (a && b) 5 else 6 7 if (a || b) 8 else 9 10 if (a) 11 12 if (a) else 13 14 }   <v24>   COPY             
+a && b                                                                                                        <v9>    NEW(<v7>, <v8>)  
+5                                                                                                             <v10>   NEW()            
+6                                                                                                             <v11>   NEW()            
+if (a && b) 5 else 6                                                                                          <v12>   NEW(<v10>, <v11>)
+7                                                                                                             <v13>   NEW()            
+a                                                                                                             <v14>   NEW()            
+b                                                                                                             <v15>   NEW()            
+a || b                                                                                                        <v16>   NEW(<v14>, <v15>)
+8                                                                                                             <v17>   NEW()            
+9                                                                                                             <v18>   NEW()            
+if (a || b) 8 else 9                                                                                          <v19>   NEW(<v17>, <v18>)
+10                                                                                                            <v20>   NEW()            
+a                                                                                                             <v21>   NEW()            
+11                                                                                                            <v22>   NEW()            
+if (a) 11                                                                                                     <v22>   COPY             
+12                                                                                                            <v23>   NEW()            
+a                                                                                                             <v24>   NEW()            
+13                                                                                                            <v25>   NEW()            
+if (a) else 13                                                                                                <v25>   COPY             
+14                                                                                                            <v26>   NEW()            
+{ if (a) { 1 } else { 2 } 3 if (a && b) 5 else 6 7 if (a || b) 8 else 9 10 if (a) 11 12 if (a) else 13 14 }   <v26>   COPY             
 =====================

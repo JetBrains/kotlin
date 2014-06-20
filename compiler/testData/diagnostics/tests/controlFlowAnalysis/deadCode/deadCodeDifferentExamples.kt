@@ -138,7 +138,7 @@ fun tf() : Int {
 }
 
 fun failtest(a : Int) : Int {
-  if (fail() || <!UNREACHABLE_CODE!>true<!>) <!UNREACHABLE_CODE!>{
+  if (fail() <!UNREACHABLE_CODE!>|| true<!>) <!UNREACHABLE_CODE!>{
 
   }<!>
   <!UNREACHABLE_CODE!>return 1<!>

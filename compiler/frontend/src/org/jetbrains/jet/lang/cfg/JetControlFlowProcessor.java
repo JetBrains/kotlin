@@ -335,29 +335,8 @@ public class JetControlFlowProcessor {
 
             JetExpression left = expression.getLeft();
             JetExpression right = expression.getRight();
-            if (operationType == ANDAND) {
-                generateInstructions(left, IN_CONDITION);
-                Label resultLabel = builder.createUnboundLabel();
-                builder.jumpOnFalse(resultLabel, expression, builder.getBoundValue(left));
-                if (right != null) {
-                    generateInstructions(right, IN_CONDITION);
-                }
-                builder.bindLabel(resultLabel);
-                if (!context.inCondition()) {
-                    predefinedOperation(expression, AND);
-                }
-            }
-            else if (operationType == OROR) {
-                generateInstructions(left, IN_CONDITION);
-                Label resultLabel = builder.createUnboundLabel();
-                builder.jumpOnTrue(resultLabel, expression, builder.getBoundValue(left));
-                if (right != null) {
-                    generateInstructions(right, IN_CONDITION);
-                }
-                builder.bindLabel(resultLabel);
-                if (!context.inCondition()) {
-                    predefinedOperation(expression, OR);
-                }
+            if (operationType == ANDAND || operationType == OROR) {
+                generateBooleanOperation(expression);
             }
             else if (operationType == EQ) {
                 visitAssignment(left, getDeferredValue(right), expression);
@@ -402,6 +381,27 @@ public class JetControlFlowProcessor {
             }
         }
 
+        private void generateBooleanOperation(JetBinaryExpression expression) {
+            IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+            JetExpression left = expression.getLeft();
+            JetExpression right = expression.getRight();
+
+            Label resultLabel = builder.createUnboundLabel();
+            generateInstructions(left, IN_CONDITION);
+            if (operationType == ANDAND) {
+                builder.jumpOnFalse(resultLabel, expression, builder.getBoundValue(left));
+            }
+            else {
+                builder.jumpOnTrue(resultLabel, expression, builder.getBoundValue(left));
+            }
+            if (right != null) {
+                generateInstructions(right, IN_CONDITION);
+            }
+            builder.bindLabel(resultLabel);
+            JetControlFlowBuilder.PredefinedOperation operation = operationType == ANDAND ? AND : OR;
+            builder.predefinedOperation(expression, operation, elementsToValues(Arrays.asList(left, right)));
+        }
+
         private Function0<PseudoValue> getValueAsFunction(final PseudoValue value) {
             return new Function0<PseudoValue>() {
                 @Override
@@ -419,12 +419,6 @@ public class JetControlFlowProcessor {
                     return builder.getBoundValue(expression);
                 }
             };
-        }
-
-        private void predefinedOperation(JetBinaryExpression expression, JetControlFlowBuilder.PredefinedOperation operation) {
-            builder.predefinedOperation(
-                    expression, operation, elementsToValues(Arrays.asList(expression.getLeft(), expression.getRight()))
-            );
         }
 
         private void generateBothArgumentsAndMark(JetBinaryExpression expression) {
