@@ -39,11 +39,11 @@ public class TypeCheckingProcedure {
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
     public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypingConstraints typingConstraints) {
-        TypeConstructor constructor = subtype.getConstructor();
-        if (typingConstraints.assertEqualTypeConstructors(constructor, supertype.getConstructor())) {
+        TypeConstructor subtypeConstructor = subtype.getConstructor();
+        if (typingConstraints.assertEqualTypeConstructors(subtypeConstructor, supertype.getConstructor())) {
             return subtype;
         }
-        for (JetType immediateSupertype : constructor.getSupertypes()) {
+        for (JetType immediateSupertype : subtypeConstructor.getSupertypes()) {
             JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype, typingConstraints);
             if (correspondingSupertype != null) {
                 return TypeSubstitutor.create(subtype).safeSubstitute(correspondingSupertype, Variance.INVARIANT);
