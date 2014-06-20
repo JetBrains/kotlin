@@ -56,9 +56,19 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/constantValue/");
     }
     
+    @TestMetadata("filesExchangePackages")
+    public void testFilesExchangePackages() throws Exception {
+        doTest("jps-plugin/testData/incremental/filesExchangePackages/");
+    }
+    
     @TestMetadata("independentClasses")
     public void testIndependentClasses() throws Exception {
         doTest("jps-plugin/testData/incremental/independentClasses/");
+    }
+    
+    @TestMetadata("multiplePackagesModified")
+    public void testMultiplePackagesModified() throws Exception {
+        doTest("jps-plugin/testData/incremental/multiplePackagesModified/");
     }
     
     @TestMetadata("packageFileAdded")
@@ -86,6 +96,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/packageFilesChangedInTurn/");
     }
     
+    @TestMetadata("packageRemoved")
+    public void testPackageRemoved() throws Exception {
+        doTest("jps-plugin/testData/incremental/packageRemoved/");
+    }
+    
     @TestMetadata("returnTypeChanged")
     public void testReturnTypeChanged() throws Exception {
         doTest("jps-plugin/testData/incremental/returnTypeChanged/");
@@ -94,6 +109,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestMetadata("simpleClassDependency")
     public void testSimpleClassDependency() throws Exception {
         doTest("jps-plugin/testData/incremental/simpleClassDependency/");
+    }
+    
+    @TestMetadata("soleFileChangesPackage")
+    public void testSoleFileChangesPackage() throws Exception {
+        doTest("jps-plugin/testData/incremental/soleFileChangesPackage/");
     }
     
     @TestMetadata("topLevelFunctionSameSignature")
