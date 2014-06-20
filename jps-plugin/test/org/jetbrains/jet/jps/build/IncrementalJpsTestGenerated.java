@@ -41,6 +41,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("jps-plugin/testData/incremental"), Pattern.compile("^([^\\.]+)$"), false);
     }
     
+    @TestMetadata("classRecreated")
+    public void testClassRecreated() throws Exception {
+        doTest("jps-plugin/testData/incremental/classRecreated/");
+    }
+    
     @TestMetadata("classSignatureChanged")
     public void testClassSignatureChanged() throws Exception {
         doTest("jps-plugin/testData/incremental/classSignatureChanged/");
@@ -99,6 +104,16 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestMetadata("packageFilesChangedInTurn")
     public void testPackageFilesChangedInTurn() throws Exception {
         doTest("jps-plugin/testData/incremental/packageFilesChangedInTurn/");
+    }
+    
+    @TestMetadata("packageRecreated")
+    public void testPackageRecreated() throws Exception {
+        doTest("jps-plugin/testData/incremental/packageRecreated/");
+    }
+    
+    @TestMetadata("packageRecreatedAfterRenaming")
+    public void testPackageRecreatedAfterRenaming() throws Exception {
+        doTest("jps-plugin/testData/incremental/packageRecreatedAfterRenaming/");
     }
     
     @TestMetadata("packageRemoved")
