@@ -36,16 +36,25 @@ fun suite(): TestSuite = buildTestSuite {
     object : TestCase(getTestName(methodNode.name)) {
 
             override fun runTest() {
-                val value = interpreterLoop(
-                        methodNode,
-                        initFrame(
-                                ownerClass.getInternalName(),
-                                methodNode
-                        ),
-                        REFLECTION_EVAL
-                )
+                if (!isIgnored(methodNode)) {
+                    val value = interpreterLoop(
+                            methodNode,
+                            initFrame(
+                                    ownerClass.getInternalName(),
+                                    methodNode
+                            ),
+                            REFLECTION_EVAL
+                    )
+                    assertEquals(expected, value)
+                }
+            }
 
-                assertEquals(expected, value)
+            private fun isIgnored(methodNode: MethodNode): Boolean {
+                return methodNode.visibleAnnotations?.any {
+                    val annotationDesc = it.desc
+                    annotationDesc != null &&
+                        Type.getType(annotationDesc) == Type.getType(javaClass<IgnoreInReflectionTests>())
+                } ?: false
             }
         }
 }

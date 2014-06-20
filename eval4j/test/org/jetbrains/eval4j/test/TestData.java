@@ -697,10 +697,12 @@ class TestData extends BaseTestData {
         return "Derived";
     }
 
+    @IgnoreInReflectionTests
     String testInvokeSpecialForSuperCall() {
         return super.superCall();
     }
 
+    @IgnoreInReflectionTests
     static String testInvokeSpecial() {
         TestData td = new TestData();
         return td.invokeSpecialPrivateFun("");
