@@ -1,0 +1,11 @@
+Cleaning output files:
+out/production/module/test/TestPackage-a-*.class
+out/production/module/test/TestPackage.class
+End of files
+Compiling files:
+End of files
+
+
+Compiling files:
+src/b.kt
+End of files

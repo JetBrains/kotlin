@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.jps.build;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.StreamUtil;
@@ -23,6 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
@@ -222,11 +224,18 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         IncrementalCacheImpl cache = new IncrementalCacheImpl(KotlinBuilderModuleScriptGenerator.getIncrementalCacheDir(context));
 
         try {
+            List<Pair<String, File>> moduleIdsAndFiles = Lists.newArrayList();
+            Map<String, File> outDirectories = new HashMap<String, File>();
+
             for (ModuleBuildTarget target : chunk.getTargets()) {
+                String targetId = target.getId();
+                outDirectories.put(targetId, target.getOutputDir());
+
                 for (String file : dirtyFilesHolder.getRemovedFiles(target)) {
-                    cache.clearCacheForRemovedFile(target.getId(), new File(file));
+                    moduleIdsAndFiles.add(new Pair<String, File>(targetId, new File(file)));
                 }
             }
+            cache.clearCacheForRemovedFiles(moduleIdsAndFiles, outDirectories);
 
             boolean significantChanges = false;
 
