@@ -88,10 +88,10 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         val haveFilesWithNumbers = testDataDir.listFiles { it.getName().matches(".+\\.(new|delete)\\.\\d+$") }?.isNotEmpty() ?: false
 
         if (haveFilesWithoutNumbers && haveFilesWithNumbers) {
-            fail("Bad test data format: no files ending with \".new\" or \".delete\" found")
+            fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
         }
         if (!haveFilesWithoutNumbers && !haveFilesWithNumbers) {
-            fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
+            fail("Bad test data format: no files ending with \".new\" or \".delete\" found")
         }
 
         if (haveFilesWithoutNumbers) {
