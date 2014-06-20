@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache
 import java.util.HashMap
+import com.google.common.collect.Maps
 
 public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     class object {
@@ -203,7 +204,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
         override fun read(`in`: DataInput): Map<String, Any>? {
             val size = `in`.readInt()
-            val map = HashMap<String, Any>(size)
+            val map = Maps.newHashMapWithExpectedSize<String, Any>(size)!!
 
             for (i in size.indices) {
                 val name = IOUtil.readString(`in`)!!
