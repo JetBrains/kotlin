@@ -66,7 +66,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return builder.result
     }
 
-    private fun convertTopElement(element: PsiElement?): Element? = when(element) {
+    private fun convertTopElement(element: PsiElement?): Element? = when (element) {
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
         is PsiMethod -> convertMethod(element, HashSet())
@@ -125,21 +125,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val primaryConstructor = convertedMembers.values().filterIsInstance(javaClass<PrimaryConstructor>()).firstOrNull()
         val secondaryConstructors = convertedMembers.values().filterIsInstance(javaClass<SecondaryConstructor>())
 
-        // do not convert private static methods into class object if possible
-        val useClassObject = if (psiClass.isEnum()) {
-            false
-        }
-        else {
-            val members = convertedMembers.keySet().filter { it !is PsiMethod || !it.isConstructor() }
-            val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
-            val nestedClasses = members.filterIsInstance(javaClass<PsiClass>()).filter { it.hasModifierProperty(PsiModifier.STATIC) }
-            if (classObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
-                nestedClasses.any { nestedClass -> classObjectMembers.any { findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
-            }
-            else {
-                true
-            }
-        }
+        val useClassObject = shouldGenerateClassObject(psiClass, convertedMembers)
 
         val normalMembers = ArrayList<Member>()
         val classObjectMembers = ArrayList<Member>()
@@ -158,7 +144,21 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return ClassBody(primaryConstructor, secondaryConstructors, normalMembers, classObjectMembers, lBrace, rBrace)
     }
 
-    private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>): Member = when(member) {
+    // do not convert private static methods into class object if possible
+    private fun shouldGenerateClassObject(psiClass: PsiClass, convertedMembers: Map<PsiMember, Member>): Boolean {
+        if (psiClass.isEnum()) return false
+        val members = convertedMembers.keySet().filter { it !is PsiMethod || !it.isConstructor() }
+        val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
+        val nestedClasses = members.filterIsInstance(javaClass<PsiClass>()).filter { it.hasModifierProperty(PsiModifier.STATIC) }
+        if (classObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
+            return nestedClasses.any { nestedClass -> classObjectMembers.any { findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
+        }
+        else {
+            return true
+        }
+    }
+
+    private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>): Member = when (member) {
         is PsiMethod -> convertMethod(member, membersToRemove)
         is PsiField -> convertField(member)
         is PsiClass -> convertClass(member)
@@ -351,7 +351,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             it.getMethod().getContainingClass()?.getQualifiedName() == JAVA_LANG_OBJECT
         }
         if (overridesMethodFromObject) {
-            when(method.getName()) {
+            when (method.getName()) {
                 "equals", "hashCode", "toString" -> return true // these methods from java.lang.Object exist in kotlin.Any
 
                 else -> {
@@ -435,7 +435,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
         if (refs.any { PsiUtil.isAccessedForWriting(it) }) return null
 
-        for(ref in refs) {
+        for (ref in refs) {
             val assignment = ref.getParent() as? PsiAssignmentExpression ?: continue
             if (assignment.getOperationSign().getTokenType() != JavaTokenType.EQ) continue
             val assignee = assignment.getLExpression() as? PsiReferenceExpression ?: continue
@@ -459,7 +459,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return null
     }
 
-    fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = {true}): Block {
+    fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = { true }): Block {
         if (block == null) return Block.Empty
 
         val lBrace = LBrace().assignPrototype(block.getLBrace())
@@ -570,7 +570,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             }
             else {
                 var child: PsiElement? = modifierList
-                while(true) {
+                while (true) {
                     child = child!!.getNextSibling()
                     if (child == null || child!!.getTextLength() != 0) break
                 }
@@ -608,7 +608,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     }
 
     private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<Expression> {
-        return when(value) {
+        return when (value) {
             is PsiExpression -> listOf(convertExpression(value as? PsiExpression, expectedType))
 
             is PsiArrayInitializerMemberValue -> {
