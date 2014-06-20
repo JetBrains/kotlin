@@ -127,11 +127,21 @@ class JDIEval(
     }
 
     override fun getArrayElement(array: Value, index: Value): Value {
-        return array.array().getValue(index.int).asValue()
+        try {
+            return array.array().getValue(index.int).asValue()
+        }
+        catch (e: IndexOutOfBoundsException) {
+            throwEvalException(ArrayIndexOutOfBoundsException(e.getMessage()))
+        }
     }
 
     override fun setArrayElement(array: Value, index: Value, newValue: Value) {
-        array.array().setValue(index.int, newValue.asJdiValue(vm, array.asmType.arrayElementType))
+        try {
+            return array.array().setValue(index.int, newValue.asJdiValue(vm, array.asmType.arrayElementType))
+        }
+        catch (e: IndexOutOfBoundsException) {
+            throwEvalException(ArrayIndexOutOfBoundsException(e.getMessage()))
+        }
     }
 
     private fun findField(fieldDesc: FieldDescription): jdi.Field {
@@ -276,8 +286,5 @@ fun <T> mayThrow(f: () -> T): T {
     }
     catch (e: jdi.InvocationException) {
         throw ThrownFromEvaluatedCodeException(e.exception().asValue())
-    }
-    catch (e: Throwable) {
-        throwBrokenCodeException(e)
     }
 }

@@ -731,6 +731,54 @@ class TestData extends BaseTestData {
         static class Derived extends Base {}
     }
 
+    static boolean exceptionIndexOutOfBounds() {
+        int[] ints = new int[1];
+        try { int i = ints[2];           return false; } catch (ArrayIndexOutOfBoundsException e) { }
+        try { ints[2] = 1;               return false; } catch (ArrayIndexOutOfBoundsException e) { }
+
+        short[] shorts = new short[1];
+        try { short s = shorts[2];       return false; } catch (ArrayIndexOutOfBoundsException e) { }
+        try { shorts[2] = 1;             return false; } catch (ArrayIndexOutOfBoundsException e) { }
+
+        char[] chars = new char[1];
+        try { char c = chars[2];         return false; } catch (ArrayIndexOutOfBoundsException e) { }
+        try { chars[2] = 1;              return false; } catch (ArrayIndexOutOfBoundsException e) { }
+
+        byte[] bytes = new byte[1];
+        try { byte b = bytes[2];         return false; } catch (ArrayIndexOutOfBoundsException e) { }
+        try { bytes[2] = 1;              return false; } catch (ArrayIndexOutOfBoundsException e) { }
+
+        long[] longs = new long[1];
+        try { long l = longs[2];         return false; } catch (ArrayIndexOutOfBoundsException e) { }
+        try { longs[2] = 1;              return false; } catch (ArrayIndexOutOfBoundsException e) { }
+
+        double[] doubles = new double[1];
+        try { double d = doubles[2];     return false; } catch (ArrayIndexOutOfBoundsException e) { }
+        try { doubles[2] = 1.0;          return false; } catch (ArrayIndexOutOfBoundsException e) { }
+
+        float[] floats = new float[1];
+        try { float f = floats[2];       return false; } catch (ArrayIndexOutOfBoundsException e) { }
+        try { floats[2] = 1;             return false; } catch (ArrayIndexOutOfBoundsException e) { }
+
+        boolean[] booleans = new boolean[1];
+        try { boolean bool = booleans[2];return false; } catch (ArrayIndexOutOfBoundsException e) { }
+        try { booleans[2] = true;        return false; } catch (ArrayIndexOutOfBoundsException e) { }
+
+        Object[] objects = new Object[1];
+        try { Object o = objects[2];     return false; } catch (ArrayIndexOutOfBoundsException e) { }
+        try { objects[2] = 1;            return false; } catch (ArrayIndexOutOfBoundsException e) { }
+
+        return true;
+    }
+
+    static boolean indexOutOfBoundsForString() {
+        String str = "";
+        try { str.charAt(10);    return false; } catch (IndexOutOfBoundsException e) { }
+        try { str.substring(10); return false; } catch (IndexOutOfBoundsException e) { }
+
+        return true;
+    }
+
     public TestData() {
     }
 }
