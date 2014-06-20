@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-class Initializer(val block: Block, modifiers: Set<Modifier>) : Member(Annotations.Empty, modifiers) {
+class Initializer(val block: Block, modifiers: Modifiers) : Member(Annotations.Empty, modifiers) {
     override fun generateCode(builder: CodeBuilder) {
         builder.append(block)
     }

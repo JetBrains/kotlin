@@ -168,7 +168,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
     private fun convertClass(psiClass: PsiClass): Class {
         val annotations = convertAnnotations(psiClass)
-        val modifiers = convertModifiers(psiClass)
+        var modifiers = convertModifiers(psiClass)
         val typeParameters = convertTypeParameterList(psiClass.getTypeParameterList())
         val implementsTypes = convertToNotNullableTypes(psiClass.getImplementsListTypes())
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
@@ -198,11 +198,11 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 }
 
                 if (settings.openByDefault && !psiClass.hasModifierProperty(PsiModifier.FINAL)) {
-                    modifiers.add(Modifier.OPEN)
+                    modifiers = modifiers.with(Modifier.OPEN)
                 }
 
                 if (psiClass.getContainingClass() != null && !psiClass.hasModifierProperty(PsiModifier.STATIC)) {
-                    modifiers.add(Modifier.INNER)
+                    modifiers = modifiers.with(Modifier.INNER)
                 }
 
                 Class(name, annotations, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, classBody)
@@ -247,7 +247,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             val initializer = MethodCallExpression.buildNotNull(null, className.name, finalOrWithEmptyInitializerFields.map { initializers[it]!! })
             val localVar = LocalVariable(SecondaryConstructor.tempValIdentifier,
                                          Annotations.Empty,
-                                         setOf(),
+                                         Modifiers.Empty,
                                          { ClassType(className, listOf(), Nullability.NotNull, settings) },
                                          initializer,
                                          true,
@@ -259,10 +259,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
         //TODO: comments?
         val parameters = finalOrWithEmptyInitializerFields.map { field ->
             val varValModifier = if (field.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
-            Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { ACCESS_MODIFIERS.contains(it) })
+            Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS })
         }
 
-        val primaryConstructor = PrimaryConstructor(this, Annotations.Empty, setOf(Modifier.PRIVATE), ParameterList(parameters), Block.Empty)
+        val primaryConstructor = PrimaryConstructor(this, Annotations.Empty, Modifiers(listOf(Modifier.PRIVATE)), ParameterList(parameters), Block.Empty)
         val updatedMembers = classBody.normalMembers.filter { !finalOrWithEmptyInitializerFields.contains(it) }
         return ClassBody(primaryConstructor, classBody.secondaryConstructors, updatedMembers, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
     }
@@ -302,7 +302,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val returnType = typeConverter.convertMethodReturnType(method)
 
         val annotations = convertAnnotations(method) + convertThrows(method)
-        val modifiers = convertModifiers(method)
+        var modifiers = convertModifiers(method)
 
         if (method.isConstructor()) {
             if (method.isPrimaryConstructor()) {
@@ -316,7 +316,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         else {
             val isOverride = isOverride(method)
             if (isOverride) {
-                modifiers.add(Modifier.OVERRIDE)
+                modifiers = modifiers.with(Modifier.OVERRIDE)
             }
 
             val containingClass = method.getContainingClass()
@@ -325,7 +325,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 val isEffectivelyFinal = method.hasModifierProperty(PsiModifier.FINAL) ||
                         containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum())
                 if (!isEffectivelyFinal && !modifiers.contains(Modifier.ABSTRACT) && !modifiers.contains(Modifier.PRIVATE)) {
-                    modifiers.add(Modifier.OPEN)
+                    modifiers = modifiers.with(Modifier.OPEN)
                 }
             }
 
@@ -342,7 +342,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                                                        ClassType(Identifier("Any"), listOf(), Nullability.Nullable, settings),
                                                        Parameter.VarValModifier.None,
                                                        params.parameters.single().annotations,
-                                                       listOf())
+                                                       Modifiers.Empty)
                     params = ParameterList(listOf(correctedParameter))
                 }
             }
@@ -390,7 +390,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
     private fun convertPrimaryConstructor(constructor: PsiMethod,
                                           annotations: Annotations,
-                                          modifiers: Set<Modifier>,
+                                          modifiers: Modifiers,
                                           membersToRemove: MutableSet<PsiMember>): PrimaryConstructor {
         val params = constructor.getParameterList().getParameters()
         val parameterToField = HashMap<PsiParameter, Pair<PsiField, Type>>()
@@ -439,7 +439,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                           `type`,
                           if (field.hasModifierProperty(PsiModifier.FINAL)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
                           convertAnnotations(parameter) + convertAnnotations(field),
-                          convertModifiers(field).filter { ACCESS_MODIFIERS.contains(it) }).assignPrototypes(listOf(parameter, field), inheritBlankLinesBefore = false)
+                          convertModifiers(field).filter { it in ACCESS_MODIFIERS }).assignPrototypes(listOf(parameter, field), inheritBlankLinesBefore = false)
             }
         })
         return PrimaryConstructor(this, annotations, modifiers, parameterList, block).assignPrototype(constructor)
@@ -521,9 +521,9 @@ public class Converter private(val project: Project, val settings: ConverterSett
             = ParameterList(parameterList.getParameters().map { convertParameter(it) }).assignPrototype(parameterList)
 
     fun convertParameter(parameter: PsiParameter,
-                                nullability: Nullability = Nullability.Default,
-                                varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
-                                modifiers: List<Modifier> = listOf()): Parameter {
+                         nullability: Nullability = Nullability.Default,
+                         varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
+                         modifiers: Modifiers = Modifiers.Empty): Parameter {
         var `type` = typeConverter.convertVariableType(parameter)
         when (nullability) {
             Nullability.NotNull -> `type` = `type`.toNotNullType()
@@ -566,8 +566,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return Identifier(identifier.getText()!!).assignPrototype(identifier)
     }
 
-    fun convertModifiers(owner: PsiModifierListOwner): MutableSet<Modifier>
-            = HashSet(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
+    fun convertModifiers(owner: PsiModifierListOwner): Modifiers
+            = Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second }).assignPrototype(owner.getModifierList(), false)
 
     private val MODIFIERS_MAP = listOf(
             PsiModifier.ABSTRACT to Modifier.ABSTRACT,

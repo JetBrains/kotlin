@@ -17,12 +17,11 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
-import java.util.ArrayList
 
 open class Field(
         val identifier: Identifier,
         annotations: Annotations,
-        modifiers: Set<Modifier>,
+        modifiers: Modifiers,
         val `type`: Type,
         val initializer: Element,
         val isVal: Boolean,
@@ -31,7 +30,7 @@ open class Field(
 
     override fun generateCode(builder: CodeBuilder) {
         builder.append(annotations)
-                .appendModifiers()
+                .appendWithSpaceAfter(modifiers)
                 .append(if (isVal) "val " else "var ")
                 .append(identifier)
                 .append(" : ")
@@ -44,16 +43,5 @@ open class Field(
         if (!initializerToUse.isEmpty) {
             builder append "=" append initializerToUse
         }
-    }
-
-    private fun CodeBuilder.appendModifiers(): CodeBuilder {
-        val modifierList = ArrayList<Modifier>()
-        if (modifiers.contains(Modifier.ABSTRACT)) {
-            modifierList.add(Modifier.ABSTRACT)
-        }
-
-        modifiers.accessModifier()?.let { modifierList.add(it) }
-
-        return append(modifierList)
     }
 }

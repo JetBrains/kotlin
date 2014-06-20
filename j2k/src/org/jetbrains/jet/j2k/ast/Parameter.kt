@@ -22,7 +22,7 @@ class Parameter(val identifier: Identifier,
                 val `type`: Type,
                 val varVal: Parameter.VarValModifier,
                 val annotations: Annotations,
-                val modifiers: List<Modifier>) : Element() {
+                val modifiers: Modifiers) : Element() {
     public enum class VarValModifier {
         None
         Val
@@ -30,7 +30,7 @@ class Parameter(val identifier: Identifier,
     }
 
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(annotations).append(modifiers)
+        builder.append(annotations).appendWithSpaceAfter(modifiers)
 
         if (`type` is VarArgType) {
             assert(varVal == VarValModifier.None)

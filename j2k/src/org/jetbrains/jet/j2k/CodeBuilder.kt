@@ -21,6 +21,7 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.Element
+import org.jetbrains.jet.j2k.ast.Modifiers
 import kotlin.platform.platformName
 
 fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
@@ -103,6 +104,17 @@ class CodeBuilder(private val topElement: PsiElement?) {
         }
 
         element.generateCode(this)
+
+        // scan for all comments inside which are not yet used in the text and put them here to not loose any comment from code
+        for ((prototype, _) in element.prototypes) {
+            prototype.accept(object : JavaRecursiveElementVisitor(){
+                override fun visitComment(comment: PsiComment) {
+                    if (commentsAndSpacesUsed.add(comment)) {
+                        append(comment.getText()!!, comment.isEndOfLineComment())
+                    }
+                }
+            })
+        }
 
         postfixElements.forEach { append(it.getText()!!, it.isEndOfLineComment()) }
 

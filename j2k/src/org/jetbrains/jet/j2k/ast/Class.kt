@@ -16,13 +16,12 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
 import org.jetbrains.jet.j2k.*
 
 open class Class(
         val name: Identifier,
         annotations: Annotations,
-        modifiers: Set<Modifier>,
+        modifiers: Modifiers,
         val typeParameterList: TypeParameterList,
         val extendsTypes: List<Type>,
         val baseClassParams: List<Expression>,
@@ -32,7 +31,11 @@ open class Class(
 
     override fun generateCode(builder: CodeBuilder) {
         builder.append(annotations)
-        appendModifiers(builder).append(keyword).append(" ").append(name).append(typeParameterList)
+                .appendWithSpaceAfter(presentationModifiers())
+                .append(keyword)
+                .append(" ")
+                .append(name)
+                .append(typeParameterList)
         appendPrimaryConstructorSignature(builder)
         appendBaseTypes(builder)
         typeParameterList.appendWhere(builder)
@@ -61,22 +64,6 @@ open class Class(
         return extendsTypes.map { { builder.append(it) } }
     }
 
-    protected open fun appendModifiers(builder: CodeBuilder): CodeBuilder {
-        val modifierList = ArrayList<Modifier>()
-
-        modifiers.accessModifier()?.let { modifierList.add(it) }
-
-        if (modifiers.contains(Modifier.ABSTRACT)) {
-            modifierList.add(Modifier.ABSTRACT)
-        }
-        else if (modifiers.contains(Modifier.OPEN)) {
-            modifierList.add(Modifier.OPEN)
-        }
-
-        if (modifiers.contains(Modifier.INNER)) {
-            modifierList.add(Modifier.INNER)
-        }
-
-        return builder.append(modifierList)
-    }
+    protected open fun presentationModifiers(): Modifiers
+            = if (modifiers.contains(Modifier.ABSTRACT)) modifiers.without(Modifier.OPEN) else modifiers
 }

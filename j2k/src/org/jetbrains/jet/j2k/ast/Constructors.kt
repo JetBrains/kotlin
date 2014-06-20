@@ -16,29 +16,30 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.HashSet
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.*
 
 abstract class Constructor(
         converter: Converter,
         annotations: Annotations,
-        modifiers: Set<Modifier>,
+        modifiers: Modifiers,
         parameterList: ParameterList,
         block: Block
 ) : Function(converter, Identifier.Empty, annotations, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
 
 class PrimaryConstructor(converter: Converter,
                          annotations: Annotations,
-                         modifiers: Set<Modifier>,
+                         modifiers: Modifiers,
                          parameterList: ParameterList,
                          block: Block)
   : Constructor(converter, annotations, modifiers, parameterList, block) {
 
     public fun appendSignature(builder: CodeBuilder): CodeBuilder {
-        val accessModifier = modifiers.accessModifier()
-        val modifiersString = if (accessModifier != null && accessModifier != Modifier.PUBLIC) " " + accessModifier.toKotlin() else ""
-        return builder.append(modifiersString).append("(").append(parameterList).append(")")
+        val accessModifier = modifiers.filter { it in ACCESS_MODIFIERS && it != Modifier.PUBLIC }
+        if (!accessModifier.isEmpty) {
+            builder append " " append accessModifier
+        }
+        return builder append "(" append parameterList append ")"
     }
 
     public fun appendBody(builder: CodeBuilder): CodeBuilder = builder.append(block!!)
@@ -46,13 +47,12 @@ class PrimaryConstructor(converter: Converter,
 
 class SecondaryConstructor(converter: Converter,
                          annotations: Annotations,
-                         modifiers: Set<Modifier>,
+                         modifiers: Modifiers,
                          parameterList: ParameterList,
                          block: Block)
   : Constructor(converter, annotations, modifiers, parameterList, block) {
 
     public fun toFactoryFunction(containingClass: Class?): Function {
-        val modifiers = HashSet(modifiers)
         val statements = ArrayList(block?.statements ?: listOf())
         statements.add(ReturnStatement(tempValIdentifier))
         val block = Block(statements, block?.lBrace ?: LBrace(), block?.rBrace ?: RBrace())

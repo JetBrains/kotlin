@@ -16,12 +16,11 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
 import org.jetbrains.jet.j2k.CodeBuilder
 
 class Trait(name: Identifier,
             annotations: Annotations,
-            modifiers: Set<Modifier>,
+            modifiers: Modifiers,
             typeParameterList: TypeParameterList,
             extendsTypes: List<Type>,
             baseClassParams: List<Expression>,
@@ -34,10 +33,6 @@ class Trait(name: Identifier,
 
     override fun appendPrimaryConstructorSignature(builder: CodeBuilder) { }
 
-    override fun appendModifiers(builder: CodeBuilder): CodeBuilder {
-        val modifierList = ArrayList<Modifier>()
-        modifiers.accessModifier()?.let { modifierList.add(it) }
-        return builder.append(modifierList)
-    }
-
+    override fun presentationModifiers(): Modifiers
+            = modifiers.filter { it in ACCESS_MODIFIERS }
 }

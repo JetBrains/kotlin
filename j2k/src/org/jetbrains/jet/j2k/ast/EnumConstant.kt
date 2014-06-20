@@ -21,7 +21,7 @@ import org.jetbrains.jet.j2k.*
 class EnumConstant(
         identifier: Identifier,
         annotations: Annotations,
-        modifiers: Set<Modifier>,
+        modifiers: Modifiers,
         `type`: Type,
         params: Element
 ) : Field(identifier, annotations, modifiers, `type`.toNotNullType(), params, true, false) {

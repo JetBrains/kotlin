@@ -19,8 +19,8 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.*
 import com.intellij.psi.PsiElement
 
-fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?): TElement {
-    assignPrototypeInfos(if (prototype != null) listOf(PrototypeInfo(prototype, true)) else listOf())
+fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?, inheritBlankLinesBefore: Boolean = true): TElement {
+    assignPrototypeInfos(if (prototype != null) listOf(PrototypeInfo(prototype, inheritBlankLinesBefore)) else listOf())
     return this
 }
 

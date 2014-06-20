@@ -21,7 +21,7 @@ import org.jetbrains.jet.j2k.*
 class Enum(
         name: Identifier,
         annotations: Annotations,
-        modifiers: Set<Modifier>,
+        modifiers: Modifiers,
         typeParameterList: TypeParameterList,
         extendsTypes: List<Type>,
         baseClassParams: List<Expression>,
@@ -35,8 +35,7 @@ class Enum(
     }
 
     override fun generateCode(builder: CodeBuilder) {
-        builder append annotations
-        appendModifiers(builder) append "enum class " append name
+        builder append annotations appendWithSpaceAfter presentationModifiers() append "enum class " append name
         appendPrimaryConstructorSignature(builder)
         builder append typeParameterList
         appendBaseTypes(builder)

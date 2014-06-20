@@ -23,7 +23,7 @@ import org.jetbrains.jet.j2k.append
 class LocalVariable(
         private val identifier: Identifier,
         private val annotations: Annotations,
-        private val modifiers: Set<Modifier>,
+        private val modifiers: Modifiers,
         private val typeCalculator: () -> Type /* we use lazy type calculation for better performance */,
         private val initializer: Expression,
         private val isVal: Boolean,

@@ -16,14 +16,13 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
 import org.jetbrains.jet.j2k.*
 
 open class Function(
         val converter: Converter,
         val name: Identifier,
         annotations: Annotations,
-        modifiers: Set<Modifier>,
+        modifiers: Modifiers,
         val `type`: Type,
         val typeParameterList: TypeParameterList,
         val parameterList: ParameterList,
@@ -31,33 +30,23 @@ open class Function(
         val isInTrait: Boolean
 ) : Member(annotations, modifiers) {
 
-    private fun CodeBuilder.appendModifiers(): CodeBuilder {
-        val resultingModifiers = ArrayList<Modifier>()
-        val isOverride = modifiers.contains(Modifier.OVERRIDE)
-        if (isOverride) {
-            resultingModifiers.add(Modifier.OVERRIDE)
+    private fun presentationModifiers(): Modifiers {
+        var modifiers = this.modifiers
+        if (isInTrait) {
+            modifiers = modifiers.without(Modifier.ABSTRACT)
         }
 
-        val accessModifier = modifiers.accessModifier()
-        if (accessModifier != null && !isOverride) {
-            resultingModifiers.add(accessModifier)
+        if (modifiers.contains(Modifier.OVERRIDE)) {
+            modifiers = modifiers.filter { it != Modifier.OPEN && it !in ACCESS_MODIFIERS }
         }
 
-        if (modifiers.contains(Modifier.ABSTRACT) && !isInTrait) {
-            resultingModifiers.add(Modifier.ABSTRACT)
-        }
-
-        if (modifiers.contains(Modifier.OPEN) && !isOverride) {
-            resultingModifiers.add(Modifier.OPEN)
-        }
-
-        return append(resultingModifiers)
+        return modifiers
     }
 
     override fun generateCode(builder: CodeBuilder) {
         builder.append(annotations)
-                .appendModifiers()
-                .append(" fun ")
+                .appendWithSpaceAfter(presentationModifiers())
+                .append("fun ")
                 .appendWithSuffix(typeParameterList, " ")
                 .append(name)
                 .append("(")

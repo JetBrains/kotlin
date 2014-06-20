@@ -24,6 +24,7 @@ import java.util.HashMap
 import java.util.HashSet
 import org.jetbrains.jet.j2k.ast.Import
 import org.jetbrains.jet.j2k.ast.ImportList
+import org.jetbrains.jet.j2k.ast.assignPrototype
 
 class TypeConverter(val settings: ConverterSettings, val conversionScope: ConversionScope) {
     private val nullabilityCache = HashMap<PsiElement, Nullability>()
@@ -56,7 +57,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
             = types.map { convertType(it) }
 
     public fun convertVariableType(variable: PsiVariable): Type
-            = convertType(variable.getType(), variableNullability(variable))
+            = convertType(variable.getType(), variableNullability(variable)).assignPrototype(variable.getTypeElement())
 
     public fun variableNullability(variable: PsiVariable): Nullability {
         val cached = nullabilityCache[variable]
@@ -119,7 +120,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
     }
 
     public fun convertMethodReturnType(method: PsiMethod): Type
-            = convertType(method.getReturnType(), methodNullability(method))
+            = convertType(method.getReturnType(), methodNullability(method)).assignPrototype(method.getReturnTypeElement())
 
     public fun methodNullability(method: PsiMethod): Nullability {
         val cached = nullabilityCache[method]

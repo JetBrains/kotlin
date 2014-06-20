@@ -742,6 +742,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/comments/comments.java");
         }
         
+        @TestMetadata("comments2.java")
+        public void testComments2() throws Exception {
+            doTest("j2k/tests/testData/ast/comments/comments2.java");
+        }
+        
         @TestMetadata("fieldWithEndOfLineComment.java")
         public void testFieldWithEndOfLineComment() throws Exception {
             doTest("j2k/tests/testData/ast/comments/fieldWithEndOfLineComment.java");
