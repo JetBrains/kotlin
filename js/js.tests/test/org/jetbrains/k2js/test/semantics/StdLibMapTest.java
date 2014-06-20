@@ -18,10 +18,10 @@ package org.jetbrains.k2js.test.semantics;
 
 import junit.framework.Test;
 
-//NOTE: well, it has tests
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class BitwiseOperationsTest extends JsUnitTestBase {
+public final class StdLibMapTest extends JsUnitTestBase {
     public static Test suite() throws Exception {
-        return createTestSuiteForFile("libraries/stdlib/test/language/BitwiseOperationsTest.kt");
+        return createTestSuiteForFile("libraries/stdlib/test/collections/MapTest.kt");
     }
 }
+
