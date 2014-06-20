@@ -75,7 +75,7 @@ public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestC
             val expectedTypes =
                     InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_TYPES: ")
                             .mapTo(expectedParameterTypes) { "[$it]" }
-                            .makeString()
+                            .joinToString()
 
             val renderer = DescriptorRenderer.DEBUG_TEXT
 
@@ -83,8 +83,8 @@ public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestC
             selectElements(editor, file) { (elements, previousSibling) ->
                 ExtractKotlinFunctionHandler().doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling) {
                     val actualTypes = (ContainerUtil.createMaybeSingletonList(it.receiverParameter) + it.parameters).map {
-                        it.parameterTypeCandidates.map { renderer.renderType(it) }. makeString(", ", "[", "]")
-                    }.makeString()
+                        it.parameterTypeCandidates.map { renderer.renderType(it) }. joinToString(", ", "[", "]")
+                    }.joinToString()
 
                     assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
                 }
@@ -108,7 +108,7 @@ public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestC
             JetTestUtils.assertEqualsToFile(afterFile, file.getText()!!)
         }
         catch(e: Exception) {
-            val message = if (e is ConflictsInTestsException) e.getMessages().sort().makeString(" ") else e.getMessage()
+            val message = if (e is ConflictsInTestsException) e.getMessages().sort().joinToString(" ") else e.getMessage()
             JetTestUtils.assertEqualsToFile(conflictFile, message?.replace("\n", " ") ?: e.javaClass.getName())
         }
     }

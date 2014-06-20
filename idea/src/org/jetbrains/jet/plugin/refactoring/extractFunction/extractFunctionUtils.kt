@@ -880,7 +880,7 @@ fun ExtractionDescriptor.generateFunction(
 
         val callText = parameters
                 .map { it.argumentText }
-                .makeString(separator = ", ", prefix = "$name(", postfix = ")")
+                .joinToString(separator = ", ", prefix = "$name(", postfix = ")")
         val wrappedCall = when (controlFlow) {
             is ExpressionEvaluationWithCallSiteReturn ->
                 JetPsiFactory.createReturn(project, callText)
