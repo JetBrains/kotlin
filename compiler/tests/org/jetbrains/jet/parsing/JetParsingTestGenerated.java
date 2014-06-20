@@ -882,9 +882,7 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             }
             
             public void testAllFilesPresentInRecovery() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                             new File("compiler/testData/psi/recovery"), Pattern.compile("^(.*)\\.kts?$"),
-                                                             true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/psi/recovery"), Pattern.compile("^(.*)\\.kts?$"), true);
             }
             
             @TestMetadata("DoWhileWithEmptyCondition.kt")
@@ -901,10 +899,55 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             public void testEnumEntryInitList() throws Exception {
                 doParsingTest("compiler/testData/psi/recovery/EnumEntryInitList.kt");
             }
-
+            
+            @TestMetadata("ForEmptyParentheses.kt")
+            public void testForEmptyParentheses() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/ForEmptyParentheses.kt");
+            }
+            
+            @TestMetadata("ForEmptyWithoutBody.kt")
+            public void testForEmptyWithoutBody() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/ForEmptyWithoutBody.kt");
+            }
+            
+            @TestMetadata("ForNoBodyBeforeRBrace.kt")
+            public void testForNoBodyBeforeRBrace() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/ForNoBodyBeforeRBrace.kt");
+            }
+            
             @TestMetadata("ForRecovery.kt")
             public void testForRecovery() throws Exception {
                 doParsingTest("compiler/testData/psi/recovery/ForRecovery.kt");
+            }
+            
+            @TestMetadata("ForWithOnlyOneLParInEOF.kt")
+            public void testForWithOnlyOneLParInEOF() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/ForWithOnlyOneLParInEOF.kt");
+            }
+            
+            @TestMetadata("ForWithoutBodyInEOF.kt")
+            public void testForWithoutBodyInEOF() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/ForWithoutBodyInEOF.kt");
+            }
+            
+            @TestMetadata("ForWithoutLPar.kt")
+            public void testForWithoutLPar() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/ForWithoutLPar.kt");
+            }
+            
+            @TestMetadata("ForWithoutLParInEOF.kt")
+            public void testForWithoutLParInEOF() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/ForWithoutLParInEOF.kt");
+            }
+            
+            @TestMetadata("ForWithoutParamButWithRange.kt")
+            public void testForWithoutParamButWithRange() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/ForWithoutParamButWithRange.kt");
+            }
+            
+            @TestMetadata("ForWithoutRange.kt")
+            public void testForWithoutRange() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/ForWithoutRange.kt");
             }
             
             @TestMetadata("IfWithEmptyCondition.kt")
@@ -980,6 +1023,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             @TestMetadata("WhileWithoutLPar.kt")
             public void testWhileWithoutLPar() throws Exception {
                 doParsingTest("compiler/testData/psi/recovery/WhileWithoutLPar.kt");
+            }
+            
+            @TestMetadata("WithWithoutInAndMultideclaration.kt")
+            public void testWithWithoutInAndMultideclaration() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/WithWithoutInAndMultideclaration.kt");
             }
             
         }

@@ -658,17 +658,9 @@ JetFile: ForWithMultiDecl.kt
         PsiErrorElement:Expecting 'in'
           <empty list>
         PsiWhiteSpace(' ')
-        LOOP_RANGE
-          FUNCTION_LITERAL_EXPRESSION
-            FUNCTION_LITERAL
-              PsiElement(LBRACE)('{')
-              BLOCK
-                <empty list>
-              PsiElement(RBRACE)('}')
-        PsiErrorElement:Expecting ')'
-          <empty list>
-        PsiWhiteSpace('\n')
         BODY
-          PsiErrorElement:Expecting an expression
-            <empty list>
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
