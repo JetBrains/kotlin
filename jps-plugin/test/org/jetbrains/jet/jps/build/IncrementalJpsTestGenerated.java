@@ -32,6 +32,11 @@ import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest;
 @SuppressWarnings("all")
 @TestMetadata("jps-plugin/testData/incremental")
 public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
+    @TestMetadata("allConstants")
+    public void testAllConstants() throws Exception {
+        doTest("jps-plugin/testData/incremental/allConstants/");
+    }
+    
     public void testAllFilesPresentInIncremental() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("jps-plugin/testData/incremental"), Pattern.compile("^([^\\.]+)$"), false);
     }
