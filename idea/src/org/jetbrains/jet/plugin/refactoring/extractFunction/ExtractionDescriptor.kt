@@ -45,7 +45,7 @@ trait Parameter {
 
     val nameForRef: String get() = mirrorVarName ?: name
 
-    fun copy(name: String): Parameter
+    fun copy(name: String, parameterType: JetType): Parameter
 }
 
 data class TypeParameter(

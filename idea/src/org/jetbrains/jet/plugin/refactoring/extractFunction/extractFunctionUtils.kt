@@ -349,14 +349,15 @@ private class MutableParameter(
         CommonSupertypes.commonSupertype(defaultTypes)
     }
 
-    override fun copy(name: String): Parameter = DelegatingParameter(this, name)
+    override fun copy(name: String, parameterType: JetType): Parameter = DelegatingParameter(this, name, parameterType)
 }
 
 private class DelegatingParameter(
         val original: Parameter,
-        override val name: String
+        override val name: String,
+        override val parameterType: JetType
 ): Parameter by original {
-    override fun copy(name: String): Parameter = DelegatingParameter(original, name)
+    override fun copy(name: String, parameterType: JetType): Parameter = DelegatingParameter(original, name, parameterType)
 }
 
 private fun ExtractionData.inferParametersInfo(
