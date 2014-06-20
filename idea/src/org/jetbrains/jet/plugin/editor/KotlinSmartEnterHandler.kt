@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.plugin.editor
 
+import org.jetbrains.jet.plugin.editor.fixers.*
 import com.intellij.lang.SmartEnterProcessorWithFixers
-import org.jetbrains.jet.plugin.editor.fixers.KotlinIfConditionFixer
-import org.jetbrains.jet.plugin.editor.fixers.KotlinMissingIfBranchFixer
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.CharArrayUtil
@@ -31,11 +30,7 @@ import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.plugin.editor.fixers.KotlinWhileConditionFixer
 import org.jetbrains.jet.lang.psi.JetWhileExpression
-import org.jetbrains.jet.plugin.editor.fixers.isWithCaret
-import org.jetbrains.jet.plugin.editor.fixers.KotlinForConditionFixer
-import org.jetbrains.jet.plugin.editor.fixers.KotlinMissingForOrWhileBodyFixer
 import org.jetbrains.jet.lang.psi.JetForExpression
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.JetNodeTypes
@@ -48,7 +43,10 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
                 KotlinWhileConditionFixer(),
                 KotlinForConditionFixer(),
-                KotlinMissingForOrWhileBodyFixer()
+                KotlinMissingForOrWhileBodyFixer(),
+
+                KotlinWhenSubjectCaretFixer(),
+                KotlinMissingWhenBodyFixer()
         )
 
         addEnterProcessors(KotlinPlainEnterProcessor())

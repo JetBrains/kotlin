@@ -457,6 +457,109 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             """
     )
 
+
+
+    fun testWhen() = doFunTest(
+            """
+            when <caret>
+            """
+            ,
+            """
+            when {
+                <caret>
+            }
+            """
+    )
+
+    fun testWhen1() = doFunTest(
+            """
+            when<caret>
+            """
+            ,
+            """
+            when {
+                <caret>
+            }
+            """
+    )
+
+    fun testWhen2() = doFunTest(
+            """
+            when (true<caret>) {
+            }
+            """
+            ,
+            """
+            when (true) {
+                <caret>
+            }
+            """
+    )
+
+    fun testWhen3() = doFunTest(
+            """
+            when (true) {<caret>
+            """
+            ,
+            """
+            when (true) {
+                <caret>
+            }
+            """
+    )
+
+    fun testWhen4() = doFunTest(
+            """
+            when (true<caret>) {
+                false -> println("false")
+            }
+            """
+            ,
+            """
+            when (true) {
+                <caret>
+                false -> println("false")
+            }
+            """
+    )
+
+    fun testWhen5() = doFunTest(
+            """
+            when (<caret>)
+            """
+            ,
+            """
+            when (<caret>) {
+            }
+            """
+    )
+
+    fun testWhen6() = doFunTest(
+            """
+            when (true<caret>)
+            """
+            ,
+            """
+            when (true) {
+                <caret>
+            }
+            """
+    )
+
+    // Check that no addition {} inserted
+    fun testWhenBadParsed() = doFunTest(
+            """
+            when ( {<caret>
+            }
+            """
+            ,
+            """
+            when ( {
+            }
+                <caret>
+            """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----${this.trimIndent()}//----"

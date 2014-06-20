@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,13 +47,28 @@ public class JetWhenExpression extends JetExpressionImpl {
 
     @NotNull
     public PsiElement getWhenKeywordElement() {
+        //noinspection ConstantConditions
         return findChildByType(JetTokens.WHEN_KEYWORD);
     }
 
     @Nullable
-    public PsiElement getCloseBraceNode() {
-        ASTNode openBraceNode = getNode().findChildByType(JetTokens.RBRACE);
-        return openBraceNode != null ? openBraceNode.getPsi() : null;
+    public PsiElement getCloseBrace() {
+        return findChildByType(JetTokens.RBRACE);
+    }
+
+    @Nullable
+    public PsiElement getOpenBrace() {
+        return findChildByType(JetTokens.LBRACE);
+    }
+
+    @Nullable
+    public PsiElement getLeftParenthesis() {
+        return findChildByType(JetTokens.LPAR);
+    }
+
+    @Nullable
+    public PsiElement getRightParenthesis() {
+        return findChildByType(JetTokens.RPAR);
     }
 
     @Nullable
