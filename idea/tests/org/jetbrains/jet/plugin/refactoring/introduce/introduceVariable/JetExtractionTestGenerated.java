@@ -576,6 +576,21 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithReturn.kt");
                 }
                 
+                @TestMetadata("valueUsedInAnonymousObject.kt")
+                public void testValueUsedInAnonymousObject() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInAnonymousObject.kt");
+                }
+                
+                @TestMetadata("valueUsedInLambda.kt")
+                public void testValueUsedInLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInLambda.kt");
+                }
+                
+                @TestMetadata("valueUsedInLocalFunction.kt")
+                public void testValueUsedInLocalFunction() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInLocalFunction.kt");
+                }
+                
                 @TestMetadata("variablesOutOfScope.kt")
                 public void testVariablesOutOfScope() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/variablesOutOfScope.kt");
