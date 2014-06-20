@@ -37,6 +37,7 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache
 import java.util.HashMap
 import com.google.common.collect.Maps
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 
 public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     class object {
@@ -55,16 +56,15 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         if (classNameAndHeader == null) return false
 
         val (className, header) = classNameAndHeader
-        val classFqName = className.getFqNameForClassNameWithoutDollars()
         val annotationDataEncoded = header.annotationData
         if (annotationDataEncoded != null) {
             val data = BitEncoding.decodeBytes(annotationDataEncoded)
             when (header.kind) {
                 KotlinClassHeader.Kind.PACKAGE_FACADE -> {
-                    return protoMap.put(moduleId, classFqName.parent(), data)
+                    return protoMap.put(moduleId, className, data)
                 }
                 KotlinClassHeader.Kind.CLASS -> {
-                    return protoMap.put(moduleId, classFqName, data)
+                    return protoMap.put(moduleId, className, data)
                 }
                 else -> {
                     throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}")
@@ -90,7 +90,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     }
 
     public override fun getPackageData(moduleId: String, fqName: String): ByteArray? {
-        return protoMap[moduleId, fqName]
+        return protoMap[moduleId, JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(FqName(fqName)))]
     }
 
     public fun close() {
@@ -106,12 +106,12 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
                 ByteArrayExternalizer
         )
 
-        private fun getKeyString(moduleId: String, fqName: FqName): String {
-            return moduleId + ":" + fqName
+        private fun getKeyString(moduleId: String, className: JvmClassName): String {
+            return moduleId + ":" + className.getInternalName()
         }
 
-        public fun put(moduleId: String, fqName: FqName, data: ByteArray): Boolean {
-            val key = getKeyString(moduleId, fqName)
+        public fun put(moduleId: String, className: JvmClassName, data: ByteArray): Boolean {
+            val key = getKeyString(moduleId, className)
             val oldData = map[key]
             if (Arrays.equals(data, oldData)) {
                 return false
@@ -120,8 +120,8 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             return true
         }
 
-        public fun get(moduleId: String, fqName: String): ByteArray? {
-            return map[getKeyString(moduleId, FqName(fqName))]
+        public fun get(moduleId: String, className: JvmClassName): ByteArray? {
+            return map[getKeyString(moduleId, className)]
         }
 
         public fun close() {
