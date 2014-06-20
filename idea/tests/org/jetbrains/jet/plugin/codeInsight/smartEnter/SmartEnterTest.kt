@@ -457,8 +457,6 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             """
     )
 
-
-
     fun testWhen() = doFunTest(
             """
             when <caret>
@@ -557,6 +555,171 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             when ( {
             }
                 <caret>
+            """
+    )
+
+    fun testDoWhile() = doFunTest(
+            """
+            do <caret>
+            """
+            ,
+            """
+            do {
+            } while (<caret>)${' '}
+            """
+    )
+
+    fun testDoWhile2() = doFunTest(
+            """
+            do<caret>
+            """
+            ,
+            """
+            do {
+            } while (<caret>)
+            """
+    )
+
+    fun testDoWhile3() = doFunTest(
+            """
+            do<caret> {
+                println(hi)
+            }
+            """
+            ,
+            """
+            do {
+                println(hi)
+            } while (<caret>)
+            """
+    )
+
+    fun testDoWhile5() = doFunTest(
+            """
+            do<caret> {
+            } while ()
+            """
+            ,
+            """
+            do {
+            } while (<caret>)
+            """
+    )
+
+    fun testDoWhile6() = doFunTest(
+            """
+            do<caret> {
+            } while (true)
+            """
+            ,
+            """
+            do {
+                <caret>
+            } while (true)
+            """
+    )
+
+    fun testDoWhile7() = doFunTest(
+            """
+            do {
+            } <caret>while (true)
+            """
+            ,
+            """
+            do {
+            } while (true)
+            <caret>
+            """
+    )
+
+    fun testDoWhile8() = doFunTest(
+            """
+            do {
+            } while (<caret>true)
+            """
+            ,
+            """
+            do {
+                <caret>
+            } while (true)
+            """
+    )
+
+    fun testDoWhile9() = doFunTest(
+            """
+            do while<caret>
+            """
+            ,
+            """
+            do {
+            } while (<caret>)
+            """
+    )
+
+    fun testDoWhile10() = doFunTest(
+            """
+            do while (true<caret>)
+            """
+            ,
+            """
+            do {
+                <caret>
+            } while (true)
+            """
+    )
+
+    fun testDoWhile11() = doFunTest(
+            """
+            do {
+                println("some")
+            } while<caret>
+            """
+            ,
+            """
+            do {
+                println("some")
+            } while (<caret>)
+            """
+    )
+
+    fun testDoWhile12() = doFunTest(
+            """
+            do {
+                println("some")
+            } while (true<caret>
+            """
+            ,
+            """
+            do {
+                <caret>
+                println("some")
+            } while (true
+            """
+    )
+
+    fun testDoWhileOneLine1() = doFunTest(
+            """
+            do println("some") while (true<caret>)
+            println("hi")
+            """
+            ,
+            """
+            do println("some") while (true)
+            <caret>
+            println("hi")
+            """
+    )
+
+    fun testDoWhileOneLine2() = doFunTest(
+            """
+            do <caret>println("some") while (true)
+            println("hi")
+            """
+            ,
+            """
+            do println("some") while (true)
+            <caret>
+            println("hi")
             """
     )
 

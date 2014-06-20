@@ -30,10 +30,10 @@ import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.psi.JetWhileExpression
 import org.jetbrains.jet.lang.psi.JetForExpression
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.JetNodeTypes
+import org.jetbrains.jet.lang.psi.JetLoopExpression
 
 public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     {
@@ -46,7 +46,9 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
                 KotlinMissingForOrWhileBodyFixer(),
 
                 KotlinWhenSubjectCaretFixer(),
-                KotlinMissingWhenBodyFixer()
+                KotlinMissingWhenBodyFixer(),
+
+                KotlinDoWhileFixer()
         )
 
         addEnterProcessors(KotlinPlainEnterProcessor())
@@ -115,9 +117,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
                     if (element.getThen().isWithCaret(caret)) return element.getThen()
                     if (element.getElse().isWithCaret(caret)) return element.getElse()
                 }
-                is JetWhileExpression -> {
-                    if (element.getBody()?.getTextRange()?.contains(caret) == true) return element.getBody()
-                }
+                is JetLoopExpression -> return element.getBody()
             }
 
             return null
