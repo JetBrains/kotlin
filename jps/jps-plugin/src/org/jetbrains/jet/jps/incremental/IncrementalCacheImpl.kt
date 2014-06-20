@@ -74,13 +74,14 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
             assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
             packagePartMap.putPackagePartSourceData(moduleId, sourceFiles.first(), className)
-            return constantsMap.process(className, fileBytes)
+            return constantsMap.process(moduleId, sourceFiles.first(), fileBytes)
         }
 
         return false
     }
 
     public fun clearCacheForRemovedFile(moduleId: String, sourceFile: File) {
+        constantsMap.remove(moduleId, sourceFile)
         packagePartMap.remove(moduleId, sourceFile)
     }
 
@@ -135,6 +136,10 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
                 ConstantsMapExternalizer
         )
 
+        private fun getKey(moduleId: String, sourceFile: File): String {
+            return moduleId + File.pathSeparator + sourceFile.getAbsolutePath()
+        }
+
         private fun getConstantsMap(bytes: ByteArray): Map<String, Any> {
             val result = HashMap<String, Any>()
 
@@ -150,12 +155,12 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             return result
         }
 
-        public fun process(packagePartClass: JvmClassName, bytes: ByteArray): Boolean {
-            return put(packagePartClass, getConstantsMap(bytes))
+        public fun process(moduleId: String, file: File, bytes: ByteArray): Boolean {
+            return put(moduleId, file, getConstantsMap(bytes))
         }
 
-        private fun put(packagePartClass: JvmClassName, constantsMap: Map<String, Any>): Boolean {
-            val key = packagePartClass.getInternalName()
+        private fun put(moduleId: String, file: File, constantsMap: Map<String, Any>): Boolean {
+            val key = getKey(moduleId, file)
 
             val oldMap = map[key]
             if (oldMap == constantsMap) {
@@ -163,6 +168,10 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             }
             map.put(key, constantsMap)
             return true
+        }
+
+        public fun remove(moduleId: String, file: File) {
+            map.remove(getKey(moduleId, file))
         }
 
         public fun close() {
