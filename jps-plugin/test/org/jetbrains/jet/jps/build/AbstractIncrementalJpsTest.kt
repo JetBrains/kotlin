@@ -187,7 +187,16 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
     private class ModifyContent(name: String, val dataFile: File) : Modification(name) {
         override fun perform(workDir: File) {
-            dataFile.copyTo(File(workDir, "src/$name"))
+            val file = File(workDir, "src/$name")
+
+            val oldLastModified = file.lastModified()
+            dataFile.copyTo(file)
+
+            val newLastModified = file.lastModified()
+            if (newLastModified <= oldLastModified) {
+                //Mac OS and some versions of Linux truncate timestamp to nearest second
+                file.setLastModified(oldLastModified + 1000)
+            }
         }
     }
 
