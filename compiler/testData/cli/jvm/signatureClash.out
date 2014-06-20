@@ -1,3 +1,4 @@
+WARNING: $TESTDATA_DIR$/signatureClash.kt: (26, 17) Parameter 'c' is never used
 ERROR: $TESTDATA_DIR$/signatureClash.kt: (6, 5) Accidental override: The following declarations have the same JVM signature (getX()I):
     fun getX(): kotlin.Int
     fun <get-x>(): kotlin.Int
@@ -19,4 +20,10 @@ ERROR: $TESTDATA_DIR$/signatureClash.kt: (16, 5) Platform declaration clash: The
 ERROR: $TESTDATA_DIR$/signatureClash.kt: (20, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
     fun <get-tr>(): kotlin.Int
     fun getTr(): kotlin.Int
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (24, 7) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
+    fun f$b$0(c: C): kotlin.Unit
+    fun f(): kotlin.Unit
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (26, 5) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
+    fun f$b$0(c: C): kotlin.Unit
+    fun f(): kotlin.Unit
 COMPILATION_ERROR

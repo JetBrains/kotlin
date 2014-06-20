@@ -2552,9 +2552,19 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("caseInProperties.kt")
+            public void testCaseInProperties() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/caseInProperties.kt");
+            }
+            
             @TestMetadata("missingNames.kt")
             public void testMissingNames() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/missingNames.kt");
+            }
+            
+            @TestMetadata("vararg.kt")
+            public void testVararg() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/vararg.kt");
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides")
@@ -2687,6 +2697,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("delegationAndOwnMethod.kt")
                 public void testDelegationAndOwnMethod() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/delegationAndOwnMethod.kt");
+                }
+                
+                @TestMetadata("extensionProperties.kt")
+                public void testExtensionProperties() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/extensionProperties.kt");
                 }
                 
                 @TestMetadata("genericType.kt")
