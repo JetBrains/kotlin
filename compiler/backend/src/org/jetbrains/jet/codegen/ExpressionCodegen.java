@@ -3413,6 +3413,11 @@ The "returned" value of try expression with no finally is either the last expres
 
             myFrameMap.leave(descriptor);
 
+            Label clauseEnd = new Label();
+            v.mark(clauseEnd);
+
+            v.visitLocalVariable(descriptor.getName().asString(), descriptorType.getDescriptor(), null, clauseStart, clauseEnd, index);
+
             genFinallyBlockOrGoto(finallyBlockStackElement, i != size - 1 || finallyBlock != null ? end : null);
 
             generateExceptionTable(clauseStart, tryBlockRegions, descriptorType.getInternalName());
