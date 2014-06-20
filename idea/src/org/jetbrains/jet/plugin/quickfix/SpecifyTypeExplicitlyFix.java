@@ -22,9 +22,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -40,7 +42,7 @@ public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement element) {
         //noinspection unchecked
         JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetProperty.class, JetNamedFunction.class);
         JetType type = getTypeForDeclaration(declaration);
@@ -51,12 +53,12 @@ public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
             addTypeAnnotation(project, editor, (JetNamedFunction) declaration, type);
         }
         else {
-            assert false : "Couldn't find property or function";
+            assert false : "Couldn't find property or function " + JetPsiUtil.getElementTextWithContext((JetElement) element);
         }
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+    public boolean isAvailable(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement element) {
         //noinspection unchecked
         JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetProperty.class, JetNamedFunction.class);
         if (declaration instanceof JetProperty) {
@@ -66,7 +68,7 @@ public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
             setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
         }
         else {
-            assert false : "Couldn't find property or function";
+            assert false : "Couldn't find property or function " + JetPsiUtil.getElementTextWithContext((JetElement) element);
         }
 
         return !getTypeForDeclaration(declaration).isError();
