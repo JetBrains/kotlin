@@ -51,7 +51,8 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
     }
 
     override fun visitBlockStatement(statement: PsiBlockStatement) {
-        result = converter.convertBlock(statement.getCodeBlock())
+        val block = converter.convertBlock(statement.getCodeBlock())
+        result = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
     }
 
     override fun visitBreakStatement(statement: PsiBreakStatement) {
@@ -82,7 +83,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
             converter.convertExpression(condition, condition.getType())
         else
             converter.convertExpression(condition)
-        result = DoWhileStatement(expression, converter.convertStatement(statement.getBody()), statement.isInSingleLine())
+        result = DoWhileStatement(expression, convertStatementOrBlock(statement.getBody()), statement.isInSingleLine())
     }
 
     override fun visitExpressionStatement(statement: PsiExpressionStatement) {
@@ -111,7 +112,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 && condition != null
                 && update != null
                 && update.getChildren().size == 1
-                && isPlusPlusExpression(update.getChildren().single())
+                && update.getChildren().single().isPlusPlusExpression()
                 && (operationTokenType == JavaTokenType.LT || operationTokenType == JavaTokenType.LE)
                 && loopVar != null
                 && loopVar.getNameIdentifier() != null
@@ -121,19 +122,48 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
             result = ForeachWithRangeStatement(loopVar.declarationIdentifier(),
                                                  converter.convertExpression(loopVar.getInitializer()),
                                                  endExpression,
-                                                 converter.convertStatement(body),
+                                                 convertStatementOrBlock(body),
                                                  statement.isInSingleLine())
         }
         else {
-            var forStatements = ArrayList<Statement>()
-            forStatements.add(converter.convertStatement(initialization))
-            val bodyAndUpdate = listOf(converter.convertStatement(body),
-                                       Block(listOf(converter.convertStatement(update)), LBrace(), RBrace()))
-            forStatements.add(WhileStatement(
-                    if (condition == null) LiteralExpression("true") else converter.convertExpression(condition),
-                    Block(bodyAndUpdate, LBrace(), RBrace()),
-                    statement.isInSingleLine()))
-            result = Block(forStatements, LBrace(), RBrace())
+            val initializationConverted = converter.convertStatement(initialization)
+            val updateConverted = converter.convertStatement(update)
+
+            val whileBody = if (updateConverted.isEmpty) {
+                converter.convertStatement(body)
+            }
+            else if (body is PsiBlockStatement) {
+                val nameConflict = initialization is PsiDeclarationStatement && initialization.getDeclaredElements().any { loopVar ->
+                    loopVar is PsiNamedElement && body.getCodeBlock().getStatements().any { statement ->
+                        statement is PsiDeclarationStatement && statement.getDeclaredElements().any {
+                            it is PsiNamedElement && it.getName() == loopVar.getName()
+                        }
+                    }
+                }
+
+                if (nameConflict) {
+                    Block(listOf(converter.convertStatement(body), updateConverted), LBrace(), RBrace(), true)
+                }
+                else {
+                    val block = converter.convertBlock(body.getCodeBlock(), true)
+                    Block(block.statements + listOf(updateConverted), block.lBrace, block.rBrace, true).assignPrototypesFrom(block)
+                }
+            }
+            else {
+                Block(listOf(converter.convertStatement(body), updateConverted), LBrace(), RBrace(), true)
+            }
+            val whileStatement = WhileStatement(
+                    if (condition != null) converter.convertExpression(condition) else LiteralExpression("true"),
+                    whileBody,
+                    statement.isInSingleLine())
+
+            if (initializationConverted.isEmpty) {
+                result = whileStatement
+            }
+            else {
+                val block = Block(listOf(initializationConverted, whileStatement), LBrace(), RBrace())
+                result = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
+            }
         }
     }
 
@@ -147,7 +177,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         }
         result = ForeachStatement(converter.convertParameter(statement.getIterationParameter()),
                                   iterator,
-                                  converter.convertStatement(statement.getBody()),
+                                  convertStatementOrBlock(statement.getBody()),
                                   statement.isInSingleLine())
     }
 
@@ -155,8 +185,8 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         val condition = statement.getCondition()
         val expression = converter.convertExpression(condition, PsiType.BOOLEAN)
         result = IfStatement(expression,
-                             converter.convertStatement(statement.getThenBranch()),
-                             converter.convertStatement(statement.getElseBranch()),
+                             convertStatementOrBlock(statement.getThenBranch()),
+                             convertStatementOrBlock(statement.getElseBranch()),
                              statement.isInSingleLine())
     }
 
@@ -307,7 +337,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
             converter.convertExpression(condition, condition!!.getType())
         else
             converter.convertExpression(condition)
-        result = WhileStatement(expression, converter.convertStatement(statement.getBody()), statement.isInSingleLine())
+        result = WhileStatement(expression, convertStatementOrBlock(statement.getBody()), statement.isInSingleLine())
     }
 
     override fun visitReturnStatement(statement: PsiReturnStatement) {
@@ -324,9 +354,9 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         result = Statement.Empty
     }
 
-    private fun isPlusPlusExpression(psiElement: PsiElement): Boolean {
-        return (psiElement is PsiPostfixExpression && psiElement.getOperationTokenType() == JavaTokenType.PLUSPLUS) ||
-                (psiElement is PsiPrefixExpression && psiElement.getOperationTokenType() == JavaTokenType.PLUSPLUS)
+    private fun PsiElement.isPlusPlusExpression(): Boolean {
+        return (this is PsiPostfixExpression && this.getOperationTokenType() == JavaTokenType.PLUSPLUS) ||
+                (this is PsiPrefixExpression && this.getOperationTokenType() == JavaTokenType.PLUSPLUS)
     }
 
     private fun containsBreak(slice: List<PsiElement?>) = slice.any { it is PsiBreakStatement }
@@ -370,5 +400,12 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         }
 
         return cases
+    }
+
+    private fun convertStatementOrBlock(statement: PsiStatement?): Statement {
+        return if (statement is PsiBlockStatement)
+            converter.convertBlock(statement.getCodeBlock())
+        else
+            converter.convertStatement(statement)
     }
 }

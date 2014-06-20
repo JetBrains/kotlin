@@ -1,6 +1,4 @@
-{
+run {
     init()
-    while (condition()) {
-        body()
-    }
+    while (condition()) body()
 }
