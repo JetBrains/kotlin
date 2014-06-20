@@ -2593,6 +2593,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/prop/CollectionSize.kt");
             }
             
+            @TestMetadata("Constants.kt")
+            public void testConstants() throws Exception {
+                doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/prop/Constants.kt");
+            }
+            
             @TestMetadata("ExtValClass.kt")
             public void testExtValClass() throws Exception {
                 doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/prop/ExtValClass.kt");

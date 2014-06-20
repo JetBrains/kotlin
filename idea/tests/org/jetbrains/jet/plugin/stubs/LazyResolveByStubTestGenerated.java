@@ -1061,6 +1061,11 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/prop/CollectionSize.kt");
             }
             
+            @TestMetadata("Constants.kt")
+            public void testConstants() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/prop/Constants.kt");
+            }
+            
             @TestMetadata("ExtValClass.kt")
             public void testExtValClass() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/prop/ExtValClass.kt");

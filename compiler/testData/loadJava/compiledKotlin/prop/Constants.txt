@@ -1,0 +1,28 @@
+package test
+
+internal val b: kotlin.Byte = 100.toByte()
+    internal fun <get-b>(): kotlin.Byte
+internal val b1: kotlin.Byte = 1.toByte()
+    internal fun <get-b1>(): kotlin.Byte
+internal val bb: kotlin.Boolean = true
+    internal fun <get-bb>(): kotlin.Boolean
+internal val c: kotlin.Char = #960(π)
+    internal fun <get-c>(): kotlin.Char
+internal val d: kotlin.Double = 3.14.toDouble()
+    internal fun <get-d>(): kotlin.Double
+internal val f: kotlin.Float = 3.14.toFloat()
+    internal fun <get-f>(): kotlin.Float
+internal val i: kotlin.Int = 2000000
+    internal fun <get-i>(): kotlin.Int
+internal val i1: kotlin.Short = 1.toShort()
+    internal fun <get-i1>(): kotlin.Short
+internal val l: kotlin.Long = 2000000000000.toLong()
+    internal fun <get-l>(): kotlin.Long
+internal val l1: kotlin.Long = 1.toLong()
+    internal fun <get-l1>(): kotlin.Long
+internal val s: kotlin.Short = 20000.toShort()
+    internal fun <get-s>(): kotlin.Short
+internal val s1: kotlin.Short = 1.toShort()
+    internal fun <get-s1>(): kotlin.Short
+internal val str: kotlin.String = ":)"
+    internal fun <get-str>(): kotlin.String
