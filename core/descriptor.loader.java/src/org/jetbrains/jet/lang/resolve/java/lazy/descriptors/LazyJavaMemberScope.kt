@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.utils.*
+import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -180,12 +181,12 @@ public abstract class LazyJavaMemberScope(
                     val paramType = javaParameter.getType()
                     assert (paramType is JavaArrayType, "Vararg parameter should be an array: $paramType")
                     val arrayType = c.typeResolver.transformArrayType(paramType as JavaArrayType, typeUsage, true)
-                    val outType = TypeUtils.makeNotNullable(arrayType)
+                    val outType = if (PLATFORM_TYPES) arrayType else TypeUtils.makeNotNullable(arrayType)
                     Pair(outType, KotlinBuiltIns.getInstance().getArrayElementType(outType))
                 }
                 else {
                     val jetType = c.typeResolver.transformJavaType(javaParameter.getType(), typeUsage)
-                    if (jetType.isNullable() && c.hasNotNullAnnotation(javaParameter))
+                    if (!PLATFORM_TYPES && jetType.isNullable() && c.hasNotNullAnnotation(javaParameter))
                         Pair(TypeUtils.makeNotNullable(jetType), null)
                     else Pair(jetType, null)
                 }
@@ -285,7 +286,7 @@ public abstract class LazyJavaMemberScope(
     private fun getPropertyType(field: JavaField): JetType {
         // Fields do not have their own generic parameters
         val propertyType = c.typeResolver.transformJavaType(field.getType(), LazyJavaTypeAttributes(c, field, TypeUsage.MEMBER_SIGNATURE_INVARIANT))
-        if (field.isFinal() && field.isStatic()) {
+        if (!PLATFORM_TYPES && field.isFinal() && field.isStatic()) {
             return TypeUtils.makeNotNullable(propertyType)
         }
         return propertyType
