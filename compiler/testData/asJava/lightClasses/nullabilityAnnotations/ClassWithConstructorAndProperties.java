@@ -10,6 +10,5 @@ public final class ClassWithConstructorAndProperties implements kotlin.jvm.inter
     @org.jetbrains.annotations.NotNull
     public final java.lang.String getNotNull() { /* compiled code */ }
 
-    @org.jetbrains.annotations.NotNull
     public ClassWithConstructorAndProperties(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "nullable", type = "?") java.lang.String nullable, @org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "notNull") java.lang.String notNull) { /* compiled code */ }
 }

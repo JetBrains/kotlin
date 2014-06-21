@@ -25,7 +25,6 @@ public interface Trait extends kotlin.jvm.internal.KObject {
     @org.jetbrains.annotations.Nullable
     java.lang.String getNullableVar();
 
-    @org.jetbrains.annotations.NotNull
     void setNullableVar(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "<set-?>", type = "?") java.lang.String p);
 
     @org.jetbrains.annotations.NotNull
@@ -34,6 +33,5 @@ public interface Trait extends kotlin.jvm.internal.KObject {
     @org.jetbrains.annotations.NotNull
     java.lang.String getNotNullVar();
 
-    @org.jetbrains.annotations.NotNull
     void setNotNullVar(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "<set-?>") java.lang.String p);
 }

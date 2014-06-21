@@ -85,7 +85,10 @@ public abstract class AnnotationCodegen {
         bindingContext = typeMapper.getBindingContext();
     }
 
-    public void genAnnotations(Annotated annotated) {
+    /**
+     * @param returnType can be null if not applicable (e.g. {@code annotated} is a class)
+     */
+    public void genAnnotations(@Nullable Annotated annotated, @Nullable Type returnType) {
         if (annotated == null) {
             return;
         }
@@ -111,7 +114,7 @@ public abstract class AnnotationCodegen {
         }
 
         if (modifierList == null) {
-            generateAdditionalAnnotations(annotated, Collections.<String>emptySet());
+            generateAdditionalAnnotations(annotated, returnType, Collections.<String>emptySet());
             return;
         }
 
@@ -131,10 +134,14 @@ public abstract class AnnotationCodegen {
             }
         }
 
-        generateAdditionalAnnotations(annotated, annotationDescriptorsAlreadyPresent);
+        generateAdditionalAnnotations(annotated, returnType, annotationDescriptorsAlreadyPresent);
     }
 
-    private void generateAdditionalAnnotations(@NotNull Annotated annotated, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
+    private void generateAdditionalAnnotations(
+            @NotNull Annotated annotated,
+            @Nullable Type returnType,
+            @NotNull Set<String> annotationDescriptorsAlreadyPresent
+    ) {
         if (annotated instanceof CallableDescriptor) {
             CallableDescriptor descriptor = (CallableDescriptor) annotated;
 
@@ -142,7 +149,9 @@ public abstract class AnnotationCodegen {
             if (isInvisibleFromTheOutside(descriptor)) return;
             if (descriptor instanceof ValueParameterDescriptor && isInvisibleFromTheOutside(descriptor.getContainingDeclaration())) return;
 
-            generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
+            if (returnType != null && !AsmUtil.isPrimitive(returnType)) {
+                generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
+            }
         }
     }
 
@@ -166,7 +175,6 @@ public abstract class AnnotationCodegen {
         }
 
         boolean isNullableType = JvmCodegenUtil.isNullableType(type);
-        if (!isNullableType && KotlinBuiltIns.getInstance().isPrimitiveType(type)) return;
 
         Class<?> annotationClass = isNullableType ? Nullable.class : NotNull.class;
 

@@ -4,7 +4,6 @@ public final class ClassObjectField implements kotlin.jvm.internal.KObject {
     private static final java.lang.String y = "";
     public static final ClassObjectField.object object$;
 
-    @org.jetbrains.annotations.NotNull
     public ClassObjectField() { /* compiled code */ }
 
     public static final class object implements kotlin.jvm.internal.KObject {

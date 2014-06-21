@@ -54,7 +54,6 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmClassSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
-import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -67,10 +66,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.DelegationToTraitImpl;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -78,6 +74,9 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.DelegationToTraitImpl;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
@@ -208,7 +207,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         writeInnerClasses();
 
-        AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor);
+        AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor, null);
     }
 
     @Override
@@ -1083,11 +1082,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (PropertyAndDefaultValue info : classObjectPropertiesToCopy) {
             PropertyDescriptor property = info.descriptor;
 
+            Type type = typeMapper.mapType(property);
             FieldVisitor fv = v.newField(OtherOrigin(property), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property, false),
-                                         typeMapper.mapType(property).getDescriptor(), typeMapper.mapFieldSignature(property.getType()),
+                                         type.getDescriptor(), typeMapper.mapFieldSignature(property.getType()),
                                          info.defaultValue);
 
-            AnnotationCodegen.forField(fv, typeMapper).genAnnotations(property);
+            AnnotationCodegen.forField(fv, typeMapper).genAnnotations(property, type);
 
             //This field are always static and final so if it has constant initializer don't do anything in clinit,
             //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4

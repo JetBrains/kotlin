@@ -34,7 +34,6 @@ public final class Class implements kotlin.jvm.internal.KObject {
     @org.jetbrains.annotations.Nullable
     public final java.lang.String getNullableVar() { /* compiled code */ }
 
-    @org.jetbrains.annotations.NotNull
     public final void setNullableVar(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "<set-?>", type = "?") java.lang.String p) { /* compiled code */ }
 
     @org.jetbrains.annotations.NotNull
@@ -43,7 +42,6 @@ public final class Class implements kotlin.jvm.internal.KObject {
     @org.jetbrains.annotations.NotNull
     public final java.lang.String getNotNullVar() { /* compiled code */ }
 
-    @org.jetbrains.annotations.NotNull
     public final void setNotNullVar(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "<set-?>") java.lang.String p) { /* compiled code */ }
 
     @org.jetbrains.annotations.Nullable
@@ -55,7 +53,6 @@ public final class Class implements kotlin.jvm.internal.KObject {
     public final java.lang.String getNotNullVarWithGetSet() { /* compiled code */ }
 
     @org.jetbrains.annotations.Nullable
-    @org.jetbrains.annotations.NotNull
     public final void setNotNullVarWithGetSet(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "v") java.lang.String v) { /* compiled code */ }
 
     @org.jetbrains.annotations.NotNull
@@ -69,6 +66,5 @@ public final class Class implements kotlin.jvm.internal.KObject {
     @org.jetbrains.annotations.NotNull
     public final void setNullableVarWithGetSet(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "v", type = "?") java.lang.String v) { /* compiled code */ }
 
-    @org.jetbrains.annotations.NotNull
     public Class() { /* compiled code */ }
 }
