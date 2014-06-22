@@ -43,6 +43,9 @@ public final class Namer {
     private static final String TRAIT_OBJECT_NAME = "createTrait";
     private static final String OBJECT_OBJECT_NAME = "createObject";
     private static final String ENUM_ENTRIES_NAME = "createEnumEntries";
+    private static final String CALLABLE_REF_FUN_NAME = "getCallableRefFun";
+    private static final String CALLABLE_REF_EXT_NAME = "getCallableRefExt";
+    private static final String CALLABLE_REF_CTR_NAME = "getCallableRefCtr";
 
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
@@ -177,6 +180,12 @@ public final class Namer {
     @NotNull
     private final JsName enumEntriesName;
     @NotNull
+    private final JsName callableRefFunName;
+    @NotNull
+    private final JsName callableRefExtName;
+    @NotNull
+    private final JsName callableRefCtrName;
+    @NotNull
     private final JsExpression undefinedExpression;
     @NotNull
     private final JsExpression callGetProperty;
@@ -200,6 +209,9 @@ public final class Namer {
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
         enumEntriesName = kotlinScope.declareName(ENUM_ENTRIES_NAME);
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
+        callableRefFunName = kotlinScope.declareName(CALLABLE_REF_FUN_NAME);
+        callableRefExtName = kotlinScope.declareName(CALLABLE_REF_EXT_NAME);
+        callableRefCtrName = kotlinScope.declareName(CALLABLE_REF_CTR_NAME);
 
         isTypeName = kotlinScope.declareName("isType");
 
@@ -234,6 +246,21 @@ public final class Namer {
     @NotNull
     public JsExpression objectCreationMethodReference() {
         return kotlin(objectName);
+    }
+
+    @NotNull
+    public JsExpression callableRefFunReference() {
+        return kotlin(callableRefFunName);
+    }
+
+    @NotNull
+    public JsExpression callableRefExtReference() {
+        return kotlin(callableRefExtName);
+    }
+
+    @NotNull
+    public JsExpression callableRefCtrReference() {
+        return kotlin(callableRefCtrName);
     }
 
     @NotNull

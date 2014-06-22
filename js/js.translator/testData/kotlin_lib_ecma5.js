@@ -294,7 +294,33 @@ var Kotlin = {};
         }
     };
 
+    // TODO Store callable references for members in class
+    Kotlin.getCallableRefFun = function (klass, memberName) {
+        var ref = function () {
+          return this[memberName].apply(this, arguments);
+        };
+        return ref;
+    };
 
+    // TODO Store callable references for extension functions in class
+    // extFun expected receiver as the first argument
+    Kotlin.getCallableRefExt = function (extFun) {
+        var ref = function () {
+          var args = Array.prototype.slice.call(arguments);
+          args.unshift(this);
+          return extFun.apply(null, args);
+        };
+        return ref;
+    };
+
+    Kotlin.getCallableRefCtr = function (klass) {
+        var ref = function () {
+          var obj = Object.create(klass.prototype);
+          klass.apply(obj, arguments);
+          return obj;
+        };
+        return ref;
+    };
 ////////////////////////////////// packages & modules //////////////////////////////
 
     Kotlin.modules = {};

@@ -30,7 +30,16 @@
         return this.indexOf(s) !== -1;
     };
 
+
     // Kotlin stdlib
+
+    Kotlin.length = function(obj) {
+        return obj.length;
+    }
+
+    Kotlin.isEmpty = function(obj) {
+        return obj.length === 0;
+    }
 
     Kotlin.equals = function (obj1, obj2) {
         if (obj1 == null) {

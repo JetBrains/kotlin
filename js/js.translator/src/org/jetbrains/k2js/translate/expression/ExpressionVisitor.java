@@ -17,11 +17,12 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.codeInsight.AnnotationUtil;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -42,9 +43,7 @@ import org.jetbrains.k2js.translate.reference.AccessTranslationUtils;
 import org.jetbrains.k2js.translate.reference.CallExpressionTranslator;
 import org.jetbrains.k2js.translate.reference.QualifiedExpressionTranslator;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
+import org.jetbrains.k2js.translate.utils.*;
 import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.List;
@@ -166,6 +165,62 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
 
         return newVar(name, initializer).source(expression);
+    }
+
+    // TODO Refactor this long method (move to new CallableReferenceTranslator?)
+    @Override
+    @NotNull
+    public JsNode visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, @NotNull TranslationContext context) {
+        JetSimpleNameExpression simpleNameExpression = expression.getCallableReference();
+        DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), simpleNameExpression);
+
+        assert descriptor instanceof CallableDescriptor;
+        CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
+
+        if (JsDescriptorUtils.isBuiltin(callableDescriptor)) {
+            throw new UnsupportedOperationException("callable references for builtin functions are not supported yet");
+        }
+
+        if (AnnotationsUtils.isNativeObject(callableDescriptor)) {
+            throw new UnsupportedOperationException("callable references for native functions are not supported yet");
+        }
+
+        if (callableDescriptor instanceof ConstructorDescriptor) {
+            JsExpression jsFunctionRef = ReferenceTranslator.translateAsFQReference(descriptor, context);
+            return new JsInvocation(context.namer().callableRefCtrReference(), jsFunctionRef);
+        }
+
+        if (JsDescriptorUtils.isExtension(callableDescriptor)) {
+            ReceiverParameterDescriptor receiverParameterDescriptor = callableDescriptor.getReceiverParameter();
+            assert receiverParameterDescriptor != null;
+
+            /* TODO Support for primitive types (translates to "_.kotlin.Int" for now)
+            DeclarationDescriptor classDescriptor = receiverParameterDescriptor.getType().getConstructor().getDeclarationDescriptor();
+            JsNameRef jsClassNameRef = context.getQualifiedReference(classDescriptor);
+            */
+            JsExpression jsFunctionRef = ReferenceTranslator.translateAsFQReference(descriptor, context);
+            if (callableDescriptor.getVisibility() == Visibilities.LOCAL) {
+                return jsFunctionRef;
+            }
+            else {
+                return new JsInvocation(context.namer().callableRefExtReference(), jsFunctionRef);
+            }
+        }
+
+        DeclarationDescriptor classDescriptor = JsDescriptorUtils.getContainingDeclaration(descriptor);
+        if (!(classDescriptor instanceof ClassDescriptorBase)) {
+            return ReferenceTranslator.translateAsFQReference(descriptor, context);
+        }
+
+        DeclarationDescriptor containingDescriptor = JsDescriptorUtils.getContainingDeclaration(classDescriptor);
+        if (!(containingDescriptor instanceof PackageFragmentDescriptor)) {
+            return ReferenceTranslator.translateAsFQReference(descriptor, context);
+        }
+
+        JsNameRef jsClassNameRef = context.getQualifiedReference(classDescriptor);
+        JsName jsName = context.getNameForDescriptor(descriptor);
+        JsStringLiteral jsLiteral = context.program().getStringLiteral(jsName.toString());
+        return new JsInvocation(context.namer().callableRefFunReference(), jsClassNameRef, jsLiteral);
     }
 
     @Override
