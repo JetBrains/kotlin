@@ -27,7 +27,6 @@ public abstract class InstructionImpl(public override val lexicalScope: LexicalS
     private var _owner: Pseudocode? = null
     private val _copies = HashSet<Instruction>()
     private var original: Instruction? = null
-    protected var _dead: Boolean = false
 
     private fun setOriginalInstruction(value: Instruction?) {
         assert(original == null) { "Instruction can't have two originals: this.original = ${original}; new original = $this" }
@@ -49,11 +48,9 @@ public abstract class InstructionImpl(public override val lexicalScope: LexicalS
 
     protected abstract fun createCopy(): InstructionImpl
 
-    public fun die() {
-        _dead = true
-    }
+    public var markedAsDead: Boolean = false
 
-    override val dead: Boolean get() = _dead
+    override val dead: Boolean get() = markedAsDead && getCopies().all { (it as InstructionImpl).markedAsDead }
 
     public fun copy(): Instruction {
         return updateCopyInfo(createCopy())

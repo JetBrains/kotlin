@@ -370,7 +370,7 @@ public class PseudocodeImpl implements Pseudocode {
         Set<Instruction> instructionSet = Sets.newHashSet(instructions);
         for (Instruction instruction : mutableInstructionList) {
             if (!instructionSet.contains(instruction)) {
-                ((InstructionImpl)instruction).die();
+                ((InstructionImpl)instruction).setMarkedAsDead(true);
                 for (Instruction nextInstruction : instruction.getNextInstructions()) {
                     nextInstruction.getPreviousInstructions().remove(instruction);
                 }

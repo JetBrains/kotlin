@@ -140,7 +140,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
             @NotNull Set<Instruction> remainedAfterPostProcessInstructions
     ) {
         boolean isRemovedThroughPostProcess = !remainedAfterPostProcessInstructions.contains(instruction);
-        assert isRemovedThroughPostProcess == ((InstructionImpl)instruction).getDead();
+        assert isRemovedThroughPostProcess == ((InstructionImpl)instruction).getMarkedAsDead();
         return isRemovedThroughPostProcess ? "-" : " ";
     }
 

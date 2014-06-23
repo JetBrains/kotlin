@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.*;
@@ -108,7 +109,7 @@ public abstract class AbstractControlFlowTest extends AbstractPseudocodeTest {
         //check edges directions
         Collection<Instruction> instructions = pseudocode.getInstructionsIncludingDeadCode();
         for (Instruction instruction : instructions) {
-            if (!instruction.getDead()) {
+            if (!((InstructionImpl)instruction).getMarkedAsDead()) {
                 for (Instruction nextInstruction : instruction.getNextInstructions()) {
                     assertTrue("instruction '" + instruction + "' has '" + nextInstruction + "' among next instructions list, but not vice versa",
                                nextInstruction.getPreviousInstructions().contains(instruction));

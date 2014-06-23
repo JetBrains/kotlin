@@ -276,7 +276,7 @@ public class JetFlowInformationProvider {
                 if (!isJumpElement) continue;
             }
 
-            if (PseudocodeUtil.isDeadInAllCopies(instruction)) {
+            if (instruction.getDead()) {
                 unreachableElements.add(element);
             }
             else {
