@@ -882,17 +882,39 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             }
             
             public void testAllFilesPresentInRecovery() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/psi/recovery"), Pattern.compile("^(.*)\\.kts?$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
+                                                             new File("compiler/testData/psi/recovery"), Pattern.compile("^(.*)\\.kts?$"),
+                                                             true);
+            }
+            
+            @TestMetadata("DoWhileWithEmptyCondition.kt")
+            public void testDoWhileWithEmptyCondition() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/DoWhileWithEmptyCondition.kt");
+            }
+            
+            @TestMetadata("DoWhileWithoutLPar.kt")
+            public void testDoWhileWithoutLPar() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/DoWhileWithoutLPar.kt");
             }
             
             @TestMetadata("EnumEntryInitList.kt")
             public void testEnumEntryInitList() throws Exception {
                 doParsingTest("compiler/testData/psi/recovery/EnumEntryInitList.kt");
             }
-            
+
             @TestMetadata("ForRecovery.kt")
             public void testForRecovery() throws Exception {
                 doParsingTest("compiler/testData/psi/recovery/ForRecovery.kt");
+            }
+            
+            @TestMetadata("IfWithEmptyCondition.kt")
+            public void testIfWithEmptyCondition() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/IfWithEmptyCondition.kt");
+            }
+            
+            @TestMetadata("IfWithoutLPar.kt")
+            public void testIfWithoutLPar() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/IfWithoutLPar.kt");
             }
             
             @TestMetadata("ImportRecovery.kt")
@@ -948,6 +970,16 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             @TestMetadata("ValueParameterNoTypeRecovery.kt")
             public void testValueParameterNoTypeRecovery() throws Exception {
                 doParsingTest("compiler/testData/psi/recovery/ValueParameterNoTypeRecovery.kt");
+            }
+            
+            @TestMetadata("WhileWithEmptyCondition.kt")
+            public void testWhileWithEmptyCondition() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/WhileWithEmptyCondition.kt");
+            }
+            
+            @TestMetadata("WhileWithoutLPar.kt")
+            public void testWhileWithoutLPar() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/WhileWithoutLPar.kt");
             }
             
         }

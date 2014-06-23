@@ -1,0 +1,28 @@
+JetFile: WhileWithEmptyCondition.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHILE
+        PsiElement(while)('while')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          PsiErrorElement:Expecting an expression
+            <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n\n    ')
+        BODY
+          RETURN
+            PsiElement(return)('return')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

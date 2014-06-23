@@ -1548,13 +1548,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parseCondition() {
         myBuilder.disableNewlines();
-        expect(LPAR, "Expecting a condition in parentheses '(...)'");
 
-        PsiBuilder.Marker condition = mark();
-        parseExpression();
-        condition.done(CONDITION);
+        if (expect(LPAR, "Expecting a condition in parentheses '(...)'", EXPRESSION_FIRST)) {
+            PsiBuilder.Marker condition = mark();
+            parseExpression();
+            condition.done(CONDITION);
+            expect(RPAR, "Expecting ')");
+        }
 
-        expect(RPAR, "Expecting ')");
         myBuilder.restoreNewlinesState();
     }
 
