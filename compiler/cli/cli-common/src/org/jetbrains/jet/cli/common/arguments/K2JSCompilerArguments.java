@@ -38,7 +38,7 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "sourcemap", description = "Generate SourceMap")
     public boolean sourcemap;
 
-    @Argument(value = "target", description = "Generate js files for specific ECMA version (now support only ECMA 5)")
+    @Argument(value = "target", description = "Generate JS files for specific ECMA version (only ECMA 5 is supported)")
     public String target;
 
     @Nullable
@@ -46,7 +46,7 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
                                             "' or '" + NO_CALL + "', default '" + CALL + "' (main function will be auto detected)")
     public String main;
 
-    @Argument(value = "outputPrefix", description = "Path to file which will be added to the begin of output file")
+    @Argument(value = "outputPrefix", description = "Path to file which will be added to the beginning of output file")
     public String outputPrefix;
 
     @Argument(value = "outputPostfix", description = "Path to file which will be added to the end of output file")

@@ -25,15 +25,20 @@ import static org.jetbrains.jet.cli.common.arguments.CommonArgumentConstants.SUP
 public abstract class CommonCompilerArguments {
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
+
     @Argument(value = "verbose", description = "Enable verbose logging output")
     public boolean verbose;
+
     @Argument(value = "version", description = "Display compiler version")
     public boolean version;
-    @Argument(value = "help", alias = "h", description = "Show help")
+
+    @Argument(value = "help", alias = "h", description = "Print a synopsis of standard options")
     public boolean help;
+
     @Argument(value = "suppress", description = "Suppress compiler messages by severity (" + SUPPRESS_WARNINGS + ")")
     public String suppress;
-    @Argument(value = "printArgs", description = "Print commandline arguments")
+
+    @Argument(value = "printArgs", description = "Print command line arguments")
     public boolean printArgs;
 
     public List<String> freeArgs = new SmartList<String>();
