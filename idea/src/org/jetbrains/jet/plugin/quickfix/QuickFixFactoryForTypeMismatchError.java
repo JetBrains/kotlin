@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -71,9 +72,9 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
             ResolvedCall<?> resolvedCall =
                     context.get(BindingContext.RESOLVED_CALL, ((JetOperationExpression) expression).getOperationReference());
             if (resolvedCall != null) {
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());
-                if (declaration instanceof JetFunction) {
-                    actions.add(new ChangeFunctionReturnTypeFix((JetFunction) declaration, expectedType));
+                JetFunction declaration = getFunctionDeclaration(context, resolvedCall);
+                if (declaration != null) {
+                    actions.add(new ChangeFunctionReturnTypeFix(declaration, expectedType));
                 }
             }
         }
@@ -82,9 +83,9 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
             if (parentBinary.getRight() == expression) {
                 ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, parentBinary.getOperationReference());
                 if (resolvedCall != null) {
-                    PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());
-                    if (declaration instanceof JetFunction) {
-                        JetParameter binaryOperatorParameter = ((JetFunction) declaration).getValueParameterList().getParameters().get(0);
+                    JetFunction declaration = getFunctionDeclaration(context, resolvedCall);
+                    if (declaration != null) {
+                        JetParameter binaryOperatorParameter = declaration.getValueParameterList().getParameters().get(0);
                         actions.add(new ChangeParameterTypeFix(binaryOperatorParameter, expressionType));
                     }
                 }
@@ -96,9 +97,9 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
             ResolvedCall<?> resolvedCall =
                     context.get(BindingContext.RESOLVED_CALL, ((JetCallExpression) expression).getCalleeExpression());
             if (resolvedCall != null) {
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());
-                if (declaration instanceof JetFunction) {
-                    actions.add(new ChangeFunctionReturnTypeFix((JetFunction) declaration, expectedType));
+                JetFunction declaration = getFunctionDeclaration(context, resolvedCall);
+                if (declaration != null) {
+                    actions.add(new ChangeFunctionReturnTypeFix(declaration, expectedType));
                 }
             }
         }
@@ -127,5 +128,19 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
             }
         }
         return actions;
+    }
+
+    @Nullable
+    private static JetFunction getFunctionDeclaration(@NotNull BindingContext context, @NotNull ResolvedCall<?> resolvedCall) {
+        List<PsiElement> declarations = BindingContextUtils.descriptorToDeclarations(context, resolvedCall.getResultingDescriptor());
+        //do not create fix if descriptor has more than one overridden declarations
+        //TODO: use change signature to deal with this case correctly
+        if (declarations.size() == 1) {
+            PsiElement result = declarations.iterator().next();
+            if (result instanceof JetFunction) {
+                return (JetFunction) result;
+            }
+        }
+        return null;
     }
 }

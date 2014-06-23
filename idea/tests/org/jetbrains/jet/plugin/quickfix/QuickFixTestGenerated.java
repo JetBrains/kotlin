@@ -2306,6 +2306,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeExpectedTypeMismatch.kt");
             }
             
+            @TestMetadata("beforeMultiFakeOverride.kt")
+            public void testMultiFakeOverride() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeMultiFakeOverride.kt");
+            }
+            
+            @TestMetadata("beforeMultiFakeOverrideForOperatorConvention.kt")
+            public void testMultiFakeOverrideForOperatorConvention() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeMultiFakeOverrideForOperatorConvention.kt");
+            }
+            
             @TestMetadata("beforePropertyGetterInitializerTypeMismatch.kt")
             public void testPropertyGetterInitializerTypeMismatch() throws Exception {
                 doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforePropertyGetterInitializerTypeMismatch.kt");
