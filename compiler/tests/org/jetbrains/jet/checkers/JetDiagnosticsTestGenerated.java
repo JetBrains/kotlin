@@ -1551,6 +1551,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/kt2585_3.kt");
                 }
                 
+                @TestMetadata("kt3162tryAsInitializer.kt")
+                public void testKt3162tryAsInitializer() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/kt3162tryAsInitializer.kt");
+                }
+                
                 @TestMetadata("kt5200DeadCodeInLambdas.kt")
                 public void testKt5200DeadCodeInLambdas() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/kt5200DeadCodeInLambdas.kt");
