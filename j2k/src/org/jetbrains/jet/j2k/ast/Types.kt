@@ -47,19 +47,9 @@ abstract class NotNullType() : Type() {
 abstract class Type() : Element() {
     abstract val isNullable: Boolean
 
-    open fun toNotNullType(): Type {
-        if (isNullable) {
-            throw UnsupportedOperationException("toNotNullType must be defined")
-        }
-        return this
-    }
+    open fun toNotNullType(): Type = this
 
-    open fun toNullableType(): Type {
-        if (!isNullable) {
-            throw UnsupportedOperationException("toNullableType must be defined")
-        }
-        return this
-    }
+    open fun toNullableType(): Type = this
 
     object Empty : NotNullType() {
         override fun generateCode(builder: CodeBuilder) {

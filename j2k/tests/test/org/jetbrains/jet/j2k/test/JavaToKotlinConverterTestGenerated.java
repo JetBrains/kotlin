@@ -2084,6 +2084,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/nullability/MethodReturnsTernaryNull.java");
         }
         
+        @TestMetadata("NullableIntNoCrash.java")
+        public void testNullableIntNoCrash() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/NullableIntNoCrash.java");
+        }
+        
         @TestMetadata("NullableMethodDotAccess.java")
         public void testNullableMethodDotAccess() throws Exception {
             doTest("j2k/tests/testData/ast/nullability/NullableMethodDotAccess.java");

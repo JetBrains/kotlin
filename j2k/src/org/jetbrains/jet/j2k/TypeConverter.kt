@@ -69,6 +69,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
 
     private fun variableNullabilityNoCache(variable: PsiVariable): Nullability {
         if (variable is PsiEnumConstant) return Nullability.NotNull
+        if (variable.getType() is PsiPrimitiveType) return Nullability.NotNull
 
         var nullability = variable.nullabilityFromAnnotations()
 
@@ -154,6 +155,8 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
     }
 
     private fun methodNullabilityNoCache(method: PsiMethod): Nullability {
+        if (method.getReturnType() is PsiPrimitiveType) return Nullability.NotNull
+
         var nullability = method.nullabilityFromAnnotations()
 
         if (nullability == Nullability.Default) {
