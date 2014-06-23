@@ -249,7 +249,7 @@ public class CallCompleter(
             updatedType = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context as ResolutionContext<*>, expression)
         }
 
-        updateRecordedTypeForArgument(updatedType, expression, context.trace)
+        updateRecordedTypeForArgument(updatedType, recordedType, expression, context.trace)
 
         // While the expected type is not known, the function literal arguments are not analyzed (to analyze function literal bodies once),
         // but they should be analyzed when the expected type is known (during the call completion).
@@ -292,7 +292,14 @@ public class CallCompleter(
         return argument?.getCorrespondingCall(bindingContext)
     }
 
-    private fun updateRecordedTypeForArgument(updatedType: JetType?, argumentExpression: JetExpression, trace: BindingTrace) {
+    private fun updateRecordedTypeForArgument(
+            updatedType: JetType?,
+            recordedType: JetType?,
+            argumentExpression: JetExpression,
+            trace: BindingTrace
+    ) {
+        if (recordedType == updatedType) return
+
         fun deparenthesizeOrGetSelector(expression: JetExpression?): JetExpression? {
             val deparenthesized = JetPsiUtil.deparenthesizeOnce(expression, /* deparenthesizeBinaryExpressionWithTypeRHS = */ false)
             if (deparenthesized != expression) return deparenthesized
