@@ -2263,6 +2263,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/beforeChangePrimaryConstructorParameterType.kt");
             }
             
+            @TestMetadata("beforeMultiFakeOverride.kt")
+            public void testMultiFakeOverride() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/beforeMultiFakeOverride.kt");
+            }
+            
         }
         
         @TestMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression")

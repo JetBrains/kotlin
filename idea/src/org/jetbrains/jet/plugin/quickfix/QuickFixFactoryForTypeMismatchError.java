@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
@@ -34,6 +33,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import java.util.LinkedList;
 import java.util.List;
 
+//TODO: should use change signature to deal with cases of multiple overridden descriptors
 public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsFactory {
     @NotNull
     @Override
@@ -132,14 +132,9 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
 
     @Nullable
     private static JetFunction getFunctionDeclaration(@NotNull BindingContext context, @NotNull ResolvedCall<?> resolvedCall) {
-        List<PsiElement> declarations = BindingContextUtils.descriptorToDeclarations(context, resolvedCall.getResultingDescriptor());
-        //do not create fix if descriptor has more than one overridden declarations
-        //TODO: use change signature to deal with this case correctly
-        if (declarations.size() == 1) {
-            PsiElement result = declarations.iterator().next();
-            if (result instanceof JetFunction) {
-                return (JetFunction) result;
-            }
+        PsiElement result = QuickFixUtil.safeGetDeclaration(context, resolvedCall);
+        if (result instanceof JetFunction) {
+            return (JetFunction) result;
         }
         return null;
     }
