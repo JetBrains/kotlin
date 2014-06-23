@@ -553,8 +553,8 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             ,
             """
             when ( {
-            }
                 <caret>
+            }
             """
     )
 
@@ -836,6 +836,62 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             """,
             """
             fun Int.other() {
+                <caret>
+            }
+            """
+    )
+
+    fun testInLambda1() = doFunTest(
+            """
+            some {
+                p -><caret>
+            }
+            """,
+            """
+            some {
+                p ->
+                <caret>
+            }
+            """
+    )
+
+    fun testInLambda2() = doFunTest(
+            """
+            some {
+                p<caret> ->
+            }
+            """,
+            """
+            some {
+                p ->
+                <caret>
+            }
+            """
+    )
+
+    fun testInLambda3() = doFunTest(
+            """
+            some {
+                (<caret>p: Int) : Int ->
+            }
+            """,
+            """
+            some {
+                (p: Int) : Int ->
+                <caret>
+            }
+            """
+    )
+
+    fun testInLambda4() = doFunTest(
+            """
+            some {
+                (p: <caret>Int) : Int ->
+            }
+            """,
+            """
+            some {
+                (p: Int) : Int ->
                 <caret>
             }
             """

@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetForExpression
 import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.JetLoopExpression
@@ -64,12 +65,17 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
         if (atCaret is PsiWhiteSpace) return null
 
         while (atCaret != null) {
-            if (atCaret?.isJetStatement() == true) return atCaret
-
-            if (atCaret is JetDeclaration &&
-                    atCaret !is JetParameter &&
-                    (atCaret?.getParent() !is JetForExpression)) {
-                return atCaret
+            when {
+                atCaret?.isJetStatement() == true -> return atCaret
+                atCaret?.getParent() is JetFunctionLiteral -> return atCaret
+                atCaret is JetDeclaration -> {
+                    val declaration = atCaret!!
+                    when {
+                        declaration is JetParameter && !declaration.isInLambdaExpression() -> {/* proceed to function declaration */}
+                        declaration.getParent() is JetForExpression -> {/* skip variable declaration in 'for' expression */}
+                        else -> return atCaret
+                    }
+                }
             }
 
             atCaret = atCaret?.getParent()
@@ -152,3 +158,4 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 }
 
 private val IF_BRANCHES_CONTAINERS = TokenSet.create(JetNodeTypes.THEN, JetNodeTypes.ELSE)
+private fun JetParameter.isInLambdaExpression() = this.getParent()?.getParent() is JetFunctionLiteral
