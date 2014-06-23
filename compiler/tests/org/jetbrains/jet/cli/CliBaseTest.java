@@ -73,6 +73,7 @@ public class CliBaseTest {
     }
 
     private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {
+        System.setProperty("java.awt.headless", "true");
         Pair<String, ExitCode> outputAndExitCode =
                 executeCompilerGrabOutput(compiler, readArgs(testDataDir + "/" + testName.getMethodName() + ".args", testDataDir,
                                                              tmpdir.getTmpDir().getPath()));
