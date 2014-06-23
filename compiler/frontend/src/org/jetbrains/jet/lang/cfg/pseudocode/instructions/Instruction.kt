@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 public trait Instruction {
     public var owner: Pseudocode
 
-    public val previousInstructions: MutableCollection<Instruction>
+    public val previousInstructions: Collection<Instruction>
     public val nextInstructions: Collection<Instruction>
 
     public val dead: Boolean
@@ -32,7 +32,7 @@ public trait Instruction {
 
     public val inputValues: List<PseudoValue>
 
-    public fun getCopies(): Collection<Instruction>
+    public val copies: Collection<Instruction>
 
     public fun accept(visitor: InstructionVisitor)
     public fun <R> accept(visitor: InstructionVisitorWithResult<R>): R
