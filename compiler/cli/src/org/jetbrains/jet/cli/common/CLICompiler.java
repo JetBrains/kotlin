@@ -85,20 +85,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
      * Allow derived classes to add additional command line arguments
      */
     protected void usage(@NotNull PrintStream target) {
-        // We should say something like
-        //   Args.usage(target, K2JVMCompilerArguments.class);
-        // but currently cli-parser we are using does not support that
-        // a corresponding patch has been sent to the authors
-        // For now, we are using this:
-        PrintStream oldErr = System.err;
-        System.setErr(target);
-        try {
-            // TODO: use proper argv0
-            Args.usage(createArguments());
-        }
-        finally {
-            System.setErr(oldErr);
-        }
+        Usage.print(target, createArguments());
     }
 
     /**
