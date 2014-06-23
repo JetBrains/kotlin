@@ -3,8 +3,8 @@ fun test(a: Any) {
     a.foo()
 }
 ---------------------
-a             <v1>   NEW()
-foo()         <v2>   NEW(<v1>)
-a.foo()       <v2>   COPY
-{ a.foo() }   <v2>   COPY     
+a             <v1>: *   NEW()
+foo()         <v2>: *   NEW(<v1>)
+a.foo()       <v2>: *   COPY
+{ a.foo() }   <v2>: *   COPY
 =====================

@@ -860,15 +860,21 @@ public class JetControlFlowProcessor {
             JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
             JetExpression loopRange = expression.getLoopRange();
 
-            JetType loopRangeType = trace.get(BindingContext.EXPRESSION_TYPE, loopRange);
-            TypePredicate loopRangeTypeSet = loopRangeType != null ? new SingleType(loopRangeType) : AllTypes.instance$;
-            PseudoValue loopRangeValue = builder.getBoundValue(loopRange);
+            TypePredicate loopRangeTypePredicate = AllTypes.instance$;
+            ResolvedCall<?> iteratorResolvedCall = trace.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange);
+            if (iteratorResolvedCall != null) {
+                ReceiverValue iteratorReceiver = getExplicitReceiverValue(iteratorResolvedCall);
+                if (iteratorReceiver.exists()) {
+                    loopRangeTypePredicate = PseudocodePackage.getReceiverTypePredicate(iteratorResolvedCall, iteratorReceiver);
+                }
+            }
 
+            PseudoValue loopRangeValue = builder.getBoundValue(loopRange);
             PseudoValue value = builder.magic(
                     loopRange != null ? loopRange : expression,
                     null,
                     Collections.singletonList(loopRangeValue),
-                    Collections.singletonMap(loopRangeValue, loopRangeTypeSet),
+                    Collections.singletonMap(loopRangeValue, loopRangeTypePredicate),
                     true
             ).getOutputValue();
 
@@ -879,6 +885,17 @@ public class JetControlFlowProcessor {
                 for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
                     generateInitializer(entry, value);
                 }
+            }
+        }
+
+        private ReceiverValue getExplicitReceiverValue(ResolvedCall<?> resolvedCall) {
+            switch(resolvedCall.getExplicitReceiverKind()) {
+                case THIS_OBJECT:
+                    return resolvedCall.getThisObject();
+                case RECEIVER_ARGUMENT:
+                    return resolvedCall.getReceiverArgument();
+                default:
+                    return ReceiverValue.NO_RECEIVER;
             }
         }
 

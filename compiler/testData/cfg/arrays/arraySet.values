@@ -3,9 +3,9 @@ fun foo(a: Array<Int>) {
     a[1] = 2
 }
 ---------------------
-a              <v1>   NEW()
-1              <v2>   NEW()
-2              <v3>   NEW()
-a[1] = 2       <v4>   NEW(<v1>, <v2>, <v3>)
-{ a[1] = 2 }   <v4>   COPY
+a              <v1>: {<: Array<Int>}   NEW()
+1              <v2>: Int               NEW()
+2              <v3>: Int               NEW()
+a[1] = 2       <v4>: *                 NEW(<v1>, <v2>, <v3>)
+{ a[1] = 2 }   <v4>: *                 COPY
 =====================

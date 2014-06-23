@@ -3,9 +3,9 @@ fun foo(a: Array<Int>) {
     a[0]++
 }
 ---------------------
-a            <v5>   NEW()
-0            <v6>   NEW()
-a[0]         <v3>   NEW(<v1>, <v2>)
-a[0]++       <v3>   COPY
-{ a[0]++ }   <v3>   COPY
+a            <v5>: {<: Array<Int>}   NEW()
+0            <v6>: Int               NEW()
+a[0]         <v3>: Int               NEW(<v1>, <v2>)
+a[0]++       <v3>: Int               COPY
+{ a[0]++ }   <v3>: Int               COPY
 =====================

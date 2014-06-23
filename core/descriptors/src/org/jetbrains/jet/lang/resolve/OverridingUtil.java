@@ -17,10 +17,13 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.Unit;
+import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -31,12 +34,11 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.utils.DFS;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT;
-import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE;
-import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
+import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.*;
 
 public class OverridingUtil {
 
@@ -510,6 +512,32 @@ public class OverridingUtil {
             }
         }
         return maxVisibility;
+    }
+
+
+    @NotNull
+    @KotlinSignature("fun getTopmostOverridenDescriptors(originalDescriptor: CallableDescriptor): List<out CallableDescriptor>")
+    public static List<? extends CallableDescriptor> getTopmostOverridenDescriptors(@NotNull CallableDescriptor originalDescriptor) {
+        return DFS.dfs(
+                Collections.singletonList(originalDescriptor),
+                new DFS.Neighbors<CallableDescriptor>() {
+                    @NotNull
+                    @Override
+                    public Iterable<? extends CallableDescriptor> getNeighbors(CallableDescriptor current) {
+                        return current.getOverriddenDescriptors();
+                    }
+                },
+                new DFS.CollectingNodeHandler<CallableDescriptor, CallableDescriptor, ArrayList<CallableDescriptor>>(
+                        new ArrayList<CallableDescriptor>()
+                ) {
+                    @Override
+                    public void afterChildren(CallableDescriptor current) {
+                        if (current.getOverriddenDescriptors().isEmpty()) {
+                            result.add(current);
+                        }
+                    }
+                }
+        );
     }
 
     public interface DescriptorSink {

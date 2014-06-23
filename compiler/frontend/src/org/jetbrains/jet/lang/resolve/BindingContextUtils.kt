@@ -21,14 +21,18 @@ import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetUnaryExpression
-import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetOperationExpression
 import org.jetbrains.jet.lang.resolve.BindingContext.CALL
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lang.psi.JetReturnExpression
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET
+import org.jetbrains.jet.lang.resolve.BindingContext.FUNCTION
+import org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
 
 /**
  *  For expressions like <code>a(), a[i], a.b.c(), +a, a + b, (a()), a(): Int, @label a()</code>
@@ -50,4 +54,17 @@ fun JetExpression.getCorrespondingCall(bindingContext: BindingContext): Call? {
         else -> expr
     }
     return bindingContext[CALL, reference]
+}
+
+public fun JetReturnExpression.getTargetFunctionDescriptor(bindingContext: BindingContext): FunctionDescriptor? {
+    val targetLabel = getTargetLabel()
+    if (targetLabel != null) return bindingContext[LABEL_TARGET, targetLabel]?.let { bindingContext[FUNCTION, it] }
+
+    val declarationDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, getParentByType(javaClass<JetDeclarationWithBody>())]
+    val containingFunctionDescriptor = DescriptorUtils.getParentOfType(declarationDescriptor, javaClass<FunctionDescriptor>(), false)
+    if (containingFunctionDescriptor == null) return null
+
+    return stream(containingFunctionDescriptor) { DescriptorUtils.getParentOfType(it, javaClass<FunctionDescriptor>()) }
+            .dropWhile { it is AnonymousFunctionDescriptor }
+            .firstOrNull()
 }

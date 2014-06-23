@@ -3,10 +3,10 @@ fun test(array: Array<(Int)->Unit>) {
     array[11](3)
 }
 ---------------------
-array              <v1>   NEW()
-11                 <v2>   NEW()
-array[11]          <v3>   NEW(<v1>, <v2>)
-3                  <v4>   NEW()
-array[11](3)       <v5>   NEW(<v3>, <v4>)
-{ array[11](3) }   <v5>   COPY
+array              <v1>: {<: Array<(Int) -> Unit>}   NEW()
+11                 <v2>: Int                         NEW()
+array[11]          <v3>: {<: (Int) -> Unit}          NEW(<v1>, <v2>)
+3                  <v4>: Int                         NEW()
+array[11](3)       <v5>: *                           NEW(<v3>, <v4>)
+{ array[11](3) }   <v5>: *                           COPY
 =====================

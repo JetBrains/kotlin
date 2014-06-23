@@ -7,12 +7,12 @@ fun t1() {
   }
 }
 ---------------------
-1                             <v0>   NEW()
-{ 1 }                         <v0>   COPY 
-2                             <v1>   NEW()
-{ 2 }                         <v1>   COPY 
-try { 1 } finally { 2 }       <v0>   COPY 
-{ try { 1 } finally { 2 } }   <v0>   COPY 
+1                             <v0>: *   NEW()
+{ 1 }                         <v0>: *   COPY 
+2                             <v1>: *   NEW()
+{ 2 }                         <v1>: *   COPY 
+try { 1 } finally { 2 }       <v0>: *   COPY 
+{ try { 1 } finally { 2 } }   <v0>: *   COPY 
 =====================
 == t2 ==
 fun t2() {
@@ -26,12 +26,12 @@ fun t2() {
   }
 }
 ---------------------
-1       <v0>   NEW()          
-2       <v1>   NEW()          
-3       <v2>   NEW()
-2 > 3   <v3>   NEW(<v1>, <v2>)
-2       <v4>   NEW()          
-{ 2 }   <v4>   COPY           
+1       <v0>: *                      NEW()          
+2       <v1>: {<: Comparable<Int>}   NEW()          
+3       <v2>: Int                    NEW()          
+2 > 3   <v3>: Boolean                NEW(<v1>, <v2>)
+2       <v4>: *                      NEW()          
+{ 2 }   <v4>: *                      COPY           
 =====================
 == t3 ==
 fun t3() {
@@ -47,14 +47,14 @@ fun t3() {
   }
 }
 ---------------------
-1                                                                 <v0>   NEW()
-{ () -> if (2 > 3) { return@l } }                                 <v1>   NEW()
-@l{ () -> if (2 > 3) { return@l } }                               <v1>   COPY 
-{ 1 @l{ () -> if (2 > 3) { return@l } } }                         <v1>   COPY 
-2                                                                 <v2>   NEW()
-{ 2 }                                                             <v2>   COPY 
-try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }       <v1>   COPY 
-{ try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 } }   <v1>   COPY 
+1                                                                 <v0>: *   NEW()
+{ () -> if (2 > 3) { return@l } }                                 <v1>: *   NEW()
+@l{ () -> if (2 > 3) { return@l } }                               <v1>: *   COPY 
+{ 1 @l{ () -> if (2 > 3) { return@l } } }                         <v1>: *   COPY 
+2                                                                 <v2>: *   NEW()
+{ 2 }                                                             <v2>: *   COPY 
+try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }       <v1>: *   COPY 
+{ try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 } }   <v1>: *   COPY 
 =====================
 == anonymous_0 ==
 { () ->
@@ -63,9 +63,9 @@ try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }       <v1>   COPY
         }
     }
 ---------------------
-2       <v0>   NEW()          
-3       <v1>   NEW()
-2 > 3   <v2>   NEW(<v0>, <v1>)
+2       <v0>: {<: Comparable<Int>}   NEW()          
+3       <v1>: Int                    NEW()          
+2 > 3   <v2>: Boolean                NEW(<v0>, <v1>)
 =====================
 == t4 ==
 fun t4() {
@@ -81,9 +81,9 @@ fun t4() {
   }
 }
 ---------------------
-{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }         <v0>   NEW()
-@l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }       <v0>   COPY 
-{ @l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } } }   <v0>   COPY 
+{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }         <v0>: *   NEW()
+@l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }       <v0>: *   COPY 
+{ @l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } } }   <v0>: *   COPY 
 =====================
 == anonymous_1 ==
 { () ->
@@ -97,12 +97,12 @@ fun t4() {
     }
   }
 ---------------------
-1       <v0>   NEW()          
-2       <v1>   NEW()          
-3       <v2>   NEW()
-2 > 3   <v3>   NEW(<v1>, <v2>)
-2       <v4>   NEW()          
-{ 2 }   <v4>   COPY           
+1       <v0>: *                      NEW()          
+2       <v1>: {<: Comparable<Int>}   NEW()          
+3       <v2>: Int                    NEW()          
+2 > 3   <v3>: Boolean                NEW(<v1>, <v2>)
+2       <v4>: *                      NEW()          
+{ 2 }   <v4>: *                      COPY           
 =====================
 == t5 ==
 fun t5() {
@@ -118,13 +118,13 @@ fun t5() {
   }
 }
 ---------------------
-true    <v0>   NEW()          
-1       <v1>   NEW()          
-2       <v2>   NEW()          
-3       <v3>   NEW()
-2 > 3   <v4>   NEW(<v2>, <v3>)
-2       <v5>   NEW()          
-{ 2 }   <v5>   COPY           
+true    <v0>: *                      NEW()          
+1       <v1>: *                      NEW()          
+2       <v2>: {<: Comparable<Int>}   NEW()          
+3       <v3>: Int                    NEW()          
+2 > 3   <v4>: Boolean                NEW(<v2>, <v3>)
+2       <v5>: *                      NEW()          
+{ 2 }   <v5>: *                      COPY           
 =====================
 == t6 ==
 fun t6() {
@@ -141,17 +141,17 @@ fun t6() {
   }
 }
 ---------------------
-true                                                                       <v0>   NEW()          
-1                                                                          <v1>   NEW()          
-2                                                                          <v2>   NEW()          
-3                                                                          <v3>   NEW()
-2 > 3                                                                      <v4>   NEW(<v2>, <v3>)
-5                                                                          <v5>   NEW()          
-{ @l while(true) { 1 if (2 > 3) { break @l } } 5 }                         <v5>   COPY           
-2                                                                          <v6>   NEW()          
-{ 2 }                                                                      <v6>   COPY           
-try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 }       <v5>   COPY           
-{ try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 } }   <v5>   COPY           
+true                                                                       <v0>: *                      NEW()          
+1                                                                          <v1>: *                      NEW()          
+2                                                                          <v2>: {<: Comparable<Int>}   NEW()          
+3                                                                          <v3>: Int                    NEW()          
+2 > 3                                                                      <v4>: Boolean                NEW(<v2>, <v3>)
+5                                                                          <v5>: *                      NEW()          
+{ @l while(true) { 1 if (2 > 3) { break @l } } 5 }                         <v5>: *                      COPY           
+2                                                                          <v6>: *                      NEW()          
+{ 2 }                                                                      <v6>: *                      COPY           
+try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 }       <v5>: *                      COPY           
+{ try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 } }   <v5>: *                      COPY           
 =====================
 == t7 ==
 fun t7() {
@@ -167,13 +167,13 @@ fun t7() {
   }
 }
 ---------------------
-true    <v0>   NEW()          
-1       <v1>   NEW()          
-2       <v2>   NEW()          
-3       <v3>   NEW()
-2 > 3   <v4>   NEW(<v2>, <v3>)
-2       <v5>   NEW()          
-{ 2 }   <v5>   COPY           
+true    <v0>: *                      NEW()          
+1       <v1>: *                      NEW()          
+2       <v2>: {<: Comparable<Int>}   NEW()          
+3       <v3>: Int                    NEW()          
+2 > 3   <v4>: Boolean                NEW(<v2>, <v3>)
+2       <v5>: *                      NEW()          
+{ 2 }   <v5>: *                      COPY           
 =====================
 == t8 ==
 fun t8(a : Int) {
@@ -189,15 +189,15 @@ fun t8(a : Int) {
   }
 }
 ---------------------
-1       <v1>   NEW()
-a       <v2>   NEW()
-1..a    <v3>   NEW(<v1>, <v2>)
-1       <v5>   NEW()
-2       <v6>   NEW()
-3       <v7>   NEW()
-2 > 3   <v8>   NEW(<v6>, <v7>)
-2       <v9>   NEW()
-{ 2 }   <v9>   COPY
+1       <v1>: Int                    NEW()          
+a       <v2>: Int                    NEW()          
+1..a    <v3>: {<: Iterable<Int>}     NEW(<v1>, <v2>)
+1       <v5>: *                      NEW()          
+2       <v6>: {<: Comparable<Int>}   NEW()          
+3       <v7>: Int                    NEW()          
+2 > 3   <v8>: Boolean                NEW(<v6>, <v7>)
+2       <v9>: *                      NEW()          
+{ 2 }   <v9>: *                      COPY           
 =====================
 == t9 ==
 fun t9(a : Int) {
@@ -214,19 +214,19 @@ fun t9(a : Int) {
   }
 }
 ---------------------
-1                                                                                 <v1>    NEW()
-a                                                                                 <v2>    NEW()
-1..a                                                                              <v3>    NEW(<v1>, <v2>)
-1                                                                                 <v5>    NEW()          
-2                                                                                 <v6>    NEW()          
-3                                                                                 <v7>    NEW()
-2 > 3                                                                             <v8>    NEW(<v6>, <v7>)
-5                                                                                 <v9>    NEW()          
-{ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 }                         <v9>    COPY           
-2                                                                                 <v10>   NEW()          
-{ 2 }                                                                             <v10>   COPY           
-try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 }       <v9>    COPY           
-{ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 } }   <v9>    COPY           
+1                                                                                 <v1>: Int                    NEW()          
+a                                                                                 <v2>: Int                    NEW()          
+1..a                                                                              <v3>: {<: Iterable<Int>}     NEW(<v1>, <v2>)
+1                                                                                 <v5>: *                      NEW()          
+2                                                                                 <v6>: {<: Comparable<Int>}   NEW()          
+3                                                                                 <v7>: Int                    NEW()          
+2 > 3                                                                             <v8>: Boolean                NEW(<v6>, <v7>)
+5                                                                                 <v9>: *                      NEW()          
+{ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 }                         <v9>: *                      COPY           
+2                                                                                 <v10>: *                     NEW()          
+{ 2 }                                                                             <v10>: *                     COPY           
+try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 }       <v9>: *                      COPY           
+{ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 } }   <v9>: *                      COPY           
 =====================
 == t10 ==
 fun t10(a : Int) {
@@ -242,15 +242,15 @@ fun t10(a : Int) {
   }
 }
 ---------------------
-1       <v1>   NEW()
-a       <v2>   NEW()
-1..a    <v3>   NEW(<v1>, <v2>)
-1       <v5>   NEW()
-2       <v6>   NEW()
-3       <v7>   NEW()
-2 > 3   <v8>   NEW(<v6>, <v7>)
-2       <v9>   NEW()
-{ 2 }   <v9>   COPY
+1       <v1>: Int                    NEW()          
+a       <v2>: Int                    NEW()          
+1..a    <v3>: {<: Iterable<Int>}     NEW(<v1>, <v2>)
+1       <v5>: *                      NEW()          
+2       <v6>: {<: Comparable<Int>}   NEW()          
+3       <v7>: Int                    NEW()          
+2 > 3   <v8>: Boolean                NEW(<v6>, <v7>)
+2       <v9>: *                      NEW()          
+{ 2 }   <v9>: *                      COPY           
 =====================
 == t11 ==
 fun t11() {
@@ -262,8 +262,8 @@ fun t11() {
   }
 }
 ---------------------
-1   <v0>   NEW()
-2   <v1>   NEW()
+1   <v0>: *      NEW()
+2   <v1>: Unit   NEW()
 =====================
 == t12 ==
 fun t12() : Int {
@@ -275,10 +275,10 @@ fun t12() : Int {
     }
 }
 ---------------------
-1               <v0>   NEW()    
-3               <v1>   NEW()
-doSmth(3)       <v2>   NEW(<v1>)
-{ doSmth(3) }   <v2>   COPY     
+1               <v0>: Int   NEW()    
+3               <v1>: Int   NEW()    
+doSmth(3)       <v2>: *     NEW(<v1>)
+{ doSmth(3) }   <v2>: *     COPY     
 =====================
 == t13 ==
 fun t13() : Int {
@@ -293,15 +293,15 @@ fun t13() : Int {
     }
 }
 ---------------------
-1                                                                                                   <v0>   NEW()    
-2                                                                                                   <v4>   NEW()
-doSmth(2)                                                                                           <v5>   NEW(<v4>)
-{ doSmth(2) }                                                                                       <v5>   COPY     
-3                                                                                                   <v1>   NEW()
-doSmth(3)                                                                                           <v2>   NEW(<v1>)
-{ doSmth(3) }                                                                                       <v2>   COPY     
-try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }       <v5>   COPY     
-{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) } }   <v5>   COPY     
+1                                                                                                   <v0>: Int   NEW()    
+2                                                                                                   <v4>: Int   NEW()    
+doSmth(2)                                                                                           <v5>: *     NEW(<v4>)
+{ doSmth(2) }                                                                                       <v5>: *     COPY     
+3                                                                                                   <v1>: Int   NEW()    
+doSmth(3)                                                                                           <v2>: *     NEW(<v1>)
+{ doSmth(3) }                                                                                       <v2>: *     COPY     
+try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }       <v5>: *     COPY     
+{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) } }   <v5>: *     COPY     
 =====================
 == t14 ==
 fun t14() : Int {
@@ -313,12 +313,12 @@ fun t14() : Int {
     }
 }
 ---------------------
-1                                                                             <v0>   NEW()    
-2                                                                             <v2>   NEW()
-doSmth(2)                                                                     <v3>   NEW(<v2>)
-{ doSmth(2) }                                                                 <v3>   COPY     
-try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }       <v3>   COPY     
-{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } }   <v3>   COPY     
+1                                                                             <v0>: Int   NEW()    
+2                                                                             <v2>: Int   NEW()    
+doSmth(2)                                                                     <v3>: *     NEW(<v2>)
+{ doSmth(2) }                                                                 <v3>: *     COPY     
+try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }       <v3>: *     COPY     
+{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } }   <v3>: *     COPY     
 =====================
 == t15 ==
 fun t15() : Int {
@@ -333,11 +333,11 @@ fun t15() : Int {
     }
 }
 ---------------------
-1               <v0>   NEW()
-2               <v4>   NEW()
-3               <v1>   NEW()
-doSmth(3)       <v2>   NEW(<v1>)
-{ doSmth(3) }   <v2>   COPY
+1               <v0>: Int   NEW()    
+2               <v4>: Int   NEW()    
+3               <v1>: Int   NEW()    
+doSmth(3)       <v2>: *     NEW(<v1>)
+{ doSmth(3) }   <v2>: *     COPY     
 =====================
 == t16 ==
 fun t16() : Int {
@@ -352,15 +352,15 @@ fun t16() : Int {
     }
 }
 ---------------------
-1                                                                                                   <v0>   NEW()
-doSmth(1)                                                                                           <v1>   NEW(<v0>)
-{ doSmth(1) }                                                                                       <v1>   COPY     
-2                                                                                                   <v3>   NEW()
-3                                                                                                   <v4>   NEW()
-doSmth(3)                                                                                           <v5>   NEW(<v4>)
-{ doSmth(3) }                                                                                       <v5>   COPY     
-try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v1>   COPY     
-{ try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v1>   COPY     
+1                                                                                                   <v0>: Int   NEW()    
+doSmth(1)                                                                                           <v1>: *     NEW(<v0>)
+{ doSmth(1) }                                                                                       <v1>: *     COPY     
+2                                                                                                   <v3>: Int   NEW()    
+3                                                                                                   <v4>: Int   NEW()    
+doSmth(3)                                                                                           <v5>: *     NEW(<v4>)
+{ doSmth(3) }                                                                                       <v5>: *     COPY     
+try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v1>: *     COPY     
+{ try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v1>: *     COPY     
 =====================
 == doSmth ==
 fun doSmth(i: Int) {

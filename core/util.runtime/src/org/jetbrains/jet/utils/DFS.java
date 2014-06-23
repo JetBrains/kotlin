@@ -91,7 +91,7 @@ public class DFS {
     public interface Neighbors<N> {
         @KotlinSignature("fun getNeighbors(current: N): Iterable<N>")
         @NotNull
-        Iterable<N> getNeighbors(N current);
+        Iterable<? extends N> getNeighbors(N current);
     }
 
     public interface Visited<N> {

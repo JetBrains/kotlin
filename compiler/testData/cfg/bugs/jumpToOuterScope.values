@@ -7,9 +7,9 @@ fun foo(c: Collection<Int>) {
     }
 }
 ---------------------
-c               <v1>   NEW()
-{ break }       <v3>   NEW()
-{ { break } }   <v3>   COPY
+c               <v1>: {<: Iterable<Int>}   NEW()
+{ break }       <v3>: *                    NEW()
+{ { break } }   <v3>: *                    COPY
 =====================
 == anonymous_0 ==
 {

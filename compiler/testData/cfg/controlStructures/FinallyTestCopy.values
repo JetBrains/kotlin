@@ -30,15 +30,15 @@ fun testCopy1() : Int {
     }
 }
 ---------------------
-doSmth()                                                                                                                     <v0>   NEW()
-{ doSmth() }                                                                                                                 <v0>   COPY
-doSmth1()                                                                                                                    <v2>   NEW()
-{ doSmth1() }                                                                                                                <v2>   COPY
-doSmth2()                                                                                                                    <v4>   NEW()
-{ doSmth2() }                                                                                                                <v4>   COPY
-1                                                                                                                            <v5>   NEW()                
-try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { return 1 }       <v6>   NEW(<v0>, <v2>, <v4>)
-{ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { return 1 } }   <v6>   COPY                 
+doSmth()                                                                                                                     <v0>: *     NEW()
+{ doSmth() }                                                                                                                 <v0>: *     COPY
+doSmth1()                                                                                                                    <v2>: *     NEW()
+{ doSmth1() }                                                                                                                <v2>: *     COPY
+doSmth2()                                                                                                                    <v4>: *     NEW()
+{ doSmth2() }                                                                                                                <v4>: *     COPY
+1                                                                                                                            <v5>: Int   NEW()
+try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { return 1 }       <v6>: *     NEW(<v0>, <v2>, <v4>)
+{ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { return 1 } }   <v6>: *     COPY
 =====================
 == testCopy2 ==
 fun testCopy2() {
@@ -59,16 +59,16 @@ fun testCopy2() {
     }
 }
 ---------------------
-cond()                                                                                                                                               <v0>   NEW()
-doSmth()                                                                                                                                             <v1>   NEW()
-{ doSmth() }                                                                                                                                         <v1>   COPY
-doSmth1()                                                                                                                                            <v3>   NEW()
-{ doSmth1() }                                                                                                                                        <v3>   COPY
-doSmth2()                                                                                                                                            <v5>   NEW()
-{ doSmth2() }                                                                                                                                        <v5>   COPY
-cond()                                                                                                                                               <v6>   NEW()
-try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue }       <v7>   NEW(<v1>, <v3>, <v5>)
-{ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } }   <v7>   COPY                 
+cond()                                                                                                                                               <v0>: Boolean   NEW()
+doSmth()                                                                                                                                             <v1>: *         NEW()
+{ doSmth() }                                                                                                                                         <v1>: *         COPY
+doSmth1()                                                                                                                                            <v3>: *         NEW()
+{ doSmth1() }                                                                                                                                        <v3>: *         COPY
+doSmth2()                                                                                                                                            <v5>: *         NEW()
+{ doSmth2() }                                                                                                                                        <v5>: *         COPY
+cond()                                                                                                                                               <v6>: Boolean   NEW()
+try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue }       <v7>: *         NEW(<v1>, <v3>, <v5>)
+{ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } }   <v7>: *         COPY
 =====================
 == testCopy3 ==
 fun testCopy3() {
@@ -86,15 +86,15 @@ fun testCopy3() {
     }
 }
 ---------------------
-doSmth()                                                                                                                            <v0>   NEW()
-{ doSmth() }                                                                                                                        <v0>   COPY
-doSmth1()                                                                                                                           <v2>   NEW()
-{ doSmth1() }                                                                                                                       <v2>   COPY
-doSmth2()                                                                                                                           <v4>   NEW()
-{ doSmth2() }                                                                                                                       <v4>   COPY
-cond()                                                                                                                              <v5>   NEW()
-try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { while (cond()); }       <v6>   NEW(<v0>, <v2>, <v4>)
-{ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { while (cond()); } }   <v6>   COPY                 
+doSmth()                                                                                                                            <v0>: *         NEW()
+{ doSmth() }                                                                                                                        <v0>: *         COPY
+doSmth1()                                                                                                                           <v2>: *         NEW()
+{ doSmth1() }                                                                                                                       <v2>: *         COPY
+doSmth2()                                                                                                                           <v4>: *         NEW()
+{ doSmth2() }                                                                                                                       <v4>: *         COPY
+cond()                                                                                                                              <v5>: Boolean   NEW()
+try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { while (cond()); }       <v6>: *         NEW(<v0>, <v2>, <v4>)
+{ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { while (cond()); } }   <v6>: *         COPY
 =====================
 == doTestCopy4 ==
 fun doTestCopy4(list: List<String>?) : Int {
@@ -107,11 +107,11 @@ fun doTestCopy4(list: List<String>?) : Int {
     }
 }
 ---------------------
-doSmth()                                                <v1>   NEW()
-{ doSmth() }                                            <v1>   COPY
-list                                                    <v2>   NEW()          
-null                                                    <v3>   NEW()
-list != null                                            <v4>   NEW(<v2>, <v3>)
-try { doSmth() } finally { if(list != null) { } }       <v1>   COPY           
-{ try { doSmth() } finally { if(list != null) { } } }   <v1>   COPY           
+doSmth()                                                <v1>: *           NEW()
+{ doSmth() }                                            <v1>: *           COPY
+list                                                    <v2>: {<: Any?}   NEW()
+null                                                    <v3>: {<: Any?}   NEW()
+list != null                                            <v4>: Boolean     NEW(<v2>, <v3>)
+try { doSmth() } finally { if(list != null) { } }       <v1>: *           COPY
+{ try { doSmth() } finally { if(list != null) { } } }   <v1>: *           COPY
 =====================

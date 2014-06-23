@@ -22,9 +22,15 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.*
+import org.jetbrains.jet.lang.cfg.pseudocode.collectValueUsages
+import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate
+import org.jetbrains.jet.lang.cfg.pseudocode.getExpectedTypePredicate
 
 public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
     override fun dumpInstructions(pseudocode: PseudocodeImpl, out: StringBuilder, bindingContext: BindingContext) {
+        val valueUsageMap = pseudocode.collectValueUsages()
+        val expectedTypePredicateMap = HashMap<PseudoValue, TypePredicate>()
+
         fun getElementToValueMap(pseudocode: PseudocodeImpl): Map<JetElement, PseudoValue> {
             val elementToValues = LinkedHashMap<JetElement, PseudoValue>()
             pseudocode.getCorrespondingElement().accept(object : JetTreeVisitorVoid() {
@@ -44,6 +50,11 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
 
         fun elementText(element: JetElement): String = element.getText()!!.replaceAll("\\s+", " ")
 
+        fun valueDecl(value: PseudoValue): String {
+            val typePredicate = expectedTypePredicateMap.getOrPut(value) { getExpectedTypePredicate(value, valueUsageMap, bindingContext) }
+            return "${value.debugName}: $typePredicate"
+        }
+
         fun valueDescription(element: JetElement, value: PseudoValue): String {
             return if (value.element != element) "COPY" else "NEW${value.createdAt.inputValues.makeString(", ", "(", ")")}"
         }
@@ -52,14 +63,14 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
         if (elementToValues.isEmpty()) return
 
         val elementColumnWidth = elementToValues.keySet().map { elementText(it).length() }.max()!!
-        val valueColumnWidth = elementToValues.values().map { it.debugName.length() }.max()!!
+        val valueColumnWidth = elementToValues.values().map { valueDecl(it).length() }.max()!!
         val valueDescColumnWidth = elementToValues.entrySet().map { valueDescription(it.key, it.value).length }.max()!!
 
         for ((element, value) in elementToValues.entrySet()) {
             out
                     .append("%1$-${elementColumnWidth}s".format(elementText(element)))
                     .append("   ")
-                    .append("%1$-${valueColumnWidth}s".format(value.debugName))
+                    .append("%1$-${valueColumnWidth}s".format(valueDecl(value)))
                     .append("   ")
                     .append("%1$-${valueDescColumnWidth}s".format(valueDescription(element, value)))
                     .append("\n")

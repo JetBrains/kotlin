@@ -10,12 +10,12 @@ fun foo() {
     use(b)
 }
 ---------------------
-1                                                                      <v0>   NEW()
-2                                                                      <v1>   NEW()
-1 < 2                                                                  <v2>   NEW(<v0>, <v1>)
-false                                                                  <v3>   NEW()
-true                                                                   <v4>   NEW()
-b                                                                      <v5>   NEW()
-use(b)                                                                 <v6>   NEW(<v5>)
-{ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) }   <v6>   COPY           
+1                                                                      <v0>: {<: Comparable<Int>}   NEW()          
+2                                                                      <v1>: Int                    NEW()          
+1 < 2                                                                  <v2>: Boolean                NEW(<v0>, <v1>)
+false                                                                  <v3>: Boolean                NEW()          
+true                                                                   <v4>: Boolean                NEW()          
+b                                                                      <v5>: *                      NEW()          
+use(b)                                                                 <v6>: *                      NEW(<v5>)      
+{ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) }   <v6>: *                      COPY           
 =====================

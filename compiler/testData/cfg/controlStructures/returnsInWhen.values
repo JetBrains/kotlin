@@ -5,6 +5,6 @@ fun illegalWhenBlock(a: Any): Any {
     }
 }
 ---------------------
-a   <v1>   NEW()
-a   <v3>   NEW()
+a   <v1>: *          NEW()
+a   <v3>: {<: Any}   NEW()
 =====================

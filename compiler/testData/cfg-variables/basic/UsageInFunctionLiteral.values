@@ -7,8 +7,8 @@ fun foo() {
     }
 }
 ---------------------
-1                                      <v0>   NEW()
-{ (x: Int) -> val y = x + a use(a) }   <v1>   NEW()
+1                                      <v0>: Int                         NEW()
+{ (x: Int) -> val y = x + a use(a) }   <v1>: {<: (Int) -> Array<Any?>}   NEW()
 =====================
 == anonymous_0 ==
 { (x: Int) ->
@@ -16,15 +16,15 @@ fun foo() {
         use(a)
     }
 ---------------------
-x                      <v1>   NEW()
-a                      <v2>   NEW()
-x + a                  <v3>   NEW(<v1>, <v2>)
-a                      <v4>   NEW()          
-use(a)                 <v5>   NEW(<v4>)
-val y = x + a use(a)   <v5>   COPY           
+x                      <v1>: Int                NEW()
+a                      <v2>: Int                NEW()
+x + a                  <v3>: Int                NEW(<v1>, <v2>)
+a                      <v4>: {<: Any?}          NEW()
+use(a)                 <v5>: {<: Array<Any?>}   NEW(<v4>)
+val y = x + a use(a)   <v5>: {<: Array<Any?>}   COPY
 =====================
 == use ==
 fun use(vararg a: Any?) = a
 ---------------------
-a   <v1>   NEW()
+a   <v1>: {<: Array<Any?>}   NEW()
 =====================

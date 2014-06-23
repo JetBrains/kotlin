@@ -15,7 +15,7 @@ class AnonymousInitializers() {
     }
 }
 ---------------------
-34   <v0>   NEW()
-12   <v2>   NEW()
-13   <v4>   NEW()
+34   <v0>: Int   NEW()
+12   <v2>: Int   NEW()
+13   <v4>: Int   NEW()
 =====================

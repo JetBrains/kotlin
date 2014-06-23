@@ -3,8 +3,8 @@ fun test(s: String?) {
     s?.length
 }
 ---------------------
-s               <v1>   NEW()
-length          <v2>   NEW(<v1>)
-s?.length       <v2>   COPY     
-{ s?.length }   <v2>   COPY     
+s               <v1>: {<: CharSequence?}   NEW()
+length          <v2>: *                    NEW(<v1>)
+s?.length       <v2>: *                    COPY
+{ s?.length }   <v2>: *                    COPY
 =====================

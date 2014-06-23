@@ -1,0 +1,65 @@
+== Bar ==
+class Bar {
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== Foo ==
+class Foo() {
+    fun Bar.invoke() {}
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== invoke ==
+fun Bar.invoke() {}
+---------------------
+L0:
+  1 <START>
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>          NEXT:[<SINK>]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================
+== foobar ==
+fun foobar(f: Foo) {
+    Bar().f()
+}
+---------------------
+L0:
+  1 <START>
+    v(f: Foo)
+    magic(f: Foo) -> <v0>
+    w(f|<v0>)
+  2 mark({ Bar().f() })
+    mark(Bar().f())
+    r(f) -> <v1>
+    mark(Bar())
+    call(Bar, <init>) -> <v2>
+    mark(f())
+    call(f, invoke|<v1>, <v2>) -> <v3>
+L1:
+  1 <END>                                 NEXT:[<SINK>]
+error:
+    <ERROR>                               PREV:[]
+sink:
+    <SINK>                                PREV:[<ERROR>, <END>]
+=====================

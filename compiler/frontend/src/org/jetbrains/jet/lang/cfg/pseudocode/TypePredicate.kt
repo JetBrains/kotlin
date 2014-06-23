@@ -32,11 +32,47 @@ public data class SingleType(val targetType: JetType): TypePredicate {
     override fun toString(): String = targetType.render()
 }
 
+public data class AllSubtypes(val upperBound: JetType): TypePredicate {
+    override fun invoke(typeToCheck: JetType): Boolean = JetTypeChecker.INSTANCE.isSubtypeOf(typeToCheck, upperBound)
+
+    override fun toString(): String = "{<: ${upperBound.render()}}"
+}
+
+public data class ForAllTypes(val typeSets: List<TypePredicate>): TypePredicate {
+    override fun invoke(typeToCheck: JetType): Boolean = typeSets.all { it(typeToCheck) }
+
+    override fun toString(): String = "AND{${typeSets.makeString(", ")}}"
+}
+
+public data class ForSomeType(val typeSets: List<TypePredicate>): TypePredicate {
+    override fun invoke(typeToCheck: JetType): Boolean = typeSets.any { it(typeToCheck) }
+
+    override fun toString(): String = "OR{${typeSets.makeString(", ")}}"
+}
+
 public object AllTypes : TypePredicate {
     override fun invoke(typeToCheck: JetType): Boolean = true
 
-    override fun toString(): String = ""
+    override fun toString(): String = "*"
 }
+
+// todo: simplify computed type predicate when possible
+fun and(predicates: Collection<TypePredicate>): TypePredicate =
+        when (predicates.size) {
+            0 -> AllTypes
+            1 -> predicates.first()
+            else -> ForAllTypes(predicates.toList())
+        }
+
+fun or(predicates: Collection<TypePredicate>): TypePredicate? =
+        when (predicates.size) {
+            0 -> null
+            1 -> predicates.first()
+            else -> ForSomeType(predicates.toList())
+        }
+
+fun JetType.getSubtypesPredicate(): TypePredicate? =
+        if (TypeUtils.canHaveSubtypes(JetTypeChecker.INSTANCE, this)) AllSubtypes(this) else SingleType(this)
 
 private fun JetType.render(): String = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
 
