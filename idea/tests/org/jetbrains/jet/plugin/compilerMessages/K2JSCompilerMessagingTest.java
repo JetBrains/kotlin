@@ -101,7 +101,7 @@ public final class K2JSCompilerMessagingTest extends IDECompilerMessagingTest {
     @Override
     protected void checkHeader(@NotNull MessageChecker checker) {
         checker.expect(info().textStartsWith("Using kotlinHome="));
-        checker.expect(info().textStartsWith("Invoking compiler"));
+        checker.expect(info().textStartsWith("Invoking K2JSCompiler"));
         checker.expect(info().textStartsWith("Kotlin Compiler version"));
         checker.expect(stats().textMatchesRegexp("Compiling source files: .*/src/test.kt"));
     }

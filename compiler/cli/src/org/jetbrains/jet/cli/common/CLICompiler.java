@@ -200,7 +200,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             String argumentsAsString = StringUtil.join(argumentsAsList, " ");
 
             String printArgsMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
-                                                             "Invoking compiler " + getClass().getName() +
+                                                             "Invoking " + getClass().getSimpleName() +
                                                              " with arguments " + argumentsAsString + freeArgs,
                                                              CompilerMessageLocation.NO_LOCATION);
             errStream.println(printArgsMessage);

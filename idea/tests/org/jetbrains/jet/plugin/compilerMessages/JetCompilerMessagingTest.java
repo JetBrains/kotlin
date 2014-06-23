@@ -81,7 +81,7 @@ public final class JetCompilerMessagingTest extends IDECompilerMessagingTest {
     @Override
     protected void checkHeader(@NotNull MessageChecker checker) {
         checker.expect(Message.info().textStartsWith("Using kotlinHome="));
-        checker.expect(Message.info().textStartsWith("Invoking compiler"));
+        checker.expect(Message.info().textStartsWith("Invoking K2JVMCompiler"));
         checker.expect(Message.info().textStartsWith("Kotlin Compiler version"));
         checker.expect(Message.stats().textStartsWith("Using Kotlin home directory"));
         checker.expect(Message.stats().text("Configuring the compilation environment"));
