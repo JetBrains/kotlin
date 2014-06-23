@@ -20,94 +20,58 @@ import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.ValueDescription;
 
 import java.io.PrintStream;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 class Usage {
-    private final PrintStream out;
-
-    private Usage(@NotNull PrintStream out) {
-        this.out = out;
-    }
+    // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
+    private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
     public static void print(@NotNull PrintStream target, @NotNull CommonCompilerArguments arguments) {
-        new Usage(target).print(arguments);
-    }
-
-    private void print(@NotNull CommonCompilerArguments arguments) {
-        Class<?> clazz = arguments.getClass();
-        out.println("Usage: " + clazz.getName());
-        for (Class<?> currentClass = clazz; currentClass != null; currentClass = currentClass.getSuperclass()) {
-            for (Field field : currentClass.getDeclaredFields()) {
-                Argument argument = field.getAnnotation(Argument.class);
-                if (argument == null) continue;
-
-                try {
-                    printFieldUsage(field, field.get(arguments), argument);
-                }
-                catch (IllegalAccessException e) {
-                    throw new IllegalArgumentException("Could not use the field " + field + " as an argument field", e);
+        target.println("Usage: " + arguments.executableScriptFileName() + " <options> <source files>");
+        target.println("where possible options include:");
+        for (Class<?> clazz = arguments.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
+            for (Field field : clazz.getDeclaredFields()) {
+                String usage = fieldUsage(field);
+                if (usage != null) {
+                    target.println(usage);
                 }
             }
         }
     }
 
-    private void printFieldUsage(@NotNull Field field, @Nullable Object defaultValue, @NotNull Argument argument) {
+    @Nullable
+    private static String fieldUsage(@NotNull Field field) {
+        Argument argument = field.getAnnotation(Argument.class);
+        if (argument == null) return null;
+        ValueDescription description = field.getAnnotation(ValueDescription.class);
+
         String prefix = argument.prefix();
-        Class<?> type = field.getType();
-        String description = argument.description();
 
         StringBuilder sb = new StringBuilder("  ");
         sb.append(prefix);
-        if (argument.value().equals("")) {
+        if (argument.value().isEmpty()) {
             sb.append(field.getName());
         }
         else {
             sb.append(argument.value());
         }
-        if (!argument.alias().equals("")) {
+        if (!argument.alias().isEmpty()) {
             sb.append(" (");
             sb.append(prefix);
             sb.append(argument.alias());
             sb.append(")");
         }
-        if (type == Boolean.TYPE || type == Boolean.class) {
-            sb.append(" [flag] ");
-            sb.append(description);
+        if (description != null) {
+            sb.append(" ");
+            sb.append(description.value());
         }
-        else {
-            sb.append(" [");
-            if (type.isArray()) {
-                sb.append(type.getComponentType().getSimpleName());
-                sb.append("[");
-                sb.append(argument.delimiter());
-                sb.append("]");
-            }
-            else {
-                sb.append(type.getSimpleName());
-            }
-            sb.append("] ");
-            sb.append(description);
-            if (defaultValue != null) {
-                sb.append(" (");
-                if (type.isArray()) {
-                    int len = Array.getLength(defaultValue);
-                    List<Object> list = new ArrayList<Object>(len);
-                    for (int i = 0; i < len; i++) {
-                        list.add(Array.get(defaultValue, i));
-                    }
-                    sb.append(list);
-                }
-                else {
-                    sb.append(defaultValue);
-                }
-                sb.append(")");
-            }
+        while (sb.length() < OPTION_NAME_PADDING_WIDTH) {
+            sb.append(" ");
         }
-        out.println(sb);
+        sb.append(argument.description());
+        return sb.toString();
     }
 }

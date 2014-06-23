@@ -19,6 +19,7 @@
 package org.jetbrains.jet.cli.common.arguments;
 
 import com.sampullara.cli.Argument;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Command line arguments for K2JVMCompiler
@@ -26,18 +27,23 @@ import com.sampullara.cli.Argument;
 @SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "src", description = "Source file or directory (allows many paths separated by the system path separator)")
+    @ValueDescription("<path>")
     public String src;
 
     @Argument(value = "jar", description = "Resulting .jar file path")
+    @ValueDescription("<path>")
     public String jar;
 
     @Argument(value = "output", description = "Output directory path for .class files")
+    @ValueDescription("<path>")
     public String outputDir;
 
     @Argument(value = "classpath", description = "Paths where to find user class files")
+    @ValueDescription("<path>")
     public String classpath;
 
     @Argument(value = "annotations", description = "Paths to external annotations")
+    @ValueDescription("<path>")
     public String annotations;
 
     @Argument(value = "includeRuntime", description = "Include Kotlin runtime in to resulting .jar")
@@ -59,14 +65,23 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public boolean notNullParamAssertions;
 
     @Argument(value = "module", description = "Path to the module file to compile")
+    @ValueDescription("<path>")
     public String module;
 
     @Argument(value = "script", description = "Evaluate the script file")
     public boolean script;
 
     @Argument(value = "kotlinHome", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
+    @ValueDescription("<path>")
     public String kotlinHome;
 
-    @Argument(value = "inline", description = "Inlining mode: on/off (default is on)")
+    @Argument(value = "inline", description = "Inlining mode (default is on)")
+    @ValueDescription("{on,off}")
     public String inline;
+
+    @Override
+    @NotNull
+    public String executableScriptFileName() {
+        return "kotlinc-jvm";
+    }
 }

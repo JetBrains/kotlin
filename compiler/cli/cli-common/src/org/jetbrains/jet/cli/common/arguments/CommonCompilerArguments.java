@@ -18,8 +18,10 @@ package org.jetbrains.jet.cli.common.arguments;
 
 import com.intellij.util.SmartList;
 import com.sampullara.cli.Argument;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
 import static org.jetbrains.jet.cli.common.arguments.CommonArgumentConstants.SUPPRESS_WARNINGS;
 
 public abstract class CommonCompilerArguments {
@@ -35,7 +37,8 @@ public abstract class CommonCompilerArguments {
     @Argument(value = "help", alias = "h", description = "Print a synopsis of standard options")
     public boolean help;
 
-    @Argument(value = "suppress", description = "Suppress compiler messages by severity (" + SUPPRESS_WARNINGS + ")")
+    @Argument(value = "suppress", description = "Suppress all compiler warnings")
+    @ValueDescription(SUPPRESS_WARNINGS)
     public String suppress;
 
     @Argument(value = "printArgs", description = "Print command line arguments")
@@ -45,6 +48,11 @@ public abstract class CommonCompilerArguments {
 
     public boolean suppressAllWarnings() {
         return SUPPRESS_WARNINGS.equalsIgnoreCase(suppress);
+    }
+
+    @NotNull
+    public String executableScriptFileName() {
+        return "kotlinc";
     }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
