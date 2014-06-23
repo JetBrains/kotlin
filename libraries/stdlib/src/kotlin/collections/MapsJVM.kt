@@ -8,6 +8,10 @@ import java.util.Properties
 
 // Map APIs
 
+// Move back to Maps.kt after KT-2093 will be fixed
+/** Provides [] access to maps */
+public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = this.put(key, value)
+
 /**
  * Converts this [[Map]] to a [[LinkedHashMap]] so future insertion orders are maintained
  */

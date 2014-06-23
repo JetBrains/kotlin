@@ -12,9 +12,6 @@ public val Map<*, *>.size: Int
 public val Map<*, *>.empty: Boolean
     get() = isEmpty()
 
-/** Provides [] access to maps */
-public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = this.put(key, value)
-
 /** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
 public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
        = if (this != null) this else stdlib_emptyMap()
