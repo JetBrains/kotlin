@@ -217,7 +217,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                     for (FunctionDescriptor overriddenFunction: descriptor.getOverriddenDescriptors()) {
                         JetType overriddenFunctionType = overriddenFunction.getReturnType();
                         if (overriddenFunctionType == null) continue;
-                        if (!JetTypeChecker.INSTANCE.isSubtypeOf(functionType, overriddenFunctionType)) {
+                        if (!JetTypeChecker.DEFAULT.isSubtypeOf(functionType, overriddenFunctionType)) {
                             overriddenMismatchingFunctions.add(overriddenFunction);
                         }
                     }

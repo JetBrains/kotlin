@@ -28,12 +28,12 @@ public trait TypePredicate: (JetType) -> Boolean {
 }
 
 public data class SingleType(val targetType: JetType): TypePredicate {
-    override fun invoke(typeToCheck: JetType): Boolean = JetTypeChecker.INSTANCE.equalTypes(typeToCheck, targetType)
+    override fun invoke(typeToCheck: JetType): Boolean = JetTypeChecker.DEFAULT.equalTypes(typeToCheck, targetType)
     override fun toString(): String = targetType.render()
 }
 
 public data class AllSubtypes(val upperBound: JetType): TypePredicate {
-    override fun invoke(typeToCheck: JetType): Boolean = JetTypeChecker.INSTANCE.isSubtypeOf(typeToCheck, upperBound)
+    override fun invoke(typeToCheck: JetType): Boolean = JetTypeChecker.DEFAULT.isSubtypeOf(typeToCheck, upperBound)
 
     override fun toString(): String = "{<: ${upperBound.render()}}"
 }
@@ -72,7 +72,7 @@ fun or(predicates: Collection<TypePredicate>): TypePredicate? =
         }
 
 fun JetType.getSubtypesPredicate(): TypePredicate? =
-        if (TypeUtils.canHaveSubtypes(JetTypeChecker.INSTANCE, this)) AllSubtypes(this) else SingleType(this)
+        if (TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, this)) AllSubtypes(this) else SingleType(this)
 
 private fun JetType.render(): String = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
 

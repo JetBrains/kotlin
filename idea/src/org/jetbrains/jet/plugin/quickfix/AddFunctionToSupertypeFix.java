@@ -76,10 +76,10 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
                 if (o1.equals(o2)) {
                     return 0;
                 }
-                if (JetTypeChecker.INSTANCE.isSubtypeOf(o1, o2)) {
+                if (JetTypeChecker.DEFAULT.isSubtypeOf(o1, o2)) {
                     return -1;
                 }
-                if (JetTypeChecker.INSTANCE.isSubtypeOf(o2, o1)) {
+                if (JetTypeChecker.DEFAULT.isSubtypeOf(o2, o1)) {
                     return 1;
                 }
                 return o1.toString().compareTo(o2.toString());

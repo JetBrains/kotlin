@@ -484,7 +484,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             JetType returnType = function.getReturnType();
             assert returnType != null : function.toString();
             JetType paramType = function.getValueParameters().get(0).getType();
-            if (JetTypeChecker.INSTANCE.equalTypes(arrayType, returnType) && JetTypeChecker.INSTANCE.equalTypes(arrayType, paramType)) {
+            if (JetTypeChecker.DEFAULT.equalTypes(arrayType, returnType) && JetTypeChecker.DEFAULT.equalTypes(arrayType, paramType)) {
                 return true;
             }
         }

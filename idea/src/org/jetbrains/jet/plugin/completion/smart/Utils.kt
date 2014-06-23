@@ -172,7 +172,7 @@ fun createLookupElement(descriptor: DeclarationDescriptor, resolveSession: Resol
     return if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) element.keepOldArgumentListOnTab() else element
 }
 
-fun JetType.isSubtypeOf(expectedType: JetType) = !isError() && JetTypeChecker.INSTANCE.isSubtypeOf(this, expectedType)
+fun JetType.isSubtypeOf(expectedType: JetType) = !isError() && JetTypeChecker.DEFAULT.isSubtypeOf(this, expectedType)
 
 fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()
 fun <T : Any> T?.toSet(): Set<T> = if (this != null) setOf(this) else setOf()

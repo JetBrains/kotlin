@@ -113,7 +113,7 @@ public class OverridingUtil {
                 JetType superValueParameterType = getUpperBound(superValueParameters.get(i));
                 JetType subValueParameterType = getUpperBound(subValueParameters.get(i));
                 // TODO: compare erasure
-                if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameterType, subValueParameterType)) {
+                if (!JetTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)) {
                     return OverrideCompatibilityInfo.typeParameterNumberMismatch();
                 }
             }
@@ -165,7 +165,7 @@ public class OverridingUtil {
 
             if (superReturnType != null && subReturnType != null) {
                 boolean bothErrors = subReturnType.isError() && superReturnType.isError();
-                if (!bothErrors && !JetTypeChecker.INSTANCE.isSubtypeOf(subReturnType, superReturnType, localEqualityAxioms)) {
+                if (!bothErrors && !JetTypeChecker.DEFAULT.isSubtypeOf(subReturnType, superReturnType, localEqualityAxioms)) {
                     return OverrideCompatibilityInfo.returnTypeMismatch(superReturnType, subReturnType);
                 }
             }
@@ -203,7 +203,7 @@ public class OverridingUtil {
             @NotNull JetTypeChecker.TypeConstructorEquality axioms
     ) {
         boolean bothErrors = typeInSuper.isError() && typeInSub.isError();
-        if (!bothErrors && !JetTypeChecker.INSTANCE.equalTypes(typeInSuper, typeInSub, axioms)) {
+        if (!bothErrors && !JetTypeChecker.DEFAULT.equalTypes(typeInSuper, typeInSub, axioms)) {
             return false;
         }
         return true;
@@ -317,7 +317,7 @@ public class OverridingUtil {
             JetType bReturnType = b.getReturnType();
             assert bReturnType != null;
 
-            return JetTypeChecker.INSTANCE.isSubtypeOf(aReturnType, bReturnType);
+            return JetTypeChecker.DEFAULT.isSubtypeOf(aReturnType, bReturnType);
         }
         if (a instanceof PropertyDescriptor) {
             assert b instanceof PropertyDescriptor : "b is " + b.getClass();
@@ -327,7 +327,7 @@ public class OverridingUtil {
             }
 
             // both vals
-            return JetTypeChecker.INSTANCE.isSubtypeOf(((PropertyDescriptor) a).getType(), ((PropertyDescriptor) b).getType());
+            return JetTypeChecker.DEFAULT.isSubtypeOf(((PropertyDescriptor) a).getType(), ((PropertyDescriptor) b).getType());
         }
         throw new IllegalArgumentException("Unexpected callable: " + a.getClass());
     }

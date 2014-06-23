@@ -239,7 +239,7 @@ public class OverloadingConflictResolver {
     }
 
     private boolean typeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
-        return JetTypeChecker.INSTANCE.isSubtypeOf(specific, general) ||
+        return JetTypeChecker.DEFAULT.isSubtypeOf(specific, general) ||
                             numericTypeMoreSpecific(specific, general);
     }
 

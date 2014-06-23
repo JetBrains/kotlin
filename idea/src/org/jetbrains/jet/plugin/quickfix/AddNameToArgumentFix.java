@@ -76,7 +76,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         for (ValueParameterDescriptor parameter: callableDescriptor.getValueParameters()) {
             String name = parameter.getName().asString();
             if (usedParameters.contains(name)) continue;
-            if (type == null || JetTypeChecker.INSTANCE.isSubtypeOf(type, parameter.getType())) {
+            if (type == null || JetTypeChecker.DEFAULT.isSubtypeOf(type, parameter.getType())) {
                 names.add(name);
             }
         }

@@ -722,7 +722,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             invokeFunction(fakeCall, StackValue.local(iteratorVarIndex, asmTypeForIterator), hasNextCall);
 
             JetType type = hasNextCall.getResultingDescriptor().getReturnType();
-            assert type != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
+            assert type != null && JetTypeChecker.DEFAULT.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
 
             Type asmType = asmType(type);
             StackValue.coerce(asmType, Type.BOOLEAN_TYPE, v);

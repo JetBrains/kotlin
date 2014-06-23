@@ -212,7 +212,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
         }
         else {
-            JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
+            JetTypeChecker typeChecker = JetTypeChecker.DEFAULT;
             // Upcast?
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
                 if (!typeChecker.isSubtypeOf(targetType, actualType)) {
@@ -668,7 +668,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
             else {
                 JetType receiverType = receiver.getType();
-                if (!JetTypeChecker.INSTANCE.isSubtypeOf(returnType, receiverType)) {
+                if (!JetTypeChecker.DEFAULT.isSubtypeOf(returnType, receiverType)) {
                     context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, name.asString(), receiverType, returnType));
                 }
                 else {

@@ -216,7 +216,7 @@ public class CommonSupertypes {
         }
 
         if (ins != null) {
-            JetType intersection = TypeUtils.intersect(JetTypeChecker.INSTANCE, ins);
+            JetType intersection = TypeUtils.intersect(JetTypeChecker.DEFAULT, ins);
             if (intersection == null) {
                 if (outs != null) {
                     return new TypeProjectionImpl(OUT_VARIANCE, commonSupertype(outs));

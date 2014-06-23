@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
@@ -326,7 +325,7 @@ public class TaskPrioritizer {
         if (expectedThisObject == null) return true;
         List<ReceiverParameterDescriptor> receivers = scope.getImplicitReceiversHierarchy();
         for (ReceiverParameterDescriptor receiver : receivers) {
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(receiver.getType(), expectedThisObject.getType())) {
+            if (JetTypeChecker.DEFAULT.isSubtypeOf(receiver.getType(), expectedThisObject.getType())) {
                 // TODO : Autocasts & nullability
                 candidate.setThisObject(expectedThisObject.getValue());
                 return true;

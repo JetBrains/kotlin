@@ -355,7 +355,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             variableDescriptor = components.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope, loopParameter, context.trace);
             JetType actualParameterType = variableDescriptor.getType();
             if (expectedParameterType != null &&
-                    !JetTypeChecker.INSTANCE.isSubtypeOf(expectedParameterType, actualParameterType)) {
+                    !JetTypeChecker.DEFAULT.isSubtypeOf(expectedParameterType, actualParameterType)) {
                 context.trace.report(TYPE_MISMATCH_IN_FOR_LOOP.on(typeReference, expectedParameterType, actualParameterType));
             }
         }

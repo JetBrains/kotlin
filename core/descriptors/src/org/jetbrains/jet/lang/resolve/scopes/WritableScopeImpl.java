@@ -352,7 +352,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         for (VariableDescriptor oldProperty : properties) {
             ReceiverParameterDescriptor receiverParameterForOldVariable = oldProperty.getReceiverParameter();
             if (((receiverParameter != null && receiverParameterForOldVariable != null) &&
-                 (JetTypeChecker.INSTANCE.equalTypes(receiverParameter.getType(), receiverParameterForOldVariable.getType())))) {
+                 (JetTypeChecker.DEFAULT.equalTypes(receiverParameter.getType(), receiverParameterForOldVariable.getType())))) {
                 redeclarationHandler.handleRedeclaration(oldProperty, variableDescriptor);
             }
         }

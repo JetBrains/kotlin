@@ -98,7 +98,7 @@ public class DelegatedPropertyResolver {
         JetType propertyType = propertyDescriptor.getType();
 
         /* Do not check return type of get() method of delegate for properties with DeferredType because property type is taken from it */
-        if (!(propertyType instanceof DeferredType) && returnType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(returnType, propertyType)) {
+        if (!(propertyType instanceof DeferredType) && returnType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(returnType, propertyType)) {
             Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, propertyDescriptor.getGetter());
             assert call != null : "Call should exists for " + propertyDescriptor.getGetter();
             trace.report(DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH

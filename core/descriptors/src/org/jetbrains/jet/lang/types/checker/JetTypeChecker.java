@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 
 public class JetTypeChecker {
 
-    public static final JetTypeChecker INSTANCE = new JetTypeChecker();
+    public static final JetTypeChecker DEFAULT = new JetTypeChecker();
     public interface TypeConstructorEquality {
         boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b);
     }

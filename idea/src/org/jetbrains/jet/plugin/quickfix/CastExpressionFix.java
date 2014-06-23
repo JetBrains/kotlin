@@ -61,7 +61,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
         if (!super.isAvailable(project, editor, file)) return false;
         BindingContext context = ResolvePackage.getBindingContext((JetFile) file);
         JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, element);
-        return expressionType != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, expressionType);
+        return expressionType != null && JetTypeChecker.DEFAULT.isSubtypeOf(type, expressionType);
     }
 
     @Override

@@ -150,14 +150,14 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                     for (PropertyDescriptor overriddenProperty: propertyDescriptor.getOverriddenDescriptors()) {
                         JetType overriddenPropertyType = overriddenProperty.getReturnType();
                         if (overriddenPropertyType != null) {
-                            if (!JetTypeChecker.INSTANCE.isSubtypeOf(propertyType, overriddenPropertyType)) {
+                            if (!JetTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
                                 overriddenMismatchingProperties.add(overriddenProperty);
                             }
-                            else if (overriddenProperty.isVar() && !JetTypeChecker.INSTANCE.equalTypes(overriddenPropertyType, propertyType)) {
+                            else if (overriddenProperty.isVar() && !JetTypeChecker.DEFAULT.equalTypes(overriddenPropertyType, propertyType)) {
                                 canChangeOverriddenPropertyType = false;
                             }
                             if (overriddenProperty.isVar() && lowerBoundOfOverriddenPropertiesTypes != null &&
-                                !JetTypeChecker.INSTANCE.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)) {
+                                !JetTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)) {
                                 lowerBoundOfOverriddenPropertiesTypes = null;
                             }
                         }

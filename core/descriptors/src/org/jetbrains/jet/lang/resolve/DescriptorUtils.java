@@ -459,7 +459,7 @@ public class DescriptorUtils {
         JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
         return "valueOf".equals(functionDescriptor.getName().asString())
                && methodTypeParameters.size() == 1
-               && JetTypeChecker.INSTANCE.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
+               && JetTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
     }
 
     public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor functionDescriptor) {

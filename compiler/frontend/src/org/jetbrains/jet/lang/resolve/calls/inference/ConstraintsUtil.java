@@ -94,7 +94,7 @@ public class ConstraintsUtil {
             JetType substitutedUpperBound = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
             assert substitutedUpperBound != null : "We wanted to substitute projections as a result for " + typeParameter;
-            if (!JetTypeChecker.INSTANCE.isSubtypeOf(type, substitutedUpperBound)) {
+            if (!JetTypeChecker.DEFAULT.isSubtypeOf(type, substitutedUpperBound)) {
                 return false;
             }
         }

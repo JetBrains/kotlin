@@ -90,10 +90,10 @@ public class QuickFixUtil {
             if (overriddenReturnType == null) {
                 return null;
             }
-            if (matchingReturnType == null || JetTypeChecker.INSTANCE.isSubtypeOf(overriddenReturnType, matchingReturnType)) {
+            if (matchingReturnType == null || JetTypeChecker.DEFAULT.isSubtypeOf(overriddenReturnType, matchingReturnType)) {
                 matchingReturnType = overriddenReturnType;
             }
-            else if (!JetTypeChecker.INSTANCE.isSubtypeOf(matchingReturnType, overriddenReturnType)) {
+            else if (!JetTypeChecker.DEFAULT.isSubtypeOf(matchingReturnType, overriddenReturnType)) {
                 return null;
             }
         }

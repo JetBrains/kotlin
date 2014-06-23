@@ -66,8 +66,8 @@ public class CastDiagnosticsUtil {
 
         for (JetType aType : aTypes) {
             for (JetType bType : bTypes) {
-                if (JetTypeChecker.INSTANCE.isSubtypeOf(aType, bType)) return true;
-                if (JetTypeChecker.INSTANCE.isSubtypeOf(bType, aType)) return true;
+                if (JetTypeChecker.DEFAULT.isSubtypeOf(aType, bType)) return true;
+                if (JetTypeChecker.DEFAULT.isSubtypeOf(bType, aType)) return true;
             }
         }
 
@@ -100,7 +100,7 @@ public class CastDiagnosticsUtil {
     }
 
     private static boolean isFinal(@NotNull JetType type) {
-        return !TypeUtils.canHaveSubtypes(JetTypeChecker.INSTANCE, type);
+        return !TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type);
     }
 
     private static boolean isTrait(@NotNull JetType type) {

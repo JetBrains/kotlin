@@ -221,7 +221,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (typeReference != null) {
             type = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true);
             if (expectedType != null) {
-                if (!JetTypeChecker.INSTANCE.isSubtypeOf(expectedType, type)) {
+                if (!JetTypeChecker.DEFAULT.isSubtypeOf(expectedType, type)) {
                     context.trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(declaredParameter, expectedType));
                 }
             }
@@ -278,7 +278,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
             functionDescriptor.setReturnType(declaredReturnType);
             if (expectedReturnType != null) {
-                if (!JetTypeChecker.INSTANCE.isSubtypeOf(declaredReturnType, expectedReturnType)) {
+                if (!JetTypeChecker.DEFAULT.isSubtypeOf(declaredReturnType, expectedReturnType)) {
                     context.trace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(returnTypeRef, expectedReturnType));
                 }
             }

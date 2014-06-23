@@ -735,7 +735,7 @@ public class CandidateResolver {
         Set<JetType> possibleTypes = dataFlowInfoForArgument.getPossibleTypes(dataFlowValue);
         if (possibleTypes.isEmpty()) return type;
 
-        return TypeUtils.intersect(JetTypeChecker.INSTANCE, possibleTypes);
+        return TypeUtils.intersect(JetTypeChecker.DEFAULT, possibleTypes);
     }
 
     private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkAllValueArguments(
@@ -859,7 +859,7 @@ public class CandidateResolver {
         List<JetType> variants =
                 AutoCastUtils.getAutoCastVariantsExcludingReceiver(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
         for (JetType possibleType : variants) {
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, expectedType)) {
+            if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {
                 return possibleType;
             }
         }

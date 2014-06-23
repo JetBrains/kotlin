@@ -31,11 +31,8 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
-import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -139,7 +136,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             JetType typeNoExpectedType = AnalyzerPackage.computeTypeInfoInContext(
                     expression, scope, bindingTrace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, resolveSession.getModuleDescriptor()
             ).getType();
-            if (expressionType != null && typeNoExpectedType != null && !JetTypeChecker.INSTANCE.equalTypes(expressionType,
+            if (expressionType != null && typeNoExpectedType != null && !JetTypeChecker.DEFAULT.equalTypes(expressionType,
                                                                                                            typeNoExpectedType)) {
                 noTypeInference = true;
             }
@@ -149,7 +146,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             return;
         }
         if (expressionType != null &&
-            JetTypeChecker.INSTANCE.equalTypes(KotlinBuiltIns.getInstance().getUnitType(), expressionType)) {
+            JetTypeChecker.DEFAULT.equalTypes(KotlinBuiltIns.getInstance().getUnitType(), expressionType)) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
             return;
         }

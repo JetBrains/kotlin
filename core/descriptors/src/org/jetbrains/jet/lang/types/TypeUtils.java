@@ -142,7 +142,7 @@ public class TypeUtils {
     }
 
     public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
-        return intersect(JetTypeChecker.INSTANCE, Sets.newLinkedHashSet(Lists.newArrayList(typeA, typeB))) == null;
+        return intersect(JetTypeChecker.DEFAULT, Sets.newLinkedHashSet(Lists.newArrayList(typeA, typeB))) == null;
     }
 
     @Nullable
@@ -473,7 +473,7 @@ public class TypeUtils {
     }
 
     public static boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
-        return JetTypeChecker.INSTANCE.isSubtypeOf(a, b) && JetTypeChecker.INSTANCE.isSubtypeOf(b, a);
+        return JetTypeChecker.DEFAULT.isSubtypeOf(a, b) && JetTypeChecker.DEFAULT.isSubtypeOf(b, a);
     }
 
     public static boolean dependsOnTypeParameters(@NotNull JetType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
@@ -586,7 +586,7 @@ public class TypeUtils {
             return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
         }
         for (JetType primitiveNumberType : numberValueTypeConstructor.getSupertypes()) {
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(primitiveNumberType, expectedType)) {
+            if (JetTypeChecker.DEFAULT.isSubtypeOf(primitiveNumberType, expectedType)) {
                 return primitiveNumberType;
             }
         }

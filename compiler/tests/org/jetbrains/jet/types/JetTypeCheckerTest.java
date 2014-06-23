@@ -503,7 +503,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         for (String type : types) {
             typesToIntersect.add(makeType(type));
         }
-        JetType result = TypeUtils.intersect(JetTypeChecker.INSTANCE, typesToIntersect);
+        JetType result = TypeUtils.intersect(JetTypeChecker.DEFAULT, typesToIntersect);
 //        assertNotNull("Intersection is null for " + typesToIntersect, result);
         assertEquals(makeType(expected), result);
     }
@@ -520,7 +520,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private void assertSubtypingRelation(String subtype, String supertype, boolean expected) {
         JetType typeNode1 = makeType(subtype);
         JetType typeNode2 = makeType(supertype);
-        boolean result = JetTypeChecker.INSTANCE.isSubtypeOf(
+        boolean result = JetTypeChecker.DEFAULT.isSubtypeOf(
                 typeNode1,
                 typeNode2);
         String modifier = expected ? "not " : "";

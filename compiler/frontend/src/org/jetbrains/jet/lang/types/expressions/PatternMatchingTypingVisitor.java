@@ -254,7 +254,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         if (conditionExpected) {
             JetType booleanType = KotlinBuiltIns.getInstance().getBooleanType();
-            if (!JetTypeChecker.INSTANCE.equalTypes(booleanType, type)) {
+            if (!JetTypeChecker.DEFAULT.equalTypes(booleanType, type)) {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(expression, type));
             }
             else {
@@ -294,7 +294,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(Errors.USELESS_NULLABLE_CHECK.on(nullableType));
         }
         checkTypeCompatibility(context, type, subjectType, typeReferenceAfterIs);
-        if (CastDiagnosticsUtil.isCastErased(subjectType, type, JetTypeChecker.INSTANCE)) {
+        if (CastDiagnosticsUtil.isCastErased(subjectType, type, JetTypeChecker.DEFAULT)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, type));
         }
         return new DataFlowInfos(context.dataFlowInfo.establishSubtyping(subjectDataFlowValue, type), context.dataFlowInfo);

@@ -71,7 +71,7 @@ public class OverloadUtil {
             JetType superValueParameterType = OverridingUtil.getUpperBound(superValueParameters.get(i));
             JetType subValueParameterType = OverridingUtil.getUpperBound(subValueParameters.get(i));
             // TODO: compare erasure
-            if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameterType, subValueParameterType)) {
+            if (!JetTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)) {
                 return OverridingUtil.OverrideCompatibilityInfo
                         .valueParameterTypeMismatch(superValueParameterType, subValueParameterType, INCOMPATIBLE);
             }
