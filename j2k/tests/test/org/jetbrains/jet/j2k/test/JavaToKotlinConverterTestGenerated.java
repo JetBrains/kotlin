@@ -1177,6 +1177,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/for/forWithReturn.java");
         }
         
+        @TestMetadata("infiniteFor.java")
+        public void testInfiniteFor() throws Exception {
+            doTest("j2k/tests/testData/ast/for/infiniteFor.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/foreachStatement")

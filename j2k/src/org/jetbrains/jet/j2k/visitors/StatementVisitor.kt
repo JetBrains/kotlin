@@ -130,7 +130,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
             val updateConverted = converter.convertStatement(update)
 
             val whileBody = if (updateConverted.isEmpty) {
-                converter.convertStatement(body)
+                convertStatementOrBlock(body)
             }
             else if (body is PsiBlockStatement) {
                 val nameConflict = initialization is PsiDeclarationStatement && initialization.getDeclaredElements().any { loopVar ->
