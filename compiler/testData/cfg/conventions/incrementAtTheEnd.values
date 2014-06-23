@@ -6,6 +6,6 @@ fun foo() {
 ---------------------
 1                   <v0>   NEW()
 i                   <v1>   NEW()
-i++                 <v2>   NEW(<v1>)
-{ var i = 1 i++ }   <v2>   COPY
+i++                 <v1>   COPY
+{ var i = 1 i++ }   <v1>   COPY
 =====================

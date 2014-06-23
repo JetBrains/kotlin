@@ -585,6 +585,9 @@ public class JetControlFlowProcessor {
 
             if (incrementOrDecrement) {
                 visitAssignment(baseExpression, getValueAsFunction(rhsValue), expression);
+                if (expression instanceof JetPostfixExpression) {
+                    copyValue(baseExpression, expression);
+                }
             }
         }
 

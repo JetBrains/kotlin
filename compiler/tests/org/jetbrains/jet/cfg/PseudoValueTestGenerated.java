@@ -361,6 +361,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest("compiler/testData/cfg/expressions/expressionAsFunction.kt");
             }
             
+            @TestMetadata("incdec.kt")
+            public void testIncdec() throws Exception {
+                doTest("compiler/testData/cfg/expressions/incdec.kt");
+            }
+            
             @TestMetadata("LazyBooleans.kt")
             public void testLazyBooleans() throws Exception {
                 doTest("compiler/testData/cfg/expressions/LazyBooleans.kt");
