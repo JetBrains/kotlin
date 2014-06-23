@@ -358,13 +358,13 @@ class ExpressionVisitor(private val converter: Converter,
     }
 
     override fun visitSuperExpression(expression: PsiSuperExpression) {
-        val qualifier = expression.getQualifier()
-        result = SuperExpression(if (qualifier != null) Identifier(qualifier.getQualifiedName()!!) else Identifier.Empty)
+        val qualifier = expression.getQualifier()?.getReferenceName()
+        result = SuperExpression(if (qualifier != null) Identifier(qualifier) else Identifier.Empty)
     }
 
     override fun visitThisExpression(expression: PsiThisExpression) {
-        val qualifier = expression.getQualifier()
-        result = ThisExpression(if (qualifier != null) Identifier(qualifier.getQualifiedName()!!) else Identifier.Empty)
+        val qualifier = expression.getQualifier()?.getReferenceName()
+        result = ThisExpression(if (qualifier != null) Identifier(qualifier) else Identifier.Empty)
     }
 
     override fun visitTypeCastExpression(expression: PsiTypeCastExpression) {

@@ -1,3 +1,5 @@
+package a.b
+
 class Base() {
     fun foo()
 }
