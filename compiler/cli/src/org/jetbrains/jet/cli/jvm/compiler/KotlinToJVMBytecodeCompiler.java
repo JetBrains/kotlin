@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.ArrayUtil;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.Unit;
@@ -91,12 +92,12 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     private static void writeOutput(
-            CompilerConfiguration configuration,
-            ClassFileFactory outputFiles,
-            File outputDir,
-            File jarPath,
+            @NotNull CompilerConfiguration configuration,
+            @NotNull ClassFileFactory outputFiles,
+            @Nullable File outputDir,
+            @Nullable File jarPath,
             boolean jarRuntime,
-            FqName mainClass
+            @Nullable FqName mainClass
     ) {
         MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE);
         CompileEnvironmentUtil.writeOutputToDirOrJar(jarPath, outputDir, jarRuntime, mainClass, outputFiles, messageCollector);
@@ -192,7 +193,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileBunchOfSources(
-            JetCoreEnvironment environment,
+            @NotNull JetCoreEnvironment environment,
             @Nullable File jar,
             @Nullable File outputDir,
             boolean includeRuntime
@@ -223,7 +224,7 @@ public class KotlinToJVMBytecodeCompiler {
         if (scriptClass == null) return;
 
         try {
-            scriptClass.getConstructor(String[].class).newInstance(new Object[]{scriptArgs.toArray(new String[scriptArgs.size()])});
+            scriptClass.getConstructor(String[].class).newInstance(new Object[] {ArrayUtil.toStringArray(scriptArgs)});
         }
         catch (RuntimeException e) {
             throw e;
