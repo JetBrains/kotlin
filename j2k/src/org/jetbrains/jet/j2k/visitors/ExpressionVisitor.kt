@@ -77,7 +77,7 @@ class ExpressionVisitor(private val converter: Converter,
         val lhs = converter.convertExpression(expression.getLExpression())
         val rhs = converter.convertExpression(expression.getRExpression()!!, expression.getLExpression().getType())
         if (!secondOp.isEmpty()) {
-            result = AssignmentExpression(lhs, BinaryExpression(lhs, rhs, secondOp), "=")
+            result = AssignmentExpression(lhs, BinaryExpression(lhs, rhs, secondOp), " = ")
         }
         else {
             result = AssignmentExpression(lhs, rhs, expression.getOperationSign().getText()!!)

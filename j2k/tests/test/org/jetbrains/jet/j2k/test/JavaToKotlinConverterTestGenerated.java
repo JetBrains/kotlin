@@ -1682,6 +1682,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/issues/qualifyStatic.java");
         }
         
+        @TestMetadata("spaceBeforeAssignment.java")
+        public void testSpaceBeforeAssignment() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/spaceBeforeAssignment.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/kotlinApiAccess")

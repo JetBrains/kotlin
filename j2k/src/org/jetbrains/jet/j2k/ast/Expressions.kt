@@ -29,7 +29,7 @@ class ArrayAccessExpression(val expression: Expression, val index: Expression, v
 
 class AssignmentExpression(val left: Expression, val right: Expression, val op: String) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.appendOperand(this, left).append(op).appendOperand(this, right)
+        builder.appendOperand(this, left).append(" ").append(op).append(" ").appendOperand(this, right)
     }
 }
 

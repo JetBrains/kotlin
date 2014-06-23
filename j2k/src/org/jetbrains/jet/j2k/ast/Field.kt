@@ -41,7 +41,7 @@ open class Field(
             initializerToUse = getDefaultInitializer(this)
         }
         if (!initializerToUse.isEmpty) {
-            builder append "=" append initializerToUse
+            builder append " = " append initializerToUse
         }
     }
 }

@@ -38,9 +38,9 @@ class LocalVariable(
         else {
             val shouldSpecifyType = settings.specifyLocalVariableTypeByDefault
             if (shouldSpecifyType)
-                builder append identifier append ":" append typeCalculator() append "=" append initializer
+                builder append identifier append ":" append typeCalculator() append " = " append initializer
             else
-                builder append identifier append "=" append initializer
+                builder append identifier append " = " append initializer
         }
     }
 }
