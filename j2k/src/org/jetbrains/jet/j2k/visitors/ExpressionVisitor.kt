@@ -20,7 +20,6 @@ import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import java.util.ArrayList
 import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.types.lang.PrimitiveType
@@ -34,6 +33,8 @@ import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import com.intellij.psi.impl.light.LightField
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 
 class ExpressionVisitor(private val converter: Converter,
                         private val usageReplacementMap: Map<PsiVariable, String> = mapOf()) : JavaElementVisitor() {
@@ -165,8 +166,11 @@ class ExpressionVisitor(private val converter: Converter,
         if (target is KotlinLightMethod) {
             val origin = target.origin
             val isTopLevel = origin?.getParentByType(javaClass<JetClassOrObject>(), true) == null
-            if (origin is JetProperty || origin is JetPropertyAccessor) {
-                val property = if (origin is JetProperty) origin else origin.getParent() as JetProperty
+            if (origin is JetProperty || origin is JetPropertyAccessor || origin is JetParameter) {
+                val property = if (origin is JetPropertyAccessor)
+                    origin.getParent() as JetProperty
+                else
+                    origin as JetNamedDeclaration
                 val parameterCount = target.getParameterList().getParameters().size
                 if (parameterCount == arguments.size) {
                     val propertyName = Identifier(property.getName()!!, isNullable)

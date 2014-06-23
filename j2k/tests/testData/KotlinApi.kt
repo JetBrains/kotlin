@@ -1,6 +1,6 @@
 package kotlinApi
 
-public open class KotlinClass {
+public open class KotlinClass(public var field: Int) {
     public var property: String = ""
     public var nullableProperty: String? = ""
 

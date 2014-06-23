@@ -1770,6 +1770,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/kotlinApiAccess/Property.java");
         }
         
+        @TestMetadata("Property2.java")
+        public void testProperty2() throws Exception {
+            doTest("j2k/tests/testData/ast/kotlinApiAccess/Property2.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/labelStatement")
