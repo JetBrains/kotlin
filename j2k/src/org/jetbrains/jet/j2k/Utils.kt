@@ -93,12 +93,3 @@ fun PsiElement.isInSingleLine(): Boolean {
     }
     return true
 }
-
-fun PsiVariable.isEffectivelyFinal(): Boolean {
-    if (hasModifierProperty(PsiModifier.FINAL)) return true
-    return when(this) {
-        is PsiLocalVariable -> !hasWriteAccesses(getContainingMethod())
-        is PsiField -> if (hasModifierProperty(PsiModifier.PRIVATE)) !hasWriteAccesses(getContainingClass()) else false
-        else -> false
-    }
-}

@@ -1,3 +1,3 @@
 class Base(name: String)
 
-class One(name: String, private var mySecond: String) : Base(name)
+class One(name: String, private val mySecond: String) : Base(name)

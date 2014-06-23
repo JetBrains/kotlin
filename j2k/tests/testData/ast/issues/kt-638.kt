@@ -1,4 +1,4 @@
-public class Identifier<T> private(private val myName: T, private var myHasDollar: Boolean) {
+public class Identifier<T> private(private val myName: T, private val myHasDollar: Boolean) {
     private var myNullable = true
 
     public fun getName(): T {

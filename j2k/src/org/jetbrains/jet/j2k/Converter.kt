@@ -285,7 +285,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         else {
             val initializer = field.getInitializer()
             val convertedType = typeConverter.convertVariableType(field)
-            val isVal = field.isEffectivelyFinal()
+            val isVal = isVal(field)
             val omitType = !settings.specifyFieldTypeByDefault &&
                     initializer != null &&
                     (modifiers.isPrivate && (isVal || convertedType == typeConverter.convertExpressionType(initializer)) ||
@@ -300,6 +300,29 @@ public class Converter private(val project: Project, val settings: ConverterSett
                   field.hasWriteAccesses(field.getContainingClass()))
         }
         return converted.assignPrototype(field)
+    }
+
+    private fun isVal(field: PsiField): Boolean {
+        if (field.hasModifierProperty(PsiModifier.FINAL)) return true
+        if (!field.hasModifierProperty(PsiModifier.PRIVATE)) return false
+        val containingClass = field.getContainingClass() ?: return false
+        val writes = findVariableUsages(field, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
+        if (writes.size == 0) return true
+        if (writes.size > 1) return false
+        val write = writes.single()
+        val parent = write.getParent()
+        if (parent is PsiAssignmentExpression &&
+                parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
+                isQualifierEmptyOrThis(write)) {
+            val constructor = write.getContainingConstructor()
+            if (constructor != null &&
+                    constructor.getContainingClass() == containingClass &&
+                    parent.getParent() is PsiExpressionStatement &&
+                    parent.getParent()?.getParent() == constructor.getBody()) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
@@ -428,7 +451,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 val (field, `type`) = parameterToField[parameter]!!
                 Parameter(field.declarationIdentifier(),
                           `type`,
-                          if (field.hasModifierProperty(PsiModifier.FINAL)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
+                          if (isVal(field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
                           convertAnnotations(parameter) + convertAnnotations(field),
                           convertModifiers(field).filter { it in ACCESS_MODIFIERS }).assignPrototypes(listOf(parameter, field), inheritBlankLinesBefore = false)
             }

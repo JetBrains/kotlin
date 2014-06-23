@@ -1,4 +1,4 @@
-public class Identifier private(private val myName: String, private var myHasDollar: Boolean) {
+public class Identifier private(private val myName: String, private val myHasDollar: Boolean) {
     private var myNullable = true
 
     public fun getName(): String {

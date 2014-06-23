@@ -1,4 +1,4 @@
-class C(private var s: String?) {
+class C(private val s: String?) {
 
     fun foo() {
         if (s != null) {
