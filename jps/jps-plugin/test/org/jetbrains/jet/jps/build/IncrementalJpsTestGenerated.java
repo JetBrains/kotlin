@@ -66,6 +66,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/constantValue/");
     }
     
+    @TestMetadata("dependencyClassReferenced")
+    public void testDependencyClassReferenced() throws Exception {
+        doTest("jps-plugin/testData/incremental/dependencyClassReferenced/");
+    }
+    
     @TestMetadata("filesExchangePackages")
     public void testFilesExchangePackages() throws Exception {
         doTest("jps-plugin/testData/incremental/filesExchangePackages/");
@@ -79,6 +84,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestMetadata("multiplePackagesModified")
     public void testMultiplePackagesModified() throws Exception {
         doTest("jps-plugin/testData/incremental/multiplePackagesModified/");
+    }
+    
+    @TestMetadata("ourClassReferenced")
+    public void testOurClassReferenced() throws Exception {
+        doTest("jps-plugin/testData/incremental/ourClassReferenced/");
     }
     
     @TestMetadata("packageFileAdded")
