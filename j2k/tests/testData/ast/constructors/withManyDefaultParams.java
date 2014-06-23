@@ -1,13 +1,13 @@
 //file
 public class Test {
   private final String myName;
-  private boolean a;
-  private double b;
-  private float c;
-  private long d;
-  private int e;
-  private short f;
-  private char g;
+  boolean a;
+  double b;
+  float c;
+  long d;
+  int e;
+  protected short f;
+  protected char g;
 
   public Test() {}
 

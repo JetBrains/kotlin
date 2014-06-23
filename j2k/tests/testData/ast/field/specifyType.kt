@@ -21,6 +21,7 @@ class A() {
     }
 
     fun bar() {
+        field5 = ArrayList<String>()
         field7++
         field8++
         field9 = null

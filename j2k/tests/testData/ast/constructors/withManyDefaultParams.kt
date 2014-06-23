@@ -1,4 +1,4 @@
-public class Test private(private val myName: String, private var a: Boolean, private var b: Double, private var c: Float, private var d: Long, private var e: Int, private var f: Short, private var g: Char) {
+public class Test private(private val myName: String, var a: Boolean, var b: Double, var c: Float, var d: Long, var e: Int, protected var f: Short, protected var g: Char) {
     class object {
 
         public fun create(): Test {

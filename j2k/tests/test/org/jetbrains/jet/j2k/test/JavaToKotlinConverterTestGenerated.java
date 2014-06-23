@@ -1099,6 +1099,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/field/specifyType.java");
         }
         
+        @TestMetadata("valOrVar.java")
+        public void testValOrVar() throws Exception {
+            doTest("j2k/tests/testData/ast/field/valOrVar.java");
+        }
+        
         @TestMetadata("valWithInit.java")
         public void testValWithInit() throws Exception {
             doTest("j2k/tests/testData/ast/field/valWithInit.java");

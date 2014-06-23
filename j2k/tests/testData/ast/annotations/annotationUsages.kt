@@ -9,10 +9,10 @@ Anon6(array("x", "y"))
 Anon7(javaClass<String>(), javaClass<StringBuilder>())
 Anon8(classes = *array(javaClass<String>(), javaClass<StringBuilder>()))
 class C() {
-    Anon5(1) deprecated("") private var field1 = 0
+    Anon5(1) deprecated("") private val field1 = 0
 
     Anon5(1)
-    private var field2 = 0
+    private val field2 = 0
 
     Anon5(1) var field3 = 0
 

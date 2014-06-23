@@ -20,6 +20,7 @@ class A {
     String foo() { return "x"; }
 
     void bar() {
+        field5 = new ArrayList<String>();
         field7++;
         field8++;
         field9 = null;

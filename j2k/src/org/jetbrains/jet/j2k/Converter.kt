@@ -285,7 +285,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         else {
             val initializer = field.getInitializer()
             val convertedType = typeConverter.convertVariableType(field)
-            val isVal = field.hasModifierProperty(PsiModifier.FINAL)
+            val isVal = field.isEffectivelyFinal()
             val omitType = !settings.specifyFieldTypeByDefault &&
                     initializer != null &&
                     (modifiers.isPrivate && (isVal || convertedType == typeConverter.convertExpressionType(initializer)) ||
