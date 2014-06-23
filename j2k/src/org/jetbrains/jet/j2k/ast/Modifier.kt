@@ -55,6 +55,11 @@ class Modifiers(val modifiers: Collection<Modifier>) : Element() {
 
     fun contains(modifier: Modifier): Boolean = modifiers.contains(modifier)
 
+    val isPublic: Boolean get() = contains(Modifier.PUBLIC)
+    val isPrivate: Boolean get() = contains(Modifier.PRIVATE)
+    val isProtected: Boolean get() = contains(Modifier.PROTECTED)
+    val isInternal: Boolean get() = !isPublic && !isPrivate && !isProtected
+
     class object {
         val Empty = Modifiers(listOf())
     }

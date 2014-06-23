@@ -18,13 +18,14 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-open class Field(
+class Field(
         val identifier: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
         val `type`: Type,
         val initializer: Element,
         val isVal: Boolean,
+        val explicitType: Boolean,
         private val hasWriteAccesses: Boolean
 ) : Member(annotations, modifiers) {
 
@@ -33,8 +34,10 @@ open class Field(
                 .appendWithSpaceAfter(modifiers)
                 .append(if (isVal) "val " else "var ")
                 .append(identifier)
-                .append(" : ")
-                .append(`type`)
+
+        if (explicitType) {
+            builder append ":" append `type`
+        }
 
         var initializerToUse = initializer
         if (initializerToUse.isEmpty && !(isVal && hasWriteAccesses)) {

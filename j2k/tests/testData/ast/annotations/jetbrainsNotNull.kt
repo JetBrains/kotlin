@@ -3,7 +3,7 @@
 package test
 
 public class Test(str: String) {
-    var myStr: String = "String2"
+    var myStr = "String2"
 
     public fun sout(str: String) {
         System.out!!.println(str)

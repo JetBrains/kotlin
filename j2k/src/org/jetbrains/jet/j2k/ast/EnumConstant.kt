@@ -19,20 +19,20 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.*
 
 class EnumConstant(
-        identifier: Identifier,
+        val identifier: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
-        `type`: Type,
-        params: Element
-) : Field(identifier, annotations, modifiers, `type`.toNotNullType(), params, true, false) {
+        val `type`: Type,
+        val params: Element
+) : Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) {
-        if (initializer.isEmpty) {
+        if (params.isEmpty) {
             builder append annotations append identifier
             return
         }
 
-        builder append annotations append identifier append " : " append `type` append "(" append initializer append ")"
+        builder append annotations append identifier append " : " append `type` append "(" append params append ")"
     }
 
 

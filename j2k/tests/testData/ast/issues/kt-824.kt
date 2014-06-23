@@ -1,12 +1,12 @@
 package demo
 
 class Container() {
-    var myBoolean: Boolean = true
+    var myBoolean = true
 }
 
 class One() {
     class object {
-        var myContainer: Container = Container()
+        var myContainer = Container()
     }
 }
 

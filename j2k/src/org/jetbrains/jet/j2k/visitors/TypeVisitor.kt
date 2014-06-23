@@ -36,6 +36,9 @@ class TypeVisitor(private val converter: TypeConverter, private val importNames:
         else if (PRIMITIVE_TYPES_NAMES.contains(name)) {
             PrimitiveType(Identifier(StringUtil.capitalize(name)))
         }
+        else if (name == "null") {
+            Type.Null
+        }
         else {
             PrimitiveType(Identifier(name))
         }

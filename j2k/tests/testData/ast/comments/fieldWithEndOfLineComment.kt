@@ -1,3 +1,3 @@
 class A() {
-    private var isOpen: Boolean = true // ideally should be atomic boolean
+    private var isOpen = true // ideally should be atomic boolean
 }

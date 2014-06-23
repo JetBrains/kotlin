@@ -77,6 +77,7 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
                 "forceNotNullTypes" -> settings.forceNotNullTypes = parseBoolean(value)
                 "forceLocalVariableImmutability" -> settings.forceLocalVariableImmutability = parseBoolean(value)
                 "specifyLocalVariableTypeByDefault" -> settings.specifyLocalVariableTypeByDefault = parseBoolean(value)
+                "specifyFieldTypeByDefault" -> settings.specifyFieldTypeByDefault = parseBoolean(value)
                 "openByDefault" -> settings.openByDefault = parseBoolean(value)
                 else -> throw IllegalArgumentException("Unknown option: $name")
             }

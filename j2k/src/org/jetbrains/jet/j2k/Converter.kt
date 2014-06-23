@@ -271,7 +271,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return Initializer(convertBlock(initializer.getBody()), convertModifiers(initializer)).assignPrototype(initializer)
     }
 
-    private fun convertField(field: PsiField): Field {
+    private fun convertField(field: PsiField): Member {
         val annotations = convertAnnotations(field)
         val modifiers = convertModifiers(field)
         val name = field.declarationIdentifier()
@@ -283,12 +283,20 @@ public class Converter private(val project: Project, val settings: ConverterSett
                          convertElement(field.getArgumentList()))
         }
         else {
+            val initializer = field.getInitializer()
+            val convertedType = typeConverter.convertVariableType(field)
+            val isVal = field.hasModifierProperty(PsiModifier.FINAL)
+            val omitType = !settings.specifyFieldTypeByDefault &&
+                    initializer != null &&
+                    (modifiers.isPrivate && (isVal || convertedType == typeConverter.convertExpressionType(initializer)) ||
+                            modifiers.isInternal && convertedType == typeConverter.convertExpressionType(initializer))
             Field(name,
                   annotations,
                   modifiers,
-                  typeConverter.convertVariableType(field),
-                  convertExpression(field.getInitializer(), field.getType()),
-                  field.hasModifierProperty(PsiModifier.FINAL),
+                  convertedType,
+                  convertExpression(initializer, field.getType()),
+                  isVal,
+                  !omitType,
                   field.hasWriteAccesses(field.getContainingClass()))
         }
         return converted.assignPrototype(field)
@@ -324,7 +332,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             if (settings.openByDefault) {
                 val isEffectivelyFinal = method.hasModifierProperty(PsiModifier.FINAL) ||
                         containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum())
-                if (!isEffectivelyFinal && !modifiers.contains(Modifier.ABSTRACT) && !modifiers.contains(Modifier.PRIVATE)) {
+                if (!isEffectivelyFinal && !modifiers.contains(Modifier.ABSTRACT) && !modifiers.isPrivate) {
                     modifiers = modifiers.with(Modifier.OPEN)
                 }
             }

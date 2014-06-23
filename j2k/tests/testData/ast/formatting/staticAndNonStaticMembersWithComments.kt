@@ -24,7 +24,7 @@ class F() {
 
         fun f1() {
         }
-        var i: Int = 0
+        var i = 0
 
         //c5
 

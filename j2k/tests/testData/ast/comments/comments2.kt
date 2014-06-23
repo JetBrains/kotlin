@@ -11,7 +11,7 @@ class A() {
         /* body is empty */
     }
 
-    private /*it's private*/ var field: Int = 0
+    private /*it's private*/ var field = 0
 
     public /*it's public*/ fun foo(): Char {
     }

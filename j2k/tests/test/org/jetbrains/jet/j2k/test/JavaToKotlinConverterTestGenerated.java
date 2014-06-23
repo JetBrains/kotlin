@@ -1094,6 +1094,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/field/publicField.java");
         }
         
+        @TestMetadata("specifyType.java")
+        public void testSpecifyType() throws Exception {
+            doTest("j2k/tests/testData/ast/field/specifyType.java");
+        }
+        
         @TestMetadata("valWithInit.java")
         public void testValWithInit() throws Exception {
             doTest("j2k/tests/testData/ast/field/valWithInit.java");
@@ -2352,6 +2357,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("openByDefault.java")
         public void testOpenByDefault() throws Exception {
             doTest("j2k/tests/testData/ast/settings/openByDefault.java");
+        }
+        
+        @TestMetadata("specifyFieldTypeByDefault.java")
+        public void testSpecifyFieldTypeByDefault() throws Exception {
+            doTest("j2k/tests/testData/ast/settings/specifyFieldTypeByDefault.java");
         }
         
         @TestMetadata("specifyLocalVariableTypeByDefault.java")

@@ -1,5 +1,5 @@
 public class Identifier<T> private(private val myName: T, private var myHasDollar: Boolean) {
-    private var myNullable: Boolean = true
+    private var myNullable = true
 
     public fun getName(): T {
         return myName

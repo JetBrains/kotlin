@@ -6,7 +6,7 @@ class A() {
     }
 
     class object {
-        private val s: String = "abc"
+        private val s = "abc"
 
         private fun privateStatic1() {
         }
