@@ -37,8 +37,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
             importNames = importList?.imports?.mapTo(HashSet<String>()) { it.name } ?: setOf()
 
         }
-    public var importNames: Set<String> = setOf()
-        private set
+    private var importNames: Set<String> = setOf()
 
     public val importsToAdd: Collection<Import>
         get() = classesToImport.map { Import(it) }
@@ -46,7 +45,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
     public fun convertType(`type`: PsiType?, nullability: Nullability = Nullability.Default): Type {
         if (`type` == null) return Type.Empty
 
-        val result = `type`.accept<Type>(TypeVisitor(this, classesToImport))!!
+        val result = `type`.accept<Type>(TypeVisitor(this, importNames, classesToImport))!!
         return when (nullability) {
             Nullability.NotNull -> result.toNotNullType()
             Nullability.Nullable -> result.toNullableType()

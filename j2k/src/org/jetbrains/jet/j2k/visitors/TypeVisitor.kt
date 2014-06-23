@@ -27,7 +27,7 @@ import org.jetbrains.jet.j2k.TypeConverter
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 
-class TypeVisitor(private val converter: TypeConverter, private val classesToImport: MutableSet<String>) : PsiTypeVisitor<Type>() {
+class TypeVisitor(private val converter: TypeConverter, private val importNames: Set<String>, private val classesToImport: MutableSet<String>) : PsiTypeVisitor<Type>() {
     override fun visitPrimitiveType(primitiveType: PsiPrimitiveType): Type {
         val name = primitiveType.getCanonicalText()
         return if (name == "void") {
@@ -75,7 +75,7 @@ class TypeVisitor(private val converter: TypeConverter, private val classesToImp
             val kotlinClassName = toKotlinTypesMap[javaClassName]
             if (kotlinClassName != null) {
                 val kotlinShortName = getShortName(kotlinClassName)
-                if (kotlinShortName == getShortName(javaClassName!!) && converter.importNames.contains(getPackageName(javaClassName) + ".*")) {
+                if (kotlinShortName == getShortName(javaClassName!!) && importNames.contains(getPackageName(javaClassName) + ".*")) {
                     classesToImport.add(kotlinClassName)
                 }
                 return Identifier(kotlinShortName)

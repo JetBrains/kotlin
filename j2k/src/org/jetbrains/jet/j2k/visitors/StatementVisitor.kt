@@ -277,44 +277,47 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         if (resourceList != null) {
             val variables = resourceList.getResourceVariables()
             if (variables.isNotEmpty()) {
-                var wrapResultStatement: (Expression) -> Statement = { it }
-                var converterForBody = converter
-
-                val returns = collectReturns(tryBlock)
-                //TODO: support other returns when non-local returns supported by Kotlin
-                if (returns.size == 1 && returns.single() == tryBlock!!.getStatements().last()) {
-                    wrapResultStatement = { ReturnStatement(it) }
-                    converterForBody = converter.withStatementVisitor { object : StatementVisitor(it) {
-                        override fun visitReturnStatement(statement: PsiReturnStatement) {
-                            if (statement == returns.single()) {
-                                result = converter.convertExpression(statement.getReturnValue(), tryStatement.getContainingMethod()?.getReturnType())
-                            }
-                            else {
-                                super.visitReturnStatement(statement)
-                            }
-                        }
-                    }}
-                }
-
-                var block = converterForBody.convertBlock(tryBlock)
-                var expression: Expression = Expression.Empty
-                for (variable in variables.reverse()) {
-                    val lambda = LambdaExpression(Identifier.toKotlin(variable.getName()!!), block)
-                    expression = MethodCallExpression.build(converter.convertExpression(variable.getInitializer()), "use", listOf(), listOf(), false, lambda)
-                    block = Block(listOf(expression), LBrace(), RBrace())
-                }
-
-                if (catchesConverted.isEmpty() && finallyConverted.isEmpty) {
-                    result = wrapResultStatement(expression)
-                    return
-                }
-
-                result = TryStatement(Block(listOf(wrapResultStatement(expression)), LBrace(), RBrace(), true), catchesConverted, finallyConverted)
+                result = convertTryWithResources(tryBlock, variables, catchesConverted, finallyConverted)
                 return
             }
         }
 
         result = TryStatement(converter.convertBlock(tryBlock), catchesConverted, finallyConverted)
+    }
+
+    private fun convertTryWithResources(tryBlock: PsiCodeBlock?, resourceVariables: List<PsiResourceVariable>, catchesConverted: List<CatchStatement>, finallyConverted: Block): Statement {
+        var wrapResultStatement: (Expression) -> Statement = { it }
+        var converterForBody = converter
+
+        val returns = collectReturns(tryBlock)
+        //TODO: support other returns when non-local returns supported by Kotlin
+        if (returns.size == 1 && returns.single() == tryBlock!!.getStatements().last()) {
+            wrapResultStatement = { ReturnStatement(it) }
+            converterForBody = converter.withStatementVisitor { object : StatementVisitor(it) {
+                override fun visitReturnStatement(statement: PsiReturnStatement) {
+                    if (statement == returns.single()) {
+                        result = converter.convertExpression(statement.getReturnValue(), tryBlock!!.getContainingMethod()?.getReturnType())
+                    }
+                    else {
+                        super.visitReturnStatement(statement)
+                    }
+                }
+            }}
+        }
+
+        var block = converterForBody.convertBlock(tryBlock)
+        var expression: Expression = Expression.Empty
+        for (variable in resourceVariables.reverse()) {
+            val lambda = LambdaExpression(Identifier.toKotlin(variable.getName()!!), block)
+            expression = MethodCallExpression.build(converter.convertExpression(variable.getInitializer()), "use", listOf(), listOf(), false, lambda)
+            block = Block(listOf(expression), LBrace(), RBrace())
+        }
+
+        if (catchesConverted.isEmpty() && finallyConverted.isEmpty) {
+            return wrapResultStatement(expression)
+        }
+
+        return TryStatement(Block(listOf(wrapResultStatement(expression)), LBrace(), RBrace(), true), catchesConverted, finallyConverted)
     }
 
     private fun collectReturns(block: PsiCodeBlock?): Collection<PsiReturnStatement> {

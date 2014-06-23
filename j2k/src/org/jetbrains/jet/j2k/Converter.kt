@@ -147,7 +147,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     // do not convert private static methods into class object if possible
     private fun shouldGenerateClassObject(psiClass: PsiClass, convertedMembers: Map<PsiMember, Member>): Boolean {
         if (psiClass.isEnum()) return false
-        val members = convertedMembers.keySet().filter { it !is PsiMethod || !it.isConstructor() }
+        val members = convertedMembers.keySet().filter { !it.isConstructor() }
         val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance(javaClass<PsiClass>()).filter { it.hasModifierProperty(PsiModifier.STATIC) }
         if (classObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
