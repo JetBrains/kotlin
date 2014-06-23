@@ -32,6 +32,10 @@ public final class CastTest extends AbstractExpressionTest {
         checkFooBoxIsOk();
     }
 
+    public void testCastToGenericType() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testSmartCastInExtensionFunction() throws Exception {
         checkFooBoxIsOk();
     }

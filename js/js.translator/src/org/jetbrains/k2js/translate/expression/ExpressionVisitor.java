@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -29,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -347,9 +347,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (expression.getOperationReference().getReferencedNameElementType() != JetTokens.AS_KEYWORD)
             return jsExpression.source(expression);
 
-        JetType rightType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.TYPE, expression.getRight());
+        JetTypeReference right = expression.getRight();
+        assert right != null;
+
+        JetType rightType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.TYPE, right);
         JetType leftType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.EXPRESSION_TYPE, expression.getLeft());
-        if (rightType.isNullable() || !leftType.isNullable()) {
+        if (TypeUtils.isNullableType(rightType) || !TypeUtils.isNullableType(leftType)) {
             return jsExpression.source(expression);
         }
 
