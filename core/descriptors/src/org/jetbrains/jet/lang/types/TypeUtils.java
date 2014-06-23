@@ -420,6 +420,20 @@ public class TypeUtils {
         return false;
     }
 
+    /**
+     * A work-around of the generic nullability problem in the type checker
+     * @return true if a value of this type can be null
+     */
+    public static boolean isNullableType(@NotNull JetType type) {
+        if (type.isNullable()) {
+            return true;
+        }
+        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+            return hasNullableSuperType(type);
+        }
+        return false;
+    }
+
     public static boolean hasNullableSuperType(@NotNull JetType type) {
         if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
             // A class/trait cannot have a nullable supertype

@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.Stack;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -37,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Arrays;
@@ -191,20 +188,6 @@ public class JvmCodegenUtil {
                                      }
                                  }
         );
-    }
-
-    /**
-     * A work-around of the generic nullability problem in the type checker
-     * @return true if a value of this type can be null
-     */
-    public static boolean isNullableType(@NotNull JetType type) {
-        if (type.isNullable()) {
-            return true;
-        }
-        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
-            return TypeUtils.hasNullableSuperType(type);
-        }
-        return false;
     }
 
     public static boolean couldUseDirectAccessToProperty(

@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -174,7 +173,7 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        boolean isNullableType = JvmCodegenUtil.isNullableType(type);
+        boolean isNullableType = TypeUtils.isNullableType(type);
 
         Class<?> annotationClass = isNullableType ? Nullable.class : NotNull.class;
 
