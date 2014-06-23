@@ -165,7 +165,7 @@ public class OverridingUtil {
 
             if (superReturnType != null && subReturnType != null) {
                 boolean bothErrors = subReturnType.isError() && superReturnType.isError();
-                if (!bothErrors && !JetTypeChecker.DEFAULT.isSubtypeOf(subReturnType, superReturnType, localEqualityAxioms)) {
+                if (!bothErrors && !JetTypeChecker.withAxioms(localEqualityAxioms).isSubtypeOf(subReturnType, superReturnType)) {
                     return OverrideCompatibilityInfo.returnTypeMismatch(superReturnType, subReturnType);
                 }
             }
@@ -203,7 +203,7 @@ public class OverridingUtil {
             @NotNull JetTypeChecker.TypeConstructorEquality axioms
     ) {
         boolean bothErrors = typeInSuper.isError() && typeInSub.isError();
-        if (!bothErrors && !JetTypeChecker.DEFAULT.equalTypes(typeInSuper, typeInSub, axioms)) {
+        if (!bothErrors && !JetTypeChecker.withAxioms(axioms).equalTypes(typeInSuper, typeInSub)) {
             return false;
         }
         return true;
