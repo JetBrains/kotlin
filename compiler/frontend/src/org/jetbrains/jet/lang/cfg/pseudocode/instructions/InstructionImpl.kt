@@ -25,36 +25,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 
 public abstract class InstructionImpl(public override val lexicalScope: LexicalScope): Instruction {
     private var _owner: Pseudocode? = null
-    private val _copies = HashSet<Instruction>()
-    private var original: Instruction? = null
-
-    private fun setOriginalInstruction(value: Instruction?) {
-        assert(original == null) { "Instruction can't have two originals: this.original = ${original}; new original = $this" }
-        original = value
-    }
-
-    protected fun outgoingEdgeTo(target: Instruction?): Instruction? {
-        if (target != null) {
-            target.previousInstructions.add(this)
-        }
-        return target
-    }
-
-    protected fun updateCopyInfo(instruction: InstructionImpl): Instruction {
-        _copies.add(instruction)
-        instruction.setOriginalInstruction(this)
-        return instruction
-    }
-
-    protected abstract fun createCopy(): InstructionImpl
-
-    public var markedAsDead: Boolean = false
-
-    override val dead: Boolean get() = markedAsDead && getCopies().all { (it as InstructionImpl).markedAsDead }
-
-    public fun copy(): Instruction {
-        return updateCopyInfo(createCopy())
-    }
 
     override var owner: Pseudocode
         get() = _owner!!
@@ -63,9 +33,7 @@ public abstract class InstructionImpl(public override val lexicalScope: LexicalS
             _owner = value
         }
 
-    override val previousInstructions: MutableCollection<Instruction> = LinkedHashSet()
-
-    override val inputValues: List<PseudoValue> = Collections.emptyList()
+    private val _copies = HashSet<Instruction>()
 
     override fun getCopies(): Collection<Instruction> {
         return original?.let { original ->
@@ -75,4 +43,38 @@ public abstract class InstructionImpl(public override val lexicalScope: LexicalS
             originalCopies
         } ?: _copies
     }
+
+    private var original: Instruction? = null
+
+    private fun setOriginalInstruction(value: Instruction?) {
+        assert(original == null) { "Instruction can't have two originals: this.original = ${original}; new original = $this" }
+        original = value
+    }
+
+    public fun copy(): Instruction {
+        return updateCopyInfo(createCopy())
+    }
+
+    protected abstract fun createCopy(): InstructionImpl
+
+    protected fun updateCopyInfo(instruction: InstructionImpl): Instruction {
+        _copies.add(instruction)
+        instruction.setOriginalInstruction(this)
+        return instruction
+    }
+
+    public var markedAsDead: Boolean = false
+
+    override val dead: Boolean get() = markedAsDead && getCopies().all { (it as InstructionImpl).markedAsDead }
+
+    override val previousInstructions: MutableCollection<Instruction> = LinkedHashSet()
+
+    protected fun outgoingEdgeTo(target: Instruction?): Instruction? {
+        if (target != null) {
+            target.previousInstructions.add(this)
+        }
+        return target
+    }
+
+    override val inputValues: List<PseudoValue> = Collections.emptyList()
 }
