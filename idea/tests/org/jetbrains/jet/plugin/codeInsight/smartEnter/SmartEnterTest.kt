@@ -723,6 +723,124 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testFunBody() = doFileTest(
+            """
+            fun test<caret>()
+            """
+            ,
+            """
+            fun test() {
+                <caret>
+            }
+            """
+    )
+
+    fun testFunBody1() = doFileTest(
+            """
+            fun test<caret>
+            """
+            ,
+            """
+            fun test() {
+                <caret>
+            }
+            """
+    )
+
+    fun testFunBody2() = doFileTest(
+            """
+            fun (p: Int, s: String<caret>
+            """
+            ,
+            """
+            fun (p: Int, s: String) {
+                <caret>
+            }
+            """
+    )
+
+    fun testFunBody3() = doFileTest(
+            """
+            trait Some {
+                fun (<caret>p: Int)
+            }
+            """
+            ,
+            """
+            trait Some {
+                fun (p: Int)
+                <caret>
+            }
+            """
+    )
+
+    fun testFunBody4() = doFileTest(
+            """
+            class Some {
+                abstract fun (<caret>p: Int)
+            }
+            """
+            ,
+            """
+            class Some {
+                abstract fun (p: Int)
+                <caret>
+            }
+            """
+    )
+
+    fun testFunBody5() = doFileTest(
+            """
+            class Some {
+                fun test(<caret>p: Int) = 1
+            }
+            """
+            ,
+            """
+            class Some {
+                fun test(p: Int) = 1
+                <caret>
+            }
+            """
+    )
+
+    fun testFunBody6() = doFileTest(
+            """
+            fun test(<caret>p: Int) {
+            }
+            """
+            ,
+            """
+            fun test(p: Int) {
+                <caret>
+            }
+            """
+    )
+
+    fun testFunBody7() = doFileTest(
+            """
+            trait T
+            fun <U> other() where U: T<caret>
+            """,
+            """
+            trait T
+            fun <U> other() where U : T {
+                <caret>
+            }
+            """
+    )
+
+    fun testFunBody8() = doFileTest(
+            """
+            fun Int.other<caret>
+            """,
+            """
+            fun Int.other() {
+                <caret>
+            }
+            """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----${this.trimIndent()}//----"
@@ -734,6 +852,10 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
         doTest(before.withFunContext(), after.withFunContext())
     }
 
+    fun doFileTest(before: String, after: String) {
+        doTest(before.trimIndent().removeFirstEmptyLines(), after.trimIndent().removeFirstEmptyLines())
+    }
+
     fun doTest(before: String, after: String) {
         myFixture.configureByText(JetFileType.INSTANCE, before)
         myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COMPLETE_STATEMENT)
@@ -741,4 +863,6 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor = LightCodeInsightFixtureTestCase.JAVA_LATEST
+
+    private fun String.removeFirstEmptyLines() = this.split("\n").dropWhile { it.isEmpty() }.joinToString(separator = "\n")
 }

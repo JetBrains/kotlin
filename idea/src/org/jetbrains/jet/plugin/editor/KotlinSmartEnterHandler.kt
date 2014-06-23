@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetForExpression
+import org.jetbrains.jet.lang.psi.JetParameter
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.JetLoopExpression
@@ -48,7 +49,10 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
                 KotlinWhenSubjectCaretFixer(),
                 KotlinMissingWhenBodyFixer(),
 
-                KotlinDoWhileFixer()
+                KotlinDoWhileFixer(),
+
+                KotlinFunctionParametersFixer(),
+                KotlinFunctionDeclarationBodyFixer()
         )
 
         addEnterProcessors(KotlinPlainEnterProcessor())
@@ -62,7 +66,9 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
         while (atCaret != null) {
             if (atCaret?.isJetStatement() == true) return atCaret
 
-            if (atCaret is JetDeclaration && (atCaret?.getParent() !is JetForExpression)) {
+            if (atCaret is JetDeclaration &&
+                    atCaret !is JetParameter &&
+                    (atCaret?.getParent() !is JetForExpression)) {
                 return atCaret
             }
 
@@ -94,7 +100,9 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
             val old = settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = false
             val elt = PsiTreeUtil.getParentOfType(file.findElementAt(caretOffset - 1), javaClass<JetBlockExpression>())
-            reformat(elt)
+            if (elt != null) {
+                reformat(elt)
+            }
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = old
             editor.getCaretModel().moveToOffset(caretOffset - 1)
         }
