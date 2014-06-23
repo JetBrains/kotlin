@@ -540,6 +540,38 @@ public class OverridingUtil {
         );
     }
 
+    public static boolean traverseOverridenDescriptors(
+            @NotNull CallableDescriptor originalDescriptor,
+            @NotNull final Function1<CallableDescriptor, Boolean> handler
+    ) {
+        return DFS.dfs(
+                Collections.singletonList(originalDescriptor),
+                new DFS.Neighbors<CallableDescriptor>() {
+                    @NotNull
+                    @Override
+                    public Iterable<? extends CallableDescriptor> getNeighbors(CallableDescriptor current) {
+                        return current.getOverriddenDescriptors();
+                    }
+                },
+                new DFS.AbstractNodeHandler<CallableDescriptor, Boolean>() {
+                    private boolean result = true;
+
+                    @Override
+                    public boolean beforeChildren(CallableDescriptor current) {
+                        if (!handler.invoke(current)) {
+                            result = false;
+                        }
+                        return result;
+                    }
+
+                    @Override
+                    public Boolean result() {
+                        return result;
+                    }
+                }
+        );
+    }
+
     public interface DescriptorSink {
         void addToScope(@NotNull CallableMemberDescriptor fakeOverride);
 

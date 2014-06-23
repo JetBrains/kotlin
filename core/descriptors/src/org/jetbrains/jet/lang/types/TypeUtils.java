@@ -634,7 +634,7 @@ public class TypeUtils {
                 },
                 new DFS.NodeHandlerWithListResult<JetType, TypeConstructor>() {
                     @Override
-                    public void beforeChildren(JetType current) {
+                    public boolean beforeChildren(JetType current) {
                         TypeConstructor constructor = current.getConstructor();
 
                         Set<JetType> instances = constructorToAllInstances.get(constructor);
@@ -643,6 +643,8 @@ public class TypeUtils {
                             constructorToAllInstances.put(constructor, instances);
                         }
                         instances.add(current);
+
+                        return true;
                     }
 
                     @Override
