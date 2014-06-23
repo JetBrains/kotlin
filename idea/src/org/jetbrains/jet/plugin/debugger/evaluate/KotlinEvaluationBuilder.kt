@@ -100,7 +100,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
 
             // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
-            if (result is ExceptionThrown && isCompiledDataFromCache) {
+            if (isCompiledDataFromCache && result is ExceptionThrown && result.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
                 return runEval4j(context, extractAndCompile(codeFragment, sourcePosition), args).toJdiValue(virtualMachine)
             }
 

@@ -114,26 +114,6 @@ fun subTypePlatform() {
     }
 }
 
-fun genericRerun() {
-    if (true) {
-        val c = ArrayList<Int>()
-        c.add(1)
-        // EXPRESSION: c.get(0)
-        // RESULT: 1: I
-        //Breakpoint!
-        val b = 1
-    }
-
-    if (true) {
-        val c = ArrayList<String>()
-        c.add("a")
-        // EXPRESSION: c.get(0)
-        // RESULT: "a": Ljava/lang/String;
-        //Breakpoint!
-        val b = 1
-    }
-}
-
 fun innerClass() {
     if (true) {
         val o = TestInnerClasses.Base()
@@ -200,7 +180,6 @@ fun main(args: Array<String>) {
     primitiveTypes()
     subType()
     subTypePlatform()
-    genericRerun()
     innerClass()
     objects()
 }

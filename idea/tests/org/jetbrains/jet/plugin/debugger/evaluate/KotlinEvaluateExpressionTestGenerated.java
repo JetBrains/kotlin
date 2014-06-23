@@ -151,6 +151,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/clearCache.kt");
         }
         
+        @TestMetadata("exceptions.kt")
+        public void testExceptions() throws Exception {
+            doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/exceptions.kt");
+        }
+        
     }
     
     public static Test suite() {
