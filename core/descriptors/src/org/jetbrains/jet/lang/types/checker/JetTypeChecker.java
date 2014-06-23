@@ -34,7 +34,7 @@ public class JetTypeChecker {
         return TYPE_CHECKER.isSubtypeOf(subtype, supertype);
     }
 
-    public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull final TypeConstructorEquality equalityAxioms) {
+    public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeConstructorEquality equalityAxioms) {
         return createWithAxioms(equalityAxioms).isSubtypeOf(subtype, supertype);
     }
 
@@ -42,7 +42,7 @@ public class JetTypeChecker {
         return TYPE_CHECKER.equalTypes(a, b);
     }
 
-    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b, @NotNull final TypeConstructorEquality equalityAxioms) {
+    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b, @NotNull TypeConstructorEquality equalityAxioms) {
         return createWithAxioms(equalityAxioms).equalTypes(a, b);
     }
 
