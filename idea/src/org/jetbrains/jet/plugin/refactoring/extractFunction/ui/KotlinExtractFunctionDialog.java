@@ -63,7 +63,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         setModal(true);
         setTitle(JetRefactoringBundle.message("extract.function"));
         init();
-        update(false);
+        update();
     }
 
     private void createUIComponents() {
@@ -94,10 +94,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         return true;
     }
 
-    private void update(boolean recreateDescriptor) {
-        if (recreateDescriptor) {
-            this.currentDescriptor = createDescriptor();
-        }
+    private void update() {
+        this.currentDescriptor = createDescriptor();
 
         setOKActionEnabled(checkNames());
         signaturePreviewField.setText(
@@ -116,7 +114,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                 new DocumentAdapter() {
                     @Override
                     public void documentChanged(DocumentEvent event) {
-                        update(true);
+                        update();
                     }
                 }
         );
@@ -130,7 +128,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                 new ItemListener() {
                     @Override
                     public void itemStateChanged(@NotNull ItemEvent e) {
-                        update(true);
+                        update();
                     }
                 }
         );
@@ -138,7 +136,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         parameterTablePanel = new KotlinParameterTablePanel() {
             @Override
             protected void updateSignature() {
-                KotlinExtractFunctionDialog.this.update(true);
+                KotlinExtractFunctionDialog.this.update();
             }
 
             @Override
