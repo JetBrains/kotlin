@@ -87,16 +87,10 @@ private fun List<Instruction>.getResultType(
         options: ExtractionOptions): JetType {
     fun instructionToType(instruction: Instruction): JetType? {
         val expression = when (instruction) {
-            is ReturnValueInstruction -> {
+            is ReturnValueInstruction ->
                 (instruction.element as JetReturnExpression).getReturnedExpression()
-            }
-            is CallInstruction -> {
-                val callElement = instruction.resolvedCall.getCall().getCallElement() as? JetExpression
-                if (callElement is JetSimpleNameExpression) callElement.getParentByType(javaClass<JetExpression>(), true) else callElement
-            }
-            is ReadValueInstruction, is OperationInstruction -> {
-                (instruction as JetElementInstruction).element as? JetExpression
-            }
+            is InstructionWithValue ->
+                instruction.outputValue?.element as? JetExpression
             else -> null
         }
 
