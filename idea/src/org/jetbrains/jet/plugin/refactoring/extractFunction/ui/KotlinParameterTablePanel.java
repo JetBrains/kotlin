@@ -118,6 +118,7 @@ public class KotlinParameterTablePanel extends JPanel {
 
         myTable.setTableHeader(null);
         myTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        myTable.setCellSelectionEnabled(true);
 
         TableColumn checkBoxColumn = myTable.getColumnModel().getColumn(MyTableModel.CHECKMARK_COLUMN);
         TableUtil.setupCheckboxColumn(checkBoxColumn);
