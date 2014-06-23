@@ -216,20 +216,6 @@ public class KotlinParameterTablePanel extends JPanel {
             }
         });
 
-        // F2: edit parameter name
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "edit_parameter_name");
-        actionMap.put("edit_parameter_name", new AbstractAction() {
-            @Override
-            public void actionPerformed(@NotNull ActionEvent e) {
-                if (!myTable.isEditing()) {
-                    int row = myTable.getSelectedRow();
-                    if (row >= 0 && row < myTableModel.getRowCount()) {
-                        TableUtil.editCellAt(myTable, row, MyTableModel.PARAMETER_NAME_COLUMN);
-                    }
-                }
-            }
-        });
-
         // make ENTER work when the table has focus
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "invoke_impl");
         actionMap.put("invoke_impl", new AbstractAction() {
