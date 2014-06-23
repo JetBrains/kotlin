@@ -90,8 +90,8 @@ class MapTest {
 
     test fun contains() {
         val map = mapOf("a" to 1, "b" to 2)
-        assert("a" in map)
-        assert("c" !in map)
+        assertTrue("a" in map)
+        assertTrue("c" !in map)
     }
 
     test fun map() {
