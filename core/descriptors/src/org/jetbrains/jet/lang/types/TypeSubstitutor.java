@@ -151,8 +151,25 @@ public class TypeSubstitutor {
     @NotNull
     private TypeProjection unsafeSubstitute(@NotNull TypeProjection originalProjection, int recursionDepth) throws SubstitutionException {
         assertRecursionDepth(recursionDepth, originalProjection, substitution);
+
         // The type is within the substitution range, i.e. T or T?
         JetType type = originalProjection.getType();
+        Variance originalProjectionKind = originalProjection.getProjectionKind();
+        if (type instanceof FlexibleType) {
+            FlexibleType flexibleType = (FlexibleType) type;
+            TypeProjection substitutedLower =
+                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, flexibleType.getLowerBound()), recursionDepth + 1);
+            TypeProjection substitutedUpper =
+                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, flexibleType.getUpperBound()), recursionDepth + 1);
+            // todo: projection kind is neglected
+            return new TypeProjectionImpl(originalProjectionKind,
+                                          new DelegatingFlexibleType(
+                                                  substitutedLower.getType(),
+                                                  substitutedUpper.getType()
+                                          )
+            );
+        }
+
         if (KotlinBuiltIns.getInstance().isNothing(type) || type.isError()) return originalProjection;
 
         TypeProjection replacement = substitution.get(type.getConstructor());
@@ -161,7 +178,7 @@ public class TypeSubstitutor {
             // It must be a type parameter: only they can be directly substituted for
             TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor();
 
-            switch (conflictType(originalProjection.getProjectionKind(), replacement.getProjectionKind())) {
+            switch (conflictType(originalProjectionKind, replacement.getProjectionKind())) {
                 case OUT_IN_IN_POSITION:
                     throw new SubstitutionException("Out-projection in in-position");
                 case IN_IN_OUT_POSITION:
@@ -170,7 +187,7 @@ public class TypeSubstitutor {
                 case NO_CONFLICT:
                     boolean resultingIsNullable = type.isNullable() || replacement.getType().isNullable();
                     JetType substitutedType = TypeUtils.makeNullableAsSpecified(replacement.getType(), resultingIsNullable);
-                    Variance resultingProjectionKind = combine(originalProjection.getProjectionKind(), replacement.getProjectionKind());
+                    Variance resultingProjectionKind = combine(originalProjectionKind, replacement.getProjectionKind());
 
                     return new TypeProjectionImpl(resultingProjectionKind, substitutedType);
                 default:
@@ -187,7 +204,7 @@ public class TypeSubstitutor {
                                                type.isNullable(),       // Same nullability
                                                substitutedArguments,
                                                new SubstitutingScope(type.getMemberScope(), this));
-            return new TypeProjectionImpl(originalProjection.getProjectionKind(), substitutedType);
+            return new TypeProjectionImpl(originalProjectionKind, substitutedType);
         }
     }
 
