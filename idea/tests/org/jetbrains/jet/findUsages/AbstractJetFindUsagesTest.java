@@ -202,6 +202,13 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
                 return new JavaVariableFindUsagesOptions(project);
             }
         },
+        JAVA_PACKAGE {
+            @NotNull
+            @Override
+            public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+                return new JavaPackageFindUsagesOptions(project);
+            }
+        },
         DEFAULT {
             @NotNull
             @Override
@@ -246,6 +253,9 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
             }
             if (klass == PsiField.class) {
                 return JAVA_FIELD;
+            }
+            if (klass == PsiPackage.class) {
+                return JAVA_PACKAGE;
             }
             if (klass == JetTypeParameter.class) {
                 return DEFAULT;

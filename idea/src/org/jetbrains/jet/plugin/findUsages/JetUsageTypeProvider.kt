@@ -17,12 +17,9 @@
 package org.jetbrains.jet.plugin.findUsages
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.tree.IElementType
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.usages.UsageTarget
 import com.intellij.usages.impl.rules.UsageType
 import com.intellij.usages.impl.rules.UsageTypeProviderEx
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.psi.psiUtil.*
@@ -30,9 +27,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import com.intellij.psi.PsiPackage
 
 public object JetUsageTypeProvider : UsageTypeProviderEx {
     public override fun getUsageType(element: PsiElement?): UsageType? {
@@ -166,6 +162,14 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             }
         }
 
+        fun getPackageUsageType(): UsageType? {
+            return when {
+                simpleName.getParentByType(javaClass<JetPackageDirective>()) != null -> JetUsageTypes.PACKAGE_DIRECTIVE
+                simpleName.getParentByType(javaClass<JetQualifiedExpression>()) != null -> JetUsageTypes.PACKAGE_MEMBER_ACCESS
+                else -> getClassUsageType()
+            }
+        }
+
         val usageType = getCommonUsageType()
         if (usageType != null) return usageType
 
@@ -181,7 +185,9 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             } else {
                 getClassUsageType()
             }
-            is PackageViewDescriptor -> getClassUsageType()
+            is PackageViewDescriptor -> {
+                if (reference.getReference()?.resolve() is PsiPackage) getPackageUsageType() else getClassUsageType()
+            }
             is VariableDescriptor -> getVariableUsageType()
             is FunctionDescriptor -> getFunctionUsageType(descriptor)
             else -> null
@@ -208,6 +214,10 @@ object JetUsageTypes {
     // values
     val RECEIVER = UsageType(JetBundle.message("usageType.receiver"))
     val DELEGATE = UsageType(JetBundle.message("usageType.delegate"))
+
+    // packages
+    val PACKAGE_DIRECTIVE = UsageType(JetBundle.message("usageType.packageDirective"))
+    val PACKAGE_MEMBER_ACCESS = UsageType(JetBundle.message("usageType.packageMemberAccess"))
 
     // common usage types
     val CALLABLE_REFERENCE = UsageType(JetBundle.message("usageType.callable.reference"))
