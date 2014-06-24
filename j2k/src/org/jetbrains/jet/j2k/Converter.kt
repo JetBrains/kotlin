@@ -315,12 +315,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
                 isQualifierEmptyOrThis(write)) {
             val constructor = write.getContainingConstructor()
-            if (constructor != null &&
+            return constructor != null &&
                     constructor.getContainingClass() == containingClass &&
                     parent.getParent() is PsiExpressionStatement &&
-                    parent.getParent()?.getParent() == constructor.getBody()) {
-                return true
-            }
+                    parent.getParent()?.getParent() == constructor.getBody()
         }
         return false
     }

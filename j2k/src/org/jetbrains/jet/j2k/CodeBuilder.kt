@@ -51,7 +51,13 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
     private val commentsAndSpacesUsed = HashSet<PsiElement>()
 
-    public fun append(text: String, endOfLineComment: Boolean = false): CodeBuilder {
+    public fun append(text: String): CodeBuilder
+            = append(text, false)
+
+    private fun appendCommentOrWhiteSpace(element: PsiElement)
+            = append(element.getText()!!, element.isEndOfLineComment())
+
+    private fun append(text: String, endOfLineComment: Boolean = false): CodeBuilder {
         if (text.isEmpty()) {
             assert(!endOfLineComment)
             return this
@@ -78,8 +84,8 @@ class CodeBuilder(private val topElement: PsiElement?) {
             return this
         }
 
-        val prefixElements = ArrayList<PsiElement>(2)
-        val postfixElements = ArrayList<PsiElement>(2)
+        val prefixElements = ArrayList<PsiElement>(1)
+        val postfixElements = ArrayList<PsiElement>(1)
         for ((prototype, inheritBlankLinesBefore) in element.prototypes) {
             assert(prototype !is PsiComment)
             assert(prototype !is PsiWhiteSpace)
@@ -95,11 +101,11 @@ class CodeBuilder(private val topElement: PsiElement?) {
             val e = prefixElements[i]
             if (i == 0 && e is PsiWhiteSpace) {
                 if (e.newLinesCount() > 1) {  // insert at maximum one blank line
-                    append("\n")
+                    append("\n", false)
                 }
             }
             else {
-                append(e.getText()!!, e.isEndOfLineComment())
+                appendCommentOrWhiteSpace(e)
             }
         }
 
@@ -110,21 +116,21 @@ class CodeBuilder(private val topElement: PsiElement?) {
             prototype.accept(object : JavaRecursiveElementVisitor(){
                 override fun visitComment(comment: PsiComment) {
                     if (commentsAndSpacesUsed.add(comment)) {
-                        append(comment.getText()!!, comment.isEndOfLineComment())
+                        appendCommentOrWhiteSpace(comment)
                     }
                 }
             })
         }
 
-        postfixElements.forEach { append(it.getText()!!, it.isEndOfLineComment()) }
+        postfixElements.forEach { appendCommentOrWhiteSpace(it) }
 
         return this
     }
 
     private fun MutableList<PsiElement>.collectPrefixElements(element: PsiElement, allowBlankLinesBefore: Boolean) {
-        val atStart = ArrayList<PsiElement>(2).collectCommentsAndSpacesAtStart(element)
+        val atStart = ArrayList<PsiElement>(1).collectCommentsAndSpacesAtStart(element)
 
-        val before = ArrayList<PsiElement>(2).collectCommentsAndSpacesBefore(element)
+        val before = ArrayList<PsiElement>(1).collectCommentsAndSpacesBefore(element)
         if (!allowBlankLinesBefore && before.lastOrNull() is PsiWhiteSpace) {
             before.remove(before.size - 1)
         }
@@ -134,9 +140,9 @@ class CodeBuilder(private val topElement: PsiElement?) {
     }
 
     private fun MutableList<PsiElement>.collectPostfixElements(element: PsiElement) {
-        val atEnd = ArrayList<PsiElement>(2).collectCommentsAndSpacesAtEnd(element)
+        val atEnd = ArrayList<PsiElement>(1).collectCommentsAndSpacesAtEnd(element)
 
-        val after = ArrayList<PsiElement>(2).collectCommentsAndSpacesAfter(element)
+        val after = ArrayList<PsiElement>(1).collectCommentsAndSpacesAfter(element)
         if (after.isNotEmpty()) {
             val last = after.last()
             if (last is PsiWhiteSpace) {
