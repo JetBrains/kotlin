@@ -52,8 +52,7 @@ public class RemoveValVarFromParametersFix implements IntentionAction {
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) {
         // TODO after M6, this quick fix should remove val/var only for current parameter
 
-        JetFile initialFile = (JetFile) file;
-        Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(initialFile);
+        Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(project);
         for (JetFile jetFile : files) {
             jetFile.acceptChildren(new JetVisitorVoid() {
                 @Override

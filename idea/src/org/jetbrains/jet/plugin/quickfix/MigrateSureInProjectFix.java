@@ -86,7 +86,7 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(file);
+        Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(project);
 
         for (JetFile jetFile : files) {
             replaceUnresolvedSure(jetFile);

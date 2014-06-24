@@ -16,63 +16,22 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.google.common.collect.Sets;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentIterator;
-import com.intellij.openapi.roots.ModuleFileIndex;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
+import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class PluginJetFilesProvider  {
 
-    public static Collection<JetFile> allFilesInProject(@NotNull final JetFile rootFile) {
-        final Project project = rootFile.getProject();
-        final Set<JetFile> files = Sets.newLinkedHashSet();
-
-        Module rootModule = ModuleUtil.findModuleForPsiElement(rootFile);
-        if (rootModule != null) {
-            Set<Module> allModules = new HashSet<Module>();
-            ModuleUtil.getDependencies(rootModule, allModules);
-
-            for (Module module : allModules) {
-                final ModuleFileIndex index = ModuleRootManager.getInstance(module).getFileIndex();
-                index.iterateContent(new ContentIterator() {
-                    @Override
-                    public boolean processFile(VirtualFile file) {
-                        if (file.isDirectory()) return true;
-                        if (!index.isInSourceContent(file) && !index.isInTestSourceContent(file)) return true;
-                        if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file, project)) return true;
-
-                        FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
-                        if (fileType != JetFileType.INSTANCE) return true;
-                        PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                        if (psiFile instanceof JetFile) {
-                            if (rootFile.getOriginalFile() != psiFile) {
-                                files.add((JetFile) psiFile);
-                            }
-                        }
-                        return true;
-                    }
-                });
-            }
-        }
-
-        files.add(rootFile);
-        return files;
+    @NotNull
+    public static Collection<JetFile> allFilesInProject(@NotNull Project project) {
+        return JetAllPackagesIndex.getInstance().get(FqName.ROOT.asString(), project,
+                                                     JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project)));
     }
 
     private PluginJetFilesProvider() {

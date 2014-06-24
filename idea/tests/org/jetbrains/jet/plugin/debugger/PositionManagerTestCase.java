@@ -41,6 +41,7 @@ import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -86,9 +87,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
 
     private void performTest() {
         Project project = getProject();
-        List<JetFile> files = new ArrayList<JetFile>(
-                JetAllPackagesIndex.getInstance().get(FqName.ROOT.asString(), project, GlobalSearchScope.allScope(project))
-        );
+        List<JetFile> files = new ArrayList<JetFile>(PluginJetFilesProvider.allFilesInProject(project));
 
         final List<Breakpoint> breakpoints = Lists.newArrayList();
         for (JetFile file : files) {
