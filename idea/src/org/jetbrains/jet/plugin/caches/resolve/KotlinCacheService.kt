@@ -36,6 +36,7 @@ import org.jetbrains.jet.plugin.project.TargetPlatformDetector
 import java.util.HashSet
 import org.jetbrains.jet.analyzer.AnalyzerFacade
 import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
@@ -147,8 +148,11 @@ class KotlinCacheService(val project: Project) {
     }
 
     private fun isFileInScope(jetFile: JetFile): Boolean {
-        val project = jetFile.getProject()
-        return JetFilesProvider.getInstance(project).isFileInScope(jetFile, GlobalSearchScope.allScope(project))
+        val virtualFile = jetFile.getVirtualFile()
+        if (virtualFile == null) {
+            return false
+        }
+        return virtualFile in JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project))
     }
 
     public fun <T> get(extension: CacheExtension<T>): T {
