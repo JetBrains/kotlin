@@ -16,11 +16,12 @@
 
 package kotlin.reflect.jvm.internal
 
-abstract class KPropertyImpl<out R>(
-        name: String
-) : KProperty<R>, KCallableImpl<R>(name)
+import java.lang.reflect.*
+
+trait KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
+
+}
 
 
-abstract class KMutablePropertyImpl<R>(
-        name: String
-) : KMutableProperty<R>, KPropertyImpl<R>(name)
+trait KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
+}

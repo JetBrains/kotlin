@@ -16,6 +16,4 @@
 
 package kotlin.reflect.jvm.internal
 
-abstract class KCallableImpl<out R>(
-        public override val name: String
-) : KCallable<R>
+trait KCallableImpl<out R> : KCallable<R>

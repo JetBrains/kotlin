@@ -19,12 +19,12 @@ package kotlin.reflect.jvm.internal
 import java.lang.reflect.Method
 
 open class KExtensionPropertyImpl<T, out R>(
-        name: String,
+        public override val name: String,
         protected val owner: KPackageImpl,
         protected val receiverClass: Class<T>
-) : KExtensionProperty<T, R>, KPropertyImpl<R>(name) {
+) : KExtensionProperty<T, R>, KPropertyImpl<R> {
     // TODO: extract, make lazy (weak?), use our descriptors knowledge, support Java fields
-    protected val getter: Method = owner.jClass.getMethod(getterName(name), receiverClass)
+    val getter: Method = owner.jClass.getMethod(getterName(name), receiverClass)
 
     override fun get(receiver: T): R {
         return getter(null, receiver) as R
@@ -35,8 +35,8 @@ class KMutableExtensionPropertyImpl<T, R>(
         name: String,
         owner: KPackageImpl,
         receiverClass: Class<T>
-) : KMutableExtensionProperty<T, R>, KExtensionPropertyImpl<T, R>(name, owner, receiverClass) {
-    private val setter = owner.jClass.getMethod(setterName(name), receiverClass, getter.getReturnType()!!)
+) : KMutableExtensionProperty<T, R>, KMutablePropertyImpl<R>, KExtensionPropertyImpl<T, R>(name, owner, receiverClass) {
+    val setter = owner.jClass.getMethod(setterName(name), receiverClass, getter.getReturnType()!!)
 
     override fun set(receiver: T, value: R) {
         setter.invoke(null, receiver, value)

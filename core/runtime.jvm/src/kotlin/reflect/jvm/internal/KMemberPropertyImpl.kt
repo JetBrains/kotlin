@@ -20,9 +20,9 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 
 open class KMemberPropertyImpl<T, out R>(
-        name: String,
+        public override val name: String,
         protected val owner: KClassImpl<T>
-) : KMemberProperty<T, R>, KPropertyImpl<R>(name) {
+) : KMemberProperty<T, R>, KPropertyImpl<R> {
     val field: Field? =
             if (owner.origin == KClassOrigin.FOREIGN) {
                 owner.jClass.getField(name)
@@ -48,7 +48,7 @@ open class KMemberPropertyImpl<T, out R>(
 class KMutableMemberPropertyImpl<T, R>(
         name: String,
         owner: KClassImpl<T>
-) : KMutableMemberProperty<T, R>, KMemberPropertyImpl<T, R>(name, owner) {
+) : KMutableMemberProperty<T, R>, KMutablePropertyImpl<R>, KMemberPropertyImpl<T, R>(name, owner) {
     val setter: Method? =
             if (owner.origin == KClassOrigin.KOTLIN) {
                 owner.jClass.getMaybeDeclaredMethod(setterName(name), getter!!.getReturnType()!!)

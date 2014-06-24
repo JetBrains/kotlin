@@ -16,11 +16,6 @@
 
 package kotlin.reflect.jvm.internal
 
-abstract class KVariableImpl<out R>(
-        name: String
-) : KVariable<R>, KPropertyImpl<R>(name)
+trait KVariableImpl<out R> : KVariable<R>, KPropertyImpl<R>
 
-
-abstract class KMutableVariableImpl<R>(
-        name: String
-) : KMutableVariable<R>, KVariableImpl<R>(name)
+trait KMutableVariableImpl<R> : KMutableVariable<R>, KVariableImpl<R>, KMutablePropertyImpl<R>
