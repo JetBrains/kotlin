@@ -19,7 +19,7 @@ package kotlin.reflect.jvm.internal
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-open class KMemberPropertyImpl<T, out R>(
+open class KMemberPropertyImpl<T : Any, out R>(
         public override val name: String,
         protected val owner: KClassImpl<T>
 ) : KMemberProperty<T, R>, KPropertyImpl<R> {
@@ -45,7 +45,7 @@ open class KMemberPropertyImpl<T, out R>(
     }
 }
 
-class KMutableMemberPropertyImpl<T, R>(
+class KMutableMemberPropertyImpl<T : Any, R>(
         name: String,
         owner: KClassImpl<T>
 ) : KMutableMemberProperty<T, R>, KMutablePropertyImpl<R>, KMemberPropertyImpl<T, R>(name, owner) {

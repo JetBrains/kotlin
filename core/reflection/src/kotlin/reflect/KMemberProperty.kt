@@ -16,10 +16,10 @@
 
 package kotlin.reflect
 
-public trait KMemberProperty<T, out R> : KProperty<R> {
+public trait KMemberProperty<T : Any, out R> : KProperty<R> {
     public fun get(receiver: T): R
 }
 
-public trait KMutableMemberProperty<T, R> : KMemberProperty<T, R>, KMutableProperty<R> {
+public trait KMutableMemberProperty<T : Any, R> : KMemberProperty<T, R>, KMutableProperty<R> {
     public fun set(receiver: T, value: R)
 }
