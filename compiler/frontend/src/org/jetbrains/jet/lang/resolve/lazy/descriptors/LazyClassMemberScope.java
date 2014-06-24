@@ -327,12 +327,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     @NotNull
-    @Override
-    protected ReceiverParameterDescriptor getImplicitReceiver() {
-        return thisDescriptor.getThisAsReceiverParameter();
-    }
-
-    @NotNull
     public Set<ConstructorDescriptor> getConstructors() {
         ConstructorDescriptor constructor = getPrimaryConstructor();
         return constructor == null ? Collections.<ConstructorDescriptor>emptySet() : Collections.singleton(constructor);

@@ -262,15 +262,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
-        ReceiverParameterDescriptor receiver = getImplicitReceiver();
-        if (receiver != null) {
-            return Collections.singletonList(receiver);
-        }
         return Collections.emptyList();
     }
-
-    @Nullable
-    protected abstract ReceiverParameterDescriptor getImplicitReceiver();
 
     // Do not change this, override in concrete subclasses:
     // it is very easy to compromise laziness of this class, and fail all the debugging

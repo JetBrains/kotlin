@@ -50,11 +50,6 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragm
     }
 
     @Override
-    protected ReceiverParameterDescriptor getImplicitReceiver() {
-        return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-    }
-
-    @Override
     protected void getNonDeclaredFunctions(@NotNull Name name, @NotNull Set<FunctionDescriptor> result) {
         // No extra functions
     }
