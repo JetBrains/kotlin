@@ -110,4 +110,9 @@ public class KotlinLightMethodForDeclaration(
     }
 
     override fun getUseScope(): SearchScope = origin.getUseScope()
+
+    override fun equals(other: Any?): Boolean =
+            other is KotlinLightMethodForDeclaration && getName() == other.getName() && origin == other.origin
+
+    override fun hashCode(): Int = getName().hashCode() * 31 + origin.hashCode()
 }
