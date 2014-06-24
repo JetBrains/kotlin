@@ -286,23 +286,30 @@ public class Converter private(val project: Project, val settings: ConverterSett
                          convertElement(field.getArgumentList()))
         }
         else {
-            val initializer = field.getInitializer()
             val convertedType = typeConverter.convertVariableType(field)
             val isVal = isVal(field)
-            val omitType = !settings.specifyFieldTypeByDefault &&
-                    initializer != null &&
-                    (modifiers.isPrivate && (isVal || convertedType == typeConverter.convertExpressionType(initializer)) ||
-                            modifiers.isInternal && convertedType == typeConverter.convertExpressionType(initializer))
             Field(name,
                   annotations,
                   modifiers,
                   convertedType,
-                  convertExpression(initializer, field.getType()),
+                  convertExpression(field.getInitializer(), field.getType()),
                   isVal,
-                  !omitType,
+                  shouldDeclareType(field, isVal, convertedType),
                   field.hasWriteAccesses(field.getContainingClass()))
         }
         return converted.assignPrototype(field)
+    }
+
+    private fun shouldDeclareType(field: PsiField, isVal: Boolean, convertedType: Type): Boolean {
+        if (settings.specifyFieldTypeByDefault) return true
+        val initializer = field.getInitializer() ?: return true
+        fun typeMatches() = convertedType == typeConverter.convertExpressionType(initializer)
+        return if (field.hasModifierProperty(PsiModifier.PRIVATE))
+            !isVal && !typeMatches()
+        else if (field.hasModifierProperty(PsiModifier.PACKAGE_LOCAL))
+            !typeMatches()
+        else
+            true
     }
 
     private fun isVal(field: PsiField): Boolean {
