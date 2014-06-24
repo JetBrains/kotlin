@@ -25,6 +25,7 @@ import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.engine.DebugProcessEvents;
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -39,7 +40,8 @@ import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
@@ -83,15 +85,17 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
     }
 
     private void performTest() {
-        List<JetFile> files = Lists.newArrayList(
-                JetFilesProvider.getInstance(getProject()).allInScope(GlobalSearchScope.allScope(getProject())));
+        Project project = getProject();
+        List<JetFile> files = new ArrayList<JetFile>(
+                JetAllPackagesIndex.getInstance().get(FqName.ROOT.asString(), project, GlobalSearchScope.allScope(project))
+        );
 
         final List<Breakpoint> breakpoints = Lists.newArrayList();
         for (JetFile file : files) {
             breakpoints.addAll(extractBreakpointsInfo(file, file.getText()));
         }
 
-        GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(getProject(), files);
+        GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(project, files);
 
         Map<String, ReferenceType> referencesByName = getReferenceMap(state.getFactory());
 
