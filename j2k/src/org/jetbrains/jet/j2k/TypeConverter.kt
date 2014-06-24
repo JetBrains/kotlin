@@ -72,7 +72,8 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
 
     private fun variableNullabilityNoCache(variable: PsiVariable): Nullability {
         if (variable is PsiEnumConstant) return Nullability.NotNull
-        if (variable.getType() is PsiPrimitiveType) return Nullability.NotNull
+        val variableType = variable.getType()
+        if (variableType is PsiPrimitiveType) return Nullability.NotNull
 
         var nullability = variable.nullabilityFromAnnotations()
 
@@ -100,6 +101,11 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
                     nullability = Nullability.Nullable
                 }
             }
+        }
+
+        // variables of types like Integer are most likely nullable
+        if (nullability == Nullability.Default && variableType.getCanonicalText() in boxingTypes) {
+            return Nullability.Nullable
         }
 
         if (!conversionScope.contains(variable)) { // do not analyze usages out of our conversion scope
@@ -158,13 +164,19 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
     }
 
     private fun methodNullabilityNoCache(method: PsiMethod): Nullability {
-        if (method.getReturnType() is PsiPrimitiveType) return Nullability.NotNull
+        val returnType = method.getReturnType()
+        if (returnType is PsiPrimitiveType) return Nullability.NotNull
 
         var nullability = method.nullabilityFromAnnotations()
 
         if (nullability == Nullability.Default) {
             val superSignatures = method.getHierarchicalMethodSignature().getSuperSignatures()
             nullability = superSignatures.map { methodNullability(it.getMethod()) }.firstOrNull { it != Nullability.Default } ?: Nullability.Default
+        }
+
+        // methods of types like Integer are most likely nullable
+        if (nullability == Nullability.Default && returnType?.getCanonicalText() in boxingTypes) {
+            return Nullability.Nullable
         }
 
         if (!conversionScope.contains(method)) return nullability // do not analyze body and usages of methods out of our conversion scope
@@ -264,5 +276,18 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
             Nullability.Nullable
         else
             Nullability.Default
+    }
+
+    class object {
+        private val boxingTypes: Set<String> = setOf(
+                CommonClassNames.JAVA_LANG_BYTE,
+                CommonClassNames.JAVA_LANG_CHARACTER,
+                CommonClassNames.JAVA_LANG_DOUBLE,
+                CommonClassNames.JAVA_LANG_FLOAT,
+                CommonClassNames.JAVA_LANG_INTEGER,
+                CommonClassNames.JAVA_LANG_LONG,
+                CommonClassNames.JAVA_LANG_SHORT,
+                CommonClassNames.JAVA_LANG_BOOLEAN
+        )
     }
 }

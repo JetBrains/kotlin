@@ -1,5 +1,5 @@
 class A() {
-    private var i = getByte().toInt()
+    private var i: Int? = getByte().toInt()
 
     fun foo() {
         i = 10

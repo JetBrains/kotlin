@@ -1,4 +1,4 @@
 fun foo(b: Byte) {
-    var i = b.toInt()
+    var i: Int? = b.toInt()
     if (p) i = 10
 }
