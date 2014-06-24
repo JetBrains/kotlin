@@ -360,6 +360,31 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testWhileMultiLine1() = doFunTest(
+            """
+            while (true)
+                println()<caret>
+            """,
+            """
+            while (true)
+                println()
+            <caret>
+            """
+    )
+
+    fun testWhileMultiLine2() = doFunTest(
+            """
+            while (<caret>true)
+                println()
+            """,
+            """
+            while (true) {
+                <caret>
+            }
+                println()
+            """
+    )
+
     fun testForStatement() = doFunTest(
             """
             for <caret>
@@ -454,6 +479,31 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
                 <caret>
             }
             println()
+            """
+    )
+
+    fun testForMultiLine1() = doFunTest(
+            """
+            for (i in 1..10<caret>)
+                println()
+            """,
+            """
+            for (i in 1..10) {
+                <caret>
+            }
+                println()
+            """
+    )
+
+    fun testForMultiLine2() = doFunTest(
+            """
+            for (i in 1..10)
+                println()<caret>
+            """,
+            """
+            for (i in 1..10)
+                println()
+            <caret>
             """
     )
 
@@ -720,6 +770,48 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             do println("some") while (true)
             <caret>
             println("hi")
+            """
+    )
+
+    fun testDoWhileMultiLine1() = doFunTest(
+            """
+            do
+                println()<caret>
+            while (true)
+            """,
+            """
+            do
+                println()
+                <caret>
+            while (true)
+            """
+    )
+
+    fun testDoWhileMultiLine2() = doFunTest(
+            """
+            do<caret>
+                println()
+            while (true)
+            """,
+            """
+            do {
+                <caret>
+                println()
+            } while (true)
+            """
+    )
+
+    fun testDoWhileMultiLine3() = doFunTest(
+            """
+            do
+                println()
+            while <caret>(true)
+            """,
+            """
+            do {
+                <caret>
+                println()
+            } while (true)
             """
     )
 

@@ -30,15 +30,22 @@ public class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmar
         val doc = editor.getDocument()
         val stmt = psiElement as JetDoWhileExpression
         val start = stmt.range.start
+        val body = stmt.getBody()
 
         val whileKeyword = stmt.getWhileKeywordElement()
-        if (stmt.getBody() == null) {
+        if (body == null) {
             if (whileKeyword == null) {
                 doc.replaceString(start, start + "do".length(), "do {} while()")
             }
             else {
                 doc.insertString(start + "do".length(), "{}")
             }
+            return
+        }
+        else if (whileKeyword != null && body !is JetBlockExpression && body.startLine(doc) > stmt.startLine(doc)) {
+            doc.insertString(start + "do".length(), "{")
+            doc.insertString(whileKeyword.range.start - 1, "}")
+
             return
         }
 

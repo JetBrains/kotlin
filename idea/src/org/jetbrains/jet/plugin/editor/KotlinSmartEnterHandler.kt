@@ -121,7 +121,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     }
 
     private fun PsiElement.isJetStatement() =
-        getParent() is JetBlockExpression || (getParent()?.getNode()?.getElementType() in IF_BRANCHES_CONTAINERS)
+        getParent() is JetBlockExpression || (getParent()?.getNode()?.getElementType() in BRANCH_CONTAINERS)
 
     class KotlinPlainEnterProcessor : SmartEnterProcessorWithFixers.FixEnterProcessor() {
         private fun getControlStatementBlock(caret: Int, element: PsiElement): JetExpression? {
@@ -157,5 +157,5 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     }
 }
 
-private val IF_BRANCHES_CONTAINERS = TokenSet.create(JetNodeTypes.THEN, JetNodeTypes.ELSE)
+private val BRANCH_CONTAINERS = TokenSet.create(JetNodeTypes.THEN, JetNodeTypes.ELSE, JetNodeTypes.BODY)
 private fun JetParameter.isInLambdaExpression() = this.getParent()?.getParent() is JetFunctionLiteral
