@@ -780,13 +780,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         // Parse when block
         myBuilder.enableNewlines();
-        expect(LBRACE, "Expecting '{'");
+        if (expect(LBRACE, "Expecting '{'")) {
+            while (!eof() && !at(RBRACE)) {
+                parseWhenEntry();
+            }
 
-        while (!eof() && !at(RBRACE)) {
-            parseWhenEntry();
+            expect(RBRACE, "Expecting '}'");
         }
-
-        expect(RBRACE, "Expecting '}'");
         myBuilder.restoreNewlinesState();
 
         when.done(WHEN);

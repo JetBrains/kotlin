@@ -1015,6 +1015,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest("compiler/testData/psi/recovery/ValueParameterNoTypeRecovery.kt");
             }
             
+            @TestMetadata("WhenWithoutBraces.kt")
+            public void testWhenWithoutBraces() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/WhenWithoutBraces.kt");
+            }
+            
             @TestMetadata("WhileWithEmptyCondition.kt")
             public void testWhileWithEmptyCondition() throws Exception {
                 doParsingTest("compiler/testData/psi/recovery/WhileWithEmptyCondition.kt");
