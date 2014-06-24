@@ -21,6 +21,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
+import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.find.FindManager;
 import com.intellij.find.findUsages.*;
 import com.intellij.find.impl.FindManagerImpl;
@@ -301,7 +302,11 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         }
         myFixture.configureByFile(path);
 
-        T caretElement = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), caretElementClass, false);
+        PsiElement originalElement =
+                InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF")
+                ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(), TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED)
+                : myFixture.getElementAtCaret();
+        T caretElement = PsiTreeUtil.getParentOfType(originalElement, caretElementClass, false);
         assertNotNull(String.format("Element with type '%s' wasn't found at caret position", caretElementClass), caretElement);
 
         FindUsagesOptions options = parser != null ? parser.parse(mainFileText, getProject()) : null;
