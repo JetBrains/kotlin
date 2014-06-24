@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class CliJetFilesProvider extends JetFilesProvider {
@@ -30,11 +29,6 @@ public class CliJetFilesProvider extends JetFilesProvider {
 
     public CliJetFilesProvider(JetCoreEnvironment environment) {
         this.environment = environment;
-    }
-
-    @Override
-    protected Collection<JetFile> sampleToAllFilesInModule(@NotNull JetFile file) {
-        return environment.getSourceFiles();
     }
 
     @NotNull

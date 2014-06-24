@@ -43,7 +43,10 @@ import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PluginJetFilesProvider extends JetFilesProvider {
     private final Project project;
@@ -101,11 +104,6 @@ public class PluginJetFilesProvider extends JetFilesProvider {
 
         files.add(rootFile);
         return files;
-    }
-
-    @Override
-    protected Collection<JetFile> sampleToAllFilesInModule(@NotNull JetFile file) {
-        return allFilesInProject(file);
     }
 
     private boolean isKotlinSourceVirtualFile(@NotNull VirtualFile virtualFile) {

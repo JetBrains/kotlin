@@ -16,15 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 
@@ -34,17 +30,6 @@ public abstract class JetFilesProvider {
         return ServiceManager.getService(project, JetFilesProvider.class);
     }
 
-    public final Collection<JetFile> allPackageFiles(@NotNull JetFile file) {
-        final FqName name = file.getPackageFqName();
-        return Collections2.filter(sampleToAllFilesInModule(file), new Predicate<PsiFile>() {
-            @Override
-            public boolean apply(PsiFile psiFile) {
-                return ((JetFile) psiFile).getPackageFqName().equals(name);
-            }
-        });
-    }
-
-    protected abstract Collection<JetFile> sampleToAllFilesInModule(@NotNull JetFile file);
     @NotNull
     public abstract Collection<JetFile> allInScope(@NotNull GlobalSearchScope scope);
     public abstract boolean isFileInScope(@NotNull JetFile file, @NotNull GlobalSearchScope scope);
