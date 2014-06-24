@@ -163,6 +163,12 @@ public class TypeCheckingProcedure {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
+        if (subtype instanceof FlexibleType) {
+            return isSubtypeOf(((FlexibleType) subtype).getLowerBound(), supertype);
+        }
+        if (supertype instanceof FlexibleType) {
+            return isSubtypeOf(subtype, ((FlexibleType) supertype).getUpperBound());
+        }
         if (subtype.isError() || supertype.isError()) {
             return true;
         }
