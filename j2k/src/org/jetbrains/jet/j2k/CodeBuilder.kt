@@ -21,7 +21,6 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.Element
-import org.jetbrains.jet.j2k.ast.Modifiers
 import kotlin.platform.platformName
 
 fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
@@ -79,14 +78,21 @@ class CodeBuilder(private val topElement: PsiElement?) {
     public fun append(element: Element): CodeBuilder {
         if (element.isEmpty) return this // do not insert comment and spaces for empty elements to avoid multiple blank lines
 
-        if (element.prototypes.isEmpty() || topElement == null) {
+        if (element.prototypes == null && topElement != null) {
+            val s = "Element $element has no prototypes assigned.\n" +
+                    "Use Element.assignPrototype() or Element.assignNoPrototype().\n" +
+                    "Element created at:\n${element.createdAt}"
+            throw RuntimeException(s)
+        }
+
+        if (topElement == null || element.prototypes!!.isEmpty()) {
             element.generateCode(this)
             return this
         }
 
         val prefixElements = ArrayList<PsiElement>(1)
         val postfixElements = ArrayList<PsiElement>(1)
-        for ((prototype, inheritBlankLinesBefore) in element.prototypes) {
+        for ((prototype, inheritBlankLinesBefore) in element.prototypes!!) {
             assert(prototype !is PsiComment)
             assert(prototype !is PsiWhiteSpace)
             assert(topElement.isAncestor(prototype))
@@ -112,7 +118,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
         element.generateCode(this)
 
         // scan for all comments inside which are not yet used in the text and put them here to not loose any comment from code
-        for ((prototype, _) in element.prototypes) {
+        for ((prototype, _) in element.prototypes!!) {
             prototype.accept(object : JavaRecursiveElementVisitor(){
                 override fun visitComment(comment: PsiComment) {
                     if (commentsAndSpacesUsed.add(comment)) {

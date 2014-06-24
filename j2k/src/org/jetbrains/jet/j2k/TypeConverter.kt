@@ -26,6 +26,8 @@ import org.jetbrains.jet.j2k.ast.Import
 import org.jetbrains.jet.j2k.ast.ImportList
 import org.jetbrains.jet.j2k.ast.assignPrototype
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
+import org.jetbrains.jet.j2k.ast.assignNoPrototype
+import org.jetbrains.jet.j2k.ast.ErrorType
 
 class TypeConverter(val settings: ConverterSettings, val conversionScope: ConversionScope) {
     private val nullabilityCache = HashMap<PsiElement, Nullability>()
@@ -40,12 +42,12 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
     private var importNames: Set<String> = setOf()
 
     public val importsToAdd: Collection<Import>
-        get() = classesToImport.map { Import(it) }
+        get() = classesToImport.map { Import(it).assignNoPrototype() }
 
     public fun convertType(`type`: PsiType?, nullability: Nullability = Nullability.Default): Type {
-        if (`type` == null) return Type.Empty
+        if (`type` == null) return ErrorType().assignNoPrototype()
 
-        val result = `type`.accept<Type>(TypeVisitor(this, importNames, classesToImport))!!
+        val result = `type`.accept<Type>(TypeVisitor(this, importNames, classesToImport))!!.assignNoPrototype()
         return when (nullability) {
             Nullability.NotNull -> result.toNotNullType()
             Nullability.Nullable -> result.toNullableType()

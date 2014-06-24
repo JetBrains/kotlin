@@ -25,7 +25,7 @@ abstract class Constructor(
         modifiers: Modifiers,
         parameterList: ParameterList,
         block: Block
-) : Function(converter, Identifier.Empty, annotations, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
+) : Function(converter, Identifier.Empty, annotations, modifiers, ErrorType(), TypeParameterList.Empty, parameterList, block, false)
 
 class PrimaryConstructor(converter: Converter,
                          annotations: Annotations,
@@ -54,18 +54,22 @@ class SecondaryConstructor(converter: Converter,
 
     public fun toFactoryFunction(containingClass: Class?): Function {
         val statements = ArrayList(block?.statements ?: listOf())
-        statements.add(ReturnStatement(tempValIdentifier))
-        val block = Block(statements, block?.lBrace ?: LBrace(), block?.rBrace ?: RBrace())
-        val typeParameters = ArrayList<TypeParameter>()
-        if (containingClass != null) {
-            typeParameters.addAll(containingClass.typeParameterList.parameters)
+        statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
+        val newBlock = Block(statements, block?.lBrace ?: LBrace().assignNoPrototype(), block?.rBrace ?: RBrace().assignNoPrototype())
+        if (this.block != null) {
+            newBlock.assignPrototypesFrom(block!!)
         }
-        return Function(converter, Identifier("create"), annotations, modifiers,
-                        ClassType(containingClass?.name ?: Identifier.Empty, typeParameters, Nullability.NotNull, converter.settings),
-                        TypeParameterList(typeParameters), parameterList, block, false).assignPrototypesFrom(this)
+
+        val typeParameters = if (containingClass != null) containingClass.typeParameterList.parameters else listOf()
+        val typeParameterList = TypeParameterList(typeParameters).assignNoPrototype()
+
+        val returnType = ClassType(containingClass?.name ?: Identifier.Empty, typeParameters, Nullability.NotNull, converter.settings).assignNoPrototype()
+        return Function(converter, Identifier("create").assignNoPrototype(), annotations, modifiers,
+                        returnType, typeParameterList, parameterList, newBlock, false).assignPrototypesFrom(this)
     }
 
     class object {
-        public val tempValIdentifier: Identifier = Identifier("__", false)
+        public val tempValName: String = "__"
+        public fun tempValIdentifier(): Identifier = Identifier(tempValName, false).assignNoPrototype()
     }
 }

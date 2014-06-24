@@ -59,20 +59,22 @@ fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
 
 fun getDefaultInitializer(field: Field): Expression {
     val t = field.`type`
-    if (t.isNullable) {
-        return LiteralExpression("null")
+    val result = if (t.isNullable) {
+        LiteralExpression("null")
     }
-
-    if (t is PrimitiveType) {
-        when(t.name.name) {
-            "Boolean" -> return LiteralExpression("false")
-            "Char" -> return LiteralExpression("' '")
-            "Double" -> return MethodCallExpression.buildNotNull(LiteralExpression("0"), OperatorConventions.DOUBLE.toString())
-            "Float" -> return MethodCallExpression.buildNotNull(LiteralExpression("0"), OperatorConventions.FLOAT.toString())
+    else if (t is PrimitiveType) {
+        when (t.name.name) {
+            "Boolean" -> LiteralExpression("false")
+            "Char" -> LiteralExpression("' '")
+            "Double" -> MethodCallExpression.buildNotNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.DOUBLE.toString())
+            "Float" -> MethodCallExpression.buildNotNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.FLOAT.toString())
+            else -> LiteralExpression("0")
         }
     }
-
-    return LiteralExpression("0")
+    else {
+        LiteralExpression("0")
+    }
+    return result.assignNoPrototype()
 }
 
 fun isQualifierEmptyOrThis(ref: PsiReferenceExpression): Boolean {

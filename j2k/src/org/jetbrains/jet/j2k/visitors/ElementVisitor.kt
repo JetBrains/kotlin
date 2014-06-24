@@ -43,7 +43,7 @@ class ElementVisitor(private val converter: Converter) : JavaElementVisitor() {
     override fun visitReferenceElement(reference: PsiJavaCodeReferenceElement) {
         val types = typeConverter.convertTypes(reference.getTypeParameters())
         if (!reference.isQualified()) {
-            result = ReferenceElement(Identifier(reference.getReferenceName()!!), types)
+            result = ReferenceElement(Identifier(reference.getReferenceName()!!).assignNoPrototype(), types)
         }
         else {
             var code = Identifier.toKotlin(reference.getReferenceName()!!)
@@ -53,7 +53,7 @@ class ElementVisitor(private val converter: Converter) : JavaElementVisitor() {
                 code = Identifier.toKotlin(p.getReferenceName()!!) + "." + code
                 qualifier = p.getQualifier()
             }
-            result = ReferenceElement(Identifier(code), types)
+            result = ReferenceElement(Identifier(code).assignNoPrototype(), types)
         }
     }
 

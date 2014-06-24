@@ -78,7 +78,7 @@ class ExpressionVisitor(private val converter: Converter,
         val lhs = converter.convertExpression(expression.getLExpression())
         val rhs = converter.convertExpression(expression.getRExpression()!!, expression.getLExpression().getType())
         if (!secondOp.isEmpty()) {
-            result = AssignmentExpression(lhs, BinaryExpression(lhs, rhs, secondOp), " = ")
+            result = AssignmentExpression(lhs, BinaryExpression(lhs, rhs, secondOp).assignNoPrototype(), " = ")
         }
         else {
             result = AssignmentExpression(lhs, rhs, expression.getOperationSign().getText()!!)
@@ -173,16 +173,16 @@ class ExpressionVisitor(private val converter: Converter,
                     origin as JetNamedDeclaration
                 val parameterCount = target.getParameterList().getParameters().size
                 if (parameterCount == arguments.size) {
-                    val propertyName = Identifier(property.getName()!!, isNullable)
+                    val propertyName = Identifier(property.getName()!!, isNullable).assignNoPrototype()
                     val isExtension = property.isExtensionDeclaration()
                     val propertyAccess = if (isTopLevel) {
                         if (isExtension)
-                            QualifiedExpression(converter.convertExpression(arguments.firstOrNull()), propertyName)
+                            QualifiedExpression(converter.convertExpression(arguments.firstOrNull()), propertyName).assignNoPrototype()
                         else
                             propertyName
                     }
                     else {
-                        QualifiedExpression(converter.convertExpression(methodExpr.getQualifierExpression()), propertyName)
+                        QualifiedExpression(converter.convertExpression(methodExpr.getQualifierExpression()), propertyName).assignNoPrototype()
                     }
 
                     when(if (isExtension) parameterCount - 1 else parameterCount) {
@@ -266,8 +266,8 @@ class ExpressionVisitor(private val converter: Converter,
             // non-primary constructor converted to factory method in class object
             val reference = expression.getClassReference()
             val typeParameters = if (reference != null) typeConverter.convertTypes(reference.getTypeParameters()) else listOf()
-            return QualifiedExpression(Identifier(constructor.getName(), false),
-                                       MethodCallExpression.buildNotNull(null, "create", converter.convertExpressions(arguments), typeParameters))
+            return QualifiedExpression(Identifier(constructor.getName(), false).assignNoPrototype(),
+                                       MethodCallExpression.buildNotNull(null, "create", converter.convertExpressions(arguments), typeParameters).assignNoPrototype())
         }
 
         return NewClassExpression(converter.convertElement(classReference),
@@ -303,20 +303,20 @@ class ExpressionVisitor(private val converter: Converter,
         val target = expression.getReference()?.resolve()
         val isNullable = if (target is PsiVariable) typeConverter.variableNullability(target).isNullable(converter.settings) else false
         val referencedName = expression.getReferenceName()!!
-        var identifier: Expression = Identifier(referencedName, isNullable)
+        var identifier: Expression = Identifier(referencedName, isNullable).assignNoPrototype()
         val qualifier = expression.getQualifierExpression()
 
         val containingConstructor = expression.getContainingConstructor()
         val insideSecondaryConstructor = containingConstructor != null && !containingConstructor.isPrimaryConstructor()
 
         if (insideSecondaryConstructor && (expression.getReference()?.resolve() as? PsiField)?.getContainingClass() == containingConstructor!!.getContainingClass()) {
-            identifier = QualifiedExpression(SecondaryConstructor.tempValIdentifier, Identifier(referencedName, isNullable))
+            identifier = QualifiedExpression(SecondaryConstructor.tempValIdentifier(), Identifier(referencedName, isNullable).assignNoPrototype())
         }
         else if (insideSecondaryConstructor && expression.isThisConstructorCall()) {
-            identifier = Identifier("val __ = " + (containingConstructor?.getContainingClass()?.getNameIdentifier()?.getText() ?: ""))
+            identifier = Identifier("val __ = " + (containingConstructor?.getContainingClass()?.getNameIdentifier()?.getText() ?: "")).assignNoPrototype()
         }
         else if (qualifier != null && qualifier.getType() is PsiArrayType && referencedName == "length") {
-            identifier = Identifier("size", isNullable)
+            identifier = Identifier("size", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
             if (referencedName == JvmAbi.CLASS_OBJECT_FIELD || referencedName == JvmAbi.INSTANCE_FIELD) {
@@ -362,13 +362,15 @@ class ExpressionVisitor(private val converter: Converter,
     }
 
     override fun visitSuperExpression(expression: PsiSuperExpression) {
-        val qualifier = expression.getQualifier()?.getReferenceName()
-        result = SuperExpression(if (qualifier != null) Identifier(qualifier) else Identifier.Empty)
+        val psiQualifier = expression.getQualifier()
+        val qualifier = psiQualifier?.getReferenceName()
+        result = SuperExpression(if (qualifier != null) Identifier(qualifier).assignPrototype(psiQualifier) else Identifier.Empty)
     }
 
     override fun visitThisExpression(expression: PsiThisExpression) {
-        val qualifier = expression.getQualifier()?.getReferenceName()
-        result = ThisExpression(if (qualifier != null) Identifier(qualifier) else Identifier.Empty)
+        val psiQualifier = expression.getQualifier()
+        val qualifier = psiQualifier?.getReferenceName()
+        result = ThisExpression(if (qualifier != null) Identifier(qualifier).assignPrototype(psiQualifier) else Identifier.Empty)
     }
 
     override fun visitTypeCastExpression(expression: PsiTypeCastExpression) {

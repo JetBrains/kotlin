@@ -57,8 +57,8 @@ class MethodCallExpression(
                          typeArguments: List<Type>,
                          isNullable: Boolean,
                          lambdaArgument: LambdaExpression? = null): MethodCallExpression {
-            val identifier = Identifier(methodName, false)
-            return MethodCallExpression(if (receiver != null) QualifiedExpression(receiver, identifier) else identifier,
+            val identifier = Identifier(methodName, false).assignNoPrototype()
+            return MethodCallExpression(if (receiver != null) QualifiedExpression(receiver, identifier).assignNoPrototype() else identifier,
                                         arguments,
                                         typeArguments,
                                         isNullable,

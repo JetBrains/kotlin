@@ -225,7 +225,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 var keepStatement = true
                 if (statement is AssignmentExpression) {
                     val assignee = statement.left
-                    if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == SecondaryConstructor.tempValIdentifier.name) {
+                    if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == SecondaryConstructor.tempValName) {
                         val name = (assignee.identifier as Identifier).name
                         for (field in finalOrWithEmptyInitializerFields) {
                             if (name == field.identifier.name) {
@@ -245,24 +245,27 @@ public class Converter private(val project: Project, val settings: ConverterSett
             }
 
             val initializer = MethodCallExpression.buildNotNull(null, className.name, finalOrWithEmptyInitializerFields.map { initializers[it]!! })
-            val localVar = LocalVariable(SecondaryConstructor.tempValIdentifier,
+            initializer.assignNoPrototype()
+            val localVar = LocalVariable(SecondaryConstructor.tempValIdentifier(),
                                          Annotations.Empty,
                                          Modifiers.Empty,
                                          { ClassType(className, listOf(), Nullability.NotNull, settings) },
                                          initializer,
                                          true,
-                                         settings)
-            newStatements.add(0, DeclarationStatement(listOf(localVar)))
-            constructor.block = Block(newStatements, LBrace(), RBrace())
+                                         settings).assignNoPrototype()
+            newStatements.add(0, DeclarationStatement(listOf(localVar)).assignNoPrototype())
+            constructor.block = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
 
         //TODO: comments?
         val parameters = finalOrWithEmptyInitializerFields.map { field ->
             val varValModifier = if (field.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
-            Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS })
+            Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS }).assignPrototypesFrom(field)
         }
 
-        val primaryConstructor = PrimaryConstructor(this, Annotations.Empty, Modifiers(listOf(Modifier.PRIVATE)), ParameterList(parameters), Block.Empty)
+        val modifiers = Modifiers(listOf(Modifier.PRIVATE)).assignNoPrototype()
+        val parameterList = ParameterList(parameters).assignNoPrototype()
+        val primaryConstructor = PrimaryConstructor(this, Annotations.Empty, modifiers, parameterList, Block.Empty)
         val updatedMembers = classBody.normalMembers.filter { !finalOrWithEmptyInitializerFields.contains(it) }
         return ClassBody(primaryConstructor, classBody.secondaryConstructors, updatedMembers, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
     }
@@ -330,7 +333,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
         val returnType = typeConverter.convertMethodReturnType(method)
 
-        val annotations = convertAnnotations(method) + convertThrows(method)
+        val annotations = (convertAnnotations(method) + convertThrows(method)).assignNoPrototype()
         var modifiers = convertModifiers(method)
 
         if (method.isConstructor()) {
@@ -453,7 +456,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                           convertAnnotations(parameter) + convertAnnotations(field),
                           convertModifiers(field).filter { it in ACCESS_MODIFIERS }).assignPrototypes(listOf(parameter, field), inheritBlankLinesBefore = false)
             }
-        })
+        }).assignPrototype(constructor.getParameterList())
         return PrimaryConstructor(this, annotations, modifiers, parameterList, block).assignPrototype(constructor)
     }
 
@@ -524,7 +527,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     }
 
     fun convertTypeElement(element: PsiTypeElement?): TypeElement
-            = TypeElement(if (element == null) Type.Empty else typeConverter.convertType(element.getType())).assignPrototype(element)
+            = TypeElement(if (element == null) ErrorType().assignNoPrototype() else typeConverter.convertType(element.getType())).assignPrototype(element)
 
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
             = types.map { typeConverter.convertType(it, Nullability.NotNull) }
@@ -608,13 +611,13 @@ public class Converter private(val project: Project, val settings: ConverterSett
         }
 
         val list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable) }.filterNotNull() //TODO: brackets are also needed for local classes
-        return Annotations(list, newLines)
+        return Annotations(list, newLines).assignNoPrototype()
     }
 
     private fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean): Annotation? {
         val qualifiedName = annotation.getQualifiedName()
         if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.getParameterList().getAttributes().isEmpty()) {
-            return Annotation(Identifier("deprecated"), listOf(null to LiteralExpression("\"\"")), brackets).assignPrototype(annotation) //TODO: insert comment
+            return Annotation(Identifier("deprecated").assignNoPrototype(), listOf(null to LiteralExpression("\"\"").assignNoPrototype()), brackets).assignPrototype(annotation) //TODO: insert comment
         }
 
         val nameRef = annotation.getNameReferenceElement()
@@ -625,7 +628,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             val method = annotationClass?.findMethodsByName(it.getName() ?: "value", false)?.firstOrNull()
             val expectedType = method?.getReturnType()
 
-            val attrName = it.getName()?.let { Identifier(it) }
+            val attrName = it.getName()?.let { Identifier(it).assignNoPrototype() }
             val value = it.getValue()
 
             val isVarArg = method == lastMethod /* converted to vararg in Kotlin */
@@ -638,7 +641,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
     private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<Expression> {
         return when (value) {
-            is PsiExpression -> listOf(convertExpression(value as? PsiExpression, expectedType))
+            is PsiExpression -> listOf(convertExpression(value as? PsiExpression, expectedType).assignPrototype(value))
 
             is PsiArrayInitializerMemberValue -> {
                 val componentType = (expectedType as? PsiArrayType)?.getComponentType()
@@ -650,27 +653,35 @@ public class Converter private(val project: Project, val settings: ConverterSett
                     val expectedTypeConverted = typeConverter.convertType(expectedType)
                     if (expectedTypeConverted is ArrayType) {
                         val array = createArrayInitializerExpression(expectedTypeConverted, componentsConverted, needExplicitType = false)
-                        listOf(if (isVararg) StarExpression(array) else array)
+                        if (isVararg) {
+                            listOf(StarExpression(array.assignNoPrototype()).assignPrototype(value))
+                        }
+                        else {
+                            listOf(array.assignPrototype(value))
+                        }
                     }
                     else {
-                        listOf(DummyStringExpression(value.getText()!!))
+                        listOf(DummyStringExpression(value.getText()!!).assignPrototype(value))
                     }
                 }
             }
 
-            else -> listOf(DummyStringExpression(value?.getText() ?: ""))
+            else -> listOf(DummyStringExpression(value?.getText() ?: "").assignPrototype(value))
         }
     }
 
     private fun convertThrows(method: PsiMethod): Annotations {
         val throwsList = method.getThrowsList()
         val types = throwsList.getReferencedTypes()
+        val refElements = throwsList.getReferenceElements()
+        assert(types.size == refElements.size)
         if (types.isEmpty()) return Annotations.Empty
-        val annotation = Annotation(Identifier("throws"),
-                                    types.map { null to MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(typeConverter.convertType(it, Nullability.NotNull))) },
-                                    false)
-        return Annotations(listOf(annotation.assignPrototype(throwsList)),
-                           true)
+        val arguments = types.indices.map {
+            val convertedType = typeConverter.convertType(types[it], Nullability.NotNull)
+            null to MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(convertedType)).assignPrototype(refElements[it])
+        }
+        val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, false)
+        return Annotations(listOf(annotation.assignPrototype(throwsList)), true).assignPrototype(throwsList)
     }
 
     private val TYPE_MAP: Map<String, String> = mapOf(

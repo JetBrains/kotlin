@@ -156,7 +156,10 @@ class SwitchContainer(val expression: Expression, val caseContainers: List<CaseC
 }
 
 class CaseContainer(val caseStatement: List<Element>, statements: List<Statement>) : Statement() {
-    private val block = Block(statements.filterNot { it is BreakStatement || it is ContinueStatement }, LBrace(), RBrace(), true)
+    private val block = run {
+        val filteredStatements = statements.filterNot { it is BreakStatement || it is ContinueStatement }
+        Block(filteredStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
+    }
 
     override fun generateCode(builder: CodeBuilder) {
         builder.append(caseStatement, ", ").append(" -> ").append(block)

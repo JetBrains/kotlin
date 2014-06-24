@@ -45,14 +45,16 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 result = MethodCallExpression.buildNotNull(null, "assert", listOf(condition, description))
             }
             else {
-                result = MethodCallExpression.build(null, "assert", listOf(condition), listOf(), false, LambdaExpression(null, Block(listOf(description), LBrace(), RBrace())))
+                val block = Block(listOf(description), LBrace().assignNoPrototype(), RBrace().assignNoPrototype())
+                val lambda = LambdaExpression(null, block.assignNoPrototype())
+                result = MethodCallExpression.build(null, "assert", listOf(condition), listOf(), false, lambda)
             }
         }
     }
 
     override fun visitBlockStatement(statement: PsiBlockStatement) {
         val block = converter.convertBlock(statement.getCodeBlock())
-        result = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
+        result = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block).assignNoPrototype())
     }
 
     override fun visitBreakStatement(statement: PsiBreakStatement) {
@@ -118,7 +120,10 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 && loopVar.getNameIdentifier() != null
                 && onceWritableIterator) {
             val end = converter.convertExpression((condition as PsiBinaryExpression).getROperand())
-            val endExpression = if (operationTokenType == JavaTokenType.LT) BinaryExpression(end, LiteralExpression("1"), "-") else end
+            val endExpression = if (operationTokenType == JavaTokenType.LT)
+                BinaryExpression(end, LiteralExpression("1").assignNoPrototype(), "-").assignNoPrototype()
+            else
+                end
             result = ForeachWithRangeStatement(loopVar.declarationIdentifier(),
                                                  converter.convertExpression(loopVar.getInitializer()),
                                                  endExpression,
@@ -142,7 +147,8 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 }
 
                 if (nameConflict) {
-                    Block(listOf(converter.convertStatement(body), updateConverted), LBrace(), RBrace(), true)
+                    val statements = listOf(converter.convertStatement(body), updateConverted)
+                    Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
                 }
                 else {
                     val block = converter.convertBlock(body.getCodeBlock(), true)
@@ -150,18 +156,20 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 }
             }
             else {
-                Block(listOf(converter.convertStatement(body), updateConverted), LBrace(), RBrace(), true)
+                val statements = listOf(converter.convertStatement(body), updateConverted)
+                Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
             }
             val whileStatement = WhileStatement(
-                    if (condition != null) converter.convertExpression(condition) else LiteralExpression("true"),
+                    if (condition != null) converter.convertExpression(condition) else LiteralExpression("true").assignNoPrototype(),
                     whileBody,
-                    statement.isInSingleLine())
+                    statement.isInSingleLine()).assignNoPrototype()
 
             if (initializationConverted.isEmpty) {
                 result = whileStatement
             }
             else {
-                val block = Block(listOf(initializationConverted, whileStatement), LBrace(), RBrace())
+                val statements = listOf(initializationConverted, whileStatement)
+                val block = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
                 result = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
             }
         }
@@ -216,7 +224,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         val result = ArrayList<CaseContainer>()
         var pendingLabels = ArrayList<Element>()
         var i = 0
-        var hasDefaultCase: Boolean = false
+        var hasDefaultCase = false
         for (ls in cases) {
             if (ls.size() > 0) {
                 var label = ls[0] as PsiSwitchLabelStatement
@@ -225,21 +233,19 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 // TODO assert("not a right index") {allSwitchStatements?.get(i) == label}
                 if (ls.size() > 1) {
                     pendingLabels.add(converter.convertStatement(label))
-                    val slice: List<PsiElement> = ls.subList(1, (ls.size()))
+                    val slice = ls.subList(1, (ls.size()))
 
                     fun convertStatements(elements: List<PsiElement>): List<Statement>
                             = elements.map { if (it is PsiStatement) converter.convertStatement(it) else null }.filterNotNull()
 
                     if (!containsBreak(slice)) {
-                        val statements = ArrayList(convertStatements(slice))
-                        statements.addAll(convertStatements(getAllToNextBreak(allSwitchStatements, i + ls.size())))
-                        result.add(CaseContainer(pendingLabels, statements))
-                        pendingLabels = ArrayList()
+                        val statements = convertStatements(slice) + convertStatements(getAllToNextBreak(allSwitchStatements, i + ls.size()))
+                        result.add(CaseContainer(pendingLabels, statements).assignNoPrototype())
                     }
                     else {
-                        result.add(CaseContainer(pendingLabels, convertStatements(slice)))
-                        pendingLabels = ArrayList()
+                        result.add(CaseContainer(pendingLabels, convertStatements(slice)).assignNoPrototype())
                     }
+                    pendingLabels = ArrayList()
                 }
                 else {
                     pendingLabels.add(converter.convertStatement(label))
@@ -247,8 +253,9 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 i += ls.size()
             }
         }
-        if (!hasDefaultCase)
-            result.add(CaseContainer(listOf(DefaultSwitchLabelStatement()), ArrayList()))
+        if (!hasDefaultCase) {
+            result.add(CaseContainer(listOf(DefaultSwitchLabelStatement().assignNoPrototype()), listOf()).assignNoPrototype())
+        }
         return result
     }
 
@@ -268,7 +275,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
             val catchBlockParameters = tryStatement.getCatchBlockParameters()
             catchBlocks.indices.map {
                 CatchStatement(converter.convertParameter(catchBlockParameters[it], Nullability.NotNull),
-                               converter.convertBlock(catchBlocks[it]))
+                               converter.convertBlock(catchBlocks[it])).assignNoPrototype()
             }
         }
         val finallyConverted = converter.convertBlock(tryStatement.getFinallyBlock())
@@ -292,7 +299,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         val returns = collectReturns(tryBlock)
         //TODO: support other returns when non-local returns supported by Kotlin
         if (returns.size == 1 && returns.single() == tryBlock!!.getStatements().last()) {
-            wrapResultStatement = { ReturnStatement(it) }
+            wrapResultStatement = { ReturnStatement(it).assignPrototype(returns.single()) }
             converterForBody = converter.withStatementVisitor { object : StatementVisitor(it) {
                 override fun visitReturnStatement(statement: PsiReturnStatement) {
                     if (statement == returns.single()) {
@@ -310,14 +317,16 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         for (variable in resourceVariables.reverse()) {
             val lambda = LambdaExpression(Identifier.toKotlin(variable.getName()!!), block)
             expression = MethodCallExpression.build(converter.convertExpression(variable.getInitializer()), "use", listOf(), listOf(), false, lambda)
-            block = Block(listOf(expression), LBrace(), RBrace())
+            expression.assignNoPrototype()
+            block = Block(listOf(expression), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
 
         if (catchesConverted.isEmpty() && finallyConverted.isEmpty) {
             return wrapResultStatement(expression)
         }
 
-        return TryStatement(Block(listOf(wrapResultStatement(expression)), LBrace(), RBrace(), true), catchesConverted, finallyConverted)
+        block = Block(listOf(wrapResultStatement(expression)), LBrace().assignPrototype(tryBlock?.getLBrace()), RBrace().assignPrototype(tryBlock?.getRBrace()), true)
+        return TryStatement(block.assignPrototype(tryBlock), catchesConverted, finallyConverted)
     }
 
     private fun collectReturns(block: PsiCodeBlock?): Collection<PsiReturnStatement> {

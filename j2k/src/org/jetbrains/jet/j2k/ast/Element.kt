@@ -20,17 +20,23 @@ import org.jetbrains.jet.j2k.*
 import com.intellij.psi.PsiElement
 
 fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?, inheritBlankLinesBefore: Boolean = true): TElement {
-    assignPrototypeInfos(if (prototype != null) listOf(PrototypeInfo(prototype, inheritBlankLinesBefore)) else listOf())
+    prototypes = if (prototype != null) listOf(PrototypeInfo(prototype, inheritBlankLinesBefore)) else listOf()
     return this
 }
 
 fun <TElement: Element> TElement.assignPrototypes(prototypes: List<PsiElement>, inheritBlankLinesBefore: Boolean): TElement {
-    assignPrototypeInfos(prototypes.map { PrototypeInfo(it, inheritBlankLinesBefore) })
+    this.prototypes = prototypes.map { PrototypeInfo(it, inheritBlankLinesBefore) }
+    return this
+}
+
+fun <TElement: Element> TElement.assignNoPrototype(): TElement {
+    prototypes = listOf()
     return this
 }
 
 fun <TElement: Element> TElement.assignPrototypesFrom(element: Element): TElement {
-    assignPrototypeInfos(element.prototypes)
+    prototypes = element.prototypes
+    createdAt = element.createdAt
     return this
 }
 
@@ -43,12 +49,17 @@ fun Element.canonicalCode(): String {
 }
 
 abstract class Element {
-    public var prototypes: List<PrototypeInfo> = listOf()
-        private set
+    public var prototypes: List<PrototypeInfo>? = null
+      set(value) {
+          // no prototypes assigned to empty elements because they can be singleton instances (and they are not needed anyway)
+          if (isEmpty) {
+              $prototypes = listOf()
+              return
+          }
+          $prototypes = value
+      }
 
-    public fun assignPrototypeInfos(prototypes: List<PrototypeInfo>) {
-        this.prototypes = prototypes
-    }
+    public var createdAt: String = "Element creation stacktraces turned off. Uncomment initializer of Element.createdAt." //Exception().getStackTrace().joinToString("\n")
 
     /** This method should not be used anywhere except for CodeBuilder! Use CodeBuilder.append instead. */
     public abstract fun generateCode(builder: CodeBuilder)
