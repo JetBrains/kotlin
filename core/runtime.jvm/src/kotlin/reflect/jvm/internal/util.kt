@@ -16,10 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.ref.WeakReference
 import java.lang.reflect.Method
-import java.util.Arrays
-import kotlin.reflect.jvm.internal.pcollections.HashPMap
 
 // TODO: use stdlib?
 suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
@@ -47,36 +44,6 @@ private fun Class<*>.getMaybeDeclaredMethod(name: String, vararg parameterTypes:
     }
 }
 
-
-// TODO: collect nulls periodically
-private var FOREIGN_K_CLASSES = HashPMap.empty<String, Array<WeakReference<KClassImpl<*>>>>()!!
-
-fun <T> foreignKotlinClass(jClass: Class<T>): KClassImpl<T> {
-    val name = jClass.getName()
-    val cached = FOREIGN_K_CLASSES[name]
-    if (cached != null) {
-        var i = cached.size - 1
-        while (i >= 0) {
-            val kClass = cached[i].get()
-            if (kClass?.jClass == jClass) {
-                return kClass as KClassImpl<T>
-            }
-            i--
-        }
-
-        val newArray = Arrays.copyOf(cached, cached.size + 1) as Array<WeakReference<KClassImpl<*>>>
-        val newKClass = KClassImpl<T>(jClass)
-        newArray[cached.size] = WeakReference(newKClass)
-        FOREIGN_K_CLASSES = FOREIGN_K_CLASSES.plus(name, newArray)!!
-        return newKClass
-    }
-
-    val newKClass = KClassImpl<T>(jClass)
-    val newArray = arrayOfNulls<WeakReference<KClassImpl<*>>>(1)
-    newArray[0] = WeakReference(newKClass)
-    FOREIGN_K_CLASSES = FOREIGN_K_CLASSES.plus(name, newArray as Array<WeakReference<KClassImpl<*>>>)!!
-    return newKClass
-}
 
 private val K_OBJECT_CLASS = Class.forName("kotlin.jvm.internal.KObject")
 
