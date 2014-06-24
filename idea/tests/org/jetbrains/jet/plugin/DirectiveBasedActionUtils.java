@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.UsefulTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -31,6 +32,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.highlighter.IdeErrorMessages;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -82,6 +84,26 @@ public class DirectiveBasedActionUtils {
                 })));
 
         UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position: %s. Use // ACTION: directive",
-                                           actualActions, validActions);
+                                           filterOutIrrelevantActions(actualActions), filterOutIrrelevantActions(validActions));
     }
+
+    @NotNull
+    //TODO: hack, implemented because irrelevant actions behave in different ways on build server and locally
+    // this behaviour should be investigated and hack can be removed
+    private static Collection<String> filterOutIrrelevantActions(@NotNull Collection<String> actions) {
+        return Collections2.filter(actions, new Predicate<String>() {
+            @Override
+            public boolean apply(String input) {
+                for (String prefix : IRRELEVANT_ACTION_PREFIXES) {
+                    if (input.startsWith(prefix)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
+    private static final Collection<String> IRRELEVANT_ACTION_PREFIXES =
+            Arrays.asList("Disable ", "Edit intention settings", "Edit inspection profile setting");
 }
