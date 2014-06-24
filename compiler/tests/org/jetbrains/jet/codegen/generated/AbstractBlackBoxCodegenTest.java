@@ -41,8 +41,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         blackBoxFileByFullPath(filename);
     }
 
-    public void doTestWithJava(@NotNull String filename) {
-        blackBoxFileWithJavaByFullPath(filename);
+    public void doTestAgainstJava(@NotNull String filename) {
+        blackBoxFileAgainstJavaByFullPath(filename);
     }
 
     public void doTestWithStdlib(@NotNull String filename) {
@@ -75,7 +75,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         InlineTestUtil.checkNoCallsToInline(initializedClassLoader.getAllGeneratedFiles());
     }
 
-    private void blackBoxFileWithJavaByFullPath(@NotNull String ktFileFullPath) {
+    private void blackBoxFileAgainstJavaByFullPath(@NotNull String ktFileFullPath) {
         String ktFile = ktFileFullPath.substring("compiler/testData/codegen/".length());
         File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 

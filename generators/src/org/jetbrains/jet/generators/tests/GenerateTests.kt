@@ -168,8 +168,8 @@ fun main(args: Array<String>) {
             model("codegen/boxMultiFile", extension = null, recursive = false, testMethod = "doTestMultiFile")
         }
 
-        testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithJavaCodegenTestGenerated") {
-            model("codegen/boxWithJava", testMethod = "doTestWithJava")
+        testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxAgainstJavaCodegenTestGenerated") {
+            model("codegen/boxAgainstJava", testMethod = "doTestAgainstJava")
         }
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithStdlibCodegenTestGenerated") {
