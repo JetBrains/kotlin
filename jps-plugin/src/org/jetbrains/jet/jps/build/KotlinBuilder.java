@@ -224,7 +224,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         IncrementalCacheImpl cache = new IncrementalCacheImpl(KotlinBuilderModuleScriptGenerator.getIncrementalCacheDir(context));
 
         try {
-            List<Pair<String, File>> moduleIdsAndFiles = Lists.newArrayList();
+            List<Pair<String, File>> moduleIdsAndFiles = new ArrayList<Pair<String, File>>();
             Map<String, File> outDirectories = new HashMap<String, File>();
 
             for (ModuleBuildTarget target : chunk.getTargets()) {
