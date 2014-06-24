@@ -55,7 +55,6 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.CliDeclarationProviderFactoryService;
@@ -176,7 +175,6 @@ public class JetCoreEnvironment {
 
         MockProject project = projectEnvironment.getProject();
         project.registerService(JetScriptDefinitionProvider.class, new JetScriptDefinitionProvider());
-        project.registerService(JetFilesProvider.class, new CliJetFilesProvider(this));
         project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
 
         CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport();
