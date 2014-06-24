@@ -20,3 +20,13 @@ public trait FlexibleType : JetType {
     val lowerBound: JetType
     val upperBound: JetType
 }
+
+public open class DelegatingFlexibleType(
+        override val lowerBound: JetType,
+        override val upperBound: JetType
+) : DelegatingType(), FlexibleType {
+
+    override fun getDelegate() = lowerBound
+
+    override fun toString() = "('$lowerBound'..'$upperBound')"
+}

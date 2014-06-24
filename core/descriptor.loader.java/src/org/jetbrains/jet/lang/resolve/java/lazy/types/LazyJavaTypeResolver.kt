@@ -260,16 +260,6 @@ class LazyJavaTypeResolver(
         override fun isNullable(): Boolean = _nullable()
     }
 
-    private open class DelegatingFlexibleType(
-            override val lowerBound: JetType,
-            override val upperBound: JetType
-    ) : DelegatingType(), FlexibleType {
-
-        override fun getDelegate() = lowerBound
-
-        override fun toString() = "('$lowerBound'..'$upperBound')"
-    }
-
     /*
      * For a java type like java.util.List<Foo>
      *     lowerBound = MutableList<Foo>
