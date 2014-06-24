@@ -4,7 +4,7 @@ trait I {
 
 class C() {
     fun foo(i: I, b: Boolean) {
-        val result = i.getString()
+        val result: String? = i.getString()
         if (b) result = null
         if (result != null) {
             print(result)

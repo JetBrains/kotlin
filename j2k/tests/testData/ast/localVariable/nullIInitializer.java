@@ -1,0 +1,2 @@
+//statement
+String s = null;

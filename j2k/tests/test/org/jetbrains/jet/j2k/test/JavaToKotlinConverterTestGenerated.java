@@ -1852,9 +1852,44 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/localVariable"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("autoBangBang.java")
+        public void testAutoBangBang() throws Exception {
+            doTest("j2k/tests/testData/ast/localVariable/autoBangBang.java");
+        }
+        
+        @TestMetadata("conversion.java")
+        public void testConversion() throws Exception {
+            doTest("j2k/tests/testData/ast/localVariable/conversion.java");
+        }
+        
+        @TestMetadata("literalConversion.java")
+        public void testLiteralConversion() throws Exception {
+            doTest("j2k/tests/testData/ast/localVariable/literalConversion.java");
+        }
+        
+        @TestMetadata("nullIInitializer.java")
+        public void testNullIInitializer() throws Exception {
+            doTest("j2k/tests/testData/ast/localVariable/nullIInitializer.java");
+        }
+        
         @TestMetadata("object.java")
         public void testObject() throws Exception {
             doTest("j2k/tests/testData/ast/localVariable/object.java");
+        }
+        
+        @TestMetadata("unboxing.java")
+        public void testUnboxing() throws Exception {
+            doTest("j2k/tests/testData/ast/localVariable/unboxing.java");
+        }
+        
+        @TestMetadata("valTypeDoNotMatch.java")
+        public void testValTypeDoNotMatch() throws Exception {
+            doTest("j2k/tests/testData/ast/localVariable/valTypeDoNotMatch.java");
+        }
+        
+        @TestMetadata("varTypeDoNotMatch.java")
+        public void testVarTypeDoNotMatch() throws Exception {
+            doTest("j2k/tests/testData/ast/localVariable/varTypeDoNotMatch.java");
         }
         
     }

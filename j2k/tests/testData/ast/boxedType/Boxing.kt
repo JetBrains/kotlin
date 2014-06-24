@@ -2,7 +2,7 @@ import java.util.ArrayList
 
 class Boxing() {
     fun test() {
-        val i = 0
+        val i: Int? = 0
         val n = 0.0.toFloat()
         i = 1
         val j = i!!

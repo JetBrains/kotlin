@@ -30,10 +30,23 @@ class ElementVisitor(private val converter: Converter) : JavaElementVisitor() {
         result = LocalVariable(variable.declarationIdentifier(),
                                converter.convertAnnotations(variable),
                                converter.convertModifiers(variable),
-                               { typeConverter.convertVariableType(variable) },
+                               explicitType(variable),
                                converter.convertExpression(variable.getInitializer(), variable.getType()),
                                converter.settings.forceLocalVariableImmutability || variable.hasModifierProperty(PsiModifier.FINAL),
                                converter.settings)
+    }
+
+    private fun explicitType(variable: PsiLocalVariable): Type? {
+        fun convertType() = typeConverter.convertVariableType(variable)
+        if (converter.settings.specifyLocalVariableTypeByDefault) return convertType()
+        val initializer = variable.getInitializer()
+        if (initializer == null) return convertType()
+        if (initializer is PsiLiteralExpression && initializer.getType() == PsiType.NULL) return convertType()
+        if (variable.hasModifierProperty(PsiModifier.FINAL) || !variable.hasWriteAccesses(variable.getContainingMethod())) return null
+        val convertedType = convertType()
+        var initializerType = converter.convertedExpressionType(initializer, variable.getType())
+        if (initializerType is ErrorType) return null // do not add explicit type when initializer is not resolved, let user add it if really needed
+        return if (convertedType == initializerType) null else convertedType
     }
 
     override fun visitExpressionList(list: PsiExpressionList) {

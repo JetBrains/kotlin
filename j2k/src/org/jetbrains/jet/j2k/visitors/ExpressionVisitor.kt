@@ -86,9 +86,17 @@ class ExpressionVisitor(private val converter: Converter,
     }
 
     override fun visitBinaryExpression(expression: PsiBinaryExpression) {
-        val lhs = converter.convertExpression(expression.getLOperand(), expression.getType())
-        val rhs = converter.convertExpression(expression.getROperand(), expression.getType())
-        if (expression.getOperationSign().getTokenType() == JavaTokenType.GTGTGT) {
+        val operandsExpectedType = when (expression.getOperationTokenType()) {
+            JavaTokenType.ANDAND, JavaTokenType.OROR -> PsiType.BOOLEAN
+
+            JavaTokenType.PLUS, JavaTokenType.MINUS, JavaTokenType.ASTERISK,
+            JavaTokenType.DIV, JavaTokenType.PERC, JavaTokenType.LTLT, JavaTokenType.GTGT -> expression.getType()
+
+            else -> null
+        }
+        val lhs = converter.convertExpression(expression.getLOperand(), operandsExpectedType)
+        val rhs = converter.convertExpression(expression.getROperand(), operandsExpectedType)
+        if (expression.getOperationTokenType() == JavaTokenType.GTGTGT) {
             result = MethodCallExpression.buildNotNull(lhs, "ushr", listOf(rhs))
         }
         else {

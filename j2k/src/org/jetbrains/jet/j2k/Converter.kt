@@ -249,7 +249,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             val localVar = LocalVariable(SecondaryConstructor.tempValIdentifier(),
                                          Annotations.Empty,
                                          Modifiers.Empty,
-                                         { ClassType(className, listOf(), Nullability.NotNull, settings) },
+                                         null,
                                          initializer,
                                          true,
                                          settings).assignNoPrototype()
@@ -554,33 +554,69 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return Parameter(parameter.declarationIdentifier(), `type`, varValModifier, convertAnnotations(parameter), modifiers).assignPrototype(parameter)
     }
 
-    fun convertExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
-        if (argument == null) return Identifier.Empty
+    fun convertExpression(expression: PsiExpression?, expectedType: PsiType?): Expression {
+        if (expression == null) return Identifier.Empty
 
-        var expression = convertExpression(argument)
-        val actualType = argument.getType()
-        val isPrimitiveTypeOrNull = actualType == null || actualType is PsiPrimitiveType
-        if (isPrimitiveTypeOrNull && expression.isNullable) {
-            expression = BangBangExpression(expression)
+        var convertedExpression = convertExpression(expression)
+        if (expectedType == null || expectedType == PsiType.VOID) return convertedExpression
+
+        val actualType = expression.getType()
+        if (actualType == null) return convertedExpression
+
+        if (actualType is PsiPrimitiveType && convertedExpression.isNullable ||
+                expectedType is PsiPrimitiveType && actualType is PsiClassType) {
+            convertedExpression = BangBangExpression(convertedExpression)
         }
-        else if (expectedType is PsiPrimitiveType && actualType is PsiClassType) {
-            if (PsiPrimitiveType.getUnboxedType(actualType) == expectedType) {
-                expression = BangBangExpression(expression)
+
+        if (canConvertType(actualType, expectedType) && convertedExpression !is LiteralExpression) {
+            val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedType.getCanonicalText()]
+            if (conversion != null) {
+                convertedExpression = MethodCallExpression.buildNotNull(convertedExpression, conversion)
             }
         }
 
-        if (actualType != null) {
-            if (isConversionNeeded(actualType, expectedType) && expression !is LiteralExpression) {
-                val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedType?.getCanonicalText()]
-                if (conversion != null) {
-                    expression = MethodCallExpression.buildNotNull(expression, conversion)
-                }
-            }
-
-        }
-
-        return expression.assignPrototype(argument)
+        return convertedExpression.assignPrototype(expression)
     }
+
+    fun convertedExpressionType(expression: PsiExpression, expectedType: PsiType): Type {
+        var convertedExpression = convertExpression(expression)
+        val actualType = expression.getType()
+        if (actualType == null) return ErrorType()
+        var resultType = typeConverter.convertType(actualType, if (convertedExpression.isNullable) Nullability.Nullable else Nullability.NotNull)
+
+        if (actualType is PsiPrimitiveType && resultType.isNullable ||
+                expectedType is PsiPrimitiveType && actualType is PsiClassType) {
+            resultType = resultType.toNotNullType()
+        }
+
+        if (canConvertType(actualType, expectedType) && convertedExpression !is LiteralExpression) {
+            val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedType.getCanonicalText()]
+            if (conversion != null) {
+                resultType = typeConverter.convertType(expectedType, Nullability.NotNull)
+            }
+        }
+
+        return resultType
+    }
+
+    private fun canConvertType(actual: PsiType, expected: PsiType): Boolean {
+        val expectedStr = expected.getCanonicalText()
+        val actualStr = actual.getCanonicalText()
+        if (expectedStr == actualStr) return false
+        val o1 = expectedStr == typeConversionMap[actualStr]
+        val o2 = actualStr == typeConversionMap[expectedStr]
+        return o1 == o2
+    }
+
+    private val typeConversionMap: Map<String, String> = mapOf(
+            JAVA_LANG_BYTE to "byte",
+            JAVA_LANG_SHORT to "short",
+            JAVA_LANG_INTEGER to "int",
+            JAVA_LANG_LONG to "long",
+            JAVA_LANG_FLOAT to "float",
+            JAVA_LANG_DOUBLE to "double",
+            JAVA_LANG_CHARACTER to "char"
+    )
 
     fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
         if (identifier == null) return Identifier.Empty
@@ -689,27 +725,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
         }
         val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, false)
         return Annotations(listOf(annotation.assignPrototype(throwsList)), true).assignPrototype(throwsList)
-    }
-
-    private val TYPE_MAP: Map<String, String> = mapOf(
-            JAVA_LANG_BYTE to "byte",
-            JAVA_LANG_SHORT to "short",
-            JAVA_LANG_INTEGER to "int",
-            JAVA_LANG_LONG to "long",
-            JAVA_LANG_FLOAT to "float",
-            JAVA_LANG_DOUBLE to "double",
-            JAVA_LANG_CHARACTER to "char"
-    )
-
-    private fun isConversionNeeded(actual: PsiType?, expected: PsiType?): Boolean {
-        if (actual == null || expected == null) return false
-
-        val expectedStr = expected.getCanonicalText()
-        val actualStr = actual.getCanonicalText()
-        if (expectedStr == actualStr) return false
-        val o1 = expectedStr == TYPE_MAP[actualStr]
-        val o2 = actualStr == TYPE_MAP[expectedStr]
-        return o1 == o2
     }
 }
 
