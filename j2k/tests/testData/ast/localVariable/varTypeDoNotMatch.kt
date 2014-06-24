@@ -1,4 +1,4 @@
 fun foo() {
-    val o: Any? = ""
+    var o: Any? = ""
     if (p) o = null
 }

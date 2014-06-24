@@ -1,4 +1,4 @@
 fun foo(i: Int) {
-    val i1 = i!!
+    var i1 = i!!
     i1++
 }

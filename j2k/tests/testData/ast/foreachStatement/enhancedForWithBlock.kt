@@ -1,4 +1,4 @@
 for (n in list) {
-    val i = 1
+    var i = 1
     i++
 }

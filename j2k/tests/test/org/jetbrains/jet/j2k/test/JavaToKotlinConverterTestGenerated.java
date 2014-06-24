@@ -2404,11 +2404,6 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/settings"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
-        @TestMetadata("forceLocalVariableImmutability.java")
-        public void testForceLocalVariableImmutability() throws Exception {
-            doTest("j2k/tests/testData/ast/settings/forceLocalVariableImmutability.java");
-        }
-        
         @TestMetadata("openByDefault.java")
         public void testOpenByDefault() throws Exception {
             doTest("j2k/tests/testData/ast/settings/openByDefault.java");

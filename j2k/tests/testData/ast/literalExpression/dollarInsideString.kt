@@ -2,7 +2,7 @@ package demo
 
 class Test() {
     fun test() {
-        val name = "$$$$"
+        var name = "$$$$"
         name = name.replaceAll("\\$[0-9]+", "\\$")
 
         val c = '$'

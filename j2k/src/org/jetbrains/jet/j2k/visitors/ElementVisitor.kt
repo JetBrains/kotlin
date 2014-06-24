@@ -27,13 +27,15 @@ class ElementVisitor(private val converter: Converter) : JavaElementVisitor() {
         protected set
 
     override fun visitLocalVariable(variable: PsiLocalVariable) {
-        val isVal = variable.hasModifierProperty(PsiModifier.FINAL) || !variable.hasWriteAccesses(variable.getContainingMethod())
+        val isVal = variable.hasModifierProperty(PsiModifier.FINAL) ||
+                variable.getInitializer() == null/* we do not know actually and prefer val until we have better analysis*/ ||
+                !variable.hasWriteAccesses(variable.getContainingMethod())
         result = LocalVariable(variable.declarationIdentifier(),
                                converter.convertAnnotations(variable),
                                converter.convertModifiers(variable),
                                converter.variableTypeToDeclare(variable, converter.settings.specifyLocalVariableTypeByDefault, isVal),
                                converter.convertExpression(variable.getInitializer(), variable.getType()),
-                               converter.settings.forceLocalVariableImmutability || isVal)
+                               isVal)
     }
 
     override fun visitExpressionList(list: PsiExpressionList) {

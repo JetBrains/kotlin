@@ -1,8 +1,8 @@
 run {
-    val i = 0
+    var i = 0
     while (i < 0) {
         run {
-            val i = 1
+            var i = 1
             i++
         }
         j++

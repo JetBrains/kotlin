@@ -1,4 +1,4 @@
 fun foo(b: Byte) {
-    val i = b.toInt()
+    var i = b.toInt()
     if (p) i = 10
 }

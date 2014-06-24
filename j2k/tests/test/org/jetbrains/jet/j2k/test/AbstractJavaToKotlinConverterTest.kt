@@ -76,7 +76,6 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
         for ((name, value) in directives) {
             when (name) {
                 "forceNotNullTypes" -> settings.forceNotNullTypes = parseBoolean(value)
-                "forceLocalVariableImmutability" -> settings.forceLocalVariableImmutability = parseBoolean(value)
                 "specifyLocalVariableTypeByDefault" -> settings.specifyLocalVariableTypeByDefault = parseBoolean(value)
                 "specifyFieldTypeByDefault" -> settings.specifyFieldTypeByDefault = parseBoolean(value)
                 "openByDefault" -> settings.openByDefault = parseBoolean(value)

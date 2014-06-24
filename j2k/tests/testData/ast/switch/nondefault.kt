@@ -3,7 +3,7 @@ public class NonDefault() {
         public fun main(args: Array<String>) {
 
             val value = 3
-            val valueString = ""
+            var valueString = ""
             when (value) {
                 1 -> {
                     valueString = "ONE"

@@ -7,7 +7,7 @@ public class SwitchDemo() {
         }
 
         public fun test(i: Int) {
-            val monthString = "<empty>"
+            var monthString = "<empty>"
             when (i) {
                 1 -> {
                     print(1)
