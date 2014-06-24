@@ -22,6 +22,7 @@ import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -108,7 +109,8 @@ public class JetPositionManager implements PositionManager {
         String referenceInternalName = referenceFqName.replace('.', '/');
         JvmClassName className = JvmClassName.byInternalName(referenceInternalName);
 
-        return DebuggerUtils.findSourceFileForClass(GlobalSearchScope.allScope(myDebugProcess.getProject()), className, sourceName);
+        Project project = myDebugProcess.getProject();
+        return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName);
     }
 
     @NotNull

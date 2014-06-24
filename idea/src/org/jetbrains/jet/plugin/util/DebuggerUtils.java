@@ -18,18 +18,20 @@ package org.jetbrains.jet.plugin.util;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.Collection;
+
+import static org.jetbrains.jet.plugin.stubindex.PackageIndexUtil.findFilesWithExactPackage;
 
 public class DebuggerUtils {
     private DebuggerUtils() {
@@ -37,34 +39,29 @@ public class DebuggerUtils {
 
     @Nullable
     public static JetFile findSourceFileForClass(
+            @NotNull Project project,
             @NotNull GlobalSearchScope searchScope,
             @NotNull JvmClassName className,
             @NotNull final String fileName
     ) {
-        JetFilesProvider filesProvider = JetFilesProvider.getInstance(searchScope.getProject());
-        Collection<JetFile> filesInScope = filesProvider.allInScope(searchScope);
 
-        final FqName packageFqName = getPackageFqNameForClass(className);
+        FqName packageFqName = getPackageFqNameForClass(className);
 
-        // Only consider files with the file name from the stack trace and in the given package
-        Collection<JetFile> files = Collections2.filter(filesInScope, new Predicate<JetFile>() {
+        Collection<JetFile> filesInPackage = findFilesWithExactPackage(packageFqName, searchScope, project);
+        Collection<JetFile> filesWithExactName = Collections2.filter(filesInPackage, new Predicate<JetFile>() {
             @Override
             public boolean apply(@Nullable JetFile file) {
-                return file != null
-                       && file.getName().equals(fileName)
-                       && file.getPackageFqName().equals(packageFqName);
+                return file != null && file.getName().equals(fileName);
             }
         });
 
-        if (files.isEmpty()) return null;
+        if (filesWithExactName.isEmpty()) return null;
 
-        JetFile anyFile = files.iterator().next();
-        if (files.size() == 1) {
-            return anyFile;
+        if (filesWithExactName.size() == 1) {
+            return filesWithExactName.iterator().next();
         }
 
-        Collection<JetFile> allPackageFiles = filesProvider.allPackageFiles(anyFile);
-        JetFile file = PsiCodegenPredictor.getFileForPackagePartName(allPackageFiles, className);
+        JetFile file = PsiCodegenPredictor.getFileForPackagePartName(filesWithExactName, className);
         if (file != null) {
             return file;
         }
@@ -72,10 +69,10 @@ public class DebuggerUtils {
         // In the rare case that there's more than one file with this name in this package,
         // we may actually need to analyze the project in order to find a file which produces this class
         // TODO: this code is not entirely correct, because it takes a session for only one file
-        AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(files);
+        AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(filesWithExactName);
 
         return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(),
-                                                               allPackageFiles, className.getInternalName());
+                                                               filesWithExactName, className.getInternalName());
     }
 
     @NotNull
