@@ -636,7 +636,9 @@
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
-            <zipfileset prefix="kotlinc" dir="${kotlin-home}"/>
+            <zipfileset prefix="kotlinc" dir="${kotlin-home}" excludes="bin/*"/>
+            <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" includes="*.bat" filemode="644"/>
+            <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" excludes="*.bat" filemode="755"/>
         </zip>
         <echo message="##teamcity[publishArtifacts '${output.relative}/${output.name}.zip']"/>
     </target>
