@@ -17,6 +17,8 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.optimization.boxing.RedundantBoxingMethodTransformer;
+import org.jetbrains.jet.codegen.optimization.transformer.ClassMethodsTransformer;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.ClassWriter;
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor;
@@ -62,7 +64,7 @@ public class ClassBuilderFactories {
         @NotNull
         @Override
         public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-            return new TraceBuilder(new BinaryClassWriter());
+            return new TraceBuilder(new BinaryClassWriterOptimizationsDecorator());
         }
 
         @Override
@@ -92,7 +94,7 @@ public class ClassBuilderFactories {
         @NotNull
         @Override
         public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-            return new AbstractClassBuilder.Concrete(new BinaryClassWriter());
+            return new AbstractClassBuilder.Concrete(new BinaryClassWriterOptimizationsDecorator());
         }
 
         @Override
@@ -124,6 +126,22 @@ public class ClassBuilderFactories {
                 // @todo we might need at some point do more sophisticated handling
                 return "java/lang/Object";
             }
+        }
+    }
+
+    private static final ClassMethodsTransformer defaultOptimizationsClassMethodsTransformer = new ClassMethodsTransformer(
+        new RedundantBoxingMethodTransformer(null)
+    );
+
+    private static class BinaryClassWriterOptimizationsDecorator extends BinaryClassWriter {
+        private final ClassMethodsTransformer classMethodsTransformer = defaultOptimizationsClassMethodsTransformer;
+        public BinaryClassWriterOptimizationsDecorator() {
+            super();
+        }
+
+        @Override
+        public byte[] toByteArray() {
+            return classMethodsTransformer.transform(super.toByteArray());
         }
     }
 
