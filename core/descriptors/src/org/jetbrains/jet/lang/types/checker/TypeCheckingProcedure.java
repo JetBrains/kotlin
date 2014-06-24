@@ -76,11 +76,11 @@ public class TypeCheckingProcedure {
                 return equalTypes(flexibleType1.getLowerBound(), flexibleType2.getLowerBound())
                         && equalTypes(flexibleType1.getUpperBound(), flexibleType2.getUpperBound());
             }
-            return equalTypes(flexibleType1.getLowerBound(), type2) || equalTypes(flexibleType1.getUpperBound(), type2);
+            return heterogeneousEquivalence(type2, flexibleType1);
         }
         else if (type2 instanceof FlexibleType) {
             FlexibleType flexibleType2 = (FlexibleType) type2;
-            return equalTypes(type1, flexibleType2.getLowerBound()) || equalTypes(type1, flexibleType2.getUpperBound());
+            return heterogeneousEquivalence(type1, flexibleType2);
         }
 
         if (type1.isNullable() != type2.isNullable()) {
@@ -119,6 +119,12 @@ public class TypeCheckingProcedure {
             }
         }
         return true;
+    }
+
+    private boolean heterogeneousEquivalence(JetType inflexibleType, FlexibleType flexibleType) {
+        // This is to account for the case when we have Collection<X> vs (Mutable)Collection<X>! or K(java.util.Collection<? extends X>)
+        assert !TypesPackage.isFlexible(inflexibleType) : "Only inflexible types are allowed here: " + inflexibleType;
+        return isSubtypeOf(flexibleType.getLowerBound(), inflexibleType) && isSubtypeOf(inflexibleType, flexibleType.getUpperBound());
     }
 
     public enum EnrichedProjectionKind {

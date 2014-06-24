@@ -6155,10 +6155,20 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("GenericsInSupertypes.kt")
+            public void testGenericsInSupertypes() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/GenericsInSupertypes.kt");
+            }
+            
             @TestMetadata("inheritAbstractSamAdapter.kt")
             public void testInheritAbstractSamAdapter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/inheritAbstractSamAdapter.kt");
                 doTest(fileName);
+            }
+            
+            @TestMetadata("InheritedGenericFunction.kt")
+            public void testInheritedGenericFunction() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/InheritedGenericFunction.kt");
             }
             
             @TestMetadata("innerNestedClassFromJava.kt")
@@ -7717,6 +7727,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public void testSafeCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/safeCall.kt");
                 doTest(fileName);
+            }
+            
+            @TestMetadata("override.kt")
+            public void testOverride() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/platformTypes/override.kt");
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall")
