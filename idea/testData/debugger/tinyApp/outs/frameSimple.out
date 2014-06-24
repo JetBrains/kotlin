@@ -1,0 +1,23 @@
+LineBreakpoint created at frameSimple.kt:8
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameSimple.FrameSimplePackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameSimple.kt:7
+package frameSimple
+
+val topVal1 = 1
+
+fun main(args: Array<String>) {
+    val val1 = 1
+    //Breakpoint!
+    val1 + topVal1
+}
+
+// PRINT_FRAME
+ frame    = main():8, FrameSimplePackage-@packagePartHASH {frameSimple}
+   static   = static = frameSimple.FrameSimplePackage-@packagePartHASH
+     field    = topVal1: int = 1
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
+   local    = val1: int = 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
