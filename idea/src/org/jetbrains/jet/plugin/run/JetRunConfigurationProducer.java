@@ -25,6 +25,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
@@ -32,8 +33,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
@@ -83,7 +84,9 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         if (psiFile instanceof JetFile) {
             JetFile jetFile = (JetFile) psiFile;
             AnalyzerFacade facade = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(jetFile);
-            ResolveSession resolveSession = facade.createSetup(jetFile.getProject(), Collections.singleton(jetFile)).getLazyResolveSession();
+            ResolveSession resolveSession =
+                    facade.createSetup(jetFile.getProject(), Collections.<JetFile>emptyList(), GlobalSearchScope.fileScope(jetFile))
+                            .getLazyResolveSession();
             MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(resolveSession);
             if (mainFunctionDetector.hasMain(jetFile.getDeclarations())) {
                 return jetFile;

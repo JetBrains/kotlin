@@ -26,15 +26,12 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider
 import org.jetbrains.jet.plugin.project.TargetPlatform
 import org.jetbrains.jet.plugin.project.TargetPlatform.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
-import java.util.HashSet
-import org.jetbrains.jet.analyzer.AnalyzerFacade
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 
@@ -67,11 +64,9 @@ class KotlinCacheService(val project: Project) {
         fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
     }
 
-    private fun globalResolveSessionProvider(platform: TargetPlatform, syntheticFile: JetFile? = null) = {
-        val allFiles = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project))
-
-        val files = if (syntheticFile == null) allFiles else collectFilesForSyntheticFile(allFiles, syntheticFile)
-        val setup = AnalyzerFacadeProvider.getAnalyzerFacade(platform).createSetup(project, files)
+    private fun globalResolveSessionProvider(platform: TargetPlatform, syntheticFiles: Collection<JetFile> = listOf()) = {
+        val setup = AnalyzerFacadeProvider.getAnalyzerFacade(platform)
+                .createSetup(project, syntheticFiles, GlobalSearchScope.allScope(project))
         val resolveSessionForBodies = ResolveSessionForBodies(project, setup.getLazyResolveSession())
         CachedValueProvider.Result.create(
                 SessionAndSetup(
@@ -82,21 +77,6 @@ class KotlinCacheService(val project: Project) {
                 PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
                 resolveSessionForBodies
         )
-    }
-
-    private fun collectFilesForSyntheticFile(allFiles: Collection<JetFile>, syntheticFile: JetFile): Collection<JetFile> {
-        val files = HashSet(allFiles)
-
-        // Add requested file to the list of files for searching declarations
-        files.add(syntheticFile)
-
-        val originalFile = syntheticFile.getOriginalFile()
-        if (syntheticFile != originalFile) {
-            // Given file can be a non-physical copy of the file in list (completion case). Remove the prototype file.
-            files.remove(originalFile)
-        }
-
-        return files
     }
 
     private val globalCachesPerPlatform = mapOf(
@@ -110,7 +90,7 @@ class KotlinCacheService(val project: Project) {
                     project,
                     globalResolveSessionProvider(
                             TargetPlatformDetector.getPlatform(file!!),
-                            file
+                            listOf(file)
                     )
             )
         }
@@ -152,7 +132,11 @@ class KotlinCacheService(val project: Project) {
         if (virtualFile == null) {
             return false
         }
-        return virtualFile in JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project))
+        return virtualFile in kotlinSourcesInProjectScope()
+    }
+
+    private fun kotlinSourcesInProjectScope(): GlobalSearchScope {
+        return JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project))
     }
 
     public fun <T> get(extension: CacheExtension<T>): T {

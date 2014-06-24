@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.project;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -33,7 +34,7 @@ public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
 
     @NotNull
     @Override
-    public Setup createSetup(@NotNull Project project, @NotNull Collection<JetFile> files) {
-        return new BasicSetup(AnalyzerFacadeForJS.getLazyResolveSession(files, new IDEAConfig(project)));
+    public Setup createSetup(@NotNull Project project, @NotNull Collection<JetFile> syntheticFiles, @NotNull GlobalSearchScope filesScope) {
+        return new BasicSetup(AnalyzerFacadeForJS.getLazyResolveSession(syntheticFiles, filesScope, new IDEAConfig(project)));
     }
 }

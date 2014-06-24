@@ -152,8 +152,6 @@ public class JetCoreEnvironment {
 
         applicationEnvironment.getApplication().registerService(OperationModeProvider.class, new CompilerModeProvider());
         applicationEnvironment.getApplication().registerService(KotlinBinaryClassCache.class, new KotlinBinaryClassCache());
-        applicationEnvironment.getApplication().registerService(DeclarationProviderFactoryService.class,
-                                                                new CliDeclarationProviderFactoryService());
 
         return applicationEnvironment;
     }
@@ -219,6 +217,7 @@ public class JetCoreEnvironment {
                 configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
         project.registerService(VirtualFileFinder.class, new CliVirtualFileFinder(classPath));
+        project.registerService(DeclarationProviderFactoryService.class, new CliDeclarationProviderFactoryService(sourceFiles));
     }
 
     public CompilerConfiguration getConfiguration() {

@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.stubindex.resolve
+package org.jetbrains.jet.lang.resolve.lazy.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.jet.storage.StorageManager
-import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
+import org.jetbrains.kotlin.util.sure
+import java.util.ArrayList
 
-public class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryService() {
+public class CliDeclarationProviderFactoryService(private val sourceFiles: Collection<JetFile>) : DeclarationProviderFactoryService() {
 
     override fun create(
             project: Project,
@@ -32,6 +31,12 @@ public class PluginDeclarationProviderFactoryService : DeclarationProviderFactor
             syntheticFiles: Collection<JetFile>,
             filesScope: GlobalSearchScope
     ): DeclarationProviderFactory {
-        return PluginDeclarationProviderFactory(project, JetSourceFilterScope.kotlinSources(filesScope), storageManager, syntheticFiles)
+        val allFiles = ArrayList<JetFile>()
+        sourceFiles.filterTo(allFiles) {
+            val vFile = it.getVirtualFile().sure("Source files should be physical files")
+            filesScope.contains(vFile)
+        }
+        allFiles addAll syntheticFiles
+        return FileBasedDeclarationProviderFactory(storageManager, allFiles)
     }
 }
