@@ -856,6 +856,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/constructors/identifier.java");
         }
         
+        @TestMetadata("parameterModification.java")
+        public void testParameterModification() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/parameterModification.java");
+        }
+        
         @TestMetadata("privateConstructors.java")
         public void testPrivateConstructors() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/privateConstructors.java");
@@ -1361,6 +1366,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/function/ownSeveralGenericParams.java");
         }
         
+        @TestMetadata("parameterModification.java")
+        public void testParameterModification() throws Exception {
+            doTest("j2k/tests/testData/ast/function/parameterModification.java");
+        }
+        
         @TestMetadata("private.java")
         public void testPrivate() throws Exception {
             doTest("j2k/tests/testData/ast/function/private.java");
@@ -1384,11 +1394,6 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("varVararg.java")
         public void testVarVararg() throws Exception {
             doTest("j2k/tests/testData/ast/function/varVararg.java");
-        }
-        
-        @TestMetadata("writableParameter.java")
-        public void testWritableParameter() throws Exception {
-            doTest("j2k/tests/testData/ast/function/writableParameter.java");
         }
         
     }

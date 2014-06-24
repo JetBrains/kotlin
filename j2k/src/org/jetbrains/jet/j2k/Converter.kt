@@ -349,13 +349,35 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val annotations = (convertAnnotations(method) + convertThrows(method)).assignNoPrototype()
         var modifiers = convertModifiers(method)
 
+        val statementsToInsert = ArrayList<Statement>()
+        for (parameter in method.getParameterList().getParameters()) {
+            if (parameter.hasWriteAccesses(method)) {
+                val variable = LocalVariable(parameter.declarationIdentifier(),
+                                             Annotations.Empty,
+                                             Modifiers.Empty,
+                                             null,
+                                             parameter.declarationIdentifier(),
+                                             false).assignNoPrototype()
+                statementsToInsert.add(DeclarationStatement(listOf(variable)).assignNoPrototype())
+            }
+        }
+        val postProcessBody: (Block) -> Block = { body ->
+            if (statementsToInsert.isEmpty()) {
+                body
+            }
+            else {
+                Block(statementsToInsert + body.statements, body.lBrace, body.rBrace).assignPrototypesFrom(body)
+            }
+        }
+
         if (method.isConstructor()) {
             if (method.isPrimaryConstructor()) {
-                return convertPrimaryConstructor(method, annotations, modifiers, membersToRemove)
+                return convertPrimaryConstructor(method, annotations, modifiers, membersToRemove, postProcessBody)
             }
             else {
                 val params = convertParameterList(method.getParameterList())
-                return SecondaryConstructor(this, annotations, modifiers, params, convertBlock(method.getBody()))
+                var body = postProcessBody(convertBlock(method.getBody()))
+                return SecondaryConstructor(this, annotations, modifiers, params, body)
             }
         }
         else {
@@ -376,8 +398,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
             var params = convertParameterList(method.getParameterList())
             val typeParameterList = convertTypeParameterList(method.getTypeParameterList())
-            val block = convertBlock(method.getBody())
-            return Function(this, method.declarationIdentifier(), annotations, modifiers, returnType, typeParameterList, params, block, containingClass?.isInterface() ?: false)
+            var body = postProcessBody(convertBlock(method.getBody()))
+            return Function(this, method.declarationIdentifier(), annotations, modifiers, returnType, typeParameterList, params, body, containingClass?.isInterface() ?: false)
         }
     }
 
@@ -419,7 +441,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
     private fun convertPrimaryConstructor(constructor: PsiMethod,
                                           annotations: Annotations,
                                           modifiers: Modifiers,
-                                          membersToRemove: MutableSet<PsiMember>): PrimaryConstructor {
+                                          membersToRemove: MutableSet<PsiMember>,
+                                          postProcessBody: (Block) -> Block): PrimaryConstructor {
         val params = constructor.getParameterList().getParameters()
         val parameterToField = HashMap<PsiParameter, Pair<PsiField, Type>>()
         val body = constructor.getBody()
@@ -451,7 +474,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 }
             }
 
-            withExpressionVisitor { ExpressionVisitor(it, usageReplacementMap) }.convertBlock(body, false, { !statementsToRemove.contains(it) })
+            val correctedConverter = withExpressionVisitor { ExpressionVisitor(it, usageReplacementMap) }
+            postProcessBody(correctedConverter.convertBlock(body, false, { !statementsToRemove.contains(it) }))
         }
         else {
             Block.Empty
