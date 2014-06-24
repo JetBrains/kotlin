@@ -11,5 +11,5 @@ class One() {
 }
 
 class Test() {
-    var b: Byte = One.myContainer.myInt.toByte()
+    var b = One.myContainer.myInt.toByte()
 }

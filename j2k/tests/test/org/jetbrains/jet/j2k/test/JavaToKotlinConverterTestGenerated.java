@@ -1074,6 +1074,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/field/classChildExtendsBase.java");
         }
         
+        @TestMetadata("conversion.java")
+        public void testConversion() throws Exception {
+            doTest("j2k/tests/testData/ast/field/conversion.java");
+        }
+        
         @TestMetadata("internalField.java")
         public void testInternalField() throws Exception {
             doTest("j2k/tests/testData/ast/field/internalField.java");

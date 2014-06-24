@@ -251,8 +251,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                                          Modifiers.Empty,
                                          null,
                                          initializer,
-                                         true,
-                                         settings).assignNoPrototype()
+                                         true).assignNoPrototype()
             newStatements.add(0, DeclarationStatement(listOf(localVar)).assignNoPrototype())
             constructor.block = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
@@ -286,30 +285,37 @@ public class Converter private(val project: Project, val settings: ConverterSett
                          convertElement(field.getArgumentList()))
         }
         else {
-            val convertedType = typeConverter.convertVariableType(field)
             val isVal = isVal(field)
+            val typeToDeclare = variableTypeToDeclare(field,
+                                                      settings.specifyFieldTypeByDefault || modifiers.isPublic || modifiers.isProtected,
+                                                      isVal && modifiers.isPrivate)
             Field(name,
                   annotations,
                   modifiers,
-                  convertedType,
+                  typeToDeclare ?: typeConverter.convertVariableType(field),
                   convertExpression(field.getInitializer(), field.getType()),
                   isVal,
-                  shouldDeclareType(field, isVal, convertedType),
+                  typeToDeclare != null,
                   field.hasWriteAccesses(field.getContainingClass()))
         }
         return converted.assignPrototype(field)
     }
 
-    private fun shouldDeclareType(field: PsiField, isVal: Boolean, convertedType: Type): Boolean {
-        if (settings.specifyFieldTypeByDefault) return true
-        val initializer = field.getInitializer() ?: return true
-        fun typeMatches() = convertedType == typeConverter.convertExpressionType(initializer)
-        return if (field.hasModifierProperty(PsiModifier.PRIVATE))
-            !isVal && !typeMatches()
-        else if (field.hasModifierProperty(PsiModifier.PACKAGE_LOCAL))
-            !typeMatches()
-        else
-            true
+    fun variableTypeToDeclare(variable: PsiVariable, specifyAlways: Boolean, canChangeType: Boolean): Type? {
+        fun convertType() = typeConverter.convertVariableType(variable)
+
+        if (specifyAlways) return convertType()
+
+        val initializer = variable.getInitializer()
+        if (initializer == null) return convertType()
+        if (initializer is PsiLiteralExpression && initializer.getType() == PsiType.NULL) return convertType()
+
+        if (canChangeType) return null
+
+        val convertedType = convertType()
+        var initializerType = convertedExpressionType(initializer, variable.getType())
+        if (initializerType is ErrorType) return null // do not add explicit type when initializer is not resolved, let user add it if really needed
+        return if (convertedType == initializerType) null else convertedType
     }
 
     private fun isVal(field: PsiField): Boolean {

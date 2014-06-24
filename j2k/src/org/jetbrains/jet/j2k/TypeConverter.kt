@@ -92,7 +92,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
         if (nullability == Nullability.Default) {
             val initializer = variable.getInitializer()
             if (initializer != null) {
-                val initializerNullability = initializer.nullability(false)
+                val initializerNullability = initializer.nullability()
                 if (variable.isEffectivelyFinal()) {
                     nullability = initializerNullability
                 }
@@ -133,7 +133,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
                     for (call in findMethodCalls(method, scope)) {
                         val args = call.getArgumentList().getExpressions()
                         if (args.size == parameters.size) {
-                            if (args[parameterIndex].nullability(false) == Nullability.Nullable) {
+                            if (args[parameterIndex].nullability() == Nullability.Nullable) {
                                 nullability = Nullability.Nullable
                                 break
                             }
@@ -172,7 +172,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
         if (nullability == Nullability.Default) {
             method.getBody()?.accept(object: JavaRecursiveElementVisitor() {
                 override fun visitReturnStatement(statement: PsiReturnStatement) {
-                    if (statement.getReturnValue()?.nullability(false) == Nullability.Nullable) {
+                    if (statement.getReturnValue()?.nullability() == Nullability.Nullable) {
                         nullability = Nullability.Nullable
                     }
                 }
@@ -195,10 +195,6 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
         return nullability
     }
 
-    public fun convertExpressionType(expression: PsiExpression): Type {
-        return convertType(expression.getType(), expression.nullability(true))
-    }
-
     private fun searchScope(element: PsiElement): PsiElement? {
         return when(element) {
             is PsiParameter -> element.getDeclarationScope()
@@ -209,38 +205,22 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
         }
     }
 
-    private fun PsiExpression.nullability(useDeclarationsNullability: Boolean): Nullability {
+    private fun PsiExpression.nullability(): Nullability {
         return when (this) {
             is PsiLiteralExpression -> if (getType() != PsiType.NULL) Nullability.NotNull else Nullability.Nullable
 
             is PsiNewExpression -> Nullability.NotNull
 
             is PsiConditionalExpression -> {
-                val nullability1 = getThenExpression()?.nullability(useDeclarationsNullability)
+                val nullability1 = getThenExpression()?.nullability()
                 if (nullability1 == Nullability.Nullable) return Nullability.Nullable
-                val nullability2 = getElseExpression()?.nullability(useDeclarationsNullability)
+                val nullability2 = getElseExpression()?.nullability()
                 if (nullability2 == Nullability.Nullable) return Nullability.Nullable
                 if (nullability1 == Nullability.NotNull && nullability2 == Nullability.NotNull) return Nullability.NotNull
                 Nullability.Default
             }
 
-            is PsiParenthesizedExpression -> getExpression()?.nullability(useDeclarationsNullability) ?: Nullability.Default
-
-            is PsiMethodCallExpression -> if (useDeclarationsNullability) {
-                val method = resolveMethod()
-                if (method != null) methodNullability(method) else Nullability.Default
-            }
-            else {
-                Nullability.Default
-            }
-
-            is PsiReferenceExpression -> if (useDeclarationsNullability) {
-                val variable = resolve() as? PsiVariable
-                if (variable != null) variableNullability(variable) else Nullability.Default
-            }
-            else {
-                Nullability.Default
-            }
+            is PsiParenthesizedExpression -> getExpression()?.nullability() ?: Nullability.Default
 
 
         //TODO: some other cases
@@ -252,7 +232,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
     private fun isNullableFromUsage(usage: PsiExpression): Boolean {
         val parent = usage.getParent() ?: return false
         if (parent is PsiAssignmentExpression && parent.getOperationTokenType() == JavaTokenType.EQ && usage == parent.getLExpression()) {
-            return parent.getRExpression()?.nullability(false) == Nullability.Nullable
+            return parent.getRExpression()?.nullability() == Nullability.Nullable
         }
         else if (parent is PsiBinaryExpression) {
             val operationType = parent.getOperationTokenType()

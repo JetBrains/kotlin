@@ -8,7 +8,7 @@ class Foo() {
 }
 
 class Bar() {
-    var fooNotNull: Foo = Foo()
+    var fooNotNull = Foo()
     var fooNullable: Foo? = null
 }
 

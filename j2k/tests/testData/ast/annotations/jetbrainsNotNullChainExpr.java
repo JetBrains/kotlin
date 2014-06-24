@@ -11,7 +11,7 @@ class Foo {
 
 class Bar {
   @NotNull
-  Foo fooNotNull = Foo();
+  Foo fooNotNull = new Foo();
   Foo fooNullable = null;
 }
 

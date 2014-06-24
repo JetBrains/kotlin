@@ -26,8 +26,7 @@ class LocalVariable(
         private val modifiers: Modifiers,
         private val explicitType: Type?,
         private val initializer: Expression,
-        private val isVal: Boolean,
-        private val settings: ConverterSettings
+        private val isVal: Boolean
 ) : Element() {
 
     override fun generateCode(builder: CodeBuilder) {
