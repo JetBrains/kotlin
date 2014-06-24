@@ -53,12 +53,9 @@ import static org.jetbrains.jet.codegen.CodegenTestUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
 public abstract class CodegenTestCase extends UsefulTestCase {
-
-    // for environment and classloader
     protected JetCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
-
-    private ClassFileFactory classFileFactory;
+    protected ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;
 
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull ConfigurationKind configurationKind) {

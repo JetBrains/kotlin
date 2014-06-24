@@ -17,12 +17,20 @@
 package org.jetbrains.jet.codegen.generated;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.*;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.CodegenTestCase;
+import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.InlineTestUtil;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -43,6 +51,15 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     public void doTestAgainstJava(@NotNull String filename) {
         blackBoxFileAgainstJavaByFullPath(filename);
+    }
+
+    public void doTestWithJava(@NotNull String filename) {
+        try {
+            blackBoxFileWithJavaByFullPath(filename);
+        }
+        catch (Exception e) {
+            throw UtilsPackage.rethrow(e);
+        }
     }
 
     public void doTestWithStdlib(@NotNull String filename) {
@@ -66,7 +83,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
         Collections.sort(files);
 
-        loadFiles(files.toArray(new String[files.size()]));
+        loadFiles(ArrayUtil.toStringArray(files));
         blackBox();
     }
 
@@ -83,6 +100,44 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
         loadFile(ktFile);
+        blackBox();
+    }
+
+    private void blackBoxFileWithJavaByFullPath(@NotNull String directory) throws Exception {
+        File dirFile = new File(directory);
+
+        final List<String> javaFilePaths = new ArrayList<String>();
+        final List<String> ktFilePaths = new ArrayList<String>();
+        FileUtil.processFilesRecursively(dirFile, new Processor<File>() {
+            @Override
+            public boolean process(File file) {
+                String path = file.getPath().substring("compiler/testData/codegen/".length());
+                if (path.endsWith(".kt")) {
+                    ktFilePaths.add(path);
+                }
+                else if (path.endsWith(".java")) {
+                    javaFilePaths.add(path);
+                }
+                return true;
+            }
+        });
+
+        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar()
+        );
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, dirFile);
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
+        loadFiles(ArrayUtil.toStringArray(ktFilePaths));
+        classFileFactory =
+                GenerationUtils.compileManyFilesGetGenerationStateForTest(myEnvironment.getProject(), myFiles.getPsiFiles()).getFactory();
+        File kotlinOut = JetTestUtils.tmpDir(toString());
+        OutputUtilsPackage.writeAllTo(classFileFactory, kotlinOut);
+
+        // TODO: support several Java sources
+        File javaOut = compileJava(KotlinPackage.single(javaFilePaths), kotlinOut.getPath());
+        // Add javac output to classpath so that the created class loader can find generated Java classes
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, javaOut);
+
         blackBox();
     }
 

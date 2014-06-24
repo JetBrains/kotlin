@@ -172,6 +172,10 @@ fun main(args: Array<String>) {
             model("codegen/boxAgainstJava", testMethod = "doTestAgainstJava")
         }
 
+        testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithJavaCodegenTestGenerated") {
+            model("codegen/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = false)
+        }
+
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithStdlibCodegenTestGenerated") {
             model("codegen/boxWithStdlib", testMethod = "doTestWithStdlib")
         }
