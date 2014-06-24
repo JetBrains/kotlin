@@ -1672,6 +1672,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/issues/kt-837.java");
         }
         
+        @TestMetadata("kt-851.java")
+        public void testKt_851() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/kt-851.java");
+        }
+        
         @TestMetadata("kt-852.java")
         public void testKt_852() throws Exception {
             doTest("j2k/tests/testData/ast/issues/kt-852.java");

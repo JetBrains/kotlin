@@ -6,6 +6,6 @@ class Test() {
     }
 
     fun test() {
-        val i = getInteger(10)!!
+        val i = getInteger(10)
     }
 }

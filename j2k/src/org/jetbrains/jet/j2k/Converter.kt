@@ -569,9 +569,9 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val actualType = expression.getType()
         if (actualType == null) return convertedExpression
 
-        if (actualType is PsiPrimitiveType && convertedExpression.isNullable ||
-                expectedType is PsiPrimitiveType && actualType is PsiClassType) {
-            convertedExpression = BangBangExpression(convertedExpression)
+        if (convertedExpression.isNullable &&
+                (actualType is PsiPrimitiveType || actualType is PsiClassType && expectedType is PsiPrimitiveType)) {
+            convertedExpression = BangBangExpression(convertedExpression).assignNoPrototype()
         }
 
         if (canConvertType(actualType, expectedType) && convertedExpression !is LiteralExpression) {
