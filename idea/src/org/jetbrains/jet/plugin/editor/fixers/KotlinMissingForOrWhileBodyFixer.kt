@@ -22,22 +22,29 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetWhileExpression
 import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.lang.psi.JetLoopExpression
+import org.jetbrains.jet.lang.psi.JetForExpression
 
-public class KotlinMissingWhileBodyFixer: SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+public class KotlinMissingForOrWhileBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
-        if (element !is JetWhileExpression) return
-        val whileStatement = element as JetWhileExpression
+        if (!(element is JetForExpression || element is JetWhileExpression)) return
+        val loopExpression = element as JetLoopExpression
 
         val doc = editor.getDocument()
 
-        val body = whileStatement.getBody()
+        val body = loopExpression.getBody()
         if (body is JetBlockExpression) return
-        if (body != null && body.startLine(doc) == whileStatement.startLine(doc) && whileStatement.getCondition() != null) return
 
-        val rParenth = whileStatement.getRightParenthesis()
-        if (rParenth == null) return
+        if (!loopExpression.isValidLoopCondition()) return
 
-        doc.insertString(rParenth.range.end, "{}")
+        if (body != null && body.startLine(doc) == loopExpression.startLine(doc)) return
+
+        val rParen = loopExpression.getRightParenthesis()
+        if (rParen == null) return
+
+        doc.insertString(rParen.range.end, "{}")
     }
+
+    fun JetLoopExpression.isValidLoopCondition() = getLeftParenthesis() != null && getRightParenthesis() != null
 }
 

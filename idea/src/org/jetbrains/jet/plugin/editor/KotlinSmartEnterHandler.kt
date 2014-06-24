@@ -32,9 +32,11 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.plugin.editor.fixers.KotlinWhileConditionFixer
-import org.jetbrains.jet.plugin.editor.fixers.KotlinMissingWhileBodyFixer
 import org.jetbrains.jet.lang.psi.JetWhileExpression
 import org.jetbrains.jet.plugin.editor.fixers.isWithCaret
+import org.jetbrains.jet.plugin.editor.fixers.KotlinForConditionFixer
+import org.jetbrains.jet.plugin.editor.fixers.KotlinMissingForOrWhileBodyFixer
+import org.jetbrains.jet.lang.psi.JetForExpression
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.JetNodeTypes
 
@@ -45,7 +47,8 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
                 KotlinMissingIfBranchFixer(),
 
                 KotlinWhileConditionFixer(),
-                KotlinMissingWhileBodyFixer()
+                KotlinForConditionFixer(),
+                KotlinMissingForOrWhileBodyFixer()
         )
 
         addEnterProcessors(KotlinPlainEnterProcessor())
@@ -57,7 +60,9 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
         if (atCaret is PsiWhiteSpace) return null
 
         while (atCaret != null) {
-            if (atCaret is JetDeclaration || atCaret?.isJetStatement() == true) {
+            if (atCaret?.isJetStatement() == true) return atCaret
+
+            if (atCaret is JetDeclaration && (atCaret?.getParent() !is JetForExpression)) {
                 return atCaret
             }
 

@@ -360,6 +360,103 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testForStatement() = doFunTest(
+            """
+            for <caret>
+            """
+            ,
+            """
+            for (<caret>) {
+            }
+            """
+    )
+
+    fun testForStatement2() = doFunTest(
+            """
+            for<caret>
+            """
+            ,
+            """
+            for (<caret>) {
+            }
+            """
+    )
+
+    fun testForStatement4() = doFunTest(
+            """
+            for (i in 1..10<caret>) {
+            }
+            """
+            ,
+            """
+            for (i in 1..10) {
+                <caret>
+            }
+            """
+    )
+
+    fun testForStatement5() = doFunTest(
+            """
+            for (i in 1..10) {<caret>
+            """
+            ,
+            """
+            for (i in 1..10) {
+                <caret>
+            }
+            """
+    )
+
+    fun testForStatement6() = doFunTest(
+            """
+            for (i in 1..10<caret>) {
+                println()
+            }
+            """
+            ,
+            """
+            for (i in 1..10) {
+                <caret>
+                println()
+            }
+            """
+    )
+
+    fun testForStatementSingle() = doFunTest(
+            """
+            for (i in 1..10<caret>) println()
+            """
+            ,
+            """
+            for (i in 1..10) println()
+            <caret>
+            """
+    )
+
+    fun testForStatementSingleEmpty() = doFunTest(
+            """
+            for (<caret>) println()
+            """
+            ,
+            """
+            for (<caret>) println()
+            """
+    )
+
+    fun testForStatementOnLoopParameter() = doFunTest(
+            """
+            for (som<caret>e)
+            println()
+            """
+            ,
+            """
+            for (some) {
+                <caret>
+            }
+            println()
+            """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----${this.trimIndent()}//----"

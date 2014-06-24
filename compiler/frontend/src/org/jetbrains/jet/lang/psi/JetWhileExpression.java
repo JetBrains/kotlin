@@ -17,10 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetWhileExpression extends JetWhileExpressionBase {
     public JetWhileExpression(@NotNull ASTNode node) {
@@ -30,16 +27,5 @@ public class JetWhileExpression extends JetWhileExpressionBase {
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitWhileExpression(this, data);
-    }
-
-    @Nullable
-    @IfNotParsed
-    public PsiElement getLeftParenthesis() {
-        return findChildByType(JetTokens.LPAR);
-    }
-
-    @Nullable @IfNotParsed
-    public PsiElement getRightParenthesis() {
-        return findChildByType(JetTokens.RPAR);
     }
 }
