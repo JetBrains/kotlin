@@ -22,6 +22,8 @@ import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.jet.j2k.ast.*
+import com.intellij.codeInsight.AnnotationUtil
+import com.intellij.codeInsight.NullableNotNullManager
 
 fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier.toKotlin(it) }.makeString(".")
 
@@ -46,16 +48,6 @@ fun PsiVariable.countWriteAccesses(scope: PsiElement?): Int
 
 fun PsiVariable.hasWriteAccesses(scope: PsiElement?): Boolean
         = if (scope != null) findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
-
-fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
-    val annotations = getModifierList()?.getAnnotations() ?: return Nullability.Default
-    return if (annotations.any { NOT_NULL_ANNOTATIONS.contains(it.getQualifiedName()) })
-        Nullability.NotNull
-    else if (annotations.any { NULLABLE_ANNOTATIONS.contains(it.getQualifiedName()) })
-        Nullability.Nullable
-    else
-        Nullability.Default
-}
 
 fun getDefaultInitializer(field: Field): Expression {
     val t = field.`type`

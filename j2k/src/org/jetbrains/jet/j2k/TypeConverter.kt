@@ -28,6 +28,7 @@ import org.jetbrains.jet.j2k.ast.assignPrototype
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import org.jetbrains.jet.j2k.ast.assignNoPrototype
 import org.jetbrains.jet.j2k.ast.ErrorType
+import com.intellij.codeInsight.NullableNotNullManager
 
 class TypeConverter(val settings: ConverterSettings, val conversionScope: ConversionScope) {
     private val nullabilityCache = HashMap<PsiElement, Nullability>()
@@ -273,5 +274,15 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
             is PsiField -> if (hasModifierProperty(PsiModifier.PRIVATE)) !hasWriteAccesses(getContainingClass()) else false
             else -> false
         }
+    }
+
+    private fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
+        val manager = NullableNotNullManager.getInstance(getProject())
+        return if (manager.isNotNull(this, false/* we do not check bases because they are checked by callers of this method*/))
+            Nullability.NotNull
+        else if (manager.isNullable(this, false))
+            Nullability.Nullable
+        else
+            Nullability.Default
     }
 }
