@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -59,6 +58,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
+import static org.jetbrains.jet.plugin.stubindex.PackageIndexUtil.findFilesWithExactPackage;
 
 public class JetPositionManager implements PositionManager {
     private final DebugProcess myDebugProcess;
@@ -191,18 +191,19 @@ public class JetPositionManager implements PositionManager {
     }
 
     private JetTypeMapper prepareTypeMapper(final JetFile file) {
-        FqName fqName = file.getPackageFqName();
+        final FqName fqName = file.getPackageFqName();
         CachedValue<JetTypeMapper> value = myTypeMappers.get(fqName);
         if(value == null) {
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
                 @Override
                 public Result<JetTypeMapper> compute() {
-                    Collection<JetFile> packageFiles = JetFilesProvider.getInstance(file.getProject()).allPackageFiles(file);
+                    Project project = file.getProject();
+                    Collection<JetFile> packageFiles = findFilesWithExactPackage(fqName, GlobalSearchScope.allScope(project), project);
 
                     AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(packageFiles);
                     analyzeExhaust.throwIfError();
 
-                    GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
+                    GenerationState state = new GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION,
                                                                 analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(),
                                                                 new ArrayList<JetFile>(packageFiles)
                     );
