@@ -68,7 +68,7 @@ public class ReadValueInstruction private (
     }
 
     override fun toString(): String {
-        val inVal = if (receiverValues.empty) "" else "|${receiverValues.keySet().makeString()}"
+        val inVal = if (receiverValues.empty) "" else "|${receiverValues.keySet().joinToString()}"
         return "r(${render(element)}$inVal) -> $outputValue"
     }
 
@@ -113,7 +113,7 @@ public class WriteValueInstruction(
 
     override fun toString(): String {
         val lhs = (lValue as? JetNamedDeclaration)?.getName() ?: render(lValue)
-        return "w($lhs|${inputValues.makeString(", ")})"
+        return "w($lhs|${inputValues.joinToString(", ")})"
     }
 
     override fun createCopy(): InstructionImpl =
