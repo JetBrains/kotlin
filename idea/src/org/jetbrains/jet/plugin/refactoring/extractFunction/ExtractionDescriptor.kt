@@ -43,10 +43,10 @@ trait Parameter {
     val parameterTypeCandidates: List<JetType>
     val receiverCandidate: Boolean
 
-    val nameForRef: String get() = mirrorVarName ?: name
-
     fun copy(name: String, parameterType: JetType): Parameter
 }
+
+val Parameter.nameForRef: String get() = mirrorVarName ?: name
 
 data class TypeParameter(
         val originalDeclaration: JetTypeParameter,
