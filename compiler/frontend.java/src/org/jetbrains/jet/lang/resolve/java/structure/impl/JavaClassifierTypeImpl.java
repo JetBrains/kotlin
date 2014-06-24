@@ -16,20 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeSubstitutor;
+import org.jetbrains.jet.lang.resolve.java.structure.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.types;
 
@@ -68,11 +60,23 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
         if (resolutionResult == null) {
             PsiClassType.ClassResolveResult result = getPsi().resolveGenerics();
             PsiClass psiClass = result.getElement();
+            PsiSubstitutor substitutor = result.getSubstitutor();
             resolutionResult = new ResolutionResult(
                     psiClass == null ? null : JavaClassifierImpl.create(psiClass),
-                    new JavaTypeSubstitutorImpl(result.getSubstitutor())
+                    new JavaTypeSubstitutorImpl(convertSubstitutionMap(substitutor.getSubstitutionMap()))
             );
         }
+    }
+
+    @NotNull
+    private Map<JavaTypeParameter, JavaType> convertSubstitutionMap(@NotNull Map<PsiTypeParameter, PsiType> psiMap) {
+        Map<JavaTypeParameter, JavaType> substitutionMap = new HashMap<JavaTypeParameter, JavaType>();
+        for (Map.Entry<PsiTypeParameter, PsiType> entry : psiMap.entrySet()) {
+            PsiType value = entry.getValue();
+            substitutionMap.put(new JavaTypeParameterImpl(entry.getKey()), value == null ? null : JavaTypeImpl.create(value));
+        }
+
+        return substitutionMap;
     }
 
     @Override

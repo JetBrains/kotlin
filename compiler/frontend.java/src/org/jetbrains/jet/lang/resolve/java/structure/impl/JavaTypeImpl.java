@@ -39,31 +39,31 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType {
         return psiType.accept(new PsiTypeVisitor<JavaTypeImpl<?>>() {
             @Nullable
             @Override
-            public JavaTypeImpl<?> visitType(PsiType type) {
+            public JavaTypeImpl<?> visitType(@NotNull PsiType type) {
                 throw new UnsupportedOperationException("Unsupported PsiType: " + type);
             }
 
             @Nullable
             @Override
-            public JavaTypeImpl<?> visitPrimitiveType(PsiPrimitiveType primitiveType) {
+            public JavaTypeImpl<?> visitPrimitiveType(@NotNull PsiPrimitiveType primitiveType) {
                 return new JavaPrimitiveTypeImpl(primitiveType);
             }
 
             @Nullable
             @Override
-            public JavaTypeImpl<?> visitArrayType(PsiArrayType arrayType) {
+            public JavaTypeImpl<?> visitArrayType(@NotNull PsiArrayType arrayType) {
                 return new JavaArrayTypeImpl(arrayType);
             }
 
             @Nullable
             @Override
-            public JavaTypeImpl<?> visitClassType(PsiClassType classType) {
+            public JavaTypeImpl<?> visitClassType(@NotNull PsiClassType classType) {
                 return new JavaClassifierTypeImpl(classType);
             }
 
             @Nullable
             @Override
-            public JavaTypeImpl<?> visitWildcardType(PsiWildcardType wildcardType) {
+            public JavaTypeImpl<?> visitWildcardType(@NotNull PsiWildcardType wildcardType) {
                 return new JavaWildcardTypeImpl(wildcardType);
             }
         });
