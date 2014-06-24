@@ -16,10 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiCompiledElement;
-import com.intellij.psi.PsiTypeParameter;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiSubstitutorImpl;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +28,9 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.*;
 
@@ -180,5 +180,28 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
         else {
             return OriginKind.SOURCE;
         }
+    }
+
+    @NotNull
+    @Override
+    public JavaType createImmediateType(@NotNull JavaTypeSubstitutor substitutor) {
+        return new JavaClassifierTypeImpl(
+                JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi(), createPsiSubstitutor(substitutor)));
+    }
+
+    @NotNull
+    private static PsiSubstitutor createPsiSubstitutor(@NotNull JavaTypeSubstitutor substitutor) {
+        Map<PsiTypeParameter, PsiType> substMap = new HashMap<PsiTypeParameter, PsiType>();
+        for (Map.Entry<JavaTypeParameter, JavaType> entry : substitutor.getSubstitutionMap().entrySet()) {
+            PsiTypeParameter key = ((JavaTypeParameterImpl) entry.getKey()).getPsi();
+            if (entry.getValue() == null) {
+                substMap.put(key, null);
+            }
+            else {
+                substMap.put(key, ((JavaTypeImpl) entry.getValue()).getPsi());
+            }
+        }
+
+        return PsiSubstitutorImpl.createSubstitutor(substMap);
     }
 }
