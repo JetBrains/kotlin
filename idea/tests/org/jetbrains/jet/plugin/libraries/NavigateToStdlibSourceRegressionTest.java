@@ -43,7 +43,7 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
     }
 
     public void testJavaClass() throws IOException {
-        doNavigationInSourcesTest("libraries/stdlib/src/kotlin/collections/Maps.kt", "Collections", "java.util.Collections");
+        doNavigationInSourcesTest("libraries/stdlib/src/kotlin/collections/Iterators.kt", "Enumeration", "java.util.Enumeration");
     }
 
     public void testKotlinClass() throws IOException {
