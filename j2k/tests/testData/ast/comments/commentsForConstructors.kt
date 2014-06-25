@@ -10,8 +10,7 @@ class A// this is a primary constructor
 
         // this is a secondary constructor
         fun create(): A {
-            val __ = A(1)
-            return __
+            return A(1)
         } // end of secondary constructor body
     }
 }

@@ -254,16 +254,23 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 }
             }
 
-            val initializer = MethodCallExpression.buildNotNull(null, className.name, finalOrWithEmptyInitializerFields.map { initializers[it]!! })
-            initializer.assignNoPrototype()
-            val localVar = LocalVariable(FactoryFunction.tempValIdentifier(),
-                                         Annotations.Empty,
-                                         Modifiers.Empty,
-                                         null,
-                                         initializer,
-                                         true).assignNoPrototype()
-            statements.add(0, DeclarationStatement(listOf(localVar)).assignNoPrototype())
-            statements.add(ReturnStatement(FactoryFunction.tempValIdentifier()).assignNoPrototype())
+            val initializer = MethodCallExpression.buildNotNull(null,
+                                                                className.name,
+                                                                finalOrWithEmptyInitializerFields.map { initializers[it]!! }).assignNoPrototype()
+            if (statements.isNotEmpty()) {
+                val localVar = LocalVariable(FactoryFunction.tempValIdentifier(),
+                                             Annotations.Empty,
+                                             Modifiers.Empty,
+                                             null,
+                                             initializer,
+                                             true).assignNoPrototype()
+                statements.add(0, DeclarationStatement(listOf(localVar)).assignNoPrototype())
+                statements.add(ReturnStatement(FactoryFunction.tempValIdentifier()).assignNoPrototype())
+            }
+            else {
+                statements.add(ReturnStatement(initializer).assignNoPrototype())
+            }
+
             factoryFunction.body = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
 
@@ -282,25 +289,34 @@ public class Converter private(val project: Project, val settings: ConverterSett
     private fun correctFactoryFunctions(classBody: ClassBody, className: String) {
         for (factoryFunction in classBody.factoryFunctions()) {
             val body = factoryFunction.body!!
-            val statements = ArrayList(body.statements)
-
-            // searching for other constructor call in form "this(...)"
-            // it's not necessary the first statement because of statements inserted for writable parameters
-            for (i in statements.indices) {
-                val statement = statements[i]
-                if (statement is MethodCallExpression) {
-                    if ((statement.methodExpression as? Identifier)?.name == "this") {
-                        val constructorCall = MethodCallExpression.buildNotNull(null, className, statement.arguments).assignPrototypesFrom(statement)
-                        val localVar = LocalVariable(FactoryFunction.tempValIdentifier(), Annotations.Empty, Modifiers.Empty, null, constructorCall, true).assignNoPrototype()
-                        statements[i] = DeclarationStatement(listOf(localVar)).assignNoPrototype()
-                        break
-                    }
-                }
-            }
-
-            statements.add(ReturnStatement(FactoryFunction.tempValIdentifier()).assignNoPrototype())
+            val statements = correctFactoryFunctionStatements(body, className)
             factoryFunction.body = Block(statements, body.lBrace, body.rBrace).assignPrototypesFrom(body)
         }
+    }
+
+    private fun correctFactoryFunctionStatements(body: Block, className: String): List<Statement> {
+        val statements = ArrayList(body.statements)
+
+        // searching for other constructor call in form "this(...)"
+        // it's not necessary the first statement because of statements inserted for writable parameters
+        for (i in statements.indices) {
+            val statement = statements[i]
+            if (statement is MethodCallExpression) {
+                if ((statement.methodExpression as? Identifier)?.name == "this") {
+                    val constructorCall = MethodCallExpression.buildNotNull(null, className, statement.arguments).assignPrototypesFrom(statement)
+                    if (i == statements.lastIndex) { // constructor call is the last statement - no intermediate variable needed
+                        statements[i] = ReturnStatement(constructorCall).assignNoPrototype()
+                        return statements
+                    }
+                    val localVar = LocalVariable(FactoryFunction.tempValIdentifier(), Annotations.Empty, Modifiers.Empty, null, constructorCall, true).assignNoPrototype()
+                    statements[i] = DeclarationStatement(listOf(localVar)).assignNoPrototype()
+                    break
+                }
+            }
+        }
+
+        statements.add(ReturnStatement(FactoryFunction.tempValIdentifier()).assignNoPrototype())
+        return statements
     }
 
     private fun convertInitializer(initializer: PsiClassInitializer): Initializer {

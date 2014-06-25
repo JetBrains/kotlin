@@ -2,13 +2,11 @@ public class Test private(private val myName: String, var a: Boolean, var b: Dou
     class object {
 
         public fun create(): Test {
-            val __ = Test(0, false, 0.toDouble(), 0.toFloat(), 0, 0, 0, ' ')
-            return __
+            return Test(0, false, 0.toDouble(), 0.toFloat(), 0, 0, 0, ' ')
         }
 
         public fun create(name: String): Test {
-            val __ = Test(foo(name), false, 0.toDouble(), 0.toFloat(), 0, 0, 0, ' ')
-            return __
+            return Test(foo(name), false, 0.toDouble(), 0.toFloat(), 0, 0, 0, ' ')
         }
 
         fun foo(n: String): String {

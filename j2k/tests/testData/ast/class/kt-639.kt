@@ -5,12 +5,10 @@ import java.util.HashMap
 class Test private() {
     class object {
         fun create(): Test {
-            val __ = Test()
-            return __
+            return Test()
         }
         fun create(s: String): Test {
-            val __ = Test()
-            return __
+            return Test()
         }
     }
 }

@@ -8,8 +8,7 @@ public class Identifier<T> private(private val myName: T, private val myHasDolla
     class object {
 
         public fun <T> create(name: T): Identifier<T> {
-            val __ = Identifier(name, false)
-            return __
+            return Identifier(name, false)
         }
 
         public fun <T> create(name: T, isNullable: Boolean): Identifier<T> {

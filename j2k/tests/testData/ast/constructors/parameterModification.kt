@@ -20,8 +20,7 @@ class C(arg1: Int, arg2: Int, arg3: Int) {
         }
 
         fun create(arg1: Int): C {
-            val __ = C(arg1, 0, 0)
-            return __
+            return C(arg1, 0, 0)
         }
     }
 }
