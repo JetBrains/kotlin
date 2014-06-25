@@ -861,6 +861,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/constructors/identifier.java");
         }
         
+        @TestMetadata("methodCallInFactoryFun.java")
+        public void testMethodCallInFactoryFun() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/methodCallInFactoryFun.java");
+        }
+        
         @TestMetadata("parameterModification.java")
         public void testParameterModification() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/parameterModification.java");
@@ -874,6 +879,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("qualifiedRefInFactoryFun.java")
         public void testQualifiedRefInFactoryFun() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/qualifiedRefInFactoryFun.java");
+        }
+        
+        @TestMetadata("staticFieldRefInFactoryFun.java")
+        public void testStaticFieldRefInFactoryFun() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/staticFieldRefInFactoryFun.java");
         }
         
         @TestMetadata("withManyDefaultParams.java")

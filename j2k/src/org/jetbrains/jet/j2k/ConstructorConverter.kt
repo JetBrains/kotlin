@@ -40,9 +40,12 @@ class ConstructorConverter(private val converter: Converter) {
             val bodyConverter = converter.withExpressionVisitor { object : ExpressionVisitor(it, mapOf()/*TODO: see KT-5327*/) {
                 override fun visitReferenceExpression(expression: PsiReferenceExpression) {
                     if (isQualifierEmptyOrThis(expression)) {
-                        val field = expression.getReference()?.resolve() as? PsiField
-                        if (field != null && field.getContainingClass() == constructor.getContainingClass()) {
-                            val isNullable = typeConverter.variableNullability(field).isNullable(converter.settings)
+                        val member = expression.getReference()?.resolve() as? PsiMember
+                        if (member != null &&
+                                !member.isConstructor() &&
+                                member.getContainingClass() == constructor.getContainingClass() &&
+                                !member.hasModifierProperty(PsiModifier.STATIC)) {
+                            val isNullable = member is PsiField && typeConverter.variableNullability(member).isNullable(converter.settings)
                             result = QualifiedExpression(tempValIdentifier(), Identifier(expression.getReferenceName()!!, isNullable).assignNoPrototype())
                             return
                         }
