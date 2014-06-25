@@ -194,7 +194,7 @@ public final class TipsManager {
     private static Set<DeclarationDescriptor> includeExternalCallableExtensions(
             @NotNull Collection<DeclarationDescriptor> descriptors,
             @NotNull JetScope externalScope,
-            @NotNull ReceiverValue receiverValue
+            @NotNull final ReceiverValue receiverValue
     ) {
         // It's impossible to add extension function for package
         JetType receiverType = receiverValue.getType();
@@ -203,7 +203,15 @@ public final class TipsManager {
         }
 
         Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
-        descriptorsSet.addAll(ExpressionTypingUtils.filterCallableExtensions(receiverValue, JetScopeUtils.getAllExtensions(externalScope)));
+
+        descriptorsSet.addAll(
+                Collections2.filter(JetScopeUtils.getAllExtensions(externalScope),
+                                    new Predicate<CallableDescriptor>() {
+                                        @Override
+                                        public boolean apply(CallableDescriptor callableDescriptor) {
+                                            return ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, callableDescriptor);
+                                        }
+                                    }));
 
         return descriptorsSet;
     }

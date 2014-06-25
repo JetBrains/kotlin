@@ -16,11 +16,8 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -46,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -244,32 +240,6 @@ public class ExpressionTypingUtils {
         return callableExtensionDescriptors;
     }
 
-    public static Collection<CallableDescriptor> filterCallableExtensions(
-            @NotNull final ReceiverValue receiverArgument, @NotNull Collection<CallableDescriptor> extensions) {
-        final Map<JetType, Boolean> filterCache = new HashMap<JetType, Boolean>();
-
-        return Collections2.filter(extensions,
-            new Predicate<CallableDescriptor>() {
-                @Override
-                public boolean apply(CallableDescriptor callableDescriptor) {
-                    ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
-                    if (receiverParameter == null) {
-                        return false;
-                    }
-
-                    JetType type = receiverParameter.getType();
-                    if (filterCache.containsKey(type)) {
-                        return filterCache.get(type);
-                    }
-
-                    boolean isExtensionCallable = checkIsExtensionCallable(receiverArgument, callableDescriptor);
-                    filterCache.put(type, isExtensionCallable);
-
-                    return isExtensionCallable;
-                }
-            });
-    }
-
     /*
     * Checks if receiver declaration could be resolved to call expected receiver.
     */
@@ -324,7 +294,7 @@ public class ExpressionTypingUtils {
     }
 
     private static Set<Name> collectUsedTypeNames(@NotNull JetType jetType) {
-        Set<Name> typeNames = Sets.newHashSet();
+        Set<Name> typeNames = new HashSet<Name>();
 
         ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (descriptor != null) {
