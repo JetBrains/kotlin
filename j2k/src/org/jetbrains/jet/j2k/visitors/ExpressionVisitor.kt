@@ -308,19 +308,23 @@ class ExpressionVisitor(private val converter: Converter,
     }
 
     override fun visitReferenceExpression(expression: PsiReferenceExpression) {
+        val referencedName = expression.getReferenceName()!!
         val target = expression.getReference()?.resolve()
         val isNullable = if (target is PsiVariable) typeConverter.variableNullability(target).isNullable(converter.settings) else false
-        val referencedName = expression.getReferenceName()!!
-        var identifier: Expression = Identifier(referencedName, isNullable).assignNoPrototype()
-        val qualifier = expression.getQualifierExpression()
 
         val containingConstructor = expression.getContainingConstructor()
         val insideSecondaryConstructor = containingConstructor != null && !containingConstructor.isPrimaryConstructor()
-
-        if (insideSecondaryConstructor && (expression.getReference()?.resolve() as? PsiField)?.getContainingClass() == containingConstructor!!.getContainingClass()) {
-            identifier = QualifiedExpression(FactoryFunction.tempValIdentifier(), Identifier(referencedName, isNullable).assignNoPrototype())
+        if (insideSecondaryConstructor &&
+                isQualifierEmptyOrThis(expression) &&
+                (expression.getReference()?.resolve() as? PsiField)?.getContainingClass() == containingConstructor!!.getContainingClass()) {
+            result = QualifiedExpression(FactoryFunction.tempValIdentifier(), Identifier(referencedName, isNullable).assignNoPrototype())
+            return
         }
-        else if (qualifier != null && qualifier.getType() is PsiArrayType && referencedName == "length") {
+
+        var identifier = Identifier(referencedName, isNullable).assignNoPrototype()
+        val qualifier = expression.getQualifierExpression()
+
+        if (qualifier != null && qualifier.getType() is PsiArrayType && referencedName == "length") {
             identifier = Identifier("size", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
