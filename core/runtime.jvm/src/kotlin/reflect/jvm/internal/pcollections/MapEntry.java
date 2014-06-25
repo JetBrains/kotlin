@@ -19,20 +19,12 @@ package kotlin.reflect.jvm.internal.pcollections;
 final class MapEntry<K, V> implements java.io.Serializable {
     private static final long serialVersionUID = 7138329143949025153L;
 
-    private final K key;
-    private final V value;
+    public final K key;
+    public final V value;
 
     public MapEntry(K key, V value) {
         this.key = key;
         this.value = value;
-    }
-
-    public K getKey() {
-        return key;
-    }
-
-    public V getValue() {
-        return value;
     }
 
     @Override
@@ -45,8 +37,7 @@ final class MapEntry<K, V> implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return (key == null ? 0 : key.hashCode()) ^
-                (value == null ? 0 : value.hashCode());
+        return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
     }
 
     @Override

@@ -46,8 +46,8 @@ public final class HashPMap<K, V> {
     public V get(Object key) {
         ConsPStack<MapEntry<K, V>> entries = getEntries(key.hashCode());
         for (MapEntry<K, V> entry : entries)
-            if (entry.getKey().equals(key))
-                return entry.getValue();
+            if (entry.key.equals(key))
+                return entry.value;
         return null;
     }
 
@@ -81,7 +81,7 @@ public final class HashPMap<K, V> {
     private static <K, V> int keyIndexIn(ConsPStack<MapEntry<K, V>> entries, Object key) {
         int i = 0;
         for (MapEntry<K, V> entry : entries) {
-            if (entry.getKey().equals(key))
+            if (entry.key.equals(key))
                 return i;
             i++;
         }
