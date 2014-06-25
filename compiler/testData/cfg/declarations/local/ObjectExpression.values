@@ -17,7 +17,7 @@ class B : A {
 == foo ==
 override fun foo() = 10
 ---------------------
-10   <v0>: Int   NEW()
+10   <v0>: Int   NEW: r(10) -> <v0>
 =====================
 == foo ==
 fun foo(b: B) : Int {
@@ -25,9 +25,10 @@ fun foo(b: B) : Int {
     return o.foo()
 }
 ---------------------
-b                    <v1>: *                    NEW()
-object : A by b {}   <v2>: <no name provided>   NEW()
-o                    <v3>: {<: A}               NEW()
-foo()                <v4>: Int                  NEW(<v3>)
-o.foo()              <v4>: Int                  COPY
+                     <v0>: B                    NEW: magic(b: B) -> <v0>          
+b                    <v1>: *                    NEW: r(b) -> <v1>                 
+object : A by b {}   <v2>: <no name provided>   NEW: r(object : A by b {}) -> <v2>
+o                    <v3>: {<: A}               NEW: r(o) -> <v3>                 
+foo()                <v4>: Int                  NEW: call(foo, foo|<v3>) -> <v4>  
+o.foo()              <v4>: Int                  COPY                              
 =====================

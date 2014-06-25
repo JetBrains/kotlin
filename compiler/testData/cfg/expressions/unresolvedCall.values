@@ -3,8 +3,9 @@ fun test(a: Any) {
     a.foo()
 }
 ---------------------
-a             <v1>: *   NEW()
-foo()         <v2>: *   NEW(<v1>)
-a.foo()       <v2>: *   COPY
-{ a.foo() }   <v2>: *   COPY
+              <v0>: {<: Any}   NEW: magic(a: Any) -> <v0>    
+a             <v1>: *          NEW: r(a) -> <v1>             
+foo()         <v2>: *          NEW: magic(foo()|<v1>) -> <v2>
+a.foo()       <v2>: *          COPY                          
+{ a.foo() }   <v2>: *          COPY                          
 =====================

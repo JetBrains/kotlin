@@ -3,7 +3,8 @@ fun foo(f: () -> Unit) {
     f()
 }
 ---------------------
-f         <v1>: {<: () -> Unit}   NEW()
-f()       <v2>: *                 NEW(<v1>)
+          <v0>: {<: () -> Unit}   NEW: magic(f: () -> Unit) -> <v0>
+f         <v1>: {<: () -> Unit}   NEW: r(f) -> <v1>
+f()       <v2>: *                 NEW: call(f, invoke|<v1>) -> <v2>
 { f() }   <v2>: *                 COPY
 =====================

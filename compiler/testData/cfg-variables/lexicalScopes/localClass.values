@@ -12,15 +12,18 @@ fun foo() {
     "after"
 }
 ---------------------
-"before"                                                                             <v0>: *     NEW()
-x                                                                                    <v3>: Int   NEW(<v2>)
-"after"                                                                              <v4>: *     NEW()
-{ "before" class A(val x: Int) { { val a = x } fun foo() { val b = x } } "after" }   <v4>: *     COPY
+                                                                                     <v1>: Int   NEW: magic(val x: Int) -> <v1>
+                                                                                     <v2>: A     NEW: magic(x) -> <v2>         
+"before"                                                                             <v0>: *     NEW: r("before") -> <v0>      
+x                                                                                    <v3>: Int   NEW: r(x|<v2>) -> <v3>        
+"after"                                                                              <v4>: *     NEW: r("after") -> <v4>       
+{ "before" class A(val x: Int) { { val a = x } fun foo() { val b = x } } "after" }   <v4>: *     COPY                          
 =====================
 == foo ==
 fun foo() {
             val b = x
         }
 ---------------------
-x   <v1>: Int   NEW(<v0>)
+    <v0>: A     NEW: magic(x) -> <v0> 
+x   <v1>: Int   NEW: r(x|<v0>) -> <v1>
 =====================

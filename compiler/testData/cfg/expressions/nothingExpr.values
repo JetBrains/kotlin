@@ -5,7 +5,7 @@ fun Any?.doSomething() {}
 == bar ==
 fun bar(): Nothing = throw Exception()
 ---------------------
-Exception()   <v0>: {<: Throwable}   NEW()
+Exception()   <v0>: {<: Throwable}   NEW: call(Exception, <init>) -> <v0>
 =====================
 == foo ==
 fun foo() {
@@ -13,11 +13,11 @@ fun foo() {
     bar().doSomething
 }
 ---------------------
-null                                         <v0>: *   NEW()    
-null!!                                       <v1>: *   NEW(<v0>)
-doSomething()                                <v2>: *   NEW(<v1>)
-null!!.doSomething()                         <v2>: *   COPY     
-doSomething                                  <v3>: *   NEW()    
-bar().doSomething                            <v3>: *   COPY     
-{ null!!.doSomething() bar().doSomething }   <v3>: *   COPY     
+null                                         <v0>: *   NEW: r(null) -> <v0>                            
+null!!                                       <v1>: *   NEW: magic(null!!|<v0>) -> <v1>                 
+doSomething()                                <v2>: *   NEW: call(doSomething, doSomething|<v1>) -> <v2>
+null!!.doSomething()                         <v2>: *   COPY                                            
+doSomething                                  <v3>: *   NEW: call(doSomething, doSomething) -> <v3>     
+bar().doSomething                            <v3>: *   COPY                                            
+{ null!!.doSomething() bar().doSomething }   <v3>: *   COPY                                            
 =====================

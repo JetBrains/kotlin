@@ -17,11 +17,12 @@ class C() {
     }
 }
 ---------------------
-1   <v0>: Int   NEW()
+1   <v0>: Int   NEW: r(1) -> <v0>
 =====================
 == doSmth ==
 fun doSmth(i: Int) {}
 ---------------------
+    <v0>: Int   NEW: magic(i: Int) -> <v0>
 =====================
 == test1 ==
 fun test1() {
@@ -33,8 +34,9 @@ fun test1() {
     }
 }
 ---------------------
-1                                   <v1>: Int                  NEW()
-object { val x : Int { $x = 1 } }   <v2>: <no name provided>   NEW()
+                                    <v0>: <no name provided>   NEW: magic($x) -> <v0>                           
+1                                   <v1>: Int                  NEW: r(1) -> <v1>                                
+object { val x : Int { $x = 1 } }   <v2>: <no name provided>   NEW: r(object { val x : Int { $x = 1 } }) -> <v2>
 =====================
 == O ==
 object O {
@@ -44,7 +46,8 @@ object O {
     }
 }
 ---------------------
-1   <v1>: Int   NEW()
+    <v0>: O     NEW: magic($x) -> <v0>
+1   <v1>: Int   NEW: r(1) -> <v1>     
 =====================
 == test2 ==
 fun test2() {
@@ -54,9 +57,9 @@ fun test2() {
     }
 }
 ---------------------
-1                      <v0>: Int                  NEW()
-b                      <v1>: Int                  NEW()
-object { val x = b }   <v2>: <no name provided>   NEW()
+1                      <v0>: Int                  NEW: r(1) -> <v0>                   
+b                      <v1>: Int                  NEW: r(b) -> <v1>                   
+object { val x = b }   <v2>: <no name provided>   NEW: r(object { val x = b }) -> <v2>
 =====================
 == test3 ==
 fun test3() {
@@ -68,14 +71,15 @@ fun test3() {
     }
 }
 ---------------------
-object { val y : Int fun inner_bar() { y = 10 } }   <v0>: <no name provided>   NEW()
+object { val y : Int fun inner_bar() { y = 10 } }   <v0>: <no name provided>   NEW: r(object { val y : Int fun inner_bar() { y = 10 } }) -> <v0>
 =====================
 == inner_bar ==
 fun inner_bar() {
             y = 10
         }
 ---------------------
-10   <v1>: Int   NEW()
+     <v0>: <no name provided>   NEW: magic(y) -> <v0>
+10   <v1>: Int                  NEW: r(10) -> <v1>   
 =====================
 == test4 ==
 fun test4() {
@@ -91,15 +95,17 @@ fun test4() {
     }
 }
 ---------------------
-1                                                                    <v1>: Int                  NEW()
-object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }   <v2>: <no name provided>   NEW()
+                                                                     <v0>: <no name provided>   NEW: magic($x) -> <v0>                                                            
+1                                                                    <v1>: Int                  NEW: r(1) -> <v1>                                                                 
+object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }   <v2>: <no name provided>   NEW: r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }) -> <v2>
 =====================
 == ggg ==
 fun ggg() {
             y = 10
         }
 ---------------------
-10   <v1>: Int   NEW()
+     <v0>: <no name provided>   NEW: magic(y) -> <v0>
+10   <v1>: Int                  NEW: r(10) -> <v1>   
 =====================
 == test5 ==
 fun test5() {
@@ -117,21 +123,24 @@ fun test5() {
     }
 }
 ---------------------
-1                                                                         <v0>: Int                  NEW()
-2                                                                         <v2>: Int                  NEW()
-object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }   <v3>: <no name provided>   NEW()
+                                                                          <v1>: <no name provided>   NEW: magic($x) -> <v1>                                                                 
+1                                                                         <v0>: Int                  NEW: r(1) -> <v0>                                                                      
+2                                                                         <v2>: Int                  NEW: r(2) -> <v2>                                                                      
+object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }   <v3>: <no name provided>   NEW: r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v3>
 =====================
 == foo ==
 fun foo() {
             x = 3
         }
 ---------------------
-3   <v1>: Int   NEW()
+    <v0>: <no name provided>   NEW: magic(x) -> <v0>
+3   <v1>: Int                  NEW: r(3) -> <v1>    
 =====================
 == bar ==
 fun bar() {
             x = 4
         }
 ---------------------
-4   <v1>: Int   NEW()
+    <v0>: <no name provided>   NEW: magic(x) -> <v0>
+4   <v1>: Int                  NEW: r(4) -> <v1>    
 =====================

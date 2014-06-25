@@ -13,17 +13,20 @@ fun foo(numbers: Collection<Int>) {
     }
 }
 ---------------------
-numbers   <v1>: {<: Iterable<Int>}     NEW()          
-1         <v3>: {<: Comparable<Int>}   NEW()          
-2         <v4>: Int                    NEW()          
-1 < 2     <v5>: Boolean                NEW(<v3>, <v4>)
-false     <v6>: Boolean                NEW()          
-true      <v7>: Boolean                NEW()          
-b         <v8>: {<: Any?}              NEW()          
-use(b)    <v9>: *                      NEW(<v8>)      
+          <v0>: {<: Collection<Int>}   NEW: magic(numbers: Collection<Int>) -> <v0>
+          <v2>: Int                    NEW: magic(numbers|<v1>) -> <v2>            
+numbers   <v1>: {<: Iterable<Int>}     NEW: r(numbers) -> <v1>                     
+1         <v3>: {<: Comparable<Int>}   NEW: r(1) -> <v3>                           
+2         <v4>: Int                    NEW: r(2) -> <v4>                           
+1 < 2     <v5>: Boolean                NEW: call(<, compareTo|<v3>, <v4>) -> <v5>  
+false     <v6>: Boolean                NEW: r(false) -> <v6>                       
+true      <v7>: Boolean                NEW: r(true) -> <v7>                        
+b         <v8>: {<: Any?}              NEW: r(b) -> <v8>                           
+use(b)    <v9>: *                      NEW: call(use, use|<v8>) -> <v9>            
 =====================
 == use ==
 fun use(vararg a: Any?) = a
 ---------------------
-a   <v1>: {<: Array<Any?>}   NEW()
+    <v0>: {<: Array<Any?>}   NEW: magic(vararg a: Any?) -> <v0>
+a   <v1>: {<: Array<Any?>}   NEW: r(a) -> <v1>                 
 =====================

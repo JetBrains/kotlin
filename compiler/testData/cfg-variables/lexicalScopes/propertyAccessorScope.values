@@ -17,12 +17,15 @@ get() {
               return $a
           }
 ---------------------
-$a   <v1>: Int   NEW(<v0>)
+     <v0>: A     NEW: magic($a) -> <v0> 
+$a   <v1>: Int   NEW: r($a|<v0>) -> <v1>
 =====================
 == set_a ==
 set(v: Int) {
               $a = v
           }
 ---------------------
-v   <v2>: Int   NEW()
+    <v0>: Int   NEW: magic(v: Int) -> <v0>
+    <v1>: A     NEW: magic($a) -> <v1>    
+v   <v2>: Int   NEW: r(v) -> <v2>         
 =====================

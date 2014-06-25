@@ -10,12 +10,12 @@ fun foo() {
     use(b)
 }
 ---------------------
-1                                                                      <v0>: {<: Comparable<Int>}   NEW()          
-2                                                                      <v1>: Int                    NEW()          
-1 < 2                                                                  <v2>: Boolean                NEW(<v0>, <v1>)
-false                                                                  <v3>: Boolean                NEW()          
-true                                                                   <v4>: Boolean                NEW()          
-b                                                                      <v5>: *                      NEW()          
-use(b)                                                                 <v6>: *                      NEW(<v5>)      
-{ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) }   <v6>: *                      COPY           
+1                                                                      <v0>: {<: Comparable<Int>}   NEW: r(1) -> <v0>                         
+2                                                                      <v1>: Int                    NEW: r(2) -> <v1>                         
+1 < 2                                                                  <v2>: Boolean                NEW: call(<, compareTo|<v0>, <v1>) -> <v2>
+false                                                                  <v3>: Boolean                NEW: r(false) -> <v3>                     
+true                                                                   <v4>: Boolean                NEW: r(true) -> <v4>                      
+b                                                                      <v5>: *                      NEW: r(b) -> <v5>                         
+use(b)                                                                 <v6>: *                      NEW: magic(use(b)|<v5>) -> <v6>           
+{ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) }   <v6>: *                      COPY                                      
 =====================

@@ -7,15 +7,17 @@ class Delegate {
 == get ==
 fun get(_this: Any, p: PropertyMetadata): Int = 0
 ---------------------
-0   <v2>: Int   NEW()
+    <v0>: {<: Any}                NEW: magic(_this: Any) -> <v0>         
+    <v1>: {<: PropertyMetadata}   NEW: magic(p: PropertyMetadata) -> <v1>
+0   <v2>: Int                     NEW: r(0) -> <v2>                      
 =====================
 == a ==
 val a = Delegate()
 ---------------------
-Delegate()   <v0>: Delegate   NEW()
+Delegate()   <v0>: Delegate   NEW: call(Delegate, <init>) -> <v0>
 =====================
 == b ==
 val b by a
 ---------------------
-a   <v0>: *   NEW()
+a   <v0>: *   NEW: r(a) -> <v0>
 =====================
