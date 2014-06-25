@@ -58,28 +58,4 @@ class FactoryFunction(annotations: Annotations,
                       parameterList: ParameterList,
                       typeParameterList: TypeParameterList,
                       block: Block)
-: Function(Identifier("create").assignNoPrototype(), annotations, modifiers, returnType, typeParameterList, parameterList, block, false) {
-
-    /*
-    public fun toFactoryFunction(containingClass: Class?): Function {
-        val statements = ArrayList(block?.statements ?: listOf())
-        statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
-        val newBlock = Block(statements, block?.lBrace ?: LBrace().assignNoPrototype(), block?.rBrace ?: RBrace().assignNoPrototype())
-        if (block != null) {
-            newBlock.assignPrototypesFrom(block!!)
-        }
-
-        val typeParameters = if (containingClass != null) containingClass.typeParameterList.parameters else listOf()
-        val typeParameterList = TypeParameterList(typeParameters).assignNoPrototype()
-
-        val returnType = ClassType(containingClass?.name ?: Identifier.Empty, typeParameters, Nullability.NotNull, converter.settings).assignNoPrototype()
-        return Function(converter, Identifier("create").assignNoPrototype(), annotations, modifiers,
-                        returnType, typeParameterList, parameterList, newBlock, false).assignPrototypesFrom(this)
-    }
-    */
-
-    class object {
-        public val tempValName: String = "__"
-        public fun tempValIdentifier(): Identifier = Identifier(tempValName, false).assignNoPrototype()
-    }
-}
+: Function(Identifier("create").assignNoPrototype(), annotations, modifiers, returnType, typeParameterList, parameterList, block, false)

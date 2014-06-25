@@ -37,7 +37,21 @@ class ConstructorConverter(private val converter: Converter) {
         }
         else {
             val params = converter.convertParameterList(constructor.getParameterList())
-            var body = postProcessBody(converter.convertBlock(constructor.getBody()))
+            val bodyConverter = converter.withExpressionVisitor { object : ExpressionVisitor(it, mapOf()/*TODO: see KT-5327*/) {
+                override fun visitReferenceExpression(expression: PsiReferenceExpression) {
+                    if (isQualifierEmptyOrThis(expression)) {
+                        val field = expression.getReference()?.resolve() as? PsiField
+                        if (field != null && field.getContainingClass() == constructor.getContainingClass()) {
+                            val isNullable = typeConverter.variableNullability(field).isNullable(converter.settings)
+                            result = QualifiedExpression(tempValIdentifier(), Identifier(expression.getReferenceName()!!, isNullable).assignNoPrototype())
+                            return
+                        }
+                    }
+
+                    super.visitReferenceExpression(expression)
+                }
+            }}
+            var body = postProcessBody(bodyConverter.convertBlock(constructor.getBody()))
             val containingClass = constructor.getContainingClass()
             val typeParameterList = converter.convertTypeParameterList(containingClass?.getTypeParameterList())
             val factoryFunctionType = ClassType(containingClass?.declarationIdentifier() ?: Identifier.Empty,
@@ -84,8 +98,8 @@ class ConstructorConverter(private val converter: Converter) {
                 }
             }
 
-            val correctedConverter = converter.withExpressionVisitor { ExpressionVisitor(it, usageReplacementMap) }
-            postProcessBody(correctedConverter.convertBlock(body, false, { !statementsToRemove.contains(it) }))
+            val bodyConverter = converter.withExpressionVisitor { ExpressionVisitor(it, usageReplacementMap) }
+            postProcessBody(bodyConverter.convertBlock(body, false, { !statementsToRemove.contains(it) }))
         }
         else {
             Block.Empty
@@ -163,7 +177,7 @@ class ConstructorConverter(private val converter: Converter) {
                 var keepStatement = true
                 if (statement is AssignmentExpression) {
                     val assignee = statement.left
-                    if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == FactoryFunction.tempValName) {
+                    if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == tempValName) {
                         val name = (assignee.identifier as Identifier).name
                         for (field in finalOrWithEmptyInitializerFields) {
                             if (name == field.identifier.name) {
@@ -185,14 +199,14 @@ class ConstructorConverter(private val converter: Converter) {
                                                                 className.name,
                                                                 finalOrWithEmptyInitializerFields.map { initializers[it]!! }).assignNoPrototype()
             if (statements.isNotEmpty()) {
-                val localVar = LocalVariable(FactoryFunction.tempValIdentifier(),
+                val localVar = LocalVariable(tempValIdentifier(),
                                              Annotations.Empty,
                                              Modifiers.Empty,
                                              null,
                                              initializer,
                                              true).assignNoPrototype()
                 statements.add(0, DeclarationStatement(listOf(localVar)).assignNoPrototype())
-                statements.add(ReturnStatement(FactoryFunction.tempValIdentifier()).assignNoPrototype())
+                statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
             }
             else {
                 statements.add(ReturnStatement(initializer).assignNoPrototype())
@@ -235,16 +249,19 @@ class ConstructorConverter(private val converter: Converter) {
                         statements[i] = ReturnStatement(constructorCall).assignNoPrototype()
                         return statements
                     }
-                    val localVar = LocalVariable(FactoryFunction.tempValIdentifier(), Annotations.Empty, Modifiers.Empty, null, constructorCall, true).assignNoPrototype()
+                    val localVar = LocalVariable(tempValIdentifier(), Annotations.Empty, Modifiers.Empty, null, constructorCall, true).assignNoPrototype()
                     statements[i] = DeclarationStatement(listOf(localVar)).assignNoPrototype()
                     break
                 }
             }
         }
 
-        statements.add(ReturnStatement(FactoryFunction.tempValIdentifier()).assignNoPrototype())
+        statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
         return statements
     }
 
     private fun ClassBody.factoryFunctions() = classObjectMembers.filterIsInstance(javaClass<FactoryFunction>())
+
+    private val tempValName: String = "__"
+    private fun tempValIdentifier(): Identifier = Identifier(tempValName, false).assignNoPrototype()
 }

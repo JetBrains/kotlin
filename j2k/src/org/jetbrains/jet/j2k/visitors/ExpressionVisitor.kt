@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 
-class ExpressionVisitor(private val converter: Converter,
+open class ExpressionVisitor(private val converter: Converter,
                         private val usageReplacementMap: Map<PsiVariable, String> = mapOf()) : JavaElementVisitor() {
     private val typeConverter = converter.typeConverter
 
@@ -308,27 +308,17 @@ class ExpressionVisitor(private val converter: Converter,
     }
 
     override fun visitReferenceExpression(expression: PsiReferenceExpression) {
-        val referencedName = expression.getReferenceName()!!
+        val referenceName = expression.getReferenceName()!!
         val target = expression.getReference()?.resolve()
         val isNullable = if (target is PsiVariable) typeConverter.variableNullability(target).isNullable(converter.settings) else false
-
-        val containingConstructor = expression.getContainingConstructor()
-        val insideSecondaryConstructor = containingConstructor != null && !containingConstructor.isPrimaryConstructor()
-        if (insideSecondaryConstructor &&
-                isQualifierEmptyOrThis(expression) &&
-                (expression.getReference()?.resolve() as? PsiField)?.getContainingClass() == containingConstructor!!.getContainingClass()) {
-            result = QualifiedExpression(FactoryFunction.tempValIdentifier(), Identifier(referencedName, isNullable).assignNoPrototype())
-            return
-        }
-
-        var identifier = Identifier(referencedName, isNullable).assignNoPrototype()
         val qualifier = expression.getQualifierExpression()
 
-        if (qualifier != null && qualifier.getType() is PsiArrayType && referencedName == "length") {
+        var identifier = Identifier(referenceName, isNullable).assignNoPrototype()
+        if (qualifier != null && qualifier.getType() is PsiArrayType && referenceName == "length") {
             identifier = Identifier("size", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
-            if (referencedName == JvmAbi.CLASS_OBJECT_FIELD || referencedName == JvmAbi.INSTANCE_FIELD) {
+            if (referenceName == JvmAbi.CLASS_OBJECT_FIELD || referenceName == JvmAbi.INSTANCE_FIELD) {
                 if (target is LightField) { //TODO: should be KotlinLightField with check of origin here, see KT-5188
                     result = converter.convertExpression(qualifier)
                     return
@@ -349,7 +339,7 @@ class ExpressionVisitor(private val converter: Converter,
                     && !PsiTreeUtil.isAncestor(target.getContainingClass(), expression, true)
                     && !isStaticallyImported(target, expression)) {
                 var member: PsiMember = target
-                var code = Identifier.toKotlin(referencedName)
+                var code = Identifier.toKotlin(referenceName)
                 while (member.getContainingClass() != null) {
                     code = Identifier.toKotlin(member.getContainingClass()!!.getName()!!) + "." + code
                     member = member.getContainingClass()!!
