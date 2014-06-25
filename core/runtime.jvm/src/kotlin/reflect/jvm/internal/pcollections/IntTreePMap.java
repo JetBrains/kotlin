@@ -1,23 +1,23 @@
+/*
+ * Copyright 2010-2014 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package kotlin.reflect.jvm.internal.pcollections;
 
 /**
  * An efficient persistent map from integer keys to non-null values.
- * <p/>
- * Iteration occurs in the integer order of the keys.
- * <p/>
- * This implementation is thread-safe, although its iterators may not be.
- * <p/>
- * The balanced tree is based on the Glasgow Haskell Compiler's Data.Map implementation,
- * which in turn is based on "size balanced binary trees" as described by:
- * <p/>
- * Stephen Adams, "Efficient sets: a balancing act",
- * Journal of Functional Programming 3(4):553-562, October 1993,
- * http://www.swiss.ai.mit.edu/~adams/BB/.
- * <p/>
- * J. Nievergelt and E.M. Reingold, "Binary search trees of bounded balance",
- * SIAM journal of computing 2(1), March 1973.
- *
- * @author harold
  */
 final class IntTreePMap<V> {
     private static final IntTreePMap<Object> EMPTY = new IntTreePMap<Object>(IntTree.EMPTYNODE);
