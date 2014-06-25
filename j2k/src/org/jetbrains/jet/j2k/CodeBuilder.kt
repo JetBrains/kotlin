@@ -108,7 +108,8 @@ class CodeBuilder(private val topElement: PsiElement?) {
         for (i in prefixElements.indices) {
             val e = prefixElements[i]
             if (i == 0 && e is PsiWhiteSpace) {
-                if (e.newLinesCount() > 1) {  // insert at maximum one blank line
+                val blankLines = e.newLinesCount() - 1
+                for (_ in 1..blankLines) {
                     append("\n", false)
                 }
             }
