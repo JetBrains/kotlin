@@ -161,6 +161,8 @@ public class FunctionCodegen extends ParentCodegenAware {
                     new Label(),
                     methodContextKind
             );
+
+            mv.visitEnd();
             return;
         }
 
