@@ -138,6 +138,8 @@ public class PropertyCodegen {
             AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(visitor, typeMapper);
             annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.getType());
         }
+
+        visitor.visitEnd();
     }
 
     private boolean generateBackingField(@NotNull JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor) {

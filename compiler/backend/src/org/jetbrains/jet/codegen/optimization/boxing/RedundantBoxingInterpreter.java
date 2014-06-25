@@ -22,6 +22,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.InsnList;
+import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter;
@@ -90,6 +91,34 @@ class RedundantBoxingInterpreter extends BasicInterpreter {
         }
 
         return super.newValue(type);
+    }
+
+    @Override
+    public BasicValue newOperation(@NotNull AbstractInsnNode insn) throws AnalyzerException {
+        if (insn.getOpcode() == Opcodes.LDC) {
+            Object cst = ((LdcInsnNode) insn).cst;
+
+            if (cst instanceof Long) {
+                return BasicValue.LONG_VALUE;
+            }
+            if (cst instanceof Boolean ||
+                cst instanceof Integer ||
+                cst instanceof Short ||
+                cst instanceof Byte ||
+                cst instanceof Character) {
+                return BasicValue.INT_VALUE;
+            }
+
+            if (cst instanceof Float) {
+                return BasicValue.FLOAT_VALUE;
+            }
+
+            if (cst instanceof Double) {
+                return BasicValue.DOUBLE_VALUE;
+            }
+        }
+
+        return super.newOperation(insn);
     }
 
     @Override

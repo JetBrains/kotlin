@@ -41,6 +41,10 @@ public abstract class SignatureCollectingClassBuilderFactory(
         return delegate.asBytes((builder as SignatureCollectingClassBuilder)._delegate)
     }
 
+    public override fun asText(builder: ClassBuilder?): String? {
+        return delegate.asText((builder as SignatureCollectingClassBuilder)._delegate)
+    }
+
     private inner class SignatureCollectingClassBuilder(
             private val classCreatedFor: JvmDeclarationOrigin,
             internal val _delegate: ClassBuilder
