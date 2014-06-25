@@ -16,23 +16,40 @@
 
 package kotlin.reflect.jvm.internal
 
-import kotlin.reflect.jvm.KOTLIN_CLASS_ANNOTATION_CLASS
-
 enum class KClassOrigin {
     BUILT_IN
     KOTLIN
     FOREIGN
 }
 
-class KClassImpl<out T>(
-        val jClass: Class<T>
-) : KClass<T> {
+private val KOTLIN_CLASS_ANNOTATION_CLASS = Class.forName("kotlin.jvm.internal.KotlinClass") as Class<Annotation>
+private val KOTLIN_SYNTHETIC_CLASS_ANNOTATION_CLASS = Class.forName("kotlin.jvm.internal.KotlinSyntheticClass") as Class<Annotation>
+
+class KClassImpl<out T>(val jClass: Class<T>) : KClass<T> {
+    // TODO: write metadata to local classes
     val origin: KClassOrigin =
-            if (K_OBJECT_CLASS.isAssignableFrom(jClass) && jClass.isAnnotationPresent(KOTLIN_CLASS_ANNOTATION_CLASS)) {
+            if (jClass.isAnnotationPresent(KOTLIN_CLASS_ANNOTATION_CLASS) ||
+                jClass.isAnnotationPresent(KOTLIN_SYNTHETIC_CLASS_ANNOTATION_CLASS)) {
                 KClassOrigin.KOTLIN
             }
             else {
                 KClassOrigin.FOREIGN
                 // TODO: built-in classes
+            }
+
+    fun memberProperty(name: String): KMemberProperty<T, *> =
+            if (origin identityEquals KClassOrigin.KOTLIN) {
+                KMemberPropertyImpl<T, Any>(name, this)
+            }
+            else {
+                KForeignMemberProperty<T, Any>(name, this)
+            }
+
+    fun mutableMemberProperty(name: String): KMutableMemberProperty<T, *> =
+            if (origin identityEquals KClassOrigin.KOTLIN) {
+                KMutableMemberPropertyImpl<T, Any>(name, this)
+            }
+            else {
+                KMutableForeignMemberProperty<T, Any>(name, this)
             }
 }

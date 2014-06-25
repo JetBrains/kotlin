@@ -38,12 +38,13 @@ public class AsmTypeConstants {
     public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadata");
     public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadataImpl");
 
+    public static final Type K_MEMBER_PROPERTY_TYPE = Type.getObjectType("kotlin/reflect/KMemberProperty");
+    public static final Type K_MUTABLE_MEMBER_PROPERTY_TYPE = Type.getObjectType("kotlin/reflect/KMutableMemberProperty");
+
     public static final Type K_CLASS_IMPL_TYPE = reflectInternal("KClassImpl");
     public static final Type K_PACKAGE_IMPL_TYPE = reflectInternal("KPackageImpl");
     public static final Type K_TOP_LEVEL_PROPERTY_IMPL_TYPE = reflectInternal("KTopLevelPropertyImpl");
     public static final Type K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE = reflectInternal("KMutableTopLevelPropertyImpl");
-    public static final Type K_MEMBER_PROPERTY_IMPL_TYPE = reflectInternal("KMemberPropertyImpl");
-    public static final Type K_MUTABLE_MEMBER_PROPERTY_IMPL_TYPE = reflectInternal("KMutableMemberPropertyImpl");
     public static final Type K_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KExtensionPropertyImpl");
     public static final Type K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KMutableExtensionPropertyImpl");
 

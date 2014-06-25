@@ -70,7 +70,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -78,6 +77,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -2427,68 +2427,75 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (variableDescriptor != null) {
             VariableDescriptor descriptor = (VariableDescriptor) resolvedCall.getResultingDescriptor();
 
-            ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
-
-            String reflectionFieldOwner;
-            Type ownerType;
-            String reflectionFieldName;
-            Method factory;
-
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
             if (containingDeclaration instanceof PackageFragmentDescriptor) {
-                reflectionFieldOwner =
-                        PackageClassUtils.getPackageClassInternalName(((PackageFragmentDescriptor) containingDeclaration).getFqName());
-
-                ownerType = K_PACKAGE_IMPL_TYPE;
-                reflectionFieldName = JvmAbi.KOTLIN_PACKAGE_FIELD_NAME;
-
-                if (receiverParameter != null) {
-                    factory = descriptor.isVar()
-                              ? method("mutableExtensionProperty", K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType,
-                                       getType(Class.class))
-                              : method("extensionProperty", K_EXTENSION_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType,
-                                       getType(Class.class));
-                }
-                else {
-                    factory = descriptor.isVar()
-                              ? method("mutableTopLevelProperty", K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType)
-                              : method("topLevelProperty", K_TOP_LEVEL_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType);
-                }
+                return generateTopLevelPropertyReference(descriptor);
             }
             else if (containingDeclaration instanceof ClassDescriptor) {
-                reflectionFieldOwner = typeMapper.mapClass((ClassDescriptor) containingDeclaration).getInternalName();
-                ownerType = K_CLASS_IMPL_TYPE;
-                reflectionFieldName = JvmAbi.KOTLIN_CLASS_FIELD_NAME;
-
-                factory = descriptor.isVar()
-                          ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType)
-                          : method("memberProperty", K_MEMBER_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType);
+                return generateMemberPropertyReference(descriptor);
             }
             else {
                 throw new UnsupportedOperationException("Unsupported callable reference container: " + containingDeclaration);
             }
-
-            v.visitLdcInsn(descriptor.getName().asString());
-
-            if (containingDeclaration instanceof JavaClassDescriptor) {
-                v.aconst(Type.getObjectType(reflectionFieldOwner));
-                v.invokestatic(REFLECTION_INTERNAL_PACKAGE, "foreignKotlinClass",
-                               Type.getMethodDescriptor(K_CLASS_IMPL_TYPE, getType(Class.class)), false);
-            }
-            else {
-                // TODO: built-in classes
-                v.getstatic(reflectionFieldOwner, reflectionFieldName, ownerType.getDescriptor());
-            }
-
-            if (receiverParameter != null) {
-                putJavaLangClassInstance(v, typeMapper.mapType(receiverParameter));
-            }
-
-            v.invokestatic(REFLECTION_INTERNAL_PACKAGE, factory.getName(), factory.getDescriptor(), false);
-            return StackValue.onStack(factory.getReturnType());
         }
 
         throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
+    }
+
+    @NotNull
+    private StackValue generateTopLevelPropertyReference(@NotNull VariableDescriptor descriptor) {
+        PackageFragmentDescriptor containingPackage = (PackageFragmentDescriptor) descriptor.getContainingDeclaration();
+        String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(containingPackage.getFqName());
+
+        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        Method factoryMethod;
+        if (receiverParameter != null) {
+            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE, getType(Class.class)};
+            factoryMethod = descriptor.isVar()
+                            ? method("mutableExtensionProperty", K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes)
+                            : method("extensionProperty", K_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes);
+        }
+        else {
+            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE};
+            factoryMethod = descriptor.isVar()
+                            ? method("mutableTopLevelProperty", K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE, parameterTypes)
+                            : method("topLevelProperty", K_TOP_LEVEL_PROPERTY_IMPL_TYPE, parameterTypes);
+        }
+
+        v.visitLdcInsn(descriptor.getName().asString());
+        v.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_IMPL_TYPE.getDescriptor());
+
+        if (receiverParameter != null) {
+            putJavaLangClassInstance(v, typeMapper.mapType(receiverParameter));
+        }
+
+        v.invokestatic(REFLECTION_INTERNAL_PACKAGE, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
+
+        return StackValue.onStack(factoryMethod.getReturnType());
+    }
+
+    @NotNull
+    private StackValue generateMemberPropertyReference(@NotNull VariableDescriptor descriptor) {
+        ClassDescriptor containingClass = (ClassDescriptor) descriptor.getContainingDeclaration();
+        Type classAsmType = typeMapper.mapClass(containingClass);
+
+        if (containingClass instanceof JavaClassDescriptor) {
+            v.aconst(classAsmType);
+            v.invokestatic(REFLECTION_INTERNAL_PACKAGE, "foreignKotlinClass",
+                           Type.getMethodDescriptor(K_CLASS_IMPL_TYPE, getType(Class.class)), false);
+        }
+        else {
+            v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_IMPL_TYPE.getDescriptor());
+        }
+
+        Method factoryMethod = descriptor.isVar()
+                               ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE)
+                               : method("memberProperty", K_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE);
+
+        v.visitLdcInsn(descriptor.getName().asString());
+        v.invokevirtual(K_CLASS_IMPL_TYPE.getInternalName(), factoryMethod.getName(), factoryMethod.getDescriptor(), false);
+
+        return StackValue.onStack(factoryMethod.getReturnType());
     }
 
     private static class CallableReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased<FunctionDescriptor> {

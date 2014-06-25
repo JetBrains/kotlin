@@ -43,15 +43,3 @@ private fun Class<*>.getMaybeDeclaredMethod(name: String, vararg parameterTypes:
         return getDeclaredMethod(name, *parameterTypes)
     }
 }
-
-
-private val K_OBJECT_CLASS = Class.forName("kotlin.jvm.internal.KObject")
-
-fun <T> kotlinClass(jClass: Class<T>): KClassImpl<T> {
-    if (K_OBJECT_CLASS.isAssignableFrom(jClass)) {
-        val field = jClass.getDeclaredField("\$kotlinClass")
-        return field.get(null) as KClassImpl<T>
-    }
-    // TODO: built-in classes
-    return foreignKotlinClass(jClass)
-}

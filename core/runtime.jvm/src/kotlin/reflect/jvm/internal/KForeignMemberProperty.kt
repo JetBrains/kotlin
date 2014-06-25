@@ -18,35 +18,26 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.*
 
-// TODO: properties of built-in classes
-
-open class KMemberPropertyImpl<T : Any, out R>(
+open class KForeignMemberProperty<T : Any, out R>(
         public override val name: String,
         protected val owner: KClassImpl<T>
 ) : KMemberProperty<T, R>, KPropertyImpl<R> {
-    override val field: Field?
-        get() = try {
-            owner.jClass.getDeclaredField(name)
-        }
-        catch (e: NoSuchFieldException) {
-            null
-        }
+    override val field: Field = owner.jClass.getField(name)
 
-    // TODO: extract, make lazy (weak?), use our descriptors knowledge
-    override val getter: Method = owner.jClass.getMaybeDeclaredMethod(getterName(name))
+    override val getter: Method? get() = null
 
     override fun get(receiver: T): R {
-        return getter(receiver) as R
+        return field.get(receiver) as R
     }
 }
 
-class KMutableMemberPropertyImpl<T : Any, R>(
+class KMutableForeignMemberProperty<T : Any, out R>(
         name: String,
         owner: KClassImpl<T>
-) : KMutableMemberProperty<T, R>, KMutablePropertyImpl<R>, KMemberPropertyImpl<T, R>(name, owner) {
-    override val setter: Method = owner.jClass.getMaybeDeclaredMethod(setterName(name), getter.getReturnType()!!)
+) : KMutableMemberProperty<T, R>, KMutablePropertyImpl<R>, KForeignMemberProperty<T, R>(name, owner) {
+    override val setter: Method? get() = null
 
     override fun set(receiver: T, value: R) {
-        setter(receiver, value)
+        field.set(receiver, value)
     }
 }

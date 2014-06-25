@@ -34,10 +34,3 @@ fun <T> extensionProperty(name: String, owner: KPackageImpl, receiver: Class<T>)
 
 fun <T> mutableExtensionProperty(name: String, owner: KPackageImpl, receiver: Class<T>): KMutableExtensionPropertyImpl<T, Any?> =
         KMutableExtensionPropertyImpl<T, Any?>(name, owner, receiver)
-
-fun <T : Any> memberProperty(name: String, owner: KClassImpl<T>): KMemberPropertyImpl<T, Any?> =
-        KMemberPropertyImpl<T, Any?>(name, owner)
-
-fun <T : Any> mutableMemberProperty(name: String, owner: KClassImpl<T>): KMutableMemberPropertyImpl<T, Any?> =
-        KMutableMemberPropertyImpl<T, Any?>(name, owner)
-
