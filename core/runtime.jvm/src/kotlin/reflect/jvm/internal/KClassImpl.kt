@@ -16,6 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
+import kotlin.reflect.jvm.KOTLIN_CLASS_ANNOTATION_CLASS
+
 enum class KClassOrigin {
     BUILT_IN
     KOTLIN
@@ -26,7 +28,7 @@ class KClassImpl<out T>(
         val jClass: Class<T>
 ) : KClass<T> {
     val origin: KClassOrigin =
-            if (K_OBJECT_CLASS.isAssignableFrom(jClass)) {
+            if (K_OBJECT_CLASS.isAssignableFrom(jClass) && jClass.isAnnotationPresent(KOTLIN_CLASS_ANNOTATION_CLASS)) {
                 KClassOrigin.KOTLIN
             }
             else {
