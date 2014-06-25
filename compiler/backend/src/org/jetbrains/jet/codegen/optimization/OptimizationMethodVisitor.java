@@ -27,6 +27,7 @@ import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OptimizationMethodVisitor extends MethodVisitor {
     private final MethodTransformer methodTransformer = new RedundantBoxingMethodTransformer(null);
@@ -50,14 +51,46 @@ public class OptimizationMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitEnd() {
+        // force mv to calculate maxStack/maxLocals in case it didn't yet done
         if (methodNode.maxLocals <= 0 || methodNode.maxStack <= 0) {
             mv.visitMaxs(-1, -1);
         }
 
         super.visitEnd();
 
-        methodTransformer.transform("fake", methodNode);
+        if (methodNode.instructions.size() > 0) {
+            methodTransformer.transform("fake", methodNode);
+        }
 
-        methodNode.accept(delegate);
+        methodNode.accept(new EndIgnoringMethodVisitorDecorator(OptimizationUtils.API, delegate));
+
+        /*
+        In case of empty instructions list MethodNode.accept doesn't call visitLocalVariables of delegate
+        So we just do it here
+         */
+        if (methodNode.instructions.size() == 0) {
+            List<LocalVariableNode> localVariables = methodNode.localVariables;
+            // visits local variables
+            int n = localVariables == null ? 0 : localVariables.size();
+            for (int i = 0; i < n; ++i) {
+                localVariables.get(i).accept(delegate);
+            }
+        }
+
+        delegate.visitEnd();
+    }
+
+    /**
+     * You can use it when you need to ignore visit end
+     */
+    private static class EndIgnoringMethodVisitorDecorator extends MethodVisitor {
+        public EndIgnoringMethodVisitorDecorator(int api, @NotNull MethodVisitor mv) {
+            super(api, mv);
+        }
+
+        @Override
+        public void visitEnd() {
+
+        }
     }
 }
