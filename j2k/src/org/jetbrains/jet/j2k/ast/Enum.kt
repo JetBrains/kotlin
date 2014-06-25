@@ -37,6 +37,6 @@ class Enum(
         }
         builder append typeParameterList
         appendBaseTypes(builder)
-        body.append(builder, this)
+        body.append(builder)
     }
 }

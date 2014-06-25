@@ -318,10 +318,7 @@ class ExpressionVisitor(private val converter: Converter,
         val insideSecondaryConstructor = containingConstructor != null && !containingConstructor.isPrimaryConstructor()
 
         if (insideSecondaryConstructor && (expression.getReference()?.resolve() as? PsiField)?.getContainingClass() == containingConstructor!!.getContainingClass()) {
-            identifier = QualifiedExpression(SecondaryConstructor.tempValIdentifier(), Identifier(referencedName, isNullable).assignNoPrototype())
-        }
-        else if (insideSecondaryConstructor && expression.isThisConstructorCall()) {
-            identifier = Identifier("val __ = " + (containingConstructor?.getContainingClass()?.getNameIdentifier()?.getText() ?: "")).assignNoPrototype()
+            identifier = QualifiedExpression(FactoryFunction.tempValIdentifier(), Identifier(referencedName, isNullable).assignNoPrototype())
         }
         else if (qualifier != null && qualifier.getType() is PsiArrayType && referencedName == "length") {
             identifier = Identifier("size", isNullable).assignNoPrototype()

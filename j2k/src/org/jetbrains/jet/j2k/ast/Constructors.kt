@@ -16,37 +16,26 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
 import org.jetbrains.jet.j2k.*
 import com.intellij.util.IncorrectOperationException
 
-abstract class Constructor(
-        converter: Converter,
-        annotations: Annotations,
-        modifiers: Modifiers,
-        parameterList: ParameterList,
-        block: Block
-) : Function(converter, Identifier.Empty, annotations, modifiers, ErrorType(), TypeParameterList.Empty, parameterList, block, false) {
+class PrimaryConstructor(annotations: Annotations,
+                         modifiers: Modifiers,
+                         val parameterList: ParameterList,
+                         val block: Block)
+  :  Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) { throw IncorrectOperationException() }
-}
-
-class PrimaryConstructor(converter: Converter,
-                         annotations: Annotations,
-                         modifiers: Modifiers,
-                         parameterList: ParameterList,
-                         block: Block)
-  : Constructor(converter, annotations, modifiers, parameterList, block) {
 
     public fun initializer(): Initializer? {
-        return if (!block!!.isEmpty)
-            Initializer(block!!, Modifiers.Empty).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
+        return if (!block.isEmpty)
+            Initializer(block, Modifiers.Empty).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
         else
             null
     }
 
     public fun signature(): PrimaryConstructorSignature {
-        val noBody = block!!.isEmpty
+        val noBody = block.isEmpty
         val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = noBody, commentsInside = noBody)
         return PrimaryConstructorSignature(modifiers, parameterList).assignPrototypesFrom(this, inheritance)
     }
@@ -63,13 +52,15 @@ class PrimaryConstructorSignature(val modifiers: Modifiers, val parameterList: P
     }
 }
 
-class SecondaryConstructor(converter: Converter,
-                         annotations: Annotations,
-                         modifiers: Modifiers,
-                         parameterList: ParameterList,
-                         block: Block)
-  : Constructor(converter, annotations, modifiers, parameterList, block) {
+class FactoryFunction(annotations: Annotations,
+                      modifiers: Modifiers,
+                      returnType: Type,
+                      parameterList: ParameterList,
+                      typeParameterList: TypeParameterList,
+                      block: Block)
+: Function(Identifier("create").assignNoPrototype(), annotations, modifiers, returnType, typeParameterList, parameterList, block, false) {
 
+    /*
     public fun toFactoryFunction(containingClass: Class?): Function {
         val statements = ArrayList(block?.statements ?: listOf())
         statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
@@ -85,6 +76,7 @@ class SecondaryConstructor(converter: Converter,
         return Function(converter, Identifier("create").assignNoPrototype(), annotations, modifiers,
                         returnType, typeParameterList, parameterList, newBlock, false).assignPrototypesFrom(this)
     }
+    */
 
     class object {
         public val tempValName: String = "__"

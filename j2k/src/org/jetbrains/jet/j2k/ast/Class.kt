@@ -41,7 +41,7 @@ open class Class(
         }
         appendBaseTypes(builder)
         typeParameterList.appendWhere(builder)
-        body.append(builder, this)
+        body.append(builder)
     }
 
     protected open val keyword: String

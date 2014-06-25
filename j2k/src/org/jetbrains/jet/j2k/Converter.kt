@@ -122,22 +122,22 @@ public class Converter private(val project: Project, val settings: ConverterSett
             convertedMembers.remove(member)
         }
 
-        val primaryConstructor = convertedMembers.values().filterIsInstance(javaClass<PrimaryConstructor>()).firstOrNull()
-        val secondaryConstructors = convertedMembers.values().filterIsInstance(javaClass<SecondaryConstructor>())
-
         val useClassObject = shouldGenerateClassObject(psiClass, convertedMembers)
 
         val members = ArrayList<Member>()
         val classObjectMembers = ArrayList<Member>()
+        var primaryConstructorSignature: PrimaryConstructorSignature? = null
         for ((psiMember, member) in convertedMembers) {
-            if (member is SecondaryConstructor) continue
             if (member is PrimaryConstructor) {
+                assert(primaryConstructorSignature == null)
+                primaryConstructorSignature = member.signature()
                 val initializer = member.initializer()
                 if (initializer != null) {
                     members.add(initializer)
                 }
             }
-            else if (useClassObject && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
+            else if (useClassObject && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC) ||
+                    member is FactoryFunction) {
                 classObjectMembers.add(member)
             }
             else {
@@ -147,7 +147,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
         val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
-        return ClassBody(primaryConstructor?.signature(), members, secondaryConstructors, classObjectMembers, lBrace, rBrace)
+        return ClassBody(primaryConstructorSignature, members, classObjectMembers, lBrace, rBrace)
     }
 
     // do not convert private static methods into class object if possible
@@ -190,6 +190,9 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 if (psiClass.getPrimaryConstructor() == null && psiClass.getConstructors().size > 1) {
                     classBody = generateArtificialPrimaryConstructor(name, classBody)
                 }
+                else {
+                    correctFactoryFunctions(classBody, psiClass.getName()!!)
+                }
 
                 val baseClassParams: List<Expression> = run {
                     val superVisitor = SuperVisitor()
@@ -216,22 +219,24 @@ public class Converter private(val project: Project, val settings: ConverterSett
         }.assignPrototype(psiClass)
     }
 
+    private fun ClassBody.factoryFunctions() = classObjectMembers.filterIsInstance(javaClass<FactoryFunction>())
+
     private fun generateArtificialPrimaryConstructor(className: Identifier, classBody: ClassBody): ClassBody {
         assert(classBody.primaryConstructorSignature == null)
 
         val finalOrWithEmptyInitializerFields = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.isEmpty }
         val initializers = HashMap<Field, Expression>()
-        for (constructor in classBody.secondaryConstructors) {
+        for (factoryFunction in classBody.factoryFunctions()) {
             for (field in finalOrWithEmptyInitializerFields) {
                 initializers.put(field, getDefaultInitializer(field))
             }
 
-            val newStatements = ArrayList<Statement>()
-            for (statement in constructor.block!!.statements) {
+            val statements = ArrayList<Statement>()
+            for (statement in factoryFunction.body!!.statements) {
                 var keepStatement = true
                 if (statement is AssignmentExpression) {
                     val assignee = statement.left
-                    if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == SecondaryConstructor.tempValName) {
+                    if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == FactoryFunction.tempValName) {
                         val name = (assignee.identifier as Identifier).name
                         for (field in finalOrWithEmptyInitializerFields) {
                             if (name == field.identifier.name) {
@@ -245,21 +250,21 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 }
 
                 if (keepStatement) {
-                    newStatements.add(statement)
+                    statements.add(statement)
                 }
-
             }
 
             val initializer = MethodCallExpression.buildNotNull(null, className.name, finalOrWithEmptyInitializerFields.map { initializers[it]!! })
             initializer.assignNoPrototype()
-            val localVar = LocalVariable(SecondaryConstructor.tempValIdentifier(),
+            val localVar = LocalVariable(FactoryFunction.tempValIdentifier(),
                                          Annotations.Empty,
                                          Modifiers.Empty,
                                          null,
                                          initializer,
                                          true).assignNoPrototype()
-            newStatements.add(0, DeclarationStatement(listOf(localVar)).assignNoPrototype())
-            constructor.block = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+            statements.add(0, DeclarationStatement(listOf(localVar)).assignNoPrototype())
+            statements.add(ReturnStatement(FactoryFunction.tempValIdentifier()).assignNoPrototype())
+            factoryFunction.body = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
 
         val parameters = finalOrWithEmptyInitializerFields.map { field ->
@@ -271,7 +276,31 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val parameterList = ParameterList(parameters).assignNoPrototype()
         val constructorSignature = PrimaryConstructorSignature(modifiers, parameterList).assignNoPrototype()
         val updatedMembers = classBody.members.filter { !finalOrWithEmptyInitializerFields.contains(it) }
-        return ClassBody(constructorSignature, updatedMembers, classBody.secondaryConstructors, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
+        return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
+    }
+
+    private fun correctFactoryFunctions(classBody: ClassBody, className: String) {
+        for (factoryFunction in classBody.factoryFunctions()) {
+            val body = factoryFunction.body!!
+            val statements = ArrayList(body.statements)
+
+            // searching for other constructor call in form "this(...)"
+            // it's not necessary the first statement because of statements inserted for writable parameters
+            for (i in statements.indices) {
+                val statement = statements[i]
+                if (statement is MethodCallExpression) {
+                    if ((statement.methodExpression as? Identifier)?.name == "this") {
+                        val constructorCall = MethodCallExpression.buildNotNull(null, className, statement.arguments).assignPrototypesFrom(statement)
+                        val localVar = LocalVariable(FactoryFunction.tempValIdentifier(), Annotations.Empty, Modifiers.Empty, null, constructorCall, true).assignNoPrototype()
+                        statements[i] = DeclarationStatement(listOf(localVar)).assignNoPrototype()
+                        break
+                    }
+                }
+            }
+
+            statements.add(ReturnStatement(FactoryFunction.tempValIdentifier()).assignNoPrototype())
+            factoryFunction.body = Block(statements, body.lBrace, body.rBrace).assignPrototypesFrom(body)
+        }
     }
 
     private fun convertInitializer(initializer: PsiClassInitializer): Initializer {
@@ -344,11 +373,11 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return false
     }
 
-    private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
+    private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Member {
         return withMethodReturnType(method.getReturnType()).doConvertMethod(method, membersToRemove).assignPrototype(method)
     }
 
-    private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
+    private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Member {
         val returnType = typeConverter.convertMethodReturnType(method)
 
         val annotations = (convertAnnotations(method) + convertThrows(method)).assignNoPrototype()
@@ -382,7 +411,13 @@ public class Converter private(val project: Project, val settings: ConverterSett
             else {
                 val params = convertParameterList(method.getParameterList())
                 var body = postProcessBody(convertBlock(method.getBody()))
-                return SecondaryConstructor(this, annotations, modifiers, params, body)
+                val containingClass = method.getContainingClass()
+                val typeParameterList = convertTypeParameterList(containingClass?.getTypeParameterList())
+                val factoryFunctionType = ClassType(containingClass?.declarationIdentifier() ?: Identifier.Empty,
+                                                    typeParameterList.parameters,
+                                                    Nullability.NotNull,
+                                                    settings).assignNoPrototype()
+                return FactoryFunction(annotations, modifiers, factoryFunctionType, params, typeParameterList, body)
             }
         }
         else {
@@ -404,7 +439,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             var params = convertParameterList(method.getParameterList())
             val typeParameterList = convertTypeParameterList(method.getTypeParameterList())
             var body = postProcessBody(convertBlock(method.getBody()))
-            return Function(this, method.declarationIdentifier(), annotations, modifiers, returnType, typeParameterList, params, body, containingClass?.isInterface() ?: false)
+            return Function(method.declarationIdentifier(), annotations, modifiers, returnType, typeParameterList, params, body, containingClass?.isInterface() ?: false)
         }
     }
 
@@ -499,7 +534,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                           convertModifiers(field).filter { it in ACCESS_MODIFIERS }).assignPrototypes(listOf(parameter, field), CommentsAndSpacesInheritance(blankLinesBefore = false))
             }
         }).assignPrototype(constructor.getParameterList())
-        return PrimaryConstructor(this, annotations, modifiers, parameterList, block).assignPrototype(constructor)
+        return PrimaryConstructor(annotations, modifiers, parameterList, block).assignPrototype(constructor)
     }
 
     private fun findBackingFieldForConstructorParameter(parameter: PsiParameter, constructor: PsiMethod): Pair<PsiField, PsiStatement>? {
