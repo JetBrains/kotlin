@@ -310,7 +310,7 @@ open class ExpressionVisitor(private val converter: Converter,
     override fun visitReferenceExpression(expression: PsiReferenceExpression) {
         val referenceName = expression.getReferenceName()!!
         val target = expression.getReference()?.resolve()
-        val isNullable = if (target is PsiVariable) typeConverter.variableNullability(target).isNullable(converter.settings) else false
+        val isNullable = target is PsiVariable && typeConverter.variableNullability(target).isNullable(converter.settings)
         val qualifier = expression.getQualifierExpression()
 
         var identifier = Identifier(referenceName, isNullable).assignNoPrototype()
