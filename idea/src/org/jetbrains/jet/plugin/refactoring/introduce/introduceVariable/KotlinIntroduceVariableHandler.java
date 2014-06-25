@@ -461,6 +461,23 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             @Override
             public void visitExpression(@NotNull JetExpression expression) {
                 if (PsiEquivalenceUtil.areElementsEquivalent(expression, actualExpression, null, new Comparator<PsiElement>() {
+                    private boolean compareCalleesAndReceivers(@NotNull ResolvedCall<?> rc1, @NotNull ResolvedCall<?> rc2) {
+                        if (rc1.getResultingDescriptor() != rc2.getResultingDescriptor() ||
+                               rc1.getExplicitReceiverKind() != rc2.getExplicitReceiverKind()) return false;
+
+                        switch (rc1.getExplicitReceiverKind()) {
+                            case NO_EXPLICIT_RECEIVER:
+                                return rc1.getReceiverArgument() == rc2.getReceiverArgument()
+                                          && rc1.getThisObject() == rc2.getThisObject();
+                            case RECEIVER_ARGUMENT:
+                                return rc1.getThisObject() == rc2.getThisObject();
+                            case THIS_OBJECT:
+                                return rc1.getReceiverArgument() == rc2.getReceiverArgument();
+                            default:
+                                return true;
+                        }
+                    }
+
                     @Override
                     public int compare(@NotNull PsiElement element1, @NotNull PsiElement element2) {
                         if (element1.getNode().getElementType() == JetTokens.IDENTIFIER &&
@@ -472,12 +489,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
                                 ResolvedCall<?> rc1 = bindingContext.get(BindingContext.RESOLVED_CALL, expr1);
                                 ResolvedCall<?> rc2 = bindingContext.get(BindingContext.RESOLVED_CALL, expr2);
-                                if (rc1 == null || rc2 == null) return rc1 == rc2 ? 0 : 1;
-
-                                return  rc1.getResultingDescriptor() == rc2.getResultingDescriptor()
-                                        && rc1.getExplicitReceiverKind() == rc2.getExplicitReceiverKind()
-                                        && rc1.getReceiverArgument() == rc2.getReceiverArgument()
-                                        && rc1.getThisObject() == rc2.getThisObject() ? 0 : 1;
+                                return (rc1 != null && rc2 != null) && compareCalleesAndReceivers(rc1, rc2) ? 0 : 1;
                             }
                         }
                         if (!element1.textMatches(element2)) {

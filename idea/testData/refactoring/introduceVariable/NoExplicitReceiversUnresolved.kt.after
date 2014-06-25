@@ -1,0 +1,5 @@
+fun main(args: Array<String>) {
+    val a = a1
+    println(a)
+    println(a2)
+}

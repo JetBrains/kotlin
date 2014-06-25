@@ -1,0 +1,13 @@
+fun main(args: Array<String>) {
+    with(A()) {
+        val i = prop
+        println(i)
+        println(i)
+    }
+}
+
+class A {
+    val prop = 1
+}
+
+public inline fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
