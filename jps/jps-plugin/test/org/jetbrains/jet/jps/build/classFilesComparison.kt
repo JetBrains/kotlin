@@ -37,6 +37,9 @@ import org.jetbrains.jet.descriptors.serialization.DebugProtoBuf
 import java.util.Arrays
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass
 
+// Set this to true if you want to dump all bytecode (test will fail in this case)
+val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
+
 fun File.hash() = Files.hash(this, Hashing.crc32())
 
 fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
@@ -95,12 +98,17 @@ fun assertEqualDirectories(expected: File, actual: File) {
     val pathsInExpected = getAllRelativePaths(expected)
     val pathsInActual = getAllRelativePaths(actual)
 
-    val changedPaths = Sets.intersection(pathsInExpected, pathsInActual)
-            .filter { !Arrays.equals(File(expected, it).readBytes(), File(actual, it).readBytes()) }
+    val commonPaths = Sets.intersection(pathsInExpected, pathsInActual)
+    val changedPaths = commonPaths
+            .filter { DUMP_ALL || !Arrays.equals(File(expected, it).readBytes(), File(actual, it).readBytes()) }
             .sort()
 
     val expectedString = getDirectoryString(expected, changedPaths)
     val actualString = getDirectoryString(actual, changedPaths)
+
+    if (DUMP_ALL) {
+        assertEquals(expectedString, actualString + " ")
+    }
 
     assertEquals(expectedString, actualString)
 }
