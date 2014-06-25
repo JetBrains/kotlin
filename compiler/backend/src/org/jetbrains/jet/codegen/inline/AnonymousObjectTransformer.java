@@ -189,6 +189,7 @@ public class AnonymousObjectTransformer {
                                                   remapper, isSameModule, "Transformer for " + invocation.getOwnerInternalName());
         InlineResult result = inliner.doInline(resultVisitor, new LocalVarRemapper(parameters, 0), false);
         resultVisitor.visitMaxs(-1, -1);
+        resultVisitor.visitEnd();
         return result;
     }
 
@@ -274,6 +275,7 @@ public class AnonymousObjectTransformer {
                                                   remapper, isSameModule, "Transformer for constructor of " + invocation.getOwnerInternalName());
         InlineResult result = inliner.doInline(capturedFieldInitializer, new LocalVarRemapper(constructorParameters, 0), false);
         constructorVisitor.visitMaxs(-1, -1);
+        constructorVisitor.visitEnd();
 
         AsmUtil.genClosureFields(capturedFieldsToGenerate, classBuilder);
         //TODO for inline method make public class

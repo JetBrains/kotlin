@@ -107,6 +107,11 @@ public class RemapVisitor extends InstructionAdapter {
     }
 
     @Override
+    public void visitEnd() {
+
+    }
+
+    @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         return null;
     }

@@ -64,7 +64,7 @@ public class ClassBuilderFactories {
         @NotNull
         @Override
         public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-            return new TraceBuilder(new BinaryClassWriterOptimizationsDecorator());
+            return new TraceBuilder(new BinaryClassWriter());
         }
 
         @Override
@@ -94,7 +94,7 @@ public class ClassBuilderFactories {
         @NotNull
         @Override
         public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-            return new AbstractClassBuilder.Concrete(new BinaryClassWriterOptimizationsDecorator());
+            return new AbstractClassBuilder.Concrete(new BinaryClassWriter());
         }
 
         @Override
