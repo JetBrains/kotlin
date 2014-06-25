@@ -80,7 +80,7 @@ public class DataFlowValueFactory {
 
     @NotNull
     private static Nullability getImmanentNullability(@NotNull JetType type) {
-        return type.isNullable() || TypeUtils.hasNullableSuperType(type) ? Nullability.UNKNOWN : Nullability.NOT_NULL;
+        return TypeUtils.isNullableType(type) ? Nullability.UNKNOWN : Nullability.NOT_NULL;
     }
 
     private static class IdentifierInfo {

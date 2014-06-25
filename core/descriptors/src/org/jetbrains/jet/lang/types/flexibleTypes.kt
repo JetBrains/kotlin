@@ -21,6 +21,8 @@ public trait FlexibleType : JetType {
     val upperBound: JetType
 }
 
+public fun JetType.isFlexible(): Boolean = this is FlexibleType
+
 public open class DelegatingFlexibleType(
         override val lowerBound: JetType,
         override val upperBound: JetType

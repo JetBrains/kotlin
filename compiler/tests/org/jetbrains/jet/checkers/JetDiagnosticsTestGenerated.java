@@ -7695,6 +7695,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("dereference.kt")
+            public void testDereference() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/platformTypes/dereference.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
