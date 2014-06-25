@@ -1,1 +1,1 @@
-assert(true) { "string details" }
+assert(true, "string details")

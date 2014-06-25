@@ -3,8 +3,8 @@ fun invoke(f: () -> Unit) {
     (f)()
 }
 ---------------------
-f           <v1>   NEW()
-(f)         <v1>   COPY
-(f)()       <v2>   NEW(<v1>)
-{ (f)() }   <v2>   COPY
+f           <v1>: {<: () -> Unit}   NEW()
+(f)         <v1>: {<: () -> Unit}   COPY
+(f)()       <v2>: *                 NEW(<v1>)
+{ (f)() }   <v2>: *                 COPY
 =====================

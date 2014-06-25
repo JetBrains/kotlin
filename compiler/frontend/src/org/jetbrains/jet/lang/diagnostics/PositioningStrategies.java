@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
@@ -526,6 +527,18 @@ public class PositioningStrategies {
             return super.mark(element);
         }
     };
+
+    public static PositioningStrategy<PsiElement> markTextRangesFromDiagnostic(
+            @NotNull final Function1<Diagnostic, List<TextRange>> getTextRanges
+    ) {
+        return new PositioningStrategy<PsiElement>() {
+            @NotNull
+            @Override
+            public List<TextRange> markDiagnostic(@NotNull ParametrizedDiagnostic<? extends PsiElement> diagnostic) {
+                return getTextRanges.invoke(diagnostic);
+            }
+        };
+    }
 
     private PositioningStrategies() {
     }

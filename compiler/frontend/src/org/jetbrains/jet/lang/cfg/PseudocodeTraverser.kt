@@ -181,18 +181,10 @@ fun traverseFollowingInstructions(
 
     while (!stack.isEmpty()) {
         val instruction = stack.pop()
-        visited.add(instruction)
+        if (!visited.add(instruction)) continue
+        if (handler != null && !handler(instruction)) return false
 
-        val followingInstructions = instruction.getNextInstructions(order)
-
-        for (followingInstruction in followingInstructions) {
-            if (!visited.contains(followingInstruction)) {
-                if (handler != null && !handler(instruction)) {
-                    return false
-                }
-                stack.push(followingInstruction)
-            }
-        }
+        instruction.getNextInstructions(order).forEach { stack.push(it) }
     }
     return true
 }

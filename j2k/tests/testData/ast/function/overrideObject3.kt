@@ -1,5 +1,5 @@
 class Base() {
-    override fun equals(other: Any?): Boolean {
+    override fun equals(o: Any?): Boolean {
         return super.equals(o)
     }
 }

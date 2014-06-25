@@ -13,12 +13,12 @@ fun foo() {
     "after"
 }
 ---------------------
-"before"                                                                                      <v0>   NEW()
-foo()                                                                                         <v1>   NEW()
-{ foo() }                                                                                     <v1>   COPY
-e                                                                                             <v3>   NEW()
-1                                                                                             <v4>   NEW()
-try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }                        <v1>   COPY 
-"after"                                                                                       <v5>   NEW()
-{ "before" try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 } "after" }   <v5>   COPY 
+"before"                                                                                      <v0>: *                NEW()
+foo()                                                                                         <v1>: *                NEW()
+{ foo() }                                                                                     <v1>: *                COPY
+e                                                                                             <v3>: {<: Exception}   NEW()
+1                                                                                             <v4>: Int              NEW()
+try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }                        <v1>: *                COPY
+"after"                                                                                       <v5>: *                NEW()
+{ "before" try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 } "after" }   <v5>: *                COPY
 =====================

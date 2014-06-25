@@ -13,8 +13,7 @@ L0:
     magic(c: Collection<Int>) -> <v0>
     w(c|<v0>)
   2 mark({ for (e in c) { { break } } })
-  3 mark(for (e in c) { { break } })
-    r(c) -> <v1>
+  3 r(c) -> <v1>
     v(e)
 L3:
     jmp?(L2)                                NEXT:[read (Unit), magic(c|<v1>) -> <v2>]
@@ -22,6 +21,7 @@ L4 [loop entry point]:
 L5 [body entry point]:
     magic(c|<v1>) -> <v2>                   PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
     w(e|<v2>)
+    mark(for (e in c) { { break } })
   4 mark({ { break } })
     mark({ break })
     jmp?(L6)                                NEXT:[r({ break }) -> <v3>, d({ break })]

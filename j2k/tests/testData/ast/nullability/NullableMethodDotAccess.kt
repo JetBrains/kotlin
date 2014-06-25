@@ -4,6 +4,6 @@ class C() {
     }
 
     fun foo(): Int {
-        return getString(true)?.length()!!
+        return getString(true)!!.length()
     }
 }

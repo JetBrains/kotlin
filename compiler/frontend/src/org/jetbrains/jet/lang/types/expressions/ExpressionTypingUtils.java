@@ -96,7 +96,7 @@ public class ExpressionTypingUtils {
     }
 
     public static boolean isBoolean(@NotNull JetType type) {
-        return JetTypeChecker.INSTANCE.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
+        return JetTypeChecker.DEFAULT.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
     }
 
     public static boolean ensureBooleanResult(JetExpression operationSign, Name name, JetType resultType, ExpressionTypingContext context) {
@@ -401,7 +401,7 @@ public class ExpressionTypingUtils {
                 context.trace.record(COMPONENT_RESOLVED_CALL, entry, results.getResultingCall());
                 componentType = results.getResultingDescriptor().getReturnType();
                 if (componentType != null && !noExpectedType(expectedType)
-                       && !JetTypeChecker.INSTANCE.isSubtypeOf(componentType, expectedType)) {
+                       && !JetTypeChecker.DEFAULT.isSubtypeOf(componentType, expectedType)) {
 
                     context.trace.report(
                             COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(reportErrorsOn, componentName, componentType, expectedType));

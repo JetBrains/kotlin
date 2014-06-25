@@ -143,7 +143,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, functionDescriptor, asmMethod);
         }
 
-        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
+        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, asmMethod.getReturnType());
 
         generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
 
@@ -180,7 +180,8 @@ public class FunctionCodegen extends ParentCodegenAware {
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
-            JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
+            JvmMethodParameterSignature parameterSignature = kotlinParameterTypes.get(i);
+            JvmMethodParameterKind kind = parameterSignature.getKind();
             if (kind.isSkippedInGenericSignature()) {
                 markEnumOrInnerConstructorParameterAsSynthetic(mv, i);
                 continue;
@@ -189,7 +190,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
                 v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
-                AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameter);
+                AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameter, parameterSignature.getAsmType());
             }
         }
     }

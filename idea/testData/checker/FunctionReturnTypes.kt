@@ -48,7 +48,7 @@ fun blockAndAndMismatch1() : Int {
   return <error>true && false</error>
 }
 fun blockAndAndMismatch2() : Int {
-  <warning>(return <error>true</error>) && (return <error>false</error>)</warning>
+  (return <error>true</error>) <warning>&& (return <error>false</error>)</warning>
 }
 
 fun blockAndAndMismatch3() : Int {
@@ -58,7 +58,7 @@ fun blockAndAndMismatch4() : Int {
   return <error>true || false</error>
 }
 fun blockAndAndMismatch5() : Int {
-  <warning>(return <error>true</error>) || (return <error>false</error>)</warning>
+  (return <error>true</error>) <warning>|| (return <error>false</error>)</warning>
 }
 fun blockReturnValueTypeMatch1() : Int {
   return if (1 > 2) <error>1.0</error> else <error>2.0</error>

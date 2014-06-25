@@ -1,4 +1,4 @@
-enum class Color private(private var code: Int) {
+enum class Color private(private val code: Int) {
     WHITE : Color(21)
     BLACK : Color(22)
     RED : Color(23)

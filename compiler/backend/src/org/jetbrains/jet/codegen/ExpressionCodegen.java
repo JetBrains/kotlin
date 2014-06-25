@@ -722,7 +722,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             invokeFunction(fakeCall, StackValue.local(iteratorVarIndex, asmTypeForIterator), hasNextCall);
 
             JetType type = hasNextCall.getResultingDescriptor().getReturnType();
-            assert type != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
+            assert type != null && JetTypeChecker.DEFAULT.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
 
             Type asmType = asmType(type);
             StackValue.coerce(asmType, Type.BOOLEAN_TYPE, v);
@@ -3412,6 +3412,11 @@ The "returned" value of try expression with no finally is either the last expres
             }
 
             myFrameMap.leave(descriptor);
+
+            Label clauseEnd = new Label();
+            v.mark(clauseEnd);
+
+            v.visitLocalVariable(descriptor.getName().asString(), descriptorType.getDescriptor(), null, clauseStart, clauseEnd, index);
 
             genFinallyBlockOrGoto(finallyBlockStackElement, i != size - 1 || finallyBlock != null ? end : null);
 

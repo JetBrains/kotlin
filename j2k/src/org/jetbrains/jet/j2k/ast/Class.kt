@@ -16,93 +16,54 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
-import java.util.ArrayList
+import org.jetbrains.jet.j2k.*
 
 open class Class(
-        val converter: Converter,
         val name: Identifier,
-        comments: MemberComments,
-        modifiers: Set<Modifier>,
+        annotations: Annotations,
+        modifiers: Modifiers,
         val typeParameterList: TypeParameterList,
         val extendsTypes: List<Type>,
         val baseClassParams: List<Expression>,
         val implementsTypes: List<Type>,
-        val bodyElements: List<Element>
-) : Member(comments, modifiers) {
+        val body: ClassBody
+) : Member(annotations, modifiers) {
 
-    override fun toKotlin(): String =
-            commentsToKotlin() +
-            modifiersToKotlin() +
-            keyword + " " + name.toKotlin() +
-            typeParameterList.toKotlin() +
-            primaryConstructorSignatureToKotlin() +
-            implementTypesToKotlin() +
-            typeParameterList.whereToKotlin().withPrefix(" ") +
-            bodyToKotlin()
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations)
+                .appendWithSpaceAfter(presentationModifiers())
+                .append(keyword)
+                .append(" ")
+                .append(name)
+                .append(typeParameterList)
+        appendPrimaryConstructorSignature(builder)
+        appendBaseTypes(builder)
+        typeParameterList.appendWhere(builder)
+        body.append(builder, this)
+    }
 
     protected open val keyword: String
         get() = "class"
 
-    protected val classMembers: ClassMembers = ClassMembers.fromBodyElements(bodyElements)
-
-    protected open fun primaryConstructorSignatureToKotlin(): String
-            = classMembers.primaryConstructor?.signatureToKotlin() ?: "()"
-
-    protected fun primaryConstructorBodyToKotlin(): String {
-        val constructor = classMembers.primaryConstructor
-        if (constructor != null && !(constructor.block?.isEmpty ?: true)) {
-            return "\n" + constructor.bodyToKotlin() + "\n"
-        }
-        return ""
+    protected open fun appendPrimaryConstructorSignature(builder: CodeBuilder) {
+        body.primaryConstructor?.appendSignature(builder) ?: builder.append("()")
     }
 
-    private fun secondaryConstructorsAsStaticInitFunctions(): MemberList {
-        return MemberList(classMembers.secondaryConstructors.elements.map { if (it is SecondaryConstructor) it.toInitFunction(this) else it })
+    protected fun appendBaseTypes(builder: CodeBuilder) {
+        builder.append(baseClassSignatureWithParams(builder) + implementsTypes.map { { builder.append(it) } }, ", ", ":")
     }
 
-    private fun baseClassSignatureWithParams(): List<String> {
+    private fun baseClassSignatureWithParams(builder: CodeBuilder): List<() -> CodeBuilder> {
         if (keyword.equals("class") && extendsTypes.size() == 1) {
-            val baseParams = baseClassParams.toKotlin(", ")
-            return arrayListOf(extendsTypes[0].toKotlin() + "(" + baseParams + ")")
+            return listOf({
+                              builder append extendsTypes[0] append "("
+                              builder.append(baseClassParams, ", ")
+                              builder append ")"
+                          })
         }
-        return extendsTypes.map { it.toKotlin() }
+        return extendsTypes.map { { builder.append(it) } }
     }
 
-    protected fun implementTypesToKotlin(): String {
-        val allTypes = ArrayList<String>()
-        allTypes.addAll(baseClassSignatureWithParams())
-        allTypes.addAll(implementsTypes.map { it.toKotlin() })
-        return if (allTypes.size() == 0)
-            ""
-        else
-            " : " + allTypes.makeString(", ")
-    }
-
-    protected open fun modifiersToKotlin(): String {
-        val modifierList = ArrayList<Modifier>()
-
-        modifiers.accessModifier()?.let { modifierList.add(it) }
-
-        if (modifiers.contains(Modifier.ABSTRACT)) {
-            modifierList.add(Modifier.ABSTRACT)
-        }
-        else if (modifiers.contains(Modifier.OPEN)) {
-            modifierList.add(Modifier.OPEN)
-        }
-
-        return modifierList.toKotlin()
-    }
-
-    fun bodyToKotlin(): String {
-        val innerBody = classMembers.nonStaticMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin()
-        return if (innerBody.trim().isNotEmpty()) " {" + innerBody + "}" else ""
-    }
-
-    private fun classObjectToKotlin(): String {
-        val secondaryConstructorsAsStaticInitFunctions = secondaryConstructorsAsStaticInitFunctions()
-        val staticMembers = classMembers.staticMembers
-        if (secondaryConstructorsAsStaticInitFunctions.isEmpty() && staticMembers.isEmpty()) return ""
-        return "\nclass object {${secondaryConstructorsAsStaticInitFunctions.toKotlin()}${staticMembers.toKotlin()}}"
-    }
+    protected open fun presentationModifiers(): Modifiers
+            = if (modifiers.contains(Modifier.ABSTRACT)) modifiers.without(Modifier.OPEN) else modifiers
 }

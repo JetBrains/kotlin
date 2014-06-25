@@ -1,12 +1,12 @@
 package demo
 
 class Container() {
-    var myString: String = "1"
+    var myString = "1"
 }
 
 class One() {
     class object {
-        var myContainer: Container = Container()
+        var myContainer = Container()
     }
 }
 

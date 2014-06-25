@@ -17,42 +17,37 @@
 package org.jetbrains.jet.j2k.ast
 
 import com.intellij.psi.PsiTypeParameter
-import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.*
 import com.intellij.psi.PsiTypeParameterList
 import java.util.ArrayList
 
-class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element {
+class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element() {
     fun hasWhere(): Boolean = extendsTypes.size() > 1
-    fun getWhereToKotlin(): String {
-        if (hasWhere()) {
-            return name.toKotlin() + " : " + extendsTypes.get(1).toKotlin()
-        }
 
-        return ""
+    fun whereToKotlin(builder: CodeBuilder) {
+        if (hasWhere()) {
+            builder append name append " : " append extendsTypes[1]
+        }
     }
 
-    override fun toKotlin(): String {
-        if (extendsTypes.size() > 0) {
-            return name.toKotlin() + " : " + extendsTypes [0].toKotlin()
+    override fun generateCode(builder: CodeBuilder) {
+        builder append name
+        if (extendsTypes.isNotEmpty()) {
+            builder append " : " append extendsTypes[0]
         }
-
-        return name.toKotlin()
     }
 }
 
-class TypeParameterList(val parameters: List<TypeParameter>) : Element {
-    override fun toKotlin(): String = if (!parameters.isEmpty())
-        parameters.map {
-            it.toKotlin()
-        }.makeString(", ", "<", ">")
-    else ""
+class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
+    override fun generateCode(builder: CodeBuilder) {
+        if (parameters.isNotEmpty()) builder.append(parameters, ", ", "<", ">")
+    }
 
-    fun whereToKotlin(): String {
+    fun appendWhere(builder: CodeBuilder): CodeBuilder {
         if (hasWhere()) {
-            val wheres = parameters.map { it.getWhereToKotlin() }
-            return "where " + wheres.makeString(", ")
+            builder.append( parameters.map { { it.whereToKotlin(builder) } }, ", ", " where ", "")
         }
-        return ""
+        return builder
     }
 
 
@@ -70,7 +65,9 @@ fun Converter.convertTypeParameter(psiTypeParameter: PsiTypeParameter): TypePara
     return convertElement(psiTypeParameter) as TypeParameter
 }
 
-fun Converter.convertTypeParameterList(psiTypeParameterlist: PsiTypeParameterList?): TypeParameterList {
-    return if (psiTypeParameterlist == null) TypeParameterList.Empty
-    else TypeParameterList(psiTypeParameterlist.getTypeParameters()!!.toList().map { convertTypeParameter(it) })
+fun Converter.convertTypeParameterList(typeParameterList: PsiTypeParameterList?): TypeParameterList {
+    return if (typeParameterList != null)
+        TypeParameterList(typeParameterList.getTypeParameters()!!.toList().map { convertTypeParameter(it) })
+    else
+        TypeParameterList.Empty
 }

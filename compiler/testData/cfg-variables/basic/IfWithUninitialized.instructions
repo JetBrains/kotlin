@@ -14,14 +14,14 @@ L0:
   2 mark({ val b: Boolean if (1 < 2) { use(b) } else { b = true } })
     v(val b: Boolean)                                                   INIT: in: {} out: {b=D}
     mark(if (1 < 2) { use(b) } else { b = true })                       INIT: in: {b=D} out: {b=D}
-    mark(1 < 2)
     r(1) -> <v0>
     r(2) -> <v1>
+    mark(1 < 2)
     call(<, compareTo|<v0>, <v1>) -> <v2>
     jf(L2|<v2>)
-  3 mark({ use(b) })
-    mark(use(b))                                                                                       USE: in: {b=READ} out: {b=READ}
+  3 mark({ use(b) })                                                                                   USE: in: {b=READ} out: {b=READ}
     r(b) -> <v3>                                                                                       USE: in: {} out: {b=READ}
+    mark(use(b))
     call(use, use|<v3>) -> <v4>
   2 jmp(L3)                                                                                            USE: in: {} out: {}
 L2:

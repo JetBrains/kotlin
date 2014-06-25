@@ -229,13 +229,13 @@ public class Renderers {
                 parameterTypes.add(valueParameterDescriptor.getType());
                 if (valueParameterDescriptor.getIndex() >= inferenceErrorData.valueArgumentsTypes.size()) continue;
                 JetType actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.getIndex());
-                if (!JetTypeChecker.INSTANCE.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
+                if (!JetTypeChecker.DEFAULT.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
                     errorPositions.add(ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
                 }
             }
 
             if (receiverType != null && inferenceErrorData.receiverArgumentType != null &&
-                    !JetTypeChecker.INSTANCE.isSubtypeOf(inferenceErrorData.receiverArgumentType, receiverType)) {
+                    !JetTypeChecker.DEFAULT.isSubtypeOf(inferenceErrorData.receiverArgumentType, receiverType)) {
                 errorPositions.add(ConstraintPosition.RECEIVER_POSITION);
             }
 
@@ -333,7 +333,7 @@ public class Renderers {
             JetType upperBoundWithSubstitutedInferredTypes =
                     systemWithoutWeakConstraints.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
             if (upperBoundWithSubstitutedInferredTypes != null &&
-                !JetTypeChecker.INSTANCE.isSubtypeOf(inferredValueForTypeParameter, upperBoundWithSubstitutedInferredTypes)) {
+                !JetTypeChecker.DEFAULT.isSubtypeOf(inferredValueForTypeParameter, upperBoundWithSubstitutedInferredTypes)) {
                 violatedUpperBound = upperBoundWithSubstitutedInferredTypes;
                 break;
             }

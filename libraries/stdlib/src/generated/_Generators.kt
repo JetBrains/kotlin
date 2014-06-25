@@ -8,6 +8,299 @@ package kotlin
 import java.util.*
 
 /**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Array<out T>.merge(array: Array<R>, transform: (T, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> BooleanArray.merge(array: Array<R>, transform: (Boolean, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> ByteArray.merge(array: Array<R>, transform: (Byte, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> CharArray.merge(array: Array<R>, transform: (Char, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> DoubleArray.merge(array: Array<R>, transform: (Double, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> FloatArray.merge(array: Array<R>, transform: (Float, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> IntArray.merge(array: Array<R>, transform: (Int, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> LongArray.merge(array: Array<R>, transform: (Long, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> ShortArray.merge(array: Array<R>, transform: (Short, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Iterable<T>.merge(array: Array<R>, transform: (T, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> String.merge(array: Array<R>, transform: (Char, R) -> V): List<V> {
+    val first = iterator()
+    val second = array.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Array<out T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> BooleanArray.merge(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> ByteArray.merge(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> CharArray.merge(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> DoubleArray.merge(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> FloatArray.merge(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> IntArray.merge(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> LongArray.merge(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> ShortArray.merge(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Iterable<T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+ */
+public inline fun <R, V> String.merge(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = arrayListOf<V>()
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
+}
+
+/**
+ * Returns a stream of values built from elements of both collections with same indexes using provided *transform*. Stream has length of shortest stream.
+ */
+public fun <T, R, V> Stream<T>.merge(stream: Stream<R>, transform: (T, R) -> V): Stream<V> {
+    return MergingStream(this, stream, transform)
+}
+
+/**
  * Splits original collection into pair of collections,
  * where *first* collection contains elements for which predicate yielded *true*,
  * while *second* collection contains elements for which predicate yielded *false*
@@ -518,286 +811,154 @@ public fun <T> Stream<T>.plus(stream: Stream<T>): Stream<T> {
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Array<out T>.zip(array: Array<R>): List<Pair<T, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<T, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> BooleanArray.zip(array: Array<R>): List<Pair<Boolean, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<Boolean, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ByteArray.zip(array: Array<R>): List<Pair<Byte, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<Byte, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> CharArray.zip(array: Array<R>): List<Pair<Char, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<Char, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> DoubleArray.zip(array: Array<R>): List<Pair<Double, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<Double, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> FloatArray.zip(array: Array<R>): List<Pair<Float, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<Float, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> IntArray.zip(array: Array<R>): List<Pair<Int, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<Int, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> LongArray.zip(array: Array<R>): List<Pair<Long, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<Long, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ShortArray.zip(array: Array<R>): List<Pair<Short, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<Short, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Iterable<T>.zip(array: Array<R>): List<Pair<T, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<T, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> String.zip(array: Array<R>): List<Pair<Char, R>> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<Pair<Char, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(array) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<T, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> BooleanArray.zip(other: Iterable<R>): List<Pair<Boolean, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Boolean, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ByteArray.zip(other: Iterable<R>): List<Pair<Byte, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Byte, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Char, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> DoubleArray.zip(other: Iterable<R>): List<Pair<Double, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Double, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> FloatArray.zip(other: Iterable<R>): List<Pair<Float, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Float, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> IntArray.zip(other: Iterable<R>): List<Pair<Int, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Int, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> LongArray.zip(other: Iterable<R>): List<Pair<Long, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Long, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Short, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<T, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> String.zip(other: Iterable<R>): List<Pair<Char, R>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Char, R>>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
-    }
-    return list
+    return merge(other) { (t1, t2) -> t1 to t2 }
 }
 
 /**
@@ -814,9 +975,9 @@ public fun String.zip(other: String): List<Pair<Char, Char>> {
 }
 
 /**
- * Returns a stream of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * Returns a stream of pairs built from elements of both collections with same indexes. Stream has length of shortest stream.
  */
 public fun <T, R> Stream<T>.zip(stream: Stream<R>): Stream<Pair<T, R>> {
-    return ZippingStream(this, stream)
+    return MergingStream(this, stream) { (t1, t2) -> t1 to t2 }
 }
 

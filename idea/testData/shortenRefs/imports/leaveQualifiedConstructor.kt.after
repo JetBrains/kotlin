@@ -1,0 +1,4 @@
+// OPTIMIZE_IMPORTS
+import java.sql.Date
+
+val x = Date(1)

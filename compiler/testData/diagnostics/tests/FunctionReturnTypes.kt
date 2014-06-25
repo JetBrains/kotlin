@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNREACHABLE_CODE
+
 fun none() {}
 
 fun unitEmptyInfer() {}
@@ -51,7 +53,7 @@ fun blockAndAndMismatch1() : Int {
   return <!TYPE_MISMATCH!>true && false<!>
 }
 fun blockAndAndMismatch2() : Int {
-  <!UNREACHABLE_CODE!>(return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) && (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)<!>
+  (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) && (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)
 }
 
 fun blockAndAndMismatch3() : Int {
@@ -61,7 +63,7 @@ fun blockAndAndMismatch4() : Int {
   return <!TYPE_MISMATCH!>true || false<!>
 }
 fun blockAndAndMismatch5() : Int {
-  <!UNREACHABLE_CODE!>(return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) || (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)<!>
+  (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) || (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)
 }
 fun blockReturnValueTypeMatch1() : Int {
   return if (1 > 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> else <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>

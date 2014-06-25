@@ -1,6 +1,5 @@
 class F() {
 
-
     //c3
 
 
@@ -25,14 +24,14 @@ class F() {
 
         fun f1() {
         }
-        var i: Int = 0
+        var i = 0
 
         //c5
 
         fun f5() {
         }
-
-        //c6
-
     }
+
+    //c6
+
 }

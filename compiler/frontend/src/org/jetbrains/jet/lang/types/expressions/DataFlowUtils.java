@@ -164,7 +164,7 @@ public class DataFlowUtils {
         recordExpectedType(trace, expression, expectedType);
 
         if (expressionType == null || noExpectedType(expectedType) || !expectedType.getConstructor().isDenotable() ||
-            JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, expectedType)) {
+            JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
             return expressionType;
         }
 
@@ -179,7 +179,7 @@ public class DataFlowUtils {
 
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, trace.getBindingContext());
         for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, expectedType)) {
+            if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {
                 AutoCastUtils.recordCastOrError(expression, possibleType, trace, dataFlowValue.isStableIdentifier(), false);
                 return possibleType;
             }

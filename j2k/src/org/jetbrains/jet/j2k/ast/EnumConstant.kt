@@ -16,20 +16,23 @@
 
 package org.jetbrains.jet.j2k.ast
 
-class EnumConstant(
-        identifier: Identifier,
-        members: MemberComments,
-        modifiers: Set<Modifier>,
-        `type`: Type,
-        params: Element
-) : Field(identifier, members, modifiers, `type`.toNotNullType(), params, true, false) {
+import org.jetbrains.jet.j2k.*
 
-    override fun toKotlin(): String {
-        if (initializer.toKotlin().isEmpty()) {
-            return identifier.toKotlin()
+class EnumConstant(
+        val identifier: Identifier,
+        annotations: Annotations,
+        modifiers: Modifiers,
+        val `type`: Type,
+        val params: Element
+) : Member(annotations, modifiers) {
+
+    override fun generateCode(builder: CodeBuilder) {
+        if (params.isEmpty) {
+            builder append annotations append identifier
+            return
         }
 
-        return identifier.toKotlin() + " : " + `type`.toKotlin() + "(" + initializer.toKotlin() + ")"
+        builder append annotations append identifier append " : " append `type` append "(" append params append ")"
     }
 
 

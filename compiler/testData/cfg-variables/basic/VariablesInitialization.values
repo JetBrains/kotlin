@@ -6,10 +6,10 @@ fun foo() {
     42
 }
 ---------------------
-1                                   <v0>   NEW()
-2                                   <v1>   NEW()
-42                                  <v2>   NEW()
-{ val a = 1 val b: Int b = 2 42 }   <v2>   COPY 
+1                                   <v0>: Int   NEW()
+2                                   <v1>: Int   NEW()
+42                                  <v2>: *     NEW()
+{ val a = 1 val b: Int b = 2 42 }   <v2>: *     COPY 
 =====================
 == bar ==
 fun bar(foo: Foo) {
@@ -18,13 +18,13 @@ fun bar(foo: Foo) {
     42
 }
 ---------------------
-foo                      <v1>   NEW()
-c                        <v2>   NEW(<v1>)
-foo.c                    <v2>   COPY     
-foo                      <v3>   NEW()
-2                        <v4>   NEW()
-42                       <v5>   NEW()    
-{ foo.c foo.c = 2 42 }   <v5>   COPY     
+foo                      <v1>: {<: Foo}   NEW()    
+c                        <v2>: *          NEW(<v1>)
+foo.c                    <v2>: *          COPY     
+foo                      <v3>: {<: Foo}   NEW()    
+2                        <v4>: Int        NEW()    
+42                       <v5>: *          NEW()    
+{ foo.c foo.c = 2 42 }   <v5>: *          COPY     
 =====================
 == Foo ==
 trait Foo {

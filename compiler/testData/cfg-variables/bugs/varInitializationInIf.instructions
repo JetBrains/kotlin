@@ -15,9 +15,9 @@ L0:
   2 mark({ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) })
     v(val b: Boolean)                                                             INIT: in: {} out: {b=D}
     mark(if (1 < 2) { b = false } else { b = true })                              INIT: in: {b=D} out: {b=D}
-    mark(1 < 2)
     r(1) -> <v0>
     r(2) -> <v1>
+    mark(1 < 2)
     call(<, compareTo|<v0>, <v1>) -> <v2>
     jf(L2|<v2>)
   3 mark({ b = false })
@@ -29,10 +29,10 @@ L2:
     r(true) -> <v4>                                                                                               USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
     w(b|<v4>)                                                                     INIT: in: {b=D} out: {b=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
 L3:
-  2 mark(use(b))                                                                  INIT: in: {b=ID} out: {b=ID}
-    error(use, No resolved call)                                                                                  USE: in: {b=READ} out: {b=READ}
+  2 error(use, No resolved call)                                                  INIT: in: {b=ID} out: {b=ID}    USE: in: {b=READ} out: {b=READ}
     r(b) -> <v5>                                                                                                  USE: in: {} out: {b=READ}
     error(use, No resolved call)
+    mark(use(b))
     magic(use(b)|<v5>) -> <v6>
 L1:
   1 <END>                                                                         INIT: in: {} out: {}

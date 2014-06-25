@@ -40,48 +40,50 @@ L3:
     r(3) -> <v6>
     mark(if (a && b) 5 else 6)
     r(a) -> <v7>
-    jf(L4|<v7>)                                                                                                          NEXT:[jf(L5), r(b) -> <v8>]
+    jf(L4|<v7>)                                                                                                          NEXT:[magic(a && b|<v7>, <v8>) -> <v9>, r(b) -> <v8>]
     r(b) -> <v8>
 L4:
-    jf(L5)                                                                                                               NEXT:[r(6) -> <v10>, r(5) -> <v9>]                                                                                          PREV:[jf(L4|<v7>), r(b) -> <v8>]
-    r(5) -> <v9>
-    jmp(L6)                                                                                                              NEXT:[merge(if (a && b) 5 else 6|<v9>, <v10>) -> <v11>]
+    magic(a && b|<v7>, <v8>) -> <v9>                                                                                     PREV:[jf(L4|<v7>), r(b) -> <v8>]
+    jf(L5|<v9>)                                                                                                          NEXT:[r(6) -> <v11>, r(5) -> <v10>]
+    r(5) -> <v10>
+    jmp(L6)                                                                                                              NEXT:[merge(if (a && b) 5 else 6|<v10>, <v11>) -> <v12>]
 L5:
-    r(6) -> <v10>                                                                                                        PREV:[jf(L5)]
+    r(6) -> <v11>                                                                                                        PREV:[jf(L5|<v9>)]
 L6:
-    merge(if (a && b) 5 else 6|<v9>, <v10>) -> <v11>                                                                     PREV:[jmp(L6), r(6) -> <v10>]
-    r(7) -> <v12>
+    merge(if (a && b) 5 else 6|<v10>, <v11>) -> <v12>                                                                    PREV:[jmp(L6), r(6) -> <v11>]
+    r(7) -> <v13>
     mark(if (a || b) 8 else 9)
-    r(a) -> <v13>
-    jt(L7|<v13>)                                                                                                         NEXT:[r(b) -> <v14>, jf(L8)]
-    r(b) -> <v14>
+    r(a) -> <v14>
+    jt(L7|<v14>)                                                                                                         NEXT:[r(b) -> <v15>, magic(a || b|<v14>, <v15>) -> <v16>]
+    r(b) -> <v15>
 L7:
-    jf(L8)                                                                                                               NEXT:[r(9) -> <v16>, r(8) -> <v15>]                                                                                         PREV:[jt(L7|<v13>), r(b) -> <v14>]
-    r(8) -> <v15>
-    jmp(L9)                                                                                                              NEXT:[merge(if (a || b) 8 else 9|<v15>, <v16>) -> <v17>]
+    magic(a || b|<v14>, <v15>) -> <v16>                                                                                  PREV:[jt(L7|<v14>), r(b) -> <v15>]
+    jf(L8|<v16>)                                                                                                         NEXT:[r(9) -> <v18>, r(8) -> <v17>]
+    r(8) -> <v17>
+    jmp(L9)                                                                                                              NEXT:[merge(if (a || b) 8 else 9|<v17>, <v18>) -> <v19>]
 L8:
-    r(9) -> <v16>                                                                                                        PREV:[jf(L8)]
+    r(9) -> <v18>                                                                                                        PREV:[jf(L8|<v16>)]
 L9:
-    merge(if (a || b) 8 else 9|<v15>, <v16>) -> <v17>                                                                    PREV:[jmp(L9), r(9) -> <v16>]
-    r(10) -> <v18>
+    merge(if (a || b) 8 else 9|<v17>, <v18>) -> <v19>                                                                    PREV:[jmp(L9), r(9) -> <v18>]
+    r(10) -> <v20>
     mark(if (a) 11)
-    r(a) -> <v19>
-    jf(L10|<v19>)                                                                                                        NEXT:[read (Unit), r(11) -> <v20>]
-    r(11) -> <v20>
-    jmp(L11)                                                                                                             NEXT:[r(12) -> <v21>]
+    r(a) -> <v21>
+    jf(L10|<v21>)                                                                                                        NEXT:[read (Unit), r(11) -> <v22>]
+    r(11) -> <v22>
+    jmp(L11)                                                                                                             NEXT:[r(12) -> <v23>]
 L10:
-    read (Unit)                                                                                                          PREV:[jf(L10|<v19>)]
+    read (Unit)                                                                                                          PREV:[jf(L10|<v21>)]
 L11:
-    r(12) -> <v21>                                                                                                       PREV:[jmp(L11), read (Unit)]
+    r(12) -> <v23>                                                                                                       PREV:[jmp(L11), read (Unit)]
     mark(if (a) else 13)
-    r(a) -> <v22>
-    jf(L12|<v22>)                                                                                                        NEXT:[r(13) -> <v23>, read (Unit)]
+    r(a) -> <v24>
+    jf(L12|<v24>)                                                                                                        NEXT:[r(13) -> <v25>, read (Unit)]
     read (Unit)
-    jmp(L13)                                                                                                             NEXT:[r(14) -> <v24>]
+    jmp(L13)                                                                                                             NEXT:[r(14) -> <v26>]
 L12:
-    r(13) -> <v23>                                                                                                       PREV:[jf(L12|<v22>)]
+    r(13) -> <v25>                                                                                                       PREV:[jf(L12|<v24>)]
 L13:
-    r(14) -> <v24>                                                                                                       PREV:[jmp(L13), r(13) -> <v23>]
+    r(14) -> <v26>                                                                                                       PREV:[jmp(L13), r(13) -> <v25>]
 L1:
   1 <END>                                                                                                                NEXT:[<SINK>]
 error:

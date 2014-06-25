@@ -20,9 +20,9 @@ L4 [body entry point]:
     r(2) -> <v1>
     w(a|<v1>)
 L5 [condition entry point]:
-    mark(a > 0)
     r(a) -> <v2>
     r(0) -> <v3>
+    mark(a > 0)
     call(>, compareTo|<v2>, <v3>) -> <v4>
     jt(L2 [loop entry point]|<v4>)                                                               USE: in: {a=READ} out: {a=READ}
 L3 [loop exit point]:

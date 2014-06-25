@@ -16,10 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
-import org.jetbrains.jet.j2k.ConverterSettings
+import org.jetbrains.jet.j2k.*
 
-fun Type.isPrimitive(): Boolean = this is PrimitiveType
 fun Type.isUnit(): Boolean = this == Type.Unit
 
 enum class Nullability {
@@ -34,99 +32,105 @@ fun Nullability.isNullable(settings: ConverterSettings) = when(this) {
     Nullability.Default -> !settings.forceNotNullTypes
 }
 
-abstract class MayBeNullableType(nullability: Nullability, val settings: ConverterSettings) : Type {
+abstract class MayBeNullableType(nullability: Nullability, val settings: ConverterSettings) : Type() {
     override val isNullable: Boolean = nullability.isNullable(settings)
+
+    protected val isNullableStr: String
+        get() = if (isNullable) "?" else ""
 }
 
-trait NotNullType : Type {
+abstract class NotNullType() : Type() {
     override val isNullable: Boolean
         get() = false
 }
 
-trait Type : Element {
-    val isNullable: Boolean
+abstract class Type() : Element() {
+    abstract val isNullable: Boolean
 
-    open fun toNotNullType(): Type {
-        if (isNullable) throw UnsupportedOperationException("toNotNullType must be defined")
-        return this
+    open fun toNotNullType(): Type = this
+
+    open fun toNullableType(): Type = this
+
+    object Empty : NotNullType() {
+        override fun generateCode(builder: CodeBuilder) {
+            builder.append("UNRESOLVED_TYPE")
+        }
     }
 
-    open fun toNullableType(): Type {
-        if (!isNullable) throw UnsupportedOperationException("toNullableType must be defined")
-        return this
+    object Unit: NotNullType() {
+        override fun generateCode(builder: CodeBuilder) {
+            builder.append("Unit")
+        }
     }
 
-    protected fun isNullableStr(): String? {
-        return if (isNullable) "?" else ""
+    object Null: Type() {
+        override val isNullable: Boolean = true
+
+        override fun generateCode(builder: CodeBuilder) {
+            builder.append("???")
+        }
     }
 
-    object Empty : NotNullType {
-        override fun toKotlin(): String = "UNRESOLVED_TYPE"
-    }
+    override fun equals(other: Any?): Boolean = other is Type && other.canonicalCode() == this.canonicalCode()
 
-    object Unit: NotNullType {
-        override fun toKotlin() = "Unit"
-    }
+    override fun hashCode(): Int = canonicalCode().hashCode()
 
-    override fun equals(other: Any?): Boolean = other is Type && other.toKotlin() == this.toKotlin()
-
-    override fun hashCode(): Int = toKotlin().hashCode()
-
-    override fun toString(): String = toKotlin()
+    override fun toString(): String = canonicalCode()
 }
 
-class ClassType(val `type`: Identifier, val parameters: List<Element>, nullability: Nullability, settings: ConverterSettings)
+class ClassType(val name: Identifier, val typeArgs: List<Element>, nullability: Nullability, settings: ConverterSettings)
   : MayBeNullableType(nullability, settings) {
 
-    override fun toKotlin(): String {
-        // TODO change to map() when KT-2051 is fixed
-        val parametersToKotlin = ArrayList<String>()
-        for (param in parameters) {
-            parametersToKotlin.add(param.toKotlin())
-        }
-        var params: String = if (parametersToKotlin.size() == 0)
-            ""
-        else
-            "<" + parametersToKotlin.makeString(", ") + ">"
-        return `type`.toKotlin() + params + isNullableStr()
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(name).append(typeArgs, ", ", "<", ">").append(isNullableStr)
     }
 
-
-    override fun toNotNullType(): Type = ClassType(`type`, parameters, Nullability.NotNull, settings)
-    override fun toNullableType(): Type = ClassType(`type`, parameters, Nullability.Nullable, settings)
+    override fun toNotNullType(): Type = ClassType(name, typeArgs, Nullability.NotNull, settings)
+    override fun toNullableType(): Type = ClassType(name, typeArgs, Nullability.Nullable, settings)
 }
 
 class ArrayType(val elementType: Type, nullability: Nullability, settings: ConverterSettings)
   : MayBeNullableType(nullability, settings) {
 
-    override fun toKotlin(): String {
+    override fun generateCode(builder: CodeBuilder) {
         if (elementType is PrimitiveType) {
-            return elementType.toKotlin() + "Array" + isNullableStr()
+            builder append elementType append "Array" append isNullableStr
         }
-
-        return "Array<" + elementType.toKotlin() + ">" + isNullableStr()
+        else {
+            builder append "Array<" append elementType append ">" append isNullableStr
+        }
     }
 
     override fun toNotNullType(): Type = ArrayType(elementType, Nullability.NotNull, settings)
     override fun toNullableType(): Type = ArrayType(elementType, Nullability.Nullable, settings)
 }
 
-class InProjectionType(val bound: Type) : NotNullType {
-    override fun toKotlin(): String = "in " + bound.toKotlin()
+class InProjectionType(val bound: Type) : NotNullType() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder append "in " append bound
+    }
 }
 
-class OutProjectionType(val bound: Type) : NotNullType {
-    override fun toKotlin(): String = "out " + bound.toKotlin()
+class OutProjectionType(val bound: Type) : NotNullType() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder append "out " append bound
+    }
 }
 
-class StarProjectionType() : NotNullType {
-    override fun toKotlin(): String = "*"
+class StarProjectionType() : NotNullType() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("*")
+    }
 }
 
-class PrimitiveType(val `type`: Identifier) : NotNullType {
-    override fun toKotlin(): String = `type`.toKotlin()
+class PrimitiveType(val name: Identifier) : NotNullType() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(name)
+    }
 }
 
-class VarArgType(val `type`: Type) : NotNullType {
-    override fun toKotlin(): String = `type`.toKotlin()
+class VarArgType(val `type`: Type) : NotNullType() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(`type`)
+    }
 }

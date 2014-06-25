@@ -80,7 +80,7 @@ public class MainFunctionDetector {
                     List<TypeProjection> typeArguments = parameterType.getArguments();
                     if (typeArguments.size() == 1) {
                         JetType typeArgument = typeArguments.get(0).getType();
-                        if (JetTypeChecker.INSTANCE.equalTypes(typeArgument, kotlinBuiltIns.getStringType())) {
+                        if (JetTypeChecker.DEFAULT.equalTypes(typeArgument, kotlinBuiltIns.getStringType())) {
                             return true;
                         }
                     }

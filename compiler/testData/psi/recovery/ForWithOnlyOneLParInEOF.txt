@@ -1,0 +1,26 @@
+JetFile: ForWithOnlyOneLParInEOF.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FOR
+      PsiElement(for)('for')
+      PsiWhiteSpace(' ')
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiErrorElement:Expecting a variable name
+          <empty list>
+      PsiErrorElement:Expecting 'in'
+        <empty list>
+      PsiErrorElement:Expecting ')'
+        <empty list>
+      BODY
+        <empty list>

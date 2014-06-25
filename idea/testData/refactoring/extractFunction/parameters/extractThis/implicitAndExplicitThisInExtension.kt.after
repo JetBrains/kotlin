@@ -1,3 +1,4 @@
+// PARAM_TYPES: Z
 class Z(val a: Int)
 
 // SIBLING:
@@ -6,5 +7,5 @@ fun Z.foo(): Int {
 }
 
 fun Z.i(): Int {
-    return a + a
+    return this.a + a
 }

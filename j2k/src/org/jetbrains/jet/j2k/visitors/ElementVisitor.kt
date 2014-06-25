@@ -20,17 +20,20 @@ import com.intellij.psi.*
 import org.jetbrains.jet.j2k.*
 import org.jetbrains.jet.j2k.ast.*
 
-class ElementVisitor(private val converter: Converter, private val typeConverter: TypeConverter) : JavaElementVisitor() {
+class ElementVisitor(private val converter: Converter) : JavaElementVisitor() {
+    private val typeConverter = converter.typeConverter
+
     public var result: Element = Element.Empty
         protected set
 
     override fun visitLocalVariable(variable: PsiLocalVariable) {
-        result = LocalVariable(Identifier(variable.getName()!!),
-                                 converter.convertModifiers(variable),
-                                 { typeConverter.convertVariableType(variable) },
-                                 converter.convertExpression(variable.getInitializer(), variable.getType()),
-                                 converter.settings.forceLocalVariableImmutability || variable.hasModifierProperty(PsiModifier.FINAL),
-                                 converter.settings)
+        result = LocalVariable(variable.declarationIdentifier(),
+                               converter.convertAnnotations(variable),
+                               converter.convertModifiers(variable),
+                               { typeConverter.convertVariableType(variable) },
+                               converter.convertExpression(variable.getInitializer(), variable.getType()),
+                               converter.settings.forceLocalVariableImmutability || variable.hasModifierProperty(PsiModifier.FINAL),
+                               converter.settings)
     }
 
     override fun visitExpressionList(list: PsiExpressionList) {
@@ -43,11 +46,11 @@ class ElementVisitor(private val converter: Converter, private val typeConverter
             result = ReferenceElement(Identifier(reference.getReferenceName()!!), types)
         }
         else {
-            var code = Identifier(reference.getReferenceName()!!).toKotlin()
+            var code = Identifier.toKotlin(reference.getReferenceName()!!)
             var qualifier = reference.getQualifier()
             while (qualifier != null) {
                 val p = qualifier as PsiJavaCodeReferenceElement
-                code = Identifier(p.getReferenceName()!!).toKotlin() + "." + code
+                code = Identifier.toKotlin(p.getReferenceName()!!) + "." + code
                 qualifier = p.getQualifier()
             }
             result = ReferenceElement(Identifier(code), types)
@@ -59,19 +62,11 @@ class ElementVisitor(private val converter: Converter, private val typeConverter
     }
 
     override fun visitTypeParameter(classParameter: PsiTypeParameter) {
-        result = TypeParameter(Identifier(classParameter.getName()!!),
-                                 classParameter.getExtendsListTypes().map { typeConverter.convertType(it) })
+        result = TypeParameter(classParameter.declarationIdentifier(),
+                               classParameter.getExtendsListTypes().map { typeConverter.convertType(it) })
     }
 
     override fun visitParameterList(list: PsiParameterList) {
         result = converter.convertParameterList(list)
-    }
-
-    override fun visitComment(comment: PsiComment) {
-        result = Comment(comment.getText()!!)
-    }
-
-    override fun visitWhiteSpace(space: PsiWhiteSpace) {
-        result = WhiteSpace(space.getText()!!)
     }
 }

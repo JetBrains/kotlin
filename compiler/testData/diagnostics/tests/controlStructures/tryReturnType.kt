@@ -5,7 +5,7 @@ fun foo() : Int {
         doSmth()
     }
     catch (e: Exception) {
-        <!UNREACHABLE_CODE!>return <!TYPE_MISMATCH!>""<!><!>
+        <!UNREACHABLE_CODE!>return<!> <!TYPE_MISMATCH!>""<!>
     }
     finally {
         return <!TYPE_MISMATCH!>""<!>

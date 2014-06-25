@@ -66,6 +66,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/ImportObject.A.kt");
     }
     
+    @TestMetadata("InlinedConstants.A.kt")
+    public void testInlinedConstants() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/InlinedConstants.A.kt");
+    }
+    
     @TestMetadata("InnerClass.A.kt")
     public void testInnerClass() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/InnerClass.A.kt");

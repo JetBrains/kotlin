@@ -1,0 +1,52 @@
+LineBreakpoint created at clearCache.kt:12
+LineBreakpoint created at clearCache.kt:20
+LineBreakpoint created at clearCache.kt:31
+LineBreakpoint created at clearCache.kt:42
+LineBreakpoint created at clearCache.kt:52
+LineBreakpoint created at clearCache.kt:60
+LineBreakpoint created at clearCache.kt:78
+LineBreakpoint created at clearCache.kt:86
+LineBreakpoint created at clearCache.kt:95
+LineBreakpoint created at clearCache.kt:105
+LineBreakpoint created at clearCache.kt:113
+LineBreakpoint created at clearCache.kt:123
+LineBreakpoint created at clearCache.kt:131
+LineBreakpoint created at clearCache.kt:149
+LineBreakpoint created at clearCache.kt:154
+LineBreakpoint created at clearCache.kt:161
+LineBreakpoint created at clearCache.kt:169
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! clearCache.ClearCachePackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+clearCache.kt:11
+Compile bytecode for a
+clearCache.kt:19
+Compile bytecode for a
+clearCache.kt:30
+Compile bytecode for i
+clearCache.kt:30
+clearCache.kt:41
+Compile bytecode for i
+clearCache.kt:41
+clearCache.kt:51
+Compile bytecode for o.test()
+clearCache.kt:59
+clearCache.kt:77
+Compile bytecode for c.size()
+clearCache.kt:85
+clearCache.kt:94
+clearCache.kt:104
+clearCache.kt:112
+Compile bytecode for c.size()
+clearCache.kt:122
+Compile bytecode for o.test()
+clearCache.kt:130
+clearCache.kt:148
+Compile bytecode for obj.test()
+clearCache.kt:153
+clearCache.kt:160
+Compile bytecode for o.test()
+clearCache.kt:168
+Compile bytecode for o.test()
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

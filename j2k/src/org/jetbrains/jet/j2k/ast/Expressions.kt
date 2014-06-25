@@ -17,98 +17,144 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.jet.j2k.*
 
 class ArrayAccessExpression(val expression: Expression, val index: Expression, val lvalue: Boolean) : Expression() {
-    override fun toKotlin() = operandToKotlin(expression) +
-            (if (!lvalue && expression.isNullable) "!!" else "") +
-            "[" + index.toKotlin() + "]"
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, expression)
+        if (!lvalue && expression.isNullable) builder.append("!!")
+        builder append "[" append index append "]"
+    }
 }
 
 class AssignmentExpression(val left: Expression, val right: Expression, val op: String) : Expression() {
-    override fun toKotlin() = operandToKotlin(left) + " " + op + " " + operandToKotlin(right)
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, left).append(" ").append(op).append(" ").appendOperand(this, right)
+    }
 }
 
 class BangBangExpression(val expr: Expression) : Expression() {
-    override fun toKotlin() = operandToKotlin(expr) + "!!"
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, expr).append("!!")
+    }
 }
 
 class BinaryExpression(val left: Expression, val right: Expression, val op: String) : Expression() {
-    override fun toKotlin() = operandToKotlin(left, false) + " " + op + " " + operandToKotlin(right, true)
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, left, false).append(" ").append(op).append(" ").appendOperand(this, right, true)
+    }
 }
 
 class IsOperator(val expression: Expression, val typeElement: TypeElement) : Expression() {
-    override fun toKotlin() = operandToKotlin(expression) + " is " + typeElement.toKotlinNotNull()
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, expression).append(" is ").append(typeElement.`type`.toNotNullType())
+    }
 }
 
 class TypeCastExpression(val `type`: Type, val expression: Expression) : Expression() {
-    override fun toKotlin() = operandToKotlin(expression) + " as " + `type`.toKotlin()
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, expression).append(" as ").append(`type`)
+    }
 }
 
 class LiteralExpression(val literalText: String) : Expression() {
-    override fun toKotlin() = literalText
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(literalText)
+    }
 }
 
 class ParenthesizedExpression(val expression: Expression) : Expression() {
-    override fun toKotlin() = "(" + expression.toKotlin() + ")"
+    override fun generateCode(builder: CodeBuilder) {
+        builder append "(" append expression append ")"
+    }
 }
 
 class PrefixOperator(val op: String, val expression: Expression) : Expression() {
-    override fun toKotlin() = op + operandToKotlin(expression)
+    override fun generateCode(builder: CodeBuilder){
+        builder.append(op).appendOperand(this, expression)
+    }
 
     override val isNullable: Boolean
         get() = expression.isNullable
 }
 
 class PostfixOperator(val op: String, val expression: Expression) : Expression() {
-    override fun toKotlin() = operandToKotlin(expression) + op
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, expression) append op
+    }
 }
 
 class ThisExpression(val identifier: Identifier) : Expression() {
-    override fun toKotlin() = "this" + identifier.withPrefix("@")
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("this").appendWithPrefix(identifier, "@")
+    }
 }
 
 class SuperExpression(val identifier: Identifier) : Expression() {
-    override fun toKotlin() = "super" + identifier.withPrefix("@")
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("super").appendWithPrefix(identifier, "@")
+    }
 }
 
-class QualifiedExpression(val expression: Expression, val identifier: Expression) : Expression() {
+class QualifiedExpression(val qualifier: Expression, val identifier: Expression) : Expression() {
     override val isNullable: Boolean
-        get() {
-            if (!expression.isEmpty && expression.isNullable) return true
-            return identifier.isNullable
+        get() = identifier.isNullable
+
+    override fun generateCode(builder: CodeBuilder) {
+        if (!qualifier.isEmpty) {
+            builder.appendOperand(this, qualifier).append(if (qualifier.isNullable) "!!." else ".")
         }
 
-    override fun toKotlin(): String {
-        if (!expression.isEmpty) {
-            return operandToKotlin(expression) + (if (expression.isNullable) "?." else ".") + identifier.toKotlin()
-        }
-
-        return identifier.toKotlin()
+        builder.append(identifier)
     }
 }
 
 class PolyadicExpression(val expressions: List<Expression>, val token: String) : Expression() {
-    override fun toKotlin(): String {
-        val expressionsWithConversions = expressions.map { it.toKotlin() }
-        return expressionsWithConversions.makeString(" " + token + " ")
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(expressions, " " + token + " ")
     }
 }
 
-fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>) : MethodCallExpression {
-    val elementType = arrayType.elementType
-    val createArrayFunction = if (elementType.isPrimitive()) {
-            (elementType.toNotNullType().toKotlin() + "Array").decapitalize()
+class LambdaExpression(val arguments: String?, val block: Block) : Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder append block.lBrace append " "
+
+        if (arguments != null) {
+            builder.append(arguments)
+                    .append("->")
+                    .append(if (block.statements.size > 1) "\n" else " ")
+                    .append(block.statements, "\n")
         }
+        else {
+            builder.append(block.statements, "\n")
+        }
+
+        builder append " " append block.rBrace
+    }
+}
+
+class StarExpression(val methodCall: MethodCallExpression) : Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder append "*" append methodCall
+    }
+}
+
+fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean) : MethodCallExpression {
+    val elementType = arrayType.elementType
+    val createArrayFunction = if (elementType is PrimitiveType)
+            (elementType.toNotNullType().canonicalCode() + "Array").decapitalize()
+        else if (needExplicitType)
+            arrayType.toNotNullType().canonicalCode().decapitalize()
         else
-            arrayType.toNotNullType().toKotlin().decapitalize()
+            "array"
 
     val doubleOrFloatTypes = setOf("double", "float", "java.lang.double", "java.lang.float")
-    val afterReplace = arrayType.toNotNullType().toKotlin().replace("Array", "").toLowerCase().replace(">", "").replace("<", "").replace("?", "")
+    val afterReplace = arrayType.toNotNullType().canonicalCode().replace("Array", "").toLowerCase().replace(">", "").replace("<", "").replace("?", "")
 
     fun explicitConvertIfNeeded(initializer: Expression): Expression {
         if (doubleOrFloatTypes.contains(afterReplace)) {
             if (initializer is LiteralExpression) {
-                if (!initializer.toKotlin().contains(".")) {
+                if (!initializer.canonicalCode().contains(".")) {
                     return LiteralExpression(initializer.literalText + ".0")
                 }
             }
@@ -119,7 +165,7 @@ fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Ex
                     else -> null
                 }
                 if (conversionFunction != null) {
-                    return MethodCallExpression(QualifiedExpression(initializer, Identifier(conversionFunction)), listOf(), listOf())
+                    return MethodCallExpression.buildNotNull(initializer, conversionFunction)
                 }
             }
         }
@@ -127,5 +173,5 @@ fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Ex
         return initializer
     }
 
-    return MethodCallExpression(Identifier(createArrayFunction), initializers.map { explicitConvertIfNeeded(it) }, listOf())
+    return MethodCallExpression.buildNotNull(null, createArrayFunction, initializers.map { explicitConvertIfNeeded(it) })
 }

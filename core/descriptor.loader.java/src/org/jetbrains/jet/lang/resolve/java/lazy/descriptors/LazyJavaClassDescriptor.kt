@@ -181,7 +181,7 @@ class LazyJavaClassDescriptor(
             val candidateReturnType = candidate.getReturnType()
             val currentMostSpecificReturnType = currentMostSpecificType.getReturnType()
             assert(candidateReturnType != null && currentMostSpecificReturnType != null, "$candidate, $currentMostSpecificReturnType")
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(candidateReturnType!!, currentMostSpecificReturnType!!)) {
+            if (JetTypeChecker.DEFAULT.isSubtypeOf(candidateReturnType!!, currentMostSpecificReturnType!!)) {
                 currentMostSpecificType = candidate
             }
         }

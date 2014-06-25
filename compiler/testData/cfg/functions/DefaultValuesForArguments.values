@@ -1,0 +1,9 @@
+== foo ==
+fun foo(i: Int = 1, j: Int) = i + j
+---------------------
+1            <v0>: Int   NEW()
+i: Int = 1   <v2>: Int   NEW(<v0>, <v1>)
+i            <v4>: Int   NEW()
+j            <v5>: Int   NEW()
+i + j        <v6>: Int   NEW(<v4>, <v5>)
+=====================

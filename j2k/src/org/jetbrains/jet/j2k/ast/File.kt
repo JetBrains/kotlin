@@ -16,18 +16,21 @@
 
 package org.jetbrains.jet.j2k.ast
 
-class FileMemberList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine, false)
+import org.jetbrains.jet.j2k.CodeBuilder
+import org.jetbrains.jet.j2k.append
 
-class PackageStatement(val packageName: String) : Element {
-    override fun toKotlin(): String = "package " + packageName
+class PackageStatement(val packageName: String) : Element() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder append "package " append packageName
+    }
 }
 
 class File(
-        val body: FileMemberList,
+        val elements: List<Element>,
         val mainFunction: String
-) : Element {
+) : Element() {
 
-    override fun toKotlin(): String {
-        return body.toKotlin() + mainFunction
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(elements, "\n").append(mainFunction)
     }
 }

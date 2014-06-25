@@ -1,0 +1,13 @@
+// PARAM_TYPES: kotlin.Int
+fun <T> Array<T>.check(f: (T) -> Boolean): Boolean = false
+
+// SIBLING:
+fun foo(t: Array<Array<Int>>) {
+    if (t.check { it.check{ i(it) > 1 } }) {
+        println("OK")
+    }
+}
+
+fun i(it: Int): Int {
+    return it + 1
+}

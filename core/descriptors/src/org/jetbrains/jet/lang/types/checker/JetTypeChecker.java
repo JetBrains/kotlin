@@ -22,39 +22,33 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 
 public class JetTypeChecker {
 
-    public static final JetTypeChecker INSTANCE = new JetTypeChecker();
     public interface TypeConstructorEquality {
         boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b);
     }
 
-    private JetTypeChecker() {
-    }
-
-    public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
-        return TYPE_CHECKER.isSubtypeOf(subtype, supertype);
-    }
-
-    public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull final TypeConstructorEquality equalityAxioms) {
-        return createWithAxioms(equalityAxioms).isSubtypeOf(subtype, supertype);
-    }
-
-    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
-        return TYPE_CHECKER.equalTypes(a, b);
-    }
-
-    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b, @NotNull final TypeConstructorEquality equalityAxioms) {
-        return createWithAxioms(equalityAxioms).equalTypes(a, b);
-    }
+    public static final JetTypeChecker DEFAULT = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerTypingConstraints()));
 
     @NotNull
-    private static TypeCheckingProcedure createWithAxioms(@NotNull final TypeConstructorEquality equalityAxioms) {
-        return new TypeCheckingProcedure(new TypeCheckerTypingConstraints() {
+    public static JetTypeChecker withAxioms(@NotNull final TypeConstructorEquality equalityAxioms) {
+        return new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerTypingConstraints() {
             @Override
             public boolean assertEqualTypeConstructors(@NotNull TypeConstructor constructor1, @NotNull TypeConstructor constructor2) {
                 return constructor1.equals(constructor2) || equalityAxioms.equals(constructor1, constructor2);
             }
-        });
+        }));
     }
 
-    private static final TypeCheckingProcedure TYPE_CHECKER = new TypeCheckingProcedure(new TypeCheckerTypingConstraints());
+    private final TypeCheckingProcedure procedure;
+
+    private JetTypeChecker(@NotNull TypeCheckingProcedure procedure) {
+        this.procedure = procedure;
+    }
+
+    public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
+        return procedure.isSubtypeOf(subtype, supertype);
+    }
+
+    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
+        return procedure.equalTypes(a, b);
+    }
 }

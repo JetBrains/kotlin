@@ -259,6 +259,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             afterInside(LBRACE, BLOCK).lineBreakInCode()
             beforeInside(RBRACE, CLASS_BODY).lineBreakInCode()
             beforeInside(RBRACE, BLOCK).lineBreakInCode()
+            beforeInside(RBRACE, WHEN).lineBreakInCode()
             between(RPAR, BODY).spaces(1)
 
             // if when entry has block, spacing after arrow should be set by lbrace rule

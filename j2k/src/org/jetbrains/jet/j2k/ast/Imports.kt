@@ -24,40 +24,48 @@ import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage
 
-class Import(val name: String) : Element {
-    override fun toKotlin() = "import " + name
+class Import(val name: String) : Element() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder append "import " append name
+    }
 }
 
-class ImportList(private val imports: List<Import>) : Element {
+class ImportList(public val imports: List<Import>) : Element() {
     override val isEmpty: Boolean
         get() = imports.isEmpty()
 
-    override fun toKotlin() = imports.toKotlin("\n")
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(imports, "\n")
+    }
 }
 
 public fun Converter.convertImportList(importList: PsiImportList): ImportList =
-        ImportList(importList.getAllImportStatements().map { convertImport(it, true) }.filterNotNull())
+        ImportList(importList.getAllImportStatements().map { convertImport(it, true) }.filterNotNull()).assignPrototype(importList)
 
 public fun Converter.convertImport(anImport: PsiImportStatementBase, filter: Boolean): Import? {
-    val reference = anImport.getImportReference()
-    if (reference == null) return null
-    val qualifiedName = quoteKeywords(reference.getQualifiedName()!!)
-    if (anImport.isOnDemand()) {
-        return Import(qualifiedName + ".*")
-    }
-    else {
-        return if (filter) {
-            val filteredName = filterImport(qualifiedName, reference)
-            if (filteredName != null) Import(filteredName) else null
+    fun doConvert(): Import? {
+        val reference = anImport.getImportReference()
+        if (reference == null) return null
+        val qualifiedName = quoteKeywords(reference.getQualifiedName()!!)
+        if (anImport.isOnDemand()) {
+            return Import(qualifiedName + ".*")
         }
         else {
-            Import(qualifiedName)
+            return if (filter) {
+                val filteredName = filterImport(qualifiedName, reference)
+                if (filteredName != null) Import(filteredName) else null
+            }
+            else {
+                Import(qualifiedName)
+            }
         }
     }
+
+    return doConvert()?.assignPrototype(anImport)
 }
 
 private fun filterImport(name: String, ref: PsiJavaCodeReferenceElement): String? {
-    if (name in NOT_NULL_ANNOTATIONS || name in NULLABLE_ANNOTATIONS) return null
+    if (name in ANNOTATIONS_TO_REMOVE) return null
 
     // If imported class has a kotlin analog, drop the import
     if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(FqName(name)).isEmpty()) return null

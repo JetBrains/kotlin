@@ -16,31 +16,23 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
-import java.util.ArrayList
+import org.jetbrains.jet.j2k.CodeBuilder
 
-class Trait(
-        converter: Converter,
-        name: Identifier,
-        comments: MemberComments,
-        modifiers: Set<Modifier>,
-        typeParameterList: TypeParameterList,
-        extendsTypes: List<Type>,
-        baseClassParams: List<Expression>,
-        implementsTypes: List<Type>,
-        bodyElements: List<Element>
-) : Class(converter, name, comments, modifiers, typeParameterList,
-          extendsTypes, baseClassParams, implementsTypes, bodyElements) {
+class Trait(name: Identifier,
+            annotations: Annotations,
+            modifiers: Modifiers,
+            typeParameterList: TypeParameterList,
+            extendsTypes: List<Type>,
+            baseClassParams: List<Expression>,
+            implementsTypes: List<Type>,
+            body: ClassBody
+) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {
 
     override val keyword: String
         get() = "trait"
 
-    override fun primaryConstructorSignatureToKotlin() = ""
+    override fun appendPrimaryConstructorSignature(builder: CodeBuilder) { }
 
-    override fun modifiersToKotlin(): String {
-        val modifierList = ArrayList<Modifier>()
-        modifiers.accessModifier()?.let { modifierList.add(it) }
-        return modifierList.toKotlin()
-    }
-
+    override fun presentationModifiers(): Modifiers
+            = modifiers.filter { it in ACCESS_MODIFIERS }
 }

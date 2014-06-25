@@ -16,16 +16,16 @@ fun t1(b: Boolean) {
     doSmth(r)
 }
 ---------------------
-b                                                                                                            <v1>   NEW()
-"s"                                                                                                          <v2>   NEW()    
-u                                                                                                            <v3>   NEW()
-doSmth(u)                                                                                                    <v4>   NEW(<v3>)
-b                                                                                                            <v5>   NEW()    
-"s"                                                                                                          <v6>   NEW()    
-"t"                                                                                                          <v7>   NEW()    
-r                                                                                                            <v8>   NEW()
-doSmth(r)                                                                                                    <v9>   NEW(<v8>)
-{ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) }   <v9>   COPY     
+b                                                                                                            <v1>: Boolean   NEW()
+"s"                                                                                                          <v2>: String    NEW()
+u                                                                                                            <v3>: String    NEW()
+doSmth(u)                                                                                                    <v4>: *         NEW(<v3>)
+b                                                                                                            <v5>: Boolean   NEW()
+"s"                                                                                                          <v6>: String    NEW()
+"t"                                                                                                          <v7>: String    NEW()
+r                                                                                                            <v8>: String    NEW()
+doSmth(r)                                                                                                    <v9>: *         NEW(<v8>)
+{ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) }   <v9>: *         COPY
 =====================
 == t2 ==
 fun t2(b: Boolean) {
@@ -39,12 +39,12 @@ fun t2(b: Boolean) {
     }
 }
 ---------------------
-3           <v1>   NEW()
-b           <v2>   NEW()
-i           <v3>   NEW()
-doSmth(i)   <v4>   NEW(<v3>)
-i           <v5>   NEW()
-i is Int    <v6>   NEW(<v5>)
+3           <v1>: Int       NEW()
+b           <v2>: Boolean   NEW()
+i           <v3>: String    NEW()
+doSmth(i)   <v4>: *         NEW(<v3>)
+i           <v5>: *         NEW()
+i is Int    <v6>: Boolean   NEW(<v5>)
 =====================
 == doSmth ==
 fun doSmth(s: String) {}

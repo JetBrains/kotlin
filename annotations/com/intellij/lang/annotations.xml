@@ -2,4 +2,8 @@
   <item name='com.intellij.lang.ASTNode java.lang.String getText()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item
+      name='com.intellij.lang.SmartEnterProcessorWithFixers.FixEnterProcessor boolean doEnter(com.intellij.psi.PsiElement, com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, boolean) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>

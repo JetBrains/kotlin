@@ -9,8 +9,8 @@ L0:
     magic(f: () -> Unit) -> <v0>
     w(f|<v0>)
   2 mark({ f() })
-    mark(f())
     r(f) -> <v1>
+    mark(f())
     call(f, invoke|<v1>) -> <v2>
 L1:
   1 <END>                           NEXT:[<SINK>]

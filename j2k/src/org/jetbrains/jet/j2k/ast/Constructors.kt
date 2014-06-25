@@ -16,51 +16,56 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
-import java.util.HashSet
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.*
 
 abstract class Constructor(
         converter: Converter,
-        comments: MemberComments,
-        modifiers: Set<Modifier>,
+        annotations: Annotations,
+        modifiers: Modifiers,
         parameterList: ParameterList,
         block: Block
-) : Function(converter, Identifier.Empty, comments, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
+) : Function(converter, Identifier.Empty, annotations, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
 
 class PrimaryConstructor(converter: Converter,
-                         comments: MemberComments,
-                         modifiers: Set<Modifier>,
+                         annotations: Annotations,
+                         modifiers: Modifiers,
                          parameterList: ParameterList,
                          block: Block)
-  : Constructor(converter, comments, modifiers, parameterList, block) {
+  : Constructor(converter, annotations, modifiers, parameterList, block) {
 
-    public fun signatureToKotlin(): String {
-        val accessModifier = modifiers.accessModifier()
-        val modifiersString = if (accessModifier != null && accessModifier != Modifier.PUBLIC) " " + accessModifier.toKotlin() else ""
-        return modifiersString + "(" + parameterList.toKotlin() + ")"
+    public fun appendSignature(builder: CodeBuilder): CodeBuilder {
+        val accessModifier = modifiers.filter { it in ACCESS_MODIFIERS && it != Modifier.PUBLIC }
+        if (!accessModifier.isEmpty) {
+            builder append " " append accessModifier
+        }
+        return builder append "(" append parameterList append ")"
     }
 
-    public fun bodyToKotlin(): String = block!!.toKotlin()
+    public fun appendBody(builder: CodeBuilder): CodeBuilder = builder.append(block!!)
 }
 
 class SecondaryConstructor(converter: Converter,
-                         comments: MemberComments,
-                         modifiers: Set<Modifier>,
+                         annotations: Annotations,
+                         modifiers: Modifiers,
                          parameterList: ParameterList,
                          block: Block)
-  : Constructor(converter, comments, modifiers, parameterList, block) {
+  : Constructor(converter, annotations, modifiers, parameterList, block) {
 
-    public fun toInitFunction(containingClass: Class): Function {
-        val modifiers = HashSet(modifiers)
-        modifiers.add(Modifier.STATIC)
+    public fun toFactoryFunction(containingClass: Class?): Function {
         val statements = ArrayList(block?.statements ?: listOf())
-        statements.add(ReturnStatement(Identifier("__")))
-        val block = Block(statements)
+        statements.add(ReturnStatement(tempValIdentifier))
+        val block = Block(statements, block?.lBrace ?: LBrace(), block?.rBrace ?: RBrace())
         val typeParameters = ArrayList<TypeParameter>()
-        typeParameters.addAll(containingClass.typeParameterList.parameters)
-        return Function(converter, Identifier("init"), MemberComments.Empty, modifiers,
-                        ClassType(containingClass.name, typeParameters, Nullability.NotNull, converter.settings),
-                        TypeParameterList(typeParameters), parameterList, block, false)
+        if (containingClass != null) {
+            typeParameters.addAll(containingClass.typeParameterList.parameters)
+        }
+        return Function(converter, Identifier("create"), annotations, modifiers,
+                        ClassType(containingClass?.name ?: Identifier.Empty, typeParameters, Nullability.NotNull, converter.settings),
+                        TypeParameterList(typeParameters), parameterList, block, false).assignPrototypesFrom(this)
+    }
+
+    class object {
+        public val tempValIdentifier: Identifier = Identifier("__", false)
     }
 }

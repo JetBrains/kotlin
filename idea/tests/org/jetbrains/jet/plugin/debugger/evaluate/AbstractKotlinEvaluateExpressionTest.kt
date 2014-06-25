@@ -35,14 +35,43 @@ import com.sun.jdi.ObjectReference
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import java.util.Collections
 import com.intellij.debugger.engine.evaluation.EvaluateException
+import com.intellij.execution.process.ProcessOutputTypes
+import org.apache.log4j.AppenderSkeleton
+import org.apache.log4j.spi.LoggingEvent
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestCase() {
-    fun doTest(path: String) {
+    private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
+
+    private val appender = object : AppenderSkeleton() {
+        override fun append(event: LoggingEvent?) {
+            println(event?.getRenderedMessage(), ProcessOutputTypes.SYSTEM)
+        }
+        override fun close() {}
+        override fun requiresLayout() = false
+    }
+
+    private var oldLogLevel: Level? = null
+
+    override fun setUp() {
+        super<KotlinDebuggerTestCase>.setUp()
+
+        oldLogLevel = logger.getLevel()
+        logger.setLevel(Level.DEBUG)
+        logger.addAppender(appender)
+    }
+
+    override fun tearDown() {
+        logger.setLevel(oldLogLevel)
+        logger.removeAppender(appender)
+
+        super<KotlinDebuggerTestCase>.tearDown()
+    }
+
+    fun doSingleBreakpointTest(path: String) {
         val file = File(path)
-        val fileContent = FileUtil.loadFile(file, true)
-        val expressions = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, "// EXPRESSION: ")
-        val expectedExpressionResults = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, "// RESULT: ")
-        assert(expressions.size == expectedExpressionResults.size, "Sizes of test directives are different")
+        val expressions = loadTestDirectivesPairs(file, "// EXPRESSION: ", "// RESULT: ")
 
         val blocks = findFilesWithBlocks(file).map { FileUtil.loadFile(it, true) }
         val expectedBlockResults = blocks.map { InTextDirectivesUtils.findLinesWithPrefixesRemoved(it, "// RESULT: ").makeString("\n") }
@@ -51,32 +80,68 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
 
         onBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
-            for ((i, expression) in expressions.withIndices()) {
-                try {
-                    evaluate(expression, CodeFragmentKind.EXPRESSION, expectedExpressionResults[i])
-                }
-                catch (e: Throwable) {
-                    exceptions.put(expression, e)
+            for ((expression, expected) in expressions) {
+                mayThrow(exceptions, expression) {
+                    evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
                 }
             }
 
             for ((i, block) in blocks.withIndices()) {
-                try {
+                mayThrow(exceptions, block) {
                     evaluate(block, CodeFragmentKind.CODE_BLOCK, expectedBlockResults[i])
-                }
-                catch (e: Throwable) {
-                    exceptions.put(block, e)
                 }
             }
 
-            if (!exceptions.empty) {
-                for (exc in exceptions.values()) {
-                    exc.printStackTrace()
-                }
-                throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.makeString("\n"))
-            }
+            checkExceptions(exceptions)
         }
         finish()
+    }
+
+    fun doMultipleBreakpointsTest(path: String) {
+        val expressions = loadTestDirectivesPairs(File(path), "// EXPRESSION: ", "// RESULT: ")
+
+        createDebugProcess(path)
+
+        val exceptions = linkedMapOf<String, Throwable>()
+        for ((expression, expected) in expressions) {
+            mayThrow(exceptions, expression) {
+                onBreakpoint {
+                    evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
+                }
+            }
+        }
+
+        checkExceptions(exceptions)
+
+        finish()
+    }
+
+
+
+    private fun checkExceptions(exceptions: MutableMap<String, Throwable>) {
+        if (!exceptions.empty) {
+            for (exc in exceptions.values()) {
+                exc.printStackTrace()
+            }
+            throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.makeString("\n"))
+        }
+    }
+
+    private fun mayThrow(map: MutableMap<String, Throwable>, expression: String, f: () -> Unit) {
+        try {
+            f()
+        }
+        catch (e: Throwable) {
+            map.put(expression, e)
+        }
+    }
+
+    private fun loadTestDirectivesPairs(file: File, directivePrefix: String, expectedPrefix: String): List<Pair<String, String>> {
+        val fileContent = FileUtil.loadFile(file, true)
+        val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, directivePrefix)
+        val expected = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, expectedPrefix)
+        assert(directives.size == expected.size, "Sizes of test directives are different")
+        return directives.zip(expected)
     }
 
     private fun findFilesWithBlocks(mainFile: File): List<File> {
@@ -106,10 +171,10 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
 
             val evaluator = DebuggerInvocationUtil.commitAndRunReadAction(getProject()) {
                 EvaluatorBuilderImpl.build(TextWithImportsImpl(
-                                                    codeFragmentKind,
-                                                    text,
-                                                    JetCodeFragment.getImportsForElement(contextElement),
-                                                    JetFileType.INSTANCE),
+                        codeFragmentKind,
+                        text,
+                        JetCodeFragment.getImportsForElement(contextElement),
+                        JetFileType.INSTANCE),
                                            contextElement,
                                            sourcePosition)
             }
@@ -120,7 +185,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
             Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
         }
         catch (e: EvaluateException) {
-            Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage())
+            Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage()?.replaceFirst("id=[0-9]*", "id=ID"))
         }
         finally {
             resume(this)

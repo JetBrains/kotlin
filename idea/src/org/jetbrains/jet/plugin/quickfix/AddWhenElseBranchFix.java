@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,12 +55,12 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && element.getCloseBraceNode() != null;
+        return super.isAvailable(project, editor, file) && element.getCloseBrace() != null;
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        PsiElement whenCloseBrace = element.getCloseBraceNode();
+        PsiElement whenCloseBrace = element.getCloseBrace();
         assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
 
         JetWhenEntry entry = JetPsiFactory.createWhenEntry(project, ELSE_ENTRY_TEXT);

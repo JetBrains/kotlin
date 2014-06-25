@@ -7,15 +7,15 @@ class Delegate {
 == get ==
 fun get(_this: Any, p: PropertyMetadata): Int = 0
 ---------------------
-0   <v2>   NEW()
+0   <v2>: Int   NEW()
 =====================
 == a ==
 val a = Delegate()
 ---------------------
-Delegate()   <v0>   NEW()
+Delegate()   <v0>: Delegate   NEW()
 =====================
 == b ==
 val b by a
 ---------------------
-a   <v0>   NEW()
+a   <v0>: *   NEW()
 =====================

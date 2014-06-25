@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.codeInsight.CodeInsightSettings com.intellij.codeInsight.CodeInsightSettings getInstance()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

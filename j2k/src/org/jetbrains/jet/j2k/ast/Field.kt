@@ -17,34 +17,34 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
-import java.util.ArrayList
 
-open class Field(
+class Field(
         val identifier: Identifier,
-        comments: MemberComments,
-        modifiers: Set<Modifier>,
+        annotations: Annotations,
+        modifiers: Modifiers,
         val `type`: Type,
         val initializer: Element,
         val isVal: Boolean,
+        val explicitType: Boolean,
         private val hasWriteAccesses: Boolean
-) : Member(comments, modifiers) {
+) : Member(annotations, modifiers) {
 
-    override fun toKotlin(): String {
-        val declaration = commentsToKotlin() + modifiersToKotlin() + (if (isVal) "val " else "var ") + identifier.toKotlin() + " : " + `type`.toKotlin()
-        return if (initializer.isEmpty)
-            declaration + (if (isVal && !isStatic() && hasWriteAccesses) "" else " = " + getDefaultInitializer(this))
-        else
-            declaration + " = " + initializer.toKotlin()
-    }
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations)
+                .appendWithSpaceAfter(modifiers)
+                .append(if (isVal) "val " else "var ")
+                .append(identifier)
 
-    private fun modifiersToKotlin(): String {
-        val modifierList = ArrayList<Modifier>()
-        if (modifiers.contains(Modifier.ABSTRACT)) {
-            modifierList.add(Modifier.ABSTRACT)
+        if (explicitType) {
+            builder append ":" append `type`
         }
 
-        modifiers.accessModifier()?.let { modifierList.add(it) }
-
-        return modifierList.toKotlin()
+        var initializerToUse = initializer
+        if (initializerToUse.isEmpty && !(isVal && hasWriteAccesses)) {
+            initializerToUse = getDefaultInitializer(this)
+        }
+        if (!initializerToUse.isEmpty) {
+            builder append " = " append initializerToUse
+        }
     }
 }

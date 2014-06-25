@@ -33,19 +33,34 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 fun suite(): TestSuite = buildTestSuite {
     methodNode, ownerClass, expected ->
-    object : TestCase("test" + methodNode.name.capitalize()) {
+    object : TestCase(getTestName(methodNode.name)) {
 
             override fun runTest() {
-                val value = interpreterLoop(
-                        methodNode,
-                        initFrame(
-                                ownerClass.getInternalName(),
-                                methodNode
-                        ),
-                        REFLECTION_EVAL
-                )
+                if (!isIgnored(methodNode)) {
+                    val value = interpreterLoop(
+                            methodNode,
+                            initFrame(
+                                    ownerClass.getInternalName(),
+                                    methodNode
+                            ),
+                            REFLECTION_EVAL
+                    )
+                    
+                    if (expected is ExceptionThrown && value is ExceptionThrown) {
+                        assertEquals(expected.exception.toString(), value.exception.toString())
+                    }
+                    else {
+                        assertEquals(expected.toString(), value.toString())
+                    }
+                }
+            }
 
-                assertEquals(expected, value)
+            private fun isIgnored(methodNode: MethodNode): Boolean {
+                return methodNode.visibleAnnotations?.any {
+                    val annotationDesc = it.desc
+                    annotationDesc != null &&
+                        Type.getType(annotationDesc) == Type.getType(javaClass<IgnoreInReflectionTests>())
+                } ?: false
             }
         }
 }
@@ -62,7 +77,9 @@ fun initFrame(
     var local = 0
     if ((m.access and ACC_STATIC) == 0) {
         val ctype = Type.getObjectType(owner)
-        current.setLocal(local++, makeNotInitializedValue(ctype))
+        val newInstance = REFLECTION_EVAL.newInstance(ctype)
+        val thisValue = REFLECTION_EVAL.invokeMethod(newInstance, MethodDescription(owner, "<init>", "()V", false), listOf(), true)
+        current.setLocal(local++, thisValue)
     }
 
     val args = Type.getArgumentTypes(m.desc)
@@ -133,21 +150,23 @@ object REFLECTION_EVAL : Eval {
         val elementType = if (asmType.getDimensions() == 1) asmType.getElementType() else Type.getType(asmType.getDescriptor().substring(1))
         val arr = array.obj().checkNull()
         val ind = index.int
-        return when (elementType.getSort()) {
-            Type.BOOLEAN -> boolean(JArray.getBoolean(arr, ind))
-            Type.BYTE -> byte(JArray.getByte(arr, ind))
-            Type.SHORT -> short(JArray.getShort(arr, ind))
-            Type.CHAR -> char(JArray.getChar(arr, ind))
-            Type.INT -> int(JArray.getInt(arr, ind))
-            Type.LONG -> long(JArray.getLong(arr, ind))
-            Type.FLOAT -> float(JArray.getFloat(arr, ind))
-            Type.DOUBLE -> double(JArray.getDouble(arr, ind))
-            Type.OBJECT,
-            Type.ARRAY -> {
-                val value = JArray.get(arr, ind)
-                if (value == null) NULL_VALUE else ObjectValue(value, Type.getType(value.javaClass))
+        return mayThrow {
+            when (elementType.getSort()) {
+                Type.BOOLEAN -> boolean(JArray.getBoolean(arr, ind))
+                Type.BYTE -> byte(JArray.getByte(arr, ind))
+                Type.SHORT -> short(JArray.getShort(arr, ind))
+                Type.CHAR -> char(JArray.getChar(arr, ind))
+                Type.INT -> int(JArray.getInt(arr, ind))
+                Type.LONG -> long(JArray.getLong(arr, ind))
+                Type.FLOAT -> float(JArray.getFloat(arr, ind))
+                Type.DOUBLE -> double(JArray.getDouble(arr, ind))
+                Type.OBJECT,
+                Type.ARRAY -> {
+                    val value = JArray.get(arr, ind)
+                    if (value == null) NULL_VALUE else ObjectValue(value, Type.getType(value.javaClass))
+                }
+                else -> throw UnsupportedOperationException("Unsupported array element type: $elementType")
             }
-            else -> throw UnsupportedOperationException("Unsupported array element type: $elementType")
         }
     }
 
@@ -159,20 +178,22 @@ object REFLECTION_EVAL : Eval {
             return
         }
         val elementType = array.asmType.getElementType()
-        when (elementType.getSort()) {
-            Type.BOOLEAN -> JArray.setBoolean(arr, ind, newValue.boolean)
-            Type.BYTE -> JArray.setByte(arr, ind, newValue.int.toByte())
-            Type.SHORT -> JArray.setShort(arr, ind, newValue.int.toShort())
-            Type.CHAR -> JArray.setChar(arr, ind, newValue.int.toChar())
-            Type.INT -> JArray.setInt(arr, ind, newValue.int)
-            Type.LONG -> JArray.setLong(arr, ind, newValue.long)
-            Type.FLOAT -> JArray.setFloat(arr, ind, newValue.float)
-            Type.DOUBLE -> JArray.setDouble(arr, ind, newValue.double)
-            Type.OBJECT,
-            Type.ARRAY -> {
-                JArray.set(arr, ind, newValue.obj())
+        mayThrow {
+            when (elementType.getSort()) {
+                Type.BOOLEAN -> JArray.setBoolean(arr, ind, newValue.boolean)
+                Type.BYTE -> JArray.setByte(arr, ind, newValue.int.toByte())
+                Type.SHORT -> JArray.setShort(arr, ind, newValue.int.toShort())
+                Type.CHAR -> JArray.setChar(arr, ind, newValue.int.toChar())
+                Type.INT -> JArray.setInt(arr, ind, newValue.int)
+                Type.LONG -> JArray.setLong(arr, ind, newValue.long)
+                Type.FLOAT -> JArray.setFloat(arr, ind, newValue.float)
+                Type.DOUBLE -> JArray.setDouble(arr, ind, newValue.double)
+                Type.OBJECT,
+                Type.ARRAY -> {
+                    JArray.set(arr, ind, newValue.obj())
+                }
+                else -> throw UnsupportedOperationException("Unsupported array element type: $elementType")
             }
-            else -> throw UnsupportedOperationException("Unsupported array element type: $elementType")
         }
     }
 
@@ -265,7 +286,7 @@ object REFLECTION_EVAL : Eval {
             }
             else {
                 // TODO
-                throw UnsupportedOperationException("invokespecial is not suported yet")
+                throw UnsupportedOperationException("invokespecial is not suported in reflection eval")
             }
         }
         val obj = instance.obj().checkNull()

@@ -5,7 +5,7 @@ class X() : Base() {
         return super.hashCode()
     }
 
-    override fun equals(other: Any?): Boolean {
+    override fun equals(o: Any?): Boolean {
         return super.equals(o)
     }
 
@@ -13,6 +13,7 @@ class X() : Base() {
         return super.toString()
     }
 
+    throws(javaClass<CloneNotSupportedException>())
     protected fun clone(): Any {
         return super.clone()
     }

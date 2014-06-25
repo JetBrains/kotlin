@@ -19,18 +19,25 @@ package org.jetbrains.jet.plugin.refactoring.extractFunction.ui;
 import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.components.JBComboBoxLabel;
+import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
 import com.intellij.ui.table.JBTable;
+import com.intellij.util.Function;
+import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.EditableModel;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.extractFunction.Parameter;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import java.awt.*;
@@ -42,11 +49,13 @@ public class KotlinParameterTablePanel extends JPanel {
     public static class ParameterInfo {
         private final Parameter originalParameter;
         private String name;
+        private JetType type;
         private boolean enabled = true;
 
         public ParameterInfo(Parameter originalParameter) {
             this.originalParameter = originalParameter;
             this.name = originalParameter.getName();
+            this.type = originalParameter.getParameterType();
         }
 
         public Parameter getOriginalParameter() {
@@ -69,18 +78,16 @@ public class KotlinParameterTablePanel extends JPanel {
             this.name = name;
         }
 
-        public String getTypeAsString() {
-            return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getOriginalParameter().getParameterType());
+        public JetType getType() {
+            return type;
+        }
+
+        public void setType(JetType type) {
+            this.type = type;
         }
 
         public Parameter toParameter() {
-            return new Parameter(
-                    originalParameter.getArgumentText(),
-                    name,
-                    originalParameter.getMirrorVarName(),
-                    originalParameter.getParameterType(),
-                    originalParameter.getReceiverCandidate()
-            );
+            return originalParameter.copy(name, type);
         }
     }
 
@@ -111,6 +118,7 @@ public class KotlinParameterTablePanel extends JPanel {
 
         myTable.setTableHeader(null);
         myTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        myTable.setCellSelectionEnabled(true);
 
         TableColumn checkBoxColumn = myTable.getColumnModel().getColumn(MyTableModel.CHECKMARK_COLUMN);
         TableUtil.setupCheckboxColumn(checkBoxColumn);
@@ -127,6 +135,55 @@ public class KotlinParameterTablePanel extends JPanel {
                     }
                 }
         );
+
+        myTable.getColumnModel().getColumn(MyTableModel.PARAMETER_TYPE_COLUMN).setCellRenderer(new DefaultTableCellRenderer() {
+            private final JBComboBoxLabel myLabel = new JBComboBoxLabel();
+
+            @Override
+            @NotNull
+            public Component getTableCellRendererComponent(
+                    @NotNull JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column
+            ) {
+                myLabel.setText(String.valueOf(value));
+                myLabel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                myLabel.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+                if (isSelected) {
+                    myLabel.setSelectionIcon();
+                } else {
+                    myLabel.setRegularIcon();
+                }
+                return myLabel;
+            }
+        });
+
+        myTable.getColumnModel().getColumn(MyTableModel.PARAMETER_TYPE_COLUMN).setCellEditor(new AbstractTableCellEditor() {
+            final JBComboBoxTableCellEditorComponent myEditorComponent = new JBComboBoxTableCellEditorComponent();
+
+            @Override
+            @Nullable
+            public Object getCellEditorValue() {
+                return myEditorComponent.getEditorValue();
+            }
+
+            @Override
+            public Component getTableCellEditorComponent(
+                    JTable table, Object value, boolean isSelected, int row, int column
+            ) {
+                ParameterInfo info = parameterInfos.get(row);
+
+                myEditorComponent.setCell(table, row, column);
+                myEditorComponent.setOptions(info.getOriginalParameter().getParameterTypeCandidates().toArray());
+                myEditorComponent.setDefaultValue(info.getType());
+                myEditorComponent.setToString(new Function<Object, String>() {
+                    @Override
+                    public String fun(Object o) {
+                        return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType((JetType) o);
+                    }
+                });
+
+                return myEditorComponent;
+            }
+        });
 
         myTable.setPreferredScrollableViewportSize(new Dimension(250, myTable.getRowHeight() * 5));
         myTable.setShowGrid(false);
@@ -155,20 +212,6 @@ public class KotlinParameterTablePanel extends JPanel {
                     }
                     myTableModel.fireTableRowsUpdated(rows[0], rows[rows.length - 1]);
                     TableUtil.selectRows(myTable, rows);
-                }
-            }
-        });
-
-        // F2: edit parameter name
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "edit_parameter_name");
-        actionMap.put("edit_parameter_name", new AbstractAction() {
-            @Override
-            public void actionPerformed(@NotNull ActionEvent e) {
-                if (!myTable.isEditing()) {
-                    int row = myTable.getSelectedRow();
-                    if (row >= 0 && row < myTableModel.getRowCount()) {
-                        TableUtil.editCellAt(myTable, row, MyTableModel.PARAMETER_NAME_COLUMN);
-                    }
                 }
             }
         });
@@ -266,36 +309,38 @@ public class KotlinParameterTablePanel extends JPanel {
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             switch (columnIndex) {
-                case CHECKMARK_COLUMN: {
+                case CHECKMARK_COLUMN:
                     return parameterInfos.get(rowIndex).isEnabled();
-                }
-                case PARAMETER_NAME_COLUMN: {
+                case PARAMETER_NAME_COLUMN:
                     return parameterInfos.get(rowIndex).getName();
-                }
-                case PARAMETER_TYPE_COLUMN: {
-                    return parameterInfos.get(rowIndex).getTypeAsString();
-                }
+                case PARAMETER_TYPE_COLUMN:
+                    return parameterInfos.get(rowIndex).getType();
+                default:
+                    return null;
             }
-            assert false;
-            return null;
         }
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            ParameterInfo info = parameterInfos.get(rowIndex);
             switch (columnIndex) {
                 case CHECKMARK_COLUMN: {
-                    parameterInfos.get(rowIndex).setEnabled((Boolean) aValue);
+                    info.setEnabled((Boolean) aValue);
                     fireTableRowsUpdated(rowIndex, rowIndex);
                     myTable.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
                     updateSignature();
                     break;
                 }
                 case PARAMETER_NAME_COLUMN: {
-                    ParameterInfo info = parameterInfos.get(rowIndex);
                     String name = (String) aValue;
                     if (JetNameSuggester.isIdentifier(name)) {
                         info.setName(name);
                     }
+                    updateSignature();
+                    break;
+                }
+                case PARAMETER_TYPE_COLUMN: {
+                    info.setType((JetType) aValue);
                     updateSignature();
                     break;
                 }
@@ -304,11 +349,14 @@ public class KotlinParameterTablePanel extends JPanel {
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
+            ParameterInfo info = parameterInfos.get(rowIndex);
             switch (columnIndex) {
                 case CHECKMARK_COLUMN:
                     return isEnabled();
                 case PARAMETER_NAME_COLUMN:
-                    return isEnabled() && parameterInfos.get(rowIndex).isEnabled();
+                    return isEnabled() && info.isEnabled();
+                case PARAMETER_TYPE_COLUMN:
+                    return isEnabled() && info.isEnabled() && info.getOriginalParameter().getParameterTypeCandidates().size() > 1;
                 default:
                     return false;
             }

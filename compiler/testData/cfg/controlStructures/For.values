@@ -5,12 +5,12 @@ fun t1() {
     }
 }
 ---------------------
-1               <v0>   NEW()          
-2               <v1>   NEW()
-1..2            <v2>   NEW(<v0>, <v1>)
-i               <v4>   NEW()          
-doSmth(i)       <v5>   NEW(<v4>)
-{ doSmth(i) }   <v5>   COPY           
+1               <v0>: Int                  NEW()
+2               <v1>: Int                  NEW()
+1..2            <v2>: {<: Iterable<Int>}   NEW(<v0>, <v1>)
+i               <v4>: Int                  NEW()
+doSmth(i)       <v5>: *                    NEW(<v4>)
+{ doSmth(i) }   <v5>: *                    COPY
 =====================
 == doSmth ==
 fun doSmth(i: Int) {}

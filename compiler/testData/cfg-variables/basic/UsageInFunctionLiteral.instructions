@@ -39,14 +39,14 @@ L3:
     magic(x: Int) -> <v0>               INIT: in: {x=D} out: {x=D}
     w(x|<v0>)                           INIT: in: {x=D} out: {x=ID}
   4 mark(val y = x + a use(a))          INIT: in: {x=ID} out: {x=ID}
-    v(val y = x + a)                    INIT: in: {x=ID} out: {x=ID, y=D}
-    mark(x + a)                         INIT: in: {x=ID, y=D} out: {x=ID, y=D}      USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
-    r(x) -> <v1>                                                                    USE: in: {a=READ} out: {a=READ, x=READ}
+    v(val y = x + a)                    INIT: in: {x=ID} out: {x=ID, y=D}           USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
+    r(x) -> <v1>                        INIT: in: {x=ID, y=D} out: {x=ID, y=D}      USE: in: {a=READ} out: {a=READ, x=READ}
     r(a) -> <v2>
+    mark(x + a)
     call(+, plus|<v1>, <v2>) -> <v3>
-    w(y|<v3>)                           INIT: in: {x=ID, y=D} out: {x=ID, y=ID}
-    mark(use(a))                        INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}    USE: in: {a=READ} out: {a=READ}
-    r(a) -> <v4>                                                                    USE: in: {} out: {a=READ}
+    w(y|<v3>)                           INIT: in: {x=ID, y=D} out: {x=ID, y=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v4>                        INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}    USE: in: {} out: {a=READ}
+    mark(use(a))
     call(use, use|<v4>) -> <v5>
 L4:
   3 <END>                               INIT: in: {x=ID} out: {x=ID}

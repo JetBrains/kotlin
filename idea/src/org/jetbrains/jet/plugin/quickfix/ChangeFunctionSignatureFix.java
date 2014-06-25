@@ -132,7 +132,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                     argumentExpression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, argumentExpression) : null;
             JetType parameterType = parameters.get(i).getType();
 
-            if (argumentType == null || !JetTypeChecker.INSTANCE.isSubtypeOf(argumentType, parameterType)) {
+            if (argumentType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
                 return true;
             }
         }

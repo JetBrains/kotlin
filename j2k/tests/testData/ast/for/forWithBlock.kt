@@ -1,4 +1,9 @@
-val array = IntArray(10)
-for (i in 0..10 - 1) {
-    array[i] = i
+run {
+    val i = 0
+    while (i < 10) {
+        System.out.println(i)
+        System.out.println(j)
+        j++
+        i++
+    }
 }

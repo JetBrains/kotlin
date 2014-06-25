@@ -21,4 +21,13 @@ import org.jetbrains.annotations.NotNull;
 public interface JavaTypeProvider {
     @NotNull
     JavaType createJavaLangObjectType();
+
+    @NotNull
+    JavaWildcardType createUpperBoundWildcard(@NotNull JavaType bound);
+
+    @NotNull
+    JavaWildcardType createLowerBoundWildcard(@NotNull JavaType bound);
+
+    @NotNull
+    JavaWildcardType createUnboundedWildcard();
 }

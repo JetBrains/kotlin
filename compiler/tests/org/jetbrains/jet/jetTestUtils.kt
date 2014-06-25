@@ -35,3 +35,31 @@ public fun CodeInsightTestFixture.configureWithExtraFile(path: String, extraName
         configureByFile(path)
     }
 }
+
+public fun String.trimIndent(): String {
+    val lines = split('\n')
+
+    val firstNonEmpty = lines.firstOrNull { !it.trim().isEmpty() }
+    if (firstNonEmpty == null) {
+        return this
+    }
+
+    val trimmedPrefix = firstNonEmpty.takeWhile { ch -> ch.isWhitespace() }
+    if (trimmedPrefix.isEmpty()) {
+        return this
+    }
+
+    return lines.map { line ->
+        if (line.trim().isEmpty()) {
+            ""
+        }
+        else {
+            if (!line.startsWith(trimmedPrefix)) {
+                throw IllegalArgumentException(
+                        """Invalid line "$line", ${trimmedPrefix.size} whitespace character are expected""")
+            }
+
+            line.substring(trimmedPrefix.length)
+        }
+    }.joinToString(separator = "\n")
+}

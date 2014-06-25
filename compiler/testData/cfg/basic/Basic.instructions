@@ -26,34 +26,34 @@ L0:
     r(1) -> <v1>
     r(a) -> <v2>
     mark(2.toLong())
-    mark(toLong())
     r(2) -> <v3>
+    mark(toLong())
     call(toLong, toLong|<v3>) -> <v4>
-    mark(foo(a, 3))
     r(a) -> <v5>
     r(3) -> <v6>
+    mark(foo(a, 3))
     call(foo, foo|<v5>, <v6>) -> <v7>
     mark(genfun<Any>())
     call(genfun, genfun) -> <v8>
-    mark(flfun {1})
     mark({1})
     jmp?(L2)                                                                                                        NEXT:[r({1}) -> <v9>, d({1})]
     d({1})                                                                                                          NEXT:[<SINK>]
 L2:
     r({1}) -> <v9>                                                                                                  PREV:[jmp?(L2)]
+    mark(flfun {1})
     call(flfun, flfun|<v9>) -> <v10>
     mark(3.equals(4))
-    mark(equals(4))
     r(3) -> <v11>
     r(4) -> <v12>
+    mark(equals(4))
     call(equals, equals|<v11>, <v12>) -> <v13>
-    mark(3 equals 4)
     r(3) -> <v14>
     r(4) -> <v15>
+    mark(3 equals 4)
     call(equals, equals|<v14>, <v15>) -> <v16>
-    mark(1 + 2)
     r(1) -> <v17>
     r(2) -> <v18>
+    mark(1 + 2)
     call(+, plus|<v17>, <v18>) -> <v19>
     r(a) -> <v20>
     jf(L5|<v20>)                                                                                                    NEXT:[magic(a && true|<v20>, <v21>) -> <v22>, r(true) -> <v21>]

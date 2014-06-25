@@ -780,13 +780,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         // Parse when block
         myBuilder.enableNewlines();
-        expect(LBRACE, "Expecting '{'");
+        if (expect(LBRACE, "Expecting '{'")) {
+            while (!eof() && !at(RBRACE)) {
+                parseWhenEntry();
+            }
 
-        while (!eof() && !at(RBRACE)) {
-            parseWhenEntry();
+            expect(RBRACE, "Expecting '}'");
         }
-
-        expect(RBRACE, "Expecting '}'");
         myBuilder.restoreNewlinesState();
 
         when.done(WHEN);
@@ -1370,34 +1370,39 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // FOR_KEYWORD
 
-        myBuilder.disableNewlines();
-        expect(LPAR, "Expecting '(' to open a loop range", TokenSet.create(RPAR, VAL_KEYWORD, VAR_KEYWORD, IDENTIFIER));
+        if (expect(LPAR, "Expecting '(' to open a loop range", EXPRESSION_FIRST)) {
+            myBuilder.disableNewlines();
 
-        PsiBuilder.Marker parameter = mark();
-        if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
-        if (at(LPAR)) {
-            myJetParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
+            if (!at(RPAR)) {
+                PsiBuilder.Marker parameter = mark();
+                if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
+                if (at(LPAR)) {
+                    myJetParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
+                    parameter.done(MULTI_VARIABLE_DECLARATION);
+                }
+                else {
+                    expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON, IN_KEYWORD));
 
-            parameter.done(MULTI_VARIABLE_DECLARATION);
-        }
-        else {
-            expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON));
+                    if (at(COLON)) {
+                        advance(); // COLON
+                        myJetParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
+                    }
+                    parameter.done(VALUE_PARAMETER);
+                }
 
-            if (at(COLON)) {
-                advance(); // COLON
-                myJetParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
+                if (expect(IN_KEYWORD, "Expecting 'in'", TokenSet.create(LPAR, LBRACE, RPAR))) {
+                    PsiBuilder.Marker range = mark();
+                    parseExpression();
+                    range.done(LOOP_RANGE);
+                }
             }
-            parameter.done(VALUE_PARAMETER);
+            else {
+                error("Expecting a variable name");
+            }
+
+            expectNoAdvance(RPAR, "Expecting ')'");
+            myBuilder.restoreNewlinesState();
         }
-
-        expect(IN_KEYWORD, "Expecting 'in'", TokenSet.create(LPAR, LBRACE));
-
-        PsiBuilder.Marker range = mark();
-        parseExpression();
-        range.done(LOOP_RANGE);
-
-        expectNoAdvance(RPAR, "Expecting ')'");
-        myBuilder.restoreNewlinesState();
 
         parseControlStructureBody();
 
@@ -1548,13 +1553,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parseCondition() {
         myBuilder.disableNewlines();
-        expect(LPAR, "Expecting a condition in parentheses '(...)'");
 
-        PsiBuilder.Marker condition = mark();
-        parseExpression();
-        condition.done(CONDITION);
+        if (expect(LPAR, "Expecting a condition in parentheses '(...)'", EXPRESSION_FIRST)) {
+            PsiBuilder.Marker condition = mark();
+            parseExpression();
+            condition.done(CONDITION);
+            expect(RPAR, "Expecting ')");
+        }
 
-        expect(RPAR, "Expecting ')");
         myBuilder.restoreNewlinesState();
     }
 

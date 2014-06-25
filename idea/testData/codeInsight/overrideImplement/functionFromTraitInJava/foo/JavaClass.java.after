@@ -1,11 +1,9 @@
 package foo;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class JavaClass {
 
-    @NotNull
     @Override
     public void bar(@Nullable String price) {
         

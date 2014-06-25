@@ -27,7 +27,7 @@ import org.jetbrains.jet.j2k.TypeConverter
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 
-open class TypeVisitor(private val converter: TypeConverter) : PsiTypeVisitor<Type>() {
+class TypeVisitor(private val converter: TypeConverter, private val importNames: Set<String>, private val classesToImport: MutableSet<String>) : PsiTypeVisitor<Type>() {
     override fun visitPrimitiveType(primitiveType: PsiPrimitiveType): Type {
         val name = primitiveType.getCanonicalText()
         return if (name == "void") {
@@ -35,6 +35,9 @@ open class TypeVisitor(private val converter: TypeConverter) : PsiTypeVisitor<Ty
         }
         else if (PRIMITIVE_TYPES_NAMES.contains(name)) {
             PrimitiveType(Identifier(StringUtil.capitalize(name)))
+        }
+        else if (name == "null") {
+            Type.Null
         }
         else {
             PrimitiveType(Identifier(name))
@@ -51,7 +54,7 @@ open class TypeVisitor(private val converter: TypeConverter) : PsiTypeVisitor<Ty
         if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0) {
             val starParamList = ArrayList<Type>()
             if (resolvedClassTypeParams.size() == 1) {
-                if ((resolvedClassTypeParams.single() as ClassType).`type`.name == "Any") {
+                if ((resolvedClassTypeParams.single() as ClassType).name.name == "Any") {
                     starParamList.add(StarProjectionType())
                     return ClassType(identifier, starParamList, Nullability.Default, converter.settings)
                 }
@@ -71,37 +74,53 @@ open class TypeVisitor(private val converter: TypeConverter) : PsiTypeVisitor<Ty
     private fun constructClassTypeIdentifier(classType: PsiClassType): Identifier {
         val psiClass = classType.resolve()
         if (psiClass != null) {
-            val qualifiedName = psiClass.getQualifiedName()
-            when(qualifiedName) {
-                CommonClassNames.JAVA_LANG_ITERABLE -> return Identifier(CommonClassNames.JAVA_LANG_ITERABLE)
-                CommonClassNames.JAVA_UTIL_ITERATOR -> return Identifier(CommonClassNames.JAVA_UTIL_ITERATOR)
-                CommonClassNames.JAVA_UTIL_LIST -> return Identifier("MutableList")
+            val javaClassName = psiClass.getQualifiedName()
+            val kotlinClassName = toKotlinTypesMap[javaClassName]
+            if (kotlinClassName != null) {
+                val kotlinShortName = getShortName(kotlinClassName)
+                if (kotlinShortName == getShortName(javaClassName!!) && importNames.contains(getPackageName(javaClassName) + ".*")) {
+                    classesToImport.add(kotlinClassName)
+                }
+                return Identifier(kotlinShortName)
             }
         }
 
-        val classTypeName = createQualifiedName(classType)
-        if (classTypeName.isEmpty()) {
-            return Identifier(getClassTypeName(classType))
+        if (classType is PsiClassReferenceType) {
+            val reference = classType.getReference()
+            if (reference.isQualified()) {
+                var result = Identifier.toKotlin(reference.getReferenceName()!!)
+                var qualifier = reference.getQualifier()
+                while (qualifier != null) {
+                    val codeRefElement = qualifier as PsiJavaCodeReferenceElement
+                    result = Identifier.toKotlin(codeRefElement.getReferenceName()!!) + "." + result
+                    qualifier = codeRefElement.getQualifier()
+                }
+                return Identifier(result)
+            }
         }
 
-        return Identifier(classTypeName)
+        return Identifier(classType.getClassName() ?: "")
     }
+
+    private fun getPackageName(className: String): String = className.substring(0, className.lastIndexOf('.'))
+    private fun getShortName(className: String): String = className.substring(className.lastIndexOf('.') + 1)
 
     private fun createRawTypesForResolvedReference(classType: PsiClassType): List<Type> {
         val typeParams = LinkedList<Type>()
         if (classType is PsiClassReferenceType) {
-            val reference = classType.getReference()
-            val resolve = reference.resolve()
+            val resolve = classType.getReference().resolve()
             if (resolve is PsiClass) {
                 for (typeParam in resolve.getTypeParameters()) {
                     val superTypes = typeParam.getSuperTypes()
-                    val boundType = if (superTypes.size > 0)
-                        ClassType(Identifier(getClassTypeName(superTypes[0])),
+                    val boundType = if (superTypes.size > 0) {
+                        ClassType(constructClassTypeIdentifier(superTypes[0]),
                                   converter.convertTypes(superTypes[0].getParameters()),
                                   Nullability.Default,
                                   converter.settings)
-                    else
+                    }
+                    else {
                         StarProjectionType()
+                    }
                     typeParams.add(boundType)
                 }
             }
@@ -122,38 +141,23 @@ open class TypeVisitor(private val converter: TypeConverter) : PsiTypeVisitor<Ty
         return VarArgType(converter.convertType(ellipsisType.getComponentType()))
     }
 
-    private fun createQualifiedName(classType: PsiClassType): String {
-        if (classType is PsiClassReferenceType) {
-            val reference = classType.getReference()
-            if (reference.isQualified()) {
-                var result = Identifier(reference.getReferenceName()!!).toKotlin()
-                var qualifier = reference.getQualifier()
-                while (qualifier != null) {
-                    val codeRefElement = qualifier as PsiJavaCodeReferenceElement
-                    result = Identifier(codeRefElement.getReferenceName()!!).toKotlin() + "." + result
-                    qualifier = codeRefElement.getQualifier()
-                }
-                return result
-            }
-        }
-
-        return ""
-    }
-
-    private fun getClassTypeName(classType: PsiClassType): String {
-        var canonicalTypeStr: String? = classType.getCanonicalText()
-        return when(canonicalTypeStr) {
-            CommonClassNames.JAVA_LANG_OBJECT -> "Any"
-            CommonClassNames.JAVA_LANG_BYTE -> "Byte"
-            CommonClassNames.JAVA_LANG_CHARACTER -> "Char"
-            CommonClassNames.JAVA_LANG_DOUBLE -> "Double"
-            CommonClassNames.JAVA_LANG_FLOAT -> "Float"
-            CommonClassNames.JAVA_LANG_INTEGER -> "Int"
-            CommonClassNames.JAVA_LANG_LONG -> "Long"
-            CommonClassNames.JAVA_LANG_SHORT -> "Short"
-            CommonClassNames.JAVA_LANG_BOOLEAN -> "Boolean"
-
-            else -> classType.getClassName() ?: classType.getCanonicalText()
-        }
+    class object {
+        private val toKotlinTypesMap: Map<String, String> = mapOf(
+                CommonClassNames.JAVA_LANG_OBJECT to "kotlin.Any",
+                CommonClassNames.JAVA_LANG_BYTE to "kotlin.Byte",
+                CommonClassNames.JAVA_LANG_CHARACTER to "kotlin.Char",
+                CommonClassNames.JAVA_LANG_DOUBLE to "kotlin.Double",
+                CommonClassNames.JAVA_LANG_FLOAT to "kotlin.Float",
+                CommonClassNames.JAVA_LANG_INTEGER to "kotlin.Int",
+                CommonClassNames.JAVA_LANG_LONG to "kotlin.Long",
+                CommonClassNames.JAVA_LANG_SHORT to "kotlin.Short",
+                CommonClassNames.JAVA_LANG_BOOLEAN to "kotlin.Boolean",
+                CommonClassNames.JAVA_LANG_ITERABLE to "kotlin.Iterable",
+                CommonClassNames.JAVA_UTIL_ITERATOR to "kotlin.Iterator",
+                CommonClassNames.JAVA_UTIL_LIST to "kotlin.List",
+                CommonClassNames.JAVA_UTIL_COLLECTION to "kotlin.Collection",
+                CommonClassNames.JAVA_UTIL_SET to "kotlin.Set",
+                CommonClassNames.JAVA_UTIL_MAP to "kotlin.Map"
+        )
     }
 }

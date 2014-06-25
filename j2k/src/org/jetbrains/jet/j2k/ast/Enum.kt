@@ -16,33 +16,29 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.*
 
 class Enum(
-        converter: Converter,
         name: Identifier,
-        comments: MemberComments,
-        modifiers: Set<Modifier>,
+        annotations: Annotations,
+        modifiers: Modifiers,
         typeParameterList: TypeParameterList,
         extendsTypes: List<Type>,
         baseClassParams: List<Expression>,
         implementsTypes: List<Type>,
-        bodyElements: List<Element>
-) : Class(converter, name, comments, modifiers, typeParameterList,
-          extendsTypes, baseClassParams, implementsTypes, bodyElements) {
+        body: ClassBody
+) : Class(name, annotations, modifiers, typeParameterList,
+          extendsTypes, baseClassParams, implementsTypes, body) {
 
-    override fun primaryConstructorSignatureToKotlin(): String
-        = classMembers.primaryConstructor?.signatureToKotlin() ?: ""
+    override fun appendPrimaryConstructorSignature(builder: CodeBuilder) {
+        body.primaryConstructor?.appendSignature(builder)
+    }
 
-    override fun toKotlin(): String {
-        return modifiersToKotlin() +
-                "enum class " + name.toKotlin() +
-                primaryConstructorSignatureToKotlin() +
-                typeParameterList.toKotlin() +
-                implementTypesToKotlin() +
-                " {" +
-                classMembers.allMembers.toKotlin() +
-                primaryConstructorBodyToKotlin() +
-                "}"
+    override fun generateCode(builder: CodeBuilder) {
+        builder append annotations appendWithSpaceAfter presentationModifiers() append "enum class " append name
+        appendPrimaryConstructorSignature(builder)
+        builder append typeParameterList
+        appendBaseTypes(builder)
+        body.append(builder, this)
     }
 }

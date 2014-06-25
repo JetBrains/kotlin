@@ -116,7 +116,7 @@ public class AutoCastUtils {
         }
         if (subTypes.isEmpty()) return null;
 
-        JetType intersection = TypeUtils.intersect(JetTypeChecker.INSTANCE, subTypes);
+        JetType intersection = TypeUtils.intersect(JetTypeChecker.DEFAULT, subTypes);
         if (intersection == null || !intersection.getConstructor().isDenotable()) {
             return receiverParameterType;
         }

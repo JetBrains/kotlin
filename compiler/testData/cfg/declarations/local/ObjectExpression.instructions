@@ -70,8 +70,8 @@ L0:
     r(object : A by b {}) -> <v2>
     w(o|<v2>)
     mark(o.foo())
-    mark(foo())
     r(o) -> <v3>
+    mark(foo())
     call(foo, foo|<v3>) -> <v4>
     ret(*|<v4>) L1
 L1:

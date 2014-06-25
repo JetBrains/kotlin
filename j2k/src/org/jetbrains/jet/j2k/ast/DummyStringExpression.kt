@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CodeBuilder
 
-open class DummyStringExpression(val string: String) : Expression() {
-    override fun toKotlin(): String = string
+class DummyStringExpression(val string: String) : Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(string)
+    }
 }

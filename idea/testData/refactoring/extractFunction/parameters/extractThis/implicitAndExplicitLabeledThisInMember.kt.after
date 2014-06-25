@@ -1,3 +1,5 @@
+// PARAM_TYPES: A
+// PARAM_TYPES: A.B
 public open class Z {
     val z: Int = 0
 }

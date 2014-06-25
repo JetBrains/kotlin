@@ -145,18 +145,15 @@ public class PropertyCodegen {
             return false;
         }
 
-        FieldVisitor fv;
         if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
-            fv = generateBackingFieldAccess(p, descriptor);
+            generateBackingFieldAccess(p, descriptor);
         }
         else if (p instanceof JetProperty && ((JetProperty) p).hasDelegate()) {
-            fv = generatePropertyDelegateAccess((JetProperty) p, descriptor);
+            generatePropertyDelegateAccess((JetProperty) p, descriptor);
         }
         else {
             return false;
         }
-
-        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(descriptor);
         return true;
     }
 
@@ -172,7 +169,7 @@ public class PropertyCodegen {
         if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.TRAIT_IMPL) {
             int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
             MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), flags, name, desc, null, null);
-            AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(descriptor);
+            AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(descriptor, Type.VOID_TYPE);
             mv.visitCode();
             mv.visitInsn(Opcodes.RETURN);
             mv.visitEnd();
@@ -187,7 +184,7 @@ public class PropertyCodegen {
         }
     }
 
-    private FieldVisitor generateBackingField(JetNamedDeclaration element, PropertyDescriptor propertyDescriptor, boolean isDelegate, JetType jetType, Object defaultValue) {
+    private void generateBackingField(JetNamedDeclaration element, PropertyDescriptor propertyDescriptor, boolean isDelegate, JetType jetType, Object defaultValue) {
         int modifiers = getDeprecatedAccessFlag(propertyDescriptor);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.FIELD_FLAGS) {
@@ -230,21 +227,22 @@ public class PropertyCodegen {
 
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
 
-        return builder.newField(OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
-                                typeMapper.mapFieldSignature(jetType), defaultValue);
+        FieldVisitor fv = builder.newField(OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
+                                                typeMapper.mapFieldSignature(jetType), defaultValue);
+        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(propertyDescriptor, type);
     }
 
-    private FieldVisitor generatePropertyDelegateAccess(JetProperty p, PropertyDescriptor propertyDescriptor) {
+    private void generatePropertyDelegateAccess(JetProperty p, PropertyDescriptor propertyDescriptor) {
         JetType delegateType = bindingContext.get(BindingContext.EXPRESSION_TYPE, p.getDelegateExpression());
         if (delegateType == null) {
             // If delegate expression is unresolved reference
             delegateType = ErrorUtils.createErrorType("Delegate type");
         }
 
-        return generateBackingField(p, propertyDescriptor, true, delegateType, null);
+        generateBackingField(p, propertyDescriptor, true, delegateType, null);
     }
 
-    private FieldVisitor generateBackingFieldAccess(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor) {
+    private void generateBackingFieldAccess(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor) {
         Object value = null;
 
         if (shouldWriteFieldInitializer(propertyDescriptor)) {
@@ -254,7 +252,7 @@ public class PropertyCodegen {
             }
         }
 
-        return generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value);
+        generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value);
     }
 
     private boolean shouldWriteFieldInitializer(@NotNull PropertyDescriptor descriptor) {

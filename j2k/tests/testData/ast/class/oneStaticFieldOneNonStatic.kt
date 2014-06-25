@@ -4,6 +4,6 @@ class S() {
     }
 
     class object {
-        var myI: Int = 10
+        var myI = 10
     }
 }

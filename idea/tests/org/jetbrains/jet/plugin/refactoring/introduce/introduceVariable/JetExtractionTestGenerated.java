@@ -447,6 +447,21 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/simpleEvalExpr.kt");
                 }
                 
+                @TestMetadata("trailingLambdaEmptyArgList.kt")
+                public void testTrailingLambdaEmptyArgList() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaEmptyArgList.kt");
+                }
+                
+                @TestMetadata("trailingLambdaNoArgList.kt")
+                public void testTrailingLambdaNoArgList() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNoArgList.kt");
+                }
+                
+                @TestMetadata("trailingLambdaNonEmptyArgList.kt")
+                public void testTrailingLambdaNonEmptyArgList() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNonEmptyArgList.kt");
+                }
+                
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues")
@@ -576,6 +591,21 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithReturn.kt");
                 }
                 
+                @TestMetadata("valueUsedInAnonymousObject.kt")
+                public void testValueUsedInAnonymousObject() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInAnonymousObject.kt");
+                }
+                
+                @TestMetadata("valueUsedInLambda.kt")
+                public void testValueUsedInLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInLambda.kt");
+                }
+                
+                @TestMetadata("valueUsedInLocalFunction.kt")
+                public void testValueUsedInLocalFunction() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInLocalFunction.kt");
+                }
+                
                 @TestMetadata("variablesOutOfScope.kt")
                 public void testVariablesOutOfScope() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/variablesOutOfScope.kt");
@@ -636,10 +666,48 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/parameters")
-        @InnerTestClasses({Parameters.ExtractSuper.class, Parameters.ExtractThis.class, Parameters.Misc.class, Parameters.NonDenotableTypes.class})
+        @InnerTestClasses({Parameters.CandidateTypes.class, Parameters.ExtractSuper.class, Parameters.ExtractThis.class, Parameters.It.class, Parameters.Misc.class, Parameters.NonDenotableTypes.class})
         public static class Parameters extends AbstractJetExtractionTest {
             public void testAllFilesPresentInParameters() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes")
+            public static class CandidateTypes extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInCandidateTypes() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/parameters/candidateTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("nonNullableTypes.kt")
+                public void testNonNullableTypes() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/nonNullableTypes.kt");
+                }
+                
+                @TestMetadata("nullableTypes.kt")
+                public void testNullableTypes() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/nullableTypes.kt");
+                }
+                
+                @TestMetadata("typeHierarchy1.kt")
+                public void testTypeHierarchy1() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy1.kt");
+                }
+                
+                @TestMetadata("typeHierarchy2.kt")
+                public void testTypeHierarchy2() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy2.kt");
+                }
+                
+                @TestMetadata("typeHierarchy3.kt")
+                public void testTypeHierarchy3() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy3.kt");
+                }
+                
+                @TestMetadata("typeHierarchy4.kt")
+                public void testTypeHierarchy4() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy4.kt");
+                }
+                
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/extractSuper")
@@ -709,6 +777,34 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("implicitThisInMember.kt")
                 public void testImplicitThisInMember() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitThisInMember.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/refactoring/extractFunction/parameters/it")
+            public static class It extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInIt() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/parameters/it"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("innerIt.kt")
+                public void testInnerIt() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/innerIt.kt");
+                }
+                
+                @TestMetadata("lambdaWithIt.kt")
+                public void testLambdaWithIt() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/lambdaWithIt.kt");
+                }
+                
+                @TestMetadata("outerIt.kt")
+                public void testOuterIt() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/outerIt.kt");
+                }
+                
+                @TestMetadata("simpleIt.kt")
+                public void testSimpleIt() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/simpleIt.kt");
                 }
                 
             }
@@ -794,6 +890,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/usagesInCallArgs.kt");
                 }
                 
+                @TestMetadata("variableAsFunction.kt")
+                public void testVariableAsFunction() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/variableAsFunction.kt");
+                }
+                
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes")
@@ -817,8 +918,10 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Parameters");
                 suite.addTestSuite(Parameters.class);
+                suite.addTestSuite(CandidateTypes.class);
                 suite.addTestSuite(ExtractSuper.class);
                 suite.addTestSuite(ExtractThis.class);
+                suite.addTestSuite(It.class);
                 suite.addTestSuite(Misc.class);
                 suite.addTestSuite(NonDenotableTypes.class);
                 return suite;

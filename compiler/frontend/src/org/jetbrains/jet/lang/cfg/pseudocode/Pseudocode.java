@@ -45,7 +45,7 @@ public interface Pseudocode {
     List<Instruction> getReversedInstructions();
 
     @NotNull
-    List<Instruction> getDeadInstructions();
+    List<Instruction> getInstructionsIncludingDeadCode();
 
     @NotNull
     SubroutineExitInstruction getExitInstruction();

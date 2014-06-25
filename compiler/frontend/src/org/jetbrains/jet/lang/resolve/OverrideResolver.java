@@ -733,7 +733,7 @@ public class OverrideResolver {
         JetType substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
 
-        return JetTypeChecker.INSTANCE.isSubtypeOf(subReturnType, substitutedSuperReturnType);
+        return JetTypeChecker.DEFAULT.isSubtypeOf(subReturnType, substitutedSuperReturnType);
     }
 
     @Nullable
@@ -768,7 +768,7 @@ public class OverrideResolver {
 
         JetType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getType(), Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
-        return JetTypeChecker.INSTANCE.equalTypes(subDescriptor.getType(), substitutedSuperReturnType);
+        return JetTypeChecker.DEFAULT.equalTypes(subDescriptor.getType(), substitutedSuperReturnType);
     }
 
     private void checkOverrideForComponentFunction(@NotNull final CallableMemberDescriptor componentFunction) {

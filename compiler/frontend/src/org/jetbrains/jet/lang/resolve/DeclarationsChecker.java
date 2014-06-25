@@ -220,13 +220,13 @@ public class DeclarationsChecker {
         REMOVE_IF_SUBTYPE_IN_THE_SET {
             @Override
             public boolean removeNeeded(JetType subject, JetType other) {
-                return JetTypeChecker.INSTANCE.isSubtypeOf(other, subject);
+                return JetTypeChecker.DEFAULT.isSubtypeOf(other, subject);
             }
         },
         REMOVE_IF_SUPERTYPE_IN_THE_SET {
             @Override
             public boolean removeNeeded(JetType subject, JetType other) {
-                return JetTypeChecker.INSTANCE.isSubtypeOf(subject, other);
+                return JetTypeChecker.DEFAULT.isSubtypeOf(subject, other);
             }
         };
 

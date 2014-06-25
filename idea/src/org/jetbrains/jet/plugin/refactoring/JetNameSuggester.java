@@ -98,7 +98,7 @@ public class JetNameSuggester {
 
     private static void addNamesForType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
+        JetTypeChecker typeChecker = JetTypeChecker.DEFAULT;
         jetType = TypeUtils.makeNotNullable(jetType); // wipe out '?'
         if (ErrorUtils.containsErrorType(jetType)) return;
         if (typeChecker.equalTypes(builtIns.getBooleanType(), jetType)) {

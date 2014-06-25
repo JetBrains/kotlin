@@ -38,7 +38,7 @@ fun createMainFunction(file: PsiFile): String {
     }
 
     if (classNamesWithMains.size() > 0) {
-        var className = classNamesWithMains.get(0).first
+        var className = classNamesWithMains[0].first
         return MessageFormat.format("fun main(args : Array<String>) = {0}.main(args as Array<String?>?)", className)
     }
 

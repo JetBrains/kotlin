@@ -4,7 +4,7 @@ fun foo(x: Int) {
     a
 }
 ---------------------
-x                      <v1>   NEW()
-a                      <v4>   NEW()
-{ val (a, b) = x a }   <v4>   COPY
+x                      <v1>: *   NEW()
+a                      <v4>: *   NEW()
+{ val (a, b) = x a }   <v4>: *   COPY
 =====================

@@ -440,7 +440,7 @@ public class JetRefactoringUtil {
                     BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(expression);
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     if (expressionType == null || !(expressionType instanceof PackageType) &&
-                                                  !JetTypeChecker.INSTANCE.equalTypes(KotlinBuiltIns.
+                                                  !JetTypeChecker.DEFAULT.equalTypes(KotlinBuiltIns.
                                                           getInstance().getUnitType(), expressionType)) {
                         expressions.add(expression);
                     }

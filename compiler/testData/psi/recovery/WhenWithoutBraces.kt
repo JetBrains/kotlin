@@ -1,0 +1,5 @@
+fun test() {
+    when
+
+    bar()
+}

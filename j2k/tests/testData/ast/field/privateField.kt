@@ -1,3 +1,3 @@
 class C() {
-    private var f: Foo = 0
+    private val f: Foo = 0
 }

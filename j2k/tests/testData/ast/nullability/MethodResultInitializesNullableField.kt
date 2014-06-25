@@ -1,5 +1,5 @@
 class C() {
-    private val string: String? = getString()
+    private val string = getString()
 
     class object {
 

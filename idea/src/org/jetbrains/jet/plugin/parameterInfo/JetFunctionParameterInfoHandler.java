@@ -327,7 +327,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         if (argument.getArgumentExpression() != null) {
             JetType paramType = getActualParameterType(param);
             JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
-            return exprType == null || JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType);
+            return exprType == null || JetTypeChecker.DEFAULT.isSubtypeOf(exprType, paramType);
         }
 
         return false;

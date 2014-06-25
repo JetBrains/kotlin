@@ -3,6 +3,6 @@ fun main(arg : Array<String>) {
     a
 }
 ---------------------
-a       <v1>   NEW()
-{ a }   <v1>   COPY
+a       <v1>: *   NEW()
+{ a }   <v1>: *   COPY
 =====================

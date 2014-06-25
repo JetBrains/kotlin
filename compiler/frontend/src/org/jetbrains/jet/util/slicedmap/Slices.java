@@ -16,12 +16,14 @@
 
 package org.jetbrains.jet.util.slicedmap;
 
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class Slices {
+    private static final Logger LOG = Logger.getInstance(Slices.class);
 
     public static final RewritePolicy ONLY_REWRITE_TO_EQUAL = new RewritePolicy() {
         @Override
@@ -33,7 +35,7 @@ public class Slices {
         public <K, V> boolean processRewrite(WritableSlice<K, V> slice, K key, V oldValue, V newValue) {
             if (!((oldValue == null && newValue == null) || (oldValue != null && oldValue.equals(newValue)))) {
                 // NOTE: Use BindingTraceContext.TRACK_REWRITES to debug this exception
-                throw new IllegalStateException("Rewrite at slice " + slice +
+                LOG.error("Rewrite at slice " + slice +
                         " key: " + key +
                         " old value: " + oldValue + '@' + System.identityHashCode(oldValue) +
                         " new value: " + newValue + '@' + System.identityHashCode(newValue));

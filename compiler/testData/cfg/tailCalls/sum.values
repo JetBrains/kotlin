@@ -4,17 +4,17 @@ tailRecursive fun sum(x: Long, sum: Long): Long {
     return sum(x - 1, sum + x)
 }
 ---------------------
-x                     <v2>    NEW()
-0                     <v3>    NEW()
-toLong()              <v4>    NEW(<v3>)
-0.toLong()            <v4>    COPY
-x == 0.toLong()       <v5>    NEW(<v2>, <v4>)
-sum                   <v6>    NEW()            
-x                     <v7>    NEW()
-1                     <v8>    NEW()
-x - 1                 <v9>    NEW(<v7>, <v8>)
-sum                   <v10>   NEW()            
-x                     <v11>   NEW()
-sum + x               <v12>   NEW(<v10>, <v11>)
-sum(x - 1, sum + x)   <v13>   NEW(<v9>, <v12>)
+x                     <v2>: OR{{<: Any}, {<: Any}}   NEW()
+0                     <v3>: {<: Number}              NEW()
+toLong()              <v4>: {<: Any?}                NEW(<v3>)
+0.toLong()            <v4>: {<: Any?}                COPY
+x == 0.toLong()       <v5>: Boolean                  NEW(<v2>, <v4>)
+sum                   <v6>: Long                     NEW()
+x                     <v7>: Long                     NEW()
+1                     <v8>: Int                      NEW()
+x - 1                 <v9>: Long                     NEW(<v7>, <v8>)
+sum                   <v10>: Long                    NEW()
+x                     <v11>: Long                    NEW()
+sum + x               <v12>: Long                    NEW(<v10>, <v11>)
+sum(x - 1, sum + x)   <v13>: Long                    NEW(<v9>, <v12>)
 =====================

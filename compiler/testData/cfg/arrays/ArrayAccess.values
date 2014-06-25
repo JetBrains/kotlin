@@ -9,21 +9,21 @@ fun foo() {
   a[10] += 1
 }
 ---------------------
-Array<Int>                                                  <v0>    NEW()
-3                                                           <v1>    NEW()                   
-a                                                           <v2>    NEW()                   
-10                                                          <v3>    NEW()                   
-4                                                           <v4>    NEW()                   
-a[10] = 4                                                   <v5>    NEW(<v2>, <v3>, <v4>)   
-2                                                           <v6>    NEW()                   
-a                                                           <v7>    NEW()                   
-10                                                          <v8>    NEW()                   
-a[10]                                                       <v9>    NEW(<v7>, <v8>)         
-100                                                         <v10>   NEW()                   
-a                                                           <v16>   NEW()                   
-10                                                          <v17>   NEW()                   
-a[10]                                                       <v13>   NEW(<v11>, <v12>)       
-1                                                           <v14>   NEW()
-a[10] += 1                                                  <v18>   NEW(<v16>, <v17>, <v15>)
-{ val a = Array<Int> 3 a[10] = 4 2 a[10] 100 a[10] += 1 }   <v18>   COPY                    
+Array<Int>                                                  <v0>: {<: Array<Int>}    NEW()
+3                                                           <v1>: *                  NEW()
+a                                                           <v2>: {<: Array<Int>}    NEW()
+10                                                          <v3>: Int                NEW()
+4                                                           <v4>: Int                NEW()
+a[10] = 4                                                   <v5>: *                  NEW(<v2>, <v3>, <v4>)
+2                                                           <v6>: *                  NEW()
+a                                                           <v7>: {<: Array<Int>}    NEW()
+10                                                          <v8>: Int                NEW()
+a[10]                                                       <v9>: *                  NEW(<v7>, <v8>)
+100                                                         <v10>: *                 NEW()
+a                                                           <v16>: {<: Array<Int>}   NEW()
+10                                                          <v17>: Int               NEW()
+a[10]                                                       <v13>: Int               NEW(<v11>, <v12>)
+1                                                           <v14>: Int               NEW()
+a[10] += 1                                                  <v18>: *                 NEW(<v16>, <v17>, <v15>)
+{ val a = Array<Int> 3 a[10] = 4 2 a[10] 100 a[10] += 1 }   <v18>: *                 COPY
 =====================

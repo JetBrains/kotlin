@@ -43,12 +43,21 @@ public class ImportInsertHelper {
      *
      * @param importFqn full name of the import
      * @param file File where directive should be added.
+     * @param optimize Optimize existing imports before adding new one.
      */
-    public static void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file) {
-        addImportDirectiveIfNeeded(new ImportPath(importFqn, false), file);
+    public static void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file, boolean optimize) {
+        addImportDirectiveIfNeeded(new ImportPath(importFqn, false), file, optimize);
     }
 
-    public static void addImportDirectiveOrChangeToFqName(@NotNull FqName importFqn, @NotNull JetFile file, int refOffset, @NotNull PsiElement targetElement) {
+    public static void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file) {
+        addImportDirectiveIfNeeded(importFqn, file, true);
+    }
+
+    public static void addImportDirectiveOrChangeToFqName(
+            @NotNull FqName importFqn,
+            @NotNull JetFile file,
+            int refOffset,
+            @NotNull PsiElement targetElement) {
         PsiReference reference = file.findReferenceAt(refOffset);
         if (reference instanceof JetReference) {
             PsiElement target = reference.resolve();
@@ -80,12 +89,12 @@ public class ImportInsertHelper {
                 return;
             }
         }
-        addImportDirectiveIfNeeded(new ImportPath(importFqn, false), file);
+        addImportDirectiveIfNeeded(importFqn, file);
     }
 
-    public static void addImportDirectiveIfNeeded(@NotNull ImportPath importPath, @NotNull JetFile file) {
-        if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
-            new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
+    public static void addImportDirectiveIfNeeded(@NotNull ImportPath importPath, @NotNull JetFile file, boolean optimize) {
+        if (optimize) {
+            optimizeImportsIfNeeded(file);
         }
 
         if (!needImport(importPath, file)) {
@@ -93,6 +102,16 @@ public class ImportInsertHelper {
         }
 
         writeImportToFile(importPath, file);
+    }
+
+    public static void optimizeImportsIfNeeded(JetFile file) {
+        if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
+            optimizeImports(file);
+        }
+    }
+
+    public static void optimizeImports(JetFile file) {
+        new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
     }
 
     public static void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
@@ -105,6 +124,7 @@ public class ImportInsertHelper {
         JetImportList importList = file.getImportList();
         if (importList != null) {
             JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
+            importList.add(JetPsiFactory.createNewLine(file.getProject()));
             importList.add(newDirective);
         }
         else {

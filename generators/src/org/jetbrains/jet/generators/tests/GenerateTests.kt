@@ -115,6 +115,7 @@ import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterTest
 import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.jet.asJava.AbstractKotlinLightClassTest
+import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -271,6 +272,11 @@ fun main(args: Array<String>) {
     }
 
     testGroup("idea/tests", "idea/testData") {
+
+        testClass(javaClass<AbstractJavaTypeSubstitutorTest>()) {
+            model("typeSubstitution", extension = "java")
+        }
+
         testClass(javaClass<AbstractAdditionalLazyResolveDescriptorRendererTest>()) {
             model("resolve/additionalLazyResolve", testMethod = "doTest")
         }
@@ -612,7 +618,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlinEvaluateExpressionTest>()) {
-            model("debugger/tinyApp/src/evaluate")
+            model("debugger/tinyApp/src/evaluate/singleBreakpoint", testMethod = "doSingleBreakpointTest")
+            model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
         }
 
         testClass(javaClass<AbstractStubBuilderTest>()) {

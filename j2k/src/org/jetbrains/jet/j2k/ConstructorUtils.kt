@@ -80,8 +80,7 @@ fun PsiElement.getContainingConstructor(): PsiMethod? {
 fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
     val ref = getMethodExpression()
     if (ref.getCanonicalText() == "super") {
-        val target = ref.resolve()
-        return target is PsiMethod && target.isConstructor()
+        return ref.resolve()?.isConstructor() ?: false
     }
     return false
 }
@@ -89,3 +88,4 @@ fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
 fun PsiReferenceExpression.isThisConstructorCall(): Boolean
         = getReferences().filter { it.getCanonicalText() == "this" }.map { it.resolve() }.any { it is PsiMethod && it.isConstructor() }
 
+fun PsiElement.isConstructor(): Boolean = this is PsiMethod && this.isConstructor()

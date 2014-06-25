@@ -13,9 +13,9 @@ L0:
     w(b|<v1>)
   2 mark({ if (a != b) {} })
     mark(if (a != b) {})
-    mark(a != b)
     r(a) -> <v2>
     r(b) -> <v3>
+    mark(a != b)
     call(!=, equals|<v2>, <v3>) -> <v4>
     jf(L2|<v4>)                            NEXT:[read (Unit), mark({})]
   3 mark({})

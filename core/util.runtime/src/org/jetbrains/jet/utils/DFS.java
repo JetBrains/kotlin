@@ -68,10 +68,9 @@ public class DFS {
     }
 
     private static <N> void doDfs(@NotNull N current, @NotNull Neighbors<N> neighbors, @NotNull Visited<N> visited, @NotNull NodeHandler<N, ?> handler) {
-        if (!visited.checkAndMarkVisited(current)) {
-            return;
-        }
-        handler.beforeChildren(current);
+        if (!visited.checkAndMarkVisited(current)) return;
+        if (!handler.beforeChildren(current)) return;
+
         for (N neighbor : neighbors.getNeighbors(current)) {
             doDfs(neighbor, neighbors, visited, handler);
         }
@@ -79,8 +78,8 @@ public class DFS {
     }
 
     public interface NodeHandler<N, R> {
-        @KotlinSignature("fun beforeChildren(current: N): Unit")
-        void beforeChildren(N current);
+        @KotlinSignature("fun beforeChildren(current: N): Boolean")
+        boolean beforeChildren(N current);
 
         @KotlinSignature("fun afterChildren(current: N): Unit")
         void afterChildren(N current);
@@ -91,7 +90,7 @@ public class DFS {
     public interface Neighbors<N> {
         @KotlinSignature("fun getNeighbors(current: N): Iterable<N>")
         @NotNull
-        Iterable<N> getNeighbors(N current);
+        Iterable<? extends N> getNeighbors(N current);
     }
 
     public interface Visited<N> {
@@ -100,7 +99,8 @@ public class DFS {
 
     public static abstract class AbstractNodeHandler<N, R> implements NodeHandler<N, R> {
         @Override
-        public void beforeChildren(N current) {
+        public boolean beforeChildren(N current) {
+            return true;
         }
 
         @Override

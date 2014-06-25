@@ -33,7 +33,7 @@ import org.jetbrains.jet.cfg.AbstractPseudoValueTest;
 @InnerTestClasses({PseudoValueTestGenerated.Cfg.class, PseudoValueTestGenerated.Cfg_variables.class})
 public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
     @TestMetadata("compiler/testData/cfg")
-    @InnerTestClasses({Cfg.Arrays.class, Cfg.Basic.class, Cfg.Bugs.class, Cfg.ControlStructures.class, Cfg.Conventions.class, Cfg.DeadCode.class, Cfg.Declarations.class, Cfg.Expressions.class, Cfg.TailCalls.class})
+    @InnerTestClasses({Cfg.Arrays.class, Cfg.Basic.class, Cfg.Bugs.class, Cfg.ControlStructures.class, Cfg.Conventions.class, Cfg.DeadCode.class, Cfg.Declarations.class, Cfg.Expressions.class, Cfg.Functions.class, Cfg.TailCalls.class})
     public static class Cfg extends AbstractPseudoValueTest {
         public void testAllFilesPresentInCfg() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cfg"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -155,6 +155,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
         public static class Conventions extends AbstractPseudoValueTest {
             public void testAllFilesPresentInConventions() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cfg/conventions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("bothReceivers.kt")
+            public void testBothReceivers() throws Exception {
+                doTest("compiler/testData/cfg/conventions/bothReceivers.kt");
             }
             
             @TestMetadata("equals.kt")
@@ -361,6 +366,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest("compiler/testData/cfg/expressions/expressionAsFunction.kt");
             }
             
+            @TestMetadata("incdec.kt")
+            public void testIncdec() throws Exception {
+                doTest("compiler/testData/cfg/expressions/incdec.kt");
+            }
+            
             @TestMetadata("LazyBooleans.kt")
             public void testLazyBooleans() throws Exception {
                 doTest("compiler/testData/cfg/expressions/LazyBooleans.kt");
@@ -404,6 +414,19 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             @TestMetadata("unusedExpressionSimpleName.kt")
             public void testUnusedExpressionSimpleName() throws Exception {
                 doTest("compiler/testData/cfg/expressions/unusedExpressionSimpleName.kt");
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/cfg/functions")
+        public static class Functions extends AbstractPseudoValueTest {
+            public void testAllFilesPresentInFunctions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cfg/functions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("DefaultValuesForArguments.kt")
+            public void testDefaultValuesForArguments() throws Exception {
+                doTest("compiler/testData/cfg/functions/DefaultValuesForArguments.kt");
             }
             
         }
@@ -452,6 +475,7 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             suite.addTestSuite(DeadCode.class);
             suite.addTest(Declarations.innerSuite());
             suite.addTestSuite(Expressions.class);
+            suite.addTestSuite(Functions.class);
             suite.addTestSuite(TailCalls.class);
             return suite;
         }

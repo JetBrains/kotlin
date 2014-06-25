@@ -1,0 +1,20 @@
+LineBreakpoint created at exceptions.kt:9
+LineBreakpoint created at exceptions.kt:14
+LineBreakpoint created at exceptions.kt:26
+LineBreakpoint created at exceptions.kt:31
+LineBreakpoint created at exceptions.kt:42
+LineBreakpoint created at exceptions.kt:51
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! exceptions.ExceptionsPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+exceptions.kt:8
+Compile bytecode for fail()
+exceptions.kt:13
+exceptions.kt:25
+Compile bytecode for o as Derived
+exceptions.kt:30
+exceptions.kt:41
+Compile bytecode for c.get(0)
+exceptions.kt:50
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

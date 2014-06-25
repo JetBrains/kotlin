@@ -16,8 +16,11 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.*
 
-open class ParameterList(val parameters: List<Parameter>) : Element {
-    override fun toKotlin() = parameters.map { it.toKotlin() }.makeString(", ")
+class ParameterList(val parameters: List<Parameter>) : Element() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(parameters, ", ")
+    }
 }
 

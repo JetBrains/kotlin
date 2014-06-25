@@ -9,11 +9,12 @@ L0:
     magic(a: Array<Int>) -> <v0>
     w(a|<v0>)
   2 mark({ a[0]++ })
-    mark(a[0]++)
     mark(a[0])
     r(a) -> <v1>
     r(0) -> <v2>
+    mark(a[0])
     call(a[0], get|<v1>, <v2>) -> <v3>
+    mark(a[0]++)
     call(++, inc|<v3>) -> <v4>
     r(a) -> <v5>
     r(0) -> <v6>

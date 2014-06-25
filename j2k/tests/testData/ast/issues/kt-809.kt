@@ -1,12 +1,12 @@
 package demo
 
 class Container() {
-    var myInt: Int = 1
+    var myInt = 1
 }
 
 class One() {
     class object {
-        var myContainer: Container = Container()
+        var myContainer = Container()
     }
 }
 

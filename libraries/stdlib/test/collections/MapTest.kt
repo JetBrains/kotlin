@@ -53,7 +53,7 @@ class MapTest {
         assertEquals(map.size(), 1)
         assertEquals("James", map["name"])
     }
-    
+
     test fun iterate() {
         val map = TreeMap<String, String>()
         map["beverage"] = "beer"

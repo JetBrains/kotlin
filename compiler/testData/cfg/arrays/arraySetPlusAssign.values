@@ -3,10 +3,10 @@ fun foo(a: Array<Int>) {
     a[0] += 1
 }
 ---------------------
-a               <v6>   NEW()
-0               <v7>   NEW()                
-a[0]            <v3>   NEW(<v1>, <v2>)      
-1               <v4>   NEW()
-a[0] += 1       <v8>   NEW(<v6>, <v7>, <v5>)
-{ a[0] += 1 }   <v8>   COPY                 
+a               <v6>: {<: Array<Int>}   NEW()
+0               <v7>: Int               NEW()
+a[0]            <v3>: Int               NEW(<v1>, <v2>)
+1               <v4>: Int               NEW()
+a[0] += 1       <v8>: *                 NEW(<v6>, <v7>, <v5>)
+{ a[0] += 1 }   <v8>: *                 COPY
 =====================

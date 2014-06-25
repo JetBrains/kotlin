@@ -13,10 +13,10 @@ fun test(ab: Ab) {
     ab.getArray()[1]
 }
 ---------------------
-ab                     <v1>   NEW()
-getArray()             <v2>   NEW(<v1>)
-ab.getArray()          <v2>   COPY
-1                      <v3>   NEW()          
-ab.getArray()[1]       <v4>   NEW(<v2>, <v3>)
-{ ab.getArray()[1] }   <v4>   COPY           
+ab                     <v1>: {<: Ab}           NEW()
+getArray()             <v2>: {<: Array<Int>}   NEW(<v1>)
+ab.getArray()          <v2>: {<: Array<Int>}   COPY
+1                      <v3>: Int               NEW()
+ab.getArray()[1]       <v4>: *                 NEW(<v2>, <v3>)
+{ ab.getArray()[1] }   <v4>: *                 COPY
 =====================

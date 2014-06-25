@@ -13,17 +13,17 @@ fun foo(numbers: Collection<Int>) {
     }
 }
 ---------------------
-numbers   <v1>   NEW()
-1         <v3>   NEW()
-2         <v4>   NEW()
-1 < 2     <v5>   NEW(<v3>, <v4>)
-false     <v6>   NEW()
-true      <v7>   NEW()
-b         <v8>   NEW()
-use(b)    <v9>   NEW(<v8>)
+numbers   <v1>: {<: Iterable<Int>}     NEW()          
+1         <v3>: {<: Comparable<Int>}   NEW()          
+2         <v4>: Int                    NEW()          
+1 < 2     <v5>: Boolean                NEW(<v3>, <v4>)
+false     <v6>: Boolean                NEW()          
+true      <v7>: Boolean                NEW()          
+b         <v8>: {<: Any?}              NEW()          
+use(b)    <v9>: *                      NEW(<v8>)      
 =====================
 == use ==
 fun use(vararg a: Any?) = a
 ---------------------
-a   <v1>   NEW()
+a   <v1>: {<: Array<Any?>}   NEW()
 =====================

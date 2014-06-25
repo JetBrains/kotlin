@@ -4,11 +4,11 @@ import java.util.HashMap
 
 class Test private() {
     class object {
-        fun init(): Test {
+        fun create(): Test {
             val __ = Test()
             return __
         }
-        fun init(s: String): Test {
+        fun create(s: String): Test {
             val __ = Test()
             return __
         }
@@ -20,7 +20,7 @@ class User() {
         val m = HashMap(1)
         val m2 = HashMap(10)
 
-        val t1 = Test.init()
-        val t2 = Test.init("")
+        val t1 = Test.create()
+        val t2 = Test.create("")
     }
 }

@@ -1,10 +1,12 @@
+package a.b
+
 class Base() {
     fun foo() {
     }
 }
 
 class A() : Base() {
-    class C() {
+    inner class C() {
         fun test() {
             this@A.foo()
         }

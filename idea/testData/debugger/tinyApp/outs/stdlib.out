@@ -2,6 +2,13 @@ LineBreakpoint created at stdlib.kt:5
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! stdlib.StdlibPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 stdlib.kt:4
+Compile bytecode for array(100, 101)
+Compile bytecode for array("a", "b", "c")
+Compile bytecode for intArray(1, 2)
+Compile bytecode for javaClass<String>()
+Compile bytecode for javaClass<Int>()
+Compile bytecode for 100.toInt()
+Compile bytecode for 100.toLong()
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

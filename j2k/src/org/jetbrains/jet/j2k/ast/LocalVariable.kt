@@ -17,27 +17,30 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ConverterSettings
+import org.jetbrains.jet.j2k.CodeBuilder
+import org.jetbrains.jet.j2k.append
 
 class LocalVariable(
         private val identifier: Identifier,
-        private val modifiers: Set<Modifier>,
+        private val annotations: Annotations,
+        private val modifiers: Modifiers,
         private val typeCalculator: () -> Type /* we use lazy type calculation for better performance */,
         private val initializer: Expression,
         private val isVal: Boolean,
         private val settings: ConverterSettings
-) : Element {
+) : Element() {
 
-    override fun toKotlin(): String {
-        val varVal = if (isVal) "val" else "var"
-        return if (initializer.isEmpty) {
-            "$varVal ${identifier.toKotlin()} : ${typeCalculator().toKotlin()}"
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations).append(if (isVal) "val " else "var ")
+        if (initializer.isEmpty) {
+            builder append identifier append ":" append typeCalculator()
         }
         else {
             val shouldSpecifyType = settings.specifyLocalVariableTypeByDefault
             if (shouldSpecifyType)
-                "$varVal ${identifier.toKotlin()} : ${typeCalculator().toKotlin()} = ${initializer.toKotlin()}"
+                builder append identifier append ":" append typeCalculator() append " = " append initializer
             else
-                "$varVal ${identifier.toKotlin()} = ${initializer.toKotlin()}"
+                builder append identifier append " = " append initializer
         }
     }
 }

@@ -28,6 +28,9 @@ fun some(x: Any) {
     when (true) {
 
     }
+
+    when {
+    }
 }
 
 // SET_FALSE: ALIGN_IN_COLUMNS_CASE_BRANCH

@@ -147,13 +147,15 @@ public class DescriptorSubstitutor {
                 },
                 new DFS.NodeHandlerWithListResult<JetType, TypeParameterDescriptor>() {
                     @Override
-                    public void beforeChildren(JetType current) {
+                    public boolean beforeChildren(JetType current) {
                         ClassifierDescriptor declarationDescriptor = current.getConstructor().getDeclarationDescriptor();
                         // typeParameters in a list, but it contains very few elements, so it's fine to call contains() on it
                         //noinspection SuspiciousMethodCalls
                         if (typeParameters.contains(declarationDescriptor)) {
                             result.add((TypeParameterDescriptor) declarationDescriptor);
                         }
+
+                        return true;
                     }
                 }
         );

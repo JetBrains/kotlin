@@ -2,6 +2,10 @@ LineBreakpoint created at extractVariablesFromCall.kt:8
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! extractVariablesFromCall.ExtractVariablesFromCallPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 extractVariablesFromCall.kt:7
+Compile bytecode for f1(a, s)
+Compile bytecode for a.f2(s)
+Compile bytecode for a f2 s
+Compile bytecode for klass.f1(a, s)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

@@ -474,6 +474,16 @@
                         void stop();
                         void dispose();
                     }
+
+                    -keepclassmembers class org.jetbrains.org.objectweb.asm.Opcodes {
+                        *** ASM5;
+                    }
+
+                    -keepclassmembers class org.jetbrains.org.objectweb.asm.ClassReader {
+                        *** SKIP_CODE;
+                        *** SKIP_DEBUG;
+                        *** SKIP_FRAMES;
+                    }
                 ]]></proguard>
             </else>
         </if>

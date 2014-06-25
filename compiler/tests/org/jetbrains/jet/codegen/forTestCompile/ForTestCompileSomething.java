@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen.forTestCompile;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TimeUtils;
@@ -27,14 +28,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import com.intellij.util.containers.Stack;
-
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 abstract class ForTestCompileSomething {
 
-    public static final boolean ACTUALLY_COMPILE = !"false".equals(System.getenv("kotlin.tests.actually.compile"));
+    public static final boolean ACTUALLY_COMPILE = "true".equals(System.getenv("kotlin.tests.actually.compile"));
 
     @NotNull
     private final String jarName;

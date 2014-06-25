@@ -142,7 +142,7 @@ public class TypeUtils {
     }
 
     public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
-        return intersect(JetTypeChecker.INSTANCE, Sets.newLinkedHashSet(Lists.newArrayList(typeA, typeB))) == null;
+        return intersect(JetTypeChecker.DEFAULT, Sets.newLinkedHashSet(Lists.newArrayList(typeA, typeB))) == null;
     }
 
     @Nullable
@@ -376,9 +376,13 @@ public class TypeUtils {
     }
 
     private static void collectImmediateSupertypes(@NotNull JetType type, @NotNull Collection<JetType> result) {
+        boolean isNullable = type.isNullable();
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
         for (JetType supertype : type.getConstructor().getSupertypes()) {
-            result.add(substitutor.substitute(supertype, Variance.INVARIANT));
+            JetType substitutedType = substitutor.substitute(supertype, Variance.INVARIANT);
+            if (substitutedType != null) {
+                result.add(makeNullableIfNeeded(substitutedType, isNullable));
+            }
         }
     }
 
@@ -469,7 +473,7 @@ public class TypeUtils {
     }
 
     public static boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
-        return JetTypeChecker.INSTANCE.isSubtypeOf(a, b) && JetTypeChecker.INSTANCE.isSubtypeOf(b, a);
+        return JetTypeChecker.DEFAULT.isSubtypeOf(a, b) && JetTypeChecker.DEFAULT.isSubtypeOf(b, a);
     }
 
     public static boolean dependsOnTypeParameters(@NotNull JetType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
@@ -582,7 +586,7 @@ public class TypeUtils {
             return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
         }
         for (JetType primitiveNumberType : numberValueTypeConstructor.getSupertypes()) {
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(primitiveNumberType, expectedType)) {
+            if (JetTypeChecker.DEFAULT.isSubtypeOf(primitiveNumberType, expectedType)) {
                 return primitiveNumberType;
             }
         }
@@ -634,7 +638,7 @@ public class TypeUtils {
                 },
                 new DFS.NodeHandlerWithListResult<JetType, TypeConstructor>() {
                     @Override
-                    public void beforeChildren(JetType current) {
+                    public boolean beforeChildren(JetType current) {
                         TypeConstructor constructor = current.getConstructor();
 
                         Set<JetType> instances = constructorToAllInstances.get(constructor);
@@ -643,6 +647,8 @@ public class TypeUtils {
                             constructorToAllInstances.put(constructor, instances);
                         }
                         instances.add(current);
+
+                        return true;
                     }
 
                     @Override

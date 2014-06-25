@@ -59,8 +59,8 @@ class PropagationHeuristics {
                     JetType elementTypeInSuper = arrayTypeFromSuper.getArguments().get(0).getType();
                     JetType elementType = type.getArguments().get(0).getType();
 
-                    if (JetTypeChecker.INSTANCE.isSubtypeOf(elementType, elementTypeInSuper)
-                        && !JetTypeChecker.INSTANCE.equalTypes(elementType, elementTypeInSuper)) {
+                    if (JetTypeChecker.DEFAULT.isSubtypeOf(elementType, elementTypeInSuper)
+                        && !JetTypeChecker.DEFAULT.equalTypes(elementType, elementTypeInSuper)) {
                         JetTypeImpl betterTypeInSuper = new JetTypeImpl(
                                 arrayTypeFromSuper.getAnnotations(),
                                 arrayTypeFromSuper.getConstructor(),

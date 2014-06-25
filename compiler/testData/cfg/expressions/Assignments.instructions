@@ -37,9 +37,9 @@ L0:
     w(x|<v0>)
     r(2) -> <v1>
     w(x|<v1>)
-    mark(x += 2)
     r(x) -> <v2>
     r(2) -> <v3>
+    mark(x += 2)
     call(+=, plus|<v2>, <v3>) -> <v4>
     w(x|<v4>)
     mark(if (true) 1 else 2)
@@ -73,11 +73,11 @@ L5:
     r(t) -> <v16>
     r(1) -> <v17>
     w(t.x|<v16>, <v17>)
-    mark(t.x += 1)
     mark(t.x)
     r(t) -> <v18>
     r(x|<v18>) -> <v19>
     r(1) -> <v20>
+    mark(t.x += 1)
     call(+=, plus|<v19>, <v20>) -> <v21>
     r(t) -> <v22>
     w(t.x|<v22>, <v21>)

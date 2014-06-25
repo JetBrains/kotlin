@@ -9,6 +9,6 @@ fun test(nothing: Nothing?) {
 }
 
 fun sum(<!UNUSED_PARAMETER!>a<!> : IntArray) : Int {
-    for (n
-    <!SYNTAX!>return<!> <!ITERATOR_MISSING!>"?"<!><!SYNTAX!><!>
-<!SYNTAX!><!>}
+for (n
+<!SYNTAX!>return<!><!SYNTAX!><!> "?"
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

@@ -7,11 +7,11 @@ fun foo() {
     "after"
 }
 ---------------------
-"before"                                              <v0>   NEW()          
-1                                                     <v1>   NEW()          
-10                                                    <v2>   NEW()
-1..10                                                 <v3>   NEW(<v1>, <v2>)
-i                                                     <v5>   NEW()          
-"after"                                               <v6>   NEW()          
-{ "before" for (i in 1..10) { val a = i } "after" }   <v6>   COPY           
+"before"                                              <v0>: *                    NEW()
+1                                                     <v1>: Int                  NEW()
+10                                                    <v2>: Int                  NEW()
+1..10                                                 <v3>: {<: Iterable<Int>}   NEW(<v1>, <v2>)
+i                                                     <v5>: Int                  NEW()
+"after"                                               <v6>: *                    NEW()
+{ "before" for (i in 1..10) { val a = i } "after" }   <v6>: *                    COPY
 =====================

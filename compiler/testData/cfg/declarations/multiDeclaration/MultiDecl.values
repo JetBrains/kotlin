@@ -8,12 +8,12 @@ class C {
 == component1 ==
 fun component1() = 1
 ---------------------
-1   <v0>   NEW()
+1   <v0>: Int   NEW()
 =====================
 == component2 ==
 fun component2() = 2
 ---------------------
-2   <v0>   NEW()
+2   <v0>: Int   NEW()
 =====================
 == test ==
 fun test(c: C) {
@@ -21,8 +21,8 @@ fun test(c: C) {
     val d = 1
 }
 ---------------------
-a   <v2>   NEW(<v1>)
-b   <v3>   NEW(<v1>)
-c   <v1>   NEW()
-1   <v4>   NEW()
+a   <v2>: Int   NEW(<v1>)
+b   <v3>: Int   NEW(<v1>)
+c   <v1>: C     NEW()
+1   <v4>: Int   NEW()
 =====================

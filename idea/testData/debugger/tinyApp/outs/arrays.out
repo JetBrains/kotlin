@@ -2,6 +2,15 @@ LineBreakpoint created at arrays.kt:5
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! arrays.ArraysPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 arrays.kt:4
+Compile bytecode for array(1, 2).map { it.toString() }
+Compile bytecode for array(1, 2, 101, 102).filter { it > 100 }
+Compile bytecode for array(1, 2).none()
+Compile bytecode for array(1, 2).count()
+Compile bytecode for array(1, 2).size
+Compile bytecode for array(1, 2).first()
+Compile bytecode for array(1, 2).last()
+Compile bytecode for intArray(1, 2).max()
+Compile bytecode for array(1, 2).max()
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

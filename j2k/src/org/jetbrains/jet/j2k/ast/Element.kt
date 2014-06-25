@@ -16,16 +16,47 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.*
+import com.intellij.psi.PsiElement
 
-trait Element : Node {
-    val isEmpty: Boolean get() = false
-
-    object Empty : Element {
-        override fun toKotlin() = ""
-        override val isEmpty: Boolean get() = true
-    }
+fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?, inheritBlankLinesBefore: Boolean = true): TElement {
+    assignPrototypeInfos(if (prototype != null) listOf(PrototypeInfo(prototype, inheritBlankLinesBefore)) else listOf())
+    return this
 }
 
-class Comment(val text: String) : Element {
-    override fun toKotlin() = text
+fun <TElement: Element> TElement.assignPrototypes(prototypes: List<PsiElement>, inheritBlankLinesBefore: Boolean): TElement {
+    assignPrototypeInfos(prototypes.map { PrototypeInfo(it, inheritBlankLinesBefore) })
+    return this
+}
+
+fun <TElement: Element> TElement.assignPrototypesFrom(element: Element): TElement {
+    assignPrototypeInfos(element.prototypes)
+    return this
+}
+
+data class PrototypeInfo(val element: PsiElement, val inheritBlankLinesBefore: Boolean)
+
+fun Element.canonicalCode(): String {
+    val builder = CodeBuilder(null)
+    builder.append(this)
+    return builder.result
+}
+
+abstract class Element {
+    public var prototypes: List<PrototypeInfo> = listOf()
+        private set
+
+    public fun assignPrototypeInfos(prototypes: List<PrototypeInfo>) {
+        this.prototypes = prototypes
+    }
+
+    /** This method should not be used anywhere except for CodeBuilder! Use CodeBuilder.append instead. */
+    public abstract fun generateCode(builder: CodeBuilder)
+
+    public open val isEmpty: Boolean get() = false
+
+    object Empty : Element() {
+        override fun generateCode(builder: CodeBuilder) { }
+        override val isEmpty: Boolean get() = true
+    }
 }

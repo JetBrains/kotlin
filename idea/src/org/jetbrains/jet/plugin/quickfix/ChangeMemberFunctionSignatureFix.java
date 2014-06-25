@@ -188,7 +188,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
                 @NotNull ValueParameterDescriptor superParameter
         ) {
             // TODO: support for generic functions
-            if (JetTypeChecker.INSTANCE.equalTypes(parameter.getType(), superParameter.getType())) {
+            if (JetTypeChecker.DEFAULT.equalTypes(parameter.getType(), superParameter.getType())) {
                 return superParameter.copy(parameter.getContainingDeclaration(), parameter.getName());
             }
             else {

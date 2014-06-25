@@ -39,6 +39,8 @@ else->1
     {
 
     }
+
+    when {}
 }
 
 // SET_FALSE: ALIGN_IN_COLUMNS_CASE_BRANCH

@@ -16,53 +16,51 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
-import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.*
 
 open class Function(
         val converter: Converter,
         val name: Identifier,
-        comments: MemberComments,
-        modifiers: Set<Modifier>,
+        annotations: Annotations,
+        modifiers: Modifiers,
         val `type`: Type,
         val typeParameterList: TypeParameterList,
         val parameterList: ParameterList,
         var block: Block?,
         val isInTrait: Boolean
-) : Member(comments, modifiers) {
+) : Member(annotations, modifiers) {
 
-    private fun modifiersToKotlin(): String {
-        val resultingModifiers = ArrayList<Modifier>()
-        val isOverride = modifiers.contains(Modifier.OVERRIDE)
-        if (isOverride) {
-            resultingModifiers.add(Modifier.OVERRIDE)
+    private fun presentationModifiers(): Modifiers {
+        var modifiers = this.modifiers
+        if (isInTrait) {
+            modifiers = modifiers.without(Modifier.ABSTRACT)
         }
 
-        val accessModifier = modifiers.accessModifier()
-        if (accessModifier != null && !isOverride) {
-            resultingModifiers.add(accessModifier)
+        if (modifiers.contains(Modifier.OVERRIDE)) {
+            modifiers = modifiers.filter { it != Modifier.OPEN && it !in ACCESS_MODIFIERS }
         }
 
-        if (modifiers.contains(Modifier.ABSTRACT) && !isInTrait) {
-            resultingModifiers.add(Modifier.ABSTRACT)
-        }
-
-        if (modifiers.contains(Modifier.OPEN) && !isOverride) {
-            resultingModifiers.add(Modifier.OPEN)
-        }
-
-        return resultingModifiers.toKotlin()
+        return modifiers
     }
 
-    private fun returnTypeToKotlin() = if (!`type`.isUnit()) " : " + `type`.toKotlin() + " " else " "
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations)
+                .appendWithSpaceAfter(presentationModifiers())
+                .append("fun ")
+                .appendWithSuffix(typeParameterList, " ")
+                .append(name)
+                .append("(")
+                .append(parameterList)
+                .append(")")
 
-    override fun toKotlin(): String {
-        return commentsToKotlin() +
-        modifiersToKotlin() +
-        "fun ${typeParameterList.toKotlin().withSuffix(" ")}${name.toKotlin()}" +
-        "(${parameterList.toKotlin()})" +
-        returnTypeToKotlin() +
-        typeParameterList.whereToKotlin() +
-        block?.toKotlin()
+        if (!`type`.isUnit()) {
+            builder append ":" append `type`
+        }
+
+        typeParameterList.appendWhere(builder)
+
+        if (block != null) {
+            builder append " " append block!!
+        }
     }
 }

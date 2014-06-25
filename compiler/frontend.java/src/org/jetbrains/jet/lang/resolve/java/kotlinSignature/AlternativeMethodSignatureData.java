@@ -139,7 +139,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             JetType substitutedReturnType = substitutor.substitute(returnType, Variance.INVARIANT);
             assert substitutedReturnType != null;
 
-            if (!JetTypeChecker.INSTANCE.isSubtypeOf(altReturnType, substitutedReturnType)) {
+            if (!JetTypeChecker.DEFAULT.isSubtypeOf(altReturnType, substitutedReturnType)) {
                 throw new AlternativeSignatureMismatchException(
                         "Return type is changed to not subtype for method which overrides another: " + altReturnType + ", was: " + returnType);
             }

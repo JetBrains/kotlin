@@ -127,7 +127,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                         JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
                         JetType parameterType = parameters.get(i).getType();
 
-                        if (argumentType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(argumentType, parameterType))
+                        if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType))
                             changeSignatureData.getParameters().get(i).setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(argumentType));
                     }
                     else {

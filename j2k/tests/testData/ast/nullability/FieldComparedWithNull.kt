@@ -1,5 +1,5 @@
 class C() {
-    private var s: String? = x()
+    private val s = x()
 
     fun foo() {
         if (s == null) {

@@ -16,17 +16,21 @@
 
 package org.jetbrains.jet.j2k.ast
 
-class Parameter(val identifier: Identifier, val `type`: Type, val varVal: Parameter.VarValModifier, val modifiers: Collection<Modifier>) : Element {
+import org.jetbrains.jet.j2k.*
+
+class Parameter(val identifier: Identifier,
+                val `type`: Type,
+                val varVal: Parameter.VarValModifier,
+                val annotations: Annotations,
+                val modifiers: Modifiers) : Element() {
     public enum class VarValModifier {
         None
         Val
         Var
     }
 
-    override fun toKotlin(): String {
-        val builder = StringBuilder()
-
-        builder.append(modifiers.toKotlin())
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations).appendWithSpaceAfter(modifiers)
 
         if (`type` is VarArgType) {
             assert(varVal == VarValModifier.None)
@@ -38,7 +42,6 @@ class Parameter(val identifier: Identifier, val `type`: Type, val varVal: Parame
             VarValModifier.Val -> builder.append("val ")
         }
 
-        builder.append(identifier.toKotlin()).append(": ").append(`type`.toKotlin())
-        return builder.toString()
+        builder.append(identifier).append(":").append(`type`)
     }
 }

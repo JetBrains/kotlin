@@ -197,7 +197,7 @@ public class TypeBoundsImpl implements TypeBounds {
         }
 
         Set<JetType> upperBounds = filterBounds(bounds, BoundKind.UPPER_BOUND, values);
-        JetType intersectionOfUpperBounds = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
+        JetType intersectionOfUpperBounds = TypeUtils.intersect(JetTypeChecker.DEFAULT, upperBounds);
         if (!upperBounds.isEmpty() && intersectionOfUpperBounds != null) {
             if (tryPossibleAnswer(intersectionOfUpperBounds)) {
                 return Collections.singleton(intersectionOfUpperBounds);
@@ -216,19 +216,19 @@ public class TypeBoundsImpl implements TypeBounds {
         for (Bound bound : bounds) {
             switch (bound.kind) {
                 case LOWER_BOUND:
-                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(bound.type, possibleAnswer)) {
+                    if (!JetTypeChecker.DEFAULT.isSubtypeOf(bound.type, possibleAnswer)) {
                         return false;
                     }
                     break;
 
                 case UPPER_BOUND:
-                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(possibleAnswer, bound.type)) {
+                    if (!JetTypeChecker.DEFAULT.isSubtypeOf(possibleAnswer, bound.type)) {
                         return false;
                     }
                     break;
 
                 case EXACT_BOUND:
-                    if (!JetTypeChecker.INSTANCE.equalTypes(bound.type, possibleAnswer)) {
+                    if (!JetTypeChecker.DEFAULT.equalTypes(bound.type, possibleAnswer)) {
                         return false;
                     }
                     break;

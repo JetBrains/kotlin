@@ -139,6 +139,7 @@ public abstract class Config {
             "/kotlin/Ranges.kt",
             "/kotlin/Numbers.kt",
             "/kotlin/text/Strings.kt",
+            "/kotlin/text/StringBuilder.kt",
             "/kotlin/dom/Dom.kt",
             "/kotlin/test/Test.kt"
     );

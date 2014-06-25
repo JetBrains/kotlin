@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import javax.rmi.CORBA.ClassDesc;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -232,9 +233,15 @@ public class DescriptorUtils {
 
     private static boolean isSubtypeOfClass(@NotNull JetType type, @NotNull DeclarationDescriptor superClass) {
         DeclarationDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor != null && superClass == descriptor.getOriginal()) {
-            return true;
+        if (descriptor != null) {
+            DeclarationDescriptor originalDescriptor = descriptor.getOriginal();
+            if (originalDescriptor instanceof ClassifierDescriptor
+                     && superClass instanceof ClassifierDescriptor
+                     && ((ClassifierDescriptor) superClass).getTypeConstructor().equals(((ClassifierDescriptor) originalDescriptor).getTypeConstructor())) {
+                return true;
+            }
         }
+
         for (JetType superType : type.getConstructor().getSupertypes()) {
             if (isSubtypeOfClass(superType, superClass)) {
                 return true;
@@ -452,7 +459,7 @@ public class DescriptorUtils {
         JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
         return "valueOf".equals(functionDescriptor.getName().asString())
                && methodTypeParameters.size() == 1
-               && JetTypeChecker.INSTANCE.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
+               && JetTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
     }
 
     public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor functionDescriptor) {

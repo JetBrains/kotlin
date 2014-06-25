@@ -118,6 +118,73 @@ fun generators(): List<GenericFunction> {
         }
     }
 
+    templates add f("merge(other: Iterable<R>, transform: (T, R) -> V)") {
+        exclude(Streams)
+        doc {
+            """
+            Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+            """
+        }
+        typeParam("R")
+        typeParam("V")
+        returns("List<V>")
+        inline(true)
+        body {
+            """
+            val first = iterator()
+            val second = other.iterator()
+            val list = arrayListOf<V>()
+            while (first.hasNext() && second.hasNext()) {
+                list.add(transform(first.next(), second.next()))
+            }
+            return list
+            """
+        }
+    }
+
+    templates add f("merge(array: Array<R>, transform: (T, R) -> V)") {
+        exclude(Streams)
+        doc {
+            """
+            Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+            """
+        }
+        typeParam("R")
+        typeParam("V")
+        returns("List<V>")
+        inline(true)
+        body {
+            """
+            val first = iterator()
+            val second = array.iterator()
+            val list = arrayListOf<V>()
+            while (first.hasNext() && second.hasNext()) {
+                list.add(transform(first.next(), second.next()))
+            }
+            return list
+            """
+        }
+    }
+
+
+    templates add f("merge(stream: Stream<R>, transform: (T, R) -> V)") {
+        only(Streams)
+        doc {
+            """
+            Returns a stream of values built from elements of both collections with same indexes using provided *transform*. Stream has length of shortest stream.
+            """
+        }
+        typeParam("R")
+        typeParam("V")
+        returns("Stream<V>")
+        body {
+            """
+            return MergingStream(this, stream, transform)
+            """
+        }
+    }
+
+
     templates add f("zip(other: Iterable<R>)") {
         exclude(Streams)
         doc {
@@ -129,13 +196,7 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<T, R>>")
         body {
             """
-            val first = iterator()
-            val second = other.iterator()
-            val list = ArrayList<Pair<T, R>>()
-            while (first.hasNext() && second.hasNext()) {
-                list.add(first.next() to second.next())
-            }
-            return list
+            return merge(other) { (t1, t2) -> t1 to t2 }
             """
         }
     }
@@ -172,13 +233,7 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<T, R>>")
         body {
             """
-            val first = iterator()
-            val second = array.iterator()
-            val list = ArrayList<Pair<T, R>>()
-            while (first.hasNext() && second.hasNext()) {
-                list.add(first.next() to second.next())
-            }
-            return list
+            return merge(array) { (t1, t2) -> t1 to t2 }
             """
         }
     }
@@ -187,14 +242,14 @@ fun generators(): List<GenericFunction> {
         only(Streams)
         doc {
             """
-            Returns a stream of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+            Returns a stream of pairs built from elements of both collections with same indexes. Stream has length of shortest stream.
             """
         }
         typeParam("R")
         returns("Stream<Pair<T, R>>")
         body {
             """
-            return ZippingStream(this, stream)
+            return MergingStream(this, stream) { (t1, t2) -> t1 to t2 }
             """
         }
     }

@@ -26,13 +26,20 @@ import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 import org.jetbrains.org.objectweb.asm.util.Printer
 import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
 import java.util.ArrayList
+import org.jetbrains.eval4j.ExceptionThrown.ExceptionKind
 
 trait InterpreterResult {
     override fun toString(): String
 }
 
-class ExceptionThrown(val exception: Value): InterpreterResult {
-    override fun toString(): String = "Thrown $exception"
+class ExceptionThrown(val exception: Value, val kind: ExceptionKind): InterpreterResult {
+    override fun toString(): String = "Thrown $exception: $kind"
+
+    enum class ExceptionKind {
+        FROM_EVALUATED_CODE
+        FROM_EVALUATOR
+        BROKEN_CODE
+    }
 }
 
 data class ValueReturned(val result: Value): InterpreterResult {
@@ -60,9 +67,12 @@ trait InterpretationEventHandler {
     fun exceptionCaught(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult?
 }
 
-class ThrownFromEvalException(cause: Throwable): RuntimeException(cause) {
+abstract class ThrownFromEvalExceptionBase(cause: Throwable): RuntimeException(cause) {
     override fun toString(): String = "Thrown by evaluator: ${getCause()}"
 }
+
+class BrokenCode(cause: Throwable): ThrownFromEvalExceptionBase(cause)
+class ThrownFromEvalException(cause: Throwable): ThrownFromEvalExceptionBase(cause)
 
 class ThrownFromEvaluatedCodeException(val exception: Value): RuntimeException() {
     override fun toString(): String = "Thrown from evaluated code: $exception"
@@ -206,7 +216,7 @@ fun interpreterLoop(
                             val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
                             if (handled != null) return handled
                             if (exceptionCaught(exceptionValue)) continue
-                            return ExceptionThrown(exceptionValue)
+                            return ExceptionThrown(exceptionValue, ExceptionKind.FROM_EVALUATED_CODE)
                         }
 
                         // Workaround for a bug in Kotlin: NoPatterMatched exception is thrown otherwise!
@@ -216,20 +226,22 @@ fun interpreterLoop(
                     try {
                         frame.execute(currentInsn, interpreter)
                     }
-                    catch (e: ThrownFromEvalException) {
+                    catch (e: ThrownFromEvalExceptionBase) {
                         val exception = e.getCause()!!
                         val exceptionValue = ObjectValue(exception, Type.getType(exception.javaClass))
                         val handled = handler.exceptionThrown(frame, currentInsn,
                                 exceptionValue)
                         if (handled != null) return handled
                         if (exceptionFromEvalCaught(exception, exceptionValue)) continue
-                        return ExceptionThrown(exceptionValue)
+
+                        val exceptionType = if (e is BrokenCode) ExceptionKind.BROKEN_CODE else ExceptionKind.FROM_EVALUATOR
+                        return ExceptionThrown(exceptionValue, exceptionType)
                     }
                     catch (e: ThrownFromEvaluatedCodeException) {
                         val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
                         if (handled != null) return handled
                         if (exceptionCaught(e.exception)) continue
-                        return ExceptionThrown(e.exception)
+                        return ExceptionThrown(e.exception, ExceptionKind.FROM_EVALUATED_CODE)
                     }
                 }
             }
@@ -245,7 +257,7 @@ fun interpreterLoop(
     }
 }
 
-private fun <T: Value> Frame<T>.getStackTop(i: Int = 0) = this.getStack(this.getStackSize() - 1 - i) ?: throwEvalException(IllegalArgumentException("Couldn't get value with index = $i from top of stack"))
+private fun <T: Value> Frame<T>.getStackTop(i: Int = 0) = this.getStack(this.getStackSize() - 1 - i) ?: throwBrokenCodeException(IllegalArgumentException("Couldn't get value with index = $i from top of stack"))
 
 // Copied from org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer.analyze()
 fun computeHandlers(m: MethodNode): Array<out List<TryCatchBlockNode>?> {

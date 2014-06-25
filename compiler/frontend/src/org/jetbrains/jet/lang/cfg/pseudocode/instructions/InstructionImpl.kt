@@ -25,39 +25,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 
 public abstract class InstructionImpl(public override val lexicalScope: LexicalScope): Instruction {
     private var _owner: Pseudocode? = null
-    private val _copies = HashSet<Instruction>()
-    private var original: Instruction? = null
-    protected var _dead: Boolean = false
-
-    private fun setOriginalInstruction(value: Instruction?) {
-        assert(original == null) { "Instruction can't have two originals: this.original = ${original}; new original = $this" }
-        original = value
-    }
-
-    protected fun outgoingEdgeTo(target: Instruction?): Instruction? {
-        if (target != null) {
-            target.previousInstructions.add(this)
-        }
-        return target
-    }
-
-    protected fun updateCopyInfo(instruction: InstructionImpl): Instruction {
-        _copies.add(instruction)
-        instruction.setOriginalInstruction(this)
-        return instruction
-    }
-
-    protected abstract fun createCopy(): InstructionImpl
-
-    public fun die() {
-        _dead = true
-    }
-
-    public val dead: Boolean get() = _dead
-
-    public fun copy(): Instruction {
-        return updateCopyInfo(createCopy())
-    }
 
     override var owner: Pseudocode
         get() = _owner!!
@@ -66,16 +33,34 @@ public abstract class InstructionImpl(public override val lexicalScope: LexicalS
             _owner = value
         }
 
+    private var allCopies: MutableSet<InstructionImpl>? = null
+
+    override val copies: Collection<Instruction>
+        get() = allCopies?.filter { it != this } ?: Collections.emptyList()
+
+    fun copy(): Instruction = updateCopyInfo(createCopy())
+
+    protected abstract fun createCopy(): InstructionImpl
+
+    protected fun updateCopyInfo(instruction: InstructionImpl): Instruction {
+        if (allCopies == null) {
+            allCopies = hashSetOf(this)
+        }
+        instruction.allCopies = allCopies
+        allCopies!!.add(instruction)
+        return instruction
+    }
+
+    public var markedAsDead: Boolean = false
+
+    override val dead: Boolean get() = allCopies?.all { it.markedAsDead } ?: markedAsDead
+
     override val previousInstructions: MutableCollection<Instruction> = LinkedHashSet()
 
-    override val inputValues: List<PseudoValue> = Collections.emptyList()
-
-    override fun getCopies(): Collection<Instruction> {
-        return original?.let { original ->
-            val originalCopies = Sets.newHashSet(original.getCopies())
-            originalCopies.remove(this)
-            originalCopies.add(original)
-            originalCopies
-        } ?: _copies
+    protected fun outgoingEdgeTo(target: Instruction?): Instruction? {
+        (target as InstructionImpl?)?.previousInstructions?.add(this)
+        return target
     }
+
+    override val inputValues: List<PseudoValue> = Collections.emptyList()
 }

@@ -18,10 +18,12 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiWildcardType;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeProvider;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaWildcardType;
 
 public class JavaTypeProviderImpl implements JavaTypeProvider {
     private final PsiManager manager;
@@ -34,5 +36,23 @@ public class JavaTypeProviderImpl implements JavaTypeProvider {
     @NotNull
     public JavaType createJavaLangObjectType() {
         return JavaTypeImpl.create(PsiType.getJavaLangObject(manager, GlobalSearchScope.allScope(manager.getProject())));
+    }
+
+    @NotNull
+    @Override
+    public JavaWildcardType createUpperBoundWildcard(@NotNull JavaType bound) {
+        return new JavaWildcardTypeImpl(PsiWildcardType.createExtends(manager, ((JavaTypeImpl) bound).getPsi()));
+    }
+
+    @NotNull
+    @Override
+    public JavaWildcardType createLowerBoundWildcard(@NotNull JavaType bound) {
+        return new JavaWildcardTypeImpl(PsiWildcardType.createSuper(manager, ((JavaTypeImpl) bound).getPsi()));
+    }
+
+    @NotNull
+    @Override
+    public JavaWildcardType createUnboundedWildcard() {
+        return new JavaWildcardTypeImpl(PsiWildcardType.createUnbounded(manager));
     }
 }

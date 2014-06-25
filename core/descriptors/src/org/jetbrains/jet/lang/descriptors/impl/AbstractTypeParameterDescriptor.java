@@ -132,7 +132,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     private JetType computeUpperBoundsAsType() {
         Set<JetType> upperBounds = getUpperBounds();
         assert !upperBounds.isEmpty() : "Upper bound list is empty in " + getName();
-        JetType upperBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
+        JetType upperBoundsAsType = TypeUtils.intersect(JetTypeChecker.DEFAULT, upperBounds);
         return upperBoundsAsType != null ? upperBoundsAsType : KotlinBuiltIns.getInstance().getNothingType();
     }
 

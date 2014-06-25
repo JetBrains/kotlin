@@ -17,7 +17,6 @@
 package org.jetbrains.jet.jps.incremental
 
 import java.io.File
-import com.intellij.util.io.PersistentMap
 import com.intellij.util.io.PersistentHashMap
 import java.io.DataOutput
 import com.intellij.util.io.IOUtil
@@ -36,6 +35,10 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache
 import java.util.HashMap
+import com.google.common.collect.Maps
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
+import com.intellij.util.containers.MultiMap
+import com.intellij.openapi.util.io.FileUtil
 
 public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     class object {
@@ -54,16 +57,15 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         if (classNameAndHeader == null) return false
 
         val (className, header) = classNameAndHeader
-        val classFqName = className.getFqNameForClassNameWithoutDollars()
         val annotationDataEncoded = header.annotationData
         if (annotationDataEncoded != null) {
             val data = BitEncoding.decodeBytes(annotationDataEncoded)
             when (header.kind) {
                 KotlinClassHeader.Kind.PACKAGE_FACADE -> {
-                    return protoMap.put(moduleId, classFqName.parent(), data)
+                    return protoMap.put(moduleId, className, data)
                 }
                 KotlinClassHeader.Kind.CLASS -> {
-                    return protoMap.put(moduleId, classFqName, data)
+                    return protoMap.put(moduleId, className, data)
                 }
                 else -> {
                     throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}")
@@ -73,14 +75,19 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
             assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
             packagePartMap.putPackagePartSourceData(moduleId, sourceFiles.first(), className)
-            return constantsMap.process(className, fileBytes)
+            return constantsMap.process(moduleId, sourceFiles.first(), fileBytes)
         }
 
         return false
     }
 
-    public fun clearCacheForRemovedFile(moduleId: String, sourceFile: File) {
-        packagePartMap.remove(moduleId, sourceFile)
+    public fun clearCacheForRemovedFiles(moduleIdsAndFiles: Collection<Pair<String, File>>, outDirectories: Map<String, File>) {
+        for ((moduleId, sourceFile) in moduleIdsAndFiles) {
+            constantsMap.remove(moduleId, sourceFile)
+            packagePartMap.remove(moduleId, sourceFile)
+        }
+
+        protoMap.clearOutdated(outDirectories)
     }
 
     public override fun getRemovedPackageParts(moduleId: String, compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
@@ -88,7 +95,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     }
 
     public override fun getPackageData(moduleId: String, fqName: String): ByteArray? {
-        return protoMap[moduleId, fqName]
+        return protoMap[moduleId, JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(FqName(fqName)))]
     }
 
     public fun close() {
@@ -98,18 +105,23 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     }
 
     private inner class ProtoMap {
-        private val map: PersistentMap<String, ByteArray> = PersistentHashMap(
+        private val map: PersistentHashMap<String, ByteArray> = PersistentHashMap(
                 File(baseDir, PROTO_MAP),
                 EnumeratorStringDescriptor(),
                 ByteArrayExternalizer
         )
 
-        private fun getKeyString(moduleId: String, fqName: FqName): String {
-            return moduleId + ":" + fqName
+        private fun getKeyString(moduleId: String, className: JvmClassName): String {
+            return moduleId + ":" + className.getInternalName()
         }
 
-        public fun put(moduleId: String, fqName: FqName, data: ByteArray): Boolean {
-            val key = getKeyString(moduleId, fqName)
+        private fun parseKeyString(key: String): Pair<String, JvmClassName> {
+            val colon = key.lastIndexOf(":")
+            return Pair(key.substring(0, colon), JvmClassName.byInternalName(key.substring(colon + 1)))
+        }
+
+        public fun put(moduleId: String, className: JvmClassName, data: ByteArray): Boolean {
+            val key = getKeyString(moduleId, className)
             val oldData = map[key]
             if (Arrays.equals(data, oldData)) {
                 return false
@@ -118,8 +130,29 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             return true
         }
 
-        public fun get(moduleId: String, fqName: String): ByteArray? {
-            return map[getKeyString(moduleId, FqName(fqName))]
+        public fun get(moduleId: String, className: JvmClassName): ByteArray? {
+            return map[getKeyString(moduleId, className)]
+        }
+
+        public fun clearOutdated(outDirectories: Map<String, File>) {
+            val keysToRemove = HashSet<String>()
+
+            map.processKeys { key ->
+                val (moduleId, className) = parseKeyString(key!!)
+                val outDir = outDirectories[moduleId]
+                if (outDir != null) {
+                    val classFile = File(outDir, FileUtil.toSystemDependentName(className.getInternalName()) + ".class")
+                    if (!classFile.exists()) {
+                        keysToRemove.add(key)
+                    }
+                }
+
+                true
+            }
+
+            for (key in keysToRemove) {
+                map.remove(key)
+            }
         }
 
         public fun close() {
@@ -133,6 +166,10 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
                 EnumeratorStringDescriptor(),
                 ConstantsMapExternalizer
         )
+
+        private fun getKey(moduleId: String, sourceFile: File): String {
+            return moduleId + File.pathSeparator + sourceFile.getAbsolutePath()
+        }
 
         private fun getConstantsMap(bytes: ByteArray): Map<String, Any> {
             val result = HashMap<String, Any>()
@@ -149,12 +186,12 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             return result
         }
 
-        public fun process(packagePartClass: JvmClassName, bytes: ByteArray): Boolean {
-            return put(packagePartClass, getConstantsMap(bytes))
+        public fun process(moduleId: String, file: File, bytes: ByteArray): Boolean {
+            return put(moduleId, file, getConstantsMap(bytes))
         }
 
-        private fun put(packagePartClass: JvmClassName, constantsMap: Map<String, Any>): Boolean {
-            val key = packagePartClass.getInternalName()
+        private fun put(moduleId: String, file: File, constantsMap: Map<String, Any>): Boolean {
+            val key = getKey(moduleId, file)
 
             val oldMap = map[key]
             if (oldMap == constantsMap) {
@@ -162,6 +199,10 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             }
             map.put(key, constantsMap)
             return true
+        }
+
+        public fun remove(moduleId: String, file: File) {
+            map.remove(getKey(moduleId, file))
         }
 
         public fun close() {
@@ -203,7 +244,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
         override fun read(`in`: DataInput): Map<String, Any>? {
             val size = `in`.readInt()
-            val map = HashMap<String, Any>(size)
+            val map = Maps.newHashMapWithExpectedSize<String, Any>(size)!!
 
             for (i in size.indices) {
                 val name = IOUtil.readString(`in`)!!
@@ -266,6 +307,24 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
                         }
                     }
                 }
+
+                true
+            }
+
+            return result
+        }
+
+        public fun getModulesToPackages(): MultiMap<String, FqName> {
+            val result = MultiMap.createSet<String, FqName>()
+
+            map.processKeysWithExistingMapping { key ->
+                val indexOf = key!!.indexOf(File.pathSeparator)
+                val moduleId = key.substring(0, indexOf)
+                val packagePartClassName = map[key]!!
+
+                val packageFqName = JvmClassName.byInternalName(packagePartClassName).getFqNameForClassNameWithoutDollars().parent()
+
+                result.putValue(moduleId, packageFqName)
 
                 true
             }

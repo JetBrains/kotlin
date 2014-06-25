@@ -35,7 +35,7 @@ public open class ReplaceContainsIntention : AttributeCallReplacementIntention("
         val ret = call.resolved.getResultingDescriptor().getReturnType()
             ?: return intentionFailed(editor, "undefined.returntype")
 
-        if (!JetTypeChecker.INSTANCE.isSubtypeOf(ret, KotlinBuiltIns.getInstance().getBooleanType())) {
+        if (!JetTypeChecker.DEFAULT.isSubtypeOf(ret, KotlinBuiltIns.getInstance().getBooleanType())) {
             return intentionFailed(editor, "contains.returns.boolean")
         }
 

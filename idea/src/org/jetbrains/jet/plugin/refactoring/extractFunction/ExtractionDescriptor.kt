@@ -31,19 +31,21 @@ import org.jetbrains.jet.lang.psi.psiUtil.replaced
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetTypeParameter
 import org.jetbrains.jet.lang.psi.JetTypeConstraint
-import kotlin.properties.Delegates
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 
-data class Parameter(
-        val argumentText: String,
-        val name: String,
-        var mirrorVarName: String?,
-        val parameterType: JetType,
-        val receiverCandidate: Boolean
-) {
+trait Parameter {
+    val argumentText: String
+    val name: String
+    val mirrorVarName: String?
+    val parameterType: JetType
+    val parameterTypeCandidates: List<JetType>
+    val receiverCandidate: Boolean
+
     val nameForRef: String get() = mirrorVarName ?: name
+
+    fun copy(name: String, parameterType: JetType): Parameter
 }
 
 data class TypeParameter(
@@ -165,7 +167,7 @@ class AnalysisResult (
 
         fun renderMessage(): String {
             val message = JetRefactoringBundle.message(when(this) {
-                NO_EXPRESSION -> "cannot.refactor.no.expresson"
+                NO_EXPRESSION -> "cannot.refactor.no.expression"
                 NO_CONTAINER -> "cannot.refactor.no.container"
                 SUPER_CALL -> "cannot.extract.super.call"
                 DENOTABLE_TYPES -> "parameter.types.are.not.denotable"

@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.*
 
-//TODO: is a member?
-class Initializer(val block: Block, modifiers: Set<Modifier>) : Member(MemberComments.Empty, modifiers) {
-    override fun toKotlin(): String {
-        return block.toKotlin()
+class Initializer(val block: Block, modifiers: Modifiers) : Member(Annotations.Empty, modifiers) {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(block)
     }
 }

@@ -7,8 +7,8 @@ fun foo() {
     "after"
 }
 ---------------------
-"before"                                           <v0>   NEW()
-true                                               <v1>   NEW()
-"after"                                            <v2>   NEW()
-{ "before" while (true) { val a: Int } "after" }   <v2>   COPY 
+"before"                                           <v0>: *   NEW()
+true                                               <v1>: *   NEW()
+"after"                                            <v2>: *   NEW()
+{ "before" while (true) { val a: Int } "after" }   <v2>: *   COPY
 =====================

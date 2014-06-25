@@ -21,15 +21,15 @@ import com.sun.jdi
 import junit.framework.TestSuite
 import org.jetbrains.eval4j.test.buildTestSuite
 import junit.framework.TestCase
-import org.jetbrains.eval4j.interpreterLoop
 import org.junit.Assert.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
-import org.jetbrains.eval4j.ExceptionThrown
-import org.jetbrains.eval4j.MethodDescription
-import org.jetbrains.eval4j.ValueReturned
 import org.jetbrains.eval4j.jdi.*
 import java.io.File
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.eval4j.test.getTestName
+import com.sun.jdi.ObjectReference
 
 val DEBUGEE_CLASS = javaClass<Debugee>()
 
@@ -98,15 +98,24 @@ fun suite(): TestSuite {
     val suite = buildTestSuite {
         methodNode, ownerClass, expected ->
         remainingTests.incrementAndGet()
-        object : TestCase("test" + methodNode.name.capitalize()) {
+        object : TestCase(getTestName(methodNode.name)) {
 
             override fun runTest() {
-                val eval = JDIEval(
-                        vm, classLoader!!, thread!!, 0
-                )
+                val eval = JDIEval(vm, classLoader!!, thread!!, 0)
+
+                val args = if ((methodNode.access and Opcodes.ACC_STATIC) == 0) {
+                    // Instance method
+                    val newInstance = eval.newInstance(Type.getType(ownerClass))
+                    val thisValue = eval.invokeMethod(newInstance, MethodDescription(ownerClass.getName(), "<init>", "()V", false), listOf(), true)
+                    listOf(thisValue)
+                }
+                else {
+                    listOf()
+                }
+
                 val value = interpreterLoop(
                         methodNode,
-                        makeInitialFrame(methodNode, listOf()),
+                        makeInitialFrame(methodNode, args),
                         eval
                 )
 
@@ -125,13 +134,13 @@ fun suite(): TestSuite {
                 }
 
                 try {
-                    if (value is ExceptionThrown) {
-                        val str = value.exception.jdiObj.callToString()
-                        System.err.println("Exception: $str")
-                    }
-
                     if (expected is ValueReturned && value is ValueReturned && value.result is ObjectValue) {
                         assertEquals(expected.result.obj().toString(), value.result.jdiObj.callToString())
+                    }
+                    else if (expected is ExceptionThrown && value is ExceptionThrown) {
+                        val valueObj = value.exception.obj()
+                        val actual = if (valueObj is ObjectReference) valueObj.callToString() else valueObj.toString()
+                        assertEquals(expected.exception.obj().toString(), actual)
                     }
                     else {
                         assertEquals(expected, value)

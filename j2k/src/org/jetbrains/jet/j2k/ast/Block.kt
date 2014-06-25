@@ -16,32 +16,35 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
+import org.jetbrains.jet.j2k.*
 
-fun Block(statements: List<Statement>, notEmpty: Boolean = false): Block {
-    val elements = ArrayList<Element>()
-    elements.add(WhiteSpace.NewLine)
-    elements.addAll(statements)
-    elements.add(WhiteSpace.NewLine)
-    return Block(StatementList(elements), notEmpty)
-}
-
-class Block(val statementList: StatementList, val notEmpty: Boolean = false) : Statement() {
-    val statements: List<Statement> = statementList.statements
-
-
+class Block(val statements: List<Statement>, val lBrace: LBrace, val rBrace: RBrace, val notEmpty: Boolean = false) : Statement() {
     override val isEmpty: Boolean
         get() = !notEmpty && statements.all { it.isEmpty }
 
-    override fun toKotlin(): String {
-        if (!isEmpty) {
-            return "{${statementList.toKotlin()}}"
+    override fun generateCode(builder: CodeBuilder) {
+        if (statements.all { it.isEmpty }) {
+            if (!isEmpty) builder.append(lBrace).append(rBrace)
+            return
         }
 
-        return ""
+        builder.append(lBrace).append(statements, "\n", "\n", "\n").append(rBrace)
     }
 
     class object {
-        val Empty = Block(StatementList(listOf()))
+        val Empty = Block(listOf(), LBrace(), RBrace())
+    }
+}
+
+// we use LBrace and RBrace elements to better handle comments around them
+class LBrace() : Element() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("{")
+    }
+}
+
+class RBrace() : Element() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("}")
     }
 }

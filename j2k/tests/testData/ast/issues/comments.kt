@@ -15,7 +15,7 @@ class C() {
     /**
      * This is a field doc comment.
      */
-    private var i: Int = 0
+    private val i: Int = 0
 
     /**
      * This is a function doc comment.

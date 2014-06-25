@@ -87,9 +87,38 @@ public class DescriptorDeserializersStorage {
             @Override
             public KotlinJvmBinaryClass.AnnotationVisitor visitField(@NotNull Name name, @NotNull String desc, @Nullable Object initializer) {
                 MemberSignature signature = MemberSignature.fromFieldNameAndDesc(name, desc);
+
                 if (initializer != null) {
+                    Object normalizedValue;
+                    if ("ZBCS".contains(desc)) {
+                        int intValue = ((Integer) initializer).intValue();
+                        if ("Z".equals(desc)) {
+                            normalizedValue = intValue != 0;
+                        }
+                        else if ("B".equals(desc)) {
+                            normalizedValue = ((byte) intValue);
+                        }
+                        else if ("C".equals(desc)) {
+                            normalizedValue = ((char) intValue);
+                        }
+                        else if ("S".equals(desc)) {
+                            normalizedValue = ((short) intValue);
+                        }
+                        else {
+                            throw new AssertionError(desc);
+                        }
+                    }
+                    else {
+                        normalizedValue = initializer;
+                    }
+
                     propertyConstants.put(signature, ConstantsPackage.createCompileTimeConstant(
-                            initializer, /* canBeUsedInAnnotation */ true, /* isPureIntConstant */ true, /* usesVariableAsConstant */ true, /* expectedType */ null));
+                            normalizedValue,
+                            /* canBeUsedInAnnotation */ true,
+                            /* isPureIntConstant */ true,
+                            /* usesVariableAsConstant */ true,
+                            /* expectedType */ null
+                    ));
                 }
                 return new MemberAnnotationVisitor(signature);
             }

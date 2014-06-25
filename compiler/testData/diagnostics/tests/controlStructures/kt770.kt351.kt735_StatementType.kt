@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNREACHABLE_CODE
 package kt770_351_735
 
 
@@ -120,9 +121,9 @@ fun testStatementInExpressionContext() {
     val <!UNUSED_VARIABLE!>a1<!>: Unit = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = <!UNUSED_VALUE!>334<!><!>
     val <!UNUSED_VARIABLE!>f<!> = <!EXPRESSION_EXPECTED!>for (i in 1..10) {}<!>
     if (true) return <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = <!UNUSED_VALUE!>34<!><!>
-    <!UNREACHABLE_CODE!>return <!EXPRESSION_EXPECTED!>while (true) {}<!><!>
+    return <!EXPRESSION_EXPECTED!>while (true) {}<!>
 }
 
 fun testStatementInExpressionContext2() {
-    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>a2<!>: Unit = <!EXPRESSION_EXPECTED!>while(true) {}<!><!>
+    val <!UNUSED_VARIABLE!>a2<!>: Unit = <!EXPRESSION_EXPECTED!>while(true) {}<!>
 }

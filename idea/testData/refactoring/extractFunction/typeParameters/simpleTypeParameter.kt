@@ -1,3 +1,4 @@
+// PARAM_TYPES: V
 open class Data(val x: Int)
 
 class Pair<A, B>(val a: A, val b: B)

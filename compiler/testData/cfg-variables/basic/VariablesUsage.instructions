@@ -11,14 +11,14 @@ L0:
   2 mark({ var a = 1 use(a) a = 2 use(a) })
     v(var a = 1)                               INIT: in: {} out: {a=D}
     r(1) -> <v0>                               INIT: in: {a=D} out: {a=D}
-    w(a|<v0>)                                  INIT: in: {a=D} out: {a=ID}
-    mark(use(a))                               INIT: in: {a=ID} out: {a=ID}    USE: in: {a=READ} out: {a=READ}
-    r(a) -> <v1>                                                               USE: in: {a=WRITTEN_AFTER_READ} out: {a=READ}
+    w(a|<v0>)                                  INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>                               INIT: in: {a=ID} out: {a=ID}    USE: in: {a=WRITTEN_AFTER_READ} out: {a=READ}
+    mark(use(a))
     call(use, use|<v1>) -> <v2>
     r(2) -> <v3>                                                               USE: in: {a=WRITTEN_AFTER_READ} out: {a=WRITTEN_AFTER_READ}
     w(a|<v3>)                                                                  USE: in: {a=READ} out: {a=WRITTEN_AFTER_READ}
-    mark(use(a))                                                               USE: in: {a=READ} out: {a=READ}
     r(a) -> <v4>                                                               USE: in: {} out: {a=READ}
+    mark(use(a))
     call(use, use|<v4>) -> <v5>
 L1:
   1 <END>                                      INIT: in: {} out: {}

@@ -88,10 +88,10 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         val haveFilesWithNumbers = testDataDir.listFiles { it.getName().matches(".+\\.(new|delete)\\.\\d+$") }?.isNotEmpty() ?: false
 
         if (haveFilesWithoutNumbers && haveFilesWithNumbers) {
-            fail("Bad test data format: no files ending with \".new\" or \".delete\" found")
+            fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
         }
         if (!haveFilesWithoutNumbers && !haveFilesWithNumbers) {
-            fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
+            fail("Bad test data format: no files ending with \".new\" or \".delete\" found")
         }
 
         if (haveFilesWithoutNumbers) {
@@ -111,7 +111,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
         rebuild()
 
-        assertEqualDirectories(outDir, outAfterMake, { it.name == "script.xml" })
+        assertEqualDirectories(outDir, outAfterMake)
 
         FileUtil.delete(outAfterMake)
     }
@@ -187,7 +187,16 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
     private class ModifyContent(name: String, val dataFile: File) : Modification(name) {
         override fun perform(workDir: File) {
-            dataFile.copyTo(File(workDir, "src/$name"))
+            val file = File(workDir, "src/$name")
+
+            val oldLastModified = file.lastModified()
+            dataFile.copyTo(file)
+
+            val newLastModified = file.lastModified()
+            if (newLastModified <= oldLastModified) {
+                //Mac OS and some versions of Linux truncate timestamp to nearest second
+                file.setLastModified(oldLastModified + 1000)
+            }
         }
     }
 

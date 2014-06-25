@@ -212,7 +212,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
         }
         else {
-            JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
+            JetTypeChecker typeChecker = JetTypeChecker.DEFAULT;
             // Upcast?
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
                 if (!typeChecker.isSubtypeOf(targetType, actualType)) {
@@ -378,8 +378,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (labelName != null) {
             LabelResolver.LabeledReceiverResolutionResult resolutionResult =
                     LabelResolver.INSTANCE.resolveThisOrSuperLabel(expression, context, Name.identifier(labelName));
-            if (onlyClassReceivers && resolutionResult.success()) {
-                if (!isDeclaredInClass(resolutionResult.getReceiverParameterDescriptor())) {
+            if (resolutionResult.success()) {
+                ReceiverParameterDescriptor receiverParameterDescriptor = resolutionResult.getReceiverParameterDescriptor();
+                recordThisOrSuperCallInTraceAndCallExtension(context, receiverParameterDescriptor, expression);
+                if (onlyClassReceivers && !isDeclaredInClass(receiverParameterDescriptor)) {
                     return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(NO_RECEIVER_PARAMETER);
                 }
             }
@@ -402,7 +404,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (result != NO_RECEIVER_PARAMETER) {
                 context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), result.getContainingDeclaration());
                 recordThisOrSuperCallInTraceAndCallExtension(context, result, expression);
-
             }
             return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(result);
         }
@@ -661,13 +662,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType result;
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
             assert returnType != null : "returnType is null for " + resolutionResults.getResultingDescriptor();
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, KotlinBuiltIns.getInstance().getUnitType())) {
+            if (KotlinBuiltIns.getInstance().isUnit(returnType)) {
                 result = ErrorUtils.createErrorType(KotlinBuiltIns.getInstance().getUnit().getName().asString());
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {
                 JetType receiverType = receiver.getType();
-                if (!JetTypeChecker.INSTANCE.isSubtypeOf(returnType, receiverType)) {
+                if (!JetTypeChecker.DEFAULT.isSubtypeOf(returnType, receiverType)) {
                     context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, name.asString(), receiverType, returnType));
                 }
                 else {
@@ -882,7 +883,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:", right);
         traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, KotlinBuiltIns.getInstance().getNullableAnyType());
 
-        Call call = CallMaker.makeCallWithExpressions(operationSign, receiver, null, operationSign, Collections.singletonList(right));
+        Call call = CallMaker.makeCallWithExpressions(expression, receiver, null, operationSign, Collections.singletonList(right));
         ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
         OverloadResolutionResults<FunctionDescriptor> resolutionResults =
                 components.callResolver.resolveCallWithGivenName(newContext, call, operationSign, OperatorConventions.EQUALS);
