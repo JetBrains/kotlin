@@ -6,15 +6,50 @@ import java.util.HashSet
 import java.util.LinkedHashSet
 
 class ComplexSetJsTest : SetJsTest() {
+    // Helper function with generic parameter to force to use ComlpexHashMap
+    fun doTest<T>() {
+        HashSet<T>()
+        HashSet<T>(3)
+        HashSet<T>(3, 0.5f)
+
+        val set = HashSet<T>(data as HashSet<T>)
+
+        assertEquals(data, set)
+    }
+
+    test override fun constructors() {
+        doTest<String>()
+    }
+
     // hashSetOf returns ComlpexHashSet because it is Generic
     override fun createEmptyMutableSet(): MutableSet<String> = hashSetOf<String>()
 }
 
 class PrimitiveSetJsTest : SetJsTest() {
+    test override fun constructors() {
+        HashSet<String>()
+        HashSet<String>(3)
+        HashSet<String>(3, 0.5f)
+
+        val set = HashSet<String>(data)
+
+        assertEquals(data, set)
+    }
+
     override fun createEmptyMutableSet(): MutableSet<String> = HashSet<String>()
 }
 
 class LinkedHashSetTest : SetJsTest() {
+    test override fun constructors() {
+        LinkedHashSet<String>()
+        LinkedHashSet<String>(3)
+        LinkedHashSet<String>(3, 0.5f)
+
+        val set = LinkedHashSet<String>(data)
+
+        assertEquals(data, set)
+    }
+
     override fun createEmptyMutableSet(): MutableSet<String> = LinkedHashSet<String>()
 }
 
@@ -149,6 +184,8 @@ abstract class SetJsTest {
             assertFalse(s.contains(element), "unexpected element after remove: $element")
         }
     }
+
+    test abstract fun constructors()
 
     //Helpers
     abstract fun createEmptyMutableSet(): MutableSet<String>

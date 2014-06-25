@@ -6,17 +6,53 @@ import java.util.*
 import org.junit.Test as test
 
 class ComplexMapJsTest : MapJsTest() {
+    // Helper function with generic parameter to force to use ComlpexHashMap
+    fun doTest<K : kotlin.Comparable<K>>() {
+        HashMap<K, Int>()
+        HashMap<K, Int>(3)
+        HashMap<K, Int>(3, 0.5f)
+        val map = HashMap<K, Int>(createTestMap() as HashMap<K, Int>)
+
+        assertEquals(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
+    }
+    test override fun constructors() {
+        doTest<String>()
+    }
+
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
     // hashMapOf returns ComlpexHashMap because it is Generic
     override fun emptyMutableMap(): MutableMap<String, Int> = hashMapOf()
 }
 
 class PrimitiveMapJsTest : MapJsTest() {
+    test override fun constructors() {
+        HashMap<String, Int>()
+        HashMap<String, Int>(3)
+        HashMap<String, Int>(3, 0.5f)
+
+        val map = HashMap<String, Int>(createTestMap())
+
+        assertEquals(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
+    }
+
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
     override fun emptyMutableMap(): MutableMap<String, Int> = HashMap()
 }
 
 class LinkedHashMapTest : MapJsTest() {
+    test override fun constructors() {
+        LinkedHashMap<String, Int>()
+        LinkedHashMap<String, Int>(3)
+        LinkedHashMap<String, Int>(3, 0.5f)
+
+        val map = LinkedHashMap<String, Int>(createTestMap())
+
+        assertEquals(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
+    }
+
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toList()
     override fun emptyMutableMap(): MutableMap<String, Int> = LinkedHashMap()
 }
@@ -283,6 +319,8 @@ abstract class MapJsTest {
             value += 3
         }
     }
+
+    test abstract fun constructors()
 
     /*
     test fun createLinkedMap() {

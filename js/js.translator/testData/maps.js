@@ -37,6 +37,14 @@
         return this.value;
     };
 
+    function hashMapPutAll (fromMap) {
+        var entries = fromMap.entrySet();
+        var it = entries.iterator();
+        while (it.hasNext()) {
+            var e = it.next();
+            this.put_wn2jw4$(e.getKey(), e.getValue());
+        }
+    }
 
     /** @const */
     var FUNCTION = "function";
@@ -387,24 +395,8 @@
 
         /**
          * @param {Hashtable.<Key, Value>} hashtable
-         * @param {(function(Key, Value, Value): Value)=} conflictCallback
          */
-        this.putAll_za3j1t$ = function (hashtable, conflictCallback) {
-            var entries = hashtable._entries();
-            var entry, key, value, thisValue, i = entries.length;
-            var hasConflictCallback = (typeof conflictCallback == FUNCTION);
-            while (i--) {
-                entry = entries[i];
-                key = entry[0];
-                value = entry[1];
-
-                // Check for a conflict. The default behaviour is to overwrite the value for an existing key
-                if (hasConflictCallback && (thisValue = that.get(key))) {
-                    value = conflictCallback(key, thisValue, value);
-                }
-                that.put_wn2jw4$(key, value);
-            }
-        };
+        this.putAll_za3j1t$ = hashMapPutAll;
 
         this.clone = function () {
             var clone = new Hashtable(hashingFunctionParam, equalityFunctionParam);
@@ -554,14 +546,7 @@
                 this.$size = 0;
                 this.map = {};
             },
-            putAll_za3j1t$: function (fromMap) {
-                var map = fromMap.map;
-                for (var key in map) {
-                    //noinspection JSUnfilteredForInLoop
-                    this.map[key] = map[key];
-                    this.$size++;
-                }
-            },
+            putAll_za3j1t$: hashMapPutAll,
             entrySet: function () {
                 var result = new Kotlin.ComplexHashSet();
                 var map = this.map;

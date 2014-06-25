@@ -101,6 +101,7 @@ public abstract class Config {
     public static final List<String> LIB_FILE_NAMES_DEPENDENT_ON_STDLIB = Arrays.asList(
             "/core/stringsCode.kt",
             "/stdlib/domCode.kt",
+            "/core/javautilCode.kt",
             "/stdlib/jutilCode.kt",
             "/stdlib/testCode.kt"
     );
