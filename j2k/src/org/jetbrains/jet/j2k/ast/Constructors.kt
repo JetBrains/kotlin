@@ -18,6 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.*
+import com.intellij.util.IncorrectOperationException
 
 abstract class Constructor(
         converter: Converter,
@@ -25,7 +26,10 @@ abstract class Constructor(
         modifiers: Modifiers,
         parameterList: ParameterList,
         block: Block
-) : Function(converter, Identifier.Empty, annotations, modifiers, ErrorType(), TypeParameterList.Empty, parameterList, block, false)
+) : Function(converter, Identifier.Empty, annotations, modifiers, ErrorType(), TypeParameterList.Empty, parameterList, block, false) {
+
+    override fun generateCode(builder: CodeBuilder) { throw IncorrectOperationException() }
+}
 
 class PrimaryConstructor(converter: Converter,
                          annotations: Annotations,
@@ -34,15 +38,28 @@ class PrimaryConstructor(converter: Converter,
                          block: Block)
   : Constructor(converter, annotations, modifiers, parameterList, block) {
 
-    public fun appendSignature(builder: CodeBuilder): CodeBuilder {
+    public fun initializer(): Initializer? {
+        return if (!block!!.isEmpty)
+            Initializer(block!!, Modifiers.Empty).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
+        else
+            null
+    }
+
+    public fun signature(): PrimaryConstructorSignature {
+        val noBody = block!!.isEmpty
+        val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = noBody, commentsInside = noBody)
+        return PrimaryConstructorSignature(modifiers, parameterList).assignPrototypesFrom(this, inheritance)
+    }
+}
+
+class PrimaryConstructorSignature(val modifiers: Modifiers, val parameterList: ParameterList) : Element() {
+    override fun generateCode(builder: CodeBuilder) {
         val accessModifier = modifiers.filter { it in ACCESS_MODIFIERS && it != Modifier.PUBLIC }
         if (!accessModifier.isEmpty) {
             builder append " " append accessModifier
         }
-        return builder append "(" append parameterList append ")"
+        builder append "(" append parameterList append ")"
     }
-
-    public fun appendBody(builder: CodeBuilder): CodeBuilder = builder.append(block!!)
 }
 
 class SecondaryConstructor(converter: Converter,
@@ -56,7 +73,7 @@ class SecondaryConstructor(converter: Converter,
         val statements = ArrayList(block?.statements ?: listOf())
         statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
         val newBlock = Block(statements, block?.lBrace ?: LBrace().assignNoPrototype(), block?.rBrace ?: RBrace().assignNoPrototype())
-        if (this.block != null) {
+        if (block != null) {
             newBlock.assignPrototypesFrom(block!!)
         }
 

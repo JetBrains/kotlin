@@ -21,34 +21,23 @@ import org.jetbrains.jet.j2k.*
 abstract class Member(val annotations: Annotations, val modifiers: Modifiers) : Element()
 
 class ClassBody (
-        val primaryConstructor: PrimaryConstructor?,
+        val primaryConstructorSignature: PrimaryConstructorSignature?,
+        val members: List<Member>,
         val secondaryConstructors: List<SecondaryConstructor>,
-        val normalMembers: List<Member>,
         val classObjectMembers: List<Member>,
         val lBrace: LBrace,
         val rBrace: RBrace) {
 
     fun append(builder: CodeBuilder, containingClass: Class?) {
-        if (normalMembers.isEmpty() && classObjectMembers.isEmpty() && secondaryConstructors.isEmpty() && (primaryConstructor?.block?.isEmpty ?: true)) return
+        if (members.isEmpty() && classObjectMembers.isEmpty() && secondaryConstructors.isEmpty()) return
 
         builder append " " append lBrace append "\n"
 
-        builder.append(normalMembers, "\n")
-        var notEmpty = normalMembers.isNotEmpty()
+        builder.append(members, "\n")
 
-        notEmpty = appendPrimaryConstructorBody(builder, notEmpty) || notEmpty
-
-        appendClassObject(builder, containingClass, notEmpty)
+        appendClassObject(builder, containingClass, members.isNotEmpty())
 
         builder append "\n" append rBrace
-    }
-
-    private fun appendPrimaryConstructorBody(builder: CodeBuilder, blankLineBefore: Boolean): Boolean {
-        val constructor = primaryConstructor
-        if (constructor == null || constructor.block?.isEmpty ?: true) return false
-        if (blankLineBefore) builder.append("\n\n")
-        constructor.appendBody(builder)
-        return true
     }
 
     private fun appendClassObject(builder: CodeBuilder, containingClass: Class?, blankLineBefore: Boolean) {

@@ -36,7 +36,12 @@ open class Class(
                 .append(" ")
                 .append(name)
                 .append(typeParameterList)
-        appendPrimaryConstructorSignature(builder)
+        if (body.primaryConstructorSignature != null) {
+            builder.append(body.primaryConstructorSignature)
+        }
+        else if (this !is Trait) { //TODO: drop this
+            builder.append("()")
+        }
         appendBaseTypes(builder)
         typeParameterList.appendWhere(builder)
         body.append(builder, this)
@@ -44,10 +49,6 @@ open class Class(
 
     protected open val keyword: String
         get() = "class"
-
-    protected open fun appendPrimaryConstructorSignature(builder: CodeBuilder) {
-        body.primaryConstructor?.appendSignature(builder) ?: builder.append("()")
-    }
 
     protected fun appendBaseTypes(builder: CodeBuilder) {
         builder.append(baseClassSignatureWithParams(builder) + implementsTypes.map { { builder.append(it) } }, ", ", ":")

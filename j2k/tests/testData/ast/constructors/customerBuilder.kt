@@ -2,6 +2,11 @@ package org.test.customer
 
 class Customer(public val _firstName: String, public val _lastName: String) {
 
+    {
+        doSmthBefore()
+        doSmthAfter()
+    }
+
     public fun getFirstName(): String {
         return _firstName
     }
@@ -13,11 +18,6 @@ class Customer(public val _firstName: String, public val _lastName: String) {
     private fun doSmthBefore() {
     }
     private fun doSmthAfter() {
-    }
-
-    {
-        doSmthBefore()
-        doSmthAfter()
     }
 }
 

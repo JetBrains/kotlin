@@ -31,8 +31,6 @@ class Trait(name: Identifier,
     override val keyword: String
         get() = "trait"
 
-    override fun appendPrimaryConstructorSignature(builder: CodeBuilder) { }
-
     override fun presentationModifiers(): Modifiers
             = modifiers.filter { it in ACCESS_MODIFIERS }
 }

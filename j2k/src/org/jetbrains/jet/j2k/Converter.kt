@@ -127,21 +127,27 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
         val useClassObject = shouldGenerateClassObject(psiClass, convertedMembers)
 
-        val normalMembers = ArrayList<Member>()
+        val members = ArrayList<Member>()
         val classObjectMembers = ArrayList<Member>()
         for ((psiMember, member) in convertedMembers) {
-            if (member is Constructor) continue
-            if (useClassObject && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
+            if (member is SecondaryConstructor) continue
+            if (member is PrimaryConstructor) {
+                val initializer = member.initializer()
+                if (initializer != null) {
+                    members.add(initializer)
+                }
+            }
+            else if (useClassObject && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
                 classObjectMembers.add(member)
             }
             else {
-                normalMembers.add(member)
+                members.add(member)
             }
         }
 
         val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
-        return ClassBody(primaryConstructor, secondaryConstructors, normalMembers, classObjectMembers, lBrace, rBrace)
+        return ClassBody(primaryConstructor?.signature(), members, secondaryConstructors, classObjectMembers, lBrace, rBrace)
     }
 
     // do not convert private static methods into class object if possible
@@ -211,9 +217,9 @@ public class Converter private(val project: Project, val settings: ConverterSett
     }
 
     private fun generateArtificialPrimaryConstructor(className: Identifier, classBody: ClassBody): ClassBody {
-        assert(classBody.primaryConstructor == null)
+        assert(classBody.primaryConstructorSignature == null)
 
-        val finalOrWithEmptyInitializerFields = classBody.normalMembers.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.isEmpty }
+        val finalOrWithEmptyInitializerFields = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.isEmpty }
         val initializers = HashMap<Field, Expression>()
         for (constructor in classBody.secondaryConstructors) {
             for (field in finalOrWithEmptyInitializerFields) {
@@ -256,7 +262,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
             constructor.block = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
 
-        //TODO: comments?
         val parameters = finalOrWithEmptyInitializerFields.map { field ->
             val varValModifier = if (field.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
             Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS }).assignPrototypesFrom(field)
@@ -264,9 +269,9 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
         val modifiers = Modifiers(listOf(Modifier.PRIVATE)).assignNoPrototype()
         val parameterList = ParameterList(parameters).assignNoPrototype()
-        val primaryConstructor = PrimaryConstructor(this, Annotations.Empty, modifiers, parameterList, Block.Empty)
-        val updatedMembers = classBody.normalMembers.filter { !finalOrWithEmptyInitializerFields.contains(it) }
-        return ClassBody(primaryConstructor, classBody.secondaryConstructors, updatedMembers, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
+        val constructorSignature = PrimaryConstructorSignature(modifiers, parameterList).assignNoPrototype()
+        val updatedMembers = classBody.members.filter { !finalOrWithEmptyInitializerFields.contains(it) }
+        return ClassBody(constructorSignature, updatedMembers, classBody.secondaryConstructors, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
     }
 
     private fun convertInitializer(initializer: PsiClassInitializer): Initializer {
@@ -491,7 +496,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                           `type`,
                           if (isVal(field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
                           convertAnnotations(parameter) + convertAnnotations(field),
-                          convertModifiers(field).filter { it in ACCESS_MODIFIERS }).assignPrototypes(listOf(parameter, field), inheritBlankLinesBefore = false)
+                          convertModifiers(field).filter { it in ACCESS_MODIFIERS }).assignPrototypes(listOf(parameter, field), CommentsAndSpacesInheritance(blankLinesBefore = false))
             }
         }).assignPrototype(constructor.getParameterList())
         return PrimaryConstructor(this, annotations, modifiers, parameterList, block).assignPrototype(constructor)
@@ -654,8 +659,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return Identifier(identifier.getText()!!).assignPrototype(identifier)
     }
 
-    fun convertModifiers(owner: PsiModifierListOwner): Modifiers
-            = Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second }).assignPrototype(owner.getModifierList(), false)
+    fun convertModifiers(owner: PsiModifierListOwner): Modifiers {
+        return Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
+                .assignPrototype(owner.getModifierList(), CommentsAndSpacesInheritance(blankLinesBefore = false))
+    }
 
     private val MODIFIERS_MAP = listOf(
             PsiModifier.ABSTRACT to Modifier.ABSTRACT,
