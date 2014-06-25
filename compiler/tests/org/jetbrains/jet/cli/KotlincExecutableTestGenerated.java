@@ -171,6 +171,11 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), true);
         }
         
+        @TestMetadata("jsHelp.args")
+        public void testJsHelp() throws Exception {
+            doJsTest("compiler/testData/cli/js/jsHelp.args");
+        }
+        
         @TestMetadata("outputPostfixFileNotFound.args")
         public void testOutputPostfixFileNotFound() throws Exception {
             doJsTest("compiler/testData/cli/js/outputPostfixFileNotFound.args");

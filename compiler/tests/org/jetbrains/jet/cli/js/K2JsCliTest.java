@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.cli.js;
 
-import junit.framework.Assert;
 import org.jetbrains.jet.cli.CliBaseTest;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -42,5 +42,10 @@ public class K2JsCliTest extends CliBaseTest {
         executeCompilerCompareOutputJS();
 
         Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
+    }
+
+    @Test
+    public void jsHelp() throws Exception {
+        executeCompilerCompareOutputJS();
     }
 }

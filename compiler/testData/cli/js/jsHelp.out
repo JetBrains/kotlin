@@ -1,0 +1,16 @@
+Usage: org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments
+  -output [String] Output file path
+  -libraryFiles [String[,]] Path to zipped lib sources or kotlin files
+  -sourceFiles [String[,]] Source files (dir or file)
+  -sourcemap [flag] Generate SourceMap
+  -target [String] Generate JS files for specific ECMA version (only ECMA 5 is supported)
+  -main [String] Whether a main function should be called; either 'call' or 'noCall', default 'call' (main function will be auto detected)
+  -outputPrefix [String] Path to file which will be added to the beginning of output file
+  -outputPostfix [String] Path to file which will be added to the end of output file
+  -tags [flag] Demarcate each compilation message (error, warning, etc) with an open and close tag
+  -verbose [flag] Enable verbose logging output
+  -version [flag] Display compiler version
+  -help (-h) [flag] Print a synopsis of standard options
+  -suppress [String] Suppress compiler messages by severity (warnings)
+  -printArgs [flag] Print command line arguments
+OK
