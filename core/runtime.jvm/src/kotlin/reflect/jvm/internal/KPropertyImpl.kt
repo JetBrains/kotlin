@@ -19,9 +19,12 @@ package kotlin.reflect.jvm.internal
 import java.lang.reflect.*
 
 trait KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
+    val field: Field?
 
+    val getter: Method?
 }
 
 
 trait KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
+    val setter: Method?
 }

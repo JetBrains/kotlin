@@ -16,21 +16,20 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.reflect.Field
-import java.lang.reflect.Method
+import java.lang.reflect.*
 
 open class KMemberPropertyImpl<T : Any, out R>(
         public override val name: String,
         protected val owner: KClassImpl<T>
 ) : KMemberProperty<T, R>, KPropertyImpl<R> {
-    val field: Field? =
+    override val field: Field? =
             if (owner.origin == KClassOrigin.FOREIGN) {
                 owner.jClass.getField(name)
             }
             else null
 
     // TODO: extract, make lazy (weak?), use our descriptors knowledge
-    val getter: Method? =
+    override val getter: Method? =
             if (owner.origin == KClassOrigin.KOTLIN) {
                 owner.jClass.getMaybeDeclaredMethod(getterName(name))
             }
@@ -49,7 +48,7 @@ class KMutableMemberPropertyImpl<T : Any, R>(
         name: String,
         owner: KClassImpl<T>
 ) : KMutableMemberProperty<T, R>, KMutablePropertyImpl<R>, KMemberPropertyImpl<T, R>(name, owner) {
-    val setter: Method? =
+    override val setter: Method? =
             if (owner.origin == KClassOrigin.KOTLIN) {
                 owner.jClass.getMaybeDeclaredMethod(setterName(name), getter!!.getReturnType()!!)
             }

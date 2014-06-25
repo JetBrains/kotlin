@@ -16,14 +16,17 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.reflect.Method
+import java.lang.reflect.*
 
 open class KTopLevelPropertyImpl<out R>(
         public override val name: String,
         protected val owner: KPackageImpl
 ) : KTopLevelProperty<R>, KVariableImpl<R> {
+    // TODO: load the field from the corresponding package part
+    override val field: Field? get() = null
+
     // TODO: extract, make lazy (weak?), use our descriptors knowledge, support Java fields
-    val getter: Method = owner.jClass.getMethod(getterName(name))
+    override val getter: Method = owner.jClass.getMethod(getterName(name))
 
     override fun get(): R {
         return getter(null) as R
@@ -34,7 +37,7 @@ class KMutableTopLevelPropertyImpl<R>(
         name: String,
         owner: KPackageImpl
 ) : KMutableTopLevelProperty<R>, KMutableVariableImpl<R>, KTopLevelPropertyImpl<R>(name, owner) {
-    val setter = owner.jClass.getMethod(setterName(name), getter.getReturnType()!!)
+    override val setter: Method = owner.jClass.getMethod(setterName(name), getter.getReturnType()!!)
 
     override fun set(value: R) {
         setter.invoke(null, value)
