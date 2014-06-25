@@ -26,7 +26,7 @@ public class Identifier private(private val myName: String, private val myHasDol
     }
 }
 
-public class User() {
+public class User {
     class object {
         public fun main() {
             val i1 = Identifier.create("name", false, true)

@@ -1,6 +1,6 @@
 package switch_demo
 
-public class SwitchDemo() {
+public class SwitchDemo {
     class object {
         public fun main(args: Array<String>) {
 

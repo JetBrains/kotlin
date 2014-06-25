@@ -1,10 +1,10 @@
 package demo
 
-class Container() {
+class Container {
     var myInt = 1
 }
 
-class One() {
+class One {
     class object {
         var myContainer = Container()
     }
@@ -12,7 +12,7 @@ class One() {
 
 class IntContainer(i: Int)
 
-class Test() {
+class Test {
     fun putInt(i: Int) {
     }
     fun test() {

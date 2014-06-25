@@ -1,4 +1,4 @@
-class Library() {
+class Library {
     class object {
         fun call() {
         }
@@ -9,7 +9,7 @@ class Library() {
     }
 }
 
-class User() {
+class User {
     fun main() {
         Library.call()
         Library.getString().isEmpty()

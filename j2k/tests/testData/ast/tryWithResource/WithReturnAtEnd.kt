@@ -1,6 +1,6 @@
 import java.io.*
 
-public class C() {
+public class C {
     fun foo(): Int {
         try {
             return FileInputStream("foo").use { stream ->

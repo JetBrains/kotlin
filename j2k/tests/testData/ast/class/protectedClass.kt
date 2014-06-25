@@ -1,1 +1,1 @@
-protected class Test()
+protected class Test

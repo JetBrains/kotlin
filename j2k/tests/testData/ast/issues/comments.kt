@@ -9,7 +9,7 @@ This is a block comment
 //one line comment of class
 //another one
 /*another doc*/
-class C() {
+class C {
     // This is a class comment
 
     /**

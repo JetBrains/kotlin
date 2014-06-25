@@ -15,7 +15,7 @@ class Test private() {
     }
 }
 
-class User() {
+class User {
     fun main() {
         val m = HashMap(1)
         val m2 = HashMap(10)

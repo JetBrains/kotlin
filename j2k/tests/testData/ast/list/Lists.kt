@@ -1,6 +1,6 @@
 import java.util.*
 
-public class Lists() {
+public class Lists {
     public fun test() {
         val xs = ArrayList<Any>()
         val ys = LinkedList<Any>()

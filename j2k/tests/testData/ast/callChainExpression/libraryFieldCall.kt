@@ -1,10 +1,10 @@
-class Library() {
+class Library {
     class object {
         val ourOut: java.io.PrintStream = 0
     }
 }
 
-class User() {
+class User {
     fun main() {
         Library.ourOut.print()
     }

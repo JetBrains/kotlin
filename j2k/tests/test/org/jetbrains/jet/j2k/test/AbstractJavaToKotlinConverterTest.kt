@@ -135,7 +135,7 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = fileToKotlin("final class C {" + text + "}", settings, project).replaceAll("class C\\(\\) \\{", "")
+        val result = fileToKotlin("final class C {" + text + "}", settings, project).replaceAll("class C \\{", "")
         return result.substring(0, (result.lastIndexOf("}"))).trim()
     }
 

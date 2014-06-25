@@ -39,9 +39,6 @@ open class Class(
         if (body.primaryConstructorSignature != null) {
             builder.append(body.primaryConstructorSignature)
         }
-        else if (this !is Trait) { //TODO: drop this
-            builder.append("()")
-        }
         appendBaseTypes(builder)
         typeParameterList.appendWhere(builder)
         body.append(builder, this)

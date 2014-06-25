@@ -1,4 +1,4 @@
-abstract class A() {
+abstract class A {
     abstract fun callme()
 
     fun callmetoo() {

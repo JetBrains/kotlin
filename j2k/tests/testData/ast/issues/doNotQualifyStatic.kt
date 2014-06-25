@@ -1,6 +1,6 @@
-class Outer() {
+class Outer {
 
-    public class Nested() {
+    public class Nested {
         public fun foo() {
             o = null
         }

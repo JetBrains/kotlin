@@ -3,7 +3,7 @@ package demo
 import java.util.*
 import kotlin.Iterator
 
-class Test() : Iterable<String> {
+class Test : Iterable<String> {
     override fun iterator(): Iterator<String> {
         return null
     }
@@ -14,7 +14,7 @@ class Test() : Iterable<String> {
     }
 }
 
-class FullTest() : Iterable<String> {
+class FullTest : Iterable<String> {
     override fun iterator(): Iterator<String> {
         return null
     }

@@ -13,7 +13,7 @@ class C(arg1: Int, arg2: Int, arg3: Int) {
     }
 }
 
-public class User() {
+public class User {
     class object {
         public fun main() {
             val c1 = C(100, 100, 100)

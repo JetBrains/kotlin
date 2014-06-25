@@ -5,7 +5,7 @@ trait I {
     public fun doIt(stream: InputStream): Int
 }
 
-public class C() {
+public class C {
     throws(javaClass<IOException>())
     fun foo(): Int {
         return FileInputStream("foo").use { stream ->

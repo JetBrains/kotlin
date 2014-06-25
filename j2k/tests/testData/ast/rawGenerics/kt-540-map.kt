@@ -2,7 +2,7 @@ package demo
 
 import java.util.HashMap
 
-class Test() {
+class Test {
     fun main() {
         val commonMap = HashMap<String, Int>()
         val rawMap = HashMap<String, Int>()

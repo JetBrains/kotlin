@@ -1,4 +1,4 @@
-class Test() {
+class Test {
     class object {
         public fun getInt(i: Int): Int {
             when (i) {

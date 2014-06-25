@@ -1,4 +1,4 @@
-class Base() {
+class Base {
     public fun foo(s: String?): String? {
         return ""
     }
@@ -16,7 +16,7 @@ trait I {
     public fun zoo(o: Any?): String?
 }
 
-class C() : Base(), I {
+class C : Base(), I {
     override fun foo(s: String?): String? {
         return ""
     }

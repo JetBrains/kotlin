@@ -1,4 +1,4 @@
-class C() {
+class C {
     private fun foo(s: String?) {
     }
 

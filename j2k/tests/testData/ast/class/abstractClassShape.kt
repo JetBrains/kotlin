@@ -1,4 +1,4 @@
-abstract class Shape() {
+abstract class Shape {
     public var color: String = 0
     public fun setColor(c: String) {
         color = c

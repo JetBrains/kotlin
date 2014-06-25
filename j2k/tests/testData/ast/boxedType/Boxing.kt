@@ -1,6 +1,6 @@
 import java.util.ArrayList
 
-class Boxing() {
+class Boxing {
     fun test() {
         var i: Int? = 0
         val n = 0.0.toFloat()

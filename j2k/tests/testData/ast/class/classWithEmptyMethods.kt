@@ -1,4 +1,4 @@
-class T() {
+class T {
     fun main() {
     }
     fun i(): Int {

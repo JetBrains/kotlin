@@ -1,6 +1,6 @@
 package demo
 
-class Program() {
+class Program {
     class object {
         public fun main(args: Array<String>) {
             System.out.println("Halo!")

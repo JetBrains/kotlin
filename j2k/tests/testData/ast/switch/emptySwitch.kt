@@ -1,4 +1,4 @@
-public class NonDefault() {
+public class NonDefault {
     class object {
         public fun main(args: Array<String>) {
 

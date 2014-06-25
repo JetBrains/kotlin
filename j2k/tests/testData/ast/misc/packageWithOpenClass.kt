@@ -1,3 +1,3 @@
 package test
 
-class C()
+class C

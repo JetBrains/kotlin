@@ -1,3 +1,3 @@
-class C() {
+class C {
     protected var f: Foo = 0
 }

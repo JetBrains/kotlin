@@ -1,3 +1,3 @@
 package org.jetbrains.jet.j2k
 
-public class Converter()
+public class Converter

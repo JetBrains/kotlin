@@ -1,10 +1,10 @@
 package demo
 
-class Container() {
+class Container {
     var myString = "1"
 }
 
-class One() {
+class One {
     class object {
         var myContainer = Container()
     }
@@ -12,7 +12,7 @@ class One() {
 
 class StringContainer(s: String)
 
-class Test() {
+class Test {
     fun putString(s: String) {
     }
     fun test() {

@@ -1,6 +1,6 @@
 package demo
 
-class Test() : Iterable<String> {
+class Test : Iterable<String> {
     override fun iterator(): Iterator<String> {
         return null
     }

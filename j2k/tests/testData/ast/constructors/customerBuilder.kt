@@ -21,7 +21,7 @@ class Customer(public val _firstName: String, public val _lastName: String) {
     }
 }
 
-class CustomerBuilder() {
+class CustomerBuilder {
     public var _firstName: String = "Homer"
     public var _lastName: String = "Simpson"
 
@@ -40,7 +40,7 @@ class CustomerBuilder() {
     }
 }
 
-public class User() {
+public class User {
     class object {
         public fun main() {
             val customer = CustomerBuilder().WithFirstName("Homer").WithLastName("Simpson").Build()

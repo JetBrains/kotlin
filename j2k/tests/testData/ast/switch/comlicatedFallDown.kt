@@ -1,6 +1,6 @@
 package demo
 
-public class SwitchDemo() {
+public class SwitchDemo {
     class object {
         public fun print(o: Any) {
             System.out.println(o)

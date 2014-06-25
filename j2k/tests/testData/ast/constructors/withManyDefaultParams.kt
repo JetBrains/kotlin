@@ -17,7 +17,7 @@ public class Test private(private val myName: String, var a: Boolean, var b: Dou
     }
 }
 
-public class User() {
+public class User {
     class object {
         public fun main() {
             val t = Test.create("name")

@@ -1,8 +1,8 @@
-class Library() {
+class Library {
     public val myString: String = 0
 }
 
-class User() {
+class User {
     fun main() {
         Library.myString.isEmpty()
     }

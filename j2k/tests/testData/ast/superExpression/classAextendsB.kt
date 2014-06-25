@@ -4,7 +4,7 @@ class B(i: Int) {
     }
 }
 
-class A() : B(10) {
+class A : B(10) {
 
     override fun call(): Int {
         return super.call()

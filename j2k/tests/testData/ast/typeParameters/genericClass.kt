@@ -1,1 +1,1 @@
-class Comparable<T>()
+class Comparable<T>

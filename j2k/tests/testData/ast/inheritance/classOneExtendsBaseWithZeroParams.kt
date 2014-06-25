@@ -1,3 +1,3 @@
-class Base()
+class Base
 
-class One() : Base()
+class One : Base()

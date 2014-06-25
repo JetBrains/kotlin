@@ -1,15 +1,15 @@
 package demo
 
-class Container() {
+class Container {
     var myInt = 1
 }
 
-class One() {
+class One {
     class object {
         var myContainer = Container()
     }
 }
 
-class Test() {
+class Test {
     var b = One.myContainer.myInt.toByte()
 }

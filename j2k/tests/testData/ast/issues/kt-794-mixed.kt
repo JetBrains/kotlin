@@ -1,6 +1,6 @@
 package demo
 
-class Test() {
+class Test {
     fun getInteger(i: Int?): Int? {
         return i
     }

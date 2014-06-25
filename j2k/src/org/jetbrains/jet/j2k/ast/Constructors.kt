@@ -55,6 +55,7 @@ class PrimaryConstructor(converter: Converter,
 class PrimaryConstructorSignature(val modifiers: Modifiers, val parameterList: ParameterList) : Element() {
     override fun generateCode(builder: CodeBuilder) {
         val accessModifier = modifiers.filter { it in ACCESS_MODIFIERS && it != Modifier.PUBLIC }
+        if (accessModifier.isEmpty && parameterList.parameters.isEmpty()) return
         if (!accessModifier.isEmpty) {
             builder append " " append accessModifier
         }

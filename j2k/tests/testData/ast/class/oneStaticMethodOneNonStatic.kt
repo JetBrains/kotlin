@@ -1,4 +1,4 @@
-class S() {
+class S {
     fun sB(): Boolean {
         return true
     }

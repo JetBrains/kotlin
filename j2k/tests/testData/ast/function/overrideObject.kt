@@ -1,4 +1,4 @@
-class X() {
+class X {
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -17,7 +17,7 @@ class X() {
     }
 }
 
-class Y() : Thread() {
+class Y : Thread() {
     throws(javaClass<CloneNotSupportedException>())
     override fun clone(): Any {
         return super.clone()

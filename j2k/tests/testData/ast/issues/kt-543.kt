@@ -1,6 +1,6 @@
 package demo
 
-class Test() {
+class Test {
     fun putInt(i: Int) {
     }
 

@@ -25,7 +25,7 @@ class C(val myArg1: Int) {
     }
 }
 
-public class User() {
+public class User {
     class object {
         public fun main() {
             val c1 = C.create(100, 100, 100)

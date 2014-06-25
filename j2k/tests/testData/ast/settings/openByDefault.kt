@@ -1,6 +1,6 @@
 // !openByDefault: true
 
-open class A() {
+open class A {
     open fun foo1() {
     }
     private fun foo2() {
@@ -9,12 +9,12 @@ open class A() {
     }
 }
 
-class B() {
+class B {
     fun foo() {
     }
 }
 
-abstract class C() {
+abstract class C {
     abstract fun foo()
 }
 
@@ -22,7 +22,7 @@ trait I {
     public fun foo()
 }
 
-open class D() : I {
+open class D : I {
     override fun foo() {
     }
 }
