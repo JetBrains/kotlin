@@ -1,5 +1,5 @@
 abstract class Shape {
-    public var color: String = 0
+    public var color: String
     public fun setColor(c: String) {
         color = c
     }

@@ -1,6 +1,6 @@
 class Library {
     class object {
-        val ourOut: java.io.PrintStream = 0
+        val ourOut: java.io.PrintStream
     }
 }
 

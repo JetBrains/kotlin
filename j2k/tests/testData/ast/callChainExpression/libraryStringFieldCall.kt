@@ -1,5 +1,5 @@
 class Library {
-    public val myString: String = 0
+    public val myString: String
 }
 
 class User {

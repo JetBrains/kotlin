@@ -2,7 +2,7 @@ public class Test private(private val myName: String, var a: Boolean, var b: Dou
     class object {
 
         public fun create(): Test {
-            return Test(0, false, 0.toDouble(), 0.toFloat(), 0, 0, 0, ' ')
+            return Test(null, false, 0.toDouble(), 0.toFloat(), 0, 0, 0, ' ')
         }
 
         public fun create(name: String): Test {

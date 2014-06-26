@@ -41,7 +41,7 @@ class Field(
 
         var initializerToUse = initializer
         if (initializerToUse.isEmpty && defaultInitializer) {
-            initializerToUse = getDefaultInitializer(this)
+            initializerToUse = getDefaultInitializer(this) ?: Expression.Empty
         }
         if (!initializerToUse.isEmpty) {
             builder append " = " append initializerToUse

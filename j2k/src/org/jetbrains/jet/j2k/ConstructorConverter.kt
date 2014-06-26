@@ -169,7 +169,7 @@ class ConstructorConverter(private val converter: Converter) {
         assert(classBody.primaryConstructorSignature == null)
 
         val finalOrWithEmptyInitializerFields = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.isEmpty }
-        val initializers = HashMap<Field, Expression>()
+        val initializers = HashMap<Field, Expression?>()
         for (factoryFunction in classBody.factoryFunctions()) {
             for (field in finalOrWithEmptyInitializerFields) {
                 initializers.put(field, getDefaultInitializer(field))
@@ -198,9 +198,8 @@ class ConstructorConverter(private val converter: Converter) {
                 }
             }
 
-            val initializer = MethodCallExpression.buildNotNull(null,
-                                                                className.name,
-                                                                finalOrWithEmptyInitializerFields.map { initializers[it]!! }).assignNoPrototype()
+            val arguments = finalOrWithEmptyInitializerFields.map { initializers[it] ?: LiteralExpression("null").assignNoPrototype() }
+            val initializer = MethodCallExpression.buildNotNull(null, className.name, arguments).assignNoPrototype()
             if (statements.isNotEmpty()) {
                 val localVar = LocalVariable(tempValIdentifier(),
                                              Annotations.Empty,

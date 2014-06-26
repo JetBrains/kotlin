@@ -49,7 +49,7 @@ fun PsiVariable.countWriteAccesses(scope: PsiElement?): Int
 fun PsiVariable.hasWriteAccesses(scope: PsiElement?): Boolean
         = if (scope != null) findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
 
-fun getDefaultInitializer(field: Field): Expression {
+fun getDefaultInitializer(field: Field): Expression? {
     val t = field.`type`
     val result = if (t.isNullable) {
         LiteralExpression("null")
@@ -64,9 +64,9 @@ fun getDefaultInitializer(field: Field): Expression {
         }
     }
     else {
-        LiteralExpression("0")
+        null
     }
-    return result.assignNoPrototype()
+    return result?.assignNoPrototype()
 }
 
 fun isVal(field: PsiField): Boolean {

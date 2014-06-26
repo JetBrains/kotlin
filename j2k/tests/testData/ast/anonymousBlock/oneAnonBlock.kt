@@ -1,5 +1,5 @@
 class Test {
-    var str: String = 0
+    var str: String
     {
         str = "Ola"
     }
