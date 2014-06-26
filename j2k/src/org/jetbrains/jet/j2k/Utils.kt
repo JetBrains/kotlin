@@ -22,10 +22,8 @@ import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.jet.j2k.ast.*
-import com.intellij.codeInsight.AnnotationUtil
-import com.intellij.codeInsight.NullableNotNullManager
 
-fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier.toKotlin(it) }.makeString(".")
+fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier.toKotlin(it) }.joinToString(".")
 
 fun findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression> {
     return ReferencesSearch.search(variable, LocalSearchScope(scope)).findAll().filterIsInstance(javaClass<PsiReferenceExpression>())
@@ -111,3 +109,28 @@ fun PsiElement.isInSingleLine(): Boolean {
     }
     return true
 }
+
+fun PsiElement.getContainingMethod(): PsiMethod? {
+    var context = getContext()
+    while (context != null) {
+        val _context = context!!
+        if (_context is PsiMethod) return _context
+        context = _context.getContext()
+    }
+    return null
+}
+
+fun PsiElement.getContainingConstructor(): PsiMethod? {
+    val method = getContainingMethod()
+    return if (method?.isConstructor() == true) method else null
+}
+
+fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
+    val ref = getMethodExpression()
+    if (ref.getCanonicalText() == "super") {
+        return ref.resolve()?.isConstructor() ?: false
+    }
+    return false
+}
+
+fun PsiElement.isConstructor(): Boolean = this is PsiMethod && this.isConstructor()

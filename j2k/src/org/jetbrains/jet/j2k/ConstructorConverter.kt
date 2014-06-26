@@ -27,6 +27,9 @@ import java.util.HashSet
 class ConstructorConverter(private val converter: Converter) {
     private val typeConverter = converter.typeConverter
 
+    private val tempValName: String = "__"
+    private fun tempValIdentifier(): Identifier = Identifier(tempValName, false).assignNoPrototype()
+
     public fun convertConstructor(constructor: PsiMethod,
                                   annotations: Annotations,
                                   modifiers: Modifiers,
@@ -285,6 +288,49 @@ class ConstructorConverter(private val converter: Converter) {
         return statements
     }
 
-    private val tempValName: String = "__"
-    private fun tempValIdentifier(): Identifier = Identifier(tempValName, false).assignNoPrototype()
+    private fun PsiMethod.isPrimaryConstructor(): Boolean {
+        if (!isConstructor()) return false
+        val parent = getParent()
+        if (parent !is PsiClass) return false
+        return parent.getPrimaryConstructor() == this
+    }
+
+    private fun PsiClass.getPrimaryConstructor(): PsiMethod? {
+        val constructors = getConstructors()
+        when (constructors.size) {
+            0 -> return null
+
+            1 -> return constructors.single()
+
+            else -> {
+                val toTargetConstructorMap = HashMap<PsiMethod, PsiMethod>()
+                for (constructor in constructors) {
+                    val firstStatement = constructor.getBody()?.getStatements()?.firstOrNull()
+                    val refExpr = ((firstStatement as? PsiExpressionStatement)
+                            ?.getExpression() as? PsiMethodCallExpression)
+                            ?.getMethodExpression()
+                    if (refExpr != null && refExpr.getCanonicalText() == "this") {
+                        val target = refExpr.resolve() as? PsiMethod
+                        if (target != null && target.isConstructor()) {
+                            val finalTarget = toTargetConstructorMap[target] ?: target!!/*TODO: see KT-5335*/
+                            toTargetConstructorMap[constructor] = finalTarget
+                            for (entry in toTargetConstructorMap.entrySet()) {
+                                if (entry.getValue() == constructor) {
+                                    entry.setValue(finalTarget)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                val candidates = constructors.filter { it !in toTargetConstructorMap }
+                if (candidates.size != 1) return null // there should be only one constructor which does not call other constructor
+                val candidate = candidates.single()
+                return if (toTargetConstructorMap.values().all { it == candidate } /* all other constructors call our candidate (directly or indirectly)*/)
+                    candidate
+                else
+                    null
+            }
+        }
+    }
 }
