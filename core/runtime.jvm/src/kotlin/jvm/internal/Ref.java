@@ -16,42 +16,89 @@
 
 package kotlin.jvm.internal;
 
+import java.lang.Override;
+
 public class Ref {
     private Ref() {}
 
     public static final class ObjectRef<T> {
         public volatile T element;
+
+        @Override
+        public String toString() {
+            return String.valueOf(element);
+        }
     }
 
     public static final class ByteRef {
         public volatile byte element;
+
+        @Override
+        public String toString() {
+            return String.valueOf(element);
+        }
     }
 
     public static final class ShortRef {
         public volatile short element;
+
+        @Override
+        public String toString() {
+            return String.valueOf(element);
+        }
     }
 
     public static final class IntRef {
         public volatile int element;
+
+        @Override
+        public String toString() {
+            return String.valueOf(element);
+        }
     }
 
     public static final class LongRef {
         public volatile long element;
+
+        @Override
+        public String toString() {
+            return String.valueOf(element);
+        }
     }
 
     public static final class FloatRef {
         public volatile float element;
+
+        @Override
+        public String toString() {
+            return String.valueOf(element);
+        }
     }
 
     public static final class DoubleRef {
         public volatile double element;
+
+        @Override
+        public String toString() {
+            return String.valueOf(element);
+        }
     }
 
     public static final class CharRef {
         public volatile char element;
+
+        @Override
+        public String toString() {
+            return String.valueOf(element);
+        }
     }
 
     public static final class BooleanRef {
         public volatile boolean element;
+
+        @Override
+        public String toString() {
+            return String.valueOf(element);
+        }
     }
 }
