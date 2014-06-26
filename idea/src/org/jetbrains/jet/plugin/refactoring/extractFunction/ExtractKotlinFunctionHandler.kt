@@ -53,6 +53,11 @@ import com.intellij.openapi.ui.popup.Balloon.Position
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import java.util.Collections
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.psi.JetParameterList
+import org.jetbrains.jet.lang.psi.JetClassInitializer
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 
 public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boolean = false) : RefactoringActionHandler {
     fun doInvoke(
@@ -178,7 +183,13 @@ fun selectElements(
         val declaration = element.getParentByType(javaClass<JetDeclaration>(), strict)
         if (declaration == null) return Collections.emptyList()
 
-        val parent = declaration.getParent()
+        val parent = declaration.getParent()?.let {
+            when (it) {
+                is JetProperty -> it.getParent()
+                is JetParameterList -> it.getParent()?.getParent()
+                else -> it
+            }
+        }
         return when (parent) {
             is JetFile -> Collections.singletonList(parent)
             is JetClassBody -> {
@@ -189,7 +200,13 @@ fun selectElements(
                         .dropWhile { it !is JetClassBody }
             }
             else -> {
-                val targetContainer = parent?.getParentByType(javaClass<JetDeclarationWithBody>())?.getBodyExpression()
+                val enclosingDeclaration =
+                        PsiTreeUtil.getNonStrictParentOfType(parent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassInitializer>())
+                val targetContainer = when (enclosingDeclaration) {
+                    is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
+                    is JetClassInitializer -> enclosingDeclaration.getBody()
+                    else -> null
+                }
                 if (targetContainer is JetBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
             }
         }

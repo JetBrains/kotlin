@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.psi.JetClassInitializer
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
@@ -79,7 +80,9 @@ class ExtractionData(
 ) {
     val project: Project = originalFile.getProject()
 
-    val insertBefore: Boolean = targetSibling.getParentByType(javaClass<JetDeclaration>(), true) is JetDeclarationWithBody
+    val insertBefore: Boolean = targetSibling.getParentByType(javaClass<JetDeclaration>(), true)?.let {
+        it is JetDeclarationWithBody || it is JetClassInitializer
+    } ?: false
 
     fun getExpressions(): List<JetExpression> = originalElements.filterIsInstance(javaClass<JetExpression>())
 

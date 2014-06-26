@@ -1,0 +1,7 @@
+class A(val a: Int, val b: Int) {
+    val foo: Int get() = i() - 1
+
+    fun i(): Int {
+        return a + b
+    }
+}

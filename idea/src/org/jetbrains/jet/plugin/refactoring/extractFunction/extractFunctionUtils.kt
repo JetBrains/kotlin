@@ -541,17 +541,28 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_EXPRESSION))
     }
 
+    val noContainerError = AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_CONTAINER))
+
     val commonParent = PsiTreeUtil.findCommonParent(originalElements)!!
 
-    val enclosingDeclaration = commonParent.getParentByType(javaClass<JetDeclarationWithBody>())
-    if (enclosingDeclaration == null) {
-        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_CONTAINER))
+    val enclosingDeclaration = commonParent.getParentByType(javaClass<JetDeclaration>(), true)
+    val bodyElement = when (enclosingDeclaration) {
+        is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
+        is JetWithExpressionInitializer -> enclosingDeclaration.getInitializer()
+        is JetParameter -> enclosingDeclaration.getDefaultValue()
+        is JetClassInitializer -> enclosingDeclaration.getBody()
+        is JetClass -> {
+            if (commonParent.isInsideOf(enclosingDeclaration.getDelegationSpecifiers())) enclosingDeclaration else return noContainerError
+        }
+        else -> return noContainerError
     }
+    val bindingContext = originalFile.getLazyResolveSession().resolveToElement(bodyElement)
 
-    val resolveSession = originalFile.getLazyResolveSession()
-    val bindingContext = resolveSession.resolveToElement(enclosingDeclaration.getBodyExpression())
-
-    val pseudocode = PseudocodeUtil.generatePseudocode(enclosingDeclaration, bindingContext)
+    val pseudocodeDeclaration = PsiTreeUtil.getParentOfType(
+            commonParent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>()
+    ) ?: commonParent.getParentByType(javaClass<JetProperty>())
+    ?: return noContainerError
+    val pseudocode = PseudocodeUtil.generatePseudocode(pseudocodeDeclaration, bindingContext)
     val localInstructions = getLocalInstructions(pseudocode)
 
     val replacementMap = HashMap<Int, Replacement>()
@@ -587,7 +598,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val functionNameValidator =
             JetNameValidatorImpl(
                     targetSibling.getParent(),
-                    targetSibling,
+                    if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
                     JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
             )
     val functionName = JetNameSuggester.suggestNames(controlFlow.returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()

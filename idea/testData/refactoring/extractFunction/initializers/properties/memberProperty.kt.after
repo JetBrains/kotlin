@@ -1,0 +1,8 @@
+// PARAM_TYPES: kotlin.Int
+class A(val a: Int, b: Int) {
+    val foo = i(b) - 1
+
+    fun i(b: Int): Int {
+        return a + b
+    }
+}

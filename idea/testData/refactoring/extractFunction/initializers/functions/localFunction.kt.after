@@ -1,0 +1,9 @@
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
+fun bar(n: Int) {
+    fun i(a: Int, b: Int): Int {
+        return a + b - n
+    }
+
+    fun foo(a: Int, b: Int) = i(a, b) - 1
+}
