@@ -191,18 +191,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
             psiClass.isEnum() -> Enum(name, annotations, modifiers, typeParameters, listOf(), listOf(), implementsTypes, classBody)
 
             else -> {
-                val baseClassParams: List<Expression> = run {
-                    val superVisitor = SuperVisitor()
-                    psiClass.accept(superVisitor)
-                    val resolvedSuperCallParameters = superVisitor.resolvedSuperCallParameters
-                    if (resolvedSuperCallParameters.size() == 1) {
-                        convertExpressions(resolvedSuperCallParameters.single().getExpressions())
-                    }
-                    else {
-                        listOf()
-                    }
-                }
-
                 if (settings.openByDefault && !psiClass.hasModifierProperty(PsiModifier.FINAL)) {
                     modifiers = modifiers.with(Modifier.OPEN)
                 }
@@ -211,6 +199,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                     modifiers = modifiers.with(Modifier.INNER)
                 }
 
+                val baseClassParams = convertExpressions(constructorConverter.baseClassParams()?.getExpressions() ?: array())
                 Class(name, annotations, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, classBody)
             }
         }.assignPrototype(psiClass)

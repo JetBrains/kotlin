@@ -74,6 +74,18 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         }
     }
 
+    public fun baseClassParams(): PsiExpressionList? {
+        if (primaryConstructor == null) return null
+        val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
+        val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
+        if (methodCall != null && methodCall.isSuperConstructorCall()) {
+            return methodCall.getArgumentList()
+        }
+        else {
+            return null
+        }
+    }
+
     public fun convertConstructor(constructor: PsiMethod,
                                   annotations: Annotations,
                                   modifiers: Modifiers,
@@ -330,5 +342,10 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             statements.add(ReturnStatement(initializer).assignNoPrototype())
         }
         return statements
+    }
+
+    private fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
+        val ref = getMethodExpression()
+        return ref.getCanonicalText() == "super" && ref.resolve()?.isConstructor() ?: false
     }
 }

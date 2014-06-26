@@ -125,12 +125,4 @@ fun PsiElement.getContainingConstructor(): PsiMethod? {
     return if (method?.isConstructor() == true) method else null
 }
 
-fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
-    val ref = getMethodExpression()
-    if (ref.getCanonicalText() == "super") {
-        return ref.resolve()?.isConstructor() ?: false
-    }
-    return false
-}
-
 fun PsiElement.isConstructor(): Boolean = this is PsiMethod && this.isConstructor()
