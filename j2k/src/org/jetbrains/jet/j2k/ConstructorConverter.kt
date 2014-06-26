@@ -101,7 +101,14 @@ class ConstructorConverter(private val converter: Converter) {
                 }
             }
 
-            val bodyConverter = converter.withExpressionVisitor { ExpressionVisitor(it, usageReplacementMap) }
+            val bodyConverter = converter.withExpressionVisitor {
+                object : ExpressionVisitor(it, usageReplacementMap) {
+                    override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
+                        if (expression.isSuperConstructorCall()) return // skip it
+                        super.visitMethodCallExpression(expression)
+                    }
+                }
+            }
             postProcessBody(bodyConverter.convertBlock(body, false, { !statementsToRemove.contains(it) }))
         }
         else {

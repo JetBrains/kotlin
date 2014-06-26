@@ -59,9 +59,6 @@ fun PsiClass.getPrimaryConstructor(): PsiMethod? {
     }
 }
 
-fun PsiElement.isInsidePrimaryConstructor(): Boolean
-        = getContainingConstructor()?.isPrimaryConstructor() ?: false
-
 fun PsiElement.getContainingMethod(): PsiMethod? {
     var context = getContext()
     while (context != null) {

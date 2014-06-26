@@ -163,8 +163,6 @@ open class ExpressionVisitor(private val converter: Converter,
     }
 
     override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
-        if (expression.isSuperConstructorCall() && expression.isInsidePrimaryConstructor()) return // skip it
-
         val methodExpr = expression.getMethodExpression()
         val arguments = expression.getArgumentList().getExpressions()
         val target = methodExpr.resolve()
