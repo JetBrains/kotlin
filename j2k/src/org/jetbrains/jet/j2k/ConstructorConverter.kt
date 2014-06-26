@@ -167,8 +167,8 @@ class ConstructorConverter(private val converter: Converter) {
             return generateArtificialPrimaryConstructor(psiClass.getName()!!, classBody)
         }
         else {
-            replaceConstructorCallsInFactoryFunctions(classBody, psiClass.getName()!!)
-            return classBody
+            val updatedFunctions = replaceConstructorCallsInFactoryFunctions(classBody.factoryFunctions, psiClass.getName()!!)
+            return ClassBody(classBody.primaryConstructorSignature, classBody.members, classBody.classObjectMembers, updatedFunctions, classBody.lBrace, classBody.rBrace)
         }
     }
 
@@ -176,13 +176,14 @@ class ConstructorConverter(private val converter: Converter) {
         assert(classBody.primaryConstructorSignature == null)
 
         val fieldsToInitialize = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal }
-        for (factoryFunction in classBody.factoryFunctions) {
-            val body = factoryFunction.body!!
+        val updatedFactoryFunctions = ArrayList<FactoryFunction>()
+        for (function in classBody.factoryFunctions) {
+            val body = function.body!!
             // 2 cases: secondary constructor either calls another constructor or does not call any
             val newStatements = replaceConstructorCallInFactoryFunction(body, className) ?:
                     insertCallToArtificialPrimary(body, className, fieldsToInitialize)
-            factoryFunction.body = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
-            //TODO: no assignment here
+            val newBody = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+            updatedFactoryFunctions.add(function.withBody(newBody))
         }
 
         val parameters = fieldsToInitialize.map { field ->
@@ -196,15 +197,18 @@ class ConstructorConverter(private val converter: Converter) {
         val parameterList = ParameterList(parameters).assignNoPrototype()
         val constructorSignature = PrimaryConstructorSignature(modifiers, parameterList).assignNoPrototype()
         val updatedMembers = classBody.members.filter { !fieldsToInitialize.contains(it) }
-        return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, classBody.factoryFunctions, classBody.lBrace, classBody.rBrace)
+        return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, updatedFactoryFunctions, classBody.lBrace, classBody.rBrace)
     }
 
-    private fun replaceConstructorCallsInFactoryFunctions(classBody: ClassBody, className: String) {
-        for (factoryFunction in classBody.factoryFunctions) {
-            val body = factoryFunction.body!!
+    private fun replaceConstructorCallsInFactoryFunctions(functions: List<FactoryFunction>, className: String): List<FactoryFunction> {
+        return functions.map { function ->
+            val body = function.body!!
             val statements = replaceConstructorCallInFactoryFunction(body, className)
             if (statements != null) {
-                factoryFunction.body = Block(statements, body.lBrace, body.rBrace).assignPrototypesFrom(body)
+                function.withBody(Block(statements, body.lBrace, body.rBrace).assignPrototypesFrom(body))
+            }
+            else {
+                function
             }
         }
     }

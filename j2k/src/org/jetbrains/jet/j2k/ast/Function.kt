@@ -22,10 +22,10 @@ open class Function(
         val name: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
-        val `type`: Type,
+        val returnType: Type,
         val typeParameterList: TypeParameterList,
         val parameterList: ParameterList,
-        var body: Block?,
+        val body: Block?,
         val isInTrait: Boolean
 ) : Member(annotations, modifiers) {
 
@@ -52,14 +52,14 @@ open class Function(
                 .append(parameterList)
                 .append(")")
 
-        if (!`type`.isUnit()) {
-            builder append ":" append `type`
+        if (!returnType.isUnit()) {
+            builder append ":" append returnType
         }
 
         typeParameterList.appendWhere(builder)
 
         if (body != null) {
-            builder append " " append body!!
+            builder append " " append body
         }
     }
 }

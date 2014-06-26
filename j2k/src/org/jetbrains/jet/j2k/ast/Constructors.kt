@@ -58,5 +58,8 @@ class FactoryFunction(name: Identifier,
                       returnType: Type,
                       parameterList: ParameterList,
                       typeParameterList: TypeParameterList,
-                      block: Block)
-: Function(name, annotations, modifiers, returnType, typeParameterList, parameterList, block, false)
+                      body: Block)
+: Function(name, annotations, modifiers, returnType, typeParameterList, parameterList, body, false)
+
+fun FactoryFunction.withBody(body: Block)
+        = FactoryFunction(name, annotations, modifiers, returnType, parameterList, typeParameterList, body).assignPrototypesFrom(this)
