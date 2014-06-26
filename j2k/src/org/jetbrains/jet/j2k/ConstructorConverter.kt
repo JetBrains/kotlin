@@ -24,18 +24,62 @@ import java.util.HashMap
 import java.util.ArrayList
 import java.util.HashSet
 
-class ConstructorConverter(private val converter: Converter) {
+class ConstructorConverter(private val psiClass: PsiClass, private val converter: Converter) {
     private val typeConverter = converter.typeConverter
 
     private val tempValName: String = "__"
     private fun tempValIdentifier(): Identifier = Identifier(tempValName, false).assignNoPrototype()
+
+    private val className = psiClass.getName()!!
+    private val constructors = psiClass.getConstructors()
+    private val primaryConstructor: PsiMethod? = run {
+        when (constructors.size) {
+            0 -> null
+
+            1 -> constructors.single()
+
+            else -> {
+                val toTargetConstructorMap = HashMap<PsiMethod, PsiMethod>()
+                for (constructor in constructors) {
+                    val firstStatement = constructor.getBody()?.getStatements()?.firstOrNull()
+                    val refExpr = ((firstStatement as? PsiExpressionStatement)
+                            ?.getExpression() as? PsiMethodCallExpression)
+                            ?.getMethodExpression()
+                    if (refExpr != null && refExpr.getCanonicalText() == "this") {
+                        val target = refExpr.resolve() as? PsiMethod
+                        if (target != null && target.isConstructor()) {
+                            val finalTarget = toTargetConstructorMap[target] ?: target!!/*TODO: see KT-5335*/
+                            toTargetConstructorMap[constructor] = finalTarget
+                            for (entry in toTargetConstructorMap.entrySet()) {
+                                if (entry.getValue() == constructor) {
+                                    entry.setValue(finalTarget)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                val candidates = constructors.filter { it !in toTargetConstructorMap }
+                if (candidates.size == 1) { // there should be only one constructor which does not call other constructor
+                    val candidate = candidates.single()
+                    if (toTargetConstructorMap.values().all { it == candidate } /* all other constructors call our candidate (directly or indirectly)*/)
+                        candidate
+                    else
+                        null
+                }
+                else {
+                    null
+                }
+            }
+        }
+    }
 
     public fun convertConstructor(constructor: PsiMethod,
                                   annotations: Annotations,
                                   modifiers: Modifiers,
                                   membersToRemove: MutableSet<PsiMember>,
                                   postProcessBody: (Block) -> Block): Member {
-        if (constructor.isPrimaryConstructor()) {
+        if (constructor == primaryConstructor) {
             return convertPrimaryConstructor(constructor, annotations, modifiers, membersToRemove, postProcessBody)
         }
         else {
@@ -165,17 +209,17 @@ class ConstructorConverter(private val converter: Converter) {
         return null
     }
 
-    public fun postProcessConstructors(classBody: ClassBody, psiClass: PsiClass): ClassBody {
-        if (psiClass.getPrimaryConstructor() == null && psiClass.getConstructors().size > 1) {
-            return generateArtificialPrimaryConstructor(psiClass.getName()!!, classBody)
+    public fun postProcessConstructors(classBody: ClassBody): ClassBody {
+        if (primaryConstructor == null && constructors.size > 1) {
+            return generateArtificialPrimaryConstructor(classBody)
         }
         else {
-            val updatedFunctions = replaceConstructorCallsInFactoryFunctions(classBody.factoryFunctions, psiClass.getName()!!)
+            val updatedFunctions = replaceConstructorCallsInFactoryFunctions(classBody.factoryFunctions)
             return ClassBody(classBody.primaryConstructorSignature, classBody.members, classBody.classObjectMembers, updatedFunctions, classBody.lBrace, classBody.rBrace)
         }
     }
 
-    private fun generateArtificialPrimaryConstructor(className: String, classBody: ClassBody): ClassBody {
+    private fun generateArtificialPrimaryConstructor(classBody: ClassBody): ClassBody {
         assert(classBody.primaryConstructorSignature == null)
 
         val fieldsToInitialize = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal }
@@ -183,8 +227,8 @@ class ConstructorConverter(private val converter: Converter) {
         for (function in classBody.factoryFunctions) {
             val body = function.body!!
             // 2 cases: secondary constructor either calls another constructor or does not call any
-            val newStatements = replaceConstructorCallInFactoryFunction(body, className) ?:
-                    insertCallToArtificialPrimary(body, className, fieldsToInitialize)
+            val newStatements = replaceConstructorCallInFactoryFunction(body) ?:
+                    insertCallToArtificialPrimary(body, fieldsToInitialize)
             val newBody = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
             updatedFactoryFunctions.add(function.withBody(newBody))
         }
@@ -203,10 +247,10 @@ class ConstructorConverter(private val converter: Converter) {
         return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, updatedFactoryFunctions, classBody.lBrace, classBody.rBrace)
     }
 
-    private fun replaceConstructorCallsInFactoryFunctions(functions: List<FactoryFunction>, className: String): List<FactoryFunction> {
+    private fun replaceConstructorCallsInFactoryFunctions(functions: List<FactoryFunction>): List<FactoryFunction> {
         return functions.map { function ->
             val body = function.body!!
-            val statements = replaceConstructorCallInFactoryFunction(body, className)
+            val statements = replaceConstructorCallInFactoryFunction(body)
             if (statements != null) {
                 function.withBody(Block(statements, body.lBrace, body.rBrace).assignPrototypesFrom(body))
             }
@@ -216,7 +260,7 @@ class ConstructorConverter(private val converter: Converter) {
         }
     }
 
-    private fun replaceConstructorCallInFactoryFunction(body: Block, className: String): List<Statement>? {
+    private fun replaceConstructorCallInFactoryFunction(body: Block): List<Statement>? {
         val statements = ArrayList(body.statements)
 
         // searching for other constructor call in form "this(...)"
@@ -241,7 +285,7 @@ class ConstructorConverter(private val converter: Converter) {
         return null
     }
 
-    private fun insertCallToArtificialPrimary(body: Block, className: String, fieldsToInitialize: Collection<Field>): List<Statement> {
+    private fun insertCallToArtificialPrimary(body: Block, fieldsToInitialize: Collection<Field>): List<Statement> {
         val initializers = HashMap<Field, Expression?>()
         for (field in fieldsToInitialize) {
             initializers.put(field, getDefaultInitializer(field))
@@ -286,51 +330,5 @@ class ConstructorConverter(private val converter: Converter) {
             statements.add(ReturnStatement(initializer).assignNoPrototype())
         }
         return statements
-    }
-
-    private fun PsiMethod.isPrimaryConstructor(): Boolean {
-        if (!isConstructor()) return false
-        val parent = getParent()
-        if (parent !is PsiClass) return false
-        return parent.getPrimaryConstructor() == this
-    }
-
-    private fun PsiClass.getPrimaryConstructor(): PsiMethod? {
-        val constructors = getConstructors()
-        when (constructors.size) {
-            0 -> return null
-
-            1 -> return constructors.single()
-
-            else -> {
-                val toTargetConstructorMap = HashMap<PsiMethod, PsiMethod>()
-                for (constructor in constructors) {
-                    val firstStatement = constructor.getBody()?.getStatements()?.firstOrNull()
-                    val refExpr = ((firstStatement as? PsiExpressionStatement)
-                            ?.getExpression() as? PsiMethodCallExpression)
-                            ?.getMethodExpression()
-                    if (refExpr != null && refExpr.getCanonicalText() == "this") {
-                        val target = refExpr.resolve() as? PsiMethod
-                        if (target != null && target.isConstructor()) {
-                            val finalTarget = toTargetConstructorMap[target] ?: target!!/*TODO: see KT-5335*/
-                            toTargetConstructorMap[constructor] = finalTarget
-                            for (entry in toTargetConstructorMap.entrySet()) {
-                                if (entry.getValue() == constructor) {
-                                    entry.setValue(finalTarget)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                val candidates = constructors.filter { it !in toTargetConstructorMap }
-                if (candidates.size != 1) return null // there should be only one constructor which does not call other constructor
-                val candidate = candidates.single()
-                return if (toTargetConstructorMap.values().all { it == candidate } /* all other constructors call our candidate (directly or indirectly)*/)
-                    candidate
-                else
-                    null
-            }
-        }
     }
 }

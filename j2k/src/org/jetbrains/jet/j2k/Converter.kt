@@ -40,7 +40,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
     val typeConverter: TypeConverter = state.typeConverter
     val methodReturnType: PsiType? = state.methodReturnType
 
-    private val constructorConverter = ConstructorConverter(this)
     private val expressionVisitor = state.expressionVisitorFactory(this)
     private val statementVisitor = state.statementVisitorFactory(this)
 
@@ -68,7 +67,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     private fun convertTopElement(element: PsiElement?): Element? = when (element) {
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
-        is PsiMethod -> convertMethod(element, HashSet())
+        is PsiMethod -> convertMethod(element, null, null)
         is PsiField -> convertField(element)
         is PsiStatement -> convertStatement(element)
         is PsiExpression -> convertExpression(element)
@@ -102,15 +101,15 @@ public class Converter private(val project: Project, val settings: ConverterSett
     }
 
     fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
-        return AnonymousClassBody(convertBody(anonymousClass), anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
+        return AnonymousClassBody(convertBody(anonymousClass, null), anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
     }
 
-    private fun convertBody(psiClass: PsiClass): ClassBody {
+    private fun convertBody(psiClass: PsiClass, constructorConverter: ConstructorConverter?): ClassBody {
         val membersToRemove = HashSet<PsiMember>()
         val convertedMembers = LinkedHashMap<PsiMember, Member>()
         for (element in psiClass.getChildren()) {
             if (element is PsiMember) {
-                val converted = convertMember(element, membersToRemove)
+                val converted = convertMember(element, membersToRemove, constructorConverter)
                 if (!converted.isEmpty) {
                     convertedMembers.put(element, converted)
                 }
@@ -166,8 +165,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
         }
     }
 
-    private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>): Member = when (member) {
-        is PsiMethod -> convertMethod(member, membersToRemove)
+    private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>, constructorConverter: ConstructorConverter?): Member = when (member) {
+        is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter)
         is PsiField -> convertField(member)
         is PsiClass -> convertClass(member)
         is PsiClassInitializer -> convertInitializer(member)
@@ -181,7 +180,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val implementsTypes = convertToNotNullableTypes(psiClass.getImplementsListTypes())
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
         val name = psiClass.declarationIdentifier()
-        var classBody = convertBody(psiClass)
+
+        val constructorConverter = ConstructorConverter(psiClass, this)
+        var classBody = convertBody(psiClass, constructorConverter)
+        classBody = constructorConverter.postProcessConstructors(classBody)
 
         return when {
             psiClass.isInterface() -> Trait(name, annotations, modifiers, typeParameters, extendsTypes, listOf(), implementsTypes, classBody)
@@ -189,8 +191,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
             psiClass.isEnum() -> Enum(name, annotations, modifiers, typeParameters, listOf(), listOf(), implementsTypes, classBody)
 
             else -> {
-                classBody = constructorConverter.postProcessConstructors(classBody, psiClass)
-
                 val baseClassParams: List<Expression> = run {
                     val superVisitor = SuperVisitor()
                     psiClass.accept(superVisitor)
@@ -266,11 +266,11 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return if (convertedType == initializerType) null else convertedType
     }
 
-    private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Member {
-        return withMethodReturnType(method.getReturnType()).doConvertMethod(method, membersToRemove).assignPrototype(method)
+    private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member {
+        return withMethodReturnType(method.getReturnType()).doConvertMethod(method, membersToRemove, constructorConverter).assignPrototype(method)
     }
 
-    private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Member {
+    private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member {
         val returnType = typeConverter.convertMethodReturnType(method)
 
         val annotations = (convertAnnotations(method) + convertThrows(method)).assignNoPrototype()
@@ -297,8 +297,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
             }
         }
 
-        if (method.isConstructor()) {
-            return constructorConverter.convertConstructor(method, annotations, modifiers, membersToRemove, postProcessBody)
+        if (method.isConstructor() && constructorConverter != null) {
+            return constructorConverter.convertConstructor(method, annotations, modifiers, membersToRemove!!, postProcessBody)
         }
         else {
             val isOverride = isOverride(method)
