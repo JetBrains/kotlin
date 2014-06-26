@@ -17,44 +17,47 @@ fun f(a : Boolean) : Unit {
 
 }
 ---------------------
-1                                                                                                        <v1>: *                         NEW()
-a                                                                                                        <v2>: *                         NEW()
-2                                                                                                        <v3>: {<: Number}               NEW()
-toLong()                                                                                                 <v4>: *                         NEW(<v3>)
-2.toLong()                                                                                               <v4>: *                         COPY
-a                                                                                                        <v5>: Boolean                   NEW()
-3                                                                                                        <v6>: Int                       NEW()
-foo(a, 3)                                                                                                <v7>: *                         NEW(<v5>, <v6>)
-genfun<Any>()                                                                                            <v8>: *                         NEW()
-{1}                                                                                                      <v9>: {<: () -> Any}            NEW()
-flfun {1}                                                                                                <v10>: *                        NEW(<v9>)
-3                                                                                                        <v11>: OR{{<: Any}, {<: Any}}   NEW()
-4                                                                                                        <v12>: {<: Any?}                NEW()
-equals(4)                                                                                                <v13>: *                        NEW(<v11>, <v12>)
-3.equals(4)                                                                                              <v13>: *                        COPY
-3                                                                                                        <v14>: OR{{<: Any}, {<: Any}}   NEW()
-4                                                                                                        <v15>: {<: Any?}                NEW()
-3 equals 4                                                                                               <v16>: *                        NEW(<v14>, <v15>)
-1                                                                                                        <v17>: Int                      NEW()
-2                                                                                                        <v18>: Int                      NEW()
-1 + 2                                                                                                    <v19>: *                        NEW(<v17>, <v18>)
-a                                                                                                        <v20>: Boolean                  NEW()
-true                                                                                                     <v21>: Boolean                  NEW()
-a && true                                                                                                <v22>: *                        NEW(<v20>, <v21>)
-a                                                                                                        <v23>: Boolean                  NEW()
-false                                                                                                    <v24>: Boolean                  NEW()
-a || false                                                                                               <v25>: *                        NEW(<v23>, <v24>)
-{ 1 a 2.toLong() foo(a, 3) genfun<Any>() flfun {1} 3.equals(4) 3 equals 4 1 + 2 a && true a || false }   <v25>: *                        COPY
+                                                                                                         <v0>: Boolean                   NEW: magic(a : Boolean) -> <v0>                
+1                                                                                                        <v1>: *                         NEW: r(1) -> <v1>                              
+a                                                                                                        <v2>: *                         NEW: r(a) -> <v2>                              
+2                                                                                                        <v3>: {<: Number}               NEW: r(2) -> <v3>                              
+toLong()                                                                                                 <v4>: *                         NEW: call(toLong, toLong|<v3>) -> <v4>         
+2.toLong()                                                                                               <v4>: *                         COPY                                           
+a                                                                                                        <v5>: Boolean                   NEW: r(a) -> <v5>                              
+3                                                                                                        <v6>: Int                       NEW: r(3) -> <v6>                              
+foo(a, 3)                                                                                                <v7>: *                         NEW: call(foo, foo|<v5>, <v6>) -> <v7>         
+genfun<Any>()                                                                                            <v8>: *                         NEW: call(genfun, genfun) -> <v8>              
+{1}                                                                                                      <v9>: {<: () -> Any}            NEW: r({1}) -> <v9>                            
+flfun {1}                                                                                                <v10>: *                        NEW: call(flfun, flfun|<v9>) -> <v10>          
+3                                                                                                        <v11>: OR{{<: Any}, {<: Any}}   NEW: r(3) -> <v11>                             
+4                                                                                                        <v12>: {<: Any?}                NEW: r(4) -> <v12>                             
+equals(4)                                                                                                <v13>: *                        NEW: call(equals, equals|<v11>, <v12>) -> <v13>
+3.equals(4)                                                                                              <v13>: *                        COPY                                           
+3                                                                                                        <v14>: OR{{<: Any}, {<: Any}}   NEW: r(3) -> <v14>                             
+4                                                                                                        <v15>: {<: Any?}                NEW: r(4) -> <v15>                             
+3 equals 4                                                                                               <v16>: *                        NEW: call(equals, equals|<v14>, <v15>) -> <v16>
+1                                                                                                        <v17>: Int                      NEW: r(1) -> <v17>                             
+2                                                                                                        <v18>: Int                      NEW: r(2) -> <v18>                             
+1 + 2                                                                                                    <v19>: *                        NEW: call(+, plus|<v17>, <v18>) -> <v19>       
+a                                                                                                        <v20>: Boolean                  NEW: r(a) -> <v20>                             
+true                                                                                                     <v21>: Boolean                  NEW: r(true) -> <v21>                          
+a && true                                                                                                <v22>: *                        NEW: magic(a && true|<v20>, <v21>) -> <v22>    
+a                                                                                                        <v23>: Boolean                  NEW: r(a) -> <v23>                             
+false                                                                                                    <v24>: Boolean                  NEW: r(false) -> <v24>                         
+a || false                                                                                               <v25>: *                        NEW: magic(a || false|<v23>, <v24>) -> <v25>   
+{ 1 a 2.toLong() foo(a, 3) genfun<Any>() flfun {1} 3.equals(4) 3 equals 4 1 + 2 a && true a || false }   <v25>: *                        COPY                                           
 =====================
 == anonymous_0 ==
 {1}
 ---------------------
-1   <v0>: Int   NEW()
-1   <v0>: Int   COPY
+1   <v0>: Int   NEW: r(1) -> <v0>
+1   <v0>: Int   COPY             
 =====================
 == foo ==
 fun foo(a : Boolean, b : Int) : Unit {}
 ---------------------
+    <v0>: Boolean   NEW: magic(a : Boolean) -> <v0>
+    <v1>: Int       NEW: magic(b : Int) -> <v1>    
 =====================
 == genfun ==
 fun genfun<T>() : Unit {}
@@ -63,4 +66,5 @@ fun genfun<T>() : Unit {}
 == flfun ==
 fun flfun(f : () -> Any) : Unit {}
 ---------------------
+    <v0>: {<: () -> Any}   NEW: magic(f : () -> Any) -> <v0>
 =====================

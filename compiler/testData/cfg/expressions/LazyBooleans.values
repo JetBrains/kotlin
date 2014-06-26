@@ -17,34 +17,36 @@ fun lazyBooleans(a : Boolean, b : Boolean) : Unit {
     14
 }
 ---------------------
-a                                                                                                             <v2>: Boolean    NEW()            
-1                                                                                                             <v3>: *          NEW()            
-{ 1 }                                                                                                         <v3>: *          COPY             
-2                                                                                                             <v4>: *          NEW()            
-{ 2 }                                                                                                         <v4>: *          COPY             
-if (a) { 1 } else { 2 }                                                                                       <v5>: *          NEW(<v3>, <v4>)  
-3                                                                                                             <v6>: *          NEW()            
-a                                                                                                             <v7>: Boolean    NEW()            
-b                                                                                                             <v8>: Boolean    NEW()            
-a && b                                                                                                        <v9>: Boolean    NEW(<v7>, <v8>)  
-5                                                                                                             <v10>: *         NEW()            
-6                                                                                                             <v11>: *         NEW()            
-if (a && b) 5 else 6                                                                                          <v12>: *         NEW(<v10>, <v11>)
-7                                                                                                             <v13>: *         NEW()            
-a                                                                                                             <v14>: Boolean   NEW()            
-b                                                                                                             <v15>: Boolean   NEW()            
-a || b                                                                                                        <v16>: Boolean   NEW(<v14>, <v15>)
-8                                                                                                             <v17>: *         NEW()            
-9                                                                                                             <v18>: *         NEW()            
-if (a || b) 8 else 9                                                                                          <v19>: *         NEW(<v17>, <v18>)
-10                                                                                                            <v20>: *         NEW()            
-a                                                                                                             <v21>: Boolean   NEW()            
-11                                                                                                            <v22>: *         NEW()            
-if (a) 11                                                                                                     <v22>: *         COPY             
-12                                                                                                            <v23>: *         NEW()            
-a                                                                                                             <v24>: Boolean   NEW()            
-13                                                                                                            <v25>: *         NEW()            
-if (a) else 13                                                                                                <v25>: *         COPY             
-14                                                                                                            <v26>: *         NEW()            
-{ if (a) { 1 } else { 2 } 3 if (a && b) 5 else 6 7 if (a || b) 8 else 9 10 if (a) 11 12 if (a) else 13 14 }   <v26>: *         COPY             
+                                                                                                              <v0>: Boolean    NEW: magic(a : Boolean) -> <v0>                       
+                                                                                                              <v1>: Boolean    NEW: magic(b : Boolean) -> <v1>                       
+a                                                                                                             <v2>: Boolean    NEW: r(a) -> <v2>                                     
+1                                                                                                             <v3>: *          NEW: r(1) -> <v3>                                     
+{ 1 }                                                                                                         <v3>: *          COPY                                                  
+2                                                                                                             <v4>: *          NEW: r(2) -> <v4>                                     
+{ 2 }                                                                                                         <v4>: *          COPY                                                  
+if (a) { 1 } else { 2 }                                                                                       <v5>: *          NEW: merge(if (a) { 1 } else { 2 }|<v3>, <v4>) -> <v5>
+3                                                                                                             <v6>: *          NEW: r(3) -> <v6>                                     
+a                                                                                                             <v7>: Boolean    NEW: r(a) -> <v7>                                     
+b                                                                                                             <v8>: Boolean    NEW: r(b) -> <v8>                                     
+a && b                                                                                                        <v9>: Boolean    NEW: magic(a && b|<v7>, <v8>) -> <v9>                 
+5                                                                                                             <v10>: *         NEW: r(5) -> <v10>                                    
+6                                                                                                             <v11>: *         NEW: r(6) -> <v11>                                    
+if (a && b) 5 else 6                                                                                          <v12>: *         NEW: merge(if (a && b) 5 else 6|<v10>, <v11>) -> <v12>
+7                                                                                                             <v13>: *         NEW: r(7) -> <v13>                                    
+a                                                                                                             <v14>: Boolean   NEW: r(a) -> <v14>                                    
+b                                                                                                             <v15>: Boolean   NEW: r(b) -> <v15>                                    
+a || b                                                                                                        <v16>: Boolean   NEW: magic(a || b|<v14>, <v15>) -> <v16>              
+8                                                                                                             <v17>: *         NEW: r(8) -> <v17>                                    
+9                                                                                                             <v18>: *         NEW: r(9) -> <v18>                                    
+if (a || b) 8 else 9                                                                                          <v19>: *         NEW: merge(if (a || b) 8 else 9|<v17>, <v18>) -> <v19>
+10                                                                                                            <v20>: *         NEW: r(10) -> <v20>                                   
+a                                                                                                             <v21>: Boolean   NEW: r(a) -> <v21>                                    
+11                                                                                                            <v22>: *         NEW: r(11) -> <v22>                                   
+if (a) 11                                                                                                     <v22>: *         COPY                                                  
+12                                                                                                            <v23>: *         NEW: r(12) -> <v23>                                   
+a                                                                                                             <v24>: Boolean   NEW: r(a) -> <v24>                                    
+13                                                                                                            <v25>: *         NEW: r(13) -> <v25>                                   
+if (a) else 13                                                                                                <v25>: *         COPY                                                  
+14                                                                                                            <v26>: *         NEW: r(14) -> <v26>                                   
+{ if (a) { 1 } else { 2 } 3 if (a && b) 5 else 6 7 if (a || b) 8 else 9 10 if (a) 11 12 if (a) else 13 14 }   <v26>: *         COPY                                                  
 =====================

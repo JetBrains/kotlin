@@ -3,9 +3,10 @@ fun foo(a: Array<Int>) {
     a[0]++
 }
 ---------------------
-a            <v5>: {<: Array<Int>}   NEW()
-0            <v6>: Int               NEW()
-a[0]         <v3>: Int               NEW(<v1>, <v2>)
+             <v0>: {<: Array<Int>}   NEW: magic(a: Array<Int>) -> <v0>
+a            <v5>: {<: Array<Int>}   NEW: r(a) -> <v5>
+0            <v6>: Int               NEW: r(0) -> <v6>
+a[0]         <v3>: Int               NEW: call(a[0], get|<v1>, <v2>) -> <v3>
 a[0]++       <v3>: Int               COPY
 { a[0]++ }   <v3>: Int               COPY
 =====================

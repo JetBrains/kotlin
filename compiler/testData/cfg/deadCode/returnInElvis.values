@@ -3,7 +3,7 @@ fun foo() {
     return ?: null
 }
 ---------------------
-null                 <v0>: *   NEW()
-return ?: null       <v0>: *   COPY
-{ return ?: null }   <v0>: *   COPY
+null                 <v0>: *   NEW: r(null) -> <v0>
+return ?: null       <v0>: *   COPY                
+{ return ?: null }   <v0>: *   COPY                
 =====================

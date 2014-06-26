@@ -1,0 +1,17 @@
+Usage: kotlinc-js <options> <source files>
+where possible options include:
+  -output <path>             Output file path
+  -libraryFiles <path[,]>    Path to zipped library sources or kotlin files separated by commas
+  -sourceFiles <path[,]>     Source files or directories separated by commas
+  -sourcemap                 Generate SourceMap
+  -target <version>          Generate JS files for specific ECMA version (only ECMA 5 is supported)
+  -main {call,noCall}        Whether a main function should be called; default 'call' (main function will be auto detected)
+  -outputPrefix <path>       Path to file which will be added to the beginning of output file
+  -outputPostfix <path>      Path to file which will be added to the end of output file
+  -tags                      Demarcate each compilation message (error, warning, etc) with an open and close tag
+  -verbose                   Enable verbose logging output
+  -version                   Display compiler version
+  -help (-h)                 Print a synopsis of standard options
+  -suppress warnings         Suppress all compiler warnings
+  -printArgs                 Print command line arguments
+OK

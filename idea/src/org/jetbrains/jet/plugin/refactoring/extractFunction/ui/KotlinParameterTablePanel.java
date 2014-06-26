@@ -116,12 +116,12 @@ public class KotlinParameterTablePanel extends JPanel {
         DefaultCellEditor defaultEditor = (DefaultCellEditor) myTable.getDefaultEditor(Object.class);
         defaultEditor.setClickCountToStart(1);
 
-        myTable.setTableHeader(null);
         myTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         myTable.setCellSelectionEnabled(true);
 
         TableColumn checkBoxColumn = myTable.getColumnModel().getColumn(MyTableModel.CHECKMARK_COLUMN);
         TableUtil.setupCheckboxColumn(checkBoxColumn);
+        checkBoxColumn.setHeaderValue("");
         checkBoxColumn.setCellRenderer(
                 new BooleanTableCellRenderer() {
                     @NotNull
@@ -136,7 +136,11 @@ public class KotlinParameterTablePanel extends JPanel {
                 }
         );
 
-        myTable.getColumnModel().getColumn(MyTableModel.PARAMETER_TYPE_COLUMN).setCellRenderer(new DefaultTableCellRenderer() {
+        myTable.getColumnModel().getColumn(MyTableModel.PARAMETER_NAME_COLUMN).setHeaderValue("Name");
+
+        TableColumn parameterTypeColumn = myTable.getColumnModel().getColumn(MyTableModel.PARAMETER_TYPE_COLUMN);
+        parameterTypeColumn.setHeaderValue("Type");
+        parameterTypeColumn.setCellRenderer(new DefaultTableCellRenderer() {
             private final JBComboBoxLabel myLabel = new JBComboBoxLabel();
 
             @Override
@@ -149,14 +153,14 @@ public class KotlinParameterTablePanel extends JPanel {
                 myLabel.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
                 if (isSelected) {
                     myLabel.setSelectionIcon();
-                } else {
+                }
+                else {
                     myLabel.setRegularIcon();
                 }
                 return myLabel;
             }
         });
-
-        myTable.getColumnModel().getColumn(MyTableModel.PARAMETER_TYPE_COLUMN).setCellEditor(new AbstractTableCellEditor() {
+        parameterTypeColumn.setCellEditor(new AbstractTableCellEditor() {
             final JBComboBoxTableCellEditorComponent myEditorComponent = new JBComboBoxTableCellEditorComponent();
 
             @Override

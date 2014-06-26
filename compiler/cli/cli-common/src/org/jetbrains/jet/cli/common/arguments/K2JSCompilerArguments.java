@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.common.arguments;
 
 import com.sampullara.cli.Argument;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jetbrains.jet.cli.common.arguments.K2JsArgumentConstants.CALL;
@@ -27,28 +28,40 @@ import static org.jetbrains.jet.cli.common.arguments.K2JsArgumentConstants.NO_CA
  */
 public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "output", description = "Output file path")
+    @ValueDescription("<path>")
     public String outputFile;
 
-    @Argument(value = "libraryFiles", description = "Path to zipped lib sources or kotlin files")
+    @Argument(value = "libraryFiles", description = "Path to zipped library sources or kotlin files separated by commas")
+    @ValueDescription("<path[,]>")
     public String[] libraryFiles;
 
-    @Argument(value = "sourceFiles", description = "Source files (dir or file)")
+    @Argument(value = "sourceFiles", description = "Source files or directories separated by commas")
+    @ValueDescription("<path[,]>")
     public String[] sourceFiles;
 
     @Argument(value = "sourcemap", description = "Generate SourceMap")
     public boolean sourcemap;
 
-    @Argument(value = "target", description = "Generate js files for specific ECMA version (now support only ECMA 5)")
+    @Argument(value = "target", description = "Generate JS files for specific ECMA version (only ECMA 5 is supported)")
+    @ValueDescription("<version>")
     public String target;
 
     @Nullable
-    @Argument(value = "main", description = "Whether a main function should be called; either '" + CALL +
-                                            "' or '" + NO_CALL + "', default '" + CALL + "' (main function will be auto detected)")
+    @Argument(value = "main", description = "Whether a main function should be called; default '" + CALL + "' (main function will be auto detected)")
+    @ValueDescription("{" + CALL + "," + NO_CALL + "}")
     public String main;
 
-    @Argument(value = "outputPrefix", description = "Path to file which will be added to the begin of output file")
+    @Argument(value = "outputPrefix", description = "Path to file which will be added to the beginning of output file")
+    @ValueDescription("<path>")
     public String outputPrefix;
 
     @Argument(value = "outputPostfix", description = "Path to file which will be added to the end of output file")
+    @ValueDescription("<path>")
     public String outputPostfix;
+
+    @Override
+    @NotNull
+    public String executableScriptFileName() {
+        return "kotlinc-js";
+    }
 }

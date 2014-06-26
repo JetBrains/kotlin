@@ -7,11 +7,11 @@ fun foo() {
     "after"
 }
 ---------------------
-"before"                                              <v0>: *                      NEW()
-2                                                     <v1>: Int                    NEW()
-a                                                     <v2>: {<: Comparable<Int>}   NEW()
-0                                                     <v3>: Int                    NEW()
-a > 0                                                 <v4>: Boolean                NEW(<v2>, <v3>)
-"after"                                               <v5>: *                      NEW()
-{ "before" do { var a = 2 } while (a > 0) "after" }   <v5>: *                      COPY
+"before"                                              <v0>: *                      NEW: r("before") -> <v0>                  
+2                                                     <v1>: Int                    NEW: r(2) -> <v1>                         
+a                                                     <v2>: {<: Comparable<Int>}   NEW: r(a) -> <v2>                         
+0                                                     <v3>: Int                    NEW: r(0) -> <v3>                         
+a > 0                                                 <v4>: Boolean                NEW: call(>, compareTo|<v2>, <v3>) -> <v4>
+"after"                                               <v5>: *                      NEW: r("after") -> <v5>                   
+{ "before" do { var a = 2 } while (a > 0) "after" }   <v5>: *                      COPY                                      
 =====================

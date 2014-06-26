@@ -7,5 +7,5 @@ tailRecursive fun test() : Int {
     }
 }
 ---------------------
-test()   <v0>: Int   NEW()
+test()   <v0>: Int   NEW: call(test, test) -> <v0>
 =====================

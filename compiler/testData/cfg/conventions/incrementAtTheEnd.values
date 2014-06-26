@@ -4,8 +4,8 @@ fun foo() {
     i++
 }
 ---------------------
-1                   <v0>: Int   NEW()
-i                   <v1>: Int   NEW()
+1                   <v0>: Int   NEW: r(1) -> <v0>
+i                   <v1>: Int   NEW: r(i) -> <v1>
 i++                 <v1>: Int   COPY
 { var i = 1 i++ }   <v1>: Int   COPY
 =====================

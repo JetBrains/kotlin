@@ -3,10 +3,11 @@ fun test(array: Array<(Int)->Unit>) {
     array[11](3)
 }
 ---------------------
-array              <v1>: {<: Array<(Int) -> Unit>}   NEW()
-11                 <v2>: Int                         NEW()
-array[11]          <v3>: {<: (Int) -> Unit}          NEW(<v1>, <v2>)
-3                  <v4>: Int                         NEW()
-array[11](3)       <v5>: *                           NEW(<v3>, <v4>)
+                   <v0>: {<: Array<(Int) -> Unit>}   NEW: magic(array: Array<(Int)->Unit>) -> <v0>
+array              <v1>: {<: Array<(Int) -> Unit>}   NEW: r(array) -> <v1>
+11                 <v2>: Int                         NEW: r(11) -> <v2>
+array[11]          <v3>: {<: (Int) -> Unit}          NEW: call(array[11], get|<v1>, <v2>) -> <v3>
+3                  <v4>: Int                         NEW: r(3) -> <v4>
+array[11](3)       <v5>: *                           NEW: call(array[11], invoke|<v3>, <v4>) -> <v5>
 { array[11](3) }   <v5>: *                           COPY
 =====================

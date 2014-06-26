@@ -8,17 +8,18 @@ fun foo() {
     "after"
 }
 ---------------------
-"before"                                                             <v0>: *     NEW()
-1                                                                    <v1>: Int   NEW()
-"after"                                                              <v2>: *     NEW()
-{ "before" val b = 1 fun local(x: Int) { val a = x + b } "after" }   <v2>: *     COPY
+"before"                                                             <v0>: *     NEW: r("before") -> <v0>
+1                                                                    <v1>: Int   NEW: r(1) -> <v1>       
+"after"                                                              <v2>: *     NEW: r("after") -> <v2> 
+{ "before" val b = 1 fun local(x: Int) { val a = x + b } "after" }   <v2>: *     COPY                    
 =====================
 == local ==
 fun local(x: Int) {
         val a = x + b
     }
 ---------------------
-x       <v1>: Int   NEW()
-b       <v2>: Int   NEW()
-x + b   <v3>: Int   NEW(<v1>, <v2>)
+        <v0>: Int   NEW: magic(x: Int) -> <v0>           
+x       <v1>: Int   NEW: r(x) -> <v1>                    
+b       <v2>: Int   NEW: r(b) -> <v2>                    
+x + b   <v3>: Int   NEW: call(+, plus|<v1>, <v2>) -> <v3>
 =====================

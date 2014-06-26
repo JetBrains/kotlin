@@ -15,57 +15,73 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.jetbrains.jet.cli.common.arguments;
 
 import com.sampullara.cli.Argument;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Command line arguments for the {@link K2JVMCompiler}
+ * Command line arguments for K2JVMCompiler
  */
 @SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
-    @Argument(value = "jar", description = "jar file name")
-    public String jar;
-
-    @Argument(value = "src", description = "source file or directory (allows many paths separated by the system path separator)")
+    @Argument(value = "src", description = "Source file or directory (allows many paths separated by the system path separator)")
+    @ValueDescription("<path>")
     public String src;
 
-    @Argument(value = "classpath", description = "classpath to use when compiling")
-    public String classpath;
+    @Argument(value = "jar", description = "Resulting .jar file path")
+    @ValueDescription("<path>")
+    public String jar;
 
-    @Argument(value = "annotations", description = "paths to external annotations")
-    public String annotations;
-
-    @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
-    public boolean includeRuntime;
-
-    @Argument(value = "noJdk", description = "don't include Java runtime into classpath")
-    public boolean noJdk;
-
-    @Argument(value = "noStdlib", description = "don't include Kotlin runtime into classpath")
-    public boolean noStdlib;
-
-    @Argument(value = "noJdkAnnotations", description = "don't include JDK external annotations into classpath")
-    public boolean noJdkAnnotations;
-
-    @Argument(value = "notNullAssertions", description = "generate not-null assertion after each invocation of method returning not-null")
-    public boolean notNullAssertions;
-
-    @Argument(value = "notNullParamAssertions", description = "generate not-null assertions on parameters of methods accessible from Java")
-    public boolean notNullParamAssertions;
-
-    @Argument(value = "output", description = "output directory")
+    @Argument(value = "output", description = "Output directory path for .class files")
+    @ValueDescription("<path>")
     public String outputDir;
 
-    @Argument(value = "module", description = "module to compile")
+    @Argument(value = "classpath", description = "Paths where to find user class files")
+    @ValueDescription("<path>")
+    public String classpath;
+
+    @Argument(value = "annotations", description = "Paths to external annotations")
+    @ValueDescription("<path>")
+    public String annotations;
+
+    @Argument(value = "includeRuntime", description = "Include Kotlin runtime in to resulting .jar")
+    public boolean includeRuntime;
+
+    @Argument(value = "noJdk", description = "Don't include Java runtime into classpath")
+    public boolean noJdk;
+
+    @Argument(value = "noStdlib", description = "Don't include Kotlin runtime into classpath")
+    public boolean noStdlib;
+
+    @Argument(value = "noJdkAnnotations", description = "Don't include JDK external annotations into classpath")
+    public boolean noJdkAnnotations;
+
+    @Argument(value = "notNullAssertions", description = "Generate not-null assertion after each invocation of method returning not-null")
+    public boolean notNullAssertions;
+
+    @Argument(value = "notNullParamAssertions", description = "Generate not-null assertions on parameters of methods accessible from Java")
+    public boolean notNullParamAssertions;
+
+    @Argument(value = "module", description = "Path to the module file to compile")
+    @ValueDescription("<path>")
     public String module;
 
-    @Argument(value = "script", description = "evaluate script")
+    @Argument(value = "script", description = "Evaluate the script file")
     public boolean script;
 
     @Argument(value = "kotlinHome", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
+    @ValueDescription("<path>")
     public String kotlinHome;
 
-    @Argument(value = "inline", description = "Inlining mode: on/off or true/false (default is on)")
+    @Argument(value = "inline", description = "Inlining mode (default is on)")
+    @ValueDescription("{on,off}")
     public String inline;
+
+    @Override
+    @NotNull
+    public String executableScriptFileName() {
+        return "kotlinc-jvm";
+    }
 }

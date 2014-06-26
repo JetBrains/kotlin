@@ -21,6 +21,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
+import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.find.FindManager;
 import com.intellij.find.findUsages.*;
 import com.intellij.find.impl.FindManagerImpl;
@@ -201,6 +202,13 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
                 return new JavaVariableFindUsagesOptions(project);
             }
         },
+        JAVA_PACKAGE {
+            @NotNull
+            @Override
+            public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+                return new JavaPackageFindUsagesOptions(project);
+            }
+        },
         DEFAULT {
             @NotNull
             @Override
@@ -245,6 +253,9 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
             }
             if (klass == PsiField.class) {
                 return JAVA_FIELD;
+            }
+            if (klass == PsiPackage.class) {
+                return JAVA_PACKAGE;
             }
             if (klass == JetTypeParameter.class) {
                 return DEFAULT;
@@ -301,7 +312,11 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
         }
         myFixture.configureByFile(path);
 
-        T caretElement = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), caretElementClass, false);
+        PsiElement originalElement =
+                InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF")
+                ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(), TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED)
+                : myFixture.getElementAtCaret();
+        T caretElement = PsiTreeUtil.getParentOfType(originalElement, caretElementClass, false);
         assertNotNull(String.format("Element with type '%s' wasn't found at caret position", caretElementClass), caretElement);
 
         FindUsagesOptions options = parser != null ? parser.parse(mainFileText, getProject()) : null;

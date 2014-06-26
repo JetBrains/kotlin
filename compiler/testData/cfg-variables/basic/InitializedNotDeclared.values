@@ -6,5 +6,6 @@ class A {
     val x: Int
 }
 ---------------------
-1   <v1>: Int   NEW()
+    <v0>: A     NEW: magic(x) -> <v0>
+1   <v1>: Int   NEW: r(1) -> <v1>
 =====================

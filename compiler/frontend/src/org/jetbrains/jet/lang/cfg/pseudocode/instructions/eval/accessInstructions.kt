@@ -17,13 +17,30 @@
 package org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval
 
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValueFactory
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValueFactory
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+
+public trait AccessTarget {
+    public data class Declaration(val descriptor: VariableDescriptor): AccessTarget
+    public data class Call(val resolvedCall: ResolvedCall<*>): AccessTarget
+    public object BlackBox: AccessTarget
+}
+
+public abstract class AccessValueInstruction protected (
+        element: JetElement,
+        lexicalScope: LexicalScope,
+        public val target: AccessTarget,
+        public override val receiverValues: Map<PseudoValue, ReceiverValue>
+) : InstructionWithNext(element, lexicalScope), InstructionWithReceivers
 
 public class ReadValueInstruction private (
         element: JetElement,
@@ -51,7 +68,7 @@ public class ReadValueInstruction private (
     }
 
     override fun toString(): String {
-        val inVal = if (receiverValues.empty) "" else "|${receiverValues.keySet().makeString()}"
+        val inVal = if (receiverValues.empty) "" else "|${receiverValues.keySet().joinToString()}"
         return "r(${render(element)}$inVal) -> $outputValue"
     }
 
@@ -73,4 +90,32 @@ public class ReadValueInstruction private (
             }
         }
     }
+}
+
+public class WriteValueInstruction(
+        assignment: JetElement,
+        lexicalScope: LexicalScope,
+        target: AccessTarget,
+        receiverValues: Map<PseudoValue, ReceiverValue>,
+        public val lValue: JetElement,
+        public val rValue: PseudoValue
+) : AccessValueInstruction(assignment, lexicalScope, target, receiverValues) {
+    override val inputValues: List<PseudoValue>
+        get() = receiverValues.keySet() + rValue
+
+    override fun accept(visitor: InstructionVisitor) {
+        visitor.visitWriteValue(this)
+    }
+
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
+        return visitor.visitWriteValue(this)
+    }
+
+    override fun toString(): String {
+        val lhs = (lValue as? JetNamedDeclaration)?.getName() ?: render(lValue)
+        return "w($lhs|${inputValues.joinToString(", ")})"
+    }
+
+    override fun createCopy(): InstructionImpl =
+            WriteValueInstruction(element, lexicalScope, target, receiverValues, lValue, rValue)
 }

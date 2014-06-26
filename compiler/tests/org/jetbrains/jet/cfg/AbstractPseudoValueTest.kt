@@ -25,6 +25,7 @@ import java.util.*
 import org.jetbrains.jet.lang.cfg.pseudocode.collectValueUsages
 import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate
 import org.jetbrains.jet.lang.cfg.pseudocode.getExpectedTypePredicate
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithValue
 
 public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
     override fun dumpInstructions(pseudocode: PseudocodeImpl, out: StringBuilder, bindingContext: BindingContext) {
@@ -46,33 +47,47 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
             return elementToValues
         }
 
-        fun maxLength(strings: Iterable<String>): Int = strings.map { it.length }.max() ?: 0
-
-        fun elementText(element: JetElement): String = element.getText()!!.replaceAll("\\s+", " ")
+        fun elementText(element: JetElement?): String =
+                element?.getText()?.replaceAll("\\s+", " ") ?: ""
 
         fun valueDecl(value: PseudoValue): String {
             val typePredicate = expectedTypePredicateMap.getOrPut(value) { getExpectedTypePredicate(value, valueUsageMap, bindingContext) }
             return "${value.debugName}: $typePredicate"
         }
 
-        fun valueDescription(element: JetElement, value: PseudoValue): String {
-            return if (value.element != element) "COPY" else "NEW${value.createdAt.inputValues.makeString(", ", "(", ")")}"
+        fun valueDescription(element: JetElement?, value: PseudoValue): String {
+            return if (value.element != element) "COPY" else "NEW: ${value.createdAt}"
         }
 
         val elementToValues = getElementToValueMap(pseudocode)
-        if (elementToValues.isEmpty()) return
+        val unboundValues = pseudocode.getInstructions()
+                .map { (it as? InstructionWithValue)?.outputValue }
+                .filterNotNull()
+                .filter { it.element == null }
+                .toSortedListBy { it.debugName }
+        val allValues = elementToValues.values() + unboundValues
+        if (allValues.isEmpty()) return
 
-        val elementColumnWidth = elementToValues.keySet().map { elementText(it).length() }.max()!!
-        val valueColumnWidth = elementToValues.values().map { valueDecl(it).length() }.max()!!
-        val valueDescColumnWidth = elementToValues.entrySet().map { valueDescription(it.key, it.value).length }.max()!!
-
+        val valueDescriptions = LinkedHashMap<Pair<PseudoValue, JetElement?>, String>()
+        for (value in unboundValues) {
+            valueDescriptions[value to null] = valueDescription(null, value)
+        }
         for ((element, value) in elementToValues.entrySet()) {
+            valueDescriptions[value to element] = valueDescription(element, value)
+        }
+
+        val elementColumnWidth = elementToValues.keySet().map { elementText(it).length() }.max() ?: 1
+        val valueColumnWidth = allValues.map { valueDecl(it).length() }.max()!!
+        val valueDescColumnWidth = valueDescriptions.values().map { it.length }.max()!!
+
+        for ((ve, description) in valueDescriptions.entrySet()) {
+            val (value, element) = ve
             out
                     .append("%1$-${elementColumnWidth}s".format(elementText(element)))
                     .append("   ")
                     .append("%1$-${valueColumnWidth}s".format(valueDecl(value)))
                     .append("   ")
-                    .append("%1$-${valueDescColumnWidth}s".format(valueDescription(element, value)))
+                    .append("%1$-${valueDescColumnWidth}s".format(description))
                     .append("\n")
         }
     }

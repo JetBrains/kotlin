@@ -15,7 +15,9 @@ class AnonymousInitializers() {
     }
 }
 ---------------------
-34   <v0>: Int   NEW()
-12   <v2>: Int   NEW()
-13   <v4>: Int   NEW()
+     <v1>: AnonymousInitializers   NEW: magic($i) -> <v1>
+     <v3>: AnonymousInitializers   NEW: magic($i) -> <v3>
+34   <v0>: Int                     NEW: r(34) -> <v0>    
+12   <v2>: Int                     NEW: r(12) -> <v2>    
+13   <v4>: Int                     NEW: r(13) -> <v4>    
 =====================

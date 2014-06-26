@@ -1,24 +1,25 @@
 Invalid argument: -wrongArgument
-Usage: org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
-  -jar [String] jar file name
-  -src [String] source file or directory (allows many paths separated by the system path separator)
-  -classpath [String] classpath to use when compiling
-  -annotations [String] paths to external annotations
-  -includeRuntime [flag] include Kotlin runtime in to resulting jar
-  -noJdk [flag] don't include Java runtime into classpath
-  -noStdlib [flag] don't include Kotlin runtime into classpath
-  -noJdkAnnotations [flag] don't include JDK external annotations into classpath
-  -notNullAssertions [flag] generate not-null assertion after each invocation of method returning not-null
-  -notNullParamAssertions [flag] generate not-null assertions on parameters of methods accessible from Java
-  -output [String] output directory
-  -module [String] module to compile
-  -script [flag] evaluate script
-  -kotlinHome [String] Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
-  -inline [String] Inlining mode: on/off or true/false (default is on)
-  -tags [flag] Demarcate each compilation message (error, warning, etc) with an open and close tag
-  -verbose [flag] Enable verbose logging output
-  -version [flag] Display compiler version
-  -help (-h) [flag] Show help
-  -suppress [String] Suppress compiler messages by severity (warnings)
-  -printArgs [flag] Print commandline arguments
+Usage: kotlinc-jvm <options> <source files>
+where possible options include:
+  -src <path>                Source file or directory (allows many paths separated by the system path separator)
+  -jar <path>                Resulting .jar file path
+  -output <path>             Output directory path for .class files
+  -classpath <path>          Paths where to find user class files
+  -annotations <path>        Paths to external annotations
+  -includeRuntime            Include Kotlin runtime in to resulting .jar
+  -noJdk                     Don't include Java runtime into classpath
+  -noStdlib                  Don't include Kotlin runtime into classpath
+  -noJdkAnnotations          Don't include JDK external annotations into classpath
+  -notNullAssertions         Generate not-null assertion after each invocation of method returning not-null
+  -notNullParamAssertions    Generate not-null assertions on parameters of methods accessible from Java
+  -module <path>             Path to the module file to compile
+  -script                    Evaluate the script file
+  -kotlinHome <path>         Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
+  -inline {on,off}           Inlining mode (default is on)
+  -tags                      Demarcate each compilation message (error, warning, etc) with an open and close tag
+  -verbose                   Enable verbose logging output
+  -version                   Display compiler version
+  -help (-h)                 Print a synopsis of standard options
+  -suppress warnings         Suppress all compiler warnings
+  -printArgs                 Print command line arguments
 INTERNAL_ERROR

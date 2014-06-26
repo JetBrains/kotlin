@@ -3,6 +3,6 @@ fun Function0<Unit>.foo() {
     this()
 }
 ---------------------
-this()       <v0>: *   NEW()
+this()       <v0>: *   NEW: call(this, invoke) -> <v0>
 { this() }   <v0>: *   COPY
 =====================

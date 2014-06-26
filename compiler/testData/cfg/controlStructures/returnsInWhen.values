@@ -5,6 +5,8 @@ fun illegalWhenBlock(a: Any): Any {
     }
 }
 ---------------------
-a   <v1>: *          NEW()
-a   <v3>: {<: Any}   NEW()
+    <v0>: {<: Any}   NEW: magic(a: Any) -> <v0>     
+    <v2>: *          NEW: magic(is Int|<v1>) -> <v2>
+a   <v1>: *          NEW: r(a) -> <v1>              
+a   <v3>: {<: Any}   NEW: r(a) -> <v3>              
 =====================

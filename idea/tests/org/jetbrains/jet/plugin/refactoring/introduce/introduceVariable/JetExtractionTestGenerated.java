@@ -133,9 +133,24 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/noConflictWithInnerVariable.kt");
         }
         
+        @TestMetadata("NoExplicitReceivers.kt")
+        public void testNoExplicitReceivers() throws Exception {
+            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/NoExplicitReceivers.kt");
+        }
+        
+        @TestMetadata("NoExplicitReceiversUnresolved.kt")
+        public void testNoExplicitReceiversUnresolved() throws Exception {
+            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/NoExplicitReceiversUnresolved.kt");
+        }
+        
         @TestMetadata("nonEquivalentReceivers.kt")
         public void testNonEquivalentReceivers() throws Exception {
             doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/nonEquivalentReceivers.kt");
+        }
+        
+        @TestMetadata("OneExplicitReceiver.kt")
+        public void testOneExplicitReceiver() throws Exception {
+            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/OneExplicitReceiver.kt");
         }
         
         @TestMetadata("ReplaceOccurence.kt")
@@ -156,6 +171,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         @TestMetadata("StringInjection.kt")
         public void testStringInjection() throws Exception {
             doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/StringInjection.kt");
+        }
+        
+        @TestMetadata("TwoExplicitReceivers.kt")
+        public void testTwoExplicitReceivers() throws Exception {
+            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/TwoExplicitReceivers.kt");
         }
         
         @TestMetadata("WhenAddBlock.kt")

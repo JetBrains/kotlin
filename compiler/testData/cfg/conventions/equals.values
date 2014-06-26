@@ -4,7 +4,9 @@ fun foo(a: Int, b: Int) {
     }
 }
 ---------------------
-a        <v2>: OR{{<: Any}, {<: Any}}   NEW()
-b        <v3>: {<: Any?}                NEW()
-a == b   <v4>: Boolean                  NEW(<v2>, <v3>)
+         <v0>: Int                      NEW: magic(a: Int) -> <v0>
+         <v1>: Int                      NEW: magic(b: Int) -> <v1>
+a        <v2>: OR{{<: Any}, {<: Any}}   NEW: r(a) -> <v2>
+b        <v3>: {<: Any?}                NEW: r(b) -> <v3>
+a == b   <v4>: Boolean                  NEW: call(==, equals|<v2>, <v3>) -> <v4>
 =====================

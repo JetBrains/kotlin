@@ -94,12 +94,13 @@
       <delete dir="${version_substitute_dir}" quiet="true"/>
   </target>
 
-    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts">
-    </target>
+    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts"/>
 
     <target name="zipArtifact">
         <zip destfile="${plugin.zip}">
-            <zipfileset prefix="Kotlin" dir="${artifact.output.path}/Kotlin"/>
+            <zipfileset prefix="Kotlin" dir="${artifact.output.path}/Kotlin" excludes="kotlinc/bin/*"/>
+            <zipfileset prefix="Kotlin/kotlinc/bin" dir="${artifact.output.path}/Kotlin/kotlinc/bin" includes="*.bat" filemode="644"/>
+            <zipfileset prefix="Kotlin/kotlinc/bin" dir="${artifact.output.path}/Kotlin/kotlinc/bin" excludes="*.bat" filemode="755"/>
         </zip>
         <delete dir="${artifact.output.path}/Kotlin" quiet="true"/>
     </target>

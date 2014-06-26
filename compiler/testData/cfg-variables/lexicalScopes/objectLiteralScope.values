@@ -12,16 +12,16 @@ fun foo() {
     "after"
 }
 ---------------------
-"before"                                                                          <v0>: *                    NEW()
-1                                                                                 <v1>: Int                  NEW()
-object { { val x = 1 } fun foo() { val a = 2 } }                                  <v2>: <no name provided>   NEW()
-"after"                                                                           <v3>: *                    NEW()
-{ "before" val bar = object { { val x = 1 } fun foo() { val a = 2 } } "after" }   <v3>: *                    COPY
+"before"                                                                          <v0>: *                    NEW: r("before") -> <v0>                                        
+1                                                                                 <v1>: Int                  NEW: r(1) -> <v1>                                               
+object { { val x = 1 } fun foo() { val a = 2 } }                                  <v2>: <no name provided>   NEW: r(object { { val x = 1 } fun foo() { val a = 2 } }) -> <v2>
+"after"                                                                           <v3>: *                    NEW: r("after") -> <v3>                                         
+{ "before" val bar = object { { val x = 1 } fun foo() { val a = 2 } } "after" }   <v3>: *                    COPY                                                            
 =====================
 == foo ==
 fun foo() {
             val a = 2
         }
 ---------------------
-2   <v0>: Int   NEW()
+2   <v0>: Int   NEW: r(2) -> <v0>
 =====================

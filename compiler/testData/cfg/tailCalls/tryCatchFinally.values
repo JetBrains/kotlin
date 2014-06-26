@@ -9,12 +9,13 @@ fun test() : Unit {
     }
 }
 ---------------------
-test()                                                                     <v0>: *   NEW()          
-{ test() }                                                                 <v0>: *   COPY           
-test()                                                                     <v2>: *   NEW()          
-{ test() }                                                                 <v2>: *   COPY           
-test()                                                                     <v3>: *   NEW()          
-{ test() }                                                                 <v3>: *   COPY           
-try { test() } catch (any : Exception) { test() } finally { test() }       <v4>: *   NEW(<v0>, <v2>)
-{ try { test() } catch (any : Exception) { test() } finally { test() } }   <v4>: *   COPY           
+                                                                           <v1>: {<: Exception}   NEW: magic(any : Exception) -> <v1>                                                                
+test()                                                                     <v0>: *                NEW: call(test, test) -> <v0>                                                                      
+{ test() }                                                                 <v0>: *                COPY                                                                                               
+test()                                                                     <v2>: *                NEW: call(test, test) -> <v2>                                                                      
+{ test() }                                                                 <v2>: *                COPY                                                                                               
+test()                                                                     <v3>: *                NEW: call(test, test) -> <v3>                                                                      
+{ test() }                                                                 <v3>: *                COPY                                                                                               
+try { test() } catch (any : Exception) { test() } finally { test() }       <v4>: *                NEW: merge(try { test() } catch (any : Exception) { test() } finally { test() }|<v0>, <v2>) -> <v4>
+{ try { test() } catch (any : Exception) { test() } finally { test() } }   <v4>: *                COPY                                                                                               
 =====================

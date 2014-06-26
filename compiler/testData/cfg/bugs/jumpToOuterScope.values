@@ -7,9 +7,11 @@ fun foo(c: Collection<Int>) {
     }
 }
 ---------------------
-c               <v1>: {<: Iterable<Int>}   NEW()
-{ break }       <v3>: *                    NEW()
-{ { break } }   <v3>: *                    COPY
+                <v0>: {<: Collection<Int>}   NEW: magic(c: Collection<Int>) -> <v0>
+                <v2>: Int                    NEW: magic(c|<v1>) -> <v2>
+c               <v1>: {<: Iterable<Int>}     NEW: r(c) -> <v1>
+{ break }       <v3>: *                      NEW: r({ break }) -> <v3>
+{ { break } }   <v3>: *                      COPY
 =====================
 == anonymous_0 ==
 {

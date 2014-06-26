@@ -1,9 +1,11 @@
 == foo ==
 fun foo(i: Int = 1, j: Int) = i + j
 ---------------------
-1            <v0>: Int   NEW()
-i: Int = 1   <v2>: Int   NEW(<v0>, <v1>)
-i            <v4>: Int   NEW()
-j            <v5>: Int   NEW()
-i + j        <v6>: Int   NEW(<v4>, <v5>)
+             <v1>: Int   NEW: magic(i: Int = 1) -> <v1>           
+             <v3>: Int   NEW: magic(j: Int) -> <v3>               
+1            <v0>: Int   NEW: r(1) -> <v0>                        
+i: Int = 1   <v2>: Int   NEW: merge(i: Int = 1|<v0>, <v1>) -> <v2>
+i            <v4>: Int   NEW: r(i) -> <v4>                        
+j            <v5>: Int   NEW: r(j) -> <v5>                        
+i + j        <v6>: Int   NEW: call(+, plus|<v4>, <v5>) -> <v6>    
 =====================

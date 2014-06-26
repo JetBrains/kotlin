@@ -16,16 +16,17 @@ fun t1(b: Boolean) {
     doSmth(r)
 }
 ---------------------
-b                                                                                                            <v1>: Boolean   NEW()
-"s"                                                                                                          <v2>: String    NEW()
-u                                                                                                            <v3>: String    NEW()
-doSmth(u)                                                                                                    <v4>: *         NEW(<v3>)
-b                                                                                                            <v5>: Boolean   NEW()
-"s"                                                                                                          <v6>: String    NEW()
-"t"                                                                                                          <v7>: String    NEW()
-r                                                                                                            <v8>: String    NEW()
-doSmth(r)                                                                                                    <v9>: *         NEW(<v8>)
-{ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) }   <v9>: *         COPY
+                                                                                                             <v0>: Boolean   NEW: magic(b: Boolean) -> <v0>        
+b                                                                                                            <v1>: Boolean   NEW: r(b) -> <v1>                     
+"s"                                                                                                          <v2>: String    NEW: r("s") -> <v2>                   
+u                                                                                                            <v3>: String    NEW: r(u) -> <v3>                     
+doSmth(u)                                                                                                    <v4>: *         NEW: call(doSmth, doSmth|<v3>) -> <v4>
+b                                                                                                            <v5>: Boolean   NEW: r(b) -> <v5>                     
+"s"                                                                                                          <v6>: String    NEW: r("s") -> <v6>                   
+"t"                                                                                                          <v7>: String    NEW: r("t") -> <v7>                   
+r                                                                                                            <v8>: String    NEW: r(r) -> <v8>                     
+doSmth(r)                                                                                                    <v9>: *         NEW: call(doSmth, doSmth|<v8>) -> <v9>
+{ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) }   <v9>: *         COPY                                  
 =====================
 == t2 ==
 fun t2(b: Boolean) {
@@ -39,14 +40,16 @@ fun t2(b: Boolean) {
     }
 }
 ---------------------
-3           <v1>: Int       NEW()
-b           <v2>: Boolean   NEW()
-i           <v3>: String    NEW()
-doSmth(i)   <v4>: *         NEW(<v3>)
-i           <v5>: *         NEW()
-i is Int    <v6>: Boolean   NEW(<v5>)
+            <v0>: Boolean   NEW: magic(b: Boolean) -> <v0>        
+3           <v1>: Int       NEW: r(3) -> <v1>                     
+b           <v2>: Boolean   NEW: r(b) -> <v2>                     
+i           <v3>: String    NEW: r(i) -> <v3>                     
+doSmth(i)   <v4>: *         NEW: call(doSmth, doSmth|<v3>) -> <v4>
+i           <v5>: *         NEW: r(i) -> <v5>                     
+i is Int    <v6>: Boolean   NEW: magic(i is Int|<v5>) -> <v6>     
 =====================
 == doSmth ==
 fun doSmth(s: String) {}
 ---------------------
+    <v0>: String   NEW: magic(s: String) -> <v0>
 =====================

@@ -4,7 +4,10 @@ fun foo(x: Int) {
     a
 }
 ---------------------
-x                      <v1>: *   NEW()
-a                      <v4>: *   NEW()
-{ val (a, b) = x a }   <v4>: *   COPY
+                       <v0>: Int                                       NEW: magic(x: Int) -> <v0>
+                       <v2>: {<: [ERROR : component1() return type]}   NEW: magic(a|<v1>) -> <v2>
+                       <v3>: {<: [ERROR : component2() return type]}   NEW: magic(b|<v1>) -> <v3>
+x                      <v1>: *                                         NEW: r(x) -> <v1>         
+a                      <v4>: *                                         NEW: r(a) -> <v4>         
+{ val (a, b) = x a }   <v4>: *                                         COPY                      
 =====================

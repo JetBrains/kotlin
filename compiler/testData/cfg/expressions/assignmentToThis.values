@@ -3,5 +3,6 @@ fun Int.bar(c: C) {
     this = c
 }
 ---------------------
-c   <v1>: *   NEW()
+    <v0>: {<: [ERROR : C]}   NEW: magic(c: C) -> <v0>
+c   <v1>: *                  NEW: r(c) -> <v1>       
 =====================

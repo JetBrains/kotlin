@@ -278,11 +278,8 @@ public class CompileEnvironmentUtil {
         if (jar != null) {
             writeToJar(jar, includeRuntime, mainClass, outputFiles);
         }
-        else if (outputDir != null) {
-            OutputUtilsPackage.writeAll(outputFiles, outputDir, messageCollector);
-        }
         else {
-            throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
+            OutputUtilsPackage.writeAll(outputFiles, outputDir == null ? new File(".") : outputDir, messageCollector);
         }
     }
 

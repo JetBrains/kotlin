@@ -1,0 +1,10 @@
+fun main(args: Array<String>) {
+    val myA = A()
+    val i = myA.prop
+    println(i)
+    println(i)
+}
+
+class A {
+    val prop = 1
+}

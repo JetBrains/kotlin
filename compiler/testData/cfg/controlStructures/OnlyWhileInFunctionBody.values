@@ -5,11 +5,11 @@ fun main() {
     }
 }
 ---------------------
-0       <v0>: {<: Comparable<Int>}   NEW()
-1       <v1>: Int                    NEW()
-0 > 1   <v2>: Boolean                NEW(<v0>, <v1>)
-2       <v3>: *                      NEW()
-{ 2 }   <v3>: *                      COPY
+0       <v0>: {<: Comparable<Int>}   NEW: r(0) -> <v0>                         
+1       <v1>: Int                    NEW: r(1) -> <v1>                         
+0 > 1   <v2>: Boolean                NEW: call(>, compareTo|<v0>, <v1>) -> <v2>
+2       <v3>: *                      NEW: r(2) -> <v3>                         
+{ 2 }   <v3>: *                      COPY                                      
 =====================
 == dowhile ==
 fun dowhile() {
@@ -17,7 +17,7 @@ fun dowhile() {
     while(0 > 1)
 }
 ---------------------
-0       <v0>: *   NEW()
-1       <v1>: *   NEW()
-0 > 1   <v2>: *   NEW(<v0>, <v1>)
+0       <v0>: *   NEW: r(0) -> <v0>                         
+1       <v1>: *   NEW: r(1) -> <v1>                         
+0 > 1   <v2>: *   NEW: call(>, compareTo|<v0>, <v1>) -> <v2>
 =====================

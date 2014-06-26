@@ -41,13 +41,13 @@ public data class AllSubtypes(val upperBound: JetType): TypePredicate {
 public data class ForAllTypes(val typeSets: List<TypePredicate>): TypePredicate {
     override fun invoke(typeToCheck: JetType): Boolean = typeSets.all { it(typeToCheck) }
 
-    override fun toString(): String = "AND{${typeSets.makeString(", ")}}"
+    override fun toString(): String = "AND{${typeSets.joinToString(", ")}}"
 }
 
 public data class ForSomeType(val typeSets: List<TypePredicate>): TypePredicate {
     override fun invoke(typeToCheck: JetType): Boolean = typeSets.any { it(typeToCheck) }
 
-    override fun toString(): String = "OR{${typeSets.makeString(", ")}}"
+    override fun toString(): String = "OR{${typeSets.joinToString(", ")}}"
 }
 
 public object AllTypes : TypePredicate {

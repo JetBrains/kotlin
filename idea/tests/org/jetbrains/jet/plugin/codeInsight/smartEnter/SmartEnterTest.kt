@@ -677,8 +677,8 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             ,
             """
             do {
+                <caret>
             } while (true)
-            <caret>
             """
     )
 
@@ -744,6 +744,32 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
                 <caret>
                 println("some")
             } while (true
+            """
+    )
+
+    fun testDoWhile13() = doFunTest(
+            """
+            do<caret>
+            println("some")
+            """
+            ,
+            """
+            do {
+                println("some")
+            } while (<caret>)
+            """
+    )
+
+    fun testDoWhile14() = doFunTest(
+            """
+            do <caret>
+            println("some")
+            """
+            ,
+            """
+            do {
+                println("some")
+            } while (<caret>)
             """
     )
 
