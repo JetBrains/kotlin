@@ -18,19 +18,17 @@ package org.jetbrains.jet.codegen.optimization.boxing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.optimization.common.OptimizationBasicInterpreter;
 import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.InsnList;
-import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
 import java.util.*;
 
-class RedundantBoxingInterpreter extends BasicInterpreter {
+class RedundantBoxingInterpreter extends OptimizationBasicInterpreter {
     private final Map<Integer, BoxedBasicValue> boxingPlaces = new HashMap<Integer, BoxedBasicValue>();
     private final Set<BoxedBasicValue> candidatesBoxedValues = new HashSet<BoxedBasicValue>();
     private final InsnList insnList;
@@ -78,47 +76,6 @@ class RedundantBoxingInterpreter extends BasicInterpreter {
         MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
 
         return isClassBox(methodInsnNode.owner) && methodInsnNode.name.equals("valueOf");
-    }
-
-    @Override
-    @Nullable
-    public BasicValue newValue(@Nullable Type type) {
-        if (type == null) {
-            return super.newValue(null);
-        }
-        if (type.getSort() == Type.OBJECT) {
-            return new BasicValue(type);
-        }
-
-        return super.newValue(type);
-    }
-
-    @Override
-    public BasicValue newOperation(@NotNull AbstractInsnNode insn) throws AnalyzerException {
-        if (insn.getOpcode() == Opcodes.LDC) {
-            Object cst = ((LdcInsnNode) insn).cst;
-
-            if (cst instanceof Long) {
-                return BasicValue.LONG_VALUE;
-            }
-            if (cst instanceof Boolean ||
-                cst instanceof Integer ||
-                cst instanceof Short ||
-                cst instanceof Byte ||
-                cst instanceof Character) {
-                return BasicValue.INT_VALUE;
-            }
-
-            if (cst instanceof Float) {
-                return BasicValue.FLOAT_VALUE;
-            }
-
-            if (cst instanceof Double) {
-                return BasicValue.DOUBLE_VALUE;
-            }
-        }
-
-        return super.newOperation(insn);
     }
 
     @Override

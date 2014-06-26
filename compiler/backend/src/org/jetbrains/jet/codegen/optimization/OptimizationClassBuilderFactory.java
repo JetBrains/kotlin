@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.DelegatingClassBuilder;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 
 public class OptimizationClassBuilderFactory implements ClassBuilderFactory {
@@ -44,11 +43,11 @@ public class OptimizationClassBuilderFactory implements ClassBuilderFactory {
 
     @Override
     public String asText(ClassBuilder builder) {
-        return delegate.asText(((OptimizationClassBuilder)builder).getDelegate());
+        return delegate.asText(((OptimizationClassBuilder) builder).getDelegate());
     }
 
     @Override
     public byte[] asBytes(ClassBuilder builder) {
-        return delegate.asBytes(((OptimizationClassBuilder)builder).getDelegate());
+        return delegate.asBytes(((OptimizationClassBuilder) builder).getDelegate());
     }
 }

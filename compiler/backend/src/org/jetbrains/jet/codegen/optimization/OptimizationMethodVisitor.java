@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.optimization.boxing.RedundantBoxingMethodTransformer;
+import org.jetbrains.jet.codegen.optimization.ranges.RangesOptimizationMethodTransformer;
 import org.jetbrains.jet.codegen.optimization.transformer.MethodTransformer;
-import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
@@ -30,7 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OptimizationMethodVisitor extends MethodVisitor {
-    private final MethodTransformer methodTransformer = new RedundantBoxingMethodTransformer(null);
+    private final MethodTransformer methodTransformer = new RedundantBoxingMethodTransformer(
+            new RangesOptimizationMethodTransformer(null)
+    );
     private final MethodNode methodNode;
     private final MethodVisitor delegate;
 

@@ -21,7 +21,6 @@ import org.jetbrains.jet.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     @Override
-    public void transform(String owner, @NotNull MethodNode node) {
+    public void transform(@NotNull String owner, @NotNull MethodNode node) {
         for (BoxedBasicValue value : analyze(owner, node)) {
             for (AbstractInsnNode insnNode : value.getAssociatedInsns()) {
                 node.instructions.remove(insnNode);
@@ -46,12 +45,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         RedundantBoxingInterpreter interpreter = new RedundantBoxingInterpreter(node.instructions);
         Analyzer<BasicValue> analyzer = new Analyzer<BasicValue>(interpreter);
 
-        try {
-            analyzer.analyze(owner, node);
-        }
-        catch (AnalyzerException e) {
-            throw new RuntimeException(e);
-        }
+        runAnalyzer(analyzer, owner, node);
 
         return interpreter.getCandidatesBoxedValues();
     }

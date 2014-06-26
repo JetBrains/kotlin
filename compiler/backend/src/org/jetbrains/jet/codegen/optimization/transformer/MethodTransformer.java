@@ -18,6 +18,10 @@ package org.jetbrains.jet.codegen.optimization.transformer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
+import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame;
+import org.jetbrains.org.objectweb.asm.tree.analysis.Value;
 
 public abstract class MethodTransformer {
     private final MethodTransformer methodTransformer;
@@ -26,7 +30,20 @@ public abstract class MethodTransformer {
         this.methodTransformer = methodTransformer;
     }
 
-    public void transform(String owner, @NotNull MethodNode methodNode) {
+    protected static <V extends Value> Frame<V>[] runAnalyzer(
+            @NotNull Analyzer<V> analyzer,
+            @NotNull String owner,
+            @NotNull MethodNode node
+    ) {
+        try {
+            return analyzer.analyze(owner, node);
+        }
+        catch (AnalyzerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void transform(@NotNull String owner, @NotNull MethodNode methodNode) {
         if (methodTransformer != null) {
             methodTransformer.transform(owner, methodNode);
         }
