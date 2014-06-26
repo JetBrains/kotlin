@@ -3,7 +3,7 @@ fun bar(n: Int) {
 
 }
 ---------------------
-    <v0>: Int   NEW: magic(n: Int) -> <v0>
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](n: Int) -> <v0>
 =====================
 == foo ==
 fun foo() {

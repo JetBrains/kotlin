@@ -6,10 +6,10 @@ fun neq(a: Int, b: Int) {
 L0:
   1 <START>
     v(a: Int)
-    magic(a: Int) -> <v0>
+    magic[FAKE_INITIALIZER](a: Int) -> <v0>
     w(a|<v0>)
     v(b: Int)
-    magic(b: Int) -> <v1>
+    magic[FAKE_INITIALIZER](b: Int) -> <v1>
     w(b|<v1>)
   2 mark({ if (a != b) {} })
     mark(if (a != b) {})

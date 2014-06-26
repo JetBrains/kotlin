@@ -22,18 +22,18 @@ L0:
     w(k|<v0>)
     v(val i: Int)
   2 mark({ $i = 12 })
-    magic($i) -> <v1>
+    magic[IMPLICIT_RECEIVER]($i) -> <v1>
     r(12) -> <v2>
     w($i|<v1>, <v2>)
   1 v(val j: Int get() = 20)
   2 mark({ $i = 13 })
-    magic($i) -> <v3>
+    magic[IMPLICIT_RECEIVER]($i) -> <v3>
     r(13) -> <v4>
     w($i|<v3>, <v4>)
 L1:
-  1 <END>                       NEXT:[<SINK>]
+  1 <END>                                   NEXT:[<SINK>]
 error:
-    <ERROR>                     PREV:[]
+    <ERROR>                                 PREV:[]
 sink:
-    <SINK>                      PREV:[<ERROR>, <END>]
+    <SINK>                                  PREV:[<ERROR>, <END>]
 =====================

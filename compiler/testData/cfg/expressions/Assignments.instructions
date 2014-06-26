@@ -54,17 +54,17 @@ L3:
     w(x|<v8>)
     v(val y = true && false)
     r(true) -> <v9>
-    jf(L4|<v9>)                                                                                                                             NEXT:[magic(true && false|<v9>, <v10>) -> <v11>, r(false) -> <v10>]
+    jf(L4|<v9>)                                                                                                                             NEXT:[magic[AND](true && false|<v9>, <v10>) -> <v11>, r(false) -> <v10>]
     r(false) -> <v10>
 L4:
-    magic(true && false|<v9>, <v10>) -> <v11>                                                                                               PREV:[jf(L4|<v9>), r(false) -> <v10>]
+    magic[AND](true && false|<v9>, <v10>) -> <v11>                                                                                          PREV:[jf(L4|<v9>), r(false) -> <v10>]
     w(y|<v11>)
     v(val z = false && true)
     r(false) -> <v12>
-    jf(L5|<v12>)                                                                                                                            NEXT:[magic(false && true|<v12>, <v13>) -> <v14>, r(true) -> <v13>]
+    jf(L5|<v12>)                                                                                                                            NEXT:[magic[AND](false && true|<v12>, <v13>) -> <v14>, r(true) -> <v13>]
     r(true) -> <v13>
 L5:
-    magic(false && true|<v12>, <v13>) -> <v14>                                                                                              PREV:[jf(L5|<v12>), r(true) -> <v13>]
+    magic[AND](false && true|<v12>, <v13>) -> <v14>                                                                                         PREV:[jf(L5|<v12>), r(true) -> <v13>]
     w(z|<v14>)
     v(val t = Test())
     mark(Test())

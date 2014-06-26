@@ -13,7 +13,7 @@ fun foo(a: Number) {
 L0:
   1 <START>
     v(a: Number)
-    magic(a: Number) -> <v0>
+    magic[FAKE_INITIALIZER](a: Number) -> <v0>
     w(a|<v0>)
   2 mark({ val t = when (a) { 1 -> "1" in Collections.singleton(2) -> "2" is Int -> "Int" !in Collections.singleton(3) -> "!3" !is Number -> "!Number" else -> null } })
     v(val t = when (a) { 1 -> "1" in Collections.singleton(2) -> "2" is Int -> "Int" !in Collections.singleton(3) -> "!3" !is Number -> "!Number" else -> null })
@@ -22,7 +22,7 @@ L0:
     mark(1 -> "1")
     mark(1)
     r(1) -> <v2>
-    magic(1|<v1>, <v2>) -> <v3>
+    magic[EQUALS_IN_WHEN_CONDITION](1|<v1>, <v2>) -> <v3>
     jmp?(L4|<v3>)                                                                                                                                                                                                NEXT:[mark(in Collections.singleton(2) -> "2"), mark("1")]
 L3:
     mark("1")
@@ -44,7 +44,7 @@ L5:
 L6:
     mark(is Int -> "Int")                                                                                                                                                                                        PREV:[jmp?(L6|<v7>)]
     mark(is Int)
-    magic(is Int|<v1>) -> <v9>
+    magic[IS](is Int|<v1>) -> <v9>
     jmp?(L8|<v9>)                                                                                                                                                                                                NEXT:[mark(!in Collections.singleton(3) -> "!3"), mark("Int")]
 L7:
     mark("Int")
@@ -66,7 +66,7 @@ L9:
 L10:
     mark(!is Number -> "!Number")                                                                                                                                                                                PREV:[jmp?(L10|<v13>)]
     mark(!is Number)
-    magic(!is Number|<v1>) -> <v15>
+    magic[IS](!is Number|<v1>) -> <v15>
     jmp?(L12|<v15>)                                                                                                                                                                                              NEXT:[mark(else -> null), mark("!Number")]
 L11:
     mark("!Number")

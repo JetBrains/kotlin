@@ -7,7 +7,7 @@ fun foo() {
     "after"
 }
 ---------------------
-                                                      <v4>: Int                  NEW: magic(1..10|<v3>) -> <v4>
+                                                      <v4>: Int                  NEW: magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>
 "before"                                              <v0>: *                    NEW: r("before") -> <v0>
 1                                                     <v1>: Int                  NEW: r(1) -> <v1>
 10                                                    <v2>: Int                  NEW: r(10) -> <v2>

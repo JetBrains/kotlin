@@ -12,12 +12,12 @@ L0:
   1 <START>
     v(val a: Int get() = 1)
   2 mark({ $a })
-    magic($a) -> <v0>
+    magic[IMPLICIT_RECEIVER]($a) -> <v0>
     r($a|<v0>) -> <v1>
 L1:
-  1 <END>                      NEXT:[<SINK>]
+  1 <END>                                   NEXT:[<SINK>]
 error:
-    <ERROR>                    PREV:[]
+    <ERROR>                                 PREV:[]
 sink:
-    <SINK>                     PREV:[<ERROR>, <END>]
+    <SINK>                                  PREV:[<ERROR>, <END>]
 =====================

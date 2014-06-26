@@ -3,11 +3,11 @@ fun foo(a: Array<Int>) {
     a[0] += 1
 }
 ---------------------
-                <v0>: {<: Array<Int>}   NEW: magic(a: Array<Int>) -> <v0>
-a               <v6>: {<: Array<Int>}   NEW: r(a) -> <v6>
-0               <v7>: Int               NEW: r(0) -> <v7>
-a[0]            <v3>: Int               NEW: call(a[0], get|<v1>, <v2>) -> <v3>
-1               <v4>: Int               NEW: r(1) -> <v4>
-a[0] += 1       <v8>: *                 NEW: call(a[0] += 1, set|<v6>, <v7>, <v5>) -> <v8>
-{ a[0] += 1 }   <v8>: *                 COPY
+                <v0>: {<: Array<Int>}   NEW: magic[FAKE_INITIALIZER](a: Array<Int>) -> <v0>
+a               <v6>: {<: Array<Int>}   NEW: r(a) -> <v6>                                  
+0               <v7>: Int               NEW: r(0) -> <v7>                                  
+a[0]            <v3>: Int               NEW: call(a[0], get|<v1>, <v2>) -> <v3>            
+1               <v4>: Int               NEW: r(1) -> <v4>                                  
+a[0] += 1       <v8>: *                 NEW: call(a[0] += 1, set|<v6>, <v7>, <v5>) -> <v8> 
+{ a[0] += 1 }   <v8>: *                 COPY                                               
 =====================

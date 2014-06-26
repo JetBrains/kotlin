@@ -50,16 +50,16 @@ sink:
 fun use(a: Int) = a
 ---------------------
 L0:
-  1 <START>                  INIT: in: {} out: {}
-    v(a: Int)                INIT: in: {} out: {a=D}
-    magic(a: Int) -> <v0>    INIT: in: {a=D} out: {a=D}
-    w(a|<v0>)                INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
-    r(a) -> <v1>             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+  1 <START>                                    INIT: in: {} out: {}
+    v(a: Int)                                  INIT: in: {} out: {a=D}
+    magic[FAKE_INITIALIZER](a: Int) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                  INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>                               INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
     ret(*|<v1>) L1
 L1:
     <END>
 error:
-    <ERROR>                  INIT: in: {} out: {}
+    <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                   INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

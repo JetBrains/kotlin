@@ -34,17 +34,17 @@ get() {
           }
 ---------------------
 L3:
-  3 <START>                INIT: in: {} out: {}
+  3 <START>                                 INIT: in: {} out: {}
   4 mark({ return $a })
-    magic($a) -> <v0>                              USE: in: {a=READ} out: {a=READ}
-    r($a|<v0>) -> <v1>                             USE: in: {} out: {a=READ}
+    magic[IMPLICIT_RECEIVER]($a) -> <v0>                            USE: in: {a=READ} out: {a=READ}
+    r($a|<v0>) -> <v1>                                              USE: in: {} out: {a=READ}
     ret(*|<v1>) L4
 L4:
   3 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                         USE: in: {} out: {}
+    <SINK>                                                          USE: in: {} out: {}
 =====================
 == set_a ==
 set(v: Int) {
@@ -52,18 +52,18 @@ set(v: Int) {
           }
 ---------------------
 L6:
-  3 <START>                  INIT: in: {} out: {}
-    v(v: Int)                INIT: in: {} out: {v=D}
-    magic(v: Int) -> <v0>    INIT: in: {v=D} out: {v=D}
-    w(v|<v0>)                INIT: in: {v=D} out: {v=ID}
-  4 mark({ $a = v })         INIT: in: {v=ID} out: {v=ID}
-    magic($a) -> <v1>                                                  USE: in: {a=ONLY_WRITTEN_NEVER_READ, v=READ} out: {a=ONLY_WRITTEN_NEVER_READ, v=READ}
-    r(v) -> <v2>                                                       USE: in: {a=ONLY_WRITTEN_NEVER_READ} out: {a=ONLY_WRITTEN_NEVER_READ, v=READ}
-    w($a|<v1>, <v2>)         INIT: in: {v=ID} out: {a=I, v=ID}         USE: in: {} out: {a=ONLY_WRITTEN_NEVER_READ}
+  3 <START>                                    INIT: in: {} out: {}
+    v(v: Int)                                  INIT: in: {} out: {v=D}
+    magic[FAKE_INITIALIZER](v: Int) -> <v0>    INIT: in: {v=D} out: {v=D}
+    w(v|<v0>)                                  INIT: in: {v=D} out: {v=ID}
+  4 mark({ $a = v })                           INIT: in: {v=ID} out: {v=ID}
+    magic[IMPLICIT_RECEIVER]($a) -> <v1>                                                 USE: in: {a=ONLY_WRITTEN_NEVER_READ, v=READ} out: {a=ONLY_WRITTEN_NEVER_READ, v=READ}
+    r(v) -> <v2>                                                                         USE: in: {a=ONLY_WRITTEN_NEVER_READ} out: {a=ONLY_WRITTEN_NEVER_READ, v=READ}
+    w($a|<v1>, <v2>)                           INIT: in: {v=ID} out: {a=I, v=ID}         USE: in: {} out: {a=ONLY_WRITTEN_NEVER_READ}
 L7:
-  3 <END>                    INIT: in: {a=I, v=ID} out: {a=I, v=ID}
+  3 <END>                                      INIT: in: {a=I, v=ID} out: {a=I, v=ID}
 error:
-    <ERROR>                  INIT: in: {} out: {}
+    <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                   INIT: in: {a=I, v=ID} out: {a=I, v=ID}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {a=I, v=ID} out: {a=I, v=ID}    USE: in: {} out: {}
 =====================

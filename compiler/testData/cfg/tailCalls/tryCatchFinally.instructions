@@ -21,7 +21,7 @@ L0:
   2 jmp(L4 [afterCatches])                                                                            NEXT:[jmp(L5 [skipFinallyToErrorBlock])]
 L2 [onException]:
   3 v(any : Exception)                                                                                PREV:[jmp?(L2 [onException])]
-    magic(any : Exception) -> <v1>
+    magic[FAKE_INITIALIZER](any : Exception) -> <v1>
     w(any|<v1>)
   4 mark({ test() })
     mark(test())

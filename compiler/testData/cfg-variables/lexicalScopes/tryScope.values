@@ -13,7 +13,7 @@ fun foo() {
     "after"
 }
 ---------------------
-                                                                                              <v2>: {<: Exception}   NEW: magic(e: Exception) -> <v2>
+                                                                                              <v2>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: Exception) -> <v2>
 "before"                                                                                      <v0>: *                NEW: r("before") -> <v0>
 foo()                                                                                         <v1>: *                NEW: call(foo(), foo) -> <v1>
 { foo() }                                                                                     <v1>: *                COPY

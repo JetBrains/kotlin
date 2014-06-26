@@ -33,7 +33,7 @@ L3:
     r(b) -> <v5>                                                                                                  USE: in: {} out: {b=READ}
     error(use, No resolved call)
     mark(use(b))
-    magic(use(b)|<v5>) -> <v6>
+    magic[UNRESOLVED_CALL](use(b)|<v5>) -> <v6>
 L1:
   1 <END>                                                                         INIT: in: {} out: {}
 error:

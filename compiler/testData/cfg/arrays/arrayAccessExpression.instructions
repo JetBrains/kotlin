@@ -32,7 +32,7 @@ fun test(ab: Ab) {
 L0:
   1 <START>
     v(ab: Ab)
-    magic(ab: Ab) -> <v0>
+    magic[FAKE_INITIALIZER](ab: Ab) -> <v0>
     w(ab|<v0>)
   2 mark({ ab.getArray()[1] })
     mark(ab.getArray()[1])

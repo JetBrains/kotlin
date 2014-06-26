@@ -40,16 +40,16 @@ sink:
 fun use(vararg a: Any?) = a
 ---------------------
 L0:
-  1 <START>                          INIT: in: {} out: {}
-    v(vararg a: Any?)                INIT: in: {} out: {a=D}
-    magic(vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
-    w(a|<v0>)                        INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
-    r(a) -> <v1>                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+  1 <START>                                            INIT: in: {} out: {}
+    v(vararg a: Any?)                                  INIT: in: {} out: {a=D}
+    magic[FAKE_INITIALIZER](vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                          INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>                                       INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
     ret(*|<v1>) L1
 L1:
     <END>
 error:
-    <ERROR>                          INIT: in: {} out: {}
+    <ERROR>                                            INIT: in: {} out: {}
 sink:
-    <SINK>                           INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

@@ -87,7 +87,7 @@ L0:
     mark(BunchKeywordRegister() .add(ABSTRACT_KEYWORD, inTopLevel, inTopLevel, inTopLevel) .add(FINAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel) .add(OPEN_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
     mark(BunchKeywordRegister() .add(ABSTRACT_KEYWORD, inTopLevel, inTopLevel, inTopLevel) .add(FINAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
     mark(BunchKeywordRegister() .add(ABSTRACT_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    magic(BunchKeywordRegister()) -> <v1>
+    magic[IMPLICIT_RECEIVER](BunchKeywordRegister()) -> <v1>
     mark(BunchKeywordRegister())
     call(BunchKeywordRegister(), <init>|<v1>) -> <v2>
     r(ABSTRACT_KEYWORD) -> <v3>
@@ -213,7 +213,7 @@ L0:
     call(add(OUT_KEYWORD, inTopLevel), add|<v99>, <v100>, <v101>) -> <v102>
     r(OBJECT_KEYWORD) -> <v103>
     error(unresolvedCode, No resolved call)
-    magic(unresolvedCode) -> <v104>
+    magic[UNRESOLVED_CALL](unresolvedCode) -> <v104>
     mark(add(OBJECT_KEYWORD, unresolvedCode))
     call(add(OBJECT_KEYWORD, unresolvedCode), add|<v102>, <v103>, <v104>) -> <v105>
     mark(registerAll())

@@ -19,7 +19,7 @@ fun t1(b: Boolean) {
 L0:
   1 <START>
     v(b: Boolean)
-    magic(b: Boolean) -> <v0>
+    magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
     w(b|<v0>)
   2 mark({ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) })
     v(var u: String)
@@ -77,7 +77,7 @@ fun t2(b: Boolean) {
 L0:
   1 <START>
     v(b: Boolean)
-    magic(b: Boolean) -> <v0>
+    magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
     w(b|<v0>)
   2 mark({ val i = 3 if (b) { return; } doSmth(i) if (i is Int) { return; } })
     v(val i = 3)
@@ -98,7 +98,7 @@ L3:
     mark(if (i is Int) { return; })
     mark(i is Int)
     r(i) -> <v5>
-    magic(i is Int|<v5>) -> <v6>
+    magic[IS](i is Int|<v5>) -> <v6>
     jf(L4|<v6>)                                                                   NEXT:[read (Unit), mark({ return; })]
   3 mark({ return; })
     ret L1                                                                        NEXT:[<END>]
@@ -119,14 +119,14 @@ fun doSmth(s: String) {}
 L0:
   1 <START>
     v(s: String)
-    magic(s: String) -> <v0>
+    magic[FAKE_INITIALIZER](s: String) -> <v0>
     w(s|<v0>)
   2 mark({})
     read (Unit)
 L1:
-  1 <END>                       NEXT:[<SINK>]
+  1 <END>                                         NEXT:[<SINK>]
 error:
-    <ERROR>                     PREV:[]
+    <ERROR>                                       PREV:[]
 sink:
-    <SINK>                      PREV:[<ERROR>, <END>]
+    <SINK>                                        PREV:[<ERROR>, <END>]
 =====================

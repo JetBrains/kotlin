@@ -62,13 +62,13 @@ fun foo(b: B) : Int {
 L0:
   1 <START>
     v(b: B)
-    magic(b: B) -> <v0>
+    magic[FAKE_INITIALIZER](b: B) -> <v0>
     w(b|<v0>)
   2 mark({ val o = object : A by b {} return o.foo() })
     v(val o = object : A by b {})
     mark(object : A by b {})
     r(b) -> <v1>
-    magic(A by b|<v1>) -> <v2>
+    magic[VALUE_CONSUMER](A by b|<v1>) -> <v2>
     r(object : A by b {}) -> <v3>
     w(o|<v3>)
     mark(o.foo())

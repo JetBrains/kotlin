@@ -20,7 +20,7 @@ fun f(a : Boolean) : Unit {
 L0:
   1 <START>
     v(a : Boolean)
-    magic(a : Boolean) -> <v0>
+    magic[FAKE_INITIALIZER](a : Boolean) -> <v0>
     w(a|<v0>)
   2 mark({ 1 a 2.toLong() foo(a, 3) genfun<Any>() flfun {1} 3.equals(4) 3 equals 4 1 + 2 a && true a || false })
     r(1) -> <v1>
@@ -56,15 +56,15 @@ L2:
     mark(1 + 2)
     call(1 + 2, plus|<v17>, <v18>) -> <v19>
     r(a) -> <v20>
-    jf(L5|<v20>)                                                                                                    NEXT:[magic(a && true|<v20>, <v21>) -> <v22>, r(true) -> <v21>]
+    jf(L5|<v20>)                                                                                                    NEXT:[magic[AND](a && true|<v20>, <v21>) -> <v22>, r(true) -> <v21>]
     r(true) -> <v21>
 L5:
-    magic(a && true|<v20>, <v21>) -> <v22>                                                                          PREV:[jf(L5|<v20>), r(true) -> <v21>]
+    magic[AND](a && true|<v20>, <v21>) -> <v22>                                                                     PREV:[jf(L5|<v20>), r(true) -> <v21>]
     r(a) -> <v23>
-    jt(L6|<v23>)                                                                                                    NEXT:[r(false) -> <v24>, magic(a || false|<v23>, <v24>) -> <v25>]
+    jt(L6|<v23>)                                                                                                    NEXT:[r(false) -> <v24>, magic[OR](a || false|<v23>, <v24>) -> <v25>]
     r(false) -> <v24>
 L6:
-    magic(a || false|<v23>, <v24>) -> <v25>                                                                         PREV:[jt(L6|<v23>), r(false) -> <v24>]
+    magic[OR](a || false|<v23>, <v24>) -> <v25>                                                                     PREV:[jt(L6|<v23>), r(false) -> <v24>]
 L1:
   1 <END>                                                                                                           NEXT:[<SINK>]
 error:
@@ -93,19 +93,19 @@ fun foo(a : Boolean, b : Int) : Unit {}
 L0:
   1 <START>
     v(a : Boolean)
-    magic(a : Boolean) -> <v0>
+    magic[FAKE_INITIALIZER](a : Boolean) -> <v0>
     w(a|<v0>)
     v(b : Int)
-    magic(b : Int) -> <v1>
+    magic[FAKE_INITIALIZER](b : Int) -> <v1>
     w(b|<v1>)
   2 mark({})
     read (Unit)
 L1:
-  1 <END>                         NEXT:[<SINK>]
+  1 <END>                                           NEXT:[<SINK>]
 error:
-    <ERROR>                       PREV:[]
+    <ERROR>                                         PREV:[]
 sink:
-    <SINK>                        PREV:[<ERROR>, <END>]
+    <SINK>                                          PREV:[<ERROR>, <END>]
 =====================
 == genfun ==
 fun genfun<T>() : Unit {}
@@ -127,14 +127,14 @@ fun flfun(f : () -> Any) : Unit {}
 L0:
   1 <START>
     v(f : () -> Any)
-    magic(f : () -> Any) -> <v0>
+    magic[FAKE_INITIALIZER](f : () -> Any) -> <v0>
     w(f|<v0>)
   2 mark({})
     read (Unit)
 L1:
-  1 <END>                           NEXT:[<SINK>]
+  1 <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>                         PREV:[]
+    <ERROR>                                           PREV:[]
 sink:
-    <SINK>                          PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<ERROR>, <END>]
 =====================

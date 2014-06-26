@@ -435,7 +435,7 @@ fun t8(a : Int) {
 L0:
   1 <START>
     v(a : Int)
-    magic(a : Int) -> <v0>
+    magic[FAKE_INITIALIZER](a : Int) -> <v0>
     w(a|<v0>)
   2 mark({ @l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } } })
     mark(@l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } })
@@ -445,10 +445,10 @@ L0:
     call(1..a, rangeTo|<v1>, <v2>) -> <v3>
     v(i)
 L3:
-    jmp?(L2)                                                                               NEXT:[read (Unit), magic(1..a|<v3>) -> <v4>]
+    jmp?(L2)                                                                               NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 L4 [loop entry point]:
 L5 [body entry point]:
-    magic(1..a|<v3>) -> <v4>                                                               PREV:[jmp?(L2), jmp(L4 [loop entry point]), jmp?(L4 [loop entry point])]
+    magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>                                         PREV:[jmp?(L2), jmp(L4 [loop entry point]), jmp?(L4 [loop entry point])]
     w(i|<v4>)
     mark(for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } })
   4 mark({ try { 1 if (2 > 3) { continue @l } } finally { 2 } })
@@ -467,7 +467,7 @@ L8 [start finally]:
   7 mark({ 2 })
     r(2) -> <v9>
 L9 [finish finally]:
-  6 jmp(L4 [loop entry point])                                                             NEXT:[magic(1..a|<v3>) -> <v4>]
+  6 jmp(L4 [loop entry point])                                                             NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 - 5 jmp(L10)                                                                               NEXT:[jmp(L11 [skipFinallyToErrorBlock])]                                                     PREV:[]
 L7:
     read (Unit)                                                                            PREV:[jf(L7|<v8>)]
@@ -480,7 +480,7 @@ L6 [onExceptionToFinallyBlock]:
 L11 [skipFinallyToErrorBlock]:
   7 mark({ 2 })                                                                            PREV:[jmp(L11 [skipFinallyToErrorBlock])]
     r(2) -> <v9>
-  3 jmp?(L4 [loop entry point])                                                            NEXT:[magic(1..a|<v3>) -> <v4>, read (Unit)]
+  3 jmp?(L4 [loop entry point])                                                            NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>, read (Unit)]
 L2:
     read (Unit)                                                                            PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
 L1:
@@ -508,7 +508,7 @@ fun t9(a : Int) {
 L0:
   1 <START>
     v(a : Int)
-    magic(a : Int) -> <v0>
+    magic[FAKE_INITIALIZER](a : Int) -> <v0>
     w(a|<v0>)
   2 mark({ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 } })
     mark(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 })
@@ -521,10 +521,10 @@ L0:
     call(1..a, rangeTo|<v1>, <v2>) -> <v3>
     v(i)
 L4:
-    jmp?(L3)                                                                                 NEXT:[read (Unit), magic(1..a|<v3>) -> <v4>]
+    jmp?(L3)                                                                                 NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 L5 [loop entry point]:
 L6 [body entry point]:
-    magic(1..a|<v3>) -> <v4>                                                                 PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
+    magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>                                           PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
     w(i|<v4>)
     mark(for (i in 1..a) { 1 if (2 > 3) { continue @l } })
   5 mark({ 1 if (2 > 3) { continue @l } })
@@ -536,12 +536,12 @@ L6 [body entry point]:
     call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
     jf(L7|<v8>)                                                                              NEXT:[read (Unit), mark({ continue @l })]
   6 mark({ continue @l })
-    jmp(L5 [loop entry point])                                                               NEXT:[magic(1..a|<v3>) -> <v4>]
+    jmp(L5 [loop entry point])                                                               NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 - 5 jmp(L8)                                                                                  NEXT:[jmp?(L5 [loop entry point])]                                                              PREV:[]
 L7:
     read (Unit)                                                                              PREV:[jf(L7|<v8>)]
 L8:
-  4 jmp?(L5 [loop entry point])                                                              NEXT:[magic(1..a|<v3>) -> <v4>, read (Unit)]
+  4 jmp?(L5 [loop entry point])                                                              NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>, read (Unit)]
 L3:
     read (Unit)                                                                              PREV:[jmp?(L3), jmp?(L5 [loop entry point])]
   3 r(5) -> <v9>
@@ -579,7 +579,7 @@ fun t10(a : Int) {
 L0:
   1 <START>
     v(a : Int)
-    magic(a : Int) -> <v0>
+    magic[FAKE_INITIALIZER](a : Int) -> <v0>
     w(a|<v0>)
   2 mark({ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 } })
     mark(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 })
@@ -592,10 +592,10 @@ L0:
     call(1..a, rangeTo|<v1>, <v2>) -> <v3>
     v(i)
 L4:
-    jmp?(L3)                                                                               NEXT:[read (Unit), magic(1..a|<v3>) -> <v4>]
+    jmp?(L3)                                                                               NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 L5 [loop entry point]:
 L6 [body entry point]:
-    magic(1..a|<v3>) -> <v4>                                                               PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
+    magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>                                         PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
     w(i|<v4>)
     mark(for (i in 1..a) { 1 if (2 > 3) { continue @l } })
   5 mark({ 1 if (2 > 3) { continue @l } })
@@ -607,12 +607,12 @@ L6 [body entry point]:
     call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
     jf(L7|<v8>)                                                                            NEXT:[read (Unit), mark({ continue @l })]
   6 mark({ continue @l })
-    jmp(L5 [loop entry point])                                                             NEXT:[magic(1..a|<v3>) -> <v4>]
+    jmp(L5 [loop entry point])                                                             NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 - 5 jmp(L8)                                                                                NEXT:[jmp?(L5 [loop entry point])]                                                            PREV:[]
 L7:
     read (Unit)                                                                            PREV:[jf(L7|<v8>)]
 L8:
-  4 jmp?(L5 [loop entry point])                                                            NEXT:[magic(1..a|<v3>) -> <v4>, read (Unit)]
+  4 jmp?(L5 [loop entry point])                                                            NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>, read (Unit)]
 L3:
     read (Unit)                                                                            PREV:[jmp?(L3), jmp?(L5 [loop entry point])]
   2 jmp(L9 [skipFinallyToErrorBlock])                                                      NEXT:[mark({ 2 })]
@@ -746,7 +746,7 @@ L5 [finish finally]:
 - 2 jmp(L6 [afterCatches])                                                                                     NEXT:[jmp(L7 [skipFinallyToErrorBlock])]                                                                          PREV:[]
 L2 [onException]:
   3 v(e: UnsupportedOperationException)                                                                        PREV:[jmp?(L2 [onException])]
-    magic(e: UnsupportedOperationException) -> <v3>
+    magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v3>
     w(e|<v3>)
   4 mark({ doSmth(2) })
     r(2) -> <v4>
@@ -794,7 +794,7 @@ L0:
 - 2 jmp(L3 [afterCatches])                                                               NEXT:[<END>]                                                                                PREV:[]
 L2 [onException]:
   3 v(e: UnsupportedOperationException)                                                  PREV:[jmp?(L2 [onException])]
-    magic(e: UnsupportedOperationException) -> <v1>
+    magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v1>
     w(e|<v1>)
   4 mark({ doSmth(2) })
     r(2) -> <v2>
@@ -840,7 +840,7 @@ L5 [finish finally]:
 - 2 jmp(L6 [afterCatches])                                                                                    NEXT:[jmp(L7 [skipFinallyToErrorBlock])]                                                                         PREV:[]
 L2 [onException]:
   3 v(e: UnsupportedOperationException)                                                                       PREV:[jmp?(L2 [onException])]
-    magic(e: UnsupportedOperationException) -> <v3>
+    magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v3>
     w(e|<v3>)
   4 mark({ return 2 })
     r(2) -> <v4>
@@ -896,7 +896,7 @@ L0:
   2 jmp(L4 [afterCatches])                                                                                     NEXT:[jmp(L7 [skipFinallyToErrorBlock])]
 L2 [onException]:
   3 v(e: UnsupportedOperationException)                                                                        PREV:[jmp?(L2 [onException])]
-    magic(e: UnsupportedOperationException) -> <v2>
+    magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>
     w(e|<v2>)
   4 mark({ return 2 })
     r(2) -> <v3>
@@ -935,14 +935,14 @@ fun doSmth(i: Int) {
 L0:
   1 <START>
     v(i: Int)
-    magic(i: Int) -> <v0>
+    magic[FAKE_INITIALIZER](i: Int) -> <v0>
     w(i|<v0>)
   2 mark({ })
     read (Unit)
 L1:
-  1 <END>                    NEXT:[<SINK>]
+  1 <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                  PREV:[]
+    <ERROR>                                    PREV:[]
 sink:
-    <SINK>                   PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<ERROR>, <END>]
 =====================

@@ -7,11 +7,11 @@ L0:
   1 <START>
   2 mark({ T })
     error(T, No resolved call)
-    magic(T) -> <v0>
+    magic[UNRESOLVED_CALL](T) -> <v0>
 L1:
-  1 <END>                         NEXT:[<SINK>]
+  1 <END>                                NEXT:[<SINK>]
 error:
-    <ERROR>                       PREV:[]
+    <ERROR>                              PREV:[]
 sink:
-    <SINK>                        PREV:[<ERROR>, <END>]
+    <SINK>                               PREV:[<ERROR>, <END>]
 =====================

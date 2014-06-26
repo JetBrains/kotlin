@@ -39,7 +39,7 @@ L0:
   2 mark({ null!!.doSomething() bar().doSomething })
     mark(null!!.doSomething())
     r(null) -> <v0>
-    magic(null!!|<v0>) -> <v1>
+    magic[NOT_NULL_ASSERTION](null!!|<v0>) -> <v1>
     jmp(error)                                          NEXT:[<ERROR>]
 -   mark(doSomething())                                 PREV:[]
 -   call(doSomething(), doSomething|<v1>) -> <v2>       PREV:[]

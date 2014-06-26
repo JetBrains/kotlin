@@ -418,7 +418,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public InstructionWithValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
             if (inputValues.isEmpty()) return read(expression);
-            return magic(expression, expression, inputValues, PseudocodePackage.expectedTypeFor(AllTypes.instance$, inputValues));
+            Map<PseudoValue, TypePredicate> predicate = PseudocodePackage.expectedTypeFor(AllTypes.instance$, inputValues);
+            return magic(expression, expression, inputValues, predicate, MagicKind.STRING_TEMPLATE);
         }
 
         @NotNull
@@ -427,10 +428,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull JetElement instructionElement,
                 @Nullable JetElement valueElement,
                 @NotNull List<PseudoValue> inputValues,
-                @NotNull Map<PseudoValue, TypePredicate> expectedTypes
+                @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
+                @NotNull MagicKind kind
         ) {
             MagicInstruction instruction = MagicInstruction.object$.create(
-                    instructionElement, valueElement, getCurrentScope(), inputValues, expectedTypes, valueFactory
+                    instructionElement, valueElement, getCurrentScope(), inputValues, expectedTypes, kind, valueFactory
             );
             add(instruction);
             return instruction;
@@ -496,7 +498,21 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                     throw new IllegalArgumentException("Invalid operation: " + operation);
             }
 
-            return magic(expression, expression, inputValues, expectedTypes);
+            return magic(expression, expression, inputValues, expectedTypes, getMagicKind(operation));
+        }
+
+        @NotNull
+        private MagicKind getMagicKind(@NotNull PredefinedOperation operation) {
+            switch(operation) {
+                case AND:
+                    return MagicKind.AND;
+                case OR:
+                    return MagicKind.OR;
+                case NOT_NULL_ASSERTION:
+                    return MagicKind.NOT_NULL_ASSERTION;
+                default:
+                    throw new IllegalArgumentException("Invalid operation: " + operation);
+            }
         }
 
         @Override

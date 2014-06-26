@@ -7,10 +7,10 @@ tailRecursive fun sum(x: Long, sum: Long): Long {
 L0:
   1 <START>
     v(x: Long)
-    magic(x: Long) -> <v0>
+    magic[FAKE_INITIALIZER](x: Long) -> <v0>
     w(x|<v0>)
     v(sum: Long)
-    magic(sum: Long) -> <v1>
+    magic[FAKE_INITIALIZER](sum: Long) -> <v1>
     w(sum|<v1>)
   2 mark({ if (x == 0.toLong()) return sum return sum(x - 1, sum + x) })
     mark(if (x == 0.toLong()) return sum)

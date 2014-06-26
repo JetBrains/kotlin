@@ -18,11 +18,11 @@ L0:
     mark("before")
     r("before") -> <v0>
     v(val x: Int)                                                                               INIT: in: {} out: {x=D}
-    magic(val x: Int) -> <v1>                                                                   INIT: in: {x=D} out: {x=D}
+    magic[FAKE_INITIALIZER](val x: Int) -> <v1>                                                 INIT: in: {x=D} out: {x=D}
     w(x|<v1>)                                                                                   INIT: in: {x=D} out: {x=ID}
   3 mark({ val a = x })                                                                         INIT: in: {x=ID} out: {x=ID}
     v(val a = x)                                                                                INIT: in: {x=ID} out: {a=D, x=ID}
-    magic(x) -> <v2>                                                                            INIT: in: {a=D, x=ID} out: {a=D, x=ID}
+    magic[IMPLICIT_RECEIVER](x) -> <v2>                                                         INIT: in: {a=D, x=ID} out: {a=D, x=ID}
     r(x|<v2>) -> <v3>
     w(a|<v3>)                                                                                   INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
   2 jmp?(L2)                                                                                    INIT: in: {x=ID} out: {x=ID}
@@ -43,16 +43,16 @@ fun foo() {
         }
 ---------------------
 L3:
-  3 <START>                INIT: in: {} out: {}
+  3 <START>                                INIT: in: {} out: {}
   4 mark({ val b = x })
-    v(val b = x)           INIT: in: {} out: {b=D}
-    magic(x) -> <v0>       INIT: in: {b=D} out: {b=D}     USE: in: {x=READ} out: {x=READ}
-    r(x|<v0>) -> <v1>                                     USE: in: {} out: {x=READ}
-    w(b|<v1>)              INIT: in: {b=D} out: {b=ID}
+    v(val b = x)                           INIT: in: {} out: {b=D}
+    magic[IMPLICIT_RECEIVER](x) -> <v0>    INIT: in: {b=D} out: {b=D}     USE: in: {x=READ} out: {x=READ}
+    r(x|<v0>) -> <v1>                                                     USE: in: {} out: {x=READ}
+    w(b|<v1>)                              INIT: in: {b=D} out: {b=ID}
 L4:
-  3 <END>                  INIT: in: {} out: {}
+  3 <END>                                  INIT: in: {} out: {}
 error:
     <ERROR>
 sink:
-    <SINK>                                                USE: in: {} out: {}
+    <SINK>                                                                USE: in: {} out: {}
 =====================

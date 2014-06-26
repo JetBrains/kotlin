@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWith
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MagicKind
 
 public abstract class OperationInstruction protected(
         element: JetElement,
@@ -101,7 +102,8 @@ public class MagicInstruction(
         element: JetElement,
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>,
-        val expectedTypes: Map<PseudoValue, TypePredicate>
+        val expectedTypes: Map<PseudoValue, TypePredicate>,
+        val kind: MagicKind
 ) : OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
     public val synthetic: Boolean get() = outputValue.element == null
 
@@ -109,20 +111,43 @@ public class MagicInstruction(
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitMagic(this)
 
-    override fun createCopy() = MagicInstruction(element, lexicalScope, inputValues, expectedTypes).setResult(resultValue)
+    override fun createCopy() =
+            MagicInstruction(element, lexicalScope, inputValues, expectedTypes, kind).setResult(resultValue)
 
-    override fun toString() = renderInstruction("magic", render(element))
+    override fun toString() = renderInstruction("magic[$kind]", render(element))
 
     class object {
-        fun create(element: JetElement,
-                   valueElement: JetElement?,
-                   lexicalScope: LexicalScope,
-                   inputValues: List<PseudoValue>,
-                   expectedTypes: Map<PseudoValue, TypePredicate>,
-                   factory: PseudoValueFactory): MagicInstruction = MagicInstruction(
-                element, lexicalScope, inputValues, expectedTypes
+        fun create(
+                element: JetElement,
+                valueElement: JetElement?,
+                lexicalScope: LexicalScope,
+                inputValues: List<PseudoValue>,
+                expectedTypes: Map<PseudoValue, TypePredicate>,
+                kind: MagicKind,
+                factory: PseudoValueFactory
+        ): MagicInstruction = MagicInstruction(
+                element, lexicalScope, inputValues, expectedTypes, kind
         ).setResult(factory, valueElement) as MagicInstruction
     }
+}
+
+public enum class MagicKind {
+    // builtin operations
+    STRING_TEMPLATE
+    AND
+    OR
+    NOT_NULL_ASSERTION
+    EQUALS_IN_WHEN_CONDITION
+    IS
+    // implicit operations
+    LOOP_RANGE_ITERATION
+    IMPLICIT_RECEIVER
+    VALUE_CONSUMER
+    // unrecognized operations
+    UNRESOLVED_CALL
+    UNSUPPORTED_OPERATION
+    UNRECOGNIZED_WRITE_RHS
+    FAKE_INITIALIZER
 }
 
 // Merges values produced by alternative control-flow paths (such as 'if' branches)
