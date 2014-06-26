@@ -25,6 +25,7 @@ class ClassBody (
         val primaryConstructorSignature: PrimaryConstructorSignature?,
         val members: List<Member>,
         val classObjectMembers: List<Member>,
+        val factoryFunctions: List<FactoryFunction>,
         val lBrace: LBrace,
         val rBrace: RBrace) {
 

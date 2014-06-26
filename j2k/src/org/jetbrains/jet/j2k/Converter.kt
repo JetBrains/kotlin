@@ -125,6 +125,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
         val members = ArrayList<Member>()
         val classObjectMembers = ArrayList<Member>()
+        val factoryFunctions = ArrayList<FactoryFunction>()
         var primaryConstructorSignature: PrimaryConstructorSignature? = null
         for ((psiMember, member) in convertedMembers) {
             if (member is PrimaryConstructor) {
@@ -135,8 +136,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
                     members.add(initializer)
                 }
             }
-            else if (useClassObject && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC) ||
-                    member is FactoryFunction) {
+            else if (member is FactoryFunction) {
+                factoryFunctions.add(member)
+            }
+            else if (useClassObject && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
                 classObjectMembers.add(member)
             }
             else {
@@ -146,13 +149,12 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
         val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
-        return ClassBody(primaryConstructorSignature, members, classObjectMembers, lBrace, rBrace)
+        return ClassBody(primaryConstructorSignature, members, classObjectMembers, factoryFunctions, lBrace, rBrace)
     }
 
     // do not convert private static methods into class object if possible
     private fun shouldGenerateClassObject(psiClass: PsiClass, convertedMembers: Map<PsiMember, Member>): Boolean {
         if (psiClass.isEnum()) return false
-        if (convertedMembers.values().any { it is FactoryFunction }) return true
         val members = convertedMembers.keySet().filter { !it.isConstructor() }
         val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance(javaClass<PsiClass>()).filter { it.hasModifierProperty(PsiModifier.STATIC) }

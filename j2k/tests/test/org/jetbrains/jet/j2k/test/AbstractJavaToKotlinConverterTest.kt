@@ -94,10 +94,7 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
                                                 "using the first line of test data file")
         }
 
-        val reformatInFun = when (prefix) {
-            "element", "expression", "statement" -> true
-            else -> false
-        }
+        val reformatInFun = prefix in setOf("element", "expression", "statement")
 
         val actual = reformat(rawConverted, project, reformatInFun)
         val kotlinPath = javaPath.replace(".java", ".kt")

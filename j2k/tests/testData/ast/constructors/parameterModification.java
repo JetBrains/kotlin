@@ -1,6 +1,6 @@
 //file
 class C {
-    private val field;
+    private int field;
 
     C(int arg1, int arg2, int arg3) {
         arg1++;

@@ -1,3 +1,8 @@
+// this is a secondary constructor
+fun A(): A {
+    return A(1)
+} // end of secondary constructor body
+
 class A// this is a primary constructor
 (p: Int) {
     private val v: Int
@@ -5,14 +10,6 @@ class A// this is a primary constructor
     {
         v = 1
     } // end of primary constructor body
-
-    class object {
-
-        // this is a secondary constructor
-        fun create(): A {
-            return A(1)
-        } // end of secondary constructor body
-    }
 }
 
 class B// this constructor will disappear

@@ -52,10 +52,11 @@ class PrimaryConstructorSignature(val modifiers: Modifiers, val parameterList: P
     }
 }
 
-class FactoryFunction(annotations: Annotations,
+class FactoryFunction(name: Identifier,
+                      annotations: Annotations,
                       modifiers: Modifiers,
                       returnType: Type,
                       parameterList: ParameterList,
                       typeParameterList: TypeParameterList,
                       block: Block)
-: Function(Identifier("create").assignNoPrototype(), annotations, modifiers, returnType, typeParameterList, parameterList, block, false)
+: Function(name, annotations, modifiers, returnType, typeParameterList, parameterList, block, false)

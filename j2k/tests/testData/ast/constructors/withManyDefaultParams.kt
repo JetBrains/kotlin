@@ -1,4 +1,12 @@
-public class Test private(private val myName: String) {
+public fun Test(): Test {
+    return Test(null)
+}
+
+public fun Test(name: String): Test {
+    return Test(Test.foo(name))
+}
+
+public class Test(private val myName: String) {
     var a: Boolean = false
     var b: Double = 0.toDouble()
     var c: Float = 0.toFloat()
@@ -9,14 +17,6 @@ public class Test private(private val myName: String) {
 
     class object {
 
-        public fun create(): Test {
-            return Test(null)
-        }
-
-        public fun create(name: String): Test {
-            return Test(foo(name))
-        }
-
         fun foo(n: String): String {
             return ""
         }
@@ -26,7 +26,7 @@ public class Test private(private val myName: String) {
 public class User {
     class object {
         public fun main() {
-            val t = Test.create("name")
+            val t = Test("name")
         }
     }
 }

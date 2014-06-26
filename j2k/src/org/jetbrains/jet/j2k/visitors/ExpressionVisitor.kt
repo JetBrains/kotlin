@@ -264,18 +264,6 @@ open class ExpressionVisitor(private val converter: Converter,
     private fun createNewClassExpression(expression: PsiNewExpression): Expression {
         val anonymousClass = expression.getAnonymousClass()
         val classReference = expression.getClassOrAnonymousClassReference()
-        var arguments = expression.getArgumentList()?.getExpressions() ?: array()
-
-        val constructor = expression.resolveMethod()
-        if (constructor != null && converter.conversionScope.contains(constructor) && !constructor.isPrimaryConstructor()) {
-            //TODO: handle anonymous class!
-            // non-primary constructor converted to factory method in class object
-            val reference = expression.getClassReference()
-            val typeParameters = if (reference != null) typeConverter.convertTypes(reference.getTypeParameters()) else listOf()
-            return QualifiedExpression(Identifier(constructor.getName(), false).assignNoPrototype(),
-                                       MethodCallExpression.buildNotNull(null, "create", converter.convertExpressions(arguments), typeParameters).assignNoPrototype())
-        }
-
         return NewClassExpression(converter.convertElement(classReference),
                                   convertArguments(expression),
                                   converter.convertExpression(expression.getQualifier()),

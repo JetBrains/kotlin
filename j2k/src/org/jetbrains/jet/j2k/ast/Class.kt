@@ -30,17 +30,22 @@ open class Class(
 ) : Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) {
+        builder.append(body.factoryFunctions, "\n", "", "\n\n")
+
         builder.append(annotations)
                 .appendWithSpaceAfter(presentationModifiers())
                 .append(keyword)
                 .append(" ")
                 .append(name)
                 .append(typeParameterList)
+
         if (body.primaryConstructorSignature != null) {
             builder.append(body.primaryConstructorSignature)
         }
+
         appendBaseTypes(builder)
         typeParameterList.appendWhere(builder)
+
         body.append(builder)
     }
 

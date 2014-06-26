@@ -43,10 +43,10 @@ class ConstructorConverter(private val converter: Converter) {
                         val member = expression.getReference()?.resolve() as? PsiMember
                         if (member != null &&
                                 !member.isConstructor() &&
-                                member.getContainingClass() == constructor.getContainingClass() &&
-                                !member.hasModifierProperty(PsiModifier.STATIC)) {
+                                member.getContainingClass() == constructor.getContainingClass()) {
                             val isNullable = member is PsiField && typeConverter.variableNullability(member).isNullable(converter.settings)
-                            result = QualifiedExpression(tempValIdentifier(), Identifier(expression.getReferenceName()!!, isNullable).assignNoPrototype())
+                            val qualifier = if (member.hasModifierProperty(PsiModifier.STATIC)) constructor.declarationIdentifier() else tempValIdentifier()
+                            result = QualifiedExpression(qualifier, Identifier(expression.getReferenceName()!!, isNullable).assignNoPrototype())
                             return
                         }
                     }
@@ -61,7 +61,7 @@ class ConstructorConverter(private val converter: Converter) {
                                                 typeParameterList.parameters,
                                                 Nullability.NotNull,
                                                 converter.settings).assignNoPrototype()
-            return FactoryFunction(annotations, modifiers, factoryFunctionType, params, typeParameterList, body)
+            return FactoryFunction(constructor.declarationIdentifier(), annotations, modifiers, factoryFunctionType, params, typeParameterList, body)
         }
     }
 
@@ -176,12 +176,13 @@ class ConstructorConverter(private val converter: Converter) {
         assert(classBody.primaryConstructorSignature == null)
 
         val fieldsToInitialize = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal }
-        for (factoryFunction in classBody.factoryFunctions()) {
+        for (factoryFunction in classBody.factoryFunctions) {
             val body = factoryFunction.body!!
             // 2 cases: secondary constructor either calls another constructor or does not call any
             val newStatements = replaceConstructorCallInFactoryFunction(body, className) ?:
                     insertCallToArtificialPrimary(body, className, fieldsToInitialize)
             factoryFunction.body = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+            //TODO: no assignment here
         }
 
         val parameters = fieldsToInitialize.map { field ->
@@ -189,15 +190,17 @@ class ConstructorConverter(private val converter: Converter) {
             Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS }).assignPrototypesFrom(field)
         }
 
-        val modifiers = Modifiers(listOf(Modifier.PRIVATE)).assignNoPrototype()
+        val modifiers = Modifiers.Empty
+        //TODO: we can generate it private when secondary constructors are supported by Kotlin
+        //val modifiers = Modifiers(listOf(Modifier.PRIVATE)).assignNoPrototype()
         val parameterList = ParameterList(parameters).assignNoPrototype()
         val constructorSignature = PrimaryConstructorSignature(modifiers, parameterList).assignNoPrototype()
         val updatedMembers = classBody.members.filter { !fieldsToInitialize.contains(it) }
-        return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
+        return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, classBody.factoryFunctions, classBody.lBrace, classBody.rBrace)
     }
 
     private fun replaceConstructorCallsInFactoryFunctions(classBody: ClassBody, className: String) {
-        for (factoryFunction in classBody.factoryFunctions()) {
+        for (factoryFunction in classBody.factoryFunctions) {
             val body = factoryFunction.body!!
             val statements = replaceConstructorCallInFactoryFunction(body, className)
             if (statements != null) {
@@ -277,8 +280,6 @@ class ConstructorConverter(private val converter: Converter) {
         }
         return statements
     }
-
-    private fun ClassBody.factoryFunctions() = classObjectMembers.filterIsInstance(javaClass<FactoryFunction>())
 
     private val tempValName: String = "__"
     private fun tempValIdentifier(): Identifier = Identifier(tempValName, false).assignNoPrototype()
