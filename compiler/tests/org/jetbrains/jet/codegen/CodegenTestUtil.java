@@ -22,6 +22,7 @@ import com.intellij.psi.PsiFile;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
@@ -122,7 +123,7 @@ public class CodegenTestUtil {
                     "-d", javaClassesTempDirectory.getPath()
             );
 
-            File javaFile = new File("compiler/testData/codegen/" + filename);
+            File javaFile = new File(JetTestCaseBuilder.getTestDataPathBase() + "/codegen/" + filename);
             JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
 
             return javaClassesTempDirectory;

@@ -75,7 +75,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             @Override
             public boolean process(File file) {
                 if (file.getName().endsWith(".kt")) {
-                    files.add(file.getPath().substring("compiler/testData/codegen/".length()));
+                    files.add(relativePath(file));
                 }
                 return true;
             }
@@ -93,7 +93,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     private void blackBoxFileAgainstJavaByFullPath(@NotNull String ktFileFullPath) {
-        String ktFile = ktFileFullPath.substring("compiler/testData/codegen/".length());
+        String ktFile = relativePath(new File(ktFileFullPath));
         File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 
         myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
@@ -111,7 +111,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         FileUtil.processFilesRecursively(dirFile, new Processor<File>() {
             @Override
             public boolean process(File file) {
-                String path = file.getPath().substring("compiler/testData/codegen/".length());
+                String path = relativePath(file);
                 if (path.endsWith(".kt")) {
                     ktFilePaths.add(path);
                 }
