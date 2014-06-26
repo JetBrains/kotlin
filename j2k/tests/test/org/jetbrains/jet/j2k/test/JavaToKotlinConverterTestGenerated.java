@@ -811,6 +811,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/constructors"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("chain.java")
+        public void testChain() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/chain.java");
+        }
+        
         @TestMetadata("customerBuilder.java")
         public void testCustomerBuilder() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/customerBuilder.java");
@@ -864,6 +869,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("methodCallInFactoryFun.java")
         public void testMethodCallInFactoryFun() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/methodCallInFactoryFun.java");
+        }
+        
+        @TestMetadata("noPrimary.java")
+        public void testNoPrimary() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/noPrimary.java");
         }
         
         @TestMetadata("parameterModification.java")

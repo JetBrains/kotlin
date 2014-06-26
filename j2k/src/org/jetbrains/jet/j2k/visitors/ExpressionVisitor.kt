@@ -267,7 +267,7 @@ open class ExpressionVisitor(private val converter: Converter,
         var arguments = expression.getArgumentList()?.getExpressions() ?: array()
 
         val constructor = expression.resolveMethod()
-        if (constructor != null && !constructor.isPrimaryConstructor() && converter.conversionScope.contains(constructor)) {
+        if (constructor != null && converter.conversionScope.contains(constructor) && !constructor.isPrimaryConstructor()) {
             //TODO: handle anonymous class!
             // non-primary constructor converted to factory method in class object
             val reference = expression.getClassReference()

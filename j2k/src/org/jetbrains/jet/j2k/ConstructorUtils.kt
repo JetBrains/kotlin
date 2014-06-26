@@ -17,7 +17,7 @@
 package org.jetbrains.jet.j2k
 
 import com.intellij.psi.*
-import java.util.LinkedHashSet
+import java.util.HashMap
 
 fun PsiMethod.isPrimaryConstructor(): Boolean {
     if (!isConstructor()) return false
@@ -28,33 +28,39 @@ fun PsiMethod.isPrimaryConstructor(): Boolean {
 
 fun PsiClass.getPrimaryConstructor(): PsiMethod? {
     val constructors = getConstructors()
-    return when (constructors.size) {
-        0 -> null
+    when (constructors.size) {
+        0 -> return null
 
-        1 -> constructors.single()
+        1 -> return constructors.single()
 
         else -> {
-            // if there is more than one constructor then choose one invoked by all others
-            //TODO: logic is incorrect - there can be a constructor which does not call any other
-            class Visitor() : JavaRecursiveElementVisitor() {
-                //TODO: skip all non-constructor members (optimization)
-                private val invokedConstructors = LinkedHashSet<PsiMethod>()
-
-                override fun visitReferenceExpression(expression: PsiReferenceExpression) {
-                    expression.getReferences()
-                            .filter { it.getCanonicalText() == "this" }
-                            .map { it.resolve() }
-                            .filterIsInstance(javaClass<PsiMethod>())
-                            .filterTo(invokedConstructors) { it.isConstructor() }
+            val toTargetConstructorMap = HashMap<PsiMethod, PsiMethod>()
+            for (constructor in constructors) {
+                val firstStatement = constructor.getBody()?.getStatements()?.firstOrNull()
+                val refExpr = ((firstStatement as? PsiExpressionStatement)
+                        ?.getExpression() as? PsiMethodCallExpression)
+                            ?.getMethodExpression()
+                if (refExpr != null && refExpr.getCanonicalText() == "this") {
+                    val target = refExpr.resolve() as? PsiMethod
+                    if (target != null && target.isConstructor()) {
+                        val finalTarget = toTargetConstructorMap[target] ?: target!!/*TODO: see KT-5335*/
+                        toTargetConstructorMap[constructor] = finalTarget
+                        for (entry in toTargetConstructorMap.entrySet()) {
+                            if (entry.getValue() == constructor) {
+                                entry.setValue(finalTarget)
+                            }
+                        }
+                    }
                 }
-
-                val primaryConstructor: PsiMethod?
-                    get() = if (invokedConstructors.size == 1) invokedConstructors.single() else null
             }
 
-            val visitor = Visitor()
-            accept(visitor)
-            visitor.primaryConstructor
+            val candidates = constructors.filter { it !in toTargetConstructorMap }
+            if (candidates.size != 1) return null // there should be only one constructor which does not call other constructor
+            val candidate = candidates.single()
+            return if (toTargetConstructorMap.values().all { it == candidate } /* all other constructors call our candidate (directly or indirectly)*/)
+                candidate
+            else
+                null
         }
     }
 }
@@ -81,8 +87,5 @@ fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
     }
     return false
 }
-
-fun PsiReferenceExpression.isThisConstructorCall(): Boolean
-        = getReferences().filter { it.getCanonicalText() == "this" }.map { it.resolve() }.any { it is PsiMethod && it.isConstructor() }
 
 fun PsiElement.isConstructor(): Boolean = this is PsiMethod && this.isConstructor()

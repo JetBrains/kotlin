@@ -28,10 +28,10 @@ class ConstructorConverter(private val converter: Converter) {
     private val typeConverter = converter.typeConverter
 
     public fun convertConstructor(constructor: PsiMethod,
-                                          annotations: Annotations,
-                                          modifiers: Modifiers,
-                                          membersToRemove: MutableSet<PsiMember>,
-                                          postProcessBody: (Block) -> Block): Member {
+                                  annotations: Annotations,
+                                  modifiers: Modifiers,
+                                  membersToRemove: MutableSet<PsiMember>,
+                                  postProcessBody: (Block) -> Block): Member {
         if (constructor.isPrimaryConstructor()) {
             return convertPrimaryConstructor(constructor, annotations, modifiers, membersToRemove, postProcessBody)
         }
@@ -164,64 +164,24 @@ class ConstructorConverter(private val converter: Converter) {
 
     public fun postProcessConstructors(classBody: ClassBody, psiClass: PsiClass): ClassBody {
         if (psiClass.getPrimaryConstructor() == null && psiClass.getConstructors().size > 1) {
-            return generateArtificialPrimaryConstructor(psiClass.declarationIdentifier(), classBody)
+            return generateArtificialPrimaryConstructor(psiClass.getName()!!, classBody)
         }
         else {
-            correctFactoryFunctions(classBody, psiClass.getName()!!)
+            replaceConstructorCallsInFactoryFunctions(classBody, psiClass.getName()!!)
             return classBody
         }
     }
 
-    private fun generateArtificialPrimaryConstructor(className: Identifier, classBody: ClassBody): ClassBody {
+    private fun generateArtificialPrimaryConstructor(className: String, classBody: ClassBody): ClassBody {
         assert(classBody.primaryConstructorSignature == null)
 
         val fieldsToInitialize = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal }
-        val initializers = HashMap<Field, Expression?>()
         for (factoryFunction in classBody.factoryFunctions()) {
-            for (field in fieldsToInitialize) {
-                initializers.put(field, getDefaultInitializer(field))
-            }
-
-            val statements = ArrayList<Statement>()
-            for (statement in factoryFunction.body!!.statements) {
-                var keepStatement = true
-                if (statement is AssignmentExpression) {
-                    val assignee = statement.left
-                    if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == tempValName) {
-                        val name = (assignee.identifier as Identifier).name
-                        for (field in fieldsToInitialize) {
-                            if (name == field.identifier.name) {
-                                initializers.put(field, statement.right)
-                                keepStatement = false
-                            }
-
-                        }
-                    }
-
-                }
-
-                if (keepStatement) {
-                    statements.add(statement)
-                }
-            }
-
-            val arguments = fieldsToInitialize.map { initializers[it] ?: LiteralExpression("null").assignNoPrototype() }
-            val initializer = MethodCallExpression.buildNotNull(null, className.name, arguments).assignNoPrototype()
-            if (statements.isNotEmpty()) {
-                val localVar = LocalVariable(tempValIdentifier(),
-                                             Annotations.Empty,
-                                             Modifiers.Empty,
-                                             null,
-                                             initializer,
-                                             true).assignNoPrototype()
-                statements.add(0, DeclarationStatement(listOf(localVar)).assignNoPrototype())
-                statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
-            }
-            else {
-                statements.add(ReturnStatement(initializer).assignNoPrototype())
-            }
-
-            factoryFunction.body = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+            val body = factoryFunction.body!!
+            // 2 cases: secondary constructor either calls another constructor or does not call any
+            val newStatements = replaceConstructorCallInFactoryFunction(body, className) ?:
+                    insertCallToArtificialPrimary(body, className, fieldsToInitialize)
+            factoryFunction.body = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
 
         val parameters = fieldsToInitialize.map { field ->
@@ -236,15 +196,17 @@ class ConstructorConverter(private val converter: Converter) {
         return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
     }
 
-    private fun correctFactoryFunctions(classBody: ClassBody, className: String) {
+    private fun replaceConstructorCallsInFactoryFunctions(classBody: ClassBody, className: String) {
         for (factoryFunction in classBody.factoryFunctions()) {
             val body = factoryFunction.body!!
-            val statements = correctFactoryFunctionStatements(body, className)
-            factoryFunction.body = Block(statements, body.lBrace, body.rBrace).assignPrototypesFrom(body)
+            val statements = replaceConstructorCallInFactoryFunction(body, className)
+            if (statements != null) {
+                factoryFunction.body = Block(statements, body.lBrace, body.rBrace).assignPrototypesFrom(body)
+            }
         }
     }
 
-    private fun correctFactoryFunctionStatements(body: Block, className: String): List<Statement> {
+    private fun replaceConstructorCallInFactoryFunction(body: Block, className: String): List<Statement>? {
         val statements = ArrayList(body.statements)
 
         // searching for other constructor call in form "this(...)"
@@ -260,12 +222,59 @@ class ConstructorConverter(private val converter: Converter) {
                     }
                     val localVar = LocalVariable(tempValIdentifier(), Annotations.Empty, Modifiers.Empty, null, constructorCall, true).assignNoPrototype()
                     statements[i] = DeclarationStatement(listOf(localVar)).assignNoPrototype()
-                    break
+                    statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
+                    return statements
                 }
             }
         }
 
-        statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
+        return null
+    }
+
+    private fun insertCallToArtificialPrimary(body: Block, className: String, fieldsToInitialize: Collection<Field>): List<Statement> {
+        val initializers = HashMap<Field, Expression?>()
+        for (field in fieldsToInitialize) {
+            initializers.put(field, getDefaultInitializer(field))
+        }
+
+        val statements = ArrayList<Statement>()
+        for (statement in body.statements) {
+            var keepStatement = true
+            if (statement is AssignmentExpression) {
+                val assignee = statement.left
+                if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == tempValName) {
+                    val name = (assignee.identifier as Identifier).name
+                    for (field in fieldsToInitialize) {
+                        if (name == field.identifier.name) {
+                            initializers.put(field, statement.right)
+                            keepStatement = false
+                        }
+
+                    }
+                }
+
+            }
+
+            if (keepStatement) {
+                statements.add(statement)
+            }
+        }
+
+        val arguments = fieldsToInitialize.map { initializers[it] ?: LiteralExpression("null").assignNoPrototype() }
+        val initializer = MethodCallExpression.buildNotNull(null, className, arguments).assignNoPrototype()
+        if (statements.isNotEmpty()) {
+            val localVar = LocalVariable(tempValIdentifier(),
+                                         Annotations.Empty,
+                                         Modifiers.Empty,
+                                         null,
+                                         initializer,
+                                         true).assignNoPrototype()
+            statements.add(0, DeclarationStatement(listOf(localVar)).assignNoPrototype())
+            statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
+        }
+        else {
+            statements.add(ReturnStatement(initializer).assignNoPrototype())
+        }
         return statements
     }
 
