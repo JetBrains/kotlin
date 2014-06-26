@@ -14,6 +14,7 @@ L0:
     mark(when(a) { is Int -> return a })
     r(a) -> <v1>
     mark(is Int -> return a)
+    mark(is Int)
     magic(is Int|<v1>) -> <v2>
     jmp?(L4|<v2>)                               NEXT:[<END>, r(a) -> <v3>]
 L3:

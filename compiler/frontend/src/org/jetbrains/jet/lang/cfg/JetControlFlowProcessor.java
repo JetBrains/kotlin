@@ -120,24 +120,41 @@ public class JetControlFlowProcessor {
 
         private final JetVisitorVoid conditionVisitor = new JetVisitorVoid() {
 
+            private JetExpression getSubjectExpression(JetWhenCondition condition) {
+                JetWhenExpression whenExpression = PsiTreeUtil.getParentOfType(condition, JetWhenExpression.class);
+                return whenExpression != null ? whenExpression.getSubjectExpression() : null;
+            }
+
             @Override
             public void visitWhenConditionInRange(@NotNull JetWhenConditionInRange condition) {
-                generateInstructions(condition.getRangeExpression());
-                generateInstructions(condition.getOperationReference());
-
-                // TODO : read the call to contains()...
-                createNonSyntheticValue(condition, condition.getRangeExpression(), condition.getOperationReference());
+                if (!generateCall(condition.getOperationReference())) {
+                    JetExpression rangeExpression = condition.getRangeExpression();
+                    generateInstructions(rangeExpression);
+                    createNonSyntheticValue(condition, rangeExpression);
+                }
             }
 
             @Override
             public void visitWhenConditionIsPattern(@NotNull JetWhenConditionIsPattern condition) {
-                // TODO: types in CF?
+                mark(condition);
+                createNonSyntheticValue(condition, getSubjectExpression(condition));
             }
 
             @Override
             public void visitWhenConditionWithExpression(@NotNull JetWhenConditionWithExpression condition) {
-                generateInstructions(condition.getExpression());
-                copyValue(condition.getExpression(), condition);
+                mark(condition);
+
+                JetExpression expression = condition.getExpression();
+                generateInstructions(expression);
+
+                JetExpression subjectExpression = getSubjectExpression(condition);
+                if (subjectExpression != null) {
+                    // todo: this can be replaced by equals() invocation (when corresponding resolved call is recorded)
+                    createNonSyntheticValue(condition, subjectExpression, expression);
+                }
+                else {
+                    copyValue(expression, condition);
+                }
             }
 
             @Override
@@ -1254,19 +1271,14 @@ public class JetControlFlowProcessor {
                     JetWhenCondition condition = conditions[i];
                     condition.accept(conditionVisitor);
                     if (i + 1 < conditions.length) {
-                        PseudoValue conditionValue = createSyntheticValue(condition, subjectExpression, condition);
-                        builder.nondeterministicJump(bodyLabel, expression, conditionValue);
+                        builder.nondeterministicJump(bodyLabel, expression, builder.getBoundValue(condition));
                     }
                 }
 
                 if (!isElse) {
                     nextLabel = builder.createUnboundLabel();
-                    PseudoValue conditionValue = null;
                     JetWhenCondition lastCondition = KotlinPackage.lastOrNull(conditions);
-                    if (lastCondition != null) {
-                        conditionValue = createSyntheticValue(lastCondition, subjectExpression, lastCondition);
-                    }
-                    builder.nondeterministicJump(nextLabel, expression, conditionValue);
+                    builder.nondeterministicJump(nextLabel, expression, builder.getBoundValue(lastCondition));
                 }
 
                 builder.bindLabel(bodyLabel);
@@ -1515,7 +1527,9 @@ public class JetControlFlowProcessor {
                 SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues) {
             JetExpression expression = valueArgument.getArgumentExpression();
             if (expression != null) {
-                generateInstructions(expression);
+                if (!valueArgument.isExternal()) {
+                    generateInstructions(expression);
+                }
 
                 PseudoValue argValue = builder.getBoundValue(expression);
                 if (argValue != null) {

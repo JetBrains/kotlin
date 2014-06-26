@@ -149,6 +149,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest("compiler/testData/cfg/controlStructures/returnsInWhen.kt");
             }
             
+            @TestMetadata("whenConditions.kt")
+            public void testWhenConditions() throws Exception {
+                doTest("compiler/testData/cfg/controlStructures/whenConditions.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/cfg/conventions")
