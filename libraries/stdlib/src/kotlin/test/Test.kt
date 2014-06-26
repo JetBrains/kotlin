@@ -13,7 +13,7 @@ public inline fun assertTrue(message: String, block: ()-> Boolean) {
 }
 
 /** Asserts that the given block returns true */
-public inline fun assertTrue(block: ()-> Boolean) : Unit = assertTrue("exprected true", block)
+public inline fun assertTrue(block: ()-> Boolean) : Unit = assertTrue("expected true", block)
 
 /** Asserts that the given block returns false */
 public inline fun assertNot(message: String, block: ()-> Boolean) {
