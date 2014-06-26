@@ -229,18 +229,28 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
     }
 
     private static String composeTooltipString(@NotNull DeclarationDescriptor declarationDescriptor, @NotNull AnnotationDescriptor descriptor) {
-        return "'" + getDescriptorString(declarationDescriptor) + "' is deprecated. " + getMessageFromAnnotationDescriptor(descriptor);
+        String fact = "'" + getDescriptorString(declarationDescriptor) + "' is deprecated.";
+        String message = getMessageFromAnnotationDescriptor(descriptor);
+        return message == null ? fact : fact + " " + message;
     }
 
+    @Nullable
     private static String getMessageFromAnnotationDescriptor(@NotNull AnnotationDescriptor descriptor) {
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(descriptor.getType());
-        assert classDescriptor != null : "ClassDescriptor for kotlin.deprecated mustn't be null";
-        ValueParameterDescriptor parameter =
-                DescriptorResolverUtils.getAnnotationParameterByName(DEFAULT_ANNOTATION_MEMBER_NAME, classDescriptor);
-        assert parameter != null : "kotlin.deprecated must have one parameter called value";
-        CompileTimeConstant<?> valueArgument = descriptor.getValueArgument(parameter);
-        assert valueArgument != null : "kotlin.deprecated must have value argument";
-        return (String) valueArgument.getValue();
+        if (classDescriptor != null) {
+            ValueParameterDescriptor parameter =
+                    DescriptorResolverUtils.getAnnotationParameterByName(DEFAULT_ANNOTATION_MEMBER_NAME, classDescriptor);
+            if (parameter != null) {
+                CompileTimeConstant<?> valueArgument = descriptor.getValueArgument(parameter);
+                if (valueArgument != null) {
+                    Object value = valueArgument.getValue();
+                    if (value instanceof String) {
+                        return String.valueOf(value);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private static String getDescriptorString(@NotNull DeclarationDescriptor descriptor) {
