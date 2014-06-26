@@ -69,6 +69,30 @@ fun getDefaultInitializer(field: Field): Expression {
     return result.assignNoPrototype()
 }
 
+fun isVal(field: PsiField): Boolean {
+    if (field.hasModifierProperty(PsiModifier.FINAL)) return true
+    if (!field.hasModifierProperty(PsiModifier.PRIVATE)) return false
+    val containingClass = field.getContainingClass() ?: return false
+    val writes = findVariableUsages(field, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
+    if (writes.size == 0) return true
+    if (writes.size > 1) return false
+    val write = writes.single()
+    val parent = write.getParent()
+    if (parent is PsiAssignmentExpression &&
+            parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
+            isQualifierEmptyOrThis(write)) {
+        val constructor = write.getContainingConstructor()
+        return constructor != null &&
+                constructor.getContainingClass() == containingClass &&
+                parent.getParent() is PsiExpressionStatement &&
+                parent.getParent()?.getParent() == constructor.getBody()
+    }
+    return false
+}
+
+fun shouldGenerateDefaultInitializer(field: PsiField)
+        = field.getInitializer() == null && !(isVal(field) && field.hasWriteAccesses(field.getContainingClass()))
+
 fun isQualifierEmptyOrThis(ref: PsiReferenceExpression): Boolean {
     val qualifier = ref.getQualifierExpression()
     return qualifier == null || (qualifier is PsiThisExpression && qualifier.getQualifier() == null)

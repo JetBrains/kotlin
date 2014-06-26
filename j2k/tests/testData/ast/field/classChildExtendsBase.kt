@@ -1,7 +1,7 @@
 class Base {
-    private val myFirst: String = 0
+    private val myFirst: String? = null
 }
 
 class Child : Base() {
-    private val mySecond: String = 0
+    private val mySecond: String? = null
 }

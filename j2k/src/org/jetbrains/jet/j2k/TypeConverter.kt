@@ -121,6 +121,12 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
         }
 
         if (nullability == Nullability.Default) {
+            if (variable is PsiField && variable.hasModifierProperty(PsiModifier.PRIVATE) && shouldGenerateDefaultInitializer(variable)) {
+                return Nullability.Nullable
+            }
+        }
+
+        if (nullability == Nullability.Default) {
             val scope = searchScope(variable)
             if (scope != null) {
                 if (findVariableUsages(variable, scope).any { isNullableFromUsage(it) }) {

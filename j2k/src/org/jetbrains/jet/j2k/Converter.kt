@@ -23,7 +23,6 @@ import java.util.*
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.openapi.project.Project
-import com.intellij.psi.util.PsiUtil
 
 public trait ConversionScope {
     public fun contains(element: PsiElement): Boolean
@@ -235,14 +234,15 @@ public class Converter private(val project: Project, val settings: ConverterSett
             val typeToDeclare = variableTypeToDeclare(field,
                                                       settings.specifyFieldTypeByDefault || modifiers.isPublic || modifiers.isProtected,
                                                       isVal && modifiers.isPrivate)
+            val initializer = convertExpression(field.getInitializer(), field.getType())
             Field(name,
                   annotations,
                   modifiers,
                   typeToDeclare ?: typeConverter.convertVariableType(field),
-                  convertExpression(field.getInitializer(), field.getType()),
+                  initializer,
                   isVal,
                   typeToDeclare != null,
-                  field.hasWriteAccesses(field.getContainingClass()))
+                  initializer.isEmpty && shouldGenerateDefaultInitializer(field))
         }
         return converted.assignPrototype(field)
     }
@@ -262,27 +262,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
         var initializerType = convertedExpressionType(initializer, variable.getType())
         if (initializerType is ErrorType) return null // do not add explicit type when initializer is not resolved, let user add it if really needed
         return if (convertedType == initializerType) null else convertedType
-    }
-
-    fun isVal(field: PsiField): Boolean {
-        if (field.hasModifierProperty(PsiModifier.FINAL)) return true
-        if (!field.hasModifierProperty(PsiModifier.PRIVATE)) return false
-        val containingClass = field.getContainingClass() ?: return false
-        val writes = findVariableUsages(field, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
-        if (writes.size == 0) return true
-        if (writes.size > 1) return false
-        val write = writes.single()
-        val parent = write.getParent()
-        if (parent is PsiAssignmentExpression &&
-                parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
-                isQualifierEmptyOrThis(write)) {
-            val constructor = write.getContainingConstructor()
-            return constructor != null &&
-                    constructor.getContainingClass() == containingClass &&
-                    parent.getParent() is PsiExpressionStatement &&
-                    parent.getParent()?.getParent() == constructor.getBody()
-        }
-        return false
     }
 
     private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Member {

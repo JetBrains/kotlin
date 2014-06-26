@@ -116,7 +116,7 @@ class ConstructorConverter(private val converter: Converter) {
                 val (field, `type`) = parameterToField[parameter]!!
                 Parameter(field.declarationIdentifier(),
                           `type`,
-                          if (converter.isVal(field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
+                          if (isVal(field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
                           converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
                           converter.convertModifiers(field).filter { it in ACCESS_MODIFIERS }).assignPrototypes(listOf(parameter, field), CommentsAndSpacesInheritance(blankLinesBefore = false))
             }
