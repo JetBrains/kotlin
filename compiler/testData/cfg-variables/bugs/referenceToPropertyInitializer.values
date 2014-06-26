@@ -41,10 +41,11 @@ class TestObjectLiteral {
 }
 ---------------------
                                                                <v0>: TestObjectLiteral   NEW: magic(obj) -> <v0>
-                                                               <v2>: TestObjectLiteral   NEW: magic(obj) -> <v2>
-obj                                                            <v1>: *                   NEW: r(obj|<v0>) -> <v1>
-obj                                                            <v3>: {<: A}              NEW: r(obj|<v2>) -> <v3>
-object: A(obj) { { val x = obj } fun foo() { val y = obj } }   <v4>: {<: A}              NEW: r(object: A(obj) { { val x = obj } fun foo() { val y = obj } }) -> <v4>
+                                                               <v3>: TestObjectLiteral   NEW: magic(obj) -> <v3>
+obj                                                            <v1>: {<: A}              NEW: r(obj|<v0>) -> <v1>
+A(obj)                                                         <v2>: *                   NEW: call(A(obj), <init>|<v1>) -> <v2>
+obj                                                            <v4>: {<: A}              NEW: r(obj|<v3>) -> <v4>
+object: A(obj) { { val x = obj } fun foo() { val y = obj } }   <v5>: {<: A}              NEW: r(object: A(obj) { { val x = obj } fun foo() { val y = obj } }) -> <v5>
 =====================
 == foo ==
 fun foo() {

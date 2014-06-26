@@ -460,14 +460,14 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public CallInstruction call(
-                @NotNull JetExpression expression,
+                @NotNull JetElement valueElement,
                 @NotNull ResolvedCall<?> resolvedCall,
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
                 @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
         ) {
             JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
             CallInstruction instruction = CallInstruction.object$.create(
-                    expression,
+                    valueElement,
                     getCurrentScope(),
                     resolvedCall,
                     receiverValues,

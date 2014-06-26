@@ -83,16 +83,18 @@ L0:
     mark(object: A(obj) { { val x = obj } fun foo() { val y = obj } })              INIT: in: {obj=D} out: {obj=D}
     magic(obj) -> <v0>
     r(obj|<v0>) -> <v1>
+    mark(A(obj))
+    call(A(obj), <init>|<v1>) -> <v2>
   2 mark({ val x = obj })
     v(val x = obj)                                                                  INIT: in: {obj=D} out: {obj=D, x=D}
-    magic(obj) -> <v2>                                                              INIT: in: {obj=D, x=D} out: {obj=D, x=D}
-    r(obj|<v2>) -> <v3>
-    w(x|<v3>)                                                                       INIT: in: {obj=D, x=D} out: {obj=D, x=ID}
+    magic(obj) -> <v3>                                                              INIT: in: {obj=D, x=D} out: {obj=D, x=D}
+    r(obj|<v3>) -> <v4>
+    w(x|<v4>)                                                                       INIT: in: {obj=D, x=D} out: {obj=D, x=ID}
   1 jmp?(L2)                                                                        INIT: in: {obj=D} out: {obj=D}
     d(fun foo() { val y = obj })                                                                                                 USE: in: {obj=READ} out: {obj=READ}
 L2:
-    r(object: A(obj) { { val x = obj } fun foo() { val y = obj } }) -> <v4>
-    w(obj|<v4>)                                                                     INIT: in: {obj=D} out: {obj=ID}
+    r(object: A(obj) { { val x = obj } fun foo() { val y = obj } }) -> <v5>
+    w(obj|<v5>)                                                                     INIT: in: {obj=D} out: {obj=ID}
 L1:
     <END>                                                                           INIT: in: {obj=ID} out: {obj=ID}
 error:

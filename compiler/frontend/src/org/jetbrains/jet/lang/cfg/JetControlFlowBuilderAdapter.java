@@ -96,12 +96,12 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     @NotNull
     @Override
     public CallInstruction call(
-            @NotNull JetExpression expression,
+            @NotNull JetElement valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
             @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
     ) {
-        return getDelegateBuilder().call(expression, resolvedCall, receiverValues, arguments);
+        return getDelegateBuilder().call(valueElement, resolvedCall, receiverValues, arguments);
     }
 
     @NotNull

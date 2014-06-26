@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartFMap;
+import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -1348,15 +1349,35 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
-            List<? extends ValueArgument> valueArguments = call.getValueArguments();
-            for (ValueArgument valueArgument : valueArguments) {
-                generateInstructions(valueArgument.getArgumentExpression());
+            if (!generateCall(call)) {
+                List<JetExpression> arguments = KotlinPackage.map(
+                        call.getValueArguments(),
+                        new Function1<ValueArgument, JetExpression>() {
+                            @Override
+                            public JetExpression invoke(ValueArgument valueArgument) {
+                                return valueArgument.getArgumentExpression();
+                            }
+                        }
+                );
+
+                for (JetExpression argument : arguments) {
+                    generateInstructions(argument);
+                }
+                createNonSyntheticValue(call, arguments);
             }
         }
 
         @Override
         public void visitDelegationByExpressionSpecifier(@NotNull JetDelegatorByExpressionSpecifier specifier) {
             generateInstructions(specifier.getDelegateExpression());
+
+            List<PseudoValue> arguments = ContainerUtil.createMaybeSingletonList(builder.getBoundValue(specifier.getDelegateExpression()));
+            TypePredicate expectedTypePredicate =
+                    PseudocodePackage.getSubtypesPredicate(trace.get(BindingContext.TYPE, specifier.getTypeReference()));
+            if (expectedTypePredicate == null) {
+                expectedTypePredicate = AllTypes.instance$;
+            }
+            builder.magic(specifier, specifier, arguments, PseudocodePackage.expectedTypeFor(expectedTypePredicate, arguments), false);
         }
 
         @Override
@@ -1373,24 +1394,24 @@ public class JetControlFlowProcessor {
             builder.unsupported(element);
         }
 
-        private boolean generateCall(@Nullable JetExpression callExpression) {
-            if (callExpression == null) return false;
-            return checkAndGenerateCall(callExpression, getResolvedCall(callExpression, trace.getBindingContext()));
+        private boolean generateCall(@Nullable JetElement callElement) {
+            if (callElement == null) return false;
+            return checkAndGenerateCall(callElement, getResolvedCall(callElement, trace.getBindingContext()));
         }
-        private boolean checkAndGenerateCall(@NotNull JetExpression callExpression, @Nullable ResolvedCall<?> resolvedCall) {
+        private boolean checkAndGenerateCall(@NotNull JetElement callElement, @Nullable ResolvedCall<?> resolvedCall) {
             if (resolvedCall == null) {
-                builder.compilationError(callExpression, "No resolved call");
+                builder.compilationError(callElement, "No resolved call");
                 return false;
             }
-            generateCall(callExpression, resolvedCall);
+            generateCall(callElement, resolvedCall);
             return true;
         }
 
         @NotNull
-        private InstructionWithValue generateCall(@NotNull JetExpression callExpression, @NotNull ResolvedCall<?> resolvedCall) {
+        private InstructionWithValue generateCall(@NotNull JetElement callElement, @NotNull ResolvedCall<?> resolvedCall) {
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
-                return generateCall(callExpression, variableAsFunctionResolvedCall.getFunctionCall());
+                return generateCall(callElement, variableAsFunctionResolvedCall.getFunctionCall());
             }
 
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
@@ -1406,15 +1427,15 @@ public class JetControlFlowProcessor {
             if (resultingDescriptor instanceof VariableDescriptor) {
                 // If a callee of the call is just a variable (without 'invoke'), 'read variable' is generated.
                 // todo : process arguments for such a case (KT-5387)
-                JetExpression calleeExpression = PsiUtilPackage.getCalleeExpressionIfAny(callExpression);
+                JetExpression calleeExpression = PsiUtilPackage.getCalleeExpressionIfAny(callElement);
                 assert calleeExpression != null
-                        : "No callee for " + callExpression.getText();
+                        : "Variable-based call without callee expression: " + callElement.getText();
                 assert parameterValues.isEmpty()
-                        : "Variable-based call with non-empty argument list: " + callExpression.getText();
+                        : "Variable-based call with non-empty argument list: " + callElement.getText();
                 return builder.readVariable(calleeExpression, resolvedCall, receivers);
             }
             mark(resolvedCall.getCall().getCallElement());
-            return builder.call(callExpression, resolvedCall, receivers, parameterValues);
+            return builder.call(callElement, resolvedCall, receivers, parameterValues);
         }
 
         @NotNull

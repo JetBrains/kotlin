@@ -134,7 +134,7 @@ public interface JetControlFlowBuilder {
 
     @NotNull
     CallInstruction call(
-            @NotNull JetExpression expression,
+            @NotNull JetElement valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
             @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
