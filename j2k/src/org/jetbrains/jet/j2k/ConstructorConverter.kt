@@ -168,10 +168,10 @@ class ConstructorConverter(private val converter: Converter) {
     private fun generateArtificialPrimaryConstructor(className: Identifier, classBody: ClassBody): ClassBody {
         assert(classBody.primaryConstructorSignature == null)
 
-        val finalOrWithEmptyInitializerFields = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.isEmpty }
+        val fieldsToInitialize = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal }
         val initializers = HashMap<Field, Expression?>()
         for (factoryFunction in classBody.factoryFunctions()) {
-            for (field in finalOrWithEmptyInitializerFields) {
+            for (field in fieldsToInitialize) {
                 initializers.put(field, getDefaultInitializer(field))
             }
 
@@ -182,7 +182,7 @@ class ConstructorConverter(private val converter: Converter) {
                     val assignee = statement.left
                     if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == tempValName) {
                         val name = (assignee.identifier as Identifier).name
-                        for (field in finalOrWithEmptyInitializerFields) {
+                        for (field in fieldsToInitialize) {
                             if (name == field.identifier.name) {
                                 initializers.put(field, statement.right)
                                 keepStatement = false
@@ -198,7 +198,7 @@ class ConstructorConverter(private val converter: Converter) {
                 }
             }
 
-            val arguments = finalOrWithEmptyInitializerFields.map { initializers[it] ?: LiteralExpression("null").assignNoPrototype() }
+            val arguments = fieldsToInitialize.map { initializers[it] ?: LiteralExpression("null").assignNoPrototype() }
             val initializer = MethodCallExpression.buildNotNull(null, className.name, arguments).assignNoPrototype()
             if (statements.isNotEmpty()) {
                 val localVar = LocalVariable(tempValIdentifier(),
@@ -217,7 +217,7 @@ class ConstructorConverter(private val converter: Converter) {
             factoryFunction.body = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
 
-        val parameters = finalOrWithEmptyInitializerFields.map { field ->
+        val parameters = fieldsToInitialize.map { field ->
             val varValModifier = if (field.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
             Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS }).assignPrototypesFrom(field)
         }
@@ -225,7 +225,7 @@ class ConstructorConverter(private val converter: Converter) {
         val modifiers = Modifiers(listOf(Modifier.PRIVATE)).assignNoPrototype()
         val parameterList = ParameterList(parameters).assignNoPrototype()
         val constructorSignature = PrimaryConstructorSignature(modifiers, parameterList).assignNoPrototype()
-        val updatedMembers = classBody.members.filter { !finalOrWithEmptyInitializerFields.contains(it) }
+        val updatedMembers = classBody.members.filter { !fieldsToInitialize.contains(it) }
         return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
     }
 
