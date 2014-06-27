@@ -2662,36 +2662,52 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return genQualified(receiverValue, expression.getSelectorExpression());
     }
 
-    @Override
-    public StackValue visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression, StackValue unused) {
-        JetExpression receiver = expression.getReceiverExpression();
+    private void generateExpressionWithNullFallback(@NotNull JetExpression expression, @NotNull Label ifnull) {
+        Type type = expressionType(expression);
+        if (expression instanceof JetSafeQualifiedExpression && !isPrimitive(type)) {
+            StackValue value = generateSafeQualifiedExpression((JetSafeQualifiedExpression) expression, ifnull);
+            value.put(type, v);
+        }
+        else {
+            gen(expression, type);
+        }
+    }
+
+    private StackValue generateSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression, @NotNull Label ifnull) {
+        JetExpression receiver = JetPsiUtil.deparenthesize(expression.getReceiverExpression());
         JetExpression selector = expression.getSelectorExpression();
-        Type type = boxType(expressionType(expression));
         Type receiverType = expressionType(receiver);
 
-        gen(receiver, receiverType);
+        assert receiver != null : "receiver should be not null: " + expression.getText();
+        generateExpressionWithNullFallback(receiver, ifnull);
 
         if (isPrimitive(receiverType)) {
-            StackValue propValue = genQualified(StackValue.onStack(receiverType), selector);
-            propValue.put(type, v);
-
-            return StackValue.onStack(type);
+            return genQualified(StackValue.onStack(receiverType), selector);
         }
 
-        Label ifnull = new Label();
-        Label end = new Label();
         v.dup();
         v.ifnull(ifnull);
-        StackValue propValue = genQualified(StackValue.onStack(receiverType), selector);
-        propValue.put(type, v);
-        v.goTo(end);
+        return genQualified(StackValue.onStack(receiverType), selector);
+    }
 
-        v.mark(ifnull);
-        v.pop();
-        if (!type.equals(Type.VOID_TYPE)) {
-            v.aconst(null);
+    @Override
+    public StackValue visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression, StackValue unused) {
+        Label ifnull = new Label();
+        Label end = new Label();
+        Type type = boxType(expressionType(expression));
+
+        StackValue value = generateSafeQualifiedExpression(expression, ifnull);
+        value.put(type, v);
+
+        if (!isPrimitive(expressionType(expression.getReceiverExpression()))) {
+            v.goTo(end);
+            v.mark(ifnull);
+            v.pop();
+            if (!type.equals(Type.VOID_TYPE)) {
+                v.aconst(null);
+            }
+            v.mark(end);
         }
-        v.mark(end);
 
         return StackValue.onStack(type);
     }
@@ -2891,21 +2907,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateElvis(JetBinaryExpression expression) {
-        Type exprType = expressionType(expression);
-        Type leftType = expressionType(expression.getLeft());
+        JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
 
-        gen(expression.getLeft(), leftType);
+        Type exprType = expressionType(expression);
+        Type leftType = expressionType(left);
+
+        Label ifNull = new Label();
+        Label end = new Label();
+
+        assert left != null : "left expression in elvis should be not null: " + expression.getText();
+        generateExpressionWithNullFallback(left, ifNull);
 
         if (isPrimitive(leftType)) {
             return StackValue.onStack(leftType);
         }
 
         v.dup();
-        Label ifNull = new Label();
+
         v.ifnull(ifNull);
         StackValue.onStack(leftType).put(exprType, v);
-        Label end = new Label();
         v.goTo(end);
+
         v.mark(ifNull);
         v.pop();
         gen(expression.getRight(), exprType);
