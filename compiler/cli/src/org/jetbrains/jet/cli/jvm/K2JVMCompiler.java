@@ -20,7 +20,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.text.StringUtil;
-import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
@@ -28,7 +27,10 @@ import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
-import org.jetbrains.jet.cli.jvm.compiler.*;
+import org.jetbrains.jet.cli.jvm.compiler.CommandLineScriptUtils;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
@@ -83,7 +85,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         if (!arguments.script &&
             arguments.module == null &&
             arguments.src == null &&
-            arguments.freeArgs.isEmpty()
+            arguments.freeArgs.isEmpty() &&
+            !arguments.version
         ) {
             ReplFromTerminal.run(rootDisposable, configuration);
             return ExitCode.OK;

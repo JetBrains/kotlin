@@ -19,8 +19,10 @@ package org.jetbrains.jet.codegen;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.psi.PsiFile;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
@@ -39,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -108,17 +111,19 @@ public class CodegenTestUtil {
     }
 
     @NotNull
-    public static File compileJava(@NotNull String filename) {
+    public static File compileJava(@NotNull String filename, @NotNull String... additionalClasspath) {
         try {
             File javaClassesTempDirectory = JetTestUtils.tmpDir("java-classes");
-            String classPath = ForTestCompileRuntime.runtimeJarForTests() + File.pathSeparator +
-                               JetTestUtils.getAnnotationsJar().getPath();
+            List<String> classpath = new ArrayList<String>();
+            classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
+            classpath.add(JetTestUtils.getAnnotationsJar().getPath());
+            classpath.addAll(Arrays.asList(additionalClasspath));
             List<String> options = Arrays.asList(
-                    "-classpath", classPath,
+                    "-classpath", KotlinPackage.join(classpath, File.pathSeparator, "", "", -1, ""),
                     "-d", javaClassesTempDirectory.getPath()
             );
 
-            File javaFile = new File("compiler/testData/codegen/" + filename);
+            File javaFile = new File(JetTestCaseBuilder.getTestDataPathBase() + "/codegen/" + filename);
             JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
 
             return javaClassesTempDirectory;

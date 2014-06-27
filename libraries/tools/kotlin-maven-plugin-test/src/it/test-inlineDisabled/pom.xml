@@ -4,24 +4,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.jetbrains.kotlin.it</groupId>
-    <artifactId>test-helloworld</artifactId>
-    <version>1.0</version>
-    <name>Test Hello World project</name>
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
 
-    <description>
-        Test the kotlin-maven-plugin:compile goal on HelloWorld project.
-    </description>
-
-    <properties>
-        <kotlin.version>0.1-SNAPSHOT</kotlin.version>
-    </properties>
+    <artifactId>test-inlineDisabled</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-runtime</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
@@ -45,15 +46,12 @@
             </plugins>
         </pluginManagement>
 
-        <!--suppress MavenModelInspection -->
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-        <!--suppress MavenModelInspection -->
-        <!--testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory-->
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
-                <version>${kotlin.version}</version>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -70,6 +68,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <inline>false</inline>
+                </configuration>
             </plugin>
         </plugins>
     </build>

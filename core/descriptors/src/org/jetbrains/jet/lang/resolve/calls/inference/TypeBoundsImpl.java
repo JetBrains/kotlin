@@ -19,16 +19,17 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND;
@@ -167,10 +168,9 @@ public class TypeBoundsImpl implements TypeBounds {
         }
         values.addAll(exactBounds);
 
-        Pair<Collection<JetType>, Collection<JetType>> pair =
-                TypeUtils.filterNumberTypes(filterBounds(bounds, LOWER_BOUND, values));
-        Collection<JetType> generalLowerBounds = pair.getFirst();
-        Collection<JetType> numberLowerBounds = pair.getSecond();
+        Collection<JetType> numberLowerBounds = new LinkedHashSet<JetType>();
+        Collection<JetType> generalLowerBounds = new LinkedHashSet<JetType>();
+        filterNumberTypes(filterBounds(bounds, LOWER_BOUND, values), numberLowerBounds, generalLowerBounds);
 
         JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(generalLowerBounds);
         if (tryPossibleAnswer(superTypeOfLowerBounds)) {
@@ -207,6 +207,21 @@ public class TypeBoundsImpl implements TypeBounds {
         values.addAll(filterBounds(bounds, BoundKind.UPPER_BOUND));
 
         return values;
+    }
+
+    private static void filterNumberTypes(
+            @NotNull Collection<JetType> types,
+            @NotNull Collection<JetType> numberTypes,
+            @NotNull Collection<JetType> otherTypes
+    ) {
+        for (JetType type : types) {
+            if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
+                numberTypes.add(type);
+            }
+            else {
+                otherTypes.add(type);
+            }
+        }
     }
 
     private boolean tryPossibleAnswer(@Nullable JetType possibleAnswer) {

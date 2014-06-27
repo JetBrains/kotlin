@@ -54,6 +54,7 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -3506,7 +3507,7 @@ The "returned" value of try expression with no finally is either the last expres
                 value.put(boxType(value.type), v);
 
                 if (opToken != JetTokens.AS_SAFE) {
-                    if (!JvmCodegenUtil.isNullableType(rightType)) {
+                    if (!TypeUtils.isNullableType(rightType)) {
                         v.dup();
                         Label nonnull = new Label();
                         v.ifnonnull(nonnull);

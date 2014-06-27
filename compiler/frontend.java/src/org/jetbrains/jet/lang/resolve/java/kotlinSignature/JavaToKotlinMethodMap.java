@@ -32,10 +32,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JavaToKotlinMethodMap {
     public static final JavaToKotlinMethodMap INSTANCE = new JavaToKotlinMethodMap();
@@ -55,7 +52,7 @@ public class JavaToKotlinMethodMap {
 
         List<FunctionDescriptor> result = Lists.newArrayList();
 
-        Set<ClassDescriptor> allSuperClasses = DescriptorUtils.getAllSuperClasses(containingClass);
+        Set<ClassDescriptor> allSuperClasses = new HashSet<ClassDescriptor>(DescriptorUtils.getSuperclassDescriptors(containingClass));
 
         String serializedMethod = JavaSignatureFormatter.getInstance().formatMethod(javaMethod);
         for (ClassData classData : classDatas) {

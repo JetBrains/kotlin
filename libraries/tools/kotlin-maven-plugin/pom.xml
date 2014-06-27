@@ -20,12 +20,12 @@
     <packaging>maven-plugin</packaging>
 
     <dependencies>
-      <dependency>
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
             <version>${maven.version}</version>
-      </dependency>
-      <dependency>
+        </dependency>
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
@@ -60,55 +60,4 @@
 
         </plugins>
     </build>
-
-    <profiles>
-        <!--
-        moved the integration test into a profile so we can disable this
-        for example this integration test doesn't work if offline
-        -->
-        <profile>
-            <id>integrationTest</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-invoker-plugin</artifactId>
-                        <version>1.5</version>
-                        <configuration>
-                            <projectsDirectory>src/it</projectsDirectory>
-                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                            <pomIncludes>
-                                <pomInclude>*/pom.xml</pomInclude>
-                            </pomIncludes>
-                            <!--This could speed up test by providing local repo as remote repo for test but might be tricky on different OS-->
-                            <!--<settingsFile>src/it/settings.xml</settingsFile>-->
-                            <localRepositoryPath>local-repo</localRepositoryPath>
-                            <postBuildHookScript>verify.bsh</postBuildHookScript>
-                            <streamLogs>true</streamLogs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>integration-test</id>
-                                <!--<phase>package</phase>-->
-                                <goals>
-                                    <goal>install</goal>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- allows the integration test to be disabled (for example if you are offline) -->
-        <profile>
-            <id>noTest</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-        </profile>
-    </profiles>
 </project>

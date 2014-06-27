@@ -20,10 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.MockLibraryUtil;
-import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
@@ -45,7 +42,7 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
             @Override
             public boolean process(File file) {
                 if (file.getName().endsWith(".kt")) {
-                    sourceFiles.add(file.getPath().substring("compiler/testData/codegen/".length()));
+                    sourceFiles.add(relativePath(file));
                     return true;
                 }
                 return true;
@@ -70,7 +67,8 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
 
         loadFiles(ArrayUtil.toStringArray(sourceFiles));
 
-        List<OccurrenceInfo> expected = readExpectedOccurrences("compiler/testData/codegen/" + sourceFiles.get(0));
+        List<OccurrenceInfo> expected =
+                readExpectedOccurrences(JetTestCaseBuilder.getTestDataPathBase() + "/codegen/" + sourceFiles.get(0));
         countAndCompareActualOccurrences(expected);
     }
 }

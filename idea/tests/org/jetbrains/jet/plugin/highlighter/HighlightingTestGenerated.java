@@ -108,6 +108,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
             doTest("idea/testData/highlighter/deprecated/Inc.kt");
         }
         
+        @TestMetadata("Invalid.kt")
+        public void testInvalid() throws Exception {
+            doTest("idea/testData/highlighter/deprecated/Invalid.kt");
+        }
+        
         @TestMetadata("Invoke.kt")
         public void testInvoke() throws Exception {
             doTest("idea/testData/highlighter/deprecated/Invoke.kt");

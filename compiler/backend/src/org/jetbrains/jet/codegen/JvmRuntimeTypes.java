@@ -23,17 +23,17 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
-public class JvmFunctionImplTypes {
+public class JvmRuntimeTypes {
     private final ReflectionTypes reflectionTypes;
 
     private final ClassDescriptor functionImpl;
@@ -42,7 +42,7 @@ public class JvmFunctionImplTypes {
     private final ClassDescriptor kMemberFunctionImpl;
     private final ClassDescriptor kExtensionFunctionImpl;
 
-    public JvmFunctionImplTypes(@NotNull ReflectionTypes reflectionTypes) {
+    public JvmRuntimeTypes(@NotNull ReflectionTypes reflectionTypes) {
         this.reflectionTypes = reflectionTypes;
 
         ModuleDescriptor fakeModule = new ModuleDescriptorImpl(Name.special("<fake module for functions impl>"),
@@ -117,7 +117,7 @@ public class JvmFunctionImplTypes {
         JetType functionType = KotlinBuiltIns.getInstance().getFunctionType(
                 Annotations.EMPTY,
                 receiverParameter == null ? null : receiverParameter.getType(),
-                DescriptorUtils.getValueParametersTypes(descriptor.getValueParameters()),
+                ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType()
         );
 
@@ -125,7 +125,7 @@ public class JvmFunctionImplTypes {
     }
 
     @NotNull
-    public Collection<JetType> getSupertypesForCallableReference(@NotNull FunctionDescriptor descriptor) {
+    public Collection<JetType> getSupertypesForFunctionReference(@NotNull FunctionDescriptor descriptor) {
         ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
         ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
 
@@ -162,7 +162,7 @@ public class JvmFunctionImplTypes {
         JetType kFunctionType = reflectionTypes.getKFunctionType(
                 Annotations.EMPTY,
                 receiverType,
-                DescriptorUtils.getValueParametersTypes(descriptor.getValueParameters()),
+                ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType(),
                 receiverParameter != null
         );

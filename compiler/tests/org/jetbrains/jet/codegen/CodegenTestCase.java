@@ -53,12 +53,9 @@ import static org.jetbrains.jet.codegen.CodegenTestUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
 public abstract class CodegenTestCase extends UsefulTestCase {
-
-    // for environment and classloader
     protected JetCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
-
-    private ClassFileFactory classFileFactory;
+    protected ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;
 
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull ConfigurationKind configurationKind) {
@@ -109,6 +106,13 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     protected void loadFile() {
         loadFile(getPrefix() + "/" + getTestName(true) + ".kt");
+    }
+
+    @NotNull
+    protected String relativePath(@NotNull File file) {
+        String stringToCut = "compiler/testData/codegen/";
+        assert file.getPath().startsWith(stringToCut) : "File path is not absolute: " + file;
+        return file.getPath().substring(stringToCut.length());
     }
 
     @NotNull

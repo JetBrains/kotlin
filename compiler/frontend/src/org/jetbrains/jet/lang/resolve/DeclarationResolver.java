@@ -203,11 +203,18 @@ public class DeclarationResolver {
             MutableClassDescriptor classDescriptor = (MutableClassDescriptor) entry.getValue();
 
             if (klass instanceof JetClass && klass.hasPrimaryConstructor() && KotlinBuiltIns.getInstance().isData(classDescriptor)) {
-                ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(classDescriptor);
+                ConstructorDescriptor constructor = getConstructorOfDataClass(classDescriptor);
                 createComponentFunctions(classDescriptor, constructor);
                 createCopyFunction(classDescriptor, constructor);
             }
         }
+    }
+
+    @NotNull
+    public static ConstructorDescriptor getConstructorOfDataClass(@NotNull ClassDescriptor classDescriptor) {
+        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+        assert constructors.size() == 1 : "Data class must have only one constructor: " + classDescriptor.getConstructors();
+        return constructors.iterator().next();
     }
 
     private void createComponentFunctions(@NotNull MutableClassDescriptor classDescriptor, @NotNull ConstructorDescriptor constructorDescriptor) {

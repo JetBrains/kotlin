@@ -143,7 +143,7 @@ public class JetTypeMapper {
             }
         }
 
-        return PackageClassUtils.getPackageClassFqName(packageFragment.getFqName()).asString().replace('.', '/');
+        return PackageClassUtils.getPackageClassInternalName(packageFragment.getFqName());
     }
 
     @NotNull

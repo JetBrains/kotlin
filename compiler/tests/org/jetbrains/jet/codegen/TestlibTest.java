@@ -41,12 +41,14 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+
+import static org.jetbrains.jet.lang.types.TypeUtils.getAllSupertypes;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public class TestlibTest extends UsefulTestCase {
@@ -123,8 +125,8 @@ public class TestlibTest extends UsefulTestCase {
                                                                                               BindingContext.DECLARATION_TO_DESCRIPTOR,
                                                                                               declaration);
 
-                for (ClassDescriptor superClass : DescriptorUtils.getAllSuperClasses(descriptor)) {
-                    if (!"junit/framework/Test".equals(typeMapper.mapClass(superClass).getInternalName())) continue;
+                for (JetType superType : getAllSupertypes(descriptor.getDefaultType())) {
+                    if (!"junit/framework/Test".equals(typeMapper.mapType(superType).getInternalName())) continue;
 
                     String name = typeMapper.mapClass(descriptor).getInternalName();
 

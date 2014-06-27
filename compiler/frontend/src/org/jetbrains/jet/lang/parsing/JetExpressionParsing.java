@@ -372,7 +372,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * callableReference
-     *   : userType? "::" SimpleName
+     *   : (userType "?"*)? "::" SimpleName
      *   ;
      */
     private boolean parseCallableReferenceExpression() {
@@ -381,7 +381,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (!at(COLONCOLON)) {
             PsiBuilder.Marker typeReference = mark();
             myJetParsing.parseUserType();
+            typeReference = myJetParsing.parseNullableTypeSuffix(typeReference);
             typeReference.done(TYPE_REFERENCE);
+
             if (!at(COLONCOLON)) {
                 expression.rollbackTo();
                 return false;

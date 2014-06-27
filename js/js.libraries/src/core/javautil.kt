@@ -1,5 +1,11 @@
 package java.util
 
+native
+private val DEFAULT_INITIAL_CAPACITY = 16
+
+native
+private val DEFAULT_LOAD_FACTOR = 0.75f
+
 library
 public trait Comparator<T> {
     fun compare(obj1: T, obj2: T): Int;
@@ -67,8 +73,9 @@ public open class LinkedList<E>() : AbstractList<E>() {
 }
 
 library
-public open class HashSet<E>(capacity: Int = 0) : AbstractCollection<E>(), MutableSet<E> {
-}
+public open class HashSet<E>(
+        initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR
+) : AbstractCollection<E>(), MutableSet<E>
 
 library
 public trait SortedSet<E> : Set<E> {
@@ -79,11 +86,12 @@ public open class TreeSet<E>() : AbstractCollection<E>(), MutableSet<E>, SortedS
 }
 
 library
-public open class LinkedHashSet<E>() : AbstractCollection<E>(), MutableSet<E> {
-}
+public open class LinkedHashSet<E>(
+        initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR
+) : HashSet<E>(initialCapacity, loadFactor), MutableSet<E>
 
 library
-public open class HashMap<K, V>(capacity: Int = 0) : MutableMap<K, V> {
+public open class HashMap<K, V>(initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR) : MutableMap<K, V> {
     public override fun size(): Int = js.noImpl
     public override fun isEmpty(): Boolean = js.noImpl
     public override fun get(key: Any?): V? = js.noImpl
@@ -99,7 +107,9 @@ public open class HashMap<K, V>(capacity: Int = 0) : MutableMap<K, V> {
 }
 
 library
-public open class LinkedHashMap<K, V>(capacity: Int = 0) : HashMap<K, V>(capacity)
+public open class LinkedHashMap<K, V>(
+        initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR, accessOrder: Boolean = false
+) : HashMap<K, V>(initialCapacity, loadFactor)
 
 library
 public class NoSuchElementException(message: String? = null) : Exception() {}

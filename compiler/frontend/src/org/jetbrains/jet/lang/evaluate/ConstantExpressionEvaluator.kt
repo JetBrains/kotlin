@@ -41,6 +41,17 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             val evaluator = ConstantExpressionEvaluator(trace)
             return evaluator.evaluate(expression, expectedType)
         }
+
+        public fun isPropertyCompileTimeConstant(descriptor: VariableDescriptor): Boolean {
+            if (descriptor.isVar()) {
+                return false
+            }
+            if (DescriptorUtils.isClassObject(descriptor.getContainingDeclaration()) || DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+                val returnType = descriptor.getType()
+                return KotlinBuiltIns.getInstance().isPrimitiveType(returnType) || KotlinBuiltIns.getInstance().getStringType() == returnType
+            }
+            return false
+        }
     }
 
     private fun evaluate(expression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -311,7 +322,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
                         else
                             compileTimeConstant.getValue()
                 return createCompileTimeConstant(value, expectedType, isPure = false,
-                                                 canBeUsedInAnnotation = DescriptorUtils.isPropertyCompileTimeConstant(callableDescriptor),
+                                                 canBeUsedInAnnotation = isPropertyCompileTimeConstant(callableDescriptor),
                                                  usesVariableAsConstant = true)
             }
         }

@@ -139,7 +139,7 @@
 
         <echo file="${kotlin-home}/build.txt" message="${build.number}"/>
 
-        <chmod dir="${kotlin-home}/bin" includes="*" perm="755"/>
+        <chmod dir="${kotlin-home}/bin" excludes="**/*.bat" perm="755"/>
     </target>
 
     <target name="compilerSources">

@@ -23,6 +23,11 @@ fun ok() {
     (a::b)()
     a.(b::c)()
     a.b::c()
+
+    a?::b
+    a??::b
+    a<b>?::c
+    a<b?,c?>?::d
 }
 
 fun err0() {

@@ -1,7 +1,0 @@
-import java.io.*;
-
-File file = new File( basedir, "target/test-inlineDisabled-1.0.jar" );
-if (!file.exists() || !file.isFile())
-{
-    throw new FileNotFoundException( "Could not find generated JAR: " + file );
-}

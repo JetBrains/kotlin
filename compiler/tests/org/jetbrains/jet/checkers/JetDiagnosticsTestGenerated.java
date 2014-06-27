@@ -5032,6 +5032,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/j+k/packageVisibility.kt");
             }
             
+            @TestMetadata("protectedStaticSamePackage.kt")
+            public void testProtectedStaticSamePackage() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/protectedStaticSamePackage.kt");
+            }
+            
             @TestMetadata("recursiveRawUpperBound.kt")
             public void testRecursiveRawUpperBound() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/recursiveRawUpperBound.kt");
