@@ -138,7 +138,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
             else if (member is FactoryFunction) {
                 factoryFunctions.add(member)
             }
-            else if (useClassObject && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
+            else if (useClassObject &&
+                    psiMember.hasModifierProperty(PsiModifier.STATIC) &&
+                    // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
+                    (psiMember !is PsiClass || (member as Class).body.factoryFunctions.isNotEmpty())) {
                 classObjectMembers.add(member)
             }
             else {
@@ -154,6 +157,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
     // do not convert private static methods into class object if possible
     private fun shouldGenerateClassObject(psiClass: PsiClass, convertedMembers: Map<PsiMember, Member>): Boolean {
         if (psiClass.isEnum()) return false
+
+        // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
+        if (convertedMembers.values().any { it is Class && !it.modifiers.contains(Modifier.INNER) && it.body.factoryFunctions.isNotEmpty() }) return true
+
         val members = convertedMembers.keySet().filter { !it.isConstructor() }
         val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance(javaClass<PsiClass>()).filter { it.hasModifierProperty(PsiModifier.STATIC) }

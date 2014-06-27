@@ -120,7 +120,8 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
                                                 typeParameterList.parameters,
                                                 Nullability.NotNull,
                                                 converter.settings).assignNoPrototype()
-            return FactoryFunction(constructor.declarationIdentifier(), annotations, modifiers, factoryFunctionType, params, typeParameterList, body)
+            return FactoryFunction(constructor.declarationIdentifier(), annotations, correctFactoryFunctionAccess(modifiers),
+                                   factoryFunctionType, params, typeParameterList, body)
         }
     }
 
@@ -342,6 +343,16 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             statements.add(ReturnStatement(initializer).assignNoPrototype())
         }
         return statements
+    }
+
+    private fun correctFactoryFunctionAccess(modifiers: Modifiers): Modifiers {
+        val classAccess = converter.convertModifiers(psiClass).accessModifier()
+        return when(modifiers.accessModifier()) {
+            Modifier.PUBLIC -> modifiers.without(Modifier.PUBLIC).with(classAccess)
+            Modifier.PROTECTED -> modifiers.without(Modifier.PROTECTED).with(classAccess)
+            Modifier.PRIVATE -> modifiers
+            else/*internal*/ -> if (classAccess != Modifier.PUBLIC) modifiers.with(classAccess) else modifiers
+        }
     }
 
     private fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
