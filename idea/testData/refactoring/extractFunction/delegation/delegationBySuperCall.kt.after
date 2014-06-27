@@ -1,0 +1,9 @@
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
+open class A(a: Int, b: Int)
+
+class B(a: Int, b: Int): A(i(a, b), a - b)
+
+fun i(a: Int, b: Int): Int {
+    return a + b
+}
