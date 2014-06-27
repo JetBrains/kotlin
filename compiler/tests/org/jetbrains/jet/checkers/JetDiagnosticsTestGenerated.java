@@ -5012,6 +5012,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/j+k/kt3307.kt");
             }
             
+            @TestMetadata("kt3311.kt")
+            public void testKt3311() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/kt3311.kt");
+            }
+            
             @TestMetadata("mutableIterator.kt")
             public void testMutableIterator() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/mutableIterator.kt");
