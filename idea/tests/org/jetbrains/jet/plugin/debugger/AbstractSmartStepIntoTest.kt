@@ -26,6 +26,7 @@ import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.util.PsiFormatUtilBase
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import com.intellij.testFramework.LightProjectDescriptor
 
 abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTestCase() {
     private val fixture: JavaCodeInsightTestFixture
@@ -95,4 +96,6 @@ abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTestCase() 
     override fun getTestDataPath(): String? {
         return PluginTestCaseBase.getTestDataPathBase() + "/debugger/smartStepInto"
     }
+
+    override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
 }
