@@ -2341,47 +2341,44 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         List<ValueParameterDescriptor> valueParameters = fd.getValueParameters();
 
-        if (valueParameters.size() != valueArguments.size()) {
-            throw new IllegalStateException("Parameters and arguments size mismatch: " + valueParameters.size() + " != " + valueArguments.size());
+        int n = valueParameters.size();
+        if (n != valueArguments.size()) {
+            throw new IllegalStateException("Parameters and arguments size mismatch: " + n + " != " + valueArguments.size());
         }
 
         int mask = 0;
 
-        for (Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator(); iterator.hasNext(); ) {
-            ValueParameterDescriptor valueParameter = iterator.next();
-            if (skipLast && !iterator.hasNext()) {
-                continue;
-            }
+        for (int i = 0; i < n; i++) {
+            if (skipLast && i == n - 1) break;
 
-            ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
-            Type parameterType = valueParameterTypes.get(valueParameter.getIndex());
-            if (resolvedValueArgument instanceof ExpressionValueArgument) {
-                ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
+            ValueParameterDescriptor valueParameter = valueParameters.get(i);
+            ResolvedValueArgument argument = valueArguments.get(i);
+            Type parameterType = valueParameterTypes.get(i);
+            if (argument instanceof ExpressionValueArgument) {
+                ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
                 assert valueArgument != null;
                 JetExpression argumentExpression = valueArgument.getArgumentExpression();
                 assert argumentExpression != null : valueArgument.asElement().getText();
-
                 callGenerator.genValueAndPut(valueParameter, argumentExpression, parameterType);
-            } else if (resolvedValueArgument instanceof DefaultValueArgument) {
+            }
+            else if (argument instanceof DefaultValueArgument) {
                 pushDefaultValueOnStack(parameterType, v);
-                mask |= (1 << valueParameter.getIndex());
+                mask |= 1 << i;
                 callGenerator.afterParameterPut(parameterType, null, valueParameter);
             }
-            else if (resolvedValueArgument instanceof VarargValueArgument) {
-                VarargValueArgument valueArgument = (VarargValueArgument) resolvedValueArgument;
-                genVarargs(valueParameter, valueArgument);
+            else if (argument instanceof VarargValueArgument) {
+                genVarargs((VarargValueArgument) argument, valueParameter.getType());
                 callGenerator.afterParameterPut(parameterType, null, valueParameter);
             }
             else {
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException("Unsupported value argument: " + argument);
             }
         }
+
         return mask;
     }
 
-    public void genVarargs(ValueParameterDescriptor valueParameterDescriptor, VarargValueArgument valueArgument) {
-        JetType outType = valueParameterDescriptor.getType();
-
+    public void genVarargs(@NotNull VarargValueArgument valueArgument, @NotNull JetType outType) {
         Type type = asmType(outType);
         assert type.getSort() == Type.ARRAY;
         Type elementType = correctElementType(type);

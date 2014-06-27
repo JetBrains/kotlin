@@ -24,7 +24,6 @@ import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
@@ -33,6 +32,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCallWithAssert;
 
 public class JavaClassArray extends IntrinsicMethod {
     @NotNull
@@ -45,9 +46,10 @@ public class JavaClassArray extends IntrinsicMethod {
             @Nullable List<JetExpression> arguments,
             StackValue receiver
     ) {
-        ResolvedCall<?> call = BindingContextUtilPackage.getResolvedCallWithAssert((JetElement) element, codegen.getBindingContext());
-        Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> next = call.getValueArguments().entrySet().iterator().next();
-        codegen.genVarargs(next.getKey(), (VarargValueArgument) next.getValue());
+        assert element != null : "Element should not be null";
+        ResolvedCall<?> resolvedCall = getResolvedCallWithAssert((JetElement) element, codegen.getBindingContext());
+        Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> argument = resolvedCall.getValueArguments().entrySet().iterator().next();
+        codegen.genVarargs((VarargValueArgument) argument.getValue(), argument.getKey().getType());
         return returnType;
     }
 }
