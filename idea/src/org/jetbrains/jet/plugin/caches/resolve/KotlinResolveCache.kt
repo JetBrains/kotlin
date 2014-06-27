@@ -255,9 +255,9 @@ private object KotlinResolveDataProvider {
                     TopDownAnalysisParameters.createForLazy(
                             resolveSession.getStorageManager(),
                             resolveSession.getExceptionTracker(),
-                            analyzeCompletely = { true },
-                            analyzingBootstrapLibrary = false,
-                            declaredLocally = false
+                            /* analyzeCompletely = */ { true },
+                            /* analyzingBootstrapLibrary = */ false,
+                            /* declaredLocally = */ false
                     ),
                     listOf(analyzableElement)
             )

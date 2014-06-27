@@ -19,5 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.descriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SynthesizedCallableMemberDescriptor;
 
-public interface SamAdapterDescriptor<D extends FunctionDescriptor> extends FunctionDescriptor, SynthesizedCallableMemberDescriptor<D> {
+public interface SamAdapterDescriptor<D extends FunctionDescriptor>
+        extends FunctionDescriptor, JavaCallableMemberDescriptor, SynthesizedCallableMemberDescriptor<D> {
 }

@@ -5480,6 +5480,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/namedArguments/disallowForJavaMethods.kt");
             }
             
+            @TestMetadata("disallowForSamAdapterConstructor.kt")
+            public void testDisallowForSamAdapterConstructor() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/namedArguments/disallowForSamAdapterConstructor.kt");
+            }
+            
+            @TestMetadata("disallowForSamAdapterFunction.kt")
+            public void testDisallowForSamAdapterFunction() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/namedArguments/disallowForSamAdapterFunction.kt");
+            }
+            
             @TestMetadata("namedArgumentsAndDefaultValues.kt")
             public void testNamedArgumentsAndDefaultValues() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/namedArguments/namedArgumentsAndDefaultValues.kt");

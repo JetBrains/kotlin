@@ -28,13 +28,14 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
     private Boolean hasStableParameterNames = null;
     private Boolean hasSynthesizedParameterNames = null;
 
-    private JavaConstructorDescriptor(
+    protected JavaConstructorDescriptor(
             @NotNull ClassDescriptor containingDeclaration,
             @Nullable JavaConstructorDescriptor original,
             @NotNull Annotations annotations,
-            boolean isPrimary
+            boolean isPrimary,
+            @NotNull Kind kind
     ) {
-        super(containingDeclaration, original, annotations, isPrimary, Kind.DECLARATION);
+        super(containingDeclaration, original, annotations, isPrimary, kind);
     }
 
     @NotNull
@@ -43,7 +44,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @NotNull Annotations annotations,
             boolean isPrimary
     ) {
-        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary);
+        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION);
     }
 
     @Override
@@ -80,7 +81,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
                                             "kind: " + kind);
         }
         JavaConstructorDescriptor result =
-                new JavaConstructorDescriptor((ClassDescriptor) newOwner, this, Annotations.EMPTY /* TODO */, isPrimary);
+                new JavaConstructorDescriptor((ClassDescriptor) newOwner, this, Annotations.EMPTY /* TODO */, isPrimary, kind);
         result.setHasStableParameterNames(hasStableParameterNames());
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;

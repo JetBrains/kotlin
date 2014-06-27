@@ -30,7 +30,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     private Boolean hasStableParameterNames = null;
     private Boolean hasSynthesizedParameterNames = null;
 
-    private JavaMethodDescriptor(
+    protected JavaMethodDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @Nullable SimpleFunctionDescriptor original,
             @NotNull Annotations annotations,

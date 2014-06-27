@@ -60,7 +60,7 @@ public class LazyJavaClassMemberScope(
             val constructor = resolveConstructor(jCtor, getContainingDeclaration(), jClass.isStatic())
             val samAdapter = resolveSamAdapter(constructor)
             if (samAdapter != null) {
-                (samAdapter as ConstructorDescriptorImpl).setReturnType(containingDeclaration.getDefaultType())
+                samAdapter.setReturnType(containingDeclaration.getDefaultType())
                 listOf(constructor, samAdapter)
             }
             else
@@ -108,13 +108,13 @@ public class LazyJavaClassMemberScope(
         return MethodSignatureData(effectiveSignature, superFunctions, propagated.getErrors() + effectiveSignature.getErrors())
     }
 
-    private fun resolveSamAdapter(original: ConstructorDescriptor): ConstructorDescriptor? {
+    private fun resolveSamAdapter(original: JavaConstructorDescriptor): JavaConstructorDescriptor? {
         return if (SingleAbstractMethodUtils.isSamAdapterNecessary(original))
-                   SingleAbstractMethodUtils.createSamAdapterConstructor(original) as ConstructorDescriptor
+                   SingleAbstractMethodUtils.createSamAdapterConstructor(original) as JavaConstructorDescriptor
                else null
     }
 
-    private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor, isStaticClass: Boolean): ConstructorDescriptor {
+    private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor, isStaticClass: Boolean): JavaConstructorDescriptor {
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(classDescriptor, Annotations.EMPTY, /* isPrimary = */ false)
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())

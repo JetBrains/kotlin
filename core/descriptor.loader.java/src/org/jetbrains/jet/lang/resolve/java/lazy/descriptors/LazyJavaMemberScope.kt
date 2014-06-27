@@ -75,7 +75,7 @@ public abstract class LazyJavaMemberScope(
         (name: Name): Collection<FunctionDescriptor>
         ->
         val methods = memberIndex().findMethodsByName(name)
-        val functions = LinkedHashSet(
+        val functions = LinkedHashSet<SimpleFunctionDescriptor>(
                 methods.stream()
                       // values() and valueOf() are added manually, see LazyJavaClassDescriptor::getClassObjectDescriptor()
                       .filter{ m -> !DescriptorResolverUtils.shouldBeInEnumClassObject(m) }
@@ -110,7 +110,7 @@ public abstract class LazyJavaMemberScope(
     abstract fun resolveMethodSignature(method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>,
                                         returnType: JetType, valueParameters: ResolvedValueParameters): MethodSignatureData
 
-    fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): SimpleFunctionDescriptor {
+    fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): JavaMethodDescriptor {
 
         val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(_containingDeclaration, c.resolveAnnotations(method), method.getName())
 
@@ -216,9 +216,9 @@ public abstract class LazyJavaMemberScope(
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    private fun resolveSamAdapter(original: SimpleFunctionDescriptor): SimpleFunctionDescriptor? {
+    private fun resolveSamAdapter(original: JavaMethodDescriptor): JavaMethodDescriptor? {
         return if (SingleAbstractMethodUtils.isSamAdapterNecessary(original))
-                    SingleAbstractMethodUtils.createSamAdapterFunction(original) as SimpleFunctionDescriptor
+                    SingleAbstractMethodUtils.createSamAdapterFunction(original) as JavaMethodDescriptor
                else null
     }
 
