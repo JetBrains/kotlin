@@ -4,7 +4,7 @@ class A(
 }
 
 fun check(a : A?) : Int {
-    return (a?.y?.x ?: a?.x) ?: 3
+    return a?.y?.x ?: (a?.x ?: 3)
 }
 
 fun box() : String {
