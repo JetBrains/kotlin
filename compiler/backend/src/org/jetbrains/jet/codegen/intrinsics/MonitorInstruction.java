@@ -23,11 +23,14 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCallWithAssert;
@@ -56,12 +59,19 @@ public class MonitorInstruction extends IntrinsicMethod {
     ) {
         assert element != null : "Element should not be null";
 
-        codegen.pushMethodArgumentsWithoutCallReceiver(
-                getResolvedCallWithAssert((JetElement) element, codegen.getBindingContext()),
-                Arrays.asList(OBJECT_TYPE),
-                false,
-                codegen.defaultCallGenerator
-        );
+        ResolvedCall<?> resolvedCall = getResolvedCallWithAssert((JetElement) element, codegen.getBindingContext());
+
+        List<ResolvedValueArgument> resolvedArguments = resolvedCall.getValueArgumentsByIndex();
+        assert resolvedArguments != null && resolvedArguments.size() == 1 :
+                "Monitor instruction (" + opcode + ") should have exactly 1 argument: " + resolvedArguments;
+
+        ResolvedValueArgument argument = resolvedArguments.get(0);
+        assert argument instanceof ExpressionValueArgument :
+                "Monitor instruction (" + opcode + ") should have expression value argument: " + argument;
+
+        ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
+        assert valueArgument != null : "Unresolved value argument: " + argument;
+        codegen.gen(valueArgument.getArgumentExpression(), OBJECT_TYPE);
 
         v.visitInsn(opcode);
         return Type.VOID_TYPE;

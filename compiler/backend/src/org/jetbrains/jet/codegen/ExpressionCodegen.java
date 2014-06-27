@@ -2309,7 +2309,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return false;
     }
 
-    public int pushMethodArgumentsWithCallReceiver(
+    private int pushMethodArgumentsWithCallReceiver(
             @Nullable StackValue receiver,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull CallableMethod callableMethod,
@@ -2328,7 +2328,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return pushMethodArgumentsWithoutCallReceiver(resolvedCall, callableMethod.getValueParameterTypes(), skipLast, callGenerator);
     }
 
-    public int pushMethodArgumentsWithoutCallReceiver(
+    private int pushMethodArgumentsWithoutCallReceiver(
             @NotNull ResolvedCall<?> resolvedCall,
             List<Type> valueParameterTypes,
             boolean skipLast,
