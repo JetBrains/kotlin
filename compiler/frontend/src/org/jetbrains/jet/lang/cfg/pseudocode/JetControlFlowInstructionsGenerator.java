@@ -284,9 +284,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void returnValue(
-                @NotNull JetReturnExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine
-        ) {
+        public void returnValue(@NotNull JetExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine) {
             Label exitPoint = getExitPoint(subroutine);
             handleJumpInsideTryFinally(exitPoint);
             add(new ReturnValueInstruction(returnExpression, getCurrentScope(), exitPoint, returnValue));

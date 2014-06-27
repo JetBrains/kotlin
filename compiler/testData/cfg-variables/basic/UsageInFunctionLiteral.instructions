@@ -48,8 +48,9 @@ L3:
     r(a) -> <v4>                            INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}    USE: in: {} out: {a=READ}
     mark(use(a))
     call(use(a), use|<v4>) -> <v5>
+  3 ret(*|<v5>) L4                          INIT: in: {x=ID} out: {x=ID}
 L4:
-  3 <END>                                   INIT: in: {x=ID} out: {x=ID}
+    <END>
 error:
     <ERROR>                                 INIT: in: {} out: {}
 sink:
@@ -64,6 +65,7 @@ L0:
     magic(vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
     w(a|<v0>)                        INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
     r(a) -> <v1>                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+    ret(*|<v1>) L1
 L1:
     <END>
 error:

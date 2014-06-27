@@ -38,6 +38,7 @@ L3:
     r(b) -> <v2>                                                            USE: in: {} out: {b=READ}
     mark(x + b)
     call(x + b, plus|<v1>, <v2>) -> <v3>
+    ret(*|<v3>) L4
 L4:
     <END>
 error:

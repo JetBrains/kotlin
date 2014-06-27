@@ -233,7 +233,7 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     }
 
     @Override
-    public void returnValue(@NotNull JetReturnExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine) {
+    public void returnValue(@NotNull JetExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine) {
         getDelegateBuilder().returnValue(returnExpression, returnValue, subroutine);
     }
 

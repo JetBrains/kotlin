@@ -79,12 +79,13 @@ L3:
   3 <START>
   4 mark(1)
     r(1) -> <v0>
+  3 ret(*|<v0>) L4
 L4:
-  3 <END>           NEXT:[<SINK>]
+    <END>             NEXT:[<SINK>]
 error:
-    <ERROR>         PREV:[]
+    <ERROR>           PREV:[]
 sink:
-    <SINK>          PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo(a : Boolean, b : Int) : Unit {}

@@ -87,11 +87,21 @@ public class JetControlFlowProcessor {
             JetExpression bodyExpression = declarationWithBody.getBodyExpression();
             if (bodyExpression != null) {
                 cfpVisitor.generateInstructions(bodyExpression);
+                if (!declarationWithBody.hasBlockBody()) {
+                    generateImplicitReturnValue(bodyExpression, subroutine);
+                }
             }
         } else {
             cfpVisitor.generateInstructions(subroutine);
         }
         return builder.exitSubroutine(subroutine);
+    }
+
+    private void generateImplicitReturnValue(@NotNull JetExpression bodyExpression, @NotNull JetElement subroutine) {
+        PseudoValue returnValue = builder.getBoundValue(bodyExpression);
+        if (returnValue == null) return;
+
+        builder.returnValue(bodyExpression, returnValue, subroutine);
     }
 
     private void processLocalDeclaration(@NotNull JetDeclaration subroutine) {

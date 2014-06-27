@@ -55,6 +55,7 @@ L0:
     magic(a: Int) -> <v0>    INIT: in: {a=D} out: {a=D}
     w(a|<v0>)                INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
     r(a) -> <v1>             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+    ret(*|<v1>) L1
 L1:
     <END>
 error:

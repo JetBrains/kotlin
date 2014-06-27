@@ -43,8 +43,9 @@ L3:
     r(x) -> <v7>                                                                     USE: in: {} out: {x=READ}
     mark(sum(x - 1) + x)
     call(sum(x - 1) + x, plus|<v6>, <v7>) -> <v8>
+  2 ret(*|<v8>) L4
 L4:
-  2 <END>
+    <END>
 error:
     <ERROR>                                          INIT: in: {} out: {}
 sink:
