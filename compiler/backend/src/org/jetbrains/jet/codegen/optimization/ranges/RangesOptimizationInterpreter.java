@@ -65,7 +65,8 @@ public class RangesOptimizationInterpreter extends OptimizationBasicInterpreter 
     }
 
     private static boolean isExactValue(@NotNull BasicValue value) {
-        return value instanceof RangeIteratorBasicValue || (value.getType() != null && isProgressionClass(value.getType().getInternalName()));
+        return value instanceof RangeIteratorBasicValue ||
+               (value.getType() != null && isProgressionClass(value.getType().getInternalName()));
     }
 
     @Override
