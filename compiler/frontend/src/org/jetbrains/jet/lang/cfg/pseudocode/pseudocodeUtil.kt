@@ -49,7 +49,7 @@ fun JetExpression.isStatement(pseudocode: Pseudocode): Boolean {
 
     val instruction = value.createdAt
     if (considerUsedIfCreatedBeforeExit() && instruction.nextInstructions.any { it == pseudocode.getExitInstruction() }) return false
-    return traverseFollowingInstructions(instruction, HashSet(), TraversalOrder.FORWARD) { value !in it.inputValues }
+    return pseudocode.getUsages(pseudocode.getElementValue(this)).isEmpty()
 }
 
 val PseudoValue.implicitReturnValue: Boolean
