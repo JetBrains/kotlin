@@ -100,17 +100,19 @@ public class JavaToKotlinActionUtil {
     }
 
     static void deleteFiles(List<PsiJavaFile> allJavaFilesNear) {
-        for (final PsiFile f : allJavaFilesNear) {
+        for (final PsiFile psiFile : allJavaFilesNear) {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        PsiManager manager = f.getManager();
-                        VirtualFile vFile = f.getVirtualFile();
+                        PsiManager manager = psiFile.getManager();
+                        VirtualFile vFile = psiFile.getVirtualFile();
                         if (vFile != null) {
                             vFile.delete(manager);
                         }
-                    } catch (IOException ignored) {
+                    }
+                    catch (IOException e) {
+                        MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater();
                     }
                 }
             });
@@ -122,38 +124,35 @@ public class JavaToKotlinActionUtil {
         try {
             VirtualFile virtualFile = psiFile.getVirtualFile();
             if (psiFile instanceof PsiJavaFile && virtualFile != null) {
-                String result = "";
-                try {
-                    result = converter.elementToKotlin(psiFile);
-                } catch (Exception e) {
-                    //noinspection CallToPrintStackTrace
-                    e.printStackTrace();
-                }
+                String result = converter.elementToKotlin(psiFile);
                 PsiManager manager = psiFile.getManager();
                 assert manager != null;
                 VirtualFile copy = virtualFile.copy(manager, virtualFile.getParent(), virtualFile.getNameWithoutExtension() + ".kt");
                 copy.setBinaryContent(CharsetToolkit.getUtf8Bytes(result));
                 return copy;
             }
-        } catch (Exception ex) {
-            MessagesEx.error(psiFile.getProject(), ex.getMessage()).showLater();
+        }
+        catch (IOException e) {
+            MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater();
         }
         return null;
     }
 
     static void renameFiles(@NotNull List<PsiJavaFile> psiFiles) {
-        for (final PsiFile f : psiFiles) {
+        for (final PsiFile psiFile : psiFiles) {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        PsiManager manager = f.getManager();
-                        VirtualFile vFile = f.getVirtualFile();
+                        PsiManager manager = psiFile.getManager();
+                        VirtualFile vFile = psiFile.getVirtualFile();
                         if (vFile != null) {
                             vFile.copy(manager, vFile.getParent(), vFile.getNameWithoutExtension() + ".java.old");
                             vFile.delete(manager);
                         }
-                    } catch (IOException ignored) {
+                    }
+                    catch (IOException e) {
+                        MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater();
                     }
                 }
             });
