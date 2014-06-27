@@ -33,7 +33,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
     private val className = psiClass.getName()!!
     private val constructors = psiClass.getConstructors()
     private val constructorsToDrop = HashSet<PsiMethod>()
-    private val lastParamDefaults = ArrayList<Expression>() // defaults for a few last parameters of primary constructor in reverse order
+    private val lastParamDefaults = ArrayList<PsiExpression>() // defaults for a few last parameters of primary constructor in reverse order
     private val primaryConstructor: PsiMethod? = when (constructors.size) {
         0 -> null
         1 -> constructors.single()
@@ -48,7 +48,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             /**
              * Is not null if this constructor is equivalent to the target constructor with a few last parameters having default values
              */
-            val parameterDefaults: List<Expression>?)
+            val parameterDefaults: List<PsiExpression>?)
 
     private fun choosePrimaryConstructor(): PsiMethod? {
         val toTargetConstructorMap = HashMap<PsiMethod, TargetConstructorInfo>()
@@ -96,7 +96,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         return primary
     }
 
-    private fun calcTargetParameterDefaults(constructor: PsiMethod, target: PsiMethod, targetCall: PsiMethodCallExpression): List<Expression>? {
+    private fun calcTargetParameterDefaults(constructor: PsiMethod, target: PsiMethod, targetCall: PsiMethodCallExpression): List<PsiExpression>? {
         if (constructor.getBody()!!.getStatements().size != 1) return null // constructor's body should consist of only "this(...)"
         val parameters = constructor.getParameterList().getParameters()
         val targetParameters = target.getParameterList().getParameters()
@@ -113,9 +113,9 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             if (arg.resolve() != parameter) return null
         }
 
-        val result = ArrayList<Expression>(args.size - parameters.size)
+        val result = ArrayList<PsiExpression>(args.size - parameters.size)
         for (i in (parameters.size..args.size-1)) {
-            result.add(converter.convertExpression(args[i]))
+            result.add(args[i])
         }
         return result
     }
@@ -139,7 +139,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             for (i in (0..defaults.size-1)) {
                 val default = defaults[defaults.size - i - 1]
                 if (i < lastParamDefaults.size) { // default for this parameter has already been assigned
-                    if (lastParamDefaults[i].canonicalCode() != default.canonicalCode()) continue@DropCandidatesLoop
+                    if (lastParamDefaults[i].getText() != default.getText()) continue@DropCandidatesLoop
                 }
                 else {
                     lastParamDefaults.add(default)
@@ -150,17 +150,8 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         }
     }
 
-    public fun baseClassParams(): PsiExpressionList? {
-        if (primaryConstructor == null) return null
-        val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
-        val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
-        if (methodCall != null && methodCall.isSuperConstructorCall()) {
-            return methodCall.getArgumentList()
-        }
-        else {
-            return null
-        }
-    }
+    public var baseClassParams: List<Expression> = listOf()
+        private set
 
     public fun convertConstructor(constructor: PsiMethod,
                                   annotations: Annotations,
@@ -168,7 +159,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
                                   membersToRemove: MutableSet<PsiMember>,
                                   postProcessBody: (Block) -> Block): Member? {
         if (constructor == primaryConstructor) {
-            return convertPrimaryConstructor(constructor, annotations, modifiers, membersToRemove, postProcessBody)
+            return convertPrimaryConstructor(annotations, modifiers, membersToRemove, postProcessBody)
         }
         else {
             if (constructor in constructorsToDrop) return null
@@ -203,19 +194,18 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         }
     }
 
-    private fun convertPrimaryConstructor(constructor: PsiMethod,
-                                          annotations: Annotations,
+    private fun convertPrimaryConstructor(annotations: Annotations,
                                           modifiers: Modifiers,
                                           membersToRemove: MutableSet<PsiMember>,
                                           postProcessBody: (Block) -> Block): PrimaryConstructor {
-        val params = constructor.getParameterList().getParameters()
+        val params = primaryConstructor!!.getParameterList().getParameters()
         val parameterToField = HashMap<PsiParameter, Pair<PsiField, Type>>()
-        val body = constructor.getBody()
+        val body = primaryConstructor.getBody()
+        val usageReplacementMap = HashMap<PsiVariable, String>()
         val block = if (body != null) {
             val statementsToRemove = HashSet<PsiStatement>()
-            val usageReplacementMap = HashMap<PsiVariable, String>()
             for (parameter in params) {
-                val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, constructor) ?: continue
+                val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, primaryConstructor) ?: continue
 
                 val fieldType = typeConverter.convertVariableType(field)
                 val parameterType = typeConverter.convertVariableType(parameter)
@@ -253,10 +243,41 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             Block.Empty
         }
 
+        // we need to replace renamed parameter usages in base class constructor arguments and in default values
+        // we match simply by name because of default parameter values refer to parameters of other constructor
+        val byNameUsageReplacementMap = usageReplacementMap.map { it.key.getName() to it.value }.toMap()
+        val correctedConverter = converter.withExpressionVisitor {
+            object : ExpressionVisitor(it, mapOf()) {
+                override fun visitReferenceExpression(expression: PsiReferenceExpression) {
+                    if (expression.getQualifier() == null) {
+                        val replacement = byNameUsageReplacementMap[expression.getReferenceName()]
+                        if (replacement != null) {
+                            val target = expression.getReference()?.resolve()
+                            if (target is PsiParameter && target.getDeclarationScope().isConstructor()) {
+                                result = Identifier(replacement, typeConverter.variableNullability(target).isNullable(converter.settings))
+                                return
+                            }
+                        }
+                    }
+
+                    super.visitReferenceExpression(expression)
+                }
+            }
+        }
+
+        val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
+        val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
+        if (methodCall != null && methodCall.isSuperConstructorCall()) {
+            baseClassParams = correctedConverter.convertExpressions(methodCall.getArgumentList().getExpressions())
+        }
+
         val parameterList = ParameterList(params.indices.map { i ->
             val parameter = params[i]
             val indexFromEnd = params.size - i - 1
-            val defaultValue = if (indexFromEnd < lastParamDefaults.size) lastParamDefaults[indexFromEnd] else null
+            val defaultValue = if (indexFromEnd < lastParamDefaults.size)
+                correctedConverter.convertExpression(lastParamDefaults[indexFromEnd], parameter.getType())
+            else
+                null
             if (!parameterToField.containsKey(parameter)) {
                 converter.convertParameter(parameter, defaultValue = defaultValue)
             }
@@ -269,8 +290,8 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
                           converter.convertModifiers(field).filter { it in ACCESS_MODIFIERS },
                           defaultValue).assignPrototypes(listOf(parameter, field), CommentsAndSpacesInheritance(blankLinesBefore = false))
             }
-        }).assignPrototype(constructor.getParameterList())
-        return PrimaryConstructor(annotations, modifiers, parameterList, block).assignPrototype(constructor)
+        }).assignPrototype(primaryConstructor.getParameterList())
+        return PrimaryConstructor(annotations, modifiers, parameterList, block).assignPrototype(primaryConstructor)
     }
 
     private fun findBackingFieldForConstructorParameter(parameter: PsiParameter, constructor: PsiMethod): Pair<PsiField, PsiStatement>? {

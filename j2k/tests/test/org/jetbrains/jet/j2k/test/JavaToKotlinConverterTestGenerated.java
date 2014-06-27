@@ -856,6 +856,16 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams7.java");
         }
         
+        @TestMetadata("fieldsInitializedFromParams8.java")
+        public void testFieldsInitializedFromParams8() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams8.java");
+        }
+        
+        @TestMetadata("fieldsInitializedFromParams9.java")
+        public void testFieldsInitializedFromParams9() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams9.java");
+        }
+        
         @TestMetadata("genericIdentifier.java")
         public void testGenericIdentifier() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/genericIdentifier.java");

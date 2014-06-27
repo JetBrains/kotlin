@@ -206,8 +206,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                     modifiers = modifiers.with(Modifier.INNER)
                 }
 
-                val baseClassParams = convertExpressions(constructorConverter.baseClassParams()?.getExpressions() ?: array())
-                Class(name, annotations, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, classBody)
+                Class(name, annotations, modifiers, typeParameters, extendsTypes, constructorConverter.baseClassParams, implementsTypes, classBody)
             }
         }.assignPrototype(psiClass)
     }
