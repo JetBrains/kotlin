@@ -49,7 +49,7 @@ public class Intrinsics {
     public static void checkFieldIsNotNull(Object value, String className, String fieldName) {
         if (value == null) {
             IllegalStateException exception =
-                    new IllegalStateException("Field specified as non-null contains null: " + className + "." + fieldName);
+                    new IllegalStateException("Field specified as non-null is null: " + className + "." + fieldName);
             throw sanitizeStackTrace(exception);
         }
     }
@@ -64,7 +64,7 @@ public class Intrinsics {
             String methodName = caller.getMethodName();
 
             IllegalArgumentException exception =
-                    new IllegalArgumentException("Parameter specified as non-null contains null: " +
+                    new IllegalArgumentException("Parameter specified as non-null is null: " +
                                                  "method " + className + "." + methodName +
                                                  ", parameter " + paramName);
             throw sanitizeStackTrace(exception);
