@@ -18,21 +18,15 @@ package org.jetbrains.jet.plugin.debugger
 
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.MethodFilter
-import com.intellij.debugger.engine.StackFrameContext
 import com.intellij.debugger.engine.DebugProcessImpl
 import org.jetbrains.jet.plugin.debugger.KotlinSmartStepIntoHandler.KotlinMethodSmartStepTarget
 import org.jetbrains.jet.plugin.debugger.KotlinSmartStepIntoHandler.KotlinBasicStepMethodFilter
-import com.intellij.debugger.jdi.StackFrameProxyImpl
-import com.intellij.debugger.SourcePosition
-import com.intellij.psi.PsiElement
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
-import com.intellij.psi.PsiFile
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
-import org.jetbrains.jet.lang.resolve.name.FqName
-import java.io.File
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.engine.BasicStepMethodFilter
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
 
 abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
 
@@ -92,19 +86,21 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
 
         val line = (breakpoint as LineBreakpoint).getLineIndex()
 
-        val containingFile = breakpoint.getPsiFile()
-        if (containingFile == null) throw AssertionError("Couldn't find file for breakpoint at the line $line")
+        return ApplicationManager.getApplication()?.runReadAction(Computable {
+            val containingFile = breakpoint.getPsiFile()
+            if (containingFile == null) throw AssertionError("Couldn't find file for breakpoint at the line $line")
 
-        val position = MockSourcePosition(_file = containingFile, _line = line)
+            val position = MockSourcePosition(_file = containingFile, _line = line)
 
-        val stepTargets = KotlinSmartStepIntoHandler().findSmartStepTargets(position)
+            val stepTargets = KotlinSmartStepIntoHandler().findSmartStepTargets(position)
 
-        return stepTargets.filterIsInstance(javaClass<MethodSmartStepTarget>()).map {
-            stepTarget ->
-            when (stepTarget) {
-                is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget as KotlinMethodSmartStepTarget)
-                else -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
+            stepTargets.filterIsInstance(javaClass<MethodSmartStepTarget>()).map {
+                stepTarget ->
+                when (stepTarget) {
+                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget as KotlinMethodSmartStepTarget)
+                    else -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
+                }
             }
-        }
+        })!!
     }
 }

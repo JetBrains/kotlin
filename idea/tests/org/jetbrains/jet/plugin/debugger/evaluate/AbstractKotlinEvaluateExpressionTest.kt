@@ -40,6 +40,9 @@ import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.spi.LoggingEvent
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
+import com.intellij.psi.PsiDocumentManager
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestCase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -163,32 +166,37 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
     }
 
     private fun SuspendContextImpl.evaluate(text: String, codeFragmentKind: CodeFragmentKind, expectedResult: String) {
-        try {
+        ApplicationManager.getApplication()?.runReadAction {
             val sourcePosition = ContextUtil.getSourcePosition(this)
             val contextElement = ContextUtil.getContextElement(sourcePosition)!!
             Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.getText()}",
                               KotlinCodeFragmentFactory().isContextAccepted(contextElement))
 
-            val evaluator = DebuggerInvocationUtil.commitAndRunReadAction(getProject()) {
-                EvaluatorBuilderImpl.build(TextWithImportsImpl(
-                        codeFragmentKind,
-                        text,
-                        JetCodeFragment.getImportsForElement(contextElement),
-                        JetFileType.INSTANCE),
-                                           contextElement,
-                                           sourcePosition)
-            }
-            if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
+            try {
 
-            val value = evaluator.evaluate(createEvaluationContext(this))
-            val actualResult = value.asValue().asString()
-            Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
-        }
-        catch (e: EvaluateException) {
-            Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage()?.replaceFirst("id=[0-9]*", "id=ID"))
-        }
-        finally {
-            resume(this)
+                val evaluator =
+                        EvaluatorBuilderImpl.build(TextWithImportsImpl(
+                                codeFragmentKind,
+                                text,
+                                JetCodeFragment.getImportsForElement(contextElement),
+                                JetFileType.INSTANCE),
+                                                   contextElement,
+                                                   sourcePosition)
+
+
+                if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
+
+                val value = evaluator.evaluate(createEvaluationContext(this))
+                val actualResult = value.asValue().asString()
+
+                Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
+            }
+            catch (e: EvaluateException) {
+                Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage()?.replaceFirst("id=[0-9]*", "id=ID"))
+            }
+            finally {
+                resume(this)
+            }
         }
     }
 

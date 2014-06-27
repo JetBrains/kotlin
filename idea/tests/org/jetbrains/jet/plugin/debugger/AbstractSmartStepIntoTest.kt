@@ -25,10 +25,11 @@ import org.jetbrains.jet.InTextDirectivesUtils
 import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.util.PsiFormatUtilBase
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 
-abstract class AbstractSmartStepIntoTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTestCase() {
     private val fixture: JavaCodeInsightTestFixture
-        get() = myFixture!!
+        get() = myFixture
 
     protected fun doTest(path: String) {
         fixture.configureByFile(path)

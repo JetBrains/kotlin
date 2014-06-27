@@ -26,12 +26,14 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
@@ -66,6 +68,7 @@ public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
 
         UsefulTestCase.edt(new Runnable() {
             @Override
@@ -87,6 +90,12 @@ public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
             }
         });
 
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        super.tearDown();
     }
 
     @Override
