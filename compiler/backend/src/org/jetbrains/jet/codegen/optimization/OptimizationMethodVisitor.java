@@ -31,9 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OptimizationMethodVisitor extends MethodVisitor {
-    private final MethodTransformer methodTransformer = new RedundantNullCheckMethodTransformer(new RedundantBoxingMethodTransformer(
-            new RangesOptimizationMethodTransformer(null)
-    ));
+    private final MethodTransformer methodTransformer = new RedundantNullCheckMethodTransformer(
+            new RedundantBoxingMethodTransformer(
+                    null
+            )
+    );
     private final MethodNode methodNode;
     private final MethodVisitor delegate;
 
