@@ -869,8 +869,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         parameterIndex += type.getSize();
                     }
 
-                    String constructorJvmDescriptor = typeMapper.mapToCallableMethod(constructor).getAsmMethod().getDescriptor();
-                    iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorJvmDescriptor);
+                    Method constructorAsmMethod = typeMapper.mapSignature(constructor).getAsmMethod();
+                    iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorAsmMethod.getDescriptor());
 
                     iv.areturn(thisDescriptorType);
                 }
@@ -1580,8 +1580,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(2, Type.INT_TYPE);
         }
 
-        CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor);
-
         ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCallWithAssert(superCall, bindingContext);
         ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
 
@@ -1594,7 +1592,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
 
         if (isAnonymousObject(descriptor) && superCall instanceof JetDelegatorToSuperCall) {
-            int nextVar = findFirstSuperArgument(method);
+            int nextVar = findFirstSuperArgument(typeMapper.mapToCallableMethod(constructorDescriptor));
             for (Type t : superCallable.getAsmMethod().getArgumentTypes()) {
                 iv.load(nextVar, t);
                 nextVar += t.getSize();

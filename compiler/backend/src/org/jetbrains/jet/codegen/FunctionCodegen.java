@@ -496,7 +496,7 @@ public class FunctionCodegen extends ParentCodegenAware {
                     }
                 }
         );
-        return strings.toArray(new String[strings.size()]);
+        return ArrayUtil.toStringArray(strings);
     }
 
     static void generateConstructorWithoutParametersIfNeeded(
@@ -661,7 +661,8 @@ public class FunctionCodegen extends ParentCodegenAware {
         CallableMethod method;
         if (functionDescriptor instanceof ConstructorDescriptor) {
             method = state.getTypeMapper().mapToCallableMethod((ConstructorDescriptor) functionDescriptor);
-        } else {
+        }
+        else {
             method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, methodContext);
         }
 

@@ -23,8 +23,6 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -32,6 +30,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCallWithAssert;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class MonitorInstruction extends IntrinsicMethod {
@@ -56,12 +55,9 @@ public class MonitorInstruction extends IntrinsicMethod {
             @Nullable StackValue receiver
     ) {
         assert element != null : "Element should not be null";
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall((JetElement) element, codegen.getBindingContext());
-
-        assert resolvedCall != null : "Resolved call for " + element.getText() + " should be not null";
 
         codegen.pushMethodArgumentsWithoutCallReceiver(
-                resolvedCall,
+                getResolvedCallWithAssert((JetElement) element, codegen.getBindingContext()),
                 Arrays.asList(OBJECT_TYPE),
                 false,
                 codegen.defaultCallGenerator

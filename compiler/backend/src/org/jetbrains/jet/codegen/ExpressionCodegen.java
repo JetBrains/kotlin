@@ -1325,7 +1325,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(CONSTRUCTOR, expression.getObjectDeclaration());
         assert constructorDescriptor != null;
-        CallableMethod constructor = typeMapper.mapToCallableMethod(constructorDescriptor);
+        Method constructor = typeMapper.mapSignature(constructorDescriptor).getAsmMethod();
 
         Type type = bindingContext.get(ASM_TYPE, constructorDescriptor.getContainingDeclaration());
         assert type != null;
@@ -1337,16 +1337,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         JetDelegatorToSuperCall superCall = closure.getSuperCall();
         if (superCall != null) {
-            ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext
-                    .get(REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
-            assert superConstructor != null;
-            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
-            Type[] argumentTypes = superCallable.getAsmMethod().getArgumentTypes();
             ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(superCall, bindingContext);
+            ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
+            Type[] argumentTypes = typeMapper.mapSignature(superConstructor).getAsmMethod().getArgumentTypes();
             pushMethodArgumentsWithoutCallReceiver(resolvedCall, Arrays.asList(argumentTypes), false, defaultCallGenerator);
         }
 
-        v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor());
+        v.invokespecial(type.getInternalName(), "<init>", constructor.getDescriptor());
         return StackValue.onStack(type);
     }
 
