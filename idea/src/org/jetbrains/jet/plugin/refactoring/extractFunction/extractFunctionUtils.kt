@@ -373,8 +373,6 @@ private fun ExtractionData.inferParametersInfo(
 
     val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, MutableParameter>()
 
-    val valueUsageMap = pseudocode.collectValueUsages()
-
     for (refInfo in getBrokenReferencesInfo(createTemporaryCodeBlock())) {
         val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
         val ref = refInfo.refExpr
@@ -437,7 +435,7 @@ private fun ExtractionData.inferParametersInfo(
                 if (!parameterType.processTypeIfExtractable(typeParameters, nonDenotableTypes)) continue
 
                 val parameterTypePredicate =
-                        pseudocode.getElementValue(originalRef)?.let { getExpectedTypePredicate(it, valueUsageMap, bindingContext) } ?: AllTypes
+                        pseudocode.getElementValue(originalRef)?.let { getExpectedTypePredicate(it, bindingContext) } ?: AllTypes
 
                 val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
                     val parameterName =

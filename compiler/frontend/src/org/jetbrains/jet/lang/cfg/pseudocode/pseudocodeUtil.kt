@@ -64,18 +64,6 @@ val PseudoValue.implicitReturnValue: Boolean
         return false
     }
 
-fun Pseudocode.collectValueUsages(): Map<PseudoValue, List<Instruction>> {
-    val map = HashMap<PseudoValue, MutableList<Instruction>>()
-    traverseFollowingInstructions(getEnterInstruction(), HashSet(), TraversalOrder.FORWARD) {
-        for (value in it.inputValues) {
-            map.getOrPut(value){ ArrayList() }.add(it)
-        }
-        true
-    }
-
-    return map
-}
-
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
     val callableDescriptor = resolvedCall.getResultingDescriptor()
     if (callableDescriptor == null) return null
@@ -96,11 +84,8 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
     return null
 }
 
-fun getExpectedTypePredicate(
-        value: PseudoValue,
-        valueUsageMap: Map<PseudoValue, List<Instruction>>,
-        bindingContext: BindingContext
-): TypePredicate {
+fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
+    val pseudocode = value.createdAt.owner
     val typePredicates = HashSet<TypePredicate?>()
 
     fun addSubtypesOf(jetType: JetType?) = typePredicates.add(jetType?.getSubtypesPredicate())
@@ -112,7 +97,7 @@ fun getExpectedTypePredicate(
             addSubtypesOf(functionDescriptor?.getReturnType())
         }
 
-        valueUsageMap[value]?.forEach {
+        pseudocode.getUsages(value).forEach {
             when (it) {
                 is ReturnValueInstruction -> {
                     val functionDescriptor = (it.element as JetReturnExpression).getTargetFunctionDescriptor(bindingContext)
@@ -173,4 +158,16 @@ fun getExpectedTypePredicate(
 
     addTypePredicates(value)
     return and(typePredicates.filterNotNull())
+}
+
+private fun Pseudocode.collectValueUsages(): Map<PseudoValue, List<Instruction>> {
+    val map = HashMap<PseudoValue, MutableList<Instruction>>()
+    traverseFollowingInstructions(getEnterInstruction(), HashSet(), TraversalOrder.FORWARD) {
+        for (value in it.inputValues) {
+            map.getOrPut(value){ ArrayList() }.add(it)
+        }
+        true
+    }
+
+    return map
 }

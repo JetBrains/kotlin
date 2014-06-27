@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import com.google.common.collect.*;
+import com.intellij.openapi.util.NotNullLazyValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
@@ -88,6 +89,15 @@ public class PseudocodeImpl implements Pseudocode {
     private final List<Instruction> instructions = new ArrayList<Instruction>();
 
     private final Map<JetElement, PseudoValue> elementsToValues = new HashMap<JetElement, PseudoValue>();
+
+    private final NotNullLazyValue<Map<PseudoValue, List<? extends Instruction>>> valueUsages =
+            new NotNullLazyValue<Map<PseudoValue, List<? extends Instruction>>>() {
+                @NotNull
+                @Override
+                protected Map<PseudoValue, List<? extends Instruction>> compute() {
+                    return PseudocodePackage.collectValueUsages(PseudocodeImpl.this);
+                }
+            };
 
     private Pseudocode parent = null;
     private Set<LocalFunctionDeclarationInstruction> localDeclarations = null;
@@ -249,6 +259,13 @@ public class PseudocodeImpl implements Pseudocode {
     @Override
     public PseudoValue getElementValue(@Nullable JetElement element) {
         return elementsToValues.get(element);
+    }
+
+    @NotNull
+    @Override
+    public List<? extends Instruction> getUsages(@Nullable PseudoValue value) {
+        List<? extends Instruction> result = valueUsages.getValue().get(value);
+        return result != null ? result : Collections.<Instruction>emptyList();
     }
 
     /*package*/ void bindElementToValue(@NotNull JetElement element, @NotNull PseudoValue value) {

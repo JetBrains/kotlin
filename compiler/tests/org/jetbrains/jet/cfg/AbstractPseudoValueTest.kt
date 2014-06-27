@@ -22,14 +22,12 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.*
-import org.jetbrains.jet.lang.cfg.pseudocode.collectValueUsages
 import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate
 import org.jetbrains.jet.lang.cfg.pseudocode.getExpectedTypePredicate
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithValue
 
 public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
     override fun dumpInstructions(pseudocode: PseudocodeImpl, out: StringBuilder, bindingContext: BindingContext) {
-        val valueUsageMap = pseudocode.collectValueUsages()
         val expectedTypePredicateMap = HashMap<PseudoValue, TypePredicate>()
 
         fun getElementToValueMap(pseudocode: PseudocodeImpl): Map<JetElement, PseudoValue> {
@@ -51,7 +49,7 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
                 element?.getText()?.replaceAll("\\s+", " ") ?: ""
 
         fun valueDecl(value: PseudoValue): String {
-            val typePredicate = expectedTypePredicateMap.getOrPut(value) { getExpectedTypePredicate(value, valueUsageMap, bindingContext) }
+            val typePredicate = expectedTypePredicateMap.getOrPut(value) { getExpectedTypePredicate(value, bindingContext) }
             return "${value.debugName}: $typePredicate"
         }
 
