@@ -1300,6 +1300,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/foreachStatement/enhancedForWithReturn.java");
         }
         
+        @TestMetadata("nullableIterable.java")
+        public void testNullableIterable() throws Exception {
+            doTest("j2k/tests/testData/ast/foreachStatement/nullableIterable.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/formatting")

@@ -176,13 +176,8 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
     }
 
     override fun visitForeachStatement(statement: PsiForeachStatement) {
-        val iterator = run {
-            val iteratorExpr = converter.convertExpression(statement.getIteratedValue())
-            if (iteratorExpr.isNullable)
-                BangBangExpression(iteratorExpr)
-            else
-                iteratorExpr
-        }
+        val iteratorExpr = converter.convertExpression(statement.getIteratedValue())
+        val iterator = if (iteratorExpr.isNullable) BangBangExpression(iteratorExpr).assignNoPrototype() else iteratorExpr
         result = ForeachStatement(converter.convertParameter(statement.getIterationParameter()),
                                   iterator,
                                   convertStatementOrBlock(statement.getBody()),
