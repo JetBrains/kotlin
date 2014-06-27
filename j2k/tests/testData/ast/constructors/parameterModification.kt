@@ -5,11 +5,7 @@ fun C(arg1: Int, arg2: Int): C {
     return __
 }
 
-fun C(arg1: Int): C {
-    return C(arg1, 0, 0)
-}
-
-class C(arg1: Int, arg2: Int, arg3: Int) {
+class C(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
     private val field: Int
 
     {

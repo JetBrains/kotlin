@@ -126,3 +126,10 @@ fun PsiElement.getContainingConstructor(): PsiMethod? {
 }
 
 fun PsiElement.isConstructor(): Boolean = this is PsiMethod && this.isConstructor()
+
+fun PsiModifierListOwner.accessModifier(): String = when {
+    hasModifierProperty(PsiModifier.PUBLIC) -> PsiModifier.PUBLIC
+    hasModifierProperty(PsiModifier.PRIVATE) -> PsiModifier.PRIVATE
+    hasModifierProperty(PsiModifier.PROTECTED) -> PsiModifier.PROTECTED
+    else -> PsiModifier.PACKAGE_LOCAL
+}

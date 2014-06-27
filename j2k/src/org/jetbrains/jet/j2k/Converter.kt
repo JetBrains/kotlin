@@ -110,7 +110,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         for (element in psiClass.getChildren()) {
             if (element is PsiMember) {
                 val converted = convertMember(element, membersToRemove, constructorConverter)
-                if (!converted.isEmpty) {
+                if (converted != null && !converted.isEmpty) {
                     convertedMembers.put(element, converted)
                 }
             }
@@ -172,7 +172,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         }
     }
 
-    private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>, constructorConverter: ConstructorConverter?): Member = when (member) {
+    private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>, constructorConverter: ConstructorConverter?): Member? = when (member) {
         is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter)
         is PsiField -> convertField(member)
         is PsiClass -> convertClass(member)
@@ -262,11 +262,11 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return if (convertedType == initializerType) null else convertedType
     }
 
-    private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member {
-        return withMethodReturnType(method.getReturnType()).doConvertMethod(method, membersToRemove, constructorConverter).assignPrototype(method)
+    private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member? {
+        return withMethodReturnType(method.getReturnType()).doConvertMethod(method, membersToRemove, constructorConverter)?.assignPrototype(method)
     }
 
-    private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member {
+    private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member? {
         val returnType = typeConverter.convertMethodReturnType(method)
 
         val annotations = (convertAnnotations(method) + convertThrows(method)).assignNoPrototype()
@@ -401,13 +401,14 @@ public class Converter private(val project: Project, val settings: ConverterSett
     fun convertParameter(parameter: PsiParameter,
                          nullability: Nullability = Nullability.Default,
                          varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
-                         modifiers: Modifiers = Modifiers.Empty): Parameter {
+                         modifiers: Modifiers = Modifiers.Empty,
+                         defaultValue: Expression? = null): Parameter {
         var `type` = typeConverter.convertVariableType(parameter)
         when (nullability) {
             Nullability.NotNull -> `type` = `type`.toNotNullType()
             Nullability.Nullable -> `type` = `type`.toNullableType()
         }
-        return Parameter(parameter.declarationIdentifier(), `type`, varValModifier, convertAnnotations(parameter), modifiers).assignPrototype(parameter)
+        return Parameter(parameter.declarationIdentifier(), `type`, varValModifier, convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter)
     }
 
     fun convertExpression(expression: PsiExpression?, expectedType: PsiType?): Expression {

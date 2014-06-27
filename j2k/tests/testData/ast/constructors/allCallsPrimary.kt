@@ -1,15 +1,6 @@
 package pack
 
-
-fun C(arg1: Int, arg2: Int): C {
-    return C(arg1, arg2, 0)
-}
-
-fun C(arg1: Int): C {
-    return C(arg1, 0, 0)
-}
-
-class C(arg1: Int, arg2: Int, arg3: Int)
+class C(arg1: Int, arg2: Int = 0, arg3: Int = 0)
 
 public class User {
     class object {

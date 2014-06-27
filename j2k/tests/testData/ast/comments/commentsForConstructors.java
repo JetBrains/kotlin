@@ -7,10 +7,15 @@ class A {
         v = 1;
     } // end of primary constructor body
 
-    // this is a secondary constructor
+    // this is a secondary constructor 1
     A() {
         this(1);
-    } // end of secondary constructor body
+    } // end of secondary constructor 1 body
+
+    // this is a secondary constructor 2
+    A(String s) {
+        this(s.length());
+    } // end of secondary constructor 2 body
 }
 
 class B {
