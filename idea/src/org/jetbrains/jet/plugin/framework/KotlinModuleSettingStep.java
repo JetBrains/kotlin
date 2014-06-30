@@ -57,7 +57,7 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
     public KotlinModuleSettingStep(TargetPlatform targetPlatform, ModuleBuilder moduleBuilder, @NotNull SettingsStep settingsStep) {
         this.targetPlatform = targetPlatform;
 
-        myJavaStep = JavaModuleType.getModuleType().modifySettingsStep(settingsStep, moduleBuilder);
+        myJavaStep = JavaModuleType.getModuleType().modifyProjectTypeStep(settingsStep, moduleBuilder);
 
         basePath = moduleBuilder.getContentEntryPath();
         librariesContainer = LibrariesContainerFactory.createContainer(settingsStep.getContext().getProject());
