@@ -165,7 +165,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             if (constructor in constructorsToDrop) return null
 
             val params = converter.convertParameterList(constructor.getParameterList())
-            val bodyConverter = converter.withExpressionVisitor { object : ExpressionVisitor(it, mapOf()/*TODO: see KT-5327*/) {
+            val bodyConverter = converter.withExpressionVisitor { object : ExpressionVisitor(it) {
                 override fun visitReferenceExpression(expression: PsiReferenceExpression) {
                     if (isQualifierEmptyOrThis(expression)) {
                         val member = expression.getReference()?.resolve() as? PsiMember
@@ -201,7 +201,8 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         val params = primaryConstructor!!.getParameterList().getParameters()
         val parameterToField = HashMap<PsiParameter, Pair<PsiField, Type>>()
         val body = primaryConstructor.getBody()
-        val usageReplacementMap = HashMap<PsiVariable, String>()
+
+        val parameterUsageReplacementMap = HashMap<String, String>()
         val block = if (body != null) {
             val statementsToRemove = HashSet<PsiStatement>()
             for (parameter in params) {
@@ -225,12 +226,12 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
                 membersToRemove.add(field)
 
                 if (field.getName() != parameter.getName()) {
-                    usageReplacementMap.put(parameter, field.getName()!!)
+                    parameterUsageReplacementMap.put(parameter.getName()!!, field.getName()!!)
                 }
             }
 
             val bodyConverter = converter.withExpressionVisitor {
-                object : ExpressionVisitor(it, usageReplacementMap) {
+                object : ReplacingExpressionVisitor(this, parameterUsageReplacementMap, it) {
                     override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
                         if (expression.isSuperConstructorCall()) return // skip it
                         super.visitMethodCallExpression(expression)
@@ -244,26 +245,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         }
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values
-        // we match simply by name because of default parameter values refer to parameters of other constructor
-        val byNameUsageReplacementMap = usageReplacementMap.map { it.key.getName() to it.value }.toMap()
-        val correctedConverter = converter.withExpressionVisitor {
-            object : ExpressionVisitor(it, mapOf()) {
-                override fun visitReferenceExpression(expression: PsiReferenceExpression) {
-                    if (expression.getQualifier() == null) {
-                        val replacement = byNameUsageReplacementMap[expression.getReferenceName()]
-                        if (replacement != null) {
-                            val target = expression.getReference()?.resolve()
-                            if (target is PsiParameter && target.getDeclarationScope().isConstructor()) {
-                                result = Identifier(replacement, typeConverter.variableNullability(target).isNullable(converter.settings))
-                                return
-                            }
-                        }
-                    }
-
-                    super.visitReferenceExpression(expression)
-                }
-            }
-        }
+        val correctedConverter = converter.withExpressionVisitor { ReplacingExpressionVisitor(this, parameterUsageReplacementMap, it) }
 
         val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
@@ -461,5 +443,28 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
     private fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
         val ref = getMethodExpression()
         return ref.getCanonicalText() == "super" && ref.resolve()?.isConstructor() ?: false
+    }
+
+    private /*inner*//*TODO:KT-5343*/ open class ReplacingExpressionVisitor(
+            val owner: ConstructorConverter,
+            val parameterUsageReplacementMap: Map<String, String>, converter: Converter) : ExpressionVisitor(converter) {
+        override fun visitReferenceExpression(expression: PsiReferenceExpression) {
+            if (expression.getQualifier() == null) {
+                val replacement = parameterUsageReplacementMap[expression.getReferenceName()]
+                if (replacement != null) {
+                    val target = expression.getReference()?.resolve()
+                    if (target is PsiParameter) {
+                        val scope = target.getDeclarationScope()
+                        // we do not check for exactly this constructor because default values reference parameters in other constructors
+                        if (scope.isConstructor() && scope.getParent() == owner.psiClass) {
+                            result = Identifier(replacement, owner.typeConverter.variableNullability(target).isNullable(owner.converter.settings))
+                            return
+                        }
+                    }
+                }
+            }
+
+            super.visitReferenceExpression(expression)
+        }
     }
 }

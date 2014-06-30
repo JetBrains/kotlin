@@ -36,8 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 
-open class ExpressionVisitor(private val converter: Converter,
-                        private val usageReplacementMap: Map<PsiVariable, String> = mapOf()) : JavaElementVisitor() {
+open class ExpressionVisitor(private val converter: Converter) : JavaElementVisitor() {
     private val typeConverter = converter.typeConverter
 
     public var result: Expression = Expression.Empty
@@ -333,14 +332,6 @@ open class ExpressionVisitor(private val converter: Converter,
                 result = Identifier(code, false, false)
                 return
             }
-
-            if (target is PsiVariable) {
-                val replacement = usageReplacementMap[target]
-                if (replacement != null) {
-                    identifier = Identifier(replacement, isNullable)
-                }
-            }
-
         }
 
         result = if (qualifier != null) QualifiedExpression(converter.convertExpression(qualifier), identifier) else identifier
@@ -368,8 +359,7 @@ open class ExpressionVisitor(private val converter: Converter,
             result = MethodCallExpression.buildNotNull(converter.convertExpression(operand), typeConversion)
         }
         else {
-            result = TypeCastExpression(typeConverter.convertType(castType.getType()),
-                                        converter.convertExpression(operand))
+            result = TypeCastExpression(typeConverter.convertType(castType.getType()), converter.convertExpression(operand))
         }
     }
 
