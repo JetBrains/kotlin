@@ -47,7 +47,7 @@ class LazyJavaTypeResolver(
                 assert(jetType != null, "Primitive type is not found: " + canonicalText)
                 return jetType!!
             }
-            is JavaClassifierType -> if (PLATFORM_TYPES)
+            is JavaClassifierType -> if (PLATFORM_TYPES && attr.howThisTypeIsUsed != SUPERTYPE)
                                          LazyFlexibleJavaClassifierType(javaType, attr)
                                      else LazyJavaClassifierType(javaType, attr)
             is JavaArrayType -> transformArrayType(javaType, attr)
