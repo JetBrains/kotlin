@@ -56,7 +56,8 @@ import java.util.Collections;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiversPackage.*;
+import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiversPackage.createQualifier;
+import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiversPackage.resolveAsStandaloneExpression;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class CallExpressionResolver {
@@ -300,7 +301,7 @@ public class CallExpressionResolver {
         //TODO move further
         if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
             if (selectorReturnType != null && !KotlinBuiltIns.getInstance().isUnit(selectorReturnType)) {
-                if (receiverType.isNullable()) {
+                if (TypeUtils.isNullableType(receiverType)) {
                     selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
                 }
             }

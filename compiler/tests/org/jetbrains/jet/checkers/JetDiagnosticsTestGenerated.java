@@ -7697,7 +7697,20 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             
             @TestMetadata("dereference.kt")
             public void testDereference() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/platformTypes/dereference.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/dereference.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("elvis.kt")
+            public void testElvis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/elvis.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("safeCall.kt")
+            public void testSafeCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/safeCall.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall")
@@ -7722,22 +7735,26 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 
                 @TestMetadata("javaCollectionToKotlin.kt")
                 public void testJavaCollectionToKotlin() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/javaCollectionToKotlin.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/javaCollectionToKotlin.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("javaToJava.kt")
                 public void testJavaToJava() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/javaToJava.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/javaToJava.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("javaToKotlin.kt")
                 public void testJavaToKotlin() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/javaToKotlin.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/javaToKotlin.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("kotlinCollectionToJava.kt")
                 public void testKotlinCollectionToJava() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/kotlinCollectionToJava.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/kotlinCollectionToJava.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("list.kt")
