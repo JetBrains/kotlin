@@ -32,6 +32,16 @@ import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest;
 @SuppressWarnings("all")
 @TestMetadata("jps-plugin/testData/incremental")
 public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
+    @TestMetadata("accessingFunctionsViaPackagePart")
+    public void testAccessingFunctionsViaPackagePart() throws Exception {
+        doTest("jps-plugin/testData/incremental/accessingFunctionsViaPackagePart/");
+    }
+    
+    @TestMetadata("accessingPropertiesViaField")
+    public void testAccessingPropertiesViaField() throws Exception {
+        doTest("jps-plugin/testData/incremental/accessingPropertiesViaField/");
+    }
+    
     @TestMetadata("allConstants")
     public void testAllConstants() throws Exception {
         doTest("jps-plugin/testData/incremental/allConstants/");
