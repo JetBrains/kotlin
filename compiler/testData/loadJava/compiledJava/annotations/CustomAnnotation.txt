@@ -7,7 +7,7 @@ public trait CustomAnnotation {
         public abstract fun value(): test.CustomAnnotation.MyEnum
     }
 
-    public final enum class MyEnum : kotlin.Enum<test.CustomAnnotation.MyEnum> {
+    public final enum class MyEnum : kotlin.Enum<test.CustomAnnotation.MyEnum!> {
         private constructor MyEnum()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

@@ -4,4 +4,4 @@ fun foo(){
     val l : java.util.Calendar = Calendar.getInstance(<caret>)
 }
 
-// ELEMENT_TEXT: Calendar.getInstance(TimeZone)
+// ELEMENT_TEXT: Calendar.getInstance(TimeZone!)

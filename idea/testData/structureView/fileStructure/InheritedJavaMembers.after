@@ -1,6 +1,6 @@
 -InheritedJavaMembers.kt
  -InheritedJavaMembers
-  call(): String? location=→Callable
+  call(): String! location=→Callable
   equals(Any?): Boolean location=→Any
   hashCode(): Int location=→Any
   test(): Unit

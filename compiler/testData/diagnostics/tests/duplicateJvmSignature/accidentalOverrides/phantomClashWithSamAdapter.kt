@@ -23,5 +23,6 @@ import p.*
 open class K0 : Foo()
 
 class K : K0() {
-    fun foo(f: () -> Unit) {}
+    // We keep this test to make sure ACCIDENTAL_OVERRIDE is not reported
+    <!VIRTUAL_MEMBER_HIDDEN!>fun <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>foo<!>(f: () -> Unit)<!> {}
 }

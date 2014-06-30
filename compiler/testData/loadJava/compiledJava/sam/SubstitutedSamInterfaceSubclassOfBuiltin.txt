@@ -1,7 +1,7 @@
 package test
 
-public /*synthesized*/ fun SubstitutedSamInterfaceSubclassOfBuiltin(/*0*/ function: (test.SubstitutedSamInterfaceSubclassOfBuiltin) -> kotlin.Int): test.SubstitutedSamInterfaceSubclassOfBuiltin
+public /*synthesized*/ fun SubstitutedSamInterfaceSubclassOfBuiltin(/*0*/ function: (test.SubstitutedSamInterfaceSubclassOfBuiltin!) -> kotlin.Int): test.SubstitutedSamInterfaceSubclassOfBuiltin
 
-public trait SubstitutedSamInterfaceSubclassOfBuiltin : kotlin.Comparable<test.SubstitutedSamInterfaceSubclassOfBuiltin> {
-    public abstract override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.SubstitutedSamInterfaceSubclassOfBuiltin): kotlin.Int
+public trait SubstitutedSamInterfaceSubclassOfBuiltin : kotlin.Comparable<test.SubstitutedSamInterfaceSubclassOfBuiltin!> {
+    public abstract override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.SubstitutedSamInterfaceSubclassOfBuiltin!): kotlin.Int
 }
