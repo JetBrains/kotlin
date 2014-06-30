@@ -32,6 +32,12 @@ open class KTopLevelVariableImpl<out R>(
     override fun get(): R {
         return getter(null) as R
     }
+
+    override fun equals(other: Any?): Boolean =
+            other is KTopLevelVariableImpl<*> && name == other.name && owner == other.owner
+
+    override fun hashCode(): Int =
+            name.hashCode() * 31 + owner.hashCode()
 }
 
 class KMutableTopLevelVariableImpl<R>(

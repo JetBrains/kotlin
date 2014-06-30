@@ -32,6 +32,12 @@ open class KTopLevelExtensionPropertyImpl<T, out R>(
     override fun get(receiver: T): R {
         return getter(null, receiver) as R
     }
+
+    override fun equals(other: Any?): Boolean =
+            other is KTopLevelExtensionPropertyImpl<*, *> && name == other.name && owner == other.owner && receiverClass == other.receiverClass
+
+    override fun hashCode(): Int =
+            (name.hashCode() * 31 + owner.hashCode()) * 31 + receiverClass.hashCode()
 }
 
 class KMutableTopLevelExtensionPropertyImpl<T, R>(

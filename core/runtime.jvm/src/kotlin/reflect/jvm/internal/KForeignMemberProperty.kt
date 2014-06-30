@@ -30,6 +30,12 @@ open class KForeignMemberProperty<T : Any, out R>(
     override fun get(receiver: T): R {
         return field.get(receiver) as R
     }
+
+    override fun equals(other: Any?): Boolean =
+            other is KForeignMemberProperty<*, *> && name == other.name && owner == other.owner
+
+    override fun hashCode(): Int =
+            name.hashCode() * 31 + owner.hashCode()
 }
 
 class KMutableForeignMemberProperty<T : Any, out R>(

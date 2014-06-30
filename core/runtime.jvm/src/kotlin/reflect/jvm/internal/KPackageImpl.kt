@@ -18,4 +18,10 @@ package kotlin.reflect.jvm.internal
 
 import kotlin.reflect.KPackage
 
-class KPackageImpl(val jClass: Class<*>) : KPackage
+class KPackageImpl(val jClass: Class<*>) : KPackage {
+    override fun equals(other: Any?): Boolean =
+            other is KPackageImpl && jClass == other.jClass
+
+    override fun hashCode(): Int =
+            jClass.hashCode()
+}

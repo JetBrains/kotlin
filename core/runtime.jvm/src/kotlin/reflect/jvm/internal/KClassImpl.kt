@@ -56,4 +56,10 @@ class KClassImpl<out T>(val jClass: Class<T>) : KClass<T> {
             else {
                 KMutableForeignMemberProperty<T, Any>(name, this)
             }
+
+    override fun equals(other: Any?): Boolean =
+            other is KClassImpl<*> && jClass == other.jClass
+
+    override fun hashCode(): Int =
+            jClass.hashCode()
 }

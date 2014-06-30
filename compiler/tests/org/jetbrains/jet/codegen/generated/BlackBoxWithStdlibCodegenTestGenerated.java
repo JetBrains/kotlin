@@ -1381,7 +1381,7 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection")
-    @InnerTestClasses({Reflection.Enclosing.class, Reflection.GenericSignature.class, Reflection.Mapping.class})
+    @InnerTestClasses({Reflection.Enclosing.class, Reflection.GenericSignature.class, Reflection.Mapping.class, Reflection.MethodsFromAny.class})
     public static class Reflection extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInReflection() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1530,12 +1530,26 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             
         }
         
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny")
+        public static class MethodsFromAny extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInMethodsFromAny() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("equalsHashCode.kt")
+            public void testEqualsHashCode() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/equalsHashCode.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Reflection");
             suite.addTestSuite(Reflection.class);
             suite.addTest(Enclosing.innerSuite());
             suite.addTestSuite(GenericSignature.class);
             suite.addTestSuite(Mapping.class);
+            suite.addTestSuite(MethodsFromAny.class);
             return suite;
         }
     }

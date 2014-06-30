@@ -39,6 +39,12 @@ open class KMemberPropertyImpl<T : Any, out R>(
     override fun get(receiver: T): R {
         return getter(receiver) as R
     }
+
+    override fun equals(other: Any?): Boolean =
+            other is KMemberPropertyImpl<*, *> && name == other.name && owner == other.owner
+
+    override fun hashCode(): Int =
+            name.hashCode() * 31 + owner.hashCode()
 }
 
 class KMutableMemberPropertyImpl<T : Any, R>(
