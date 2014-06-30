@@ -2601,7 +2601,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private void generateExpressionWithNullFallback(@NotNull JetExpression expression, @NotNull Label ifnull) {
+        expression = JetPsiUtil.deparenthesize(expression);
         Type type = expressionType(expression);
+
         if (expression instanceof JetSafeQualifiedExpression && !isPrimitive(type)) {
             StackValue value = generateSafeQualifiedExpression((JetSafeQualifiedExpression) expression, ifnull);
             value.put(type, v);
@@ -2612,11 +2614,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression, @NotNull Label ifnull) {
-        JetExpression receiver = JetPsiUtil.deparenthesize(expression.getReceiverExpression());
+        JetExpression receiver = expression.getReceiverExpression();
         JetExpression selector = expression.getSelectorExpression();
         Type receiverType = expressionType(receiver);
 
-        assert receiver != null : "receiver should be not null: " + expression.getText();
         generateExpressionWithNullFallback(receiver, ifnull);
 
         if (isPrimitive(receiverType)) {
@@ -2631,13 +2632,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression, StackValue unused) {
         Label ifnull = new Label();
-        Label end = new Label();
         Type type = boxType(expressionType(expression));
 
         StackValue value = generateSafeQualifiedExpression(expression, ifnull);
         value.put(type, v);
 
         if (!isPrimitive(expressionType(expression.getReceiverExpression()))) {
+            Label end = new Label();
+
             v.goTo(end);
             v.mark(ifnull);
             v.pop();
@@ -2845,13 +2847,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateElvis(JetBinaryExpression expression) {
-        JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
+        JetExpression left = expression.getLeft();
 
         Type exprType = expressionType(expression);
         Type leftType = expressionType(left);
 
         Label ifNull = new Label();
-        Label end = new Label();
+
 
         assert left != null : "left expression in elvis should be not null: " + expression.getText();
         generateExpressionWithNullFallback(left, ifNull);
@@ -2864,6 +2866,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         v.ifnull(ifNull);
         StackValue.onStack(leftType).put(exprType, v);
+
+        Label end = new Label();
         v.goTo(end);
 
         v.mark(ifNull);
