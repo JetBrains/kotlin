@@ -16,10 +16,14 @@
 
 package org.jetbrains.jet.codegen.optimization.boxing;
 
+import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.optimization.common.OptimizationBasicInterpreter;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.InsnList;
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode;
@@ -31,6 +35,18 @@ import java.util.List;
 import java.util.Map;
 
 public class BoxingInterpreter extends OptimizationBasicInterpreter {
+    private static final ImmutableSet<String> wrappersClassNames;
+
+    static {
+        ImmutableSet.Builder<String> wrappersClassesBuilder = ImmutableSet.builder();
+
+        for (JvmPrimitiveType primitiveType : JvmPrimitiveType.values()) {
+            wrappersClassesBuilder.add(AsmUtil.internalNameByFqNameWithoutInnerClasses(primitiveType.getWrapperFqName()));
+        }
+
+        wrappersClassNames = wrappersClassesBuilder.build();
+    }
+
     private final Map<Integer, BoxedBasicValue> boxingPlaces = new HashMap<Integer, BoxedBasicValue>();
     private final InsnList insnList;
 
@@ -38,24 +54,15 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         this.insnList = insnList;
     }
 
-    private static boolean isClassBox(@NotNull String owner) {
-
-        if (!owner.startsWith("java/lang/")) {
-            return false;
-        }
-
-        String className = owner.substring("java/lang/".length());
-
-        return (className.equals("Integer") ||
-                className.equals("Double") ||
-                className.equals("Long") ||
-                className.equals("Char") ||
-                className.equals("Byte") ||
-                className.equals("Boolean")) ||
-               className.endsWith("Number");
+    private static boolean isWrapperClassName(@NotNull String owner) {
+        return wrappersClassNames.contains(owner);
     }
 
-    private static boolean isUnboxingMethod(@NotNull String name) {
+    private static boolean isWrapperClassNameOrNumber(@NotNull String owner) {
+        return isWrapperClassName(owner) || owner.equals(Type.getInternalName(Number.class));
+    }
+
+    private static boolean isUnboxingMethodName(@NotNull String name) {
         return name.endsWith("Value");
     }
 
@@ -66,7 +73,7 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
 
         MethodInsnNode methodInsn = (MethodInsnNode) insn;
 
-        return isClassBox(methodInsn.owner) && isUnboxingMethod(methodInsn.name);
+        return isWrapperClassNameOrNumber(methodInsn.owner) && isUnboxingMethodName(methodInsn.name);
     }
 
     private static boolean isBoxing(@NotNull AbstractInsnNode insn) {
@@ -76,7 +83,7 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
 
         MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
 
-        return isClassBox(methodInsnNode.owner) && methodInsnNode.name.equals("valueOf");
+        return isWrapperClassName(methodInsnNode.owner) && methodInsnNode.name.equals("valueOf");
     }
 
     @Override
@@ -87,32 +94,30 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         if (isBoxing(insn)) {
             int index = insnList.indexOf(insn);
             if (!boxingPlaces.containsKey(index)) {
-                BoxedBasicValue boxedBasicValue = new BoxedBasicValue(value.getType(), values.get(0).getType(), insn);
+                BoxedBasicValue boxedBasicValue = new BoxedBasicValue(values.get(0).getType(), insn);
                 onNewBoxedValue(boxedBasicValue);
                 boxingPlaces.put(index, boxedBasicValue);
             }
 
             return boxingPlaces.get(index);
-        }
-
-        if (isUnboxing(insn) &&
+        } else if (isUnboxing(insn) &&
             values.get(0) instanceof BoxedBasicValue &&
-            value.getType().equals(((BoxedBasicValue) values.get(0)).getBoxedType())) {
+            value.getType().equals(((BoxedBasicValue) values.get(0)).getPrimitiveType())) {
+
             BoxedBasicValue boxedBasicValue = (BoxedBasicValue) values.get(0);
             boxedBasicValue.addInsn(insn);
             boxedBasicValue.setWasUnboxed(true);
+        } else {
+            for (BasicValue arg : values) {
+                if (arg instanceof BoxedBasicValue) {
+                    onMethodCallWithBoxedValue((BoxedBasicValue) arg);
+                }
+            }
         }
 
         return value;
     }
 
-    protected void onNewBoxedValue(BoxedBasicValue value) {
-
-    }
-
-    protected boolean isAllowedUnaryOperationWithBoxed(int opcode) {
-        return opcode == Opcodes.CHECKCAST || opcode == Opcodes.IFNULL;
-    }
 
     @Override
     @Nullable
@@ -128,10 +133,37 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     @Override
     @NotNull
     public BasicValue merge(@NotNull BasicValue v, @NotNull BasicValue w) {
-        if (v instanceof BoxedBasicValue && w instanceof BoxedBasicValue && v.equals(w)) {
+        if (v instanceof BoxedBasicValue && v.equals(w)) {
             return v;
         }
 
+        if (v instanceof BoxedBasicValue) {
+            onMergeFail((BoxedBasicValue) v);
+            v = new BasicValue(v.getType());
+        }
+
+        if (w instanceof BoxedBasicValue) {
+            onMergeFail((BoxedBasicValue) w);
+            w = new BasicValue(w.getType());
+        }
+
         return super.merge(v, w);
+    }
+
+
+    protected void onNewBoxedValue(BoxedBasicValue value) {
+
+    }
+
+    protected void onMethodCallWithBoxedValue(BoxedBasicValue value) {
+
+    }
+
+    protected void onMergeFail(BoxedBasicValue value) {
+
+    }
+
+    protected boolean isAllowedUnaryOperationWithBoxed(int opcode) {
+        return opcode == Opcodes.CHECKCAST || opcode == Opcodes.IFNULL;
     }
 }

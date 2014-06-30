@@ -36,8 +36,17 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
     }
 
     @Override
-    protected void onNewBoxedValue(BoxedBasicValue value) {
-        candidatesBoxedValues.add(value);
+    public BasicValue binaryOperation(
+            @NotNull AbstractInsnNode insn,
+            @NotNull BasicValue value1,
+            @NotNull BasicValue value2
+    ) throws AnalyzerException {
+
+        if (insn.getOpcode() == Opcodes.PUTFIELD && value2 instanceof BoxedBasicValue) {
+            markAsDirty((BoxedBasicValue) value2);
+        }
+
+        return super.binaryOperation(insn, value1, value2);
     }
 
     @Override
@@ -50,7 +59,7 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
     public BasicValue copyOperation(@NotNull AbstractInsnNode insn, @NotNull BasicValue value) throws AnalyzerException {
         // currently we don't allow any copy operations with boxed values
         if (value instanceof BoxedBasicValue) {
-            candidatesBoxedValues.remove(value);
+            markAsDirty((BoxedBasicValue) value);
             return new BasicValue(value.getType());
         }
 
@@ -58,23 +67,22 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
     }
 
     @Override
-    @NotNull
-    public BasicValue merge(@NotNull BasicValue v, @NotNull BasicValue w) {
-        if (v instanceof BoxedBasicValue && w instanceof BoxedBasicValue && v == w) {
-            return v;
-        }
+    protected void onNewBoxedValue(BoxedBasicValue value) {
+        candidatesBoxedValues.add(value);
+    }
 
-        if (v instanceof BoxedBasicValue) {
-            candidatesBoxedValues.remove(v);
-            v = new BasicValue(v.getType());
-        }
+    private void markAsDirty(BoxedBasicValue value) {
+        candidatesBoxedValues.remove(value);
+    }
 
-        if (w instanceof BoxedBasicValue) {
-            candidatesBoxedValues.remove(w);
-            w = new BasicValue(w.getType());
-        }
+    @Override
+    protected void onMethodCallWithBoxedValue(BoxedBasicValue value) {
+        markAsDirty(value);
+    }
 
-        return super.merge(v, w);
+    @Override
+    protected void onMergeFail(BoxedBasicValue v) {
+        markAsDirty(v);
     }
 
     @NotNull

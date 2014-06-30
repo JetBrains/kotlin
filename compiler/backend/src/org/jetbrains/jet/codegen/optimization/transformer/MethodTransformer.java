@@ -24,10 +24,10 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame;
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value;
 
 public abstract class MethodTransformer {
-    private final MethodTransformer methodTransformer;
+    private final MethodTransformer delegate;
 
-    protected MethodTransformer(MethodTransformer methodTransformer) {
-        this.methodTransformer = methodTransformer;
+    protected MethodTransformer(MethodTransformer delegate) {
+        this.delegate = delegate;
     }
 
     protected static <V extends Value> Frame<V>[] runAnalyzer(
@@ -44,8 +44,8 @@ public abstract class MethodTransformer {
     }
 
     public void transform(@NotNull String owner, @NotNull MethodNode methodNode) {
-        if (methodTransformer != null) {
-            methodTransformer.transform(owner, methodNode);
+        if (delegate != null) {
+            delegate.transform(owner, methodNode);
         }
     }
 }
