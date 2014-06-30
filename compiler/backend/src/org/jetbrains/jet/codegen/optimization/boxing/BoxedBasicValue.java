@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.optimization.boxing;
 
+import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
@@ -27,12 +28,12 @@ import java.util.List;
 public class BoxedBasicValue extends BasicValue {
     private final HashSet<AbstractInsnNode> associatedInsns = new HashSet<AbstractInsnNode>();
     private final AbstractInsnNode boxingInsn;
-    private final Type boxedType;
+    private final Type primitiveType;
     private boolean wasUnboxed = false;
 
-    public BoxedBasicValue(Type type, Type boxedType, AbstractInsnNode insnNode) {
-        super(type);
-        this.boxedType = boxedType;
+    public BoxedBasicValue(Type primitiveType, AbstractInsnNode insnNode) {
+        super(AsmUtil.boxType(primitiveType));
+        this.primitiveType = primitiveType;
         associatedInsns.add(insnNode);
         boxingInsn = insnNode;
     }
@@ -57,8 +58,8 @@ public class BoxedBasicValue extends BasicValue {
         associatedInsns.add(insnNode);
     }
 
-    public Type getBoxedType() {
-        return boxedType;
+    public Type getPrimitiveType() {
+        return primitiveType;
     }
 
     public boolean wasUnboxed() {
