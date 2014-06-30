@@ -135,7 +135,8 @@ public class KotlinToJVMBytecodeCompiler {
                             }
                         }
                 );
-                GenerationState generationState = generate(environment, exhaust, jetFiles, module.getModuleName());
+                GenerationState generationState =
+                        generate(environment, exhaust, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()));
                 outputFiles.put(module, generationState.getFactory());
             }
         }
@@ -274,7 +275,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         exhaust.throwIfError();
 
-        return generate(environment, exhaust, environment.getSourceFiles(), null);
+        return generate(environment, exhaust, environment.getSourceFiles(), null, null);
     }
 
     @Nullable
@@ -319,7 +320,8 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull JetCoreEnvironment environment,
             @NotNull AnalyzeExhaust exhaust,
             @NotNull List<JetFile> sourceFiles,
-            @Nullable String moduleId
+            @Nullable String moduleId,
+            File outputDirectory
     ) {
         CompilerConfiguration configuration = environment.getConfiguration();
         File incrementalCacheDir = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
@@ -344,8 +346,8 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
                 packagesWithRemovedFiles,
                 moduleId,
-                diagnosticHolder
-        );
+                diagnosticHolder,
+                outputDirectory);
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
         AnalyzerWithCompilerReport.reportDiagnostics(
                 new FilteredJvmDiagnostics(

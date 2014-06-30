@@ -300,8 +300,8 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     /*to generate inline flag on methods*/true,
                     null,
                     null,
-                    forExtraDiagnostics
-            );
+                    forExtraDiagnostics,
+                    null);
             KotlinCodegenFacade.prepareForCompilation(state);
 
             bindingContext = state.getBindingContext();

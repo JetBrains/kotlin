@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignat
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.*;
@@ -123,6 +124,10 @@ public class JetTypeMapper {
         }
     }
 
+    protected boolean isContainedByCompiledPartOfOurModule(@NotNull DeclarationDescriptor descriptor) {
+        return false;
+    }
+
     @NotNull
     private String internalNameForPackage(
             @NotNull PackageFragmentDescriptor packageFragment,
@@ -135,11 +140,17 @@ public class JetTypeMapper {
                 return PackagePartClassUtils.getPackagePartInternalName(file);
             }
 
-            if (descriptor instanceof DeserializedCallableMemberDescriptor && IncrementalCompilation.ENABLED) {
-                //
-                // TODO calls from other modules/libraries should use facade: KT-4590
-                FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) descriptor);
-                return AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName);
+            DeclarationDescriptor descriptorToCheck = descriptor instanceof PropertyAccessorDescriptor
+                                                      ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
+                                                      : descriptor;
+
+            if (descriptorToCheck instanceof DeserializedCallableMemberDescriptor) {
+                // TODO Temporary hack until modules infrastructure is implemented. See JetTypeMapperWithOutDirectory for details
+                if (descriptor.getContainingDeclaration() instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment ||
+                    isContainedByCompiledPartOfOurModule(descriptor)) {
+                    FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) descriptorToCheck);
+                    return AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName);
+                }
             }
         }
 

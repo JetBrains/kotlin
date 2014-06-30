@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -112,7 +113,7 @@ public class GenerationState {
             @NotNull List<JetFile> files
     ) {
         this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, false, GenerateClassFilter.GENERATE_ALL,
-             InlineCodegenUtil.DEFAULT_INLINE_FLAG, null, null, DiagnosticHolder.DO_NOTHING);
+             InlineCodegenUtil.DEFAULT_INLINE_FLAG, null, null, DiagnosticHolder.DO_NOTHING, null);
     }
 
     public GenerationState(
@@ -128,7 +129,8 @@ public class GenerationState {
             boolean inlineEnabled,
             @Nullable Collection<FqName> packagesWithRemovedFiles,
             @Nullable String moduleId,
-            @NotNull DiagnosticHolder diagnostics
+            @NotNull DiagnosticHolder diagnostics,
+            @Nullable File outDirectory
     ) {
         this.project = project;
         this.progress = progress;
@@ -142,7 +144,7 @@ public class GenerationState {
         this.bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
         this.bindingContext = bindingTrace.getBindingContext();
 
-        this.typeMapper = new JetTypeMapper(this.bindingContext, classBuilderMode);
+        this.typeMapper = new JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, outDirectory);
 
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory(this, new BuilderFactoryForDuplicateSignatureDiagnostics(

@@ -70,8 +70,8 @@ public class CodegenTestUtil {
                 configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
                 null,
                 null,
-                forExtraDiagnostics
-        );
+                forExtraDiagnostics,
+                null);
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
 
         // For JVM-specific errors
