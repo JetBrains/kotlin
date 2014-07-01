@@ -1,0 +1,12 @@
+class A {
+    fun foo() {
+        <caret>this@A.foo()
+    }
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER

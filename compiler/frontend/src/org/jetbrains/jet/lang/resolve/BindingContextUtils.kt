@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.psi.JetUnaryExpression
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.JetThisExpression
 
 /**
  *  For expressions like <code>a(), a[i], a.b.c(), +a, a + b, (a()), a(): Int, @label a()</code>
@@ -54,9 +55,11 @@ fun JetExpression.getCorrespondingCall(bindingContext: BindingContext): Call? {
     if (expr is JetQualifiedExpression) {
         return expr.getSelectorExpression()?.getCorrespondingCall(bindingContext)
     }
-    val reference = when (expr) {
-        is JetCallExpression -> expr.getCalleeExpression()
-        is JetOperationExpression -> expr.getOperationReference()
+    val parent = expr.getParent()
+    val reference = when {
+        parent is JetThisExpression -> parent : JetThisExpression
+        expr is JetCallExpression -> expr.getCalleeExpression()
+        expr is JetOperationExpression -> expr.getOperationReference()
         else -> expr
     }
     return bindingContext[CALL, reference]
