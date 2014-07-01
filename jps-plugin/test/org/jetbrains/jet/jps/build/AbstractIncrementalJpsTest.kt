@@ -150,7 +150,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
             logs.add(log)
         }
 
-        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), logs.makeString("\n\n"))
+        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), logs.join("\n\n"))
 
         rebuildAndCheckOutput()
         clearCachesRebuildAndCheckOutput()
