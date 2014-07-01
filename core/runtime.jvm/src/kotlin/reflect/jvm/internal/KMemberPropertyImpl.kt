@@ -34,10 +34,20 @@ open class KMemberPropertyImpl<T : Any, out R>(
         }
 
     // TODO: extract, make lazy (weak?), use our descriptors knowledge
-    override val getter: Method = owner.jClass.getMaybeDeclaredMethod(getterName(name))
+    override val getter: Method = try {
+        owner.jClass.getMaybeDeclaredMethod(getterName(name))
+    }
+    catch (e: NoSuchMethodException) {
+        throw NoSuchPropertyException(e)
+    }
 
     override fun get(receiver: T): R {
-        return getter(receiver) as R
+        try {
+            return getter(receiver) as R
+        }
+        catch (e: java.lang.IllegalAccessException) {
+            throw kotlin.reflect.IllegalAccessException(e)
+        }
     }
 
     override fun equals(other: Any?): Boolean =
@@ -55,10 +65,20 @@ class KMutableMemberPropertyImpl<T : Any, R>(
         name: String,
         owner: KClassImpl<T>
 ) : KMutableMemberProperty<T, R>, KMutablePropertyImpl<R>, KMemberPropertyImpl<T, R>(name, owner) {
-    override val setter: Method = owner.jClass.getMaybeDeclaredMethod(setterName(name), getter.getReturnType()!!)
+    override val setter: Method = try {
+        owner.jClass.getMaybeDeclaredMethod(setterName(name), getter.getReturnType()!!)
+    }
+    catch (e: NoSuchMethodException) {
+        throw NoSuchPropertyException(e)
+    }
 
     override fun set(receiver: T, value: R) {
-        setter(receiver, value)
+        try {
+            setter(receiver, value)
+        }
+        catch (e: java.lang.IllegalAccessException) {
+            throw kotlin.reflect.IllegalAccessException(e)
+        }
     }
 
     override fun toString(): String =

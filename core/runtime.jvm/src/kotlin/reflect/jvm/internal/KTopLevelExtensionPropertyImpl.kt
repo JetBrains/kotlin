@@ -27,10 +27,20 @@ open class KTopLevelExtensionPropertyImpl<T, out R>(
     override val field: Field? get() = null
 
     // TODO: extract, make lazy (weak?), use our descriptors knowledge, support Java fields
-    override val getter: Method = owner.jClass.getMethod(getterName(name), receiverClass)
+    override val getter: Method = try {
+        owner.jClass.getMethod(getterName(name), receiverClass)
+    }
+    catch (e: NoSuchMethodException) {
+        throw NoSuchPropertyException(e)
+    }
 
     override fun get(receiver: T): R {
-        return getter(null, receiver) as R
+        try {
+            return getter(null, receiver) as R
+        }
+        catch (e: java.lang.IllegalAccessException) {
+            throw kotlin.reflect.IllegalAccessException(e)
+        }
     }
 
     override fun equals(other: Any?): Boolean =
@@ -49,10 +59,20 @@ class KMutableTopLevelExtensionPropertyImpl<T, R>(
         owner: KPackageImpl,
         receiverClass: Class<T>
 ) : KMutableTopLevelExtensionProperty<T, R>, KMutablePropertyImpl<R>, KTopLevelExtensionPropertyImpl<T, R>(name, owner, receiverClass) {
-    override val setter: Method = owner.jClass.getMethod(setterName(name), receiverClass, getter.getReturnType()!!)
+    override val setter: Method = try {
+        owner.jClass.getMethod(setterName(name), receiverClass, getter.getReturnType()!!)
+    }
+    catch (e: NoSuchMethodException) {
+        throw NoSuchPropertyException(e)
+    }
 
     override fun set(receiver: T, value: R) {
-        setter.invoke(null, receiver, value)
+        try {
+            setter.invoke(null, receiver, value)
+        }
+        catch (e: java.lang.IllegalAccessException) {
+            throw kotlin.reflect.IllegalAccessException(e)
+        }
     }
 
     override fun toString(): String =

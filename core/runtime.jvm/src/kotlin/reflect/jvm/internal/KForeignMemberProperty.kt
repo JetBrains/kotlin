@@ -23,12 +23,22 @@ open class KForeignMemberProperty<T : Any, out R>(
         public override val name: String,
         protected val owner: KClassImpl<T>
 ) : KMemberProperty<T, R>, KPropertyImpl<R> {
-    override val field: Field = owner.jClass.getField(name)
+    override val field: Field = try {
+        owner.jClass.getField(name)
+    }
+    catch (e: NoSuchFieldException) {
+        throw NoSuchPropertyException(e)
+    }
 
     override val getter: Method? get() = null
 
     override fun get(receiver: T): R {
-        return field.get(receiver) as R
+        try {
+            return field.get(receiver) as R
+        }
+        catch (e: java.lang.IllegalAccessException) {
+            throw kotlin.reflect.IllegalAccessException(e)
+        }
     }
 
     override fun equals(other: Any?): Boolean =
@@ -49,7 +59,12 @@ class KMutableForeignMemberProperty<T : Any, out R>(
     override val setter: Method? get() = null
 
     override fun set(receiver: T, value: R) {
-        field.set(receiver, value)
+        try {
+            field.set(receiver, value)
+        }
+        catch (e: java.lang.IllegalAccessException) {
+            throw kotlin.reflect.IllegalAccessException(e)
+        }
     }
 
     override fun toString(): String =

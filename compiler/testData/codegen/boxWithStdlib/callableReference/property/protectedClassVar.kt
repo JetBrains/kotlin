@@ -1,3 +1,4 @@
+import kotlin.reflect.IllegalAccessException
 import kotlin.reflect.jvm.accessible
 
 class A(param: String) {

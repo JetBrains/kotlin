@@ -27,10 +27,20 @@ open class KTopLevelVariableImpl<out R>(
     override val field: Field? get() = null
 
     // TODO: extract, make lazy (weak?), use our descriptors knowledge, support Java fields
-    override val getter: Method = owner.jClass.getMethod(getterName(name))
+    override val getter: Method = try {
+        owner.jClass.getMethod(getterName(name))
+    }
+    catch (e: NoSuchMethodException) {
+        throw NoSuchPropertyException(e)
+    }
 
     override fun get(): R {
-        return getter(null) as R
+        try {
+            return getter(null) as R
+        }
+        catch (e: java.lang.IllegalAccessException) {
+            throw kotlin.reflect.IllegalAccessException(e)
+        }
     }
 
     override fun equals(other: Any?): Boolean =
@@ -48,10 +58,20 @@ class KMutableTopLevelVariableImpl<R>(
         name: String,
         owner: KPackageImpl
 ) : KMutableTopLevelVariable<R>, KMutableVariableImpl<R>, KTopLevelVariableImpl<R>(name, owner) {
-    override val setter: Method = owner.jClass.getMethod(setterName(name), getter.getReturnType()!!)
+    override val setter: Method = try {
+        owner.jClass.getMethod(setterName(name), getter.getReturnType()!!)
+    }
+    catch (e: NoSuchMethodException) {
+        throw NoSuchPropertyException(e)
+    }
 
     override fun set(value: R) {
-        setter.invoke(null, value)
+        try {
+            setter.invoke(null, value)
+        }
+        catch (e: java.lang.IllegalAccessException) {
+            throw kotlin.reflect.IllegalAccessException(e)
+        }
     }
 
     override fun toString(): String =
