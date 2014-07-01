@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.FlexibleType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -84,6 +85,13 @@ public class ForceResolveUtil {
 
     public static void forceResolveAllContents(@Nullable JetType type) {
         if (type == null) return;
+
+        if (type instanceof FlexibleType) {
+            FlexibleType flexibleType = (FlexibleType) type;
+            forceResolveAllContents(flexibleType.getLowerBound());
+            forceResolveAllContents(flexibleType.getUpperBound());
+            return;
+        }
 
         forceResolveAllContents(type.getConstructor());
         for (TypeProjection projection : type.getArguments()) {
