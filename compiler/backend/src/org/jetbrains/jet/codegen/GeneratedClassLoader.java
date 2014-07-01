@@ -22,6 +22,7 @@ import org.jetbrains.jet.OutputFile;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import java.util.jar.Manifest;
 
 public class GeneratedClassLoader extends URLClassLoader {
     private ClassFileFactory state;
@@ -39,6 +40,13 @@ public class GeneratedClassLoader extends URLClassLoader {
         OutputFile outputFile = state.get(classFilePath);
         if (outputFile != null) {
             byte[] bytes = outputFile.asByteArray();
+            int lastDot = name.lastIndexOf('.');
+            if (lastDot >= 0) {
+                String pkgName = name.substring(0, lastDot);
+                if (getPackage(pkgName) == null) {
+                    definePackage(pkgName, new Manifest(), null);
+                }
+            }
             return defineClass(name, bytes, 0, bytes.length);
         }
 
