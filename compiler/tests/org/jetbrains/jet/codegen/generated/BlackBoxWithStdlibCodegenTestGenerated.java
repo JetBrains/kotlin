@@ -1536,9 +1536,39 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("classToString.kt")
+            public void testClassToString() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/classToString.kt");
+            }
+            
+            @TestMetadata("defaultPackageToString.kt")
+            public void testDefaultPackageToString() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/defaultPackageToString.kt");
+            }
+            
             @TestMetadata("equalsHashCode.kt")
             public void testEqualsHashCode() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/equalsHashCode.kt");
+            }
+            
+            @TestMetadata("extensionPropertyReceiverToString.kt")
+            public void testExtensionPropertyReceiverToString() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/extensionPropertyReceiverToString.kt");
+            }
+            
+            @TestMetadata("packageForJavaStaticToString.kt")
+            public void testPackageForJavaStaticToString() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/packageForJavaStaticToString.kt");
+            }
+            
+            @TestMetadata("packageToString.kt")
+            public void testPackageToString() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/packageToString.kt");
+            }
+            
+            @TestMetadata("propertyToString.kt")
+            public void testPropertyToString() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/propertyToString.kt");
             }
             
         }

@@ -36,6 +36,10 @@ open class KForeignMemberProperty<T : Any, out R>(
 
     override fun hashCode(): Int =
             name.hashCode() * 31 + owner.hashCode()
+
+    // TODO: include visibility, return type
+    override fun toString(): String =
+            "val ${owner.jClass.getName()}.$name"
 }
 
 class KMutableForeignMemberProperty<T : Any, out R>(
@@ -47,4 +51,7 @@ class KMutableForeignMemberProperty<T : Any, out R>(
     override fun set(receiver: T, value: R) {
         field.set(receiver, value)
     }
+
+    override fun toString(): String =
+            "var ${owner.jClass.getName()}.$name"
 }

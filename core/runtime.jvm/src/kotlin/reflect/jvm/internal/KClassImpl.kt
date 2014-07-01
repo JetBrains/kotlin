@@ -62,4 +62,7 @@ class KClassImpl<out T>(val jClass: Class<T>) : KClass<T> {
 
     override fun hashCode(): Int =
             jClass.hashCode()
+
+    override fun toString(): String =
+            jClass.toString()
 }

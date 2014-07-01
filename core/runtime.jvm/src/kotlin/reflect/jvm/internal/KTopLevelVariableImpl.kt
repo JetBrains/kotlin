@@ -38,6 +38,10 @@ open class KTopLevelVariableImpl<out R>(
 
     override fun hashCode(): Int =
             name.hashCode() * 31 + owner.hashCode()
+
+    // TODO: include visibility, return type, maybe package
+    override fun toString(): String =
+            "val $name"
 }
 
 class KMutableTopLevelVariableImpl<R>(
@@ -49,4 +53,7 @@ class KMutableTopLevelVariableImpl<R>(
     override fun set(value: R) {
         setter.invoke(null, value)
     }
+
+    override fun toString(): String =
+            "var $name"
 }

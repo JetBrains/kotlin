@@ -45,6 +45,10 @@ open class KMemberPropertyImpl<T : Any, out R>(
 
     override fun hashCode(): Int =
             name.hashCode() * 31 + owner.hashCode()
+
+    // TODO: include visibility, return type
+    override fun toString(): String =
+            "val ${owner.jClass.getName()}.$name"
 }
 
 class KMutableMemberPropertyImpl<T : Any, R>(
@@ -56,4 +60,7 @@ class KMutableMemberPropertyImpl<T : Any, R>(
     override fun set(receiver: T, value: R) {
         setter(receiver, value)
     }
+
+    override fun toString(): String =
+            "var ${owner.jClass.getName()}.$name"
 }

@@ -38,6 +38,10 @@ open class KTopLevelExtensionPropertyImpl<T, out R>(
 
     override fun hashCode(): Int =
             (name.hashCode() * 31 + owner.hashCode()) * 31 + receiverClass.hashCode()
+
+    // TODO: include visibility, return type, maybe package
+    override fun toString(): String =
+            "val ${mapJavaClassToKotlin(receiverClass.getName())}.$name"
 }
 
 class KMutableTopLevelExtensionPropertyImpl<T, R>(
@@ -50,4 +54,40 @@ class KMutableTopLevelExtensionPropertyImpl<T, R>(
     override fun set(receiver: T, value: R) {
         setter.invoke(null, receiver, value)
     }
+
+    override fun toString(): String =
+            "var ${mapJavaClassToKotlin(receiverClass.getName())}.$name"
+}
+
+suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+private fun mapJavaClassToKotlin(name: String): String {
+    if (Character.isLowerCase(name[0])) {
+        return when (name) {
+            "boolean" -> "kotlin.Boolean"
+            "char" -> "kotlin.Char"
+            "byte" -> "kotlin.Byte"
+            "short" -> "kotlin.Short"
+            "int" -> "kotlin.Int"
+            "float" -> "kotlin.Float"
+            "long" -> "kotlin.Long"
+            "double" -> "kotlin.Double"
+            else -> name
+        }
+    }
+    if (name[0] == '[') {
+        val element = (name as java.lang.String).substring(1)
+        return when (element[0]) {
+            'Z' -> "kotlin.BooleanArray"
+            'C' -> "kotlin.CharArray"
+            'B' -> "kotlin.ByteArray"
+            'S' -> "kotlin.ShortArray"
+            'I' -> "kotlin.IntArray"
+            'F' -> "kotlin.FloatArray"
+            'J' -> "kotlin.LongArray"
+            'D' -> "kotlin.DoubleArray"
+            'L' -> "kotlin.Array<${mapJavaClassToKotlin((element as java.lang.String).substring(1, element.length() - 1))}>"
+            else -> "kotlin.Array<${mapJavaClassToKotlin(element)}>"
+        }
+    }
+    return name
 }

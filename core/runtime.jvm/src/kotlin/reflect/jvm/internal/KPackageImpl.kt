@@ -17,6 +17,9 @@
 package kotlin.reflect.jvm.internal
 
 import kotlin.reflect.KPackage
+import kotlin.jvm.internal.KotlinPackage
+
+private val KOTLIN_PACKAGE_ANNOTATION_CLASS = javaClass<KotlinPackage>()
 
 class KPackageImpl(val jClass: Class<*>) : KPackage {
     override fun equals(other: Any?): Boolean =
@@ -24,4 +27,23 @@ class KPackageImpl(val jClass: Class<*>) : KPackage {
 
     override fun hashCode(): Int =
             jClass.hashCode()
+
+    suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+    override fun toString(): String {
+        val name = jClass.getName() as java.lang.String
+        return if (jClass.isAnnotationPresent(KOTLIN_PACKAGE_ANNOTATION_CLASS)) {
+            // Cast to Any is needed to suppress the error: "Operator '==' cannot be applied to 'java.lang.String' and 'kotlin.String'"
+            if ((name : Any) == "_DefaultPackage") {
+                "package <default>"
+            }
+            else {
+                val lastDot = name.lastIndexOf(".")
+                if (lastDot >= 0) {
+                    "package ${name.substring(0, lastDot)}"
+                }
+                else "package $name"
+            }
+        }
+        else "package $name"
+    }
 }
