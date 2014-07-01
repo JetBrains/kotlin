@@ -115,8 +115,7 @@ public interface JetControlFlowBuilder {
             @NotNull JetElement instructionElement,
             @Nullable JetElement valueElement,
             @NotNull List<PseudoValue> inputValues,
-            @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
-            boolean synthetic
+            @NotNull Map<PseudoValue, TypePredicate> expectedTypes
     );
 
     @NotNull

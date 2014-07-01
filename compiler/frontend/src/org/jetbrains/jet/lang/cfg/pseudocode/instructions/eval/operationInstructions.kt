@@ -97,34 +97,30 @@ public class CallInstruction private(
 //      consume input values (so that they aren't considered unused)
 //      denote value transformation which can't be expressed by other instructions (such as call or read)
 //      pass more than one value to instruction which formally requires only one (e.g. jump)
-// "Synthetic" means that the instruction does not correspond to some operation explicitly expressed by PSI element
-//      Examples: providing initial values for parameters, missing right-hand side in assignments
 public class MagicInstruction(
         element: JetElement,
         lexicalScope: LexicalScope,
-        val synthetic: Boolean,
         inputValues: List<PseudoValue>,
         val expectedTypes: Map<PseudoValue, TypePredicate>
 ) : OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
+    public val synthetic: Boolean get() = outputValue.element == null
+
     override fun accept(visitor: InstructionVisitor) = visitor.visitMagic(this)
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitMagic(this)
 
-    override fun createCopy() = MagicInstruction(element, lexicalScope, synthetic, inputValues, expectedTypes).setResult(resultValue)
+    override fun createCopy() = MagicInstruction(element, lexicalScope, inputValues, expectedTypes).setResult(resultValue)
 
     override fun toString() = renderInstruction("magic", render(element))
 
     class object {
-        fun create(
-                element: JetElement,
-                valueElement: JetElement?,
-                lexicalScope: LexicalScope,
-                synthetic: Boolean,
-                inputValues: List<PseudoValue>,
-                expectedTypes: Map<PseudoValue, TypePredicate>,
-                factory: PseudoValueFactory
-        ): MagicInstruction = MagicInstruction(
-                element, lexicalScope, synthetic, inputValues, expectedTypes
+        fun create(element: JetElement,
+                   valueElement: JetElement?,
+                   lexicalScope: LexicalScope,
+                   inputValues: List<PseudoValue>,
+                   expectedTypes: Map<PseudoValue, TypePredicate>,
+                   factory: PseudoValueFactory): MagicInstruction = MagicInstruction(
+                element, lexicalScope, inputValues, expectedTypes
         ).setResult(factory, valueElement) as MagicInstruction
     }
 }

@@ -418,7 +418,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public InstructionWithValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
             if (inputValues.isEmpty()) return read(expression);
-            return magic(expression, expression, inputValues, PseudocodePackage.expectedTypeFor(AllTypes.instance$, inputValues), false);
+            return magic(expression, expression, inputValues, PseudocodePackage.expectedTypeFor(AllTypes.instance$, inputValues));
         }
 
         @NotNull
@@ -427,11 +427,10 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull JetElement instructionElement,
                 @Nullable JetElement valueElement,
                 @NotNull List<PseudoValue> inputValues,
-                @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
-                boolean synthetic
+                @NotNull Map<PseudoValue, TypePredicate> expectedTypes
         ) {
             MagicInstruction instruction = MagicInstruction.object$.create(
-                    instructionElement, valueElement, getCurrentScope(), synthetic, inputValues, expectedTypes, valueFactory
+                    instructionElement, valueElement, getCurrentScope(), inputValues, expectedTypes, valueFactory
             );
             add(instruction);
             return instruction;
@@ -497,7 +496,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                     throw new IllegalArgumentException("Invalid operation: " + operation);
             }
 
-            return magic(expression, expression, inputValues, expectedTypes, false);
+            return magic(expression, expression, inputValues, expectedTypes);
         }
 
         @Override

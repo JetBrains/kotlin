@@ -180,13 +180,13 @@ public class JetControlFlowProcessor {
         @NotNull
         private PseudoValue createSyntheticValue(@NotNull JetElement instructionElement, JetElement... from) {
             List<PseudoValue> values = elementsToValues(from.length > 0 ? Arrays.asList(from) : Collections.<JetElement>emptyList());
-            return builder.magic(instructionElement, null, values, defaultTypeMap(values), true).getOutputValue();
+            return builder.magic(instructionElement, null, values, defaultTypeMap(values)).getOutputValue();
         }
 
         @NotNull
         private PseudoValue createNonSyntheticValue(@NotNull JetElement to, @NotNull List<? extends JetElement> from) {
             List<PseudoValue> values = elementsToValues(from);
-            return builder.magic(to, to, values, defaultTypeMap(values), false).getOutputValue();
+            return builder.magic(to, to, values, defaultTypeMap(values)).getOutputValue();
         }
 
         @NotNull
@@ -886,8 +886,7 @@ public class JetControlFlowProcessor {
                     loopRange != null ? loopRange : expression,
                     null,
                     Collections.singletonList(loopRangeValue),
-                    Collections.singletonMap(loopRangeValue, loopRangeTypePredicate),
-                    true
+                    Collections.singletonMap(loopRangeValue, loopRangeTypePredicate)
             ).getOutputValue();
 
             if (loopParameter != null) {
@@ -1387,7 +1386,7 @@ public class JetControlFlowProcessor {
             if (expectedTypePredicate == null) {
                 expectedTypePredicate = AllTypes.instance$;
             }
-            builder.magic(specifier, specifier, arguments, PseudocodePackage.expectedTypeFor(expectedTypePredicate, arguments), false);
+            builder.magic(specifier, specifier, arguments, PseudocodePackage.expectedTypeFor(expectedTypePredicate, arguments));
         }
 
         @Override
