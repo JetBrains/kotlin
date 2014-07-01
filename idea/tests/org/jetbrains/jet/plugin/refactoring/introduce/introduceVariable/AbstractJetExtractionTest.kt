@@ -73,22 +73,24 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                     }
             )
 
-            val expectedParameterTypes = ArrayList<String>()
             val fileText = file.getText()
+            val expectedDescriptors =
+                    InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_DESCRIPTOR: ").joinToString()
             val expectedTypes =
-                    InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_TYPES: ")
-                            .mapTo(expectedParameterTypes) { "[$it]" }
-                            .joinToString()
+                    InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_TYPES: ").map { "[$it]" }.joinToString()
 
             val renderer = DescriptorRenderer.DEBUG_TEXT
 
             val editor = fixture.getEditor()
             selectElements(editor, file) { (elements, previousSibling) ->
                 ExtractKotlinFunctionHandler().doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling) {
-                    val actualTypes = (ContainerUtil.createMaybeSingletonList(it.receiverParameter) + it.parameters).map {
-                        it.parameterTypeCandidates.map { renderer.renderType(it) }. joinToString(", ", "[", "]")
+                    val allParameters = ContainerUtil.createMaybeSingletonList(it.receiverParameter) + it.parameters
+                    val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
+                    val actualTypes = allParameters.map {
+                        it.parameterTypeCandidates.map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                     }.joinToString()
 
+                    assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
                     assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
                 }
             }

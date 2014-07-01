@@ -1,4 +1,5 @@
 // PARAM_TYPES: T
+// PARAM_DESCRIPTOR: value-parameter val t: T defined in B.<init>
 trait T
 
 class A(a: Int, b: Int): T

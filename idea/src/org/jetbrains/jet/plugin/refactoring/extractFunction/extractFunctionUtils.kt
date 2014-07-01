@@ -315,6 +315,7 @@ private fun JetType.processTypeIfExtractable(
 
 private class MutableParameter(
         override val argumentText: String,
+        override val originalDescriptor: DeclarationDescriptor,
         override val name: String,
         override val mirrorVarName: String?,
         override val receiverCandidate: Boolean
@@ -454,7 +455,7 @@ private fun ExtractionData.inferParametersInfo(
                             else
                                 (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = ${getCodeFragmentText()}")
 
-                    MutableParameter(argumentText, parameterName, mirrorVarName, extractThis)
+                    MutableParameter(argumentText, descriptorToExtract, parameterName, mirrorVarName, extractThis)
                 }
 
                 parameter.addDefaultType(parameterType)

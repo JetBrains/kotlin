@@ -1,5 +1,7 @@
 // PARAM_TYPES: A.B<U>
 // PARAM_TYPES: V, Data
+// PARAM_DESCRIPTOR: internal final inner class B<U : DataExEx> where U : Data defined in A
+// PARAM_DESCRIPTOR: value-parameter val v: V defined in A.B.foo
 open class Data(val x: Int)
 trait DataEx
 trait DataExEx

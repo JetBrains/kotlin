@@ -1,4 +1,5 @@
 // PARAM_TYPES: V, Data
+// PARAM_DESCRIPTOR: value-parameter val v: V defined in A.B.foo
 open class Data(val x: Int)
 trait DataEx
 trait DataExEx

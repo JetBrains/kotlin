@@ -1,4 +1,5 @@
 // PARAM_TYPES: kotlin.Int
+// PARAM_DESCRIPTOR: value-parameter val it: kotlin.Int defined in foo.<anonymous>
 fun <T> Array<T>.check(f: (T) -> Boolean): Boolean = false
 
 // SIBLING:

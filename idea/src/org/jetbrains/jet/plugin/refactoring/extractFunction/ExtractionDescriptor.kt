@@ -34,9 +34,11 @@ import org.jetbrains.jet.lang.psi.JetTypeConstraint
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 trait Parameter {
     val argumentText: String
+    val originalDescriptor: DeclarationDescriptor
     val name: String
     val mirrorVarName: String?
     val parameterType: JetType
