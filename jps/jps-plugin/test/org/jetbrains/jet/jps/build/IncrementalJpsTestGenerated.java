@@ -141,6 +141,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/packageFilesChangedInTurn/");
     }
     
+    @TestMetadata("packageInlineFunctionAccessingField")
+    public void testPackageInlineFunctionAccessingField() throws Exception {
+        doTest("jps-plugin/testData/incremental/packageInlineFunctionAccessingField/");
+    }
+
     @TestMetadata("packageInlineFunctionChanged")
     public void testPackageInlineFunctionChanged() throws Exception {
         doTest("jps-plugin/testData/incremental/packageInlineFunctionChanged/");
