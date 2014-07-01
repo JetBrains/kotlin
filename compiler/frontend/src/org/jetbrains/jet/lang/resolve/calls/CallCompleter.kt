@@ -226,13 +226,10 @@ public class CallCompleter(
             valueArgument: ValueArgument,
             context: BasicCallResolutionContext
     ) {
+        if (valueArgument.isExternal()) return
+
         val expression = valueArgument.getArgumentExpression()
         if (expression == null) return
-
-        // for the 'in' call 'when (b) { in 1..10 -> true }' 'b' is an argument, but an error shouldn't be generated on it
-        // todo add special call type for such a case, and check this call type instead
-        val parent = expression.getParent()
-        if (parent is JetWhenExpression && expression == parent.getSubjectExpression()) return
 
         val recordedType = context.trace[BindingContext.EXPRESSION_TYPE, expression]
         var updatedType: JetType? = recordedType

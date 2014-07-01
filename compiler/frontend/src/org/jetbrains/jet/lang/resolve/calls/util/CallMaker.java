@@ -37,9 +37,21 @@ public class CallMaker {
 
         private final JetElement reportErrorsOn;
 
-        private ExpressionValueArgument(@Nullable JetExpression expression, @NotNull JetElement reportErrorsOn) {
+        private final boolean isExternal;
+
+        private ExpressionValueArgument(
+                @Nullable JetExpression expression,
+                @NotNull JetElement reportErrorsOn,
+                boolean isExternal
+        ) {
             this.expression = expression;
             this.reportErrorsOn = expression == null ? reportErrorsOn : expression;
+            this.isExternal = isExternal;
+        }
+
+        @Override
+        public boolean isExternal() {
+            return isExternal;
         }
 
         @Override
@@ -236,7 +248,12 @@ public class CallMaker {
 
     @NotNull
     public static ValueArgument makeValueArgument(@Nullable JetExpression expression, @NotNull JetElement reportErrorsOn) {
-        return new ExpressionValueArgument(expression, reportErrorsOn);
+        return new ExpressionValueArgument(expression, reportErrorsOn, false);
+    }
+
+    @NotNull
+    public static ValueArgument makeExternalValueArgument(@NotNull JetExpression expression) {
+        return new ExpressionValueArgument(expression, expression, true);
     }
 
     @NotNull

@@ -40,10 +40,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
-import org.jetbrains.jet.lang.resolve.calls.model.DataFlowInfoForArgumentsImpl;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
@@ -908,7 +905,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), context.dataFlowInfo);
         }
         else if (OperatorConventions.IN_OPERATIONS.contains(operationType)) {
-            result = checkInExpression(expression, operationSign, left, right, context);
+            ValueArgument leftArgument = CallMaker.makeValueArgument(left, left != null ? left : operationSign);
+            result = checkInExpression(expression, operationSign, leftArgument, right, context);
         }
         else if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationType)) {
             result = visitBooleanOperationExpression(operationType, left, right, context);
@@ -1076,10 +1074,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo checkInExpression(
             @NotNull JetElement callElement,
             @NotNull JetSimpleNameExpression operationSign,
-            @Nullable JetExpression left,
+            @NotNull ValueArgument leftArgument,
             @Nullable JetExpression right,
             @NotNull ExpressionTypingContext context
     ) {
+        JetExpression left = leftArgument.getArgumentExpression();
         ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
         if (right == null) {
             if (left != null) facade.getTypeInfo(left, contextWithNoExpectedType);
@@ -1093,7 +1092,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         OverloadResolutionResults<FunctionDescriptor> resolutionResult = components.callResolver.resolveCallWithGivenName(
                 contextWithDataFlow,
-                CallMaker.makeCallWithExpressions(callElement, receiver, null, operationSign, Collections.singletonList(left)),
+                CallMaker.makeCall(callElement, receiver, null, operationSign, Collections.singletonList(leftArgument)),
                 operationSign,
                 OperatorConventions.CONTAINS);
         JetType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context.contextDependency);

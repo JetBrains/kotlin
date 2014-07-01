@@ -61,4 +61,9 @@ public class JetValueArgument extends JetElementImpl implements ValueArgument {
         ASTNode node = getNode().findChildByType(JetTokens.MUL);
         return node == null ? null : (LeafPsiElement) node.getPsi();
     }
+
+    @Override
+    public boolean isExternal() {
+        return false;
+    }
 }

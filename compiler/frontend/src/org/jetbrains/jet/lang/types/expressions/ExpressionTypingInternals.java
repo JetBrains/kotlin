@@ -18,14 +18,18 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 
 /*package*/ interface ExpressionTypingInternals extends ExpressionTypingFacade {
     @NotNull
-    JetTypeInfo checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context);
+    JetTypeInfo checkInExpression(
+            @NotNull JetElement callElement,
+            @NotNull JetSimpleNameExpression operationSign,
+            @NotNull ValueArgument leftArgument,
+            @Nullable JetExpression right,
+            @NotNull ExpressionTypingContext context
+    );
 
     void checkStatementType(@NotNull JetExpression expression, ExpressionTypingContext context);
 
