@@ -20,6 +20,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
@@ -112,24 +114,33 @@ public abstract class AnnotationCodegen {
             modifierList = ((JetModifierListOwner) psiElement).getModifierList();
         }
 
-        if (modifierList == null) {
-            generateAdditionalAnnotations(annotated, returnType, Collections.<String>emptySet());
-            return;
-        }
-
         Set<String> annotationDescriptorsAlreadyPresent = new HashSet<String>();
 
-        List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
-        for (JetAnnotationEntry annotationEntry : annotationEntries) {
-            ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, annotationEntry.getCalleeExpression());
-            if (resolvedCall == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
+        if (modifierList == null) {
+            if (annotated instanceof DeserializedCallableMemberDescriptor ||
+                annotated instanceof PropertyAccessorDescriptor &&
+                ((PropertyAccessorDescriptor) annotated).getCorrespondingProperty() instanceof DeserializedPropertyDescriptor) {
+                for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
+                    String descriptor = genAnnotation(annotation);
+                    if (descriptor != null) {
+                        annotationDescriptorsAlreadyPresent.add(descriptor);
+                    }
+                }
+            }
+        }
+        else {
+            List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
+            for (JetAnnotationEntry annotationEntry : annotationEntries) {
+                ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, annotationEntry.getCalleeExpression());
+                if (resolvedCall == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
 
-            AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);
-            if (annotationDescriptor == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
+                AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);
+                if (annotationDescriptor == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
 
-            String descriptor = genAnnotation(annotationDescriptor);
-            if (descriptor != null) {
-                annotationDescriptorsAlreadyPresent.add(descriptor);
+                String descriptor = genAnnotation(annotationDescriptor);
+                if (descriptor != null) {
+                    annotationDescriptorsAlreadyPresent.add(descriptor);
+                }
             }
         }
 

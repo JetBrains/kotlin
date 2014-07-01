@@ -1,0 +1,7 @@
+Cleaning output files:
+out/production/module/test/TestPackage-other-*.class
+out/production/module/test/TestPackage.class
+End of files
+Compiling files:
+src/other.kt
+End of files
