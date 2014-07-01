@@ -16,3 +16,6 @@ fun foo(f: () -> Unit) {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: O.obProp
+// RESULT: 1: I

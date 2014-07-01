@@ -44,3 +44,18 @@ fun lambda(f: () -> Unit) {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: valFoo
+// RESULT: 1: I
+
+// EXPRESSION: valTest
+// RESULT: 1: I
+
+// EXPRESSION: aProp
+// RESULT: 1: I
+
+// EXPRESSION: outerProp
+// RESULT: 1: I
+
+// EXPRESSION: bProp
+// RESULT: 1: I

@@ -14,3 +14,6 @@ fun A.foo() {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: prop
+// RESULT: 1: I

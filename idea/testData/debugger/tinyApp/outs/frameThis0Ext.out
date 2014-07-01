@@ -2,6 +2,11 @@ LineBreakpoint created at frameThis0Ext.kt:14
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameThis0Ext.FrameThis0ExtPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 frameThis0Ext.kt:13
+Compile bytecode for val1
+Compile bytecode for prop1
+Compile bytecode for prop2
+Compile bytecode for prop1 + val1
+Compile bytecode for prop2 + val1
 package frameThis0Ext
 
 fun main(args: Array<String>) {
@@ -33,6 +38,21 @@ fun foo(f: () -> Unit) {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: val1
+// RESULT: 1: I
+
+// EXPRESSION: prop1
+// RESULT: 1: I
+
+// EXPRESSION: prop2
+// RESULT: 1: I
+
+// EXPRESSION: prop1 + val1
+// RESULT: 2: I
+
+// EXPRESSION: prop2 + val1
+// RESULT: 2: I
  frame    = invoke():14, A$testExt$1 {frameThis0Ext}
    this     = this = {frameThis0Ext.A$testExt$1@uniqueID}kotlin.Function0<kotlin.Unit>
      field    = this$0: frameThis0Ext.A = {frameThis0Ext.A@uniqueID}

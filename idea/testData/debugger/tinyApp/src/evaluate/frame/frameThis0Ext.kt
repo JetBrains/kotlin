@@ -29,3 +29,18 @@ fun foo(f: () -> Unit) {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: val1
+// RESULT: 1: I
+
+// EXPRESSION: prop1
+// RESULT: 1: I
+
+// EXPRESSION: prop2
+// RESULT: 1: I
+
+// EXPRESSION: prop1 + val1
+// RESULT: 2: I
+
+// EXPRESSION: prop2 + val1
+// RESULT: 2: I

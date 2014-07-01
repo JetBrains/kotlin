@@ -199,6 +199,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest("idea/testData/debugger/tinyApp/src/evaluate/frame/frameLambda.kt");
         }
         
+        @TestMetadata("frameLambdaNotUsed.kt")
+        public void testFrameLambdaNotUsed() throws Exception {
+            doSingleBreakpointTest("idea/testData/debugger/tinyApp/src/evaluate/frame/frameLambdaNotUsed.kt");
+        }
+        
         @TestMetadata("frameObject.kt")
         public void testFrameObject() throws Exception {
             doSingleBreakpointTest("idea/testData/debugger/tinyApp/src/evaluate/frame/frameObject.kt");

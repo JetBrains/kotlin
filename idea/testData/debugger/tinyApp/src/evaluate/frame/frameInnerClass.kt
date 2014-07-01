@@ -18,3 +18,9 @@ class A {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: prop1
+// RESULT: 1: I
+
+// EXPRESSION: prop2
+// RESULT: 1: I

@@ -61,6 +61,11 @@ import org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache.
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.sun.jdi.StackFrame
 import com.sun.jdi.VirtualMachine
+import org.jetbrains.jet.codegen.AsmUtil
+import com.sun.jdi.InvalidStackFrameException
+
+private val RECEIVER_NAME = "\$receiver"
+private val THIS_NAME = "this"
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -94,14 +99,13 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 isCompiledDataFromCache = false
                 extractAndCompile(fragment, position)
             }
-            val args = context.getArgumentsByNames(compiledData.parameters.getParameterNames())
-            val result = runEval4j(context, compiledData, args)
+            val result = runEval4j(context, compiledData)
 
             val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
 
             // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
             if (isCompiledDataFromCache && result is ExceptionThrown && result.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
-                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition), args).toJdiValue(virtualMachine)
+                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition)).toJdiValue(virtualMachine)
             }
 
             return result.toJdiValue(virtualMachine)
@@ -140,17 +144,14 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return CompiledDataDescriptor(outputFiles.first().asByteArray(), sourcePosition, funName, extractedFunction.getParametersForDebugger())
         }
 
-        private fun runEval4j(
-                context: EvaluationContextImpl,
-                compiledData: CompiledDataDescriptor,
-                args: List<Value>
-        ): InterpreterResult {
+        private fun runEval4j(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): InterpreterResult {
             val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
 
             var resultValue: InterpreterResult? = null
             ClassReader(compiledData.bytecodes).accept(object : ClassVisitor(ASM5) {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
                     if (name == compiledData.funName) {
+                        val args = context.getArgumentsForEval4j(compiledData.parameters.getParameterNames(), Type.getArgumentTypes(desc))
                         return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
                                 resultValue = interpreterLoop(
@@ -182,10 +183,6 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return jdiValue.asJdiValue(vm, jdiValue.asmType)
         }
 
-        private fun SuspendContext.getInvokePolicy(): Int {
-            return if (getSuspendPolicy() == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
-        }
-
         private fun JetNamedFunction.getParametersForDebugger(): ParametersDescriptor {
             return ApplicationManager.getApplication()?.runReadAction(Computable {
                 val parameters = ParametersDescriptor()
@@ -194,7 +191,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 if (descriptor != null) {
                     val receiver = descriptor.getReceiverParameter()
                     if (receiver != null) {
-                        parameters.add("this", receiver.getType())
+                        parameters.add(THIS_NAME, receiver.getType())
                     }
 
                     descriptor.getValueParameters().forEach {
@@ -206,12 +203,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             })!!
         }
 
-        private fun EvaluationContextImpl.getArgumentsByNames(parameterNames: List<String>): List<Value> {
-            val frames = getFrameProxy()?.getStackFrame()
-            if (frames != null) {
-                return parameterNames.map { frames.findLocalVariable(it)!! }
-            }
-            return Collections.emptyList()
+        private fun EvaluationContextImpl.getArgumentsForEval4j(parameterNames: List<String>, parameterTypes: Array<Type>): List<Value> {
+            return parameterNames.zip(parameterTypes).map { this.findLocalVariable(it.first, it.second, checkType = false, failIfNotFound = true)!! }
         }
 
         private fun createClassFileFactory(codeFragment: JetCodeFragment, extractedFunction: JetNamedFunction): ClassFileFactory {
@@ -301,22 +294,87 @@ fun checkForSyntacticErrors(file: JetFile) {
     }
 }
 
-fun StackFrame.findLocalVariable(name: String, failIfNotFound: Boolean = true): Value? {
-    return try {
+private fun SuspendContext.getInvokePolicy(): Int {
+    return if (getSuspendPolicy() == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
+}
+
+fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkType: Boolean, failIfNotFound: Boolean): Value? {
+    val frame = getFrameProxy()?.getStackFrame()
+    if (frame == null) return null
+    try {
         when (name) {
-            "this" -> thisObject().asValue()
-            else -> getValue(visibleVariableByName(name)).asValue()
+            THIS_NAME -> {
+                val thisObject = frame.thisObject()
+                if (thisObject != null) {
+                    val eval4jValue = thisObject.asValue()
+                    if (isValueOfCorrectType(eval4jValue, asmType, true)) return eval4jValue
+                }
+
+                val receiver = findLocalVariable(RECEIVER_NAME, asmType, checkType = true, failIfNotFound = false)
+                if (receiver != null) return receiver
+
+                val this0 = findLocalVariable(AsmUtil.CAPTURED_THIS_FIELD, asmType, checkType = true, failIfNotFound = false)
+                if (this0 != null) return this0
+            }
+            else -> {
+                val localVariable = frame.visibleVariableByName(name)
+                if (localVariable != null) {
+                    val eval4jValue = frame.getValue(localVariable).asValue()
+                    if (isValueOfCorrectType(eval4jValue, asmType, checkType)) return eval4jValue
+                }
+
+                val eval4j = JDIEval(frame.virtualMachine()!!,
+                                     getClassLoader()!!,
+                                     getSuspendContext().getThread()?.getThreadReference()!!,
+                                     getSuspendContext().getInvokePolicy())
+
+                fun JDIEval.getField(owner: Value, name: String, asmType: Type?): Value? {
+                    val fieldDescription = FieldDescription(owner.asmType.getInternalName(), name, asmType?.getDescriptor() ?: "", isStatic = false)
+                    try {
+                        val fieldValue = getField(owner, fieldDescription)
+                        if (isValueOfCorrectType(fieldValue, asmType, checkType)) return fieldValue
+                        return null
+                    }
+                    catch (e: Exception) {
+                        return null
+                    }
+                }
+
+                fun findCapturedVal(name: String): Value? {
+                    var result: Value? = null
+                    var thisObj: Value? = frame.thisObject().asValue()
+
+                    while (result == null && thisObj != null) {
+                        result = eval4j.getField(thisObj!!, name, asmType)
+                        if (result == null) {
+                            thisObj = eval4j.getField(thisObj!!, AsmUtil.CAPTURED_THIS_FIELD, null)
+                        }
+                    }
+                    return result
+                }
+
+                val capturedValName = getCapturedFieldName(name)
+                val capturedVal = findCapturedVal(capturedValName)
+                if (capturedVal != null) return capturedVal
+            }
         }
+
+        return if (!failIfNotFound)
+            null
+        else
+            throw EvaluateExceptionUtil.createEvaluateException("Cannot find local variable: name = $name${if (checkType) ", type = " + asmType.toString() else ""}")
     }
-    catch(e: Exception) {
-        if (failIfNotFound) {
-            throw EvaluateExceptionUtil.createEvaluateException(
-                    "Cannot find local variable: name = ${name}. Note that captured variables are unsupported yet.")
-        }
-        else {
-            return null
-        }
+    catch(e: InvalidStackFrameException) {
+        throw EvaluateExceptionUtil.createEvaluateException("Local variable $name is unavailable in current frame")
     }
 }
 
+private fun getCapturedFieldName(name: String) = when (name) {
+    RECEIVER_NAME -> AsmUtil.CAPTURED_RECEIVER_FIELD
+    THIS_NAME -> AsmUtil.CAPTURED_THIS_FIELD
+    AsmUtil.CAPTURED_RECEIVER_FIELD -> name
+    AsmUtil.CAPTURED_THIS_FIELD -> name
+    else -> "$$name"
+}
 
+private fun isValueOfCorrectType(value: Value, asmType: Type?, shouldCheckType: Boolean) = !shouldCheckType || asmType == null || value.asmType == asmType

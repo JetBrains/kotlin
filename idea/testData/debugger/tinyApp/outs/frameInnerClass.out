@@ -2,6 +2,8 @@ LineBreakpoint created at frameInnerClass.kt:15
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameInnerClass.FrameInnerClassPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 frameInnerClass.kt:14
+Compile bytecode for prop1
+Compile bytecode for prop2
 package frameInnerClass
 
 fun main(args: Array<String>) {
@@ -22,6 +24,12 @@ class A {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: prop1
+// RESULT: 1: I
+
+// EXPRESSION: prop2
+// RESULT: 1: I
  frame    = test():15, A$Inner {frameInnerClass}
    this     = this = {frameInnerClass.A$Inner@uniqueID}
      field    = prop2: int = 1

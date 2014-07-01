@@ -22,3 +22,6 @@ fun foo(f: () -> Unit) {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: prop
+// RESULT: 1: I

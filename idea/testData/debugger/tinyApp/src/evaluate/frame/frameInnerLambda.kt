@@ -16,3 +16,12 @@ fun foo(f: () -> Unit) {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: val1
+// RESULT: 1: I
+
+// EXPRESSION: val2
+// RESULT: 1: I
+
+// EXPRESSION: val1 + val2
+// RESULT: 2: I
