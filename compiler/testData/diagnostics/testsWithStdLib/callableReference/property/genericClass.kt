@@ -1,3 +1,5 @@
+import kotlin.reflect.KMemberProperty
+
 class A<T>(val t: T) {
     val foo: T = t
 }

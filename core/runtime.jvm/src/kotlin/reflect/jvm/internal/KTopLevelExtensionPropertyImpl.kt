@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.*
+import kotlin.reflect.*
 
 open class KTopLevelExtensionPropertyImpl<T, out R>(
         public override val name: String,

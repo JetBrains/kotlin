@@ -1,3 +1,5 @@
+import kotlin.reflect.*
+
 class A {
     val foo: Unit = Unit.VALUE
     var bar: String = ""

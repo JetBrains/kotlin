@@ -15,6 +15,7 @@
  */
 
 package kotlin.reflect.jvm.internal
+import kotlin.reflect.*
 
 class KPackageImpl(
         val jClass: Class<*>

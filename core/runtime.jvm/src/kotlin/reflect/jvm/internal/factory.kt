@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import kotlin.reflect.*
 
 fun <T> kClass(jClass: Class<T>): KClassImpl<T> =
         KClassImpl<T>(jClass)

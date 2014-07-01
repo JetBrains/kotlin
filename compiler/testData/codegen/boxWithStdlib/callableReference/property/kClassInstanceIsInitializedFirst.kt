@@ -1,3 +1,5 @@
+import kotlin.reflect.KMemberProperty
+
 class A {
     class object {
         val ref: KMemberProperty<A, String> = A::foo

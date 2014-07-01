@@ -1,3 +1,5 @@
+import kotlin.reflect.*
+
 var x: Int = 42
 val y: String get() = "y"
 

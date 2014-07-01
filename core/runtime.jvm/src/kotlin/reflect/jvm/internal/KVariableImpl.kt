@@ -16,6 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
+import kotlin.reflect.*
+
 trait KVariableImpl<out R> : KVariable<R>, KPropertyImpl<R>
 
 trait KMutableVariableImpl<R> : KMutableVariable<R>, KVariableImpl<R>, KMutablePropertyImpl<R>

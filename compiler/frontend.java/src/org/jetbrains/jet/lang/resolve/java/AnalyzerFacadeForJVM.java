@@ -57,8 +57,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             new ImportPath("java.lang.*"),
             new ImportPath("kotlin.*"),
             new ImportPath("kotlin.jvm.*"),
-            new ImportPath("kotlin.io.*"),
-            new ImportPath("kotlin.reflect.*")
+            new ImportPath("kotlin.io.*")
     );
 
     public static class JvmSetup extends BasicSetup {

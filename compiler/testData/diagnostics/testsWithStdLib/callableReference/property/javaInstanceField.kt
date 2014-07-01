@@ -13,6 +13,8 @@ public class JavaClass {
 
 // FILE: test.kt
 
+import kotlin.reflect.*
+
 fun test() {
     JavaClass::publicFinal : KMemberProperty<JavaClass, Int>
     JavaClass::publicMutable : KMutableMemberProperty<JavaClass, Long>

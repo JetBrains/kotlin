@@ -15,6 +15,8 @@ public class JavaClass {
 
 import JavaClass.*
 
+import kotlin.reflect.*
+
 fun test() {
     ::publicFinal : KTopLevelProperty<String>
     ::publicMutable : KMutableTopLevelProperty<Any?>

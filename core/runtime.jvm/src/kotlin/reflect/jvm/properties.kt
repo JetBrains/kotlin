@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm
 
+import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
 
 public var <R> KProperty<R>.accessible: Boolean

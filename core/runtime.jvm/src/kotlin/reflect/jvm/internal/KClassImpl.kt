@@ -16,6 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
+import kotlin.reflect.*
+
 enum class KClassOrigin {
     BUILT_IN
     KOTLIN

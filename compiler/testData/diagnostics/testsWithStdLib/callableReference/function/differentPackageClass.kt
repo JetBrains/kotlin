@@ -12,6 +12,8 @@ class A {
 
 package other
 
+import kotlin.reflect.*
+
 import first.A
 
 fun main() {

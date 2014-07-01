@@ -1,3 +1,5 @@
+import kotlin.reflect.*
+
 class A(var g: A) {
     val f: Int = 0
 

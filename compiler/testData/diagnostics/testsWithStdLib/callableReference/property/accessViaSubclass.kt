@@ -1,3 +1,5 @@
+import kotlin.reflect.KMemberProperty
+
 open class Base {
     val foo: Int = 42
 }

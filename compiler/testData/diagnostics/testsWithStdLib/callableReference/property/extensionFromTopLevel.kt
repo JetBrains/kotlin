@@ -1,3 +1,5 @@
+import kotlin.reflect.*
+
 val String.countCharacters: Int
     get() = length
 

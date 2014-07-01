@@ -1,3 +1,5 @@
+import kotlin.reflect.*
+
 class A {
     fun foo() {}
     fun bar(<!UNUSED_PARAMETER!>x<!>: Int) {}

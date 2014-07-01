@@ -1,3 +1,5 @@
+import kotlin.reflect.KFunction0
+
 class A {
     class Nested
 }

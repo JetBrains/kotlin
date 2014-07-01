@@ -1,3 +1,5 @@
+import kotlin.reflect.KMemberProperty
+
 trait Base {
     val x: Any
 }
