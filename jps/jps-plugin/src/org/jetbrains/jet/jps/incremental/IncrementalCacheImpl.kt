@@ -39,20 +39,25 @@ import com.google.common.collect.Maps
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.util.containers.MultiMap
 import com.intellij.openapi.util.io.FileUtil
+import com.google.common.hash.Hashing
+
+val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
 public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     class object {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
+        val INLINE_FUNCTIONS = "inline-functions.tab"
         val PACKAGE_PARTS = "package-parts.tab"
     }
 
     private val protoMap = ProtoMap()
     private val constantsMap = ConstantsMap()
+    private val inlineFunctionsMap = InlineFunctionsMap()
     private val packagePartMap = PackagePartMap()
 
-    public fun saveFileToCache(moduleId: String, sourceFiles: Collection<File>, file: File): Boolean {
-        val fileBytes = file.readBytes()
+    public fun saveFileToCache(moduleId: String, sourceFiles: Collection<File>, classFile: File): Boolean {
+        val fileBytes = classFile.readBytes()
         val classNameAndHeader = VirtualFileKotlinClass.readClassNameAndHeader(fileBytes)
         if (classNameAndHeader == null) return false
 
@@ -65,7 +70,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
                     return protoMap.put(moduleId, className, data)
                 }
                 KotlinClassHeader.Kind.CLASS -> {
-                    return protoMap.put(moduleId, className, data)
+                    return inlineFunctionsMap.process(moduleId, sourceFiles.first(), fileBytes) or protoMap.put(moduleId, className, data)
                 }
                 else -> {
                     throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}")
@@ -75,7 +80,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
             assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
             packagePartMap.putPackagePartSourceData(moduleId, sourceFiles.first(), className)
-            return constantsMap.process(moduleId, sourceFiles.first(), fileBytes)
+            return inlineFunctionsMap.process(moduleId, sourceFiles.first(), fileBytes) or constantsMap.process(moduleId, sourceFiles.first(), fileBytes)
         }
 
         return false
@@ -84,6 +89,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     public fun clearCacheForRemovedFiles(moduleIdsAndFiles: Collection<Pair<String, File>>, outDirectories: Map<String, File>) {
         for ((moduleId, sourceFile) in moduleIdsAndFiles) {
             constantsMap.remove(moduleId, sourceFile)
+            inlineFunctionsMap.remove(moduleId, sourceFile)
             packagePartMap.remove(moduleId, sourceFile)
         }
 
@@ -101,6 +107,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     public fun close() {
         protoMap.close()
         constantsMap.close()
+        inlineFunctionsMap.close()
         packagePartMap.close()
     }
 
@@ -267,6 +274,99 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             INT FLOAT LONG DOUBLE STRING
         }
     }
+
+    private inner class InlineFunctionsMap {
+        private val map: PersistentHashMap<String, Map<String, Long>> = PersistentHashMap(
+                File(baseDir, INLINE_FUNCTIONS),
+                EnumeratorStringDescriptor(),
+                InlineFunctionsMapExternalizer
+        )
+
+        private fun getKey(moduleId: String, sourceFile: File): String {
+            return moduleId + File.pathSeparator + sourceFile.getAbsolutePath()
+        }
+
+        private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
+            val result = HashMap<String, Long>()
+
+            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+                    val dummyClassWriter = ClassWriter(Opcodes.ASM5)
+                    return object : MethodVisitor(Opcodes.ASM5, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
+                        var hasInlineAnnotation = false
+
+                        override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                            if (desc == INLINE_ANNOTATION_DESC) {
+                                hasInlineAnnotation = true
+                            }
+                            return null
+                        }
+
+                        override fun visitEnd() {
+                            if (hasInlineAnnotation) {
+                                val dummyBytes = dummyClassWriter.toByteArray()!!
+                                val hash = Hashing.md5()!!.hashBytes(dummyBytes)!!.asLong()
+
+                                result[name + desc] = hash
+                            }
+                        }
+                    }
+                }
+
+            }, 0)
+
+            return result
+        }
+
+        public fun process(moduleId: String, file: File, bytes: ByteArray): Boolean {
+            return put(moduleId, file, getInlineFunctionsMap(bytes))
+        }
+
+        private fun put(moduleId: String, file: File, inlineFunctionsMap: Map<String, Long>): Boolean {
+            val key = getKey(moduleId, file)
+
+            val oldMap = map[key]
+            if (oldMap == inlineFunctionsMap) {
+                return false
+            }
+            map.put(key, inlineFunctionsMap)
+            return true
+        }
+
+        public fun remove(moduleId: String, file: File) {
+            map.remove(getKey(moduleId, file))
+        }
+
+        public fun close() {
+            map.close()
+        }
+    }
+
+    private object InlineFunctionsMapExternalizer: DataExternalizer<Map<String, Long>> {
+        override fun save(out: DataOutput, map: Map<String, Long>?) {
+            out.writeInt(map!!.size)
+            for (name in map.keySet()) {
+                IOUtil.writeString(name, out)
+                out.writeLong(map[name]!!)
+            }
+        }
+
+        override fun read(`in`: DataInput): Map<String, Long>? {
+            val size = `in`.readInt()
+            val map = Maps.newHashMapWithExpectedSize<String, Long>(size)!!
+
+            for (i in size.indices) {
+                val name = IOUtil.readString(`in`)!!
+                val value = `in`.readLong()
+
+                map[name] = value
+            }
+
+            return map
+        }
+
+    }
+
 
     private inner class PackagePartMap {
         // Format of serialization to string: <module id> <path separator> <source file path>  -->  <package part JVM internal name>

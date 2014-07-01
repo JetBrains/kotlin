@@ -51,6 +51,16 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("jps-plugin/testData/incremental"), Pattern.compile("^([^\\.]+)$"), false);
     }
     
+    @TestMetadata("classInlineFunctionChanged")
+    public void testClassInlineFunctionChanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/classInlineFunctionChanged/");
+    }
+    
+    @TestMetadata("classInlineFunctionUnchanged")
+    public void testClassInlineFunctionUnchanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/classInlineFunctionUnchanged/");
+    }
+    
     @TestMetadata("classRecreated")
     public void testClassRecreated() throws Exception {
         doTest("jps-plugin/testData/incremental/classRecreated/");
@@ -90,7 +100,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     public void testIndependentClasses() throws Exception {
         doTest("jps-plugin/testData/incremental/independentClasses/");
     }
-    
+
     @TestMetadata("multiplePackagesModified")
     public void testMultiplePackagesModified() throws Exception {
         doTest("jps-plugin/testData/incremental/multiplePackagesModified/");
@@ -124,6 +134,21 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestMetadata("packageFilesChangedInTurn")
     public void testPackageFilesChangedInTurn() throws Exception {
         doTest("jps-plugin/testData/incremental/packageFilesChangedInTurn/");
+    }
+    
+    @TestMetadata("packageInlineFunctionChanged")
+    public void testPackageInlineFunctionChanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/packageInlineFunctionChanged/");
+    }
+    
+    @TestMetadata("packageInlineFunctionFromOurPackage")
+    public void testPackageInlineFunctionFromOurPackage() throws Exception {
+        doTest("jps-plugin/testData/incremental/packageInlineFunctionFromOurPackage/");
+    }
+    
+    @TestMetadata("packageInlineFunctionUnchanged")
+    public void testPackageInlineFunctionUnchanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/packageInlineFunctionUnchanged/");
     }
     
     @TestMetadata("packageRecreated")
