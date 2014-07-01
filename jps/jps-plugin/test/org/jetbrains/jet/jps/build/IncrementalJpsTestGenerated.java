@@ -51,6 +51,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("jps-plugin/testData/incremental"), Pattern.compile("^([^\\.]+)$"), false);
     }
     
+    @TestMetadata("annotations")
+    public void testAnnotations() throws Exception {
+        doTest("jps-plugin/testData/incremental/annotations/");
+    }
+    
     @TestMetadata("classInlineFunctionChanged")
     public void testClassInlineFunctionChanged() throws Exception {
         doTest("jps-plugin/testData/incremental/classInlineFunctionChanged/");
