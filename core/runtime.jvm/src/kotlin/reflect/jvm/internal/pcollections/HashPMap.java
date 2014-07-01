@@ -16,6 +16,8 @@
 
 package kotlin.reflect.jvm.internal.pcollections;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A persistent map from non-null keys to non-null values.
  */
@@ -23,6 +25,7 @@ public final class HashPMap<K, V> {
     private static final HashPMap<Object, Object> EMPTY = new HashPMap<Object, Object>(IntTreePMap.<ConsPStack<MapEntry<Object, Object>>>empty(), 0);
 
     @SuppressWarnings("unchecked")
+    @NotNull
     public static <K, V> HashPMap<K, V> empty() {
         return (HashPMap<K, V>) HashPMap.EMPTY;
     }
@@ -51,6 +54,7 @@ public final class HashPMap<K, V> {
         return null;
     }
 
+    @NotNull
     public HashPMap<K, V> plus(K key, V value) {
         ConsPStack<MapEntry<K, V>> entries = getEntries(key.hashCode());
         int size0 = entries.size();
@@ -60,6 +64,7 @@ public final class HashPMap<K, V> {
         return new HashPMap<K, V>(intMap.plus(key.hashCode(), entries), size - size0 + entries.size());
     }
 
+    @NotNull
     public HashPMap<K, V> minus(Object key) {
         ConsPStack<MapEntry<K, V>> entries = getEntries(key.hashCode());
         int i = keyIndexIn(entries, key);
