@@ -83,19 +83,21 @@ public class ForceResolveUtil {
         }
     }
 
-    public static void forceResolveAllContents(@Nullable JetType type) {
-        if (type == null) return;
+    @Nullable
+    public static JetType forceResolveAllContents(@Nullable JetType type) {
+        if (type == null) return null;
 
         if (type instanceof FlexibleType) {
             FlexibleType flexibleType = (FlexibleType) type;
             forceResolveAllContents(flexibleType.getLowerBound());
             forceResolveAllContents(flexibleType.getUpperBound());
-            return;
         }
-
-        forceResolveAllContents(type.getConstructor());
-        for (TypeProjection projection : type.getArguments()) {
-            forceResolveAllContents(projection.getType());
+        else {
+            forceResolveAllContents(type.getConstructor());
+            for (TypeProjection projection : type.getArguments()) {
+                forceResolveAllContents(projection.getType());
+            }
         }
+        return type;
     }
 }
