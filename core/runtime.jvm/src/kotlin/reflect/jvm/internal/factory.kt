@@ -23,14 +23,14 @@ fun <T> kClass(jClass: Class<T>): KClassImpl<T> =
 fun kPackage(jClass: Class<*>): KPackageImpl =
         KPackageImpl(jClass)
 
-fun topLevelProperty(name: String, owner: KPackageImpl): KTopLevelPropertyImpl<Any?> =
-        KTopLevelPropertyImpl<Any?>(name, owner)
+fun topLevelVariable(name: String, owner: KPackageImpl): KTopLevelVariableImpl<Any?> =
+        KTopLevelVariableImpl<Any?>(name, owner)
 
-fun mutableTopLevelProperty(name: String, owner: KPackageImpl): KMutableTopLevelPropertyImpl<Any?> =
-        KMutableTopLevelPropertyImpl<Any?>(name, owner)
+fun mutableTopLevelVariable(name: String, owner: KPackageImpl): KMutableTopLevelVariableImpl<Any?> =
+        KMutableTopLevelVariableImpl<Any?>(name, owner)
 
-fun <T> extensionProperty(name: String, owner: KPackageImpl, receiver: Class<T>): KExtensionPropertyImpl<T, Any?> =
-        KExtensionPropertyImpl<T, Any?>(name, owner, receiver)
+fun <T> topLevelExtensionProperty(name: String, owner: KPackageImpl, receiver: Class<T>): KTopLevelExtensionPropertyImpl<T, Any?> =
+        KTopLevelExtensionPropertyImpl<T, Any?>(name, owner, receiver)
 
-fun <T> mutableExtensionProperty(name: String, owner: KPackageImpl, receiver: Class<T>): KMutableExtensionPropertyImpl<T, Any?> =
-        KMutableExtensionPropertyImpl<T, Any?>(name, owner, receiver)
+fun <T> mutableTopLevelExtensionProperty(name: String, owner: KPackageImpl, receiver: Class<T>): KMutableTopLevelExtensionPropertyImpl<T, Any?> =
+        KMutableTopLevelExtensionPropertyImpl<T, Any?>(name, owner, receiver)

@@ -4,8 +4,11 @@ val y: String get() = "y"
 fun testX() {
     val xx = ::x
     xx : KMutableTopLevelProperty<Int>
+    xx : KMutableTopLevelVariable<Int>
     xx : KTopLevelProperty<Int>
+    xx : KTopLevelVariable<Int>
     xx : KMutableProperty<Int>
+    xx : KMutableVariable<Int>
     xx : KProperty<Int>
     xx : KCallable<Int>
 
@@ -17,7 +20,7 @@ fun testX() {
 fun testY() {
     val yy = ::y
     <!TYPE_MISMATCH!>yy<!> : KMutableTopLevelProperty<String>
-    yy : KTopLevelProperty<String>
+    yy : KTopLevelVariable<String>
     <!TYPE_MISMATCH!>yy<!> : KMutableProperty<String>
     yy : KProperty<String>
     yy : KCallable<String>

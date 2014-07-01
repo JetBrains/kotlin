@@ -16,6 +16,6 @@
 
 package kotlin.reflect
 
-public trait KTopLevelProperty<out R> : KProperty<R>
+public trait KTopLevelExtensionProperty<T, out R> : KExtensionProperty<T, R>, KTopLevelProperty<R>
 
-public trait KMutableTopLevelProperty<R> : KTopLevelProperty<R>, KMutableProperty<R>
+public trait KMutableTopLevelExtensionProperty<T, out R> : KTopLevelExtensionProperty<T, R>, KMutableExtensionProperty<T, R>, KMutableTopLevelProperty<R>

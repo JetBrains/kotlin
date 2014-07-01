@@ -18,10 +18,10 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.*
 
-open class KTopLevelPropertyImpl<out R>(
+open class KTopLevelVariableImpl<out R>(
         public override val name: String,
         protected val owner: KPackageImpl
-) : KTopLevelProperty<R>, KVariableImpl<R> {
+) : KTopLevelVariable<R>, KVariableImpl<R> {
     // TODO: load the field from the corresponding package part
     override val field: Field? get() = null
 
@@ -33,10 +33,10 @@ open class KTopLevelPropertyImpl<out R>(
     }
 }
 
-class KMutableTopLevelPropertyImpl<R>(
+class KMutableTopLevelVariableImpl<R>(
         name: String,
         owner: KPackageImpl
-) : KMutableTopLevelProperty<R>, KMutableVariableImpl<R>, KTopLevelPropertyImpl<R>(name, owner) {
+) : KMutableTopLevelVariable<R>, KMutableVariableImpl<R>, KTopLevelVariableImpl<R>(name, owner) {
     override val setter: Method = owner.jClass.getMethod(setterName(name), getter.getReturnType()!!)
 
     override fun set(value: R) {

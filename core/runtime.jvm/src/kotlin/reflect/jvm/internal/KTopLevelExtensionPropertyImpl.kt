@@ -18,11 +18,11 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.*
 
-open class KExtensionPropertyImpl<T, out R>(
+open class KTopLevelExtensionPropertyImpl<T, out R>(
         public override val name: String,
         protected val owner: KPackageImpl,
         protected val receiverClass: Class<T>
-) : KExtensionProperty<T, R>, KPropertyImpl<R> {
+) : KTopLevelExtensionProperty<T, R>, KPropertyImpl<R> {
     override val field: Field? get() = null
 
     // TODO: extract, make lazy (weak?), use our descriptors knowledge, support Java fields
@@ -33,11 +33,11 @@ open class KExtensionPropertyImpl<T, out R>(
     }
 }
 
-class KMutableExtensionPropertyImpl<T, R>(
+class KMutableTopLevelExtensionPropertyImpl<T, R>(
         name: String,
         owner: KPackageImpl,
         receiverClass: Class<T>
-) : KMutableExtensionProperty<T, R>, KMutablePropertyImpl<R>, KExtensionPropertyImpl<T, R>(name, owner, receiverClass) {
+) : KMutableTopLevelExtensionProperty<T, R>, KMutablePropertyImpl<R>, KTopLevelExtensionPropertyImpl<T, R>(name, owner, receiverClass) {
     override val setter: Method = owner.jClass.getMethod(setterName(name), receiverClass, getter.getReturnType()!!)
 
     override fun set(receiver: T, value: R) {

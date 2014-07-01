@@ -49,12 +49,12 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public fun getKExtensionFunction(n: Int): ClassDescriptor = find("KExtensionFunction$n")
     public fun getKMemberFunction(n: Int): ClassDescriptor = find("KMemberFunction$n")
 
-    public val kTopLevelProperty: ClassDescriptor by ClassLookup
-    public val kMutableTopLevelProperty: ClassDescriptor by ClassLookup
+    public val kTopLevelVariable: ClassDescriptor by ClassLookup
+    public val kMutableTopLevelVariable: ClassDescriptor by ClassLookup
     public val kMemberProperty: ClassDescriptor by ClassLookup
     public val kMutableMemberProperty: ClassDescriptor by ClassLookup
-    public val kExtensionProperty: ClassDescriptor by ClassLookup
-    public val kMutableExtensionProperty: ClassDescriptor by ClassLookup
+    public val kTopLevelExtensionProperty: ClassDescriptor by ClassLookup
+    public val kMutableTopLevelExtensionProperty: ClassDescriptor by ClassLookup
 
     public fun getKFunctionType(
             annotations: Annotations,
@@ -85,14 +85,14 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             mutable: Boolean
     ): JetType {
         val classDescriptor = if (mutable) when {
-            extensionProperty -> kMutableExtensionProperty
+            extensionProperty -> kMutableTopLevelExtensionProperty
             receiverType != null -> kMutableMemberProperty
-            else -> kMutableTopLevelProperty
+            else -> kMutableTopLevelVariable
         }
         else when {
-            extensionProperty -> kExtensionProperty
+            extensionProperty -> kTopLevelExtensionProperty
             receiverType != null -> kMemberProperty
-            else -> kTopLevelProperty
+            else -> kTopLevelVariable
         }
 
         if (ErrorUtils.isError(classDescriptor)) {

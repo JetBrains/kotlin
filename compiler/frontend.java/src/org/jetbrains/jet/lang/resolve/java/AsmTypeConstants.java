@@ -43,10 +43,10 @@ public class AsmTypeConstants {
 
     public static final Type K_CLASS_IMPL_TYPE = reflectInternal("KClassImpl");
     public static final Type K_PACKAGE_IMPL_TYPE = reflectInternal("KPackageImpl");
-    public static final Type K_TOP_LEVEL_PROPERTY_IMPL_TYPE = reflectInternal("KTopLevelPropertyImpl");
-    public static final Type K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE = reflectInternal("KMutableTopLevelPropertyImpl");
-    public static final Type K_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KExtensionPropertyImpl");
-    public static final Type K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KMutableExtensionPropertyImpl");
+    public static final Type K_TOP_LEVEL_VARIABLE_IMPL_TYPE = reflectInternal("KTopLevelVariableImpl");
+    public static final Type K_MUTABLE_TOP_LEVEL_VARIABLE_IMPL_TYPE = reflectInternal("KMutableTopLevelVariableImpl");
+    public static final Type K_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KTopLevelExtensionPropertyImpl");
+    public static final Type K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KMutableTopLevelExtensionPropertyImpl");
 
     public static final String REFLECTION_INTERNAL_PACKAGE = reflectInternal("InternalPackage").getInternalName();
 

@@ -2452,14 +2452,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (receiverParameter != null) {
             Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE, getType(Class.class)};
             factoryMethod = descriptor.isVar()
-                            ? method("mutableExtensionProperty", K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes)
-                            : method("extensionProperty", K_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes);
+                            ? method("mutableTopLevelExtensionProperty", K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes)
+                            : method("topLevelExtensionProperty", K_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes);
         }
         else {
             Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE};
             factoryMethod = descriptor.isVar()
-                            ? method("mutableTopLevelProperty", K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE, parameterTypes)
-                            : method("topLevelProperty", K_TOP_LEVEL_PROPERTY_IMPL_TYPE, parameterTypes);
+                            ? method("mutableTopLevelVariable", K_MUTABLE_TOP_LEVEL_VARIABLE_IMPL_TYPE, parameterTypes)
+                            : method("topLevelVariable", K_TOP_LEVEL_VARIABLE_IMPL_TYPE, parameterTypes);
         }
 
         v.visitLdcInsn(descriptor.getName().asString());
