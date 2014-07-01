@@ -19,7 +19,10 @@ package kotlin.reflect.jvm.internal
 import kotlin.reflect.*
 
 fun <T> kClass(jClass: Class<T>): KClassImpl<T> =
-        KClassImpl<T>(jClass)
+        KClassImpl<T>(jClass, false)
+
+fun <T> kClassFromKotlin(jClass: Class<T>): KClassImpl<T> =
+        KClassImpl<T>(jClass, true)
 
 fun kPackage(jClass: Class<*>): KPackageImpl =
         KPackageImpl(jClass)

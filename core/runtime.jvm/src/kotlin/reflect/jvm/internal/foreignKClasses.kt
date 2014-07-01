@@ -53,13 +53,13 @@ fun <T> foreignKotlinClass(jClass: Class<T>): KClassImpl<T> {
         val newArray = arrayOfNulls<WeakReference<KClassImpl<*>>>(size + 1)
         // Don't use Arrays.copyOf because it works reflectively
         System.arraycopy(cached, 0, newArray, 0, size)
-        val newKClass = KClassImpl<T>(jClass)
+        val newKClass = kClass<T>(jClass)
         newArray[size] = WeakReference(newKClass)
         FOREIGN_K_CLASSES = FOREIGN_K_CLASSES.plus(name, newArray)
         return newKClass
     }
 
-    val newKClass = KClassImpl<T>(jClass)
+    val newKClass = kClass<T>(jClass)
     FOREIGN_K_CLASSES = FOREIGN_K_CLASSES.plus(name, WeakReference(newKClass))
     return newKClass
 }
