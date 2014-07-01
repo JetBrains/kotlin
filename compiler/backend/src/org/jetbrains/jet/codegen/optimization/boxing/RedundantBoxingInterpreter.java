@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.codegen.optimization.boxing;
 
+import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.InsnList;
@@ -29,10 +31,27 @@ import java.util.List;
 import java.util.Set;
 
 class RedundantBoxingInterpreter extends BoxingInterpreter {
+    private static final ImmutableSet<Integer> unsafeOperationsOpcodes;
+
+    static {
+        ImmutableSet.Builder<Integer> unsafeOperationsOpcodesBuilder = ImmutableSet.builder();
+        unsafeOperationsOpcodesBuilder.add(
+                Opcodes.AASTORE, Opcodes.PUTFIELD, Opcodes.PUTSTATIC, Opcodes.ARETURN
+        );
+
+        unsafeOperationsOpcodes = unsafeOperationsOpcodesBuilder.build();
+    }
+
     private final Set<BoxedBasicValue> candidatesBoxedValues = new HashSet<BoxedBasicValue>();
 
     RedundantBoxingInterpreter(InsnList insnList) {
         super(insnList);
+    }
+
+    private void checkIfUnsafeOperationWithBoxed(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
+        if (value instanceof BoxedBasicValue && unsafeOperationsOpcodes.contains(insnNode.getOpcode())) {
+            markAsDirty((BoxedBasicValue) value);
+        }
     }
 
     @Override
@@ -42,11 +61,20 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
             @NotNull BasicValue value2
     ) throws AnalyzerException {
 
-        if (insn.getOpcode() == Opcodes.PUTFIELD && value2 instanceof BoxedBasicValue) {
-            markAsDirty((BoxedBasicValue) value2);
-        }
+        checkIfUnsafeOperationWithBoxed(value2, insn);
 
         return super.binaryOperation(insn, value1, value2);
+    }
+
+    @Override
+    public BasicValue ternaryOperation(
+            @NotNull AbstractInsnNode insn,
+            @NotNull BasicValue value1, @NotNull BasicValue value2, @NotNull BasicValue value3
+    ) throws AnalyzerException {
+
+        checkIfUnsafeOperationWithBoxed(value3, insn);
+
+        return super.ternaryOperation(insn, value1, value2, value3);
     }
 
     @Override
