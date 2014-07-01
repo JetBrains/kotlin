@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.jps.incremental
 
+import org.jetbrains.jet.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
 import java.io.File
 import com.intellij.util.io.PersistentHashMap
 import java.io.DataOutput
@@ -56,10 +57,10 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     private val inlineFunctionsMap = InlineFunctionsMap()
     private val packagePartMap = PackagePartMap()
 
-    public fun saveFileToCache(moduleId: String, sourceFiles: Collection<File>, classFile: File): Boolean {
+    public fun saveFileToCache(moduleId: String, sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
         val fileBytes = classFile.readBytes()
         val classNameAndHeader = VirtualFileKotlinClass.readClassNameAndHeader(fileBytes)
-        if (classNameAndHeader == null) return false
+        if (classNameAndHeader == null) return RecompilationDecision.DO_NOTHING
 
         val (className, header) = classNameAndHeader
         val annotationDataEncoded = header.annotationData
@@ -67,10 +68,13 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             val data = BitEncoding.decodeBytes(annotationDataEncoded)
             when (header.kind) {
                 KotlinClassHeader.Kind.PACKAGE_FACADE -> {
-                    return protoMap.put(moduleId, className, data)
+                    return if (protoMap.put(moduleId, className, data)) COMPILE_OTHERS else DO_NOTHING
                 }
                 KotlinClassHeader.Kind.CLASS -> {
-                    return inlineFunctionsMap.process(moduleId, sourceFiles.first(), fileBytes) or protoMap.put(moduleId, className, data)
+                    val inlinesChanged = inlineFunctionsMap.process(moduleId, sourceFiles.first(), fileBytes)
+                    val protoChanged = protoMap.put(moduleId, className, data)
+
+                    return if (inlinesChanged) RECOMPILE_ALL else if (protoChanged) COMPILE_OTHERS else DO_NOTHING
                 }
                 else -> {
                     throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}")
@@ -80,10 +84,12 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
             assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
             packagePartMap.putPackagePartSourceData(moduleId, sourceFiles.first(), className)
-            return inlineFunctionsMap.process(moduleId, sourceFiles.first(), fileBytes) or constantsMap.process(moduleId, sourceFiles.first(), fileBytes)
+            val inlinesChanged = inlineFunctionsMap.process(moduleId, sourceFiles.first(), fileBytes)
+            val constantsChanged = constantsMap.process(moduleId, sourceFiles.first(), fileBytes)
+            return if (inlinesChanged) RECOMPILE_ALL else if (constantsChanged) COMPILE_OTHERS else DO_NOTHING
         }
 
-        return false
+        return DO_NOTHING
     }
 
     public fun clearCacheForRemovedFiles(moduleIdsAndFiles: Collection<Pair<String, File>>, outDirectories: Map<String, File>) {
@@ -286,7 +292,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             return moduleId + File.pathSeparator + sourceFile.getAbsolutePath()
         }
 
-        private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
+        private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long>? {
             val result = HashMap<String, Long>()
 
             ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
@@ -315,21 +321,23 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
             }, 0)
 
-            return result
+            return if (result.isEmpty()) null else result
         }
 
         public fun process(moduleId: String, file: File, bytes: ByteArray): Boolean {
             return put(moduleId, file, getInlineFunctionsMap(bytes))
         }
 
-        private fun put(moduleId: String, file: File, inlineFunctionsMap: Map<String, Long>): Boolean {
+        private fun put(moduleId: String, file: File, inlineFunctionsMap: Map<String, Long>?): Boolean {
             val key = getKey(moduleId, file)
 
             val oldMap = map[key]
             if (oldMap == inlineFunctionsMap) {
                 return false
             }
-            map.put(key, inlineFunctionsMap)
+            if (inlineFunctionsMap != null) {
+                map.put(key, inlineFunctionsMap)
+            }
             return true
         }
 
@@ -434,6 +442,16 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
         public fun close() {
             map.close()
+        }
+    }
+
+    enum class RecompilationDecision {
+        DO_NOTHING
+        COMPILE_OTHERS
+        RECOMPILE_ALL
+
+        fun merge(other: RecompilationDecision): RecompilationDecision {
+            return if (other.ordinal() > this.ordinal()) other else this
         }
     }
 }

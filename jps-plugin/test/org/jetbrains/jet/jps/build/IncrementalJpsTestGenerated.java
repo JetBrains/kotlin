@@ -105,7 +105,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     public void testIndependentClasses() throws Exception {
         doTest("jps-plugin/testData/incremental/independentClasses/");
     }
-
+    
+    @TestMetadata("inlineFunctionsCircularDependency")
+    public void testInlineFunctionsCircularDependency() throws Exception {
+        doTest("jps-plugin/testData/incremental/inlineFunctionsCircularDependency/");
+    }
+    
     @TestMetadata("multiplePackagesModified")
     public void testMultiplePackagesModified() throws Exception {
         doTest("jps-plugin/testData/incremental/multiplePackagesModified/");
