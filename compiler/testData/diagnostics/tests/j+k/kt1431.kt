@@ -13,5 +13,5 @@ package d
 import a.C
 
 fun test() {
-    C.create()<!UNSAFE_CALL!>.<!>foo()
+    C.create().foo()
 }

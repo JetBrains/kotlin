@@ -69,6 +69,20 @@ public class TypeCheckingProcedure {
     }
 
     public boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2) {
+        if (type1 instanceof FlexibleType) {
+            FlexibleType flexibleType1 = (FlexibleType) type1;
+            if (type2 instanceof FlexibleType) {
+                FlexibleType flexibleType2 = (FlexibleType) type2;
+                return equalTypes(flexibleType1.getLowerBound(), flexibleType2.getLowerBound())
+                        && equalTypes(flexibleType1.getUpperBound(), flexibleType2.getUpperBound());
+            }
+            return equalTypes(flexibleType1.getLowerBound(), type2) || equalTypes(flexibleType1.getUpperBound(), type2);
+        }
+        else if (type2 instanceof FlexibleType) {
+            FlexibleType flexibleType2 = (FlexibleType) type2;
+            return equalTypes(type1, flexibleType2.getLowerBound()) || equalTypes(type1, flexibleType2.getUpperBound());
+        }
+
         if (type1.isNullable() != type2.isNullable()) {
             return false;
         }
