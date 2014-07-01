@@ -100,14 +100,16 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
             }
 
             return boxingPlaces.get(index);
-        } else if (isUnboxing(insn) &&
-            values.get(0) instanceof BoxedBasicValue &&
-            value.getType().equals(((BoxedBasicValue) values.get(0)).getPrimitiveType())) {
+        }
+        else if (isUnboxing(insn) &&
+                 values.get(0) instanceof BoxedBasicValue &&
+                 value.getType().equals(((BoxedBasicValue) values.get(0)).getPrimitiveType())) {
 
             BoxedBasicValue boxedBasicValue = (BoxedBasicValue) values.get(0);
             boxedBasicValue.addInsn(insn);
             boxedBasicValue.setWasUnboxed(true);
-        } else {
+        }
+        else {
             for (BasicValue arg : values) {
                 if (arg instanceof BoxedBasicValue) {
                     onMethodCallWithBoxedValue((BoxedBasicValue) arg);
