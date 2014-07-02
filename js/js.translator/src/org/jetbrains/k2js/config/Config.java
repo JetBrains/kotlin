@@ -77,7 +77,10 @@ public abstract class Config {
             "/jquery/ui.kt",
             "/junit/core.kt",
             "/qunit/core.kt",
-            "/stdlib/browser.kt"
+            "/stdlib/browser.kt",
+            "/../../../core/reflection/src/kotlin/reflect/KFunctions.kt",
+            "/../../../core/reflection/src/kotlin/reflect/KExtensionFunctions.kt",
+            "/../../../core/reflection/src/kotlin/reflect/KMemberFunctions.kt"
     );
 
     @NotNull

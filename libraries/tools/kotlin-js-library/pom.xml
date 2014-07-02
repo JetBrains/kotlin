@@ -38,6 +38,9 @@
                                         <exclude name="**/*Code.kt"/>
                                         <exclude name="core/dom/core.kt"/>
                                     </fileset>
+                                    <fileset dir="${basedir}/../../../core/reflection/src">
+                                        <include name="kotlin/**"/>
+                                    </fileset>
                                 </copy>
                                 <copy todir="${basedir}/target/generated-js-library">
                                     <fileset dir="${kotlin-js-lib-srcdir}">
