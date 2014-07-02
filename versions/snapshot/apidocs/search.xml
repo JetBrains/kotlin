@@ -131,6 +131,11 @@
   <kind>class</kind>
 </search>
 <search>
+  <href>kotlin/DuplicateKeyException.html</href>
+  <name>DuplicateKeyException [kotlin]</name>
+  <kind>class</kind>
+</search>
+<search>
   <href>kotlin/EmptyIterableException.html</href>
   <name>EmptyIterableException [kotlin]</name>
   <kind>class</kind>
@@ -471,351 +476,6 @@
   <kind>trait</kind>
 </search>
 <search>
-  <href>kotlin/KExtensionFunction0.html</href>
-  <name>KExtensionFunction0 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction1.html</href>
-  <name>KExtensionFunction1 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction10.html</href>
-  <name>KExtensionFunction10 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction11.html</href>
-  <name>KExtensionFunction11 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction12.html</href>
-  <name>KExtensionFunction12 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction13.html</href>
-  <name>KExtensionFunction13 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction14.html</href>
-  <name>KExtensionFunction14 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction15.html</href>
-  <name>KExtensionFunction15 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction16.html</href>
-  <name>KExtensionFunction16 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction17.html</href>
-  <name>KExtensionFunction17 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction18.html</href>
-  <name>KExtensionFunction18 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction19.html</href>
-  <name>KExtensionFunction19 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction2.html</href>
-  <name>KExtensionFunction2 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction20.html</href>
-  <name>KExtensionFunction20 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction21.html</href>
-  <name>KExtensionFunction21 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction22.html</href>
-  <name>KExtensionFunction22 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction3.html</href>
-  <name>KExtensionFunction3 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction4.html</href>
-  <name>KExtensionFunction4 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction5.html</href>
-  <name>KExtensionFunction5 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction6.html</href>
-  <name>KExtensionFunction6 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction7.html</href>
-  <name>KExtensionFunction7 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction8.html</href>
-  <name>KExtensionFunction8 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction9.html</href>
-  <name>KExtensionFunction9 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction0.html</href>
-  <name>KFunction0 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction1.html</href>
-  <name>KFunction1 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction10.html</href>
-  <name>KFunction10 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction11.html</href>
-  <name>KFunction11 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction12.html</href>
-  <name>KFunction12 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction13.html</href>
-  <name>KFunction13 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction14.html</href>
-  <name>KFunction14 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction15.html</href>
-  <name>KFunction15 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction16.html</href>
-  <name>KFunction16 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction17.html</href>
-  <name>KFunction17 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction18.html</href>
-  <name>KFunction18 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction19.html</href>
-  <name>KFunction19 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction2.html</href>
-  <name>KFunction2 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction20.html</href>
-  <name>KFunction20 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction21.html</href>
-  <name>KFunction21 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction22.html</href>
-  <name>KFunction22 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction3.html</href>
-  <name>KFunction3 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction4.html</href>
-  <name>KFunction4 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction5.html</href>
-  <name>KFunction5 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction6.html</href>
-  <name>KFunction6 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction7.html</href>
-  <name>KFunction7 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction8.html</href>
-  <name>KFunction8 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KFunction9.html</href>
-  <name>KFunction9 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction0.html</href>
-  <name>KMemberFunction0 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction1.html</href>
-  <name>KMemberFunction1 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction10.html</href>
-  <name>KMemberFunction10 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction11.html</href>
-  <name>KMemberFunction11 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction12.html</href>
-  <name>KMemberFunction12 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction13.html</href>
-  <name>KMemberFunction13 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction14.html</href>
-  <name>KMemberFunction14 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction15.html</href>
-  <name>KMemberFunction15 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction16.html</href>
-  <name>KMemberFunction16 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction17.html</href>
-  <name>KMemberFunction17 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction18.html</href>
-  <name>KMemberFunction18 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction19.html</href>
-  <name>KMemberFunction19 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction2.html</href>
-  <name>KMemberFunction2 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction20.html</href>
-  <name>KMemberFunction20 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction21.html</href>
-  <name>KMemberFunction21 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction22.html</href>
-  <name>KMemberFunction22 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction3.html</href>
-  <name>KMemberFunction3 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction4.html</href>
-  <name>KMemberFunction4 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction5.html</href>
-  <name>KMemberFunction5 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction6.html</href>
-  <name>KMemberFunction6 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction7.html</href>
-  <name>KMemberFunction7 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction8.html</href>
-  <name>KMemberFunction8 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction9.html</href>
-  <name>KMemberFunction9 [kotlin]</name>
-  <kind>trait</kind>
-</search>
-<search>
   <href>kotlin/LimitedStream.html</href>
   <name>LimitedStream [kotlin]</name>
   <kind>class</kind>
@@ -864,6 +524,11 @@
   <href>kotlin/Map.html</href>
   <name>Map [kotlin]</name>
   <kind>trait</kind>
+</search>
+<search>
+  <href>kotlin/MergingStream.html</href>
+  <name>MergingStream [kotlin]</name>
+  <kind>class</kind>
 </search>
 <search>
   <href>kotlin/modules/Module.html</href>
@@ -1436,8 +1101,13 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/String-extensions.html#any(kotlin.Function1)</href>
+  <href>kotlin/kotlin/String-extensions.html#any()</href>
   <name>any() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#append(kotlin.Array)</href>
+  <name>append() [java.lang.StringBuilder]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1601,13 +1271,18 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/String-extensions.html#appendString(java.lang.Appendable, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
-  <name>appendString() [kotlin.String]</name>
+  <href>kotlin/io/java/io/File-extensions.html#appendText(kotlin.String, java.nio.charset.Charset)</href>
+  <name>appendText() [java.io.File]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/io/java/io/File-extensions.html#appendText(kotlin.String, java.nio.charset.Charset)</href>
-  <name>appendText() [java.io.File]</name>
+  <href>kotlin/java/lang/Appendable-extensions.html#appendln()</href>
+  <name>appendln() [java.lang.Appendable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#appendln()</href>
+  <name>appendln() [java.lang.StringBuilder]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1796,6 +1471,11 @@
   <kind>var</kind>
 </search>
 <search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#charAt(kotlin.Int)</href>
+  <name>charAt() [java.lang.StringBuilder]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/CharSequence-extensions.html#charAt(kotlin.Int)</href>
   <name>charAt() [kotlin.CharSequence]</name>
   <kind>fun</kind>
@@ -1976,11 +1656,6 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/ComparableRange.html#component1()</href>
-  <name>component1() [kotlin.ComparableRange]</name>
-  <kind>fun</kind>
-</search>
-<search>
   <href>kotlin/kotlin/Entry-extensions.html#component1()</href>
   <name>component1() [kotlin.Entry]</name>
   <kind>fun</kind>
@@ -1993,11 +1668,6 @@
 <search>
   <href>kotlin/Triple.html#component1()</href>
   <name>component1() [kotlin.Triple]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/ComparableRange.html#component2()</href>
-  <name>component2() [kotlin.ComparableRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2151,6 +1821,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/Map-extensions.html#contains(K)</href>
+  <name>contains() [kotlin.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/MutableCollection.html#contains(kotlin.Any)</href>
   <name>contains() [kotlin.MutableCollection]</name>
   <kind>fun</kind>
@@ -2158,6 +1833,11 @@
 <search>
   <href>kotlin/MutableList.html#contains(kotlin.Any)</href>
   <name>contains() [kotlin.MutableList]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableMap-extensions.html#contains(K)</href>
+  <name>contains() [kotlin.MutableMap]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2359,11 +2039,6 @@
   <href>kotlin/concurrent/java/lang/Thread-extensions.html#contextClassLoader</href>
   <name>contextClassLoader [java.lang.Thread]</name>
   <kind>var</kind>
-</search>
-<search>
-  <href>kotlin/ComparableRange.html#copy(T, T)</href>
-  <name>copy() [kotlin.ComparableRange]</name>
-  <kind>fun</kind>
 </search>
 <search>
   <href>kotlin/kotlin/Array-extensions.html#copyOf()</href>
@@ -2656,7 +2331,7 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/String-extensions.html#count(kotlin.Function1)</href>
+  <href>kotlin/kotlin/String-extensions.html#count()</href>
   <name>count() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
@@ -2759,6 +2434,146 @@
   <href>kotlin/io/java/io/File-extensions.html#directory</href>
   <name>directory [java.io.File]</name>
   <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#distinct()</href>
+  <name>distinct() [kotlin.ShortRange]</name>
+  <kind>fun</kind>
 </search>
 <search>
   <href>kotlin/math/java/math/BigDecimal-extensions.html#div(java.math.BigDecimal)</href>
@@ -3336,6 +3151,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#elementAt(kotlin.Int)</href>
+  <name>elementAt() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/dom/org/w3c/dom/Document-extensions.html#elements</href>
   <name>elements [org.w3c.dom.Document]</name>
   <kind>val</kind>
@@ -3351,13 +3171,8 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/Collection-extensions.html#empty</href>
-  <name>empty [kotlin.Collection]</name>
-  <kind>val</kind>
-</search>
-<search>
-  <href>kotlin/kotlin/List-extensions.html#empty</href>
-  <name>empty [kotlin.List]</name>
+  <href>kotlin/kotlin/Map-extensions.html#empty</href>
+  <name>empty [kotlin.Map]</name>
   <kind>val</kind>
 </search>
 <search>
@@ -3468,6 +3283,16 @@
 <search>
   <href>kotlin/MutableMap.html#entrySet()</href>
   <name>entrySet() [kotlin.MutableMap]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Appendable-extensions.html#equals(kotlin.Any)</href>
+  <name>equals() [java.lang.Appendable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#equals(kotlin.Any)</href>
+  <name>equals() [java.lang.StringBuilder]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3598,6 +3423,11 @@
 <search>
   <href>kotlin/Double.html#equals(kotlin.Any)</href>
   <name>equals() [kotlin.Double]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/DuplicateKeyException.html#equals(kotlin.Any)</href>
+  <name>equals() [kotlin.DuplicateKeyException]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3931,351 +3761,6 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/KExtensionFunction0.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction10.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction11.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction12.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction13.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction14.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction15.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction16.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction17.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction18.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction19.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction1.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction20.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction21.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction22.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction2.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction3.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction4.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction5.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction6.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction7.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction8.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction9.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KExtensionFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction0.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction10.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction11.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction12.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction13.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction14.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction15.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction16.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction17.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction18.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction19.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction1.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction20.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction21.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction22.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction2.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction3.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction4.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction5.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction6.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction7.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction8.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction9.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction0.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction10.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction11.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction12.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction13.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction14.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction15.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction16.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction17.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction18.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction19.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction1.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction20.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction21.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction22.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction2.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction3.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction4.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction5.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction6.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction7.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction8.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction9.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.KMemberFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
   <href>kotlin/LimitedStream.html#equals(kotlin.Any)</href>
   <name>equals() [kotlin.LimitedStream]</name>
   <kind>fun</kind>
@@ -4318,6 +3803,11 @@
 <search>
   <href>kotlin/Map.html#equals(kotlin.Any)</href>
   <name>equals() [kotlin.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/MergingStream.html#equals(kotlin.Any)</href>
+  <name>equals() [kotlin.MergingStream]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4481,6 +3971,26 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jvm/strictfp.html#equals(kotlin.Any)</href>
+  <name>equals() [kotlin.jvm.strictfp]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jvm/synchronized.html#equals(kotlin.Any)</href>
+  <name>equals() [kotlin.jvm.synchronized]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jvm/transient.html#equals(kotlin.Any)</href>
+  <name>equals() [kotlin.jvm.transient]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jvm/volatile.html#equals(kotlin.Any)</href>
+  <name>equals() [kotlin.jvm.volatile]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/modules/Module.html#equals(kotlin.Any)</href>
   <name>equals() [kotlin.modules.Module]</name>
   <kind>fun</kind>
@@ -4488,6 +3998,11 @@
 <search>
   <href>kotlin/noinline.html#equals(kotlin.Any)</href>
   <name>equals() [kotlin.noinline]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/platform/platformName.html#equals(kotlin.Any)</href>
+  <name>equals() [kotlin.platform.platformName]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4528,11 +4043,6 @@
 <search>
   <href>kotlin/throws.html#equals(kotlin.Any)</href>
   <name>equals() [kotlin.throws]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/volatile.html#equals(kotlin.Any)</href>
-  <name>equals() [kotlin.volatile]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -5551,7 +5061,7 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/String-extensions.html#filterNotTo(T, kotlin.Function1)</href>
+  <href>kotlin/kotlin/String-extensions.html#filterNotTo(C, kotlin.Function1)</href>
   <name>filterNotTo() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
@@ -5716,7 +5226,7 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/String-extensions.html#filterTo(T, kotlin.Function1)</href>
+  <href>kotlin/kotlin/String-extensions.html#filterTo(C, kotlin.Function1)</href>
   <name>filterTo() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
@@ -6176,6 +5686,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#firstOrNull()</href>
+  <name>firstOrNull() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/Array-extensions.html#flatMap(kotlin.Function1)</href>
   <name>flatMap() [kotlin.Array]</name>
   <kind>fun</kind>
@@ -6501,7 +6016,7 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/String-extensions.html#flatMapTo(kotlin.MutableCollection, kotlin.Function1)</href>
+  <href>kotlin/kotlin/String-extensions.html#flatMapTo(C, kotlin.Function1)</href>
   <name>flatMapTo() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
@@ -6906,7 +6421,7 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/String-extensions.html#format(kotlin.Array)</href>
+  <href>kotlin/kotlin/String-extensions.html#format(java.util.Locale, kotlin.Array)</href>
   <name>format() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
@@ -6928,6 +6443,11 @@
 <search>
   <href>kotlin/template/ToStringFormatter.html#format(java.lang.Appendable, kotlin.Any)</href>
   <name>format() [kotlin.template.ToStringFormatter]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#get(kotlin.Int)</href>
+  <name>get() [java.lang.StringBuilder]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -7031,6 +6551,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/DuplicateKeyException.html#getCause()</href>
+  <name>getCause() [kotlin.DuplicateKeyException]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/EmptyIterableException.html#getCause()</href>
   <name>getCause() [kotlin.EmptyIterableException]</name>
   <kind>fun</kind>
@@ -7083,6 +6608,11 @@
 <search>
   <href>kotlin/MutableEntry.html#getKey()</href>
   <name>getKey() [kotlin.MutableEntry]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/DuplicateKeyException.html#getMessage()</href>
+  <name>getMessage() [kotlin.DuplicateKeyException]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -7686,6 +7216,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/DuplicateKeyException.html#hashCode()</href>
+  <name>hashCode() [kotlin.DuplicateKeyException]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/EmptyIterableException.html#hashCode()</href>
   <name>hashCode() [kotlin.EmptyIterableException]</name>
   <kind>fun</kind>
@@ -8016,351 +7551,6 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/KExtensionFunction0.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction10.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction11.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction12.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction13.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction14.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction15.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction16.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction17.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction18.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction19.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction1.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction20.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction21.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction22.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction2.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction3.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction4.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction5.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction6.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction7.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction8.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction9.html#hashCode()</href>
-  <name>hashCode() [kotlin.KExtensionFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction0.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction10.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction11.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction12.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction13.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction14.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction15.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction16.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction17.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction18.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction19.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction1.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction20.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction21.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction22.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction2.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction3.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction4.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction5.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction6.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction7.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction8.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction9.html#hashCode()</href>
-  <name>hashCode() [kotlin.KFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction0.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction10.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction11.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction12.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction13.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction14.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction15.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction16.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction17.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction18.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction19.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction1.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction20.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction21.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction22.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction2.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction3.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction4.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction5.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction6.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction7.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction8.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction9.html#hashCode()</href>
-  <name>hashCode() [kotlin.KMemberFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
   <href>kotlin/LimitedStream.html#hashCode()</href>
   <name>hashCode() [kotlin.LimitedStream]</name>
   <kind>fun</kind>
@@ -8403,6 +7593,11 @@
 <search>
   <href>kotlin/Map.html#hashCode()</href>
   <name>hashCode() [kotlin.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/MergingStream.html#hashCode()</href>
+  <name>hashCode() [kotlin.MergingStream]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -8566,6 +7761,26 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jvm/strictfp.html#hashCode()</href>
+  <name>hashCode() [kotlin.jvm.strictfp]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jvm/synchronized.html#hashCode()</href>
+  <name>hashCode() [kotlin.jvm.synchronized]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jvm/transient.html#hashCode()</href>
+  <name>hashCode() [kotlin.jvm.transient]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jvm/volatile.html#hashCode()</href>
+  <name>hashCode() [kotlin.jvm.volatile]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/modules/Module.html#hashCode()</href>
   <name>hashCode() [kotlin.modules.Module]</name>
   <kind>fun</kind>
@@ -8573,6 +7788,11 @@
 <search>
   <href>kotlin/noinline.html#hashCode()</href>
   <name>hashCode() [kotlin.noinline]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/platform/platformName.html#hashCode()</href>
+  <name>hashCode() [kotlin.platform.platformName]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -8613,11 +7833,6 @@
 <search>
   <href>kotlin/throws.html#hashCode()</href>
   <name>hashCode() [kotlin.throws]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/volatile.html#hashCode()</href>
-  <name>hashCode() [kotlin.volatile]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -8664,6 +7879,16 @@
   <href>kotlin/dom/org/w3c/dom/Element-extensions.html#id</href>
   <name>id [org.w3c.dom.Element]</name>
   <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Appendable-extensions.html#identityEquals(kotlin.Any)</href>
+  <name>identityEquals() [java.lang.Appendable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#identityEquals(kotlin.Any)</href>
+  <name>identityEquals() [java.lang.StringBuilder]</name>
+  <kind>fun</kind>
 </search>
 <search>
   <href>kotlin/java/util/Enumeration-extensions.html#identityEquals(kotlin.Any)</href>
@@ -9181,11 +8406,6 @@
   <kind>val</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/Collection-extensions.html#indices</href>
-  <name>indices [kotlin.Collection]</name>
-  <kind>val</kind>
-</search>
-<search>
   <href>kotlin/DoubleArray.html#indices</href>
   <name>indices [kotlin.DoubleArray]</name>
   <kind>val</kind>
@@ -9201,11 +8421,6 @@
   <kind>val</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/List-extensions.html#indices</href>
-  <name>indices [kotlin.List]</name>
-  <kind>val</kind>
-</search>
-<search>
   <href>kotlin/LongArray.html#indices</href>
   <name>indices [kotlin.LongArray]</name>
   <kind>val</kind>
@@ -9213,6 +8428,11 @@
 <search>
   <href>kotlin/ShortArray.html#indices</href>
   <name>indices [kotlin.ShortArray]</name>
+  <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#indices</href>
+  <name>indices [kotlin.String]</name>
   <kind>val</kind>
 </search>
 <search>
@@ -9248,6 +8468,146 @@
 <search>
   <href>kotlin/kotlin/String-extensions.html#intern()</href>
   <name>intern() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#intersect(kotlin.Iterable)</href>
+  <name>intersect() [kotlin.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -9501,351 +8861,6 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/KExtensionFunction0.html#invoke()</href>
-  <name>invoke() [kotlin.KExtensionFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction10.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10)</href>
-  <name>invoke() [kotlin.KExtensionFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction11.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11)</href>
-  <name>invoke() [kotlin.KExtensionFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction12.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12)</href>
-  <name>invoke() [kotlin.KExtensionFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction13.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13)</href>
-  <name>invoke() [kotlin.KExtensionFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction14.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14)</href>
-  <name>invoke() [kotlin.KExtensionFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction15.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15)</href>
-  <name>invoke() [kotlin.KExtensionFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction16.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16)</href>
-  <name>invoke() [kotlin.KExtensionFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction17.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17)</href>
-  <name>invoke() [kotlin.KExtensionFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction18.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18)</href>
-  <name>invoke() [kotlin.KExtensionFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction19.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19)</href>
-  <name>invoke() [kotlin.KExtensionFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction1.html#invoke(P1)</href>
-  <name>invoke() [kotlin.KExtensionFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction20.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20)</href>
-  <name>invoke() [kotlin.KExtensionFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction21.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21)</href>
-  <name>invoke() [kotlin.KExtensionFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction22.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22)</href>
-  <name>invoke() [kotlin.KExtensionFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction2.html#invoke(P1, P2)</href>
-  <name>invoke() [kotlin.KExtensionFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction3.html#invoke(P1, P2, P3)</href>
-  <name>invoke() [kotlin.KExtensionFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction4.html#invoke(P1, P2, P3, P4)</href>
-  <name>invoke() [kotlin.KExtensionFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction5.html#invoke(P1, P2, P3, P4, P5)</href>
-  <name>invoke() [kotlin.KExtensionFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction6.html#invoke(P1, P2, P3, P4, P5, P6)</href>
-  <name>invoke() [kotlin.KExtensionFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction7.html#invoke(P1, P2, P3, P4, P5, P6, P7)</href>
-  <name>invoke() [kotlin.KExtensionFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction8.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8)</href>
-  <name>invoke() [kotlin.KExtensionFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction9.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9)</href>
-  <name>invoke() [kotlin.KExtensionFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction0.html#invoke()</href>
-  <name>invoke() [kotlin.KFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction10.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10)</href>
-  <name>invoke() [kotlin.KFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction11.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11)</href>
-  <name>invoke() [kotlin.KFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction12.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12)</href>
-  <name>invoke() [kotlin.KFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction13.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13)</href>
-  <name>invoke() [kotlin.KFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction14.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14)</href>
-  <name>invoke() [kotlin.KFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction15.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15)</href>
-  <name>invoke() [kotlin.KFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction16.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16)</href>
-  <name>invoke() [kotlin.KFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction17.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17)</href>
-  <name>invoke() [kotlin.KFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction18.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18)</href>
-  <name>invoke() [kotlin.KFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction19.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19)</href>
-  <name>invoke() [kotlin.KFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction1.html#invoke(P1)</href>
-  <name>invoke() [kotlin.KFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction20.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20)</href>
-  <name>invoke() [kotlin.KFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction21.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21)</href>
-  <name>invoke() [kotlin.KFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction22.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22)</href>
-  <name>invoke() [kotlin.KFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction2.html#invoke(P1, P2)</href>
-  <name>invoke() [kotlin.KFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction3.html#invoke(P1, P2, P3)</href>
-  <name>invoke() [kotlin.KFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction4.html#invoke(P1, P2, P3, P4)</href>
-  <name>invoke() [kotlin.KFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction5.html#invoke(P1, P2, P3, P4, P5)</href>
-  <name>invoke() [kotlin.KFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction6.html#invoke(P1, P2, P3, P4, P5, P6)</href>
-  <name>invoke() [kotlin.KFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction7.html#invoke(P1, P2, P3, P4, P5, P6, P7)</href>
-  <name>invoke() [kotlin.KFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction8.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8)</href>
-  <name>invoke() [kotlin.KFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction9.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9)</href>
-  <name>invoke() [kotlin.KFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction0.html#invoke()</href>
-  <name>invoke() [kotlin.KMemberFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction10.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10)</href>
-  <name>invoke() [kotlin.KMemberFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction11.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11)</href>
-  <name>invoke() [kotlin.KMemberFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction12.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12)</href>
-  <name>invoke() [kotlin.KMemberFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction13.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13)</href>
-  <name>invoke() [kotlin.KMemberFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction14.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14)</href>
-  <name>invoke() [kotlin.KMemberFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction15.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15)</href>
-  <name>invoke() [kotlin.KMemberFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction16.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16)</href>
-  <name>invoke() [kotlin.KMemberFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction17.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17)</href>
-  <name>invoke() [kotlin.KMemberFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction18.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18)</href>
-  <name>invoke() [kotlin.KMemberFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction19.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19)</href>
-  <name>invoke() [kotlin.KMemberFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction1.html#invoke(P1)</href>
-  <name>invoke() [kotlin.KMemberFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction20.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20)</href>
-  <name>invoke() [kotlin.KMemberFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction21.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21)</href>
-  <name>invoke() [kotlin.KMemberFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction22.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22)</href>
-  <name>invoke() [kotlin.KMemberFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction2.html#invoke(P1, P2)</href>
-  <name>invoke() [kotlin.KMemberFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction3.html#invoke(P1, P2, P3)</href>
-  <name>invoke() [kotlin.KMemberFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction4.html#invoke(P1, P2, P3, P4)</href>
-  <name>invoke() [kotlin.KMemberFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction5.html#invoke(P1, P2, P3, P4, P5)</href>
-  <name>invoke() [kotlin.KMemberFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction6.html#invoke(P1, P2, P3, P4, P5, P6)</href>
-  <name>invoke() [kotlin.KMemberFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction7.html#invoke(P1, P2, P3, P4, P5, P6, P7)</href>
-  <name>invoke() [kotlin.KMemberFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction8.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8)</href>
-  <name>invoke() [kotlin.KMemberFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction9.html#invoke(P1, P2, P3, P4, P5, P6, P7, P8, P9)</href>
-  <name>invoke() [kotlin.KMemberFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
   <href>kotlin/kotlin/Char-extensions.html#isDefined()</href>
   <name>isDefined() [kotlin.Char]</name>
   <kind>fun</kind>
@@ -9876,8 +8891,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/ByteProgression.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/ByteRange.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/CharArray-extensions.html#isEmpty()</href>
   <name>isEmpty() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/CharProgression.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/CharRange.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -9886,8 +8921,23 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/ComparableRange.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.ComparableRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/DoubleArray-extensions.html#isEmpty()</href>
   <name>isEmpty() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/DoubleProgression.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/DoubleRange.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.DoubleRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -9896,8 +8946,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/FloatProgression.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/FloatRange.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/IntArray-extensions.html#isEmpty()</href>
   <name>isEmpty() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/IntProgression.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/IntRange.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -9908,6 +8978,16 @@
 <search>
   <href>kotlin/kotlin/LongArray-extensions.html#isEmpty()</href>
   <name>isEmpty() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/LongProgression.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/LongRange.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.LongRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -9936,6 +9016,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/Range.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.Range]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/Set.html#isEmpty()</href>
   <name>isEmpty() [kotlin.Set]</name>
   <kind>fun</kind>
@@ -9943,6 +9028,16 @@
 <search>
   <href>kotlin/kotlin/ShortArray-extensions.html#isEmpty()</href>
   <name>isEmpty() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/ShortProgression.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/ShortRange.html#isEmpty()</href>
+  <name>isEmpty() [kotlin.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -9988,6 +9083,16 @@
 <search>
   <href>kotlin/kotlin/Char-extensions.html#isLowerCase()</href>
   <name>isLowerCase() [kotlin.Char]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Double-extensions.html#isNaN()</href>
+  <name>isNaN() [kotlin.Double]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Float-extensions.html#isNaN()</href>
+  <name>isNaN() [kotlin.Float]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -10098,6 +9203,11 @@
 <search>
   <href>kotlin/io/java/io/InputStream-extensions.html#iterator()</href>
   <name>iterator() [java.io.InputStream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#iterator()</href>
+  <name>iterator() [java.lang.StringBuilder]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -10261,6 +9371,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/MergingStream.html#iterator()</href>
+  <name>iterator() [kotlin.MergingStream]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/Multistream.html#iterator()</href>
   <name>iterator() [kotlin.Multistream]</name>
   <kind>fun</kind>
@@ -10344,6 +9459,401 @@
   <href>kotlin/swing/javax/swing/JFrame-extensions.html#jmenuBar</href>
   <name>jmenuBar [javax.swing.JFrame]</name>
   <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Stream-extensions.html#join(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>join() [kotlin.Stream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Stream-extensions.html#joinTo(A, kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinTo() [kotlin.Stream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Stream-extensions.html#joinToString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
+  <name>joinToString() [kotlin.Stream]</name>
+  <kind>fun</kind>
 </search>
 <search>
   <href>kotlin/kotlin/Entry-extensions.html#key</href>
@@ -10841,6 +10351,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#lastOrNull()</href>
+  <name>lastOrNull() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/concurrent/kotlin/Int-extensions.html#latch(kotlin.ExtensionFunction0)</href>
   <name>latch() [kotlin.Int]</name>
   <kind>fun</kind>
@@ -10864,6 +10379,11 @@
   <href>kotlin/dom/org/w3c/dom/DOMStringList-extensions.html#length</href>
   <name>length [org.w3c.dom.DOMStringList]</name>
   <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#length()</href>
+  <name>length() [java.lang.StringBuilder]</name>
+  <kind>fun</kind>
 </search>
 <search>
   <href>kotlin/kotlin/CharSequence-extensions.html#length()</href>
@@ -11073,11 +10593,6 @@
 <search>
   <href>kotlin/kotlin/Stream-extensions.html#makeString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
   <name>makeString() [kotlin.Stream]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/kotlin/String-extensions.html#makeString(kotlin.String, kotlin.String, kotlin.String, kotlin.Int, kotlin.String)</href>
-  <name>makeString() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -11796,6 +11311,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#max()</href>
+  <name>max() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/Array-extensions.html#maxBy(kotlin.Function1)</href>
   <name>maxBy() [kotlin.Array]</name>
   <kind>fun</kind>
@@ -11956,6 +11476,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#maxBy(kotlin.Function1)</href>
+  <name>maxBy() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/swing/java/awt/Component-extensions.html#maximumHeight</href>
   <name>maximumHeight [java.awt.Component]</name>
   <kind>var</kind>
@@ -12013,6 +11538,156 @@
 <search>
   <href>kotlin/swing/javax/swing/JPopupMenu-extensions.html#menu(kotlin.String, kotlin.ExtensionFunction0)</href>
   <name>menu() [javax.swing.JPopupMenu]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Stream-extensions.html#merge(kotlin.Stream, kotlin.Function2)</href>
+  <name>merge() [kotlin.Stream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#merge(kotlin.Array, kotlin.Function2)</href>
+  <name>merge() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -12163,6 +11838,11 @@
 <search>
   <href>kotlin/kotlin/Stream-extensions.html#min()</href>
   <name>min() [kotlin.Stream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#min()</href>
+  <name>min() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -12326,6 +12006,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#minBy(kotlin.Function1)</href>
+  <name>minBy() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/swing/java/awt/Component-extensions.html#minimumHeight</href>
   <name>minimumHeight [java.awt.Component]</name>
   <kind>var</kind>
@@ -12483,6 +12168,11 @@
 <search>
   <href>kotlin/PropertyMetadata.html#name</href>
   <name>name [kotlin.PropertyMetadata]</name>
+  <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/platform/platformName.html#name</href>
+  <name>name [kotlin.platform.platformName]</name>
   <kind>val</kind>
 </search>
 <search>
@@ -12883,6 +12573,11 @@
 <search>
   <href>kotlin/kotlin/Stream-extensions.html#none()</href>
   <name>none() [kotlin.Stream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#none()</href>
+  <name>none() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -13301,6 +12996,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/platform/platformName.html</href>
+  <name>platformName [kotlin.platform]</name>
+  <kind>annotation</kind>
+</search>
+<search>
   <href>kotlin/math/java/math/BigDecimal-extensions.html#plus(java.math.BigDecimal)</href>
   <name>plus() [java.math.BigDecimal]</name>
   <kind>fun</kind>
@@ -13633,6 +13333,11 @@
 <search>
   <href>kotlin/dom/org/w3c/dom/Node-extensions.html#previousSiblings()</href>
   <name>previousSiblings() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/DuplicateKeyException.html#printStackTrace()</href>
+  <name>printStackTrace() [kotlin.DuplicateKeyException]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -14071,13 +13776,38 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#replaceAfter(kotlin.Char, kotlin.String)</href>
+  <name>replaceAfter() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#replaceAfterLast(kotlin.Char, kotlin.String)</href>
+  <name>replaceAfterLast() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/String-extensions.html#replaceAll(kotlin.String, kotlin.Function1)</href>
   <name>replaceAll() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#replaceBefore(kotlin.Char, kotlin.String)</href>
+  <name>replaceBefore() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#replaceBeforeLast(kotlin.Char, kotlin.String)</href>
+  <name>replaceBeforeLast() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/String-extensions.html#replaceFirst(kotlin.String, kotlin.String)</href>
   <name>replaceFirst() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#replaceRange(kotlin.Int, kotlin.Int, kotlin.String)</href>
+  <name>replaceRange() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -14423,6 +14153,16 @@
 <search>
   <href>kotlin/kotlin/ShortRange-extensions.html#reversed()</href>
   <name>reversed() [kotlin.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Appendable-extensions.html#safeHashCode()</href>
+  <name>safeHashCode() [java.lang.Appendable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#safeHashCode()</href>
+  <name>safeHashCode() [java.lang.StringBuilder]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -14931,6 +14671,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#single()</href>
+  <name>single() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jdbc/java/sql/ResultSet-extensions.html#singleDouble()</href>
   <name>singleDouble() [java.sql.ResultSet]</name>
   <kind>fun</kind>
@@ -15091,6 +14836,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#singleOrNull()</href>
+  <name>singleOrNull() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/swing/javax/swing/JFrame-extensions.html#size</href>
   <name>size [javax.swing.JFrame]</name>
   <kind>var</kind>
@@ -15113,6 +14863,11 @@
 <search>
   <href>kotlin/CharArray.html#size</href>
   <name>size [kotlin.CharArray]</name>
+  <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharSequence-extensions.html#size</href>
+  <name>size [kotlin.CharSequence]</name>
   <kind>val</kind>
 </search>
 <search>
@@ -15188,6 +14943,71 @@
 <search>
   <href>kotlin/kotlin/Iterator-extensions.html#skip(kotlin.Int)</href>
   <name>skip() [kotlin.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#slice(kotlin.IntRange)</href>
+  <name>slice() [java.lang.StringBuilder]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharSequence-extensions.html#slice(kotlin.IntRange)</href>
+  <name>slice() [kotlin.CharSequence]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#slice(kotlin.Iterable)</href>
+  <name>slice() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#slice(kotlin.IntRange)</href>
+  <name>slice() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -16001,9 +15821,29 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#stream()</href>
+  <name>stream() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/MergingStream.html#stream1</href>
+  <name>stream1 [kotlin.MergingStream]</name>
+  <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/MergingStream.html#stream2</href>
+  <name>stream2 [kotlin.MergingStream]</name>
+  <kind>val</kind>
+</search>
+<search>
   <href>kotlin/Multistream.html#streams</href>
   <name>streams [kotlin.Multistream]</name>
   <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/jvm/strictfp.html</href>
+  <name>strictfp [kotlin.jvm]</name>
+  <kind>annotation</kind>
 </search>
 <search>
   <href>kotlin/dom/org/w3c/dom/Element-extensions.html#style</href>
@@ -16021,6 +15861,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#subSequence(kotlin.Int, kotlin.Int)</href>
+  <name>subSequence() [java.lang.StringBuilder]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/CharSequence-extensions.html#subSequence(kotlin.Int, kotlin.Int)</href>
   <name>subSequence() [kotlin.CharSequence]</name>
   <kind>fun</kind>
@@ -16033,6 +15878,166 @@
 <search>
   <href>kotlin/kotlin/String-extensions.html#substring(kotlin.Int)</href>
   <name>substring() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#substringAfter(kotlin.Char)</href>
+  <name>substringAfter() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#substringAfterLast(kotlin.Char)</href>
+  <name>substringAfterLast() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#substringBefore(kotlin.Char)</href>
+  <name>substringBefore() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#substringBeforeLast(kotlin.Char)</href>
+  <name>substringBeforeLast() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#subtract(kotlin.Iterable)</href>
+  <name>subtract() [kotlin.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -16168,6 +16173,11 @@
 <search>
   <href>kotlin/suppress.html</href>
   <name>suppress [kotlin]</name>
+  <kind>annotation</kind>
+</search>
+<search>
+  <href>kotlin/jvm/synchronized.html</href>
+  <name>synchronized [kotlin.jvm]</name>
   <kind>annotation</kind>
 </search>
 <search>
@@ -16766,6 +16776,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#toArrayList()</href>
+  <name>toArrayList() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/String-extensions.html#toBoolean()</href>
   <name>toBoolean() [kotlin.String]</name>
   <kind>fun</kind>
@@ -17271,6 +17286,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#toHashSet()</href>
+  <name>toHashSet() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/template/kotlin/template/StringTemplate-extensions.html#toHtml(kotlin.template.HtmlFormatter)</href>
   <name>toHtml() [kotlin.template.StringTemplate]</name>
   <kind>fun</kind>
@@ -17486,6 +17506,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/java/util/Enumeration-extensions.html#toList()</href>
+  <name>toList() [java.util.Enumeration]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/Array-extensions.html#toList()</href>
   <name>toList() [kotlin.Array]</name>
   <kind>fun</kind>
@@ -17606,8 +17631,18 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/Map-extensions.html#toList()</href>
+  <name>toList() [kotlin.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/MutableCollection-extensions.html#toList()</href>
   <name>toList() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableMap-extensions.html#toList()</href>
+  <name>toList() [kotlin.MutableMap]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -17701,13 +17736,248 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/Map-extensions.html#toMap(kotlin.MutableMap)</href>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Map-extensions.html#toMap(C)</href>
   <name>toMap() [kotlin.Map]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/MutableMap-extensions.html#toMap(kotlin.MutableMap)</href>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableMap-extensions.html#toMap(C)</href>
   <name>toMap() [kotlin.MutableMap]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#toMap()</href>
+  <name>toMap() [kotlin.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#toMutableSet()</href>
+  <name>toMutableSet() [kotlin.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -18071,6 +18341,151 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/Array-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Stream-extensions.html#toSortedListBy(kotlin.Function1)</href>
+  <name>toSortedListBy() [kotlin.Stream]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/kotlin/Map-extensions.html#toSortedMap()</href>
   <name>toSortedMap() [kotlin.Map]</name>
   <kind>fun</kind>
@@ -18231,6 +18646,21 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Appendable-extensions.html#toString()</href>
+  <name>toString() [java.lang.Appendable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/StringBuilder-extensions.html#toString()</href>
+  <name>toString() [java.lang.StringBuilder]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/java/util/Enumeration-extensions.html#toString()</href>
   <name>toString() [java.util.Enumeration]</name>
   <kind>fun</kind>
@@ -18358,6 +18788,11 @@
 <search>
   <href>kotlin/Double.html#toString()</href>
   <name>toString() [kotlin.Double]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/DuplicateKeyException.html#toString()</href>
+  <name>toString() [kotlin.DuplicateKeyException]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -18691,351 +19126,6 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/KExtensionFunction0.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction10.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction11.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction12.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction13.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction14.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction15.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction16.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction17.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction18.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction19.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction1.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction20.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction21.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction22.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction2.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction3.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction4.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction5.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction6.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction7.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction8.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KExtensionFunction9.html#toString()</href>
-  <name>toString() [kotlin.KExtensionFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction0.html#toString()</href>
-  <name>toString() [kotlin.KFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction10.html#toString()</href>
-  <name>toString() [kotlin.KFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction11.html#toString()</href>
-  <name>toString() [kotlin.KFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction12.html#toString()</href>
-  <name>toString() [kotlin.KFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction13.html#toString()</href>
-  <name>toString() [kotlin.KFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction14.html#toString()</href>
-  <name>toString() [kotlin.KFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction15.html#toString()</href>
-  <name>toString() [kotlin.KFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction16.html#toString()</href>
-  <name>toString() [kotlin.KFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction17.html#toString()</href>
-  <name>toString() [kotlin.KFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction18.html#toString()</href>
-  <name>toString() [kotlin.KFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction19.html#toString()</href>
-  <name>toString() [kotlin.KFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction1.html#toString()</href>
-  <name>toString() [kotlin.KFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction20.html#toString()</href>
-  <name>toString() [kotlin.KFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction21.html#toString()</href>
-  <name>toString() [kotlin.KFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction22.html#toString()</href>
-  <name>toString() [kotlin.KFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction2.html#toString()</href>
-  <name>toString() [kotlin.KFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction3.html#toString()</href>
-  <name>toString() [kotlin.KFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction4.html#toString()</href>
-  <name>toString() [kotlin.KFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction5.html#toString()</href>
-  <name>toString() [kotlin.KFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction6.html#toString()</href>
-  <name>toString() [kotlin.KFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction7.html#toString()</href>
-  <name>toString() [kotlin.KFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction8.html#toString()</href>
-  <name>toString() [kotlin.KFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KFunction9.html#toString()</href>
-  <name>toString() [kotlin.KFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction0.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction0]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction10.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction10]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction11.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction11]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction12.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction12]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction13.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction13]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction14.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction14]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction15.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction15]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction16.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction16]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction17.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction17]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction18.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction18]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction19.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction19]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction1.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction1]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction20.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction20]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction21.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction21]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction22.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction22]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction2.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction2]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction3.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction3]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction4.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction4]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction5.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction5]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction6.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction6]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction7.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction7]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction8.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction8]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/KMemberFunction9.html#toString()</href>
-  <name>toString() [kotlin.KMemberFunction9]</name>
-  <kind>fun</kind>
-</search>
-<search>
   <href>kotlin/LimitedStream.html#toString()</href>
   <name>toString() [kotlin.LimitedStream]</name>
   <kind>fun</kind>
@@ -19078,6 +19168,11 @@
 <search>
   <href>kotlin/Map.html#toString()</href>
   <name>toString() [kotlin.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/MergingStream.html#toString()</href>
+  <name>toString() [kotlin.MergingStream]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -19241,6 +19336,26 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jvm/strictfp.html#toString()</href>
+  <name>toString() [kotlin.jvm.strictfp]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jvm/synchronized.html#toString()</href>
+  <name>toString() [kotlin.jvm.synchronized]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jvm/transient.html#toString()</href>
+  <name>toString() [kotlin.jvm.transient]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jvm/volatile.html#toString()</href>
+  <name>toString() [kotlin.jvm.volatile]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/modules/Module.html#toString()</href>
   <name>toString() [kotlin.modules.Module]</name>
   <kind>fun</kind>
@@ -19248,6 +19363,11 @@
 <search>
   <href>kotlin/noinline.html#toString()</href>
   <name>toString() [kotlin.noinline]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/platform/platformName.html#toString()</href>
+  <name>toString() [kotlin.platform.platformName]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -19296,11 +19416,6 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/volatile.html#toString()</href>
-  <name>toString() [kotlin.volatile]</name>
-  <kind>fun</kind>
-</search>
-<search>
   <href>kotlin/kotlin/String-extensions.html#toUpperCase()</href>
   <name>toUpperCase() [kotlin.String]</name>
   <kind>fun</kind>
@@ -19326,6 +19441,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/MergingStream.html#transform</href>
+  <name>transform [kotlin.MergingStream]</name>
+  <kind>val</kind>
+</search>
+<search>
   <href>kotlin/FlatteningStream.html#transformer</href>
   <name>transformer [kotlin.FlatteningStream]</name>
   <kind>val</kind>
@@ -19334,6 +19454,11 @@
   <href>kotlin/TransformingStream.html#transformer</href>
   <name>transformer [kotlin.TransformingStream]</name>
   <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/jvm/transient.html</href>
+  <name>transient [kotlin.jvm]</name>
+  <kind>annotation</kind>
 </search>
 <search>
   <href>kotlin/kotlin/String-extensions.html#trim()</href>
@@ -19353,6 +19478,146 @@
 <search>
   <href>kotlin/PairIterator.html#tryToComputeNext()</href>
   <name>tryToComputeNext() [kotlin.PairIterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Array-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteArray-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteProgression-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ByteRange-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharArray-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharProgression-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/CharRange-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Collection-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleArray-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleProgression-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/DoubleRange-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatArray-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatProgression-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/FloatRange-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntArray-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntProgression-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/IntRange-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Iterable-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongArray-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongProgression-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/LongRange-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/MutableCollection-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.MutableCollection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/Set-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortArray-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortProgression-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/ShortRange-extensions.html#union(kotlin.Iterable)</href>
+  <name>union() [kotlin.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -19426,8 +19691,8 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/volatile.html</href>
-  <name>volatile [kotlin]</name>
+  <href>kotlin/jvm/volatile.html</href>
+  <name>volatile [kotlin.jvm]</name>
   <kind>annotation</kind>
 </search>
 <search>
@@ -19641,6 +19906,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/String-extensions.html#withIndices()</href>
+  <name>withIndices() [kotlin.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/concurrent/java/util/concurrent/locks/Lock-extensions.html#withLock(kotlin.Function0)</href>
   <name>withLock() [java.util.concurrent.locks.Lock]</name>
   <kind>fun</kind>
@@ -19843,6 +20113,11 @@
 <search>
   <href>kotlin/kotlin/Stream-extensions.html#zip(kotlin.Stream)</href>
   <name>zip() [kotlin.Stream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/String-extensions.html#zip(kotlin.Array)</href>
+  <name>zip() [kotlin.String]</name>
   <kind>fun</kind>
 </search>
 </searches>

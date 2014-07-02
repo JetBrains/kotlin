@@ -59,6 +59,14 @@
 <a href='#58' name='58'>58</a>
 <a href='#59' name='59'>59</a>
 <a href='#60' name='60'>60</a>
+<a href='#61' name='61'>61</a>
+<a href='#62' name='62'>62</a>
+<a href='#63' name='63'>63</a>
+<a href='#64' name='64'>64</a>
+<a href='#65' name='65'>65</a>
+<a href='#66' name='66'>66</a>
+<a href='#67' name='67'>67</a>
+<a href='#68' name='68'>68</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
@@ -119,4 +127,12 @@
 </span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the Set if its not null otherwise returns the empty set </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Set</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>orEmpty</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Set</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span>
         </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>Collections</span><span class='DOT'>.</span><span class='IDENTIFIER'>EMPTY_SET</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>Set</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span>
+
+
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing the elements returned by the</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> specified enumeration in the order they are returned by the</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> enumeration.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Enumeration</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Collections</span><span class='DOT'>.</span><span class='IDENTIFIER'>list</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
 </span></td></tr></table></body></html>

@@ -5,9 +5,10 @@ kotlin.dom
 kotlin.internal
 kotlin.io
 kotlin.jdbc
-kotlin.jvm.internal
+kotlin.jvm
 kotlin.math
 kotlin.modules
+kotlin.platform
 kotlin.swing
 kotlin.template
 kotlin.test

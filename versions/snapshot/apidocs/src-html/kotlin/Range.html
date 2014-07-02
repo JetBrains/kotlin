@@ -26,6 +26,8 @@
 <a href='#25' name='25'>25</a>
 <a href='#26' name='26'>26</a>
 <a href='#27' name='27'>27</a>
+<a href='#28' name='28'>28</a>
+<a href='#29' name='29'>29</a>
 </td><td><span class='BLOCK_COMMENT'>/*
  * Copyright 2010-2014 JetBrains s.r.o.
  *
@@ -50,6 +52,8 @@
     </span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>end</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span>
 
     </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>contains</span><span class='LPAR'>(</span><span class='IDENTIFIER'>item</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>isEmpty</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>start</span><span> </span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>end</span><span>
 
     </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>start</span><span class='REGULAR_STRING_PART'>..</span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>end</span><span class='CLOSING_QUOTE'>&quot;</span><span>
 </span><span class='RBRACE'>}</span><span>

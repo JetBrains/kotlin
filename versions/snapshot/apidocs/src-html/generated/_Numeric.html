@@ -200,22 +200,6 @@
 <a href='#199' name='199'>199</a>
 <a href='#200' name='200'>200</a>
 <a href='#201' name='201'>201</a>
-<a href='#202' name='202'>202</a>
-<a href='#203' name='203'>203</a>
-<a href='#204' name='204'>204</a>
-<a href='#205' name='205'>205</a>
-<a href='#206' name='206'>206</a>
-<a href='#207' name='207'>207</a>
-<a href='#208' name='208'>208</a>
-<a href='#209' name='209'>209</a>
-<a href='#210' name='210'>210</a>
-<a href='#211' name='211'>211</a>
-<a href='#212' name='212'>212</a>
-<a href='#213' name='213'>213</a>
-<a href='#214' name='214'>214</a>
-<a href='#215' name='215'>215</a>
-<a href='#216' name='216'>216</a>
-<a href='#217' name='217'>217</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
 
 </span><span class='EOL_COMMENT'>//</span><span>
@@ -228,209 +212,193 @@
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Int</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Int</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Long</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Long</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Double</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Double</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Float</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Float</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0f</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0f</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Int</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Int</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>IntArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>IntArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Long</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Long</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>LongArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>LongArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Byte</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Byte</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ByteArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ByteArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Short</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Short</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ShortArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ShortArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Double</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Double</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>DoubleArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>DoubleArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Float</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>Float</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0f</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0f</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
  </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the sum of all elements in the collection</span><span>
  </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>FloatArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='LBRACE'>{</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>FloatArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sum</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0f</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>sum</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span> </span><span class='EQ'>=</span><span> </span><span class='FLOAT_CONSTANT'>0.0f</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>sum</span><span> </span><span class='PLUSEQ'>+=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sum</span><span>
-    
 </span><span class='RBRACE'>}</span><span>
 
 </span></td></tr></table></body></html>
