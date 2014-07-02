@@ -42,7 +42,7 @@ if "%_PROFILE_PRELOADER%"=="time" (
     org.jetbrains.jet.preloading.Preloader "%_KOTLIN_HOME%\lib\kotlin-compiler.jar;%_KOTLIN_HOME%\lib\kotlin-runtime.jar" ^
     org.jetbrains.jet.cli.js.K2JSCompiler 4096 %_PROFILE_PRELOADER% %*
 )
-exit %ERRORLEVEL%
+exit /b %ERRORLEVEL%
 goto end
 
 rem ##########################################################################

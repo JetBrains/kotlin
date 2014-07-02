@@ -36,6 +36,8 @@ public class JetCodeConformanceTest extends TestCase {
     private static final Pattern SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)");
     private static final List<File> EXCLUDED_FILES_AND_DIRS = Arrays.asList(
             new File("android.tests.dependencies"),
+            new File("core/runtime.jvm/src/kotlin/reflect/jvm/internal/pcollections"),
+            new File("libraries/tools/runtime/target/copied-sources"),
             new File("dependencies"),
             new File("examples"),
             new File("js/js.translator/qunit/qunit.js"),

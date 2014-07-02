@@ -1,3 +1,5 @@
+import kotlin.reflect.KFunction0
+
 fun main() {
     class A
     

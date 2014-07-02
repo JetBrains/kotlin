@@ -12,6 +12,8 @@ fun A.baz() {}
 
 package other
 
+import kotlin.reflect.KExtensionFunction0
+
 import first.A
 import first.foo
 

@@ -1,3 +1,5 @@
+import kotlin.reflect.KMemberFunction0
+
 class A {
     fun foo() = 42
 }

@@ -9,6 +9,8 @@ class A {
 }
 
 fun main(args: Array<String>) {
+    A()
+
     //Breakpoint!
     A().bar
 }

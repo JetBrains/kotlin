@@ -10,6 +10,8 @@ fun baz() = "OK"
 
 package other
 
+import kotlin.reflect.*
+
 import first.foo
 import first.bar
 import first.baz

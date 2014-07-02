@@ -49,6 +49,8 @@ import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -68,7 +70,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -76,6 +77,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -2410,19 +2412,90 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, StackValue data) {
-        // TODO: properties
+        ResolvedCall<?> resolvedCall = resolvedCall(expression.getCallableReference());
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
-        assert functionDescriptor != null : "Callable reference is not resolved to descriptor: " + expression.getText();
+        if (functionDescriptor != null) {
+            CallableReferenceGenerationStrategy strategy = new CallableReferenceGenerationStrategy(state, functionDescriptor, resolvedCall);
+            ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, context,
+                                                               KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
+                                                               this, strategy, getParentCodegen());
+            closureCodegen.gen();
+            return closureCodegen.putInstanceOnStack(v, this);
+        }
 
-        CallableReferenceGenerationStrategy strategy =
-                new CallableReferenceGenerationStrategy(state, functionDescriptor, resolvedCall(expression.getCallableReference()));
-        ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, context,
-                                                           KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
-                                                           this, strategy, getParentCodegen());
+        VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
+        if (variableDescriptor != null) {
+            VariableDescriptor descriptor = (VariableDescriptor) resolvedCall.getResultingDescriptor();
 
-        closureCodegen.gen();
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (containingDeclaration instanceof PackageFragmentDescriptor) {
+                return generateTopLevelPropertyReference(descriptor);
+            }
+            else if (containingDeclaration instanceof ClassDescriptor) {
+                return generateMemberPropertyReference(descriptor);
+            }
+            else {
+                throw new UnsupportedOperationException("Unsupported callable reference container: " + containingDeclaration);
+            }
+        }
 
-        return closureCodegen.putInstanceOnStack(v, this);
+        throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
+    }
+
+    @NotNull
+    private StackValue generateTopLevelPropertyReference(@NotNull VariableDescriptor descriptor) {
+        PackageFragmentDescriptor containingPackage = (PackageFragmentDescriptor) descriptor.getContainingDeclaration();
+        String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(containingPackage.getFqName());
+
+        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        Method factoryMethod;
+        if (receiverParameter != null) {
+            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE, getType(Class.class)};
+            factoryMethod = descriptor.isVar()
+                            ? method("mutableTopLevelExtensionProperty", K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes)
+                            : method("topLevelExtensionProperty", K_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes);
+        }
+        else {
+            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE};
+            factoryMethod = descriptor.isVar()
+                            ? method("mutableTopLevelVariable", K_MUTABLE_TOP_LEVEL_VARIABLE_IMPL_TYPE, parameterTypes)
+                            : method("topLevelVariable", K_TOP_LEVEL_VARIABLE_IMPL_TYPE, parameterTypes);
+        }
+
+        v.visitLdcInsn(descriptor.getName().asString());
+        v.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_IMPL_TYPE.getDescriptor());
+
+        if (receiverParameter != null) {
+            putJavaLangClassInstance(v, typeMapper.mapType(receiverParameter));
+        }
+
+        v.invokestatic(REFLECTION_INTERNAL_PACKAGE, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
+
+        return StackValue.onStack(factoryMethod.getReturnType());
+    }
+
+    @NotNull
+    private StackValue generateMemberPropertyReference(@NotNull VariableDescriptor descriptor) {
+        ClassDescriptor containingClass = (ClassDescriptor) descriptor.getContainingDeclaration();
+        Type classAsmType = typeMapper.mapClass(containingClass);
+
+        if (containingClass instanceof JavaClassDescriptor) {
+            v.aconst(classAsmType);
+            v.invokestatic(REFLECTION_INTERNAL_PACKAGE, "foreignKotlinClass",
+                           Type.getMethodDescriptor(K_CLASS_IMPL_TYPE, getType(Class.class)), false);
+        }
+        else {
+            v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_IMPL_TYPE.getDescriptor());
+        }
+
+        Method factoryMethod = descriptor.isVar()
+                               ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE)
+                               : method("memberProperty", K_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE);
+
+        v.visitLdcInsn(descriptor.getName().asString());
+        v.invokevirtual(K_CLASS_IMPL_TYPE.getInternalName(), factoryMethod.getName(), factoryMethod.getDescriptor(), false);
+
+        return StackValue.onStack(factoryMethod.getReturnType());
     }
 
     private static class CallableReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased<FunctionDescriptor> {

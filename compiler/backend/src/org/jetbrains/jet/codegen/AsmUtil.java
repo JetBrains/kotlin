@@ -154,6 +154,11 @@ public class AsmUtil {
         return Type.getType(internalName.substring(1));
     }
 
+    @NotNull
+    public static Method method(@NotNull String name, @NotNull Type returnType, @NotNull Type... parameterTypes) {
+        return new Method(name, Type.getMethodDescriptor(returnType, parameterTypes));
+    }
+
     public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT
                 || isInterface(functionDescriptor.getContainingDeclaration()))
@@ -785,4 +790,12 @@ public class AsmUtil {
         return PackagePartClassUtils.getPackagePartInternalName(containingFile);
     }
 
+    public static void putJavaLangClassInstance(@NotNull InstructionAdapter v, @NotNull Type type) {
+        if (isPrimitive(type)) {
+            v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");
+        }
+        else {
+            v.aconst(type);
+        }
+    }
 }

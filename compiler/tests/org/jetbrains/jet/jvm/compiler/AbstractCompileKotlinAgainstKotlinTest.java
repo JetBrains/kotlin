@@ -28,6 +28,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.InlineTestUtil;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -108,7 +109,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
 
     private void invokeMain() throws Exception {
         URLClassLoader classLoader = new URLClassLoader(
-                new URL[]{ aDir.toURI().toURL(), bDir.toURI().toURL() },
+                new URL[]{ aDir.toURI().toURL(), bDir.toURI().toURL(), ForTestCompileRuntime.runtimeJarForTests().toURI().toURL() },
                 AbstractCompileKotlinAgainstKotlinTest.class.getClassLoader()
         );
         Class<?> clazz = classLoader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
@@ -118,7 +119,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
 
     private void invokeBox() throws Exception {
         URLClassLoader classLoader = new URLClassLoader(
-                new URL[]{ bDir.toURI().toURL(), aDir.toURI().toURL() },
+                new URL[]{ bDir.toURI().toURL(), aDir.toURI().toURL(), ForTestCompileRuntime.runtimeJarForTests().toURI().toURL() },
                 AbstractCompileKotlinAgainstKotlinTest.class.getClassLoader()
         );
         Class<?> clazz = classLoader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));

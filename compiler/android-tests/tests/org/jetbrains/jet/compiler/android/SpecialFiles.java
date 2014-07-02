@@ -57,9 +57,11 @@ public class SpecialFiles {
 
     private static void fillExcludedFiles() {
         excludedFiles.add("boxAgainstJava");  // Must compile Java files before
+        excludedFiles.add("boxWithJava");  // Must compile Java files before
         excludedFiles.add("boxMultiFile"); // MultiFileTest not supported yet
         excludedFiles.add("boxInline"); // MultiFileTest not supported yet
 
+        excludedFiles.add("reflection");
         excludedFiles.add("kt3238.kt"); // Reflection
         excludedFiles.add("kt1482_2279.kt"); // Reflection
 
@@ -67,11 +69,6 @@ public class SpecialFiles {
         excludedFiles.add("importNestedClass.kt"); // Cannot change package name
         excludedFiles.add("packageQualifiedMethod.kt"); // Cannot change package name
         excludedFiles.add("classObjectToString.kt"); // Cannot change package name
-
-        /* Reflection tests with full-qualified names*/
-        excludedFiles.add("insideLambda");
-        excludedFiles.add("lambda");
-        excludedFiles.add("kt5112.kt");
 
         excludedFiles.add("kt326.kt"); // Commented
         excludedFiles.add("kt1213.kt"); // Commented

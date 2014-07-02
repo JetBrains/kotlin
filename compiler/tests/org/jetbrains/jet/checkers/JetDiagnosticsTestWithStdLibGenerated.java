@@ -105,7 +105,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     }
     
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference")
-    @InnerTestClasses({CallableReference.Function.class})
+    @InnerTestClasses({CallableReference.Function.class, CallableReference.Property.class})
     public static class CallableReference extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInCallableReference() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/testsWithStdLib/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -359,10 +359,84 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             
         }
         
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property")
+        public static class Property extends AbstractJetDiagnosticsTestWithStdLib {
+            @TestMetadata("abstractPropertyViaSubclasses.kt")
+            public void testAbstractPropertyViaSubclasses() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/abstractPropertyViaSubclasses.kt");
+            }
+            
+            @TestMetadata("accessViaSubclass.kt")
+            public void testAccessViaSubclass() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/accessViaSubclass.kt");
+            }
+            
+            public void testAllFilesPresentInProperty() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/testsWithStdLib/callableReference/property"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("classFromClass.kt")
+            public void testClassFromClass() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/classFromClass.kt");
+            }
+            
+            @TestMetadata("extensionFromClass.kt")
+            public void testExtensionFromClass() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/extensionFromClass.kt");
+            }
+            
+            @TestMetadata("extensionFromTopLevel.kt")
+            public void testExtensionFromTopLevel() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/extensionFromTopLevel.kt");
+            }
+            
+            @TestMetadata("extensionPropertyOnNullable.kt")
+            public void testExtensionPropertyOnNullable() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/extensionPropertyOnNullable.kt");
+            }
+            
+            @TestMetadata("genericClass.kt")
+            public void testGenericClass() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/genericClass.kt");
+            }
+            
+            @TestMetadata("javaInstanceField.kt")
+            public void testJavaInstanceField() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/javaInstanceField.kt");
+            }
+            
+            @TestMetadata("javaStaticFieldViaImport.kt")
+            public void testJavaStaticFieldViaImport() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/javaStaticFieldViaImport.kt");
+            }
+            
+            @TestMetadata("localVariable.kt")
+            public void testLocalVariable() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/localVariable.kt");
+            }
+            
+            @TestMetadata("memberFromExtension.kt")
+            public void testMemberFromExtension() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/memberFromExtension.kt");
+            }
+            
+            @TestMetadata("memberFromTopLevel.kt")
+            public void testMemberFromTopLevel() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/memberFromTopLevel.kt");
+            }
+            
+            @TestMetadata("topLevelFromTopLevel.kt")
+            public void testTopLevelFromTopLevel() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/topLevelFromTopLevel.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("CallableReference");
             suite.addTestSuite(CallableReference.class);
             suite.addTestSuite(Function.class);
+            suite.addTestSuite(Property.class);
             return suite;
         }
     }

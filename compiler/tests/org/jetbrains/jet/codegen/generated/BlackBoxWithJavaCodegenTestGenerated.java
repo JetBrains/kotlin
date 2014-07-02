@@ -36,4 +36,9 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithJava"), Pattern.compile("^([^\\.]+)$"), false);
     }
     
+    @TestMetadata("referenceToJavaFieldOfKotlinSubclass")
+    public void testReferenceToJavaFieldOfKotlinSubclass() throws Exception {
+        doTestWithJava("compiler/testData/codegen/boxWithJava/referenceToJavaFieldOfKotlinSubclass/");
+    }
+    
 }

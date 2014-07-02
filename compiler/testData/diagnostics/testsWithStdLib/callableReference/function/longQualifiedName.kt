@@ -8,6 +8,8 @@ class D {
 
 // FILE: b.kt
 
+import kotlin.reflect.KMemberFunction0
+
 fun main() {
     val x = a.b.c.D::foo
 

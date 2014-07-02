@@ -12,6 +12,8 @@ fun A.baz(<!UNUSED_PARAMETER!>x<!>: String) {}
 
 // FILE: b.kt
 
+import kotlin.reflect.*
+
 import other.foo as foofoo
 import other.A as AA
 import other.baz as bazbaz

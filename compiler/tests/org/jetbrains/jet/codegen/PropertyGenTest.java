@@ -40,11 +40,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testPrivateVal() throws Exception {
         loadFile();
-        Class<?> aClass = generateClass("PrivateVal");
-        Field[] fields = aClass.getDeclaredFields();
-        assertEquals(1, fields.length);  // prop
-        Field field = fields[0];
-        assertEquals("prop", field.getName());
+        generateClass("PrivateVal").getDeclaredField("prop");
     }
 
     public void testPrivateVar() throws Exception {

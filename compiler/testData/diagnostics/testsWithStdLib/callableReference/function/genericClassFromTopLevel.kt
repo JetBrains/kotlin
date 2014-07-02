@@ -1,3 +1,5 @@
+import kotlin.reflect.KMemberFunction0
+
 class A<T>(val t: T) {
     fun foo(): T = t
 }
