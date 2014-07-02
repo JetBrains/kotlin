@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -56,8 +56,7 @@ public class MonitorInstruction extends IntrinsicMethod {
             @Nullable StackValue receiver
     ) {
         assert element != null : "Element should not be null";
-        ResolvedCall<?> resolvedCall =
-                codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, ((JetCallExpression) element).getCalleeExpression());
+        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall((JetElement) element, codegen.getBindingContext());
 
         assert resolvedCall != null : "Resolved call for " + element.getText() + " should be not null";
 

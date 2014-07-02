@@ -68,7 +68,9 @@ import java.util.*;
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState.*;
 import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.TAIL_RECURSION_CALL;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
 import static org.jetbrains.jet.lang.resolve.calls.TailRecursionKind.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
@@ -725,7 +727,7 @@ public class JetFlowInformationProvider {
                         if (!(instruction instanceof CallInstruction)) return;
                         CallInstruction callInstruction = (CallInstruction) instruction;
 
-                        ResolvedCall<?> resolvedCall = trace.get(RESOLVED_CALL, callInstruction.getElement());
+                        ResolvedCall<?> resolvedCall = getResolvedCall(callInstruction.getElement(), trace.getBindingContext());
                         if (resolvedCall == null) return;
 
                         // is this a recursive call?

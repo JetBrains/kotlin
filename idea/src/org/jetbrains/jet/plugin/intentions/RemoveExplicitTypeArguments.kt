@@ -32,11 +32,10 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetTypeArgumentList
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetReturnExpression
-import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
-import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 
 public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgumentList>(
         "remove.explicit.type.arguments", javaClass()) {
@@ -52,9 +51,9 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgu
         val injector = InjectorForMacros(callExpression.getProject(), resolveSession.getModuleDescriptor())
 
         val scope = context[BindingContext.RESOLUTION_SCOPE, callExpression]
-        val originalCall = context[BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression()]?.getCall()
+        val originalCall = callExpression.getResolvedCall(context)
         if (originalCall == null || scope !is JetScope) return false
-        val untypedCall = CallWithoutTypeArgs(originalCall)
+        val untypedCall = CallWithoutTypeArgs(originalCall.getCall())
 
         // todo Check with expected type for other expressions
         // If always use expected type from trace there is a problem with nested calls:
@@ -74,11 +73,13 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgu
             TypeUtils.NO_EXPECTED_TYPE
         }
         val dataFlow = context[BindingContext.EXPRESSION_DATA_FLOW_INFO, callExpression] ?: DataFlowInfo.EMPTY
-        val resolvedCall = injector.getExpressionTypingServices()?.getCallResolver()?.resolveFunctionCall(
+        val resolutionResults = injector.getExpressionTypingServices()?.getCallResolver()?.resolveFunctionCall(
                 BindingTraceContext(), scope, untypedCall, jType, dataFlow, false)
+        assert (resolutionResults?.isSingleResult() ?: true) { "Removing type arguments changed resolve for: " +
+                "${callExpression.getTextWithLocation()} to ${resolutionResults?.getResultCode()}" }
 
-        val args = context[BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression()]?.getTypeArguments()
-        val newArgs = resolvedCall?.getResultingCall()?.getTypeArguments()
+        val args = originalCall.getTypeArguments()
+        val newArgs = resolutionResults?.getResultingCall()?.getTypeArguments()
 
         return args == newArgs
     }

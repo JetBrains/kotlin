@@ -52,7 +52,7 @@ import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getCorrespondingCall
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getCall
 import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace
@@ -286,7 +286,7 @@ public class CallCompleter(
             val lastStatement = JetPsiUtil.getLastStatementInABlock(argument)
             return getCallForArgument(lastStatement as? JetExpression, bindingContext)
         }
-        return argument?.getCorrespondingCall(bindingContext)
+        return argument?.getCall(bindingContext)
     }
 
     private fun updateRecordedTypeForArgument(

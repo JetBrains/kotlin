@@ -27,7 +27,6 @@ import kotlin.properties.Delegates
 import java.util.HashMap
 import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetThisExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import java.util.Collections
@@ -46,11 +45,11 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 data class ExtractionOptions(val inferUnitTypeForUnusedValues: Boolean) {
     class object {
@@ -116,8 +115,7 @@ class ExtractionData(
             for ((ref, context) in JetFileReferencesResolver.resolve(originalFile, getExpressions())) {
                 if (ref !is JetSimpleNameExpression) continue
 
-                val resolvedCallKey = (ref.getParent() as? JetThisExpression) ?: ref
-                val resolvedCall = context[BindingContext.RESOLVED_CALL, resolvedCallKey]?.let {
+                val resolvedCall = ref.getResolvedCall(context)?.let {
                     (it as? VariableAsFunctionResolvedCall)?.functionCall ?: it
                 }
 

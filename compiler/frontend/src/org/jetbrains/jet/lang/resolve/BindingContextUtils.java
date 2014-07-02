@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -301,24 +302,10 @@ public class BindingContextUtils {
             @NotNull BindingContext context
     ) {
         if (expression instanceof JetCallExpression) {
-            return isCallExpressionWithValidReference(expression, context);
+            ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, context);
+            return resolvedCall instanceof VariableAsFunctionResolvedCall;
         }
-
         return expression instanceof JetReferenceExpression;
-    }
-
-    public static boolean isCallExpressionWithValidReference(
-            @NotNull JetExpression expression,
-            @NotNull BindingContext context
-    ) {
-        if (expression instanceof JetCallExpression) {
-            JetExpression calleeExpression = ((JetCallExpression) expression).getCalleeExpression();
-            ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, calleeExpression);
-            if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {

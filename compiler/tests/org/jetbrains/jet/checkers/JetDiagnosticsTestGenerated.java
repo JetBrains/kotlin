@@ -4773,6 +4773,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/inline/unaryExpressions/mathOperation.kt");
                 }
                 
+                @TestMetadata("notOnCall.kt")
+                public void testNotOnCall() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/unaryExpressions/notOnCall.kt");
+                }
+                
                 @TestMetadata("notOperation.kt")
                 public void testNotOperation() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inline/unaryExpressions/notOperation.kt");

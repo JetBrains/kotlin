@@ -68,6 +68,7 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
     public <D extends CallableDescriptor> void bindResolvedCall(
             @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
     ) {
+        if (reference instanceof JetSimpleNameExpression) return;
         trace.record(RESOLVED_CALL, reference, resolvedCall);
     }
 

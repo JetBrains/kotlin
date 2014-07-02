@@ -19,11 +19,11 @@ package org.jetbrains.jet.plugin.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(
         "insert.explicit.type.arguments", javaClass()) {
@@ -40,7 +40,7 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
         if (textRange == null || !textRange.contains(editor.getCaretModel().getOffset())) return false
 
         val context = AnalyzerFacadeWithCache.getContextForElement(element)
-        val resolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
+        val resolvedCall = element.getResolvedCall(context)
         if (resolvedCall == null) return false
 
         val types = resolvedCall.getTypeArguments()
@@ -49,7 +49,7 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
         val context = AnalyzerFacadeWithCache.getContextForElement(element)
-        val resolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
+        val resolvedCall = element.getResolvedCall(context)
         if (resolvedCall == null) return
 
         val args = resolvedCall.getTypeArguments()

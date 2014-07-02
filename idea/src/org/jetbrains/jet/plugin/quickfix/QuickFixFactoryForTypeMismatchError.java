@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
@@ -69,8 +71,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
 
         // Fixing overloaded operators:
         if (expression instanceof JetOperationExpression) {
-            ResolvedCall<?> resolvedCall =
-                    context.get(BindingContext.RESOLVED_CALL, ((JetOperationExpression) expression).getOperationReference());
+            ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, context);
             if (resolvedCall != null) {
                 JetFunction declaration = getFunctionDeclaration(context, resolvedCall);
                 if (declaration != null) {
@@ -81,7 +82,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
         if (expression.getParent() instanceof JetBinaryExpression) {
             JetBinaryExpression parentBinary = (JetBinaryExpression) expression.getParent();
             if (parentBinary.getRight() == expression) {
-                ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, parentBinary.getOperationReference());
+                ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(parentBinary, context);
                 if (resolvedCall != null) {
                     JetFunction declaration = getFunctionDeclaration(context, resolvedCall);
                     if (declaration != null) {
@@ -94,8 +95,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
 
         // Change function return type when TYPE_MISMATCH is reported on call expression:
         if (expression instanceof JetCallExpression) {
-            ResolvedCall<?> resolvedCall =
-                    context.get(BindingContext.RESOLVED_CALL, ((JetCallExpression) expression).getCalleeExpression());
+            ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, context);
             if (resolvedCall != null) {
                 JetFunction declaration = getFunctionDeclaration(context, resolvedCall);
                 if (declaration != null) {

@@ -18,8 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -30,11 +28,13 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TAIL_RECURSION_CALL;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
 
 public class TailRecursionCodegen {
 
@@ -107,7 +107,7 @@ public class TailRecursionCodegen {
                 JetExpression argumentExpression = argument == null ? null : argument.getArgumentExpression();
 
                 if (argumentExpression instanceof JetSimpleNameExpression) {
-                    ResolvedCall<?> resolvedCall = state.getBindingContext().get(RESOLVED_CALL, argumentExpression);
+                    ResolvedCall<?> resolvedCall = getResolvedCall(argumentExpression, state.getBindingContext());
                     if (resolvedCall != null && resolvedCall.getResultingDescriptor().equals(parameterDescriptor.getOriginal())) {
                         // do nothing: we shouldn't store argument to itself again
                         AsmUtil.pop(v, type);

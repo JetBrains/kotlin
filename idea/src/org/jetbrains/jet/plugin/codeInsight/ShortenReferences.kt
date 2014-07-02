@@ -36,8 +36,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.renderer.DescriptorRenderer.FQ_NAMES_IN_TYPES
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -318,8 +318,7 @@ public object ShortenReferences {
         private fun resolveState(referenceExpression: JetReferenceExpression, bindingContext: BindingContext): Any? {
             val target = bindingContext[BindingContext.REFERENCE_TARGET, referenceExpression]
             if (target != null) {
-                val resolvedCallKey = (referenceExpression.getParent() as? JetThisExpression) ?: referenceExpression
-                val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, resolvedCallKey]
+                val resolvedCall = referenceExpression.getResolvedCall(bindingContext)
                 if (resolvedCall != null) return resolvedCall.asString()
 
                 return target.asString()

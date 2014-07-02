@@ -20,10 +20,9 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetOperationExpression
 import org.jetbrains.jet.lang.resolve.BindingContext.CALL
+import org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.jet.lang.psi.JetReturnExpression
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET
@@ -40,6 +39,15 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetThisExpression
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import org.jetbrains.jet.lang.psi.psiUtil.getCalleeExpressionIfAny
+import org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke
+import org.jetbrains.kotlin.util.sure
+import org.jetbrains.jet.lang.psi.JetCallElement
+import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 
 /**
  *  For expressions like <code>a(), a[i], a.b.c(), +a, a + b, (a()), a(): Int, @label a()</code>
@@ -48,46 +56,79 @@ import org.jetbrains.jet.lang.psi.JetThisExpression
  *  Note: special construction like <code>a!!, a ?: b, if (c) a else b</code> are resolved as calls,
  *  so there is a corresponding call for them.
  */
-fun JetExpression.getCorrespondingCall(bindingContext: BindingContext): Call? {
-    val expr = JetPsiUtil.deparenthesize(this)
-    if (expr == null) return null
+public fun JetElement.getCall(context: BindingContext): Call? {
+    val element = if (this is JetExpression) JetPsiUtil.deparenthesize(this) else this
+    if (element == null) return null
 
-    if (expr is JetQualifiedExpression) {
-        return expr.getSelectorExpression()?.getCorrespondingCall(bindingContext)
-    }
-    val parent = expr.getParent()
+    val parent = element.getParent()
     val reference = when {
         parent is JetThisExpression -> parent : JetThisExpression
-        expr is JetCallExpression -> expr.getCalleeExpression()
-        expr is JetOperationExpression -> expr.getOperationReference()
-        else -> expr
+        else -> element.getCalleeExpressionIfAny()
     }
-    return bindingContext[CALL, reference]
+    if (reference != null) {
+        return context[CALL, reference]
+    }
+    return context[CALL, element]
 }
 
-fun JetExpression.getEnclosingCall(bindingContext: BindingContext): Call? {
-    val parent = PsiTreeUtil.getNonStrictParentOfType<JetExpression>(
+public fun JetExpression.getParentCall(context: BindingContext): Call? {
+    val parent = PsiTreeUtil.getNonStrictParentOfType<JetElement>(
             this,
-            javaClass<JetSimpleNameExpression>(), javaClass<JetCallExpression>(), javaClass<JetBinaryExpression>(),
+            javaClass<JetSimpleNameExpression>(), javaClass<JetCallElement>(), javaClass<JetBinaryExpression>(),
             javaClass<JetUnaryExpression>(), javaClass<JetArrayAccessExpression>())
-    return parent?.getCorrespondingCall(bindingContext)
+    return parent?.getCall(context)
 }
 
-fun Call.hasUnresolvedArguments(bindingContext: BindingContext): Boolean {
+public fun Call?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? {
+    if (this == null) return null
+    if (this is CallForImplicitInvoke) {
+        // callee for invoke is implicit (doesn't exist), so the key is callee of outer call (which is 'this object' for 'invoke' call)
+        return context[RESOLVED_CALL, this.getThisObject().getExpression()]
+    }
+
+    return context[RESOLVED_CALL, this.getCalleeExpression()]
+}
+
+public fun JetElement?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? {
+    return this?.getCall(context)?.getResolvedCall(context)
+}
+
+public fun JetElement.getCallWithAssert(context: BindingContext): Call {
+    return getCall(context).sure("No call for ${this.getTextWithLocation()}")
+}
+
+public fun JetElement.getResolvedCallWithAssert(context: BindingContext): ResolvedCall<out CallableDescriptor> {
+    return getResolvedCall(context).sure("No resolved call for ${this.getTextWithLocation()}")
+}
+
+public fun Call.getResolvedCallWithAssert(context: BindingContext): ResolvedCall<out CallableDescriptor> {
+    return getResolvedCall(context).sure("No resolved call for ${this.getCallElement().getTextWithLocation()}")
+}
+
+public fun JetExpression.getFunctionResolvedCallWithAssert(context: BindingContext): ResolvedCall<out FunctionDescriptor> {
+    val resolvedCall = getResolvedCallWithAssert(context)
+    assert(resolvedCall.getResultingDescriptor() is FunctionDescriptor) {
+        "ResolvedCall for this expression must be ResolvedCall<? extends FunctionDescriptor>: ${this.getTextWithLocation()}"
+    }
+    [suppress("UNCHECKED_CAST")]
+    return resolvedCall as ResolvedCall<out FunctionDescriptor>
+}
+
+public fun Call.hasUnresolvedArguments(context: BindingContext): Boolean {
     val arguments = getValueArguments().map { it?.getArgumentExpression() }
     return arguments.any {
         argument ->
-        val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, argument]
+        val expressionType = context[BindingContext.EXPRESSION_TYPE, argument]
         argument != null && !ArgumentTypeResolver.isFunctionLiteralArgument(argument)
             && (expressionType == null || expressionType.isError())
     }
 }
 
-public fun JetReturnExpression.getTargetFunctionDescriptor(bindingContext: BindingContext): FunctionDescriptor? {
+public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()
-    if (targetLabel != null) return bindingContext[LABEL_TARGET, targetLabel]?.let { bindingContext[FUNCTION, it] }
+    if (targetLabel != null) return context[LABEL_TARGET, targetLabel]?.let { context[FUNCTION, it] }
 
-    val declarationDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, getParentByType(javaClass<JetDeclarationWithBody>())]
+    val declarationDescriptor = context[DECLARATION_TO_DESCRIPTOR, getParentByType(javaClass<JetDeclarationWithBody>())]
     val containingFunctionDescriptor = DescriptorUtils.getParentOfType(declarationDescriptor, javaClass<FunctionDescriptor>(), false)
     if (containingFunctionDescriptor == null) return null
 

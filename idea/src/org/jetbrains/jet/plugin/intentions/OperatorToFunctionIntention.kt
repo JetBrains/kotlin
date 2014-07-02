@@ -29,12 +29,8 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpression>("operator.to.function", javaClass()) {
     fun isApplicablePrefix(element: JetPrefixExpression): Boolean {
@@ -60,7 +56,8 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
     }
 
     fun isApplicableCall(element: JetCallExpression): Boolean {
-        val resolvedCall = AnalyzerFacadeWithCache.getContextForElement(element)[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
+        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
+        val resolvedCall = element.getResolvedCall(bindingContext)
         val descriptor = resolvedCall?.getResultingDescriptor()
         if (descriptor is FunctionDescriptor && descriptor.getName().asString() == "invoke") {
             val parent = element.getParent()
@@ -129,7 +126,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
         }
 
         val context = AnalyzerFacadeWithCache.getContextForElement(element)
-        val functionCandidate = context[BindingContext.RESOLVED_CALL, element.getOperationReference()]
+        val functionCandidate = element.getResolvedCall(context)
         val functionName = functionCandidate?.getCandidateDescriptor()?.getName().toString()
         val elemType = context[BindingContext.EXPRESSION_TYPE, left]
 

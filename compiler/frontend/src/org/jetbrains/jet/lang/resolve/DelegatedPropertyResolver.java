@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
@@ -49,6 +50,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.psi.JetPsiFactory.createExpression;
 import static org.jetbrains.jet.lang.psi.JetPsiFactory.createSimpleName;
+import static org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage.getCalleeExpressionIfAny;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
@@ -227,7 +229,7 @@ public class DelegatedPropertyResolver {
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         TemporaryBindingTrace traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property");
-        JetExpression calleeExpression = JetPsiUtil.getCalleeExpressionIfAny(delegateExpression);
+        JetExpression calleeExpression = getCalleeExpressionIfAny(delegateExpression);
         ConstraintSystemCompleter completer = createConstraintSystemCompleter(
                 jetProperty, propertyDescriptor, delegateExpression, accessorScope, trace);
         if (calleeExpression != null) {

@@ -53,6 +53,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.cfg.JetControlFlowBuilder.PredefinedOperation.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class JetControlFlowProcessor {
@@ -235,7 +236,7 @@ public class JetControlFlowProcessor {
 
         @NotNull
         private AccessTarget getResolvedCallAccessTarget(JetElement element) {
-            ResolvedCall<?> resolvedCall = trace.get(BindingContext.RESOLVED_CALL, element);
+            ResolvedCall<?> resolvedCall = getResolvedCall(element, trace.getBindingContext());
             return resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.instance$;
         }
 
@@ -268,7 +269,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitThisExpression(@NotNull JetThisExpression expression) {
-            ResolvedCall<?> resolvedCall = getResolvedCall(expression);
+            ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
             if (resolvedCall == null) {
                 createNonSyntheticValue(expression);
                 return;
@@ -290,7 +291,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
-            ResolvedCall<?> resolvedCall = getResolvedCall(expression);
+            ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
                 generateCall(expression, variableAsFunctionResolvedCall.getVariableCall());
@@ -325,9 +326,9 @@ public class JetControlFlowProcessor {
                 visitAssignment(left, getDeferredValue(right), expression);
             }
             else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
-                ResolvedCall<?> resolvedCall = getResolvedCall(operationReference);
+                ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
                 if (resolvedCall != null) {
-                    PseudoValue rhsValue = generateCall(operationReference, resolvedCall).getOutputValue();
+                    PseudoValue rhsValue = generateCall(expression, resolvedCall).getOutputValue();
                     Name assignMethodName = OperatorConventions.getNameForOperationSymbol((JetToken) expression.getOperationToken());
                     if (!resolvedCall.getResultingDescriptor().getName().equals(assignMethodName)) {
                         /* At this point assignment of the form a += b actually means a = a + b
@@ -353,7 +354,7 @@ public class JetControlFlowProcessor {
                 mergeValues(Arrays.asList(left, right), expression);
             }
             else {
-                if (!generateCall(operationReference)) {
+                if (!generateCall(expression)) {
                     generateBothArgumentsAndMark(expression);
                 }
             }
@@ -572,11 +573,11 @@ public class JetControlFlowProcessor {
             }
 
             boolean incrementOrDecrement = isIncrementOrDecrement(operationType);
-            ResolvedCall<?> resolvedCall = getResolvedCall(operationSign);
+            ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
 
             PseudoValue rhsValue;
             if (resolvedCall != null) {
-                rhsValue = generateCall(operationSign, resolvedCall).getOutputValue();
+                rhsValue = generateCall(expression, resolvedCall).getOutputValue();
             }
             else {
                 generateInstructions(baseExpression);
@@ -1069,8 +1070,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitCallExpression(@NotNull JetCallExpression expression) {
-            JetExpression calleeExpression = expression.getCalleeExpression();
-            if (!generateCall(calleeExpression)) {
+            if (!generateCall(expression)) {
                 List<JetExpression> inputExpressions = new ArrayList<JetExpression>();
                 for (ValueArgument argument : expression.getValueArguments()) {
                     JetExpression argumentExpression = argument.getArgumentExpression();
@@ -1083,6 +1083,7 @@ public class JetControlFlowProcessor {
                     generateInstructions(functionLiteral);
                     inputExpressions.add(functionLiteral);
                 }
+                JetExpression calleeExpression = expression.getCalleeExpression();
                 generateInstructions(calleeExpression);
                 inputExpressions.add(calleeExpression);
                 inputExpressions.add(generateAndGetReceiverIfAny(expression));
@@ -1373,37 +1374,25 @@ public class JetControlFlowProcessor {
             builder.unsupported(element);
         }
 
-        @Nullable
-        private ResolvedCall<?> getResolvedCall(@NotNull JetElement expression) {
-            return trace.get(BindingContext.RESOLVED_CALL, expression);
+        private boolean generateCall(@Nullable JetExpression callExpression) {
+            if (callExpression == null) return false;
+            return checkAndGenerateCall(callExpression, getResolvedCall(callExpression, trace.getBindingContext()));
         }
-
-        private boolean generateCall(@Nullable JetExpression calleeExpression) {
-            if (calleeExpression == null) return false;
-            return checkAndGenerateCall(calleeExpression, getResolvedCall(calleeExpression));
-        }
-
-        private boolean checkAndGenerateCall(
-                JetExpression calleeExpression,
-                @Nullable ResolvedCall<?> resolvedCall
-        ) {
+        private boolean checkAndGenerateCall(@NotNull JetExpression callExpression, @Nullable ResolvedCall<?> resolvedCall) {
             if (resolvedCall == null) {
-                builder.compilationError(calleeExpression, "No resolved call");
+                builder.compilationError(callExpression, "No resolved call");
                 return false;
             }
-            generateCall(calleeExpression, resolvedCall);
+            generateCall(callExpression, resolvedCall);
             return true;
         }
 
         @NotNull
-        private InstructionWithValue generateCall(JetExpression calleeExpression, ResolvedCall<?> resolvedCall) {
+        private InstructionWithValue generateCall(@NotNull JetExpression callExpression, @NotNull ResolvedCall<?> resolvedCall) {
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
-                return generateCall(calleeExpression, variableAsFunctionResolvedCall.getFunctionCall());
+                return generateCall(callExpression, variableAsFunctionResolvedCall.getFunctionCall());
             }
-
-            JetElement callElement = resolvedCall.getCall().getCallElement();
-            JetExpression callExpression = callElement instanceof JetExpression ? (JetExpression) callElement : null;
 
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
             Map<PseudoValue, ReceiverValue> receivers = getReceiverValues(resolvedCall, true);
@@ -1416,14 +1405,17 @@ public class JetControlFlowProcessor {
             }
 
             if (resultingDescriptor instanceof VariableDescriptor) {
-                assert callExpression != null
-                        : "Variable-based call without call expression: " + callElement.getText();
+                // If a callee of the call is just a variable (without 'invoke'), 'read variable' is generated.
+                // todo : process arguments for such a case (KT-5387)
+                JetExpression calleeExpression = PsiUtilPackage.getCalleeExpressionIfAny(callExpression);
+                assert calleeExpression != null
+                        : "No callee for " + callExpression.getText();
                 assert parameterValues.isEmpty()
-                        : "Variable-based call with non-empty argument list: " + callElement.getText();
-                return builder.readVariable(calleeExpression, callExpression, resolvedCall, receivers);
+                        : "Variable-based call with non-empty argument list: " + callExpression.getText();
+                return builder.readVariable(calleeExpression, calleeExpression, resolvedCall, receivers);
             }
             mark(resolvedCall.getCall().getCallElement());
-            return builder.call(calleeExpression, callExpression, resolvedCall, receivers, parameterValues);
+            return builder.call(callExpression, callExpression, resolvedCall, receivers, parameterValues);
         }
 
         @NotNull

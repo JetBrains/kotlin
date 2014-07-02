@@ -20,7 +20,6 @@ import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.scopes.receivers.AbstractReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
@@ -36,9 +35,10 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.lang.psi.ValueArgument
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getEnclosingCall
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getParentCall
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCallWithAssert
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
@@ -51,19 +51,16 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
 
         val element = jetFile.findElementAt(text.indexOf("<caret>"))
         val expression = PsiTreeUtil.getParentOfType(element, javaClass<JetExpression>())
-        val call = expression?.getEnclosingCall(bindingContext)
+        val call = expression?.getParentCall(bindingContext)
 
-        val cachedCall = bindingContext[BindingContext.RESOLVED_CALL, call?.getCalleeExpression()]
-        if (cachedCall == null) {
-            throw AssertionError("No resolved call for:\nelement: ${element.toString()}\nexpression: ${expression.toString()}\ncall: $call")
-        }
+        val cachedCall = call?.getResolvedCallWithAssert(bindingContext)
 
         val resolvedCall = if (cachedCall !is VariableAsFunctionResolvedCall) cachedCall
             else if ("(" == element?.getText()) cachedCall.functionCall
             else cachedCall.variableCall
 
         val resolvedCallInfoFileName = FileUtil.getNameWithoutExtension(filePath) + ".txt"
-        JetTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), "$text\n\n\n${resolvedCall.renderToText()}")
+        JetTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), "$text\n\n\n${resolvedCall?.renderToText()}")
     }
 }
 

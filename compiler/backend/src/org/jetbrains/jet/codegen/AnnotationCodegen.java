@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -45,6 +46,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
 
 public abstract class AnnotationCodegen {
 
@@ -131,7 +133,7 @@ public abstract class AnnotationCodegen {
         else {
             List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
             for (JetAnnotationEntry annotationEntry : annotationEntries) {
-                ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, annotationEntry.getCalleeExpression());
+                ResolvedCall<?> resolvedCall = getResolvedCall(annotationEntry, bindingContext);
                 if (resolvedCall == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
 
                 AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);

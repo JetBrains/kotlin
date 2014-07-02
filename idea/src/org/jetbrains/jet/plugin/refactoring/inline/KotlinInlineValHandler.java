@@ -53,6 +53,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -320,11 +321,13 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
         ResolveSessionForBodies resolveSessionForBodies = ResolvePackage.getLazyResolveSession(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
-            JetCallExpression callExpression = getCallExpression(inlinedExpression);
-            assert callExpression != null : "can't find call expression for " + inlinedExpression.getText();
+            BindingContext context = resolveSessionForBodies.resolveToElement(inlinedExpression);
+            Call call = BindingContextUtilPackage.getCallWithAssert(inlinedExpression, context);
 
-            if (hasIncompleteTypeInferenceDiagnostic(callExpression, resolveSessionForBodies) && callExpression.getTypeArgumentList() == null) {
-                callsToAddArguments.add(callExpression);
+            JetElement callElement = call.getCallElement();
+            if (callElement instanceof JetCallExpression && hasIncompleteTypeInferenceDiagnostic(call, context) &&
+                    call.getTypeArgumentList() == null) {
+                callsToAddArguments.add((JetCallExpression) callElement);
             }
         }
 
@@ -337,17 +340,9 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     @Nullable
     private static String getTypeArgumentsStringForCall(@NotNull JetExpression initializer) {
-        JetCallExpression callExpression = getCallExpression(initializer);
-        if (callExpression == null) {
-            return null;
-        }
-
-        JetExpression callee = callExpression.getCalleeExpression();
         BindingContext context = AnalyzerFacadeWithCache.getContextForElement(initializer);
-        ResolvedCall<?> call = context.get(BindingContext.RESOLVED_CALL, callee);
-        if (call == null) {
-            return null;
-        }
+        ResolvedCall<?> call = BindingContextUtilPackage.getResolvedCall(initializer, context);
+        if (call == null) return null;
 
         List<JetType> typeArguments = Lists.newArrayList();
         Map<TypeParameterDescriptor, JetType> typeArgumentMap = call.getTypeArguments();
@@ -364,11 +359,10 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     }
 
     private static boolean hasIncompleteTypeInferenceDiagnostic(
-            @NotNull JetCallExpression callExpression,
-            @NotNull ResolveSessionForBodies resolveSessionForBodies
+            @NotNull Call call,
+            @NotNull BindingContext context
     ) {
-        JetExpression callee = callExpression.getCalleeExpression();
-        BindingContext context = resolveSessionForBodies.resolveToElement(callExpression);
+        JetExpression callee = call.getCalleeExpression();
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             if (diagnostic.getFactory() == Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER && diagnostic.getPsiElement() == callee) {
                 return true;
@@ -392,21 +386,5 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return expression;
         }
         return (JetExpression) referenceElement.replace(newExpression.copy());
-    }
-
-    @Nullable
-    private static JetCallExpression getCallExpression(@NotNull JetExpression expression) {
-        if (expression instanceof JetParenthesizedExpression) {
-            JetExpression inner = ((JetParenthesizedExpression) expression).getExpression();
-            return inner == null ? null : getCallExpression(inner);
-        }
-        if (expression instanceof JetCallExpression) {
-            return (JetCallExpression) expression;
-        }
-        if (expression instanceof JetQualifiedExpression) {
-            JetExpression selector = ((JetQualifiedExpression) expression).getSelectorExpression();
-            return selector == null ? null : getCallExpression(selector);
-        }
-        return null;
     }
 }

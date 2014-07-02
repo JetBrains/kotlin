@@ -32,8 +32,8 @@ import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getFunctionResolvedCallWithAssert;
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionResolvedCall;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
@@ -64,7 +64,7 @@ public final class UnaryOperationTranslator {
             return translateExclForBinaryEqualLikeExpr((JsBinaryOperation) baseExpression);
         }
 
-        ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCall(context.bindingContext(), expression.getOperationReference());
+        ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCallWithAssert(expression, context.bindingContext());
         return CallTranslator.instance$.translate(context, resolvedCall, baseExpression);
     }
 

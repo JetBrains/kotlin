@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 
 public class InlineDescriptorUtils {
@@ -45,8 +46,7 @@ public class InlineDescriptorUtils {
             boolean isInlinedLambda = false;
             JetExpression call = JetPsiUtil.getParentCallIfPresent((JetFunctionLiteralExpression) containingFunction);
             if (call != null) {
-                //TODO: ask sveta
-                ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, JetPsiUtil.getCalleeExpressionIfAny(call));
+                ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(call, bindingContext);
                 CallableDescriptor resultingDescriptor = resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
                 if (resultingDescriptor instanceof SimpleFunctionDescriptor) {
                     isInlinedLambda = ((SimpleFunctionDescriptor) resultingDescriptor).getInlineStrategy().isInline();

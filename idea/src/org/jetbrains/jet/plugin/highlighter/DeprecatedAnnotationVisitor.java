@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -62,7 +63,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
     @Override
     public void visitReferenceExpression(@NotNull JetReferenceExpression expression) {
         super.visitReferenceExpression(expression);
-        ResolvedCall resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
+        ResolvedCall resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, bindingContext);
         if (resolvedCall != null && resolvedCall instanceof VariableAsFunctionResolvedCall) {
             // Deprecated for invoke()
             JetCallExpression parent = PsiTreeUtil.getParentOfType(expression, JetCallExpression.class);

@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
@@ -310,7 +311,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
 
-        ResolvedCall<?> referencedFunction = bindingContext.get(RESOLVED_CALL, expression.getCallableReference());
+        ResolvedCall<?> referencedFunction = BindingContextUtilPackage.getResolvedCall(expression.getCallableReference(), bindingContext);
         if (referencedFunction == null) return;
         Collection<JetType> supertypes =
                 runtimeTypes.getSupertypesForFunctionReference((FunctionDescriptor) referencedFunction.getResultingDescriptor());
@@ -401,7 +402,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitCallExpression(@NotNull JetCallExpression expression) {
         super.visitCallExpression(expression);
-        ResolvedCall<?> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+        ResolvedCall<?> call = BindingContextUtilPackage.getResolvedCall(expression, bindingContext);
         if (call == null) return;
 
         CallableDescriptor descriptor = call.getResultingDescriptor();

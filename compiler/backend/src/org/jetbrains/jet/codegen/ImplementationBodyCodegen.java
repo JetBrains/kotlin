@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
@@ -1387,7 +1388,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private PropertyDescriptor getDelegatePropertyIfAny(JetExpression expression) {
         PropertyDescriptor propertyDescriptor = null;
         if (expression instanceof JetSimpleNameExpression) {
-            ResolvedCall<?> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
+            ResolvedCall<?> call = BindingContextUtilPackage.getResolvedCall(expression, bindingContext);
             if (call != null) {
                 CallableDescriptor callResultingDescriptor = call.getResultingDescriptor();
                 if (callResultingDescriptor instanceof ValueParameterDescriptor) {
@@ -1581,8 +1582,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor);
 
-        ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, ((JetCallElement) superCall).getCalleeExpression());
-        assert resolvedCall != null;
+        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCallWithAssert(superCall, bindingContext);
         ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
 
         //noinspection SuspiciousMethodCalls
@@ -1683,9 +1683,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
             }
 
-            ResolvedCall<?> resolvedCall =
-                    bindingContext.get(BindingContext.RESOLVED_CALL, ((JetDelegatorToSuperCall) specifier).getCalleeExpression());
-            assert resolvedCall != null : "Enum entry delegation specifier is unresolved: " + specifier.getText();
+            ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCallWithAssert(specifier, bindingContext);
 
             CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor());
 

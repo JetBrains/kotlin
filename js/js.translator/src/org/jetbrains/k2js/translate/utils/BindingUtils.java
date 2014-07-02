@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.types.JetType;
@@ -134,39 +133,6 @@ public final class BindingUtils {
     public static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull JetReferenceExpression reference) {
         return context.get(BindingContext.REFERENCE_TARGET, reference);
-    }
-
-    @NotNull
-    public static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context, @NotNull JetExpression expression) {
-        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
-        assert resolvedCall != null : message(expression, expression.getText() + " must resolve to a call");
-        return resolvedCall;
-    }
-
-    @NotNull
-    public static ResolvedCall<?> getResolvedCallForProperty(@NotNull BindingContext context, @NotNull JetExpression expression) {
-        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
-        assert resolvedCall != null : message(expression, expression.getText() + " must resolve to a call");
-        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            return ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall();
-        }
-        return resolvedCall;
-    }
-
-    @NotNull
-    public static ResolvedCall<? extends FunctionDescriptor> getResolvedCallForCallExpression(@NotNull BindingContext context,
-            @NotNull JetCallExpression expression) {
-        JetExpression calleeExpression = PsiUtils.getCallee(expression);
-        return getFunctionResolvedCall(context, calleeExpression);
-    }
-
-    @NotNull
-    public static ResolvedCall<? extends FunctionDescriptor> getFunctionResolvedCall(@NotNull BindingContext context,
-            @NotNull JetExpression expression) {
-        ResolvedCall<?> resolvedCall = getResolvedCall(context, expression);
-        assert resolvedCall.getResultingDescriptor() instanceof FunctionDescriptor
-                : message(expression, "ResolvedCall for this expression must be ResolvedCall<? extends FunctionDescriptor>");
-        return (ResolvedCall<? extends FunctionDescriptor>) resolvedCall;
     }
 
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {

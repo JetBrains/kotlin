@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -60,6 +61,8 @@ import org.jetbrains.jet.plugin.refactoring.introduce.KotlinIntroduceHandlerBase
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
 
 public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
@@ -487,8 +490,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                                 JetSimpleNameExpression expr1 = (JetSimpleNameExpression)element1.getParent();
                                 JetSimpleNameExpression expr2 = (JetSimpleNameExpression)element2.getParent();
 
-                                ResolvedCall<?> rc1 = bindingContext.get(BindingContext.RESOLVED_CALL, expr1);
-                                ResolvedCall<?> rc2 = bindingContext.get(BindingContext.RESOLVED_CALL, expr2);
+                                ResolvedCall<?> rc1 = getResolvedCall(expr1, bindingContext);
+                                ResolvedCall<?> rc2 = getResolvedCall(expr2, bindingContext);
                                 return (rc1 != null && rc2 != null) && compareCalleesAndReceivers(rc1, rc2) ? 0 : 1;
                             }
                         }

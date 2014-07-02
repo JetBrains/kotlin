@@ -273,7 +273,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         @NotNull
         @Override
-        public ReceiverValue getThisObject() {
+        public ExpressionReceiver getThisObject() {
             return calleeExpressionAsThisObject;
         }
 

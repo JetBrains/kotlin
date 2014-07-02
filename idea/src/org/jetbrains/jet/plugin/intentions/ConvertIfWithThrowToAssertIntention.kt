@@ -19,26 +19,17 @@ package org.jetbrains.jet.plugin.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.lang.psi.JetCallableReferenceExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import kotlin.properties.Delegates
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.extractExpressionIfSingle
 import org.jetbrains.jet.lang.psi.JetThrowExpression
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isNullExpression
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 public class ConvertIfWithThrowToAssertIntention :
         JetSelfTargetingIntention<JetIfExpression>("convert.if.with.throw.to.assert", javaClass()) {
@@ -58,7 +49,7 @@ public class ConvertIfWithThrowToAssertIntention :
         if (paramAmount > 1) return false
 
         val context = AnalyzerFacadeWithCache.getContextForElement(thrownExpr)
-        val resolvedCall = context[BindingContext.RESOLVED_CALL, thrownExpr.getCalleeExpression()]
+        val resolvedCall = thrownExpr.getResolvedCall(context)
         if (resolvedCall == null) return false
 
         return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() == "java.lang.AssertionError.<init>"

@@ -734,30 +734,6 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static JetExpression getCalleeExpressionIfAny(@NotNull JetExpression expression) {
-        if (expression instanceof JetSimpleNameExpression) {
-            return expression;
-        }
-        if (expression instanceof JetCallElement) {
-            JetCallElement callExpression = (JetCallElement) expression;
-            return callExpression.getCalleeExpression();
-        }
-        if (expression instanceof JetQualifiedExpression) {
-            JetExpression selectorExpression = ((JetQualifiedExpression) expression).getSelectorExpression();
-            if (selectorExpression != null) {
-                return getCalleeExpressionIfAny(selectorExpression);
-            }
-        }
-        if (expression instanceof JetUnaryExpression) {
-            return ((JetUnaryExpression) expression).getOperationReference();
-        }
-        if (expression instanceof JetBinaryExpression) {
-            return ((JetBinaryExpression) expression).getOperationReference();
-        }
-        return null;
-    }
-
-    @Nullable
     public static PsiElement skipSiblingsBackwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
         if (element == null) return null;
         for (PsiElement e = element.getPrevSibling(); e != null; e = e.getPrevSibling()) {

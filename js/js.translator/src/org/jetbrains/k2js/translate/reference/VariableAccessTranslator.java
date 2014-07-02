@@ -21,12 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +38,10 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
             @NotNull JetReferenceExpression referenceExpression,
             @Nullable JsExpression receiver
     ) {
-        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCallForProperty(context.bindingContext(), referenceExpression);
+        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCallWithAssert(referenceExpression, context.bindingContext());
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall();
+        }
         assert resolvedCall.getResultingDescriptor() instanceof VariableDescriptor;
         return new VariableAccessTranslator(context, (ResolvedCall<? extends VariableDescriptor>) resolvedCall, receiver);
     }

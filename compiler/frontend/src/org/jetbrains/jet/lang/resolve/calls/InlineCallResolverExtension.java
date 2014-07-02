@@ -23,11 +23,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.InlineDescriptorUtils;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.model.*;
+import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -180,8 +183,9 @@ public class InlineCallResolverExtension implements CallResolverExtension {
             @NotNull JetExpression expression,
             boolean unwrapVariableAsFunction
     ) {
-        // todo ask sveta
-        ResolvedCall<?> thisCall = context.trace.get(BindingContext.RESOLVED_CALL, expression);
+        if (!(expression instanceof JetSimpleNameExpression || expression instanceof JetThisExpression)) return null;
+
+        ResolvedCall<?> thisCall = BindingContextUtilPackage.getResolvedCall(expression, context.trace.getBindingContext());
         if (unwrapVariableAsFunction && thisCall instanceof VariableAsFunctionResolvedCall) {
             return ((VariableAsFunctionResolvedCall) thisCall).getVariableCall().getResultingDescriptor();
         }

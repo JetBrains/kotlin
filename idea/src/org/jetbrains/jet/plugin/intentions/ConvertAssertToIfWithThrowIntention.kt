@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
@@ -29,6 +28,7 @@ import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(
         "convert.assert.to.if.with.throw", javaClass()) {
@@ -43,7 +43,7 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
         if (!(arguments == 1 && (lambdas == 1 || lambdas == 0)) && arguments != 2) return false
 
         val context = AnalyzerFacadeWithCache.getContextForElement(element)
-        val resolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
+        val resolvedCall = element.getResolvedCall(context)
         if (resolvedCall == null) return false
 
         val valParameters = resolvedCall.getResultingDescriptor().getValueParameters()

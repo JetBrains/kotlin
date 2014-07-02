@@ -20,7 +20,6 @@ import com.intellij.debugger.actions.JvmSmartStepIntoHandler
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.actions.SmartStepTarget
 import java.util.Collections
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.util.containers.OrderedSet
 import com.intellij.util.Range
@@ -30,7 +29,6 @@ import org.jetbrains.jet.asJava.LightClassUtil
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import com.intellij.psi.PsiElement
-import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import com.intellij.debugger.engine.MethodFilter
@@ -38,11 +36,9 @@ import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.sun.jdi.Location
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiFile
-import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiClass
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
@@ -127,7 +123,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             }
 
             override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, expression]
+                val resolvedCall = expression.getResolvedCall(bindingContext)
                 if (resolvedCall != null) {
                     val propertyDescriptor = resolvedCall.getResultingDescriptor()
                     if (propertyDescriptor is PropertyDescriptor) {
@@ -162,7 +158,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             }
 
             private fun recordFunction(expression: JetExpression) {
-                val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, expression]
+                val resolvedCall = expression.getResolvedCall(bindingContext)
                 if (resolvedCall == null) return
 
                 val descriptor = resolvedCall.getResultingDescriptor()
