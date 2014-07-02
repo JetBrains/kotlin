@@ -13,9 +13,9 @@ fun foo() {
 }
 ---------------------
 "before"                                                                  <v0>: *     NEW: r("before") -> <v0>
-1                                                                         <v1>: Int   NEW: r(1) -> <v1>       
-"after"                                                                   <v2>: *     NEW: r("after") -> <v2> 
-{ "before" object A { { val a = 1 } fun foo() { val b = 2 } } "after" }   <v2>: *     COPY                    
+1                                                                         <v1>: Int   NEW: r(1) -> <v1>
+"after"                                                                   <v2>: *     NEW: r("after") -> <v2>
+{ "before" object A { { val a = 1 } fun foo() { val b = 2 } } "after" }   <v2>: *     COPY
 =====================
 == foo ==
 fun foo() {

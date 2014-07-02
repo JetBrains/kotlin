@@ -23,7 +23,7 @@ L5 [condition entry point]:
     r(a) -> <v2>
     r(0) -> <v3>
     mark(a > 0)
-    call(>, compareTo|<v2>, <v3>) -> <v4>
+    call(a > 0, compareTo|<v2>, <v3>) -> <v4>
     jt(L2 [loop entry point]|<v4>)                                                               USE: in: {a=READ} out: {a=READ}
 L3 [loop exit point]:
     read (Unit)

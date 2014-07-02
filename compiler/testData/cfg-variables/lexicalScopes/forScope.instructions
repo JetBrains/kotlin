@@ -15,7 +15,7 @@ L0:
   3 r(1) -> <v1>
     r(10) -> <v2>
     mark(1..10)
-    call(.., rangeTo|<v1>, <v2>) -> <v3>
+    call(1..10, rangeTo|<v1>, <v2>) -> <v3>
     v(i)                                                         INIT: in: {} out: {i=D}
 L3:
     jmp?(L2)                                                     INIT: in: {i=D} out: {i=D}

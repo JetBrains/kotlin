@@ -10,24 +10,24 @@ L0:
   2 mark({ while(0 > 1) { 2 } })
 L2 [loop entry point]:
 L5 [condition entry point]:
-    r(0) -> <v0>                             PREV:[mark({ while(0 > 1) { 2 } }), jmp(L2 [loop entry point])]
+    r(0) -> <v0>                                 PREV:[mark({ while(0 > 1) { 2 } }), jmp(L2 [loop entry point])]
     r(1) -> <v1>
     mark(0 > 1)
-    call(>, compareTo|<v0>, <v1>) -> <v2>
+    call(0 > 1, compareTo|<v0>, <v1>) -> <v2>
     mark(while(0 > 1) { 2 })
-    jf(L3 [loop exit point]|<v2>)            NEXT:[read (Unit), mark({ 2 })]
+    jf(L3 [loop exit point]|<v2>)                NEXT:[read (Unit), mark({ 2 })]
 L4 [body entry point]:
   3 mark({ 2 })
     r(2) -> <v3>
-  2 jmp(L2 [loop entry point])               NEXT:[r(0) -> <v0>]
+  2 jmp(L2 [loop entry point])                   NEXT:[r(0) -> <v0>]
 L3 [loop exit point]:
-    read (Unit)                              PREV:[jf(L3 [loop exit point]|<v2>)]
+    read (Unit)                                  PREV:[jf(L3 [loop exit point]|<v2>)]
 L1:
-  1 <END>                                    NEXT:[<SINK>]
+  1 <END>                                        NEXT:[<SINK>]
 error:
-    <ERROR>                                  PREV:[]
+    <ERROR>                                      PREV:[]
 sink:
-    <SINK>                                   PREV:[<ERROR>, <END>]
+    <SINK>                                       PREV:[<ERROR>, <END>]
 =====================
 == dowhile ==
 fun dowhile() {
@@ -42,19 +42,19 @@ L0:
 L2 [loop entry point]:
 L4 [body entry point]:
     mark({return})
-    ret L1                                   NEXT:[<END>]
+    ret L1                                       NEXT:[<END>]
 L5 [condition entry point]:
--   r(0) -> <v0>                             PREV:[]
--   r(1) -> <v1>                             PREV:[]
--   mark(0 > 1)                              PREV:[]
--   call(>, compareTo|<v0>, <v1>) -> <v2>    PREV:[]
--   jt(L2 [loop entry point]|<v2>)           NEXT:[read (Unit), mark({return})]              PREV:[]
+-   r(0) -> <v0>                                 PREV:[]
+-   r(1) -> <v1>                                 PREV:[]
+-   mark(0 > 1)                                  PREV:[]
+-   call(0 > 1, compareTo|<v0>, <v1>) -> <v2>    PREV:[]
+-   jt(L2 [loop entry point]|<v2>)               NEXT:[read (Unit), mark({return})]                  PREV:[]
 L3 [loop exit point]:
--   read (Unit)                              PREV:[]
+-   read (Unit)                                  PREV:[]
 L1:
-  1 <END>                                    NEXT:[<SINK>]                                   PREV:[ret L1]
+  1 <END>                                        NEXT:[<SINK>]                                       PREV:[ret L1]
 error:
-    <ERROR>                                  PREV:[]
+    <ERROR>                                      PREV:[]
 sink:
-    <SINK>                                   PREV:[<ERROR>, <END>]
+    <SINK>                                       PREV:[<ERROR>, <END>]
 =====================

@@ -16,7 +16,7 @@ L2 [after default value for parameter i]:
     r(i) -> <v4>
     r(j) -> <v5>
     mark(i + j)
-    call(+, plus|<v4>, <v5>) -> <v6>
+    call(i + j, plus|<v4>, <v5>) -> <v6>
 L1:
     <END>                                             NEXT:[<SINK>]
 error:

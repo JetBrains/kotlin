@@ -53,13 +53,13 @@ L0:
     mark(Bar().f())
     r(f) -> <v1>
     mark(Bar())
-    call(Bar, <init>) -> <v2>
+    call(Bar(), <init>) -> <v2>
     mark(f())
-    call(f, invoke|<v1>, <v2>) -> <v3>
+    call(f(), invoke|<v1>, <v2>) -> <v3>
 L1:
-  1 <END>                                 NEXT:[<SINK>]
+  1 <END>                                   NEXT:[<SINK>]
 error:
-    <ERROR>                               PREV:[]
+    <ERROR>                                 PREV:[]
 sink:
-    <SINK>                                PREV:[<ERROR>, <END>]
+    <SINK>                                  PREV:[<ERROR>, <END>]
 =====================

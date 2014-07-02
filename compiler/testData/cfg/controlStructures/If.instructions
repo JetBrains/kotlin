@@ -36,7 +36,7 @@ L2:
 L3:
     r(u) -> <v3>                                                                                                        PREV:[jmp(L3), read (Unit)]
     mark(doSmth(u))
-    call(doSmth, doSmth|<v3>) -> <v4>
+    call(doSmth(u), doSmth|<v3>) -> <v4>
     v(var r: String)
     mark(if (b) { r = "s" } else { r = "t" })
     r(b) -> <v5>
@@ -54,7 +54,7 @@ L4:
 L5:
   2 r(r) -> <v8>                                                                                                        PREV:[jmp(L5), w(r|<v7>)]
     mark(doSmth(r))
-    call(doSmth, doSmth|<v8>) -> <v9>
+    call(doSmth(r), doSmth|<v8>) -> <v9>
 L1:
   1 <END>                                                                                                               NEXT:[<SINK>]
 error:
@@ -94,7 +94,7 @@ L2:
 L3:
     r(i) -> <v3>
     mark(doSmth(i))
-    call(doSmth, doSmth|<v3>) -> <v4>
+    call(doSmth(i), doSmth|<v3>) -> <v4>
     mark(if (i is Int) { return; })
     mark(i is Int)
     r(i) -> <v5>

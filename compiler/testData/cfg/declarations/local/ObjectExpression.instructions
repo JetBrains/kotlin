@@ -72,7 +72,7 @@ L0:
     mark(o.foo())
     r(o) -> <v3>
     mark(foo())
-    call(foo, foo|<v3>) -> <v4>
+    call(foo(), foo|<v3>) -> <v4>
     ret(*|<v4>) L1
 L1:
   1 <END>                                                  NEXT:[<SINK>]

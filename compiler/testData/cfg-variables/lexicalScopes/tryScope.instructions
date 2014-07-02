@@ -23,7 +23,7 @@ L0:
     jmp?(L3 [onExceptionToFinallyBlock])
   3 mark({ foo() })
     mark(foo())
-    call(foo, foo) -> <v1>
+    call(foo(), foo) -> <v1>
   2 jmp(L4 [afterCatches])                                                                                                                          USE: in: {} out: {}
 L2 [onException]:
   3 v(e: Exception)                                                                                      INIT: in: {} out: {e=D}

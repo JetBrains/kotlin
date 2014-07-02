@@ -14,7 +14,7 @@ L0:
   2 mark({ val a = Array<Int> 3 a[10] = 4 2 a[10] 100 a[10] += 1 })
     v(val a = Array<Int>)
     mark(Array<Int>)
-    call(Array, <init>) -> <v0>
+    call(Array<Int>, <init>) -> <v0>
     w(a|<v0>)
     r(3) -> <v1>
     mark(a[10])
@@ -36,7 +36,7 @@ L0:
     call(a[10], get|<v11>, <v12>) -> <v13>
     r(1) -> <v14>
     mark(a[10] += 1)
-    call(+=, plus|<v13>, <v14>) -> <v15>
+    call(a[10] += 1, plus|<v13>, <v14>) -> <v15>
     r(a) -> <v16>
     r(10) -> <v17>
     call(a[10] += 1, set|<v16>, <v17>, <v15>) -> <v18>

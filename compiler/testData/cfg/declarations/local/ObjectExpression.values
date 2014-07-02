@@ -25,10 +25,10 @@ fun foo(b: B) : Int {
     return o.foo()
 }
 ---------------------
-                     <v0>: B                    NEW: magic(b: B) -> <v0>          
-b                    <v1>: *                    NEW: r(b) -> <v1>                 
+                     <v0>: B                    NEW: magic(b: B) -> <v0>
+b                    <v1>: *                    NEW: r(b) -> <v1>
 object : A by b {}   <v2>: <no name provided>   NEW: r(object : A by b {}) -> <v2>
-o                    <v3>: {<: A}               NEW: r(o) -> <v3>                 
-foo()                <v4>: Int                  NEW: call(foo, foo|<v3>) -> <v4>  
-o.foo()              <v4>: Int                  COPY                              
+o                    <v3>: {<: A}               NEW: r(o) -> <v3>
+foo()                <v4>: Int                  NEW: call(foo(), foo|<v3>) -> <v4>
+o.foo()              <v4>: Int                  COPY
 =====================

@@ -11,9 +11,9 @@ fun foo() {
 }
 ---------------------
 "before"                                                          <v0>: *         NEW: r("before") -> <v0>
-true                                                              <v1>: Boolean   NEW: r(true) -> <v1>    
-1                                                                 <v2>: Int       NEW: r(1) -> <v2>       
-2                                                                 <v3>: Int       NEW: r(2) -> <v3>       
-"after"                                                           <v4>: *         NEW: r("after") -> <v4> 
-{ "before" if (true) { val a = 1 } else { val b = 2 } "after" }   <v4>: *         COPY                    
+true                                                              <v1>: Boolean   NEW: r(true) -> <v1>
+1                                                                 <v2>: Int       NEW: r(1) -> <v2>
+2                                                                 <v3>: Int       NEW: r(2) -> <v3>
+"after"                                                           <v4>: *         NEW: r("after") -> <v4>
+{ "before" if (true) { val a = 1 } else { val b = 2 } "after" }   <v4>: *         COPY
 =====================

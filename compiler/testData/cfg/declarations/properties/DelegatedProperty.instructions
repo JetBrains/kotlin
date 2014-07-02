@@ -38,14 +38,14 @@ L0:
   1 <START>
     v(val a = Delegate())
     mark(Delegate())
-    call(Delegate, <init>) -> <v0>
+    call(Delegate(), <init>) -> <v0>
     w(a|<v0>)
 L1:
-    <END>                             NEXT:[<SINK>]
+    <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                           PREV:[]
+    <ERROR>                             PREV:[]
 sink:
-    <SINK>                            PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<ERROR>, <END>]
 =====================
 == b ==
 val b by a

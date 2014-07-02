@@ -40,7 +40,7 @@ L0:
     r(x) -> <v2>
     r(2) -> <v3>
     mark(x += 2)
-    call(+=, plus|<v2>, <v3>) -> <v4>
+    call(x += 2, plus|<v2>, <v3>) -> <v4>
     w(x|<v4>)
     mark(if (true) 1 else 2)
     r(true) -> <v5>
@@ -68,7 +68,7 @@ L5:
     w(z|<v14>)
     v(val t = Test())
     mark(Test())
-    call(Test, <init>) -> <v15>
+    call(Test(), <init>) -> <v15>
     w(t|<v15>)
     r(t) -> <v16>
     r(1) -> <v17>
@@ -78,7 +78,7 @@ L5:
     r(x|<v18>) -> <v19>
     r(1) -> <v20>
     mark(t.x += 1)
-    call(+=, plus|<v19>, <v20>) -> <v21>
+    call(t.x += 1, plus|<v19>, <v20>) -> <v21>
     r(t) -> <v22>
     w(t.x|<v22>, <v21>)
 L1:

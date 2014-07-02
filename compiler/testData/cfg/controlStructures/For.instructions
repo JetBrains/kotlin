@@ -11,7 +11,7 @@ L0:
   3 r(1) -> <v0>
     r(2) -> <v1>
     mark(1..2)
-    call(.., rangeTo|<v0>, <v1>) -> <v2>
+    call(1..2, rangeTo|<v0>, <v1>) -> <v2>
     v(i)
 L3:
     jmp?(L2)                                   NEXT:[read (Unit), magic(1..2|<v2>) -> <v3>]
@@ -23,7 +23,7 @@ L5 [body entry point]:
   4 mark({ doSmth(i) })
     r(i) -> <v4>
     mark(doSmth(i))
-    call(doSmth, doSmth|<v4>) -> <v5>
+    call(doSmth(i), doSmth|<v4>) -> <v5>
   3 jmp?(L4 [loop entry point])                NEXT:[magic(1..2|<v2>) -> <v3>, read (Unit)]
 L2:
     read (Unit)                                PREV:[jmp?(L2), jmp?(L4 [loop entry point])]

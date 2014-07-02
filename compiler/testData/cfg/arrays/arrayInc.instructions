@@ -15,7 +15,7 @@ L0:
     mark(a[0])
     call(a[0], get|<v1>, <v2>) -> <v3>
     mark(a[0]++)
-    call(++, inc|<v3>) -> <v4>
+    call(a[0]++, inc|<v3>) -> <v4>
     r(a) -> <v5>
     r(0) -> <v6>
     call(a[0]++, set|<v5>, <v6>, <v4>) -> <v7>

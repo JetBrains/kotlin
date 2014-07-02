@@ -9,7 +9,7 @@ L0:
     mark(throw java.lang.RuntimeException())
     mark(java.lang.RuntimeException())
     mark(RuntimeException())
-    call(RuntimeException, <init>) -> <v0>
+    call(RuntimeException(), <init>) -> <v0>
     throw (throw java.lang.RuntimeException()|<v0>)    NEXT:[<ERROR>]
 L1:
   1 <END>                                              NEXT:[<SINK>]                                             PREV:[]

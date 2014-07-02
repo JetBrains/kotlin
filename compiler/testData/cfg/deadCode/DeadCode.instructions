@@ -9,10 +9,10 @@ L0:
   2 mark({ throw Exception() test() })
     mark(throw Exception())
     mark(Exception())
-    call(Exception, <init>) -> <v0>
+    call(Exception(), <init>) -> <v0>
     throw (throw Exception()|<v0>)        NEXT:[<ERROR>]
 -   mark(test())                          PREV:[]
--   call(test, test) -> <v1>              PREV:[]
+-   call(test(), test) -> <v1>            PREV:[]
 L1:
   1 <END>                                 NEXT:[<SINK>]                                PREV:[]
 error:
