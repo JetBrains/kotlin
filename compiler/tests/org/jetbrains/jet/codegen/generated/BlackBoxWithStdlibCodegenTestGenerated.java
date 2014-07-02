@@ -902,6 +902,7 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk")
+    @InnerTestClasses({FullJdk.Synchronized.class})
     public static class FullJdk extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInFullJdk() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/fullJdk"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -947,11 +948,45 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/kt434.kt");
         }
         
-        @TestMetadata("sync.kt")
-        public void testSync() throws Exception {
-            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/sync.kt");
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized")
+        public static class Synchronized extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInSynchronized() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("finally.kt")
+            public void testFinally() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/finally.kt");
+            }
+            
+            @TestMetadata("nestedDifferentObjects.kt")
+            public void testNestedDifferentObjects() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/nestedDifferentObjects.kt");
+            }
+            
+            @TestMetadata("nestedSameObject.kt")
+            public void testNestedSameObject() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/nestedSameObject.kt");
+            }
+            
+            @TestMetadata("sync.kt")
+            public void testSync() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/sync.kt");
+            }
+            
+            @TestMetadata("wait.kt")
+            public void testWait() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/wait.kt");
+            }
+            
         }
         
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("FullJdk");
+            suite.addTestSuite(FullJdk.class);
+            suite.addTestSuite(Synchronized.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/hashPMap")
@@ -1838,7 +1873,7 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         suite.addTestSuite(Casts.class);
         suite.addTest(DataClasses.innerSuite());
         suite.addTestSuite(Evaluate.class);
-        suite.addTestSuite(FullJdk.class);
+        suite.addTest(FullJdk.innerSuite());
         suite.addTestSuite(HashPMap.class);
         suite.addTestSuite(JdkAnnotations.class);
         suite.addTestSuite(PlatformNames.class);

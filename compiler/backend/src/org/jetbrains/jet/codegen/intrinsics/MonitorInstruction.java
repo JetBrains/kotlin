@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,35 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.FUNCTION0_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-public class StupidSync extends IntrinsicMethod {
+public class MonitorInstruction extends IntrinsicMethod {
+
+    public static final MonitorInstruction MONITOR_ENTER = new MonitorInstruction(Opcodes.MONITORENTER);
+    public static final MonitorInstruction MONITOR_EXIT = new MonitorInstruction(Opcodes.MONITOREXIT);
+
+    private final int opcode;
+
+    private MonitorInstruction(int opcode) {
+        this.opcode = opcode;
+    }
+
     @NotNull
     @Override
-    public Type generateImpl(
+    protected Type generateImpl(
             @NotNull ExpressionCodegen codegen,
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
@@ -51,8 +61,14 @@ public class StupidSync extends IntrinsicMethod {
 
         assert resolvedCall != null : "Resolved call for " + element.getText() + " should be not null";
 
-        codegen.pushMethodArgumentsWithoutCallReceiver(resolvedCall, Arrays.asList(OBJECT_TYPE, FUNCTION0_TYPE), false, codegen.defaultCallGenerator);
-        v.invokestatic("kotlin/jvm/internal/Intrinsics", "stupidSync", Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, FUNCTION0_TYPE));
-        return OBJECT_TYPE;
+        codegen.pushMethodArgumentsWithoutCallReceiver(
+                resolvedCall,
+                Arrays.asList(OBJECT_TYPE),
+                false,
+                codegen.defaultCallGenerator
+        );
+
+        v.visitInsn(opcode);
+        return Type.VOID_TYPE;
     }
 }
