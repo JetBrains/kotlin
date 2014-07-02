@@ -267,8 +267,8 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         // Check that outputs are located properly
         File facadeWithA = findFileInOutputDir(findModule("module1"), "test/TestPackage.class");
         File facadeWithB = findFileInOutputDir(findModule("module2"), "test/TestPackage.class");
-        assertSameElements(getMethodsOfClass(facadeWithA), "a", "getA");
-        assertSameElements(getMethodsOfClass(facadeWithB), "b", "getB", "setB");
+        assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA");
+        assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB");
 
         checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"));
         checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"));
