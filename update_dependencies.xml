@@ -308,7 +308,7 @@
                     <matches pattern=".+\.mac\.zip" string="@{build.zip}"/>
                     <then>
                         <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK">
-                            <cutdirsmapper dirs="1"/>
+                            <cutdirsmapper dirs="2"/>
                         </unzip>
                         <!-- Java can't manipulate permissions -->
                         <exec executable="chmod">
