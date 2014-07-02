@@ -234,8 +234,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
                 javaSourceList.add(Callable<File?>{ variant.getRenderscriptCompile().getSourceOutputDir() })
 
                 if (variant is ApkVariant) {
-                    for (flavour in variant.getProductFlavors().iterator()) {
-                       val flavourSourceSetName = buildTypeSourceSetName + flavour.getName()
+                    for (flavourName in AndroidGradleWrapper.getProductFlavorsNames(variant)) {
+                       val flavourSourceSetName = buildTypeSourceSetName + flavourName
                         val flavourSourceSet : AndroidSourceSet? = sourceSets.findByName(flavourSourceSetName)
                         if (flavourSourceSet != null) {
                             javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(flavourSourceSet))

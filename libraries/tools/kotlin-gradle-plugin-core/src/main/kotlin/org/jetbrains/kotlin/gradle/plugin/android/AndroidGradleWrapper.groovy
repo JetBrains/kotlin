@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin.android
 
 import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.api.ApkVariant
 import org.gradle.api.tasks.util.PatternFilterable
 import org.jetbrains.annotations.NotNull
 
@@ -38,5 +39,10 @@ class AndroidGradleWrapper {
   @NotNull
   static def Set<File> getJavaSrcDirs(Object androidSourceSet) {
     return androidSourceSet.getJava().getSrcDirs()
+  }
+
+  @NotNull
+  static def List<String> getProductFlavorsNames(ApkVariant variant) {
+      return variant.getProductFlavors().iterator().collect { it.getName() }
   }
 }
