@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector;
@@ -35,6 +36,8 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         if (!(element instanceof JetFile) && !(element instanceof JetDeclaration)) return;
+        if (!JetPluginUtil.isInSource(element, false)) return;
+
         PsiFile file = element.getContainingFile();
         if (!(file instanceof JetFile) || TargetPlatformDetector.getPlatform((JetFile) file) != TargetPlatform.JVM) return;
 
