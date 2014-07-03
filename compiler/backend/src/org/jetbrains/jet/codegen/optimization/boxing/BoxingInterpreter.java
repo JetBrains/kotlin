@@ -94,7 +94,7 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         if (isBoxing(insn)) {
             int index = insnList.indexOf(insn);
             if (!boxingPlaces.containsKey(index)) {
-                BoxedBasicValue boxedBasicValue = new BoxedBasicValue(values.get(0).getType(), insn);
+                BoxedBasicValue boxedBasicValue = new BoxedBasicValue(value.getType(), insn);
                 onNewBoxedValue(boxedBasicValue);
                 boxingPlaces.put(index, boxedBasicValue);
             }
@@ -105,9 +105,7 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
                  values.get(0) instanceof BoxedBasicValue &&
                  value.getType().equals(((BoxedBasicValue) values.get(0)).getPrimitiveType())) {
 
-            BoxedBasicValue boxedBasicValue = (BoxedBasicValue) values.get(0);
-            boxedBasicValue.addInsn(insn);
-            boxedBasicValue.setWasUnboxed(true);
+            onUnboxing((BoxedBasicValue) values.get(0), insn);
         }
         else {
             for (BasicValue arg : values) {
@@ -120,12 +118,10 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         return value;
     }
 
-
     @Override
     @Nullable
     public BasicValue unaryOperation(@NotNull AbstractInsnNode insn, @NotNull BasicValue value) throws AnalyzerException {
-        if (isAllowedUnaryOperationWithBoxed(insn.getOpcode()) && value instanceof BoxedBasicValue) {
-            ((BoxedBasicValue) value).addInsn(insn);
+        if (insn.getOpcode() == Opcodes.CHECKCAST && value instanceof BoxedBasicValue) {
             return value;
         }
 
@@ -135,7 +131,8 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     @Override
     @NotNull
     public BasicValue merge(@NotNull BasicValue v, @NotNull BasicValue w) {
-        if (v instanceof BoxedBasicValue && v.equals(w)) {
+        if (v instanceof BoxedBasicValue && ((BoxedBasicValue) v).typeEquals(w)) {
+            ((BoxedBasicValue) v).mergeWith((BoxedBasicValue) w);
             return v;
         }
 
@@ -153,19 +150,19 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     }
 
 
-    protected void onNewBoxedValue(BoxedBasicValue value) {
+    protected void onNewBoxedValue(@NotNull BoxedBasicValue value) {
 
     }
 
-    protected void onMethodCallWithBoxedValue(BoxedBasicValue value) {
+    protected void onUnboxing(@NotNull BoxedBasicValue value, @NotNull AbstractInsnNode insn) {
 
     }
 
-    protected void onMergeFail(BoxedBasicValue value) {
+    protected void onMethodCallWithBoxedValue(@NotNull BoxedBasicValue value) {
 
     }
 
-    protected boolean isAllowedUnaryOperationWithBoxed(int opcode) {
-        return opcode == Opcodes.CHECKCAST || opcode == Opcodes.IFNULL;
+    protected void onMergeFail(@NotNull BoxedBasicValue value) {
+
     }
 }

@@ -28,27 +28,33 @@ import java.util.Set;
 
 public class BoxedBasicValue extends BasicValue {
     private final Set<AbstractInsnNode> associatedInsns = new HashSet<AbstractInsnNode>();
-    private final AbstractInsnNode boxingInsn;
+    private final Set<Integer> associatedVariables = new HashSet<Integer>();
+    private final Set<BoxedBasicValue> mergedWith = new HashSet<BoxedBasicValue>();
     private final Type primitiveType;
-    private boolean wasUnboxed = false;
+    private boolean isSafeToRemove = true;
 
-    public BoxedBasicValue(Type primitiveType, AbstractInsnNode insnNode) {
-        super(AsmUtil.boxType(primitiveType));
-        this.primitiveType = primitiveType;
+    public BoxedBasicValue(Type boxedType, AbstractInsnNode insnNode) {
+        super(boxedType);
+        this.primitiveType = AsmUtil.unboxType(boxedType);
         associatedInsns.add(insnNode);
-        boxingInsn = insnNode;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        return this == o;
+    }
+
+    public boolean typeEquals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
 
         BoxedBasicValue that = (BoxedBasicValue) o;
 
-        if (!getType().equals(that.getType())) return false;
+        return getType().equals(that.getType());
+    }
 
-        return (boxingInsn == ((BoxedBasicValue) o).boxingInsn);
+    @Override
+    public int hashCode() {
+        return System.identityHashCode(this);
     }
 
     public List<AbstractInsnNode> getAssociatedInsns() {
@@ -59,15 +65,50 @@ public class BoxedBasicValue extends BasicValue {
         associatedInsns.add(insnNode);
     }
 
+    public void addVariableIndex(int index) {
+        associatedVariables.add(index);
+    }
+
+    public List<Integer> getVariablesIndexes() {
+        return new ArrayList<Integer>(associatedVariables);
+    }
+
     public Type getPrimitiveType() {
         return primitiveType;
     }
 
-    public boolean wasUnboxed() {
-        return wasUnboxed;
+    public void mergeWith(BoxedBasicValue value) {
+        if (this == value) {
+            return;
+        }
+
+        if (!value.isSafeToRemove) {
+            propagateRemovingAsUnsafe();
+        }
+
+        if (!isSafeToRemove) {
+            value.propagateRemovingAsUnsafe();
+        }
+
+        mergedWith.add(value);
+        value.mergedWith.add(this);
     }
 
-    public void setWasUnboxed(boolean wasUnboxed) {
-        this.wasUnboxed = wasUnboxed;
+    public void propagateRemovingAsUnsafe() {
+        isSafeToRemove = false;
+
+        for (BoxedBasicValue value : mergedWith) {
+            if (value.isSafeToRemove()) {
+                value.propagateRemovingAsUnsafe();
+            }
+        }
+    }
+
+    public boolean isSafeToRemove() {
+        return isSafeToRemove;
+    }
+
+    public boolean isDoubleSize() {
+        return getPrimitiveType().getSize() == 2;
     }
 }
