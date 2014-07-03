@@ -954,9 +954,24 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("changeMonitor.kt")
+            public void testChangeMonitor() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/changeMonitor.kt");
+            }
+            
+            @TestMetadata("exceptionInMonitorExpression.kt")
+            public void testExceptionInMonitorExpression() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/exceptionInMonitorExpression.kt");
+            }
+            
             @TestMetadata("finally.kt")
             public void testFinally() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/finally.kt");
+            }
+            
+            @TestMetadata("longValue.kt")
+            public void testLongValue() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/longValue.kt");
             }
             
             @TestMetadata("nestedDifferentObjects.kt")
@@ -969,9 +984,19 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/nestedSameObject.kt");
             }
             
+            @TestMetadata("objectValue.kt")
+            public void testObjectValue() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/objectValue.kt");
+            }
+            
             @TestMetadata("sync.kt")
             public void testSync() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/sync.kt");
+            }
+            
+            @TestMetadata("value.kt")
+            public void testValue() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/synchronized/value.kt");
             }
             
             @TestMetadata("wait.kt")

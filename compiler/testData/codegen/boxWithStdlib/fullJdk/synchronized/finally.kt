@@ -1,12 +1,14 @@
 fun box(): String {
     val obj = "" as java.lang.Object
 
+    val e = IllegalArgumentException()
     try {
         synchronized (obj) {
-            throw Throwable()
+            throw e
         }
     }
-    catch (e: Throwable) {
+    catch (caught: Throwable) {
+        if (!(caught identityEquals e)) return "Fail: $caught"
         // If monitorexit didn't happen (a finally block failed), this assertion would fail
         assertThatThreadDoesNotOwnMonitor(obj)
     }
