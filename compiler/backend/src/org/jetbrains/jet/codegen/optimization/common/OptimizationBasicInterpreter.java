@@ -28,6 +28,10 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
 public class OptimizationBasicInterpreter extends BasicInterpreter {
     private static final BasicValue MIXED_VALUE = new BasicValue(Type.getObjectType("#"));
+    private static final BasicValue BOOLEAN_VALUE = new BasicValue(Type.BOOLEAN_TYPE);
+    private static final BasicValue CHAR_VALUE = new BasicValue(Type.CHAR_TYPE);
+    private static final BasicValue BYTE_VALUE = new BasicValue(Type.BYTE_TYPE);
+    private static final BasicValue SHORT_VALUE = new BasicValue(Type.SHORT_TYPE);
 
     @Override
     @Nullable
@@ -35,11 +39,23 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
         if (type == null) {
             return super.newValue(null);
         }
-        if (type.getSort() == Type.OBJECT) {
-            return new BasicValue(type);
-        }
 
-        return super.newValue(type);
+        switch (type.getSort()) {
+            case Type.VOID:
+                return null;
+            case Type.BOOLEAN:
+                return BOOLEAN_VALUE;
+            case Type.CHAR:
+                return CHAR_VALUE;
+            case Type.BYTE:
+                return BYTE_VALUE;
+            case Type.SHORT:
+                return SHORT_VALUE;
+            case Type.OBJECT:
+                return new BasicValue(type);
+            default:
+                return super.newValue(type);
+        }
     }
 
     @Override

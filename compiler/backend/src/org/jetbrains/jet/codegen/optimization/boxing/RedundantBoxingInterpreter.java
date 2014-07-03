@@ -22,12 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.InsnList;
+import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 class RedundantBoxingInterpreter extends BoxingInterpreter {
@@ -36,7 +35,8 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
     static {
         ImmutableSet.Builder<Integer> unsafeOperationsOpcodesBuilder = ImmutableSet.builder();
         unsafeOperationsOpcodesBuilder.add(
-                Opcodes.AASTORE, Opcodes.PUTFIELD, Opcodes.PUTSTATIC, Opcodes.ARETURN
+                Opcodes.AASTORE, Opcodes.PUTFIELD, Opcodes.PUTSTATIC, Opcodes.ARETURN,
+                Opcodes.IFNONNULL, Opcodes.IFNULL, Opcodes.IF_ACMPEQ, Opcodes.IF_ACMPNE
         );
 
         unsafeOperationsOpcodes = unsafeOperationsOpcodesBuilder.build();
@@ -48,9 +48,24 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
         super(insnList);
     }
 
-    private void checkIfUnsafeOperationWithBoxed(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
-        if (value instanceof BoxedBasicValue && unsafeOperationsOpcodes.contains(insnNode.getOpcode())) {
-            markAsDirty((BoxedBasicValue) value);
+    private static void markValueAsDirty(@NotNull BoxedBasicValue value) {
+        value.propagateRemovingAsUnsafe();
+    }
+
+    private static void addAssociatedInsn(@NotNull BoxedBasicValue value, @NotNull AbstractInsnNode insn) {
+        if (value.isSafeToRemove()) {
+            value.addInsn(insn);
+        }
+    }
+
+    private static void processOperationWithBoxedValue(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
+        if (value instanceof BoxedBasicValue) {
+            if (unsafeOperationsOpcodes.contains(insnNode.getOpcode())) {
+                markValueAsDirty((BoxedBasicValue) value);
+            }
+            else {
+                addAssociatedInsn((BoxedBasicValue) value, insnNode);
+            }
         }
     }
 
@@ -61,7 +76,7 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
             @NotNull BasicValue value2
     ) throws AnalyzerException {
 
-        checkIfUnsafeOperationWithBoxed(value2, insn);
+        processOperationWithBoxedValue(value2, insn);
 
         return super.binaryOperation(insn, value1, value2);
     }
@@ -72,57 +87,59 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
             @NotNull BasicValue value1, @NotNull BasicValue value2, @NotNull BasicValue value3
     ) throws AnalyzerException {
 
-        checkIfUnsafeOperationWithBoxed(value3, insn);
+        processOperationWithBoxedValue(value3, insn);
 
         return super.ternaryOperation(insn, value1, value2, value3);
     }
 
+    @Nullable
     @Override
-    protected boolean isAllowedUnaryOperationWithBoxed(int opcode) {
-        return opcode == Opcodes.CHECKCAST;
+    public BasicValue unaryOperation(
+            @NotNull AbstractInsnNode insn, @NotNull BasicValue value
+    ) throws AnalyzerException {
+
+        processOperationWithBoxedValue(value, insn);
+
+        return super.unaryOperation(insn, value);
     }
 
     @Override
     @NotNull
     public BasicValue copyOperation(@NotNull AbstractInsnNode insn, @NotNull BasicValue value) throws AnalyzerException {
-        // currently we don't allow any copy operations with boxed values
-        if (value instanceof BoxedBasicValue) {
-            markAsDirty((BoxedBasicValue) value);
-            return new BasicValue(value.getType());
+        if (value instanceof BoxedBasicValue && insn.getOpcode() == Opcodes.ASTORE) {
+            ((BoxedBasicValue) value).addVariableIndex(((VarInsnNode) insn).var);
         }
+
+        processOperationWithBoxedValue(value, insn);
 
         return super.copyOperation(insn, value);
     }
 
+
     @Override
-    protected void onNewBoxedValue(BoxedBasicValue value) {
+    protected void onNewBoxedValue(@NotNull BoxedBasicValue value) {
         candidatesBoxedValues.add(value);
     }
 
-    private void markAsDirty(BoxedBasicValue value) {
-        candidatesBoxedValues.remove(value);
+    @Override
+    protected void onUnboxing(
+            @NotNull BoxedBasicValue value, @NotNull AbstractInsnNode insn
+    ) {
+        addAssociatedInsn(value, insn);
     }
 
     @Override
-    protected void onMethodCallWithBoxedValue(BoxedBasicValue value) {
-        markAsDirty(value);
+    protected void onMethodCallWithBoxedValue(@NotNull BoxedBasicValue value) {
+        markValueAsDirty(value);
     }
 
     @Override
-    protected void onMergeFail(BoxedBasicValue v) {
-        markAsDirty(v);
+    protected void onMergeFail(@NotNull BoxedBasicValue v) {
+        markValueAsDirty(v);
     }
 
     @NotNull
-    public List<BoxedBasicValue> getCandidatesBoxedValues() {
-        List<BoxedBasicValue> result = new ArrayList<BoxedBasicValue>();
-
-        for (BoxedBasicValue value : candidatesBoxedValues) {
-            if (value.wasUnboxed()) {
-                result.add(value);
-            }
-        }
-
-        return result;
+    public Set<BoxedBasicValue> getCandidatesBoxedValues() {
+        return candidatesBoxedValues;
     }
 }
