@@ -35,6 +35,8 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Statu
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.psi.JetDeclaration
 
 trait Parameter {
     val argumentText: String
@@ -96,9 +98,13 @@ class FqNameReplacement(val fqName: FqName): Replacement {
 
 trait ControlFlow {
     val returnType: JetType
+    val declarationsToCopy: List<JetDeclaration>
 }
 
-class DefaultControlFlow(override val returnType: JetType = DEFAULT_RETURN_TYPE): ControlFlow
+class DefaultControlFlow(
+        override val returnType: JetType = DEFAULT_RETURN_TYPE,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow
 
 trait JumpBasedControlFlow : ControlFlow {
     val elementsToReplace: List<JetElement>
@@ -107,25 +113,42 @@ trait JumpBasedControlFlow : ControlFlow {
 
 class ConditionalJump(
         override val elementsToReplace: List<JetElement>,
-        override val elementToInsertAfterCall: JetElement
+        override val elementToInsertAfterCall: JetElement,
+        override val declarationsToCopy: List<JetDeclaration>
 ): JumpBasedControlFlow {
     override val returnType: JetType get() = KotlinBuiltIns.getInstance().getBooleanType()
 }
 
 class UnconditionalJump(
         override val elementsToReplace: List<JetElement>,
-        override val elementToInsertAfterCall: JetElement
+        override val elementToInsertAfterCall: JetElement,
+        override val declarationsToCopy: List<JetDeclaration>
 ): JumpBasedControlFlow {
     override val returnType: JetType get() = KotlinBuiltIns.getInstance().getUnitType()
 }
 
-class ExpressionEvaluation(override val returnType: JetType): ControlFlow
+class ExpressionEvaluation(
+        override val returnType: JetType,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow
 
-class ExpressionEvaluationWithCallSiteReturn(override val returnType: JetType): ControlFlow
+class ExpressionEvaluationWithCallSiteReturn(
+        override val returnType: JetType,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow
 
-class ParameterUpdate(val parameter: Parameter): ControlFlow {
+class ParameterUpdate(
+        val parameter: Parameter,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow {
     override val returnType: JetType get() = parameter.parameterType
 }
+
+class Initializer(
+        val initializedDeclaration: JetProperty,
+        override val returnType: JetType,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow
 
 data class ExtractionDescriptor(
         val extractionData: ExtractionData,
@@ -157,7 +180,7 @@ class AnalysisResult (
         MULTIPLE_OUTPUT
         OUTPUT_AND_EXIT_POINT
         MULTIPLE_EXIT_POINTS
-        VARIABLES_ARE_USED_OUTSIDE
+        DECLARATIONS_ARE_USED_OUTSIDE
         DECLARATIONS_OUT_OF_SCOPE
 
         var additionalInfo: List<String>? = null
@@ -176,7 +199,7 @@ class AnalysisResult (
                 MULTIPLE_OUTPUT -> "selected.code.fragment.has.multiple.output.values"
                 OUTPUT_AND_EXIT_POINT -> "selected.code.fragment.has.output.values.and.exit.points"
                 MULTIPLE_EXIT_POINTS -> "selected.code.fragment.has.multiple.exit.points"
-                VARIABLES_ARE_USED_OUTSIDE -> "variables.are.used.outside.of.selected.code.fragment"
+                DECLARATIONS_ARE_USED_OUTSIDE -> "declarations.are.used.outside.of.selected.code.fragment"
                 DECLARATIONS_OUT_OF_SCOPE -> "declarations.will.move.out.of.scope"
             })!!
             if (additionalInfo != null) {

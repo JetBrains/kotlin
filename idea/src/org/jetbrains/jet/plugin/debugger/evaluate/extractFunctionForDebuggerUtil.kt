@@ -58,7 +58,7 @@ fun getFunctionForExtractedFragment(
                 ErrorMessage.DECLARATIONS_OUT_OF_SCOPE,
                 ErrorMessage.OUTPUT_AND_EXIT_POINT,
                 ErrorMessage.MULTIPLE_EXIT_POINTS,
-                ErrorMessage.VARIABLES_ARE_USED_OUTSIDE -> "Cannot perform an action for this expression"
+                ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE -> "Cannot perform an action for this expression"
             }
             if (errorMessage.additionalInfo == null) message else "$message: ${errorMessage.additionalInfo?.makeString(", ")}"
         }.makeString(", ")

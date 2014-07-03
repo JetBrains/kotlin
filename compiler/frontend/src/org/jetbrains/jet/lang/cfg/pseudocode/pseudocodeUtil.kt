@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 
 fun JetExpression.isStatement(pseudocode: Pseudocode): Boolean =
         pseudocode.getUsages(pseudocode.getElementValue(this)).isEmpty()
@@ -127,6 +128,13 @@ fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext)
 
     addTypePredicates(value)
     return and(typePredicates.filterNotNull())
+}
+
+public fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: BindingContext): DeclarationDescriptor? {
+    return when (this) {
+        is CallInstruction -> return resolvedCall.getResultingDescriptor()
+        else -> PseudocodeUtil.extractVariableDescriptorIfAny(this, false, bindingContext)
+    }
 }
 
 private fun Pseudocode.collectValueUsages(): Map<PseudoValue, List<Instruction>> {

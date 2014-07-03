@@ -195,7 +195,11 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         ControlFlow controlFlow = descriptor.getControlFlow();
         if (controlFlow instanceof ParameterUpdate) {
-            controlFlow = new ParameterUpdate(oldToNewParameters.get(((ParameterUpdate) controlFlow).getParameter()));
+            ParameterUpdate parameterUpdate = (ParameterUpdate) controlFlow;
+            controlFlow = new ParameterUpdate(
+                    oldToNewParameters.get(parameterUpdate.getParameter()),
+                    parameterUpdate.getDeclarationsToCopy()
+            );
         }
 
         Map<Integer, Replacement> replacementMap = ContainerUtil.newHashMap();

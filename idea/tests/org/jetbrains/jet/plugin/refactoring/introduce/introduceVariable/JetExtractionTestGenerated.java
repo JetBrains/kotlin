@@ -230,6 +230,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/fragmentWithMultilineComment.kt");
             }
             
+            @TestMetadata("localClassExtraction.kt")
+            public void testLocalClassExtraction() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassExtraction.kt");
+            }
+            
             @TestMetadata("localClassFunctionRef.kt")
             public void testLocalClassFunctionRef() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassFunctionRef.kt");
@@ -243,6 +248,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("localExtraction.kt")
             public void testLocalExtraction() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localExtraction.kt");
+            }
+            
+            @TestMetadata("localFunExtraction.kt")
+            public void testLocalFunExtraction() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localFunExtraction.kt");
             }
             
             @TestMetadata("localFunctionRef.kt")
@@ -288,7 +298,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow")
-        @InnerTestClasses({ControlFlow.ConditionalJumps.class, ControlFlow.Default.class, ControlFlow.DefiniteReturns.class, ControlFlow.EvaluateExpression.class, ControlFlow.OutputValues.class, ControlFlow.Throws.class, ControlFlow.Unextractable.class})
+        @InnerTestClasses({ControlFlow.ConditionalJumps.class, ControlFlow.Default.class, ControlFlow.DefiniteReturns.class, ControlFlow.EvaluateExpression.class, ControlFlow.Initializer.class, ControlFlow.OutputValues.class, ControlFlow.Throws.class, ControlFlow.Unextractable.class})
         public static class ControlFlow extends AbstractJetExtractionTest {
             public void testAllFilesPresentInControlFlow() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/controlFlow"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -303,6 +313,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("conditionalBreakWithIf.kt")
                 public void testConditionalBreakWithIf() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIf.kt");
+                }
+                
+                @TestMetadata("conditionalBreakWithIfAndExtraVars.kt")
+                public void testConditionalBreakWithIfAndExtraVars() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIfAndExtraVars.kt");
                 }
                 
                 @TestMetadata("conditionalBreakWithIfElse.kt")
@@ -356,6 +371,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("defaultCF.kt")
                 public void testDefaultCF() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCF.kt");
+                }
+                
+                @TestMetadata("defaultCFWithExtraVars.kt")
+                public void testDefaultCFWithExtraVars() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCFWithExtraVars.kt");
                 }
                 
                 @TestMetadata("defaultCFWithJumps.kt")
@@ -481,6 +501,49 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
             }
             
+            @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer")
+            public static class Initializer extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInInitializer() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/controlFlow/initializer"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("propertyWithInitializer.kt")
+                public void testPropertyWithInitializer() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializer.kt");
+                }
+                
+                @TestMetadata("propertyWithInitializerAndExtraVars.kt")
+                public void testPropertyWithInitializerAndExtraVars() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializerAndExtraVars.kt");
+                }
+                
+                @TestMetadata("propertyWithInitializerAndUnusedVars.kt")
+                public void testPropertyWithInitializerAndUnusedVars() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializerAndUnusedVars.kt");
+                }
+                
+                @TestMetadata("propertyWithSeparateInitializer.kt")
+                public void testPropertyWithSeparateInitializer() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithSeparateInitializer.kt");
+                }
+                
+                @TestMetadata("valueUsedInAnonymousObject.kt")
+                public void testValueUsedInAnonymousObject() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInAnonymousObject.kt");
+                }
+                
+                @TestMetadata("valueUsedInLambda.kt")
+                public void testValueUsedInLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInLambda.kt");
+                }
+                
+                @TestMetadata("valueUsedInLocalFunction.kt")
+                public void testValueUsedInLocalFunction() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInLocalFunction.kt");
+                }
+                
+            }
+            
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues")
             public static class OutputValues extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInOutputValues() throws Exception {
@@ -588,6 +651,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/jumpsAndReturns.kt");
                 }
                 
+                @TestMetadata("multipleInitalizersWithNonLocalUsages.kt")
+                public void testMultipleInitalizersWithNonLocalUsages() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleInitalizersWithNonLocalUsages.kt");
+                }
+                
                 @TestMetadata("multipleJumps.kt")
                 public void testMultipleJumps() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleJumps.kt");
@@ -608,21 +676,6 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithReturn.kt");
                 }
                 
-                @TestMetadata("valueUsedInAnonymousObject.kt")
-                public void testValueUsedInAnonymousObject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInAnonymousObject.kt");
-                }
-                
-                @TestMetadata("valueUsedInLambda.kt")
-                public void testValueUsedInLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInLambda.kt");
-                }
-                
-                @TestMetadata("valueUsedInLocalFunction.kt")
-                public void testValueUsedInLocalFunction() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInLocalFunction.kt");
-                }
-                
                 @TestMetadata("variablesOutOfScope.kt")
                 public void testVariablesOutOfScope() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/variablesOutOfScope.kt");
@@ -637,6 +690,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 suite.addTestSuite(Default.class);
                 suite.addTestSuite(DefiniteReturns.class);
                 suite.addTestSuite(EvaluateExpression.class);
+                suite.addTestSuite(Initializer.class);
                 suite.addTestSuite(OutputValues.class);
                 suite.addTestSuite(Throws.class);
                 suite.addTestSuite(Unextractable.class);

@@ -130,6 +130,18 @@ public class DeclarationUtils {
         return newInitializer;
     }
 
+    @NotNull
+    public static JetProperty changePropertyInitializer(@NotNull JetProperty property, @Nullable JetExpression initializer) {
+        //noinspection ConstantConditions
+        return JetPsiFactory.createProperty(
+                property.getProject(),
+                property.getNameIdentifier().getText(),
+                JetPsiUtil.getNullableText(property.getTypeRef()),
+                property.isVar(),
+                JetPsiUtil.getNullableText(initializer)
+        );
+    }
+
     // Returns joined property
     @NotNull
     public static JetProperty joinPropertyDeclarationWithInitializer(
@@ -141,14 +153,7 @@ public class DeclarationUtils {
         JetBinaryExpression assignment = propertyAndInitializer.second;
         assertNotNull(assignment);
 
-        //noinspection ConstantConditions
-        JetProperty newProperty = JetPsiFactory.createProperty(
-                property.getProject(),
-                property.getNameIdentifier().getText(),
-                JetPsiUtil.getNullableText(property.getTypeRef()),
-                property.isVar(),
-                JetPsiUtil.getNullableText(assignment.getRight())
-        );
+        JetProperty newProperty = changePropertyInitializer(property, assignment.getRight());
 
         property.getParent().deleteChildRange(property.getNextSibling(), assignment);
         return (JetProperty) property.replace(newProperty);
