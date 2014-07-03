@@ -46,6 +46,7 @@ import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.util.containers.MultiMap
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
+import com.intellij.openapi.ui.DialogWrapper
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -147,14 +148,16 @@ public fun PsiElement.getAllExtractionContainers(strict: Boolean): List<JetEleme
     return containers
 }
 
-public fun Project.checkConflictsInteractively(conflicts: MultiMap<PsiElement, String>): Boolean {
-    if (conflicts.isEmpty()) return true
+public fun Project.checkConflictsInteractively(conflicts: MultiMap<PsiElement, String>, onAccept: () -> Unit) {
+    if (!conflicts.isEmpty()) {
+        if (ApplicationManager.getApplication()!!.isUnitTestMode()) throw ConflictsInTestsException(conflicts.values())
 
-    if (ApplicationManager.getApplication()!!.isUnitTestMode()) throw ConflictsInTestsException(conflicts.values())
+        val dialog = ConflictsDialog(this, conflicts, onAccept)
+        dialog.show()
+        if (!dialog.isOK()) return
+    }
 
-    val dialog = ConflictsDialog(this, conflicts)
-    dialog.show()
-    return dialog.isOK()
+    onAccept()
 }
 
 public fun Project.executeWriteCommand(name: String, command: () -> Unit) {

@@ -74,22 +74,21 @@ public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boole
             throw ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
         }
 
-        fun proceedWithExtraction() {
-            val validationResult = analysisResult.descriptor!!.validate()
-            if (!project.checkConflictsInteractively(validationResult.conflicts)) return
-
-            val descriptor =
-                    if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
-                        validationResult.descriptor
-                    }
-                    else {
-                        val dialog = KotlinExtractFunctionDialog(project, validationResult)
-                        if (!dialog.showAndGet()) return
-
-                        dialog.getCurrentDescriptor()
-                    }
+        fun doRefactor(descriptor: ExtractionDescriptor) {
             preprocessor?.invoke(descriptor)
             project.executeWriteCommand(EXTRACT_FUNCTION) { descriptor.generateFunction() }
+        }
+
+        fun validateAndRefactor() {
+            val validationResult = analysisResult.descriptor!!.validate()
+            project.checkConflictsInteractively(validationResult.conflicts) {
+                if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
+                    doRefactor(validationResult.descriptor)
+                }
+                else {
+                    KotlinExtractFunctionDialog(project, validationResult) { doRefactor(it.getCurrentDescriptor()) }.show()
+                }
+            }
         }
 
         val message = analysisResult.messages.map { it.renderMessage() }.makeString("\n")
@@ -109,7 +108,7 @@ public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boole
                                 MessageType.WARNING,
                                 { event ->
                                     if (event?.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                                        proceedWithExtraction()
+                                        validateAndRefactor()
                                     }
                                 }
                         )
@@ -120,7 +119,7 @@ public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boole
                         .show(anchorPoint, Position.below)
             }
 
-            Status.SUCCESS -> proceedWithExtraction()
+            Status.SUCCESS -> validateAndRefactor()
         }
     }
 

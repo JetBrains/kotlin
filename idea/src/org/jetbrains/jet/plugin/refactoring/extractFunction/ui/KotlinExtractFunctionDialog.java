@@ -25,6 +25,9 @@ import com.intellij.ui.EditorTextField;
 import com.intellij.ui.TitledSeparator;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import kotlin.Function0;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -54,12 +57,18 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     private final ExtractionDescriptorWithConflicts originalDescriptor;
     private ExtractionDescriptor currentDescriptor;
 
-    public KotlinExtractFunctionDialog(Project project, ExtractionDescriptorWithConflicts originalDescriptor) {
+    private final Function1<KotlinExtractFunctionDialog, Unit> onAccept;
+
+    public KotlinExtractFunctionDialog(
+            @NotNull Project project,
+            @NotNull ExtractionDescriptorWithConflicts originalDescriptor,
+            @NotNull Function1<KotlinExtractFunctionDialog, Unit> onAccept) {
         super(project, true);
 
         this.project = project;
         this.originalDescriptor = originalDescriptor;
         this.currentDescriptor = originalDescriptor.getDescriptor();
+        this.onAccept = onAccept;
 
         setModal(true);
         setTitle(JetRefactoringBundle.message("extract.function"));
@@ -162,9 +171,17 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         MultiMap<PsiElement, String> conflicts = ExtractFunctionPackage.validate(currentDescriptor).getConflicts();
         conflicts.values().removeAll(originalDescriptor.getConflicts().values());
 
-        if (RefactoringPackage.checkConflictsInteractively(project, conflicts)) {
-            super.doOKAction();
-        }
+        RefactoringPackage.checkConflictsInteractively(
+                project,
+                conflicts,
+                new Function0<Unit>() {
+                    @Override
+                    public Unit invoke() {
+                        KotlinExtractFunctionDialog.super.doOKAction();
+                        return onAccept.invoke(KotlinExtractFunctionDialog.this);
+                    }
+                }
+        );
     }
 
     @Override
