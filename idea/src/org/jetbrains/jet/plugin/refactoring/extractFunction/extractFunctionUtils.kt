@@ -672,7 +672,7 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
                     JetRefactoringBundle.message(
                             "0.will.no.longer.be.accessible.after.extraction",
                             RefactoringUIUtil.getDescription(resolveResult.declaration, true)
-                    )
+                    ).capitalize()
             )
             continue
         }
@@ -682,7 +682,7 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
                     resolveResult.originalRefExpr,
                     JetRefactoringBundle.message(
                             "0.will.become.invisible.after.extraction",
-                            RefactoringUIUtil.getDescription(resolveResult.declaration, true)
+                            RefactoringUIUtil.getDescription(resolveResult.declaration, true).capitalize()
                     )
             )
         }
