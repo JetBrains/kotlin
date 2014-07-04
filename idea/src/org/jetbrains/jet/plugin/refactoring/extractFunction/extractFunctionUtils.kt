@@ -365,6 +365,8 @@ private class MutableParameter(
     private val defaultTypes = HashSet<JetType>()
     private val typePredicates = HashSet<TypePredicate>()
 
+    var refCount: Int = 0
+
     fun addDefaultType(jetType: JetType) {
         assert(writable, "Can't add type to non-writable parameter $name")
         defaultTypes.add(jetType)
@@ -402,7 +404,8 @@ private fun ExtractionData.inferParametersInfo(
         bindingContext: BindingContext,
         modifiedVarDescriptors: Set<VariableDescriptor>,
         replacementMap: MutableMap<Int, Replacement>,
-        parameters: MutableSet<Parameter>,
+        originalRefToParameter: MutableMap<JetSimpleNameExpression, MutableParameter>,
+        parameters: MutableSet<MutableParameter>,
         typeParameters: MutableSet<TypeParameter>,
         nonDenotableTypes: MutableSet<JetType>
 ): ErrorMessage? {
@@ -497,6 +500,9 @@ private fun ExtractionData.inferParametersInfo(
                     MutableParameter(argumentText, descriptorToExtract, parameterName, mirrorVarName, extractThis)
                 }
 
+                parameter.refCount++
+                originalRefToParameter[originalRef] = parameter
+
                 parameter.addDefaultType(parameterType)
                 parameter.addTypePredicate(parameterTypePredicate)
 
@@ -586,11 +592,12 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val modifiedVarDescriptors = localInstructions.getModifiedVarDescriptors(bindingContext)
 
     val replacementMap = HashMap<Int, Replacement>()
-    val parameters = HashSet<Parameter>()
+    val originalRefToParameter = HashMap<JetSimpleNameExpression, MutableParameter>()
+    val parameters = HashSet<MutableParameter>()
     val typeParameters = HashSet<TypeParameter>()
     val nonDenotableTypes = HashSet<JetType>()
     val parameterError = inferParametersInfo(
-            commonParent, pseudocode, bindingContext, modifiedVarDescriptors, replacementMap, parameters, typeParameters, nonDenotableTypes
+            commonParent, pseudocode, bindingContext, modifiedVarDescriptors, replacementMap, originalRefToParameter, parameters, typeParameters, nonDenotableTypes
     )
     if (parameterError != null) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(parameterError))
@@ -623,16 +630,27 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             )
     val functionName = JetNameSuggester.suggestNames(controlFlow.returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()
 
-    val receiverCandidates = parameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }
+    if (controlFlow is JumpBasedControlFlow) {
+        controlFlow.elementToInsertAfterCall.accept(
+                object: JetTreeVisitorVoid() {
+                    override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                        originalRefToParameter[expression]?.let { it.refCount-- }
+                    }
+                }
+        )
+    }
+    val adjustedParameters = parameters.filterTo(HashSet<Parameter>()) { it.refCount > 0 }
+
+    val receiverCandidates = adjustedParameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }
     val receiverParameter = if (receiverCandidates.size == 1) receiverCandidates.first() else null
-    receiverParameter?.let { parameters.remove(it) }
+    receiverParameter?.let { adjustedParameters.remove(it) }
 
     return AnalysisResult(
             ExtractionDescriptor(
                     this,
                     functionName,
                     "",
-                    parameters.sortBy { it.name },
+                    adjustedParameters.sortBy { it.name },
                     receiverParameter,
                     typeParameters.sortBy { it.originalDeclaration.getName()!! },
                     replacementMap,
