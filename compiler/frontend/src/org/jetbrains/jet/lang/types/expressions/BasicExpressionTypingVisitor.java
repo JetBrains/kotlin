@@ -425,7 +425,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                         new DataFlowInfoForArgumentsImpl(call));
         resolvedCall.markCallAsCompleted();
 
-        trace.record(RESOLVED_CALL, expression, resolvedCall);
+        trace.record(RESOLVED_CALL, call, resolvedCall);
         trace.record(CALL, expression, call);
 
         context.callResolverExtension.run(resolvedCall,

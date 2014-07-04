@@ -80,13 +80,7 @@ public fun JetExpression.getParentCall(context: BindingContext): Call? {
 }
 
 public fun Call?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? {
-    if (this == null) return null
-    if (this is CallForImplicitInvoke) {
-        // callee for invoke is implicit (doesn't exist), so the key is callee of outer call (which is 'this object' for 'invoke' call)
-        return context[RESOLVED_CALL, this.getThisObject().getExpression()]
-    }
-
-    return context[RESOLVED_CALL, this.getCalleeExpression()]
+    return context[RESOLVED_CALL, this]
 }
 
 public fun JetElement?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? {

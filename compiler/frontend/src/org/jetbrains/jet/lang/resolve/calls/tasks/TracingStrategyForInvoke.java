@@ -69,7 +69,7 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
             @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
     ) {
         if (reference instanceof JetSimpleNameExpression) return;
-        trace.record(RESOLVED_CALL, reference, resolvedCall);
+        trace.record(RESOLVED_CALL, call, resolvedCall);
     }
 
     @Override
