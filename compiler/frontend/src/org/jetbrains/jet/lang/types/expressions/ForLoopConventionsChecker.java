@@ -93,7 +93,6 @@ public class ForLoopConventionsChecker {
         if (iteratorResolutionResults.isSuccess()) {
             ResolvedCall<FunctionDescriptor> iteratorResolvedCall = iteratorResolutionResults.getResultingCall();
             context.trace.record(LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRangeExpression, iteratorResolvedCall);
-            context.trace.record(LOOP_RANGE_ITERATOR_CALL, loopRangeExpression, iteratorCall);
 
             FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
             JetType iteratorType = iteratorFunction.getReturnType();

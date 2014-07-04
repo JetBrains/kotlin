@@ -384,9 +384,7 @@ public class PropertyCodegen {
             BindingContext bindingContext = state.getBindingContext();
             ResolvedCall<FunctionDescriptor> resolvedCall =
                     bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, callableDescriptor);
-
-            Call call = bindingContext.get(BindingContext.DELEGATED_PROPERTY_CALL, callableDescriptor);
-            assert call != null : "Call should be recorded for delegate call " + signature.toString();
+            assert resolvedCall != null : "Resolve call should be recorded for delegate call " + signature.toString();
 
             if (codegen.getContext().getContextKind() != OwnerKind.PACKAGE) {
                 v.load(0, OBJECT_TYPE);
@@ -405,7 +403,7 @@ public class PropertyCodegen {
             }
 
             codegen.tempVariables.put(
-                    call.getValueArguments().get(1).asElement(),
+                    resolvedCall.getCall().getValueArguments().get(1).asElement(),
                     new StackValue(PROPERTY_METADATA_TYPE) {
                         @Override
                         public void put(Type type, InstructionAdapter v) {
@@ -417,7 +415,7 @@ public class PropertyCodegen {
             );
 
             StackValue delegatedProperty = codegen.intermediateValueForProperty(callableDescriptor.getCorrespondingProperty(), true, null);
-            StackValue lastValue = codegen.invokeFunction(call, delegatedProperty, resolvedCall);
+            StackValue lastValue = codegen.invokeFunction(resolvedCall, delegatedProperty);
 
             Type asmType = signature.getReturnType();
             lastValue.put(asmType, v);
