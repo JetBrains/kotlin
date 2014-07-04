@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen.optimization.boxing;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
@@ -28,15 +30,18 @@ import java.util.Set;
 
 public class BoxedBasicValue extends BasicValue {
     private final Set<AbstractInsnNode> associatedInsns = new HashSet<AbstractInsnNode>();
+    private final AbstractInsnNode boxingInsn;
     private final Set<Integer> associatedVariables = new HashSet<Integer>();
     private final Set<BoxedBasicValue> mergedWith = new HashSet<BoxedBasicValue>();
     private final Type primitiveType;
+    private final RangeIteratorBasicValue numberIterator;
     private boolean isSafeToRemove = true;
 
-    public BoxedBasicValue(Type boxedType, AbstractInsnNode insnNode) {
+    public BoxedBasicValue(Type boxedType, AbstractInsnNode boxingInsn, @Nullable RangeIteratorBasicValue numberIterator) {
         super(boxedType);
         this.primitiveType = AsmUtil.unboxType(boxedType);
-        associatedInsns.add(insnNode);
+        this.boxingInsn = boxingInsn;
+        this.numberIterator = numberIterator;
     }
 
     @Override
@@ -110,5 +115,19 @@ public class BoxedBasicValue extends BasicValue {
 
     public boolean isDoubleSize() {
         return getPrimitiveType().getSize() == 2;
+    }
+
+    @NotNull
+    public AbstractInsnNode getBoxingInsn() {
+        return boxingInsn;
+    }
+
+    public boolean isFromNumberIterator() {
+        return numberIterator != null;
+    }
+
+    @Nullable
+    public RangeIteratorBasicValue getNumberIterator() {
+        return numberIterator;
     }
 }

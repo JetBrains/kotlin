@@ -138,6 +138,13 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
         markValueAsDirty(v);
     }
 
+    @Override
+    protected void onMergeSuccess(
+            @NotNull BoxedBasicValue v, @NotNull BoxedBasicValue w
+    ) {
+        v.mergeWith(w);
+    }
+
     @NotNull
     public Set<BoxedBasicValue> getCandidatesBoxedValues() {
         return candidatesBoxedValues;
