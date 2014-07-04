@@ -1342,8 +1342,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert valueArguments != null : "Failed to arrange value arguments by index: " + superConstructor;
             ArgumentGenerator argumentGenerator =
                     new CallBasedArgumentGenerator(this, defaultCallGenerator, superConstructor.getValueParameters(),
-                                                   typeMapper.mapToCallableMethod(superConstructor).getValueParameterTypes(),
-                                                   /* skipLast = */ false);
+                                                   typeMapper.mapToCallableMethod(superConstructor).getValueParameterTypes());
             argumentGenerator.generate(valueArguments);
         }
 
@@ -2131,9 +2130,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 "Tail recursive method couldn't be inlined " + descriptor;
 
         ArgumentGenerator argumentGenerator = new CallBasedArgumentGenerator(this, callGenerator, descriptor.getValueParameters(),
-                                                                             callableMethod.getValueParameterTypes(),
-                                                                             /* skipLast = */ false);
-        int mask = pushMethodArguments(receiver, resolvedCall, callableMethod, callGenerator, argumentGenerator);
+                                                                             callableMethod.getValueParameterTypes());
+
+        if (!(descriptor instanceof ConstructorDescriptor)) { // otherwise already
+            receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
+            receiver.put(receiver.type, v);
+        }
+
+        callGenerator.putHiddenParams();
+
+        List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
+        assert valueArguments != null : "Failed to arrange value arguments by index: " + descriptor;
+
+        int mask = argumentGenerator.generate(valueArguments);
 
         if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {
             tailRecursionCodegen.generateTailRecursion(resolvedCall);
@@ -2314,28 +2323,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return expression == receiverExpression;
         }
         return false;
-    }
-
-    private int pushMethodArguments(
-            @Nullable StackValue receiver,
-            @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull CallableMethod callableMethod,
-            @NotNull CallGenerator callGenerator,
-            @NotNull ArgumentGenerator argumentGenerator
-    ) {
-        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-
-        if (!(descriptor instanceof ConstructorDescriptor)) { // otherwise already
-            receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
-            receiver.put(receiver.type, v);
-        }
-
-        callGenerator.putHiddenParams();
-
-        List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
-        assert valueArguments != null : "Failed to arrange value arguments by index: " + descriptor;
-
-        return argumentGenerator.generate(valueArguments);
     }
 
     public void genVarargs(@NotNull VarargValueArgument valueArgument, @NotNull JetType outType) {
@@ -3371,9 +3358,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 ArgumentGenerator argumentGenerator =
                         new CallBasedArgumentGenerator(this, defaultCallGenerator,
                                                        resolvedCall.getResultingDescriptor().getValueParameters(),
-                                                       callableMethod.getValueParameterTypes(),
-                                                       /* skipLast = */ !isGetter);
-                pushMethodArguments(receiver, resolvedCall, callableMethod, defaultCallGenerator, argumentGenerator);
+                                                       callableMethod.getValueParameterTypes());
+
+                receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
+                receiver.put(receiver.type, v);
+
+                List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
+                assert valueArguments != null : "Failed to arrange value arguments by index: " + operationDescriptor;
+
+                if (!isGetter) {
+                    assert valueArguments.size() >= 2 : "Setter call should have at least 2 arguments: " + operationDescriptor;
+
+                    // Skip generation of the right hand side of an indexed assignment, which is the last value argument
+                    valueArguments.remove(valueArguments.size() - 1);
+                }
+
+                argumentGenerator.generate(valueArguments);
             }
             else {
                 gen(array, arrayType); // intrinsic method

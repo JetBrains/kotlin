@@ -34,25 +34,24 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
     private final CallGenerator callGenerator;
     private final List<ValueParameterDescriptor> valueParameters;
     private final List<Type> valueParameterTypes;
-    private final boolean skipLast;
 
     public CallBasedArgumentGenerator(
             @NotNull ExpressionCodegen codegen,
             @NotNull CallGenerator callGenerator,
             @NotNull List<ValueParameterDescriptor> valueParameters,
-            @NotNull List<Type> valueParameterTypes,
-            boolean skipLast
+            @NotNull List<Type> valueParameterTypes
     ) {
         this.codegen = codegen;
         this.callGenerator = callGenerator;
         this.valueParameters = valueParameters;
         this.valueParameterTypes = valueParameterTypes;
-        this.skipLast = skipLast;
+
+        assert valueParameters.size() == valueParameterTypes.size() :
+                "Value parameters and their types mismatch in sizes: " + valueParameters.size() + " != " + valueParameterTypes.size();
     }
 
     @Override
     protected void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
-        if (shouldSkip(i)) return;
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         ValueArgument valueArgument = argument.getValueArgument();
@@ -64,7 +63,6 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @Override
     protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        if (shouldSkip(i)) return;
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         pushDefaultValueOnStack(type, codegen.v);
@@ -73,14 +71,9 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @Override
     protected void generateVararg(int i, @NotNull VarargValueArgument argument) {
-        if (shouldSkip(i)) return;
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         codegen.genVarargs(argument, parameter.getType());
         callGenerator.afterParameterPut(type, null, parameter);
-    }
-
-    private boolean shouldSkip(int i) {
-        return skipLast && i == valueParameters.size() - 1;
     }
 }
