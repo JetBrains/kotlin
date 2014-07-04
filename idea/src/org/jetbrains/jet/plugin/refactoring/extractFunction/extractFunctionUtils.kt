@@ -398,17 +398,23 @@ private class DelegatingParameter(
     override fun copy(name: String, parameterType: JetType): Parameter = DelegatingParameter(original, name, parameterType)
 }
 
+private class ParametersInfo {
+    var errorMessage: ErrorMessage? = null
+    val replacementMap: MutableMap<Int, Replacement> = HashMap()
+    val originalRefToParameter: MutableMap<JetSimpleNameExpression, MutableParameter> = HashMap()
+    val parameters: MutableSet<MutableParameter> = HashSet()
+    val typeParameters: MutableSet<TypeParameter> = HashSet()
+    val nonDenotableTypes: MutableSet<JetType> = HashSet()
+}
+
 private fun ExtractionData.inferParametersInfo(
         commonParent: PsiElement,
         pseudocode: Pseudocode,
         bindingContext: BindingContext,
-        modifiedVarDescriptors: Set<VariableDescriptor>,
-        replacementMap: MutableMap<Int, Replacement>,
-        originalRefToParameter: MutableMap<JetSimpleNameExpression, MutableParameter>,
-        parameters: MutableSet<MutableParameter>,
-        typeParameters: MutableSet<TypeParameter>,
-        nonDenotableTypes: MutableSet<JetType>
-): ErrorMessage? {
+        modifiedVarDescriptors: Set<VariableDescriptor>
+): ParametersInfo {
+    val info = ParametersInfo()
+
     val varNameValidator = JetNameValidatorImpl(
             commonParent.getParentByType(javaClass<JetExpression>()),
             originalElements.first,
@@ -424,7 +430,8 @@ private fun ExtractionData.inferParametersInfo(
         val selector = (ref.getParent() as? JetCallExpression) ?: ref
         val superExpr = (selector.getParent() as? JetQualifiedExpression)?.getReceiverExpression() as? JetSuperExpression
         if (superExpr != null) {
-            return ErrorMessage.SUPER_CALL
+            info.errorMessage = ErrorMessage.SUPER_CALL
+            return info
         }
 
         val receiverArgument = resolvedCall?.getReceiverArgument()
@@ -453,10 +460,12 @@ private fun ExtractionData.inferParametersInfo(
         }
 
         if (referencedClassDescriptor != null) {
-            if (!referencedClassDescriptor.getDefaultType().processTypeIfExtractable(typeParameters, nonDenotableTypes, false)) continue
+            if (!referencedClassDescriptor.getDefaultType().processTypeIfExtractable(
+                    info.typeParameters, info.nonDenotableTypes, false
+            )) continue
 
             val replacingDescriptor = (originalDescriptor as? ConstructorDescriptor)?.getContainingDeclaration() ?: originalDescriptor
-            replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(replacingDescriptor))
+            info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(replacingDescriptor))
         }
         else {
             val extractThis = hasThisReceiver || thisExpr != null
@@ -476,7 +485,7 @@ private fun ExtractionData.inferParametersInfo(
                             ?: DEFAULT_PARAMETER_TYPE
                 }
 
-                if (!parameterType.processTypeIfExtractable(typeParameters, nonDenotableTypes)) continue
+                if (!parameterType.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes)) continue
 
                 val parameterTypePredicate =
                         pseudocode.getElementValue(originalRef)?.let { getExpectedTypePredicate(it, bindingContext) } ?: AllTypes
@@ -501,24 +510,24 @@ private fun ExtractionData.inferParametersInfo(
                 }
 
                 parameter.refCount++
-                originalRefToParameter[originalRef] = parameter
+                info.originalRefToParameter[originalRef] = parameter
 
                 parameter.addDefaultType(parameterType)
                 parameter.addTypePredicate(parameterTypePredicate)
 
-                replacementMap[refInfo.offsetInBody] =
+                info.replacementMap[refInfo.offsetInBody] =
                         if (hasThisReceiver && extractThis) AddPrefixReplacement(parameter) else RenameReplacement(parameter)
             }
         }
     }
 
-    for (typeToCheck in typeParameters.flatMapTo(HashSet<JetType>()) { it.collectReferencedTypes(bindingContext) }) {
-        typeToCheck.processTypeIfExtractable(typeParameters, nonDenotableTypes)
+    for (typeToCheck in info.typeParameters.flatMapTo(HashSet<JetType>()) { it.collectReferencedTypes(bindingContext) }) {
+        typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes)
     }
 
-    parameters.addAll(extractedDescriptorToParameter.values())
+    info.parameters.addAll(extractedDescriptorToParameter.values())
 
-    return null
+    return info
 }
 
 private fun ExtractionData.checkDeclarationsMovingOutOfScope(
@@ -591,28 +600,21 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val modifiedVarDescriptors = localInstructions.getModifiedVarDescriptors(bindingContext)
 
-    val replacementMap = HashMap<Int, Replacement>()
-    val originalRefToParameter = HashMap<JetSimpleNameExpression, MutableParameter>()
-    val parameters = HashSet<MutableParameter>()
-    val typeParameters = HashSet<TypeParameter>()
-    val nonDenotableTypes = HashSet<JetType>()
-    val parameterError = inferParametersInfo(
-            commonParent, pseudocode, bindingContext, modifiedVarDescriptors, replacementMap, originalRefToParameter, parameters, typeParameters, nonDenotableTypes
-    )
-    if (parameterError != null) {
-        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(parameterError))
+    val paramsInfo = inferParametersInfo(commonParent, pseudocode, bindingContext, modifiedVarDescriptors)
+    if (paramsInfo.errorMessage != null) {
+        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(paramsInfo.errorMessage!!))
     }
 
     val messages = ArrayList<ErrorMessage>()
 
     val (controlFlow, controlFlowMessage) =
-            analyzeControlFlow(localInstructions, pseudocode, bindingContext, modifiedVarDescriptors, options, parameters)
+            analyzeControlFlow(localInstructions, pseudocode, bindingContext, modifiedVarDescriptors, options, paramsInfo.parameters)
     controlFlowMessage?.let { messages.add(it) }
 
-    controlFlow.returnType.processTypeIfExtractable(typeParameters, nonDenotableTypes)
+    controlFlow.returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes)
 
-    if (nonDenotableTypes.isNotEmpty()) {
-        val typeStr = nonDenotableTypes.map {DescriptorRenderer.HTML.renderType(it)}.sort()
+    if (paramsInfo.nonDenotableTypes.isNotEmpty()) {
+        val typeStr = paramsInfo.nonDenotableTypes.map {DescriptorRenderer.HTML.renderType(it)}.sort()
         return AnalysisResult(
                 null,
                 Status.CRITICAL_ERROR,
@@ -634,12 +636,12 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         controlFlow.elementToInsertAfterCall.accept(
                 object: JetTreeVisitorVoid() {
                     override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                        originalRefToParameter[expression]?.let { it.refCount-- }
+                        paramsInfo.originalRefToParameter[expression]?.let { it.refCount-- }
                     }
                 }
         )
     }
-    val adjustedParameters = parameters.filterTo(HashSet<Parameter>()) { it.refCount > 0 }
+    val adjustedParameters = paramsInfo.parameters.filterTo(HashSet<Parameter>()) { it.refCount > 0 }
 
     val receiverCandidates = adjustedParameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }
     val receiverParameter = if (receiverCandidates.size == 1) receiverCandidates.first() else null
@@ -652,8 +654,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     "",
                     adjustedParameters.sortBy { it.name },
                     receiverParameter,
-                    typeParameters.sortBy { it.originalDeclaration.getName()!! },
-                    replacementMap,
+                    paramsInfo.typeParameters.sortBy { it.originalDeclaration.getName()!! },
+                    paramsInfo.replacementMap,
                     if (messages.empty) controlFlow else controlFlow.toDefault()
             ),
             if (messages.empty) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
