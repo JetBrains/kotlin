@@ -65,7 +65,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     ) {
         super.initialize(receiverParameterType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType,
                          modality, visibility);
-        this.inlineStrategy = InlineUtil.getInlineType(getAnnotations());
+        this.inlineStrategy = InlineUtil.getInlineType(this);
         return this;
     }
 

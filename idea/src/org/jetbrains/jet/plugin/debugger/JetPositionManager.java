@@ -293,7 +293,7 @@ public class JetPositionManager implements PositionManager {
 
         if (call == null) return false;
 
-        InlineStrategy inlineType = InlineUtil.getInlineType(call.getResultingDescriptor().getAnnotations());
+        InlineStrategy inlineType = InlineUtil.getInlineType(call.getResultingDescriptor());
         if (!inlineType.isInline()) return false;
 
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
