@@ -307,7 +307,26 @@ public class MethodInliner {
     protected MethodNode markPlacesForInlineAndRemoveInlinable(@NotNull MethodNode node) {
         node = prepareNode(node);
 
-        Analyzer<SourceValue> analyzer = new Analyzer<SourceValue>(new SourceInterpreter());
+        Analyzer<SourceValue> analyzer = new Analyzer<SourceValue>(new SourceInterpreter()) {
+            @NotNull
+            @Override
+            protected Frame<SourceValue> newFrame(
+                    int nLocals, int nStack
+            ) {
+                return new Frame<SourceValue>(nLocals, nStack) {
+                    @Override
+                    public void execute(
+                            @NotNull AbstractInsnNode insn, Interpreter<SourceValue> interpreter
+                    ) throws AnalyzerException {
+                        if (insn.getOpcode() == Opcodes.RETURN) {
+                            //there is exception on void non local return in frame
+                            return;
+                        }
+                        super.execute(insn, interpreter);
+                    }
+                };
+            }
+        };
 
         Frame<SourceValue>[] sources;
         try {
