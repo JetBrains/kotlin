@@ -180,8 +180,9 @@ fun selectElements(
     fun getContainers(element: PsiElement, strict: Boolean): List<JetElement> {
         if (allContainersEnabled) return element.getAllExtractionContainers(strict)
 
-        val declaration = element.getParentByType(javaClass<JetDeclaration>(), strict)
-        if (declaration == null) return Collections.emptyList()
+        val declaration = element.getParentByType(javaClass<JetDeclaration>(), strict)?.let { declaration ->
+            stream(declaration) { it.getParentByType(javaClass<JetDeclaration>(), true) }.firstOrNull { it !is JetFunctionLiteral }
+        } ?: return Collections.emptyList()
 
         val parent = declaration.getParent()?.let {
             when (it) {

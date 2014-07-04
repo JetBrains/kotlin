@@ -3,7 +3,11 @@
 class A {
     fun foo(a: Int, b: Int): Int {
         return {
-            <selection>a + b - 1</selection>
+            { i(a, b) }.invoke()
         }.invoke()
+    }
+
+    fun i(a: Int, b: Int): Int {
+        return a + b - 1
     }
 }
