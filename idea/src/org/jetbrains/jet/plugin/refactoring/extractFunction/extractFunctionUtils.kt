@@ -636,7 +636,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     receiverParameter,
                     typeParameters.sortBy { it.originalDeclaration.getName()!! },
                     replacementMap,
-                    controlFlow
+                    if (messages.empty) controlFlow else controlFlow.toDefault()
             ),
             if (messages.empty) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
             messages

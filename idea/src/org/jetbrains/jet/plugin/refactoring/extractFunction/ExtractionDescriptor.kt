@@ -99,6 +99,8 @@ class FqNameReplacement(val fqName: FqName): Replacement {
 trait ControlFlow {
     val returnType: JetType
     val declarationsToCopy: List<JetDeclaration>
+
+    fun toDefault(): ControlFlow = DefaultControlFlow(returnType, declarationsToCopy)
 }
 
 class DefaultControlFlow(
