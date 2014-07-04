@@ -1512,6 +1512,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/ifStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("elseIf.java")
+        public void testElseIf() throws Exception {
+            doTest("j2k/tests/testData/ast/ifStatement/elseIf.java");
+        }
+        
         @TestMetadata("multiLine.java")
         public void testMultiLine() throws Exception {
             doTest("j2k/tests/testData/ast/ifStatement/multiLine.java");

@@ -58,12 +58,14 @@ class IfStatement(
         val elseStatement: Element,
         singleLine: Boolean
 ) : Expression() {
+
     private val br = if (singleLine) " " else "\n"
+    private val brAfterElse = if (singleLine || elseStatement is IfStatement) " " else "\n"
 
     override fun generateCode(builder: CodeBuilder) {
         builder append "if (" append condition append ")" append br append thenStatement
         if (!elseStatement.isEmpty) {
-            builder append br append "else" append br append elseStatement
+            builder append br append "else" append brAfterElse append elseStatement
         }
     }
 }
