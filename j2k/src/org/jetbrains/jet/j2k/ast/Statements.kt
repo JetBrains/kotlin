@@ -149,32 +149,34 @@ class CatchStatement(val variable: Parameter, val block: Block) : Statement() {
     }
 }
 
-// Switch --------------------------------------------------------------------------------------------------
+// when --------------------------------------------------------------------------------------------------
 
-class SwitchContainer(val expression: Expression, val caseContainers: List<CaseContainer>) : Statement() {
+class WhenStatement(val subject: Expression, val caseContainers: List<WhenEntry>) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append("when (").append(expression).append(") {\n").append(caseContainers, "\n").append("\n}")
+        builder.append("when (").append(subject).append(") {\n").append(caseContainers, "\n").append("\n}")
     }
 }
 
-class CaseContainer(val caseStatement: List<Element>, statements: List<Statement>) : Statement() {
+class WhenEntry(val selectors: List<WhenEntrySelector>, statements: List<Statement>) : Statement() {
     private val block = run {
         val filteredStatements = statements.filterNot { it is BreakStatement || it is ContinueStatement }
         Block(filteredStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
     }
 
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(caseStatement, ", ").append(" -> ").append(block)
+        builder.append(selectors, ", ").append(" -> ").append(block)
     }
 }
 
-class SwitchLabelStatement(val expression: Expression) : Statement() {
+abstract class WhenEntrySelector : Statement()
+
+class ValueWhenEntrySelector(val expression: Expression) : WhenEntrySelector() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append(expression)
     }
 }
 
-class DefaultSwitchLabelStatement() : Statement() {
+class ElseWhenEntrySelector() : WhenEntrySelector() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("else")
     }

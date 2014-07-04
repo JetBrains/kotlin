@@ -200,56 +200,49 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
 
     override fun visitSwitchLabelStatement(statement: PsiSwitchLabelStatement) {
         result = if (statement.isDefaultCase())
-            DefaultSwitchLabelStatement()
+            ElseWhenEntrySelector()
         else
-            SwitchLabelStatement(converter.convertExpression(statement.getCaseValue()))
+            ValueWhenEntrySelector(converter.convertExpression(statement.getCaseValue()))
     }
 
     override fun visitSwitchStatement(statement: PsiSwitchStatement) {
-        result = SwitchContainer(converter.convertExpression(statement.getExpression()),
-                                   switchBodyToCases(statement.getBody()))
+        result = WhenStatement(converter.convertExpression(statement.getExpression()), switchBodyToWhenEntries(statement.getBody()))
     }
 
-    private fun switchBodyToCases(body: PsiCodeBlock?): List<CaseContainer> {
+    private fun switchBodyToWhenEntries(body: PsiCodeBlock?): List<WhenEntry> {
         val cases: List<List<PsiElement>> = splitToCases(body)
         val allSwitchStatements = ArrayList<PsiElement>()
         if (body != null) {
             allSwitchStatements.addAll(body.getStatements())
         }
-        val result = ArrayList<CaseContainer>()
-        var pendingLabels = ArrayList<Element>()
+        val result = ArrayList<WhenEntry>()
+        var pendingSelectors = ArrayList<WhenEntrySelector>()
         var i = 0
         var hasDefaultCase = false
         for (ls in cases) {
-            if (ls.size() > 0) {
-                var label = ls[0] as PsiSwitchLabelStatement
+            if (ls.isNotEmpty()) {
+                val label = ls[0] as PsiSwitchLabelStatement
                 hasDefaultCase = hasDefaultCase || label.isDefaultCase()
                 // TODO assert {(label is PsiSwitchLabelStatement?)}
                 // TODO assert("not a right index") {allSwitchStatements?.get(i) == label}
+                pendingSelectors.add(converter.convertStatement(label) as WhenEntrySelector)
                 if (ls.size() > 1) {
-                    pendingLabels.add(converter.convertStatement(label))
-                    val slice = ls.subList(1, (ls.size()))
+                    val slice = ls.drop(1)
 
                     fun convertStatements(elements: List<PsiElement>): List<Statement>
                             = elements.map { if (it is PsiStatement) converter.convertStatement(it) else null }.filterNotNull()
 
                     if (!containsBreak(slice)) {
                         val statements = convertStatements(slice) + convertStatements(getAllToNextBreak(allSwitchStatements, i + ls.size()))
-                        result.add(CaseContainer(pendingLabels, statements).assignNoPrototype())
+                        result.add(WhenEntry(pendingSelectors, statements).assignNoPrototype())
                     }
                     else {
-                        result.add(CaseContainer(pendingLabels, convertStatements(slice)).assignNoPrototype())
+                        result.add(WhenEntry(pendingSelectors, convertStatements(slice)).assignNoPrototype())
                     }
-                    pendingLabels = ArrayList()
-                }
-                else {
-                    pendingLabels.add(converter.convertStatement(label))
+                    pendingSelectors = ArrayList()
                 }
                 i += ls.size()
             }
-        }
-        if (!hasDefaultCase) {
-            result.add(CaseContainer(listOf(DefaultSwitchLabelStatement().assignNoPrototype()), listOf()).assignNoPrototype())
         }
         return result
     }

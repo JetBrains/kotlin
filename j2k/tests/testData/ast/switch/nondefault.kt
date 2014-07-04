@@ -14,8 +14,6 @@ public class NonDefault {
                 3 -> {
                     valueString = "THREE"
                 }
-                else -> {
-                }
             }
             System.out.println(valueString)
         }

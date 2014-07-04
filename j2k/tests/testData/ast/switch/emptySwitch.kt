@@ -5,8 +5,7 @@ public class NonDefault {
             val value = 3
             val valueString = ""
             when (value) {
-                else -> {
-                }
+
             }
             System.out.println(valueString)
         }
