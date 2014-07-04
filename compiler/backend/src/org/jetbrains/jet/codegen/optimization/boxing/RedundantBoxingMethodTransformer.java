@@ -50,7 +50,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
 
             adaptLocalVariableTableForBoxedValues(node, frames);
 
-            int[] remapping = variablesRemapping(valuesToOptimize, node);
+            int[] remapping = buildVariablesRemapping(valuesToOptimize, node);
             applyVariablesRemapping(node, remapping);
 
             adaptInstructionsForBoxedValues(node, frames, valuesToOptimize);
@@ -206,7 +206,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     @NotNull
-    private static int[] variablesRemapping(@NotNull Iterable<BoxedBasicValue> values, @NotNull MethodNode node) {
+    private static int[] buildVariablesRemapping(@NotNull Iterable<BoxedBasicValue> values, @NotNull MethodNode node) {
         Set<Integer> longTypesVars = new HashSet<Integer>();
         for (BoxedBasicValue value : values) {
             if (value.getPrimitiveType().getSize() == 2) {
@@ -271,8 +271,38 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     private static void adaptInstructionsForBoxedValue(@NotNull MethodNode node, @NotNull BoxedBasicValue value) {
+        adaptBoxingInstruction(node, value);
+
         for (AbstractInsnNode insn : value.getAssociatedInsns()) {
             adaptInstruction(node, insn, value);
+        }
+    }
+
+    private static void adaptBoxingInstruction(@NotNull MethodNode node, @NotNull BoxedBasicValue value) {
+        if (!value.isFromNumberIterator()) {
+            node.instructions.remove(value.getBoxingInsn());
+        }
+        else {
+            RangeIteratorBasicValue iterator = value.getNumberIterator();
+            assert iterator != null : "iterator should not be null because isFromNumberIterator returns true";
+
+            //add checkcast to kotlin/<T>Iterator before next() call
+            node.instructions.insertBefore(
+                    value.getBoxingInsn(),
+                    new TypeInsnNode(Opcodes.CHECKCAST, iterator.getType().getInternalName())
+            );
+
+            //invoke concrete method (kotlin/<T>iteraror.next<T>())
+            node.instructions.set(
+                    value.getBoxingInsn(),
+                    new MethodInsnNode(
+                            Opcodes.INVOKEVIRTUAL,
+                            iterator.getType().getInternalName(),
+                            iterator.getNextMethodName(),
+                            iterator.getNextMethodDesc(),
+                            false
+                    )
+            );
         }
     }
 
