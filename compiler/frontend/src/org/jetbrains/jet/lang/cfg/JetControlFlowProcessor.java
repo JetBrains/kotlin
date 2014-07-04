@@ -277,7 +277,7 @@ public class JetControlFlowProcessor {
 
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
             if (resultingDescriptor instanceof ReceiverParameterDescriptor) {
-                builder.readVariable(expression, expression, resolvedCall, getReceiverValues(resolvedCall, true));
+                builder.readVariable(expression, resolvedCall, getReceiverValues(resolvedCall, true));
             }
 
             copyValue(expression, expression.getInstanceReference());
@@ -453,7 +453,7 @@ public class JetControlFlowProcessor {
         private void generateArrayAssignment(
                 JetArrayAccessExpression lhs,
                 @NotNull Function0<PseudoValue> rhsDeferredValue,
-                JetExpression parentExpression
+                @NotNull JetExpression parentExpression
         ) {
             ResolvedCall<FunctionDescriptor> setResolvedCall = trace.get(BindingContext.INDEXED_LVALUE_SET, lhs);
 
@@ -473,7 +473,7 @@ public class JetControlFlowProcessor {
             SmartFMap<PseudoValue, ValueParameterDescriptor> argumentValues =
                     getArraySetterArguments(rhsDeferredValue, setResolvedCall);
 
-            builder.call(parentExpression, parentExpression, setResolvedCall, receiverValues, argumentValues);
+            builder.call(parentExpression, setResolvedCall, receiverValues, argumentValues);
         }
 
         /* We assume that assignment right-hand side corresponds to the last argument of the call
@@ -1142,7 +1142,6 @@ public class JetControlFlowProcessor {
                 if (resolvedCall != null) {
                     writtenValue = builder.call(
                             entry,
-                            entry,
                             resolvedCall,
                             getReceiverValues(resolvedCall, false),
                             Collections.<PseudoValue, ValueParameterDescriptor>emptyMap()
@@ -1412,10 +1411,10 @@ public class JetControlFlowProcessor {
                         : "No callee for " + callExpression.getText();
                 assert parameterValues.isEmpty()
                         : "Variable-based call with non-empty argument list: " + callExpression.getText();
-                return builder.readVariable(calleeExpression, calleeExpression, resolvedCall, receivers);
+                return builder.readVariable(calleeExpression, resolvedCall, receivers);
             }
             mark(resolvedCall.getCall().getCallElement());
-            return builder.call(callExpression, callExpression, resolvedCall, receivers, parameterValues);
+            return builder.call(callExpression, resolvedCall, receivers, parameterValues);
         }
 
         @NotNull

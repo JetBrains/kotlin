@@ -450,27 +450,24 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public ReadValueInstruction readVariable(
-                @NotNull JetElement instructionElement,
-                @NotNull JetExpression valueElement,
+                @NotNull JetExpression expression,
                 @NotNull ResolvedCall<?> resolvedCall,
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues
         ) {
-            return read(instructionElement, valueElement, resolvedCall, receiverValues);
+            return read(expression, resolvedCall, receiverValues);
         }
 
         @NotNull
         @Override
         public CallInstruction call(
-                @NotNull JetElement instructionElement,
-                @Nullable JetExpression valueElement,
+                @NotNull JetExpression expression,
                 @NotNull ResolvedCall<?> resolvedCall,
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
                 @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
         ) {
             JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
             CallInstruction instruction = CallInstruction.object$.create(
-                    instructionElement,
-                    valueElement,
+                    expression,
                     getCurrentScope(),
                     resolvedCall,
                     receiverValues,
@@ -512,13 +509,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @NotNull
         private ReadValueInstruction read(
-                @NotNull JetElement instructionElement,
                 @NotNull JetExpression expression,
                 @Nullable ResolvedCall<?> resolvedCall,
-                @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
+                @NotNull Map<PseudoValue, ReceiverValue> receiverValues
+        ) {
             AccessTarget accessTarget = resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.instance$;
             ReadValueInstruction instruction = ReadValueInstruction.object$.create(
-                    instructionElement, expression, getCurrentScope(), accessTarget, receiverValues, valueFactory
+                    expression, getCurrentScope(), accessTarget, receiverValues, valueFactory
             );
             add(instruction);
             return instruction;
@@ -526,7 +523,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @NotNull
         private ReadValueInstruction read(@NotNull JetExpression expression) {
-            return read(expression, expression, null, Collections.<PseudoValue, ReceiverValue>emptyMap());
+            return read(expression, null, Collections.<PseudoValue, ReceiverValue>emptyMap());
         }
     }
 

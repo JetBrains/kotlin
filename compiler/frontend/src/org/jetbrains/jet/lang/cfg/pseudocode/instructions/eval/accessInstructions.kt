@@ -78,14 +78,13 @@ public class ReadValueInstruction private (
     class object {
         public fun create (
                 element: JetElement,
-                valueElement: JetElement,
                 lexicalScope: LexicalScope,
                 target: AccessTarget,
                 receiverValues: Map<PseudoValue, ReceiverValue>,
                 factory: PseudoValueFactory
         ): ReadValueInstruction {
             return ReadValueInstruction(element, lexicalScope, target, receiverValues, null).let { instruction ->
-                instruction.newResultValue(factory, valueElement)
+                instruction.newResultValue(factory, element)
                 instruction
             }
         }

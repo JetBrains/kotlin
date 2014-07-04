@@ -127,16 +127,14 @@ public interface JetControlFlowBuilder {
 
     @NotNull
     ReadValueInstruction readVariable(
-            @NotNull JetElement instructionElement,
-            @NotNull JetExpression valueElement,
+            @NotNull JetExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues
     );
 
     @NotNull
     CallInstruction call(
-            @NotNull JetElement instructionElement,
-            @Nullable JetExpression valueElement,
+            @NotNull JetExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
             @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments

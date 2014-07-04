@@ -82,14 +82,13 @@ public class CallInstruction private(
     class object {
         fun create (
                 element: JetElement,
-                valueElement: JetElement?,
                 lexicalScope: LexicalScope,
                 resolvedCall: ResolvedCall<*>,
                 receiverValues: Map<PseudoValue, ReceiverValue>,
                 arguments: Map<PseudoValue, ValueParameterDescriptor>,
                 factory: PseudoValueFactory?
         ): CallInstruction =
-                CallInstruction(element, lexicalScope, resolvedCall, receiverValues, arguments).setResult(factory, valueElement) as CallInstruction
+                CallInstruction(element, lexicalScope, resolvedCall, receiverValues, arguments).setResult(factory, element) as CallInstruction
     }
 }
 
