@@ -363,8 +363,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
 
         // searching for other constructor call in form "this(...)"
         // it's not necessary the first statement because of statements inserted for writable parameters
-        for (i in statements.indices) {
-            val statement = statements[i]
+        for ((i, statement) in statements.withIndices()) {
             if (statement is MethodCallExpression) {
                 if ((statement.methodExpression as? Identifier)?.name == "this") {
                     val constructorCall = MethodCallExpression.buildNotNull(null, className, statement.arguments).assignPrototypesFrom(statement)

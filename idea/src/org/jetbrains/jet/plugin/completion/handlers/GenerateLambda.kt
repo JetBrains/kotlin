@@ -111,8 +111,7 @@ private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, 
         template.addTextSegment("(")
     }
 
-    for (i in parameterTypes.indices) {
-        val parameterType = parameterTypes[i]
+    for ((i, parameterType) in parameterTypes.withIndices()) {
         if (i > 0) {
             template.addTextSegment(", ")
         }

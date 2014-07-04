@@ -105,8 +105,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
         commentsAndSpacesUsed.addAll(prefixElements)
         commentsAndSpacesUsed.addAll(postfixElements)
 
-        for (i in prefixElements.indices) {
-            val e = prefixElements[i]
+        for ((i, e) in prefixElements.withIndices()) {
             if (i == 0 && e is PsiWhiteSpace) {
                 val blankLines = e.newLinesCount() - 1
                 for (_ in 1..blankLines) {

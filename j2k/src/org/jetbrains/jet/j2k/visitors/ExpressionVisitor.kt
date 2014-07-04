@@ -89,7 +89,8 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
             JavaTokenType.ANDAND, JavaTokenType.OROR -> PsiType.BOOLEAN
 
             JavaTokenType.PLUS, JavaTokenType.MINUS, JavaTokenType.ASTERISK,
-            JavaTokenType.DIV, JavaTokenType.PERC, JavaTokenType.LTLT, JavaTokenType.GTGT -> expression.getType()
+            JavaTokenType.DIV, JavaTokenType.PERC, JavaTokenType.LTLT, JavaTokenType.GTGT,
+            JavaTokenType.GTGTGT -> expression.getType()
 
             else -> null
         }

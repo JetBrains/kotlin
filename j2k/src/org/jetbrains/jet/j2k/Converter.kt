@@ -424,7 +424,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             convertedExpression = BangBangExpression(convertedExpression).assignNoPrototype()
         }
 
-        if (canConvertType(actualType, expectedType) && convertedExpression !is LiteralExpression) {
+        if (needConversion(actualType, expectedType) && convertedExpression !is LiteralExpression) {
             val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedType.getCanonicalText()]
             if (conversion != null) {
                 convertedExpression = MethodCallExpression.buildNotNull(convertedExpression, conversion)
@@ -445,7 +445,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             resultType = resultType.toNotNullType()
         }
 
-        if (canConvertType(actualType, expectedType) && convertedExpression !is LiteralExpression) {
+        if (needConversion(actualType, expectedType) && convertedExpression !is LiteralExpression) {
             val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedType.getCanonicalText()]
             if (conversion != null) {
                 resultType = typeConverter.convertType(expectedType, Nullability.NotNull)
@@ -455,13 +455,12 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return resultType
     }
 
-    private fun canConvertType(actual: PsiType, expected: PsiType): Boolean {
+    private fun needConversion(actual: PsiType, expected: PsiType): Boolean {
         val expectedStr = expected.getCanonicalText()
         val actualStr = actual.getCanonicalText()
-        if (expectedStr == actualStr) return false
-        val o1 = expectedStr == typeConversionMap[actualStr]
-        val o2 = actualStr == typeConversionMap[expectedStr]
-        return o1 == o2
+        return expectedStr != actualStr &&
+                expectedStr != typeConversionMap[actualStr] &&
+                actualStr != typeConversionMap[expectedStr]
     }
 
     private val typeConversionMap: Map<String, String> = mapOf(
