@@ -35,6 +35,26 @@ import java.util.List;
 import java.util.Map;
 
 public class BoxingInterpreter extends OptimizationBasicInterpreter {
+    private static boolean isProgressionClass(String internalName) {
+        return internalName.startsWith("kotlin/") && (
+                internalName.endsWith("Progression") ||
+                internalName.endsWith("Range")
+        );
+    }
+
+    /**
+     * e.g. for "kotlin/IntRange" it returns "Int"
+     *
+     * @param progressionClassInternalName
+     * @return
+     */
+    private static String getValuesTypePartOfProgressionClass(String progressionClassInternalName) {
+        progressionClassInternalName = progressionClassInternalName.substring("kotlin/".length());
+
+        int cutAtTheEnd = (progressionClassInternalName.endsWith("Progression")) ? "Progression".length() : "Range".length();
+        return progressionClassInternalName.substring(0, progressionClassInternalName.length() - cutAtTheEnd);
+    }
+
     private static final ImmutableSet<String> wrappersClassNames;
 
     static {
@@ -45,13 +65,6 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         }
 
         wrappersClassNames = wrappersClassesBuilder.build();
-    }
-
-    private final Map<Integer, BoxedBasicValue> boxingPlaces = new HashMap<Integer, BoxedBasicValue>();
-    private final InsnList insnList;
-
-    BoxingInterpreter(InsnList insnList) {
-        this.insnList = insnList;
     }
 
     private static boolean isWrapperClassName(@NotNull String owner) {
@@ -86,26 +99,69 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         return isWrapperClassName(methodInsnNode.owner) && methodInsnNode.name.equals("valueOf");
     }
 
+    private static boolean isIteratorMethodCallOfProgression(
+            @NotNull AbstractInsnNode insn, @NotNull List<? extends BasicValue> values
+    ) {
+        return (insn.getOpcode() == Opcodes.INVOKEINTERFACE &&
+                values.get(0).getType() != null &&
+                isProgressionClass(values.get(0).getType().getInternalName()) &&
+                ((MethodInsnNode) insn).name.equals("iterator"));
+    }
+
+    private static boolean isNextMethodCallOfProgressionIterator(
+            @NotNull AbstractInsnNode insn, @NotNull List<? extends BasicValue> values
+    ) {
+        return (insn.getOpcode() == Opcodes.INVOKEINTERFACE &&
+                values.get(0) instanceof RangeIteratorBasicValue &&
+                ((MethodInsnNode) insn).name.equals("next"));
+    }
+
+    private final Map<Integer, BoxedBasicValue> boxingPlaces = new HashMap<Integer, BoxedBasicValue>();
+    private final InsnList insnList;
+
+    BoxingInterpreter(InsnList insnList) {
+        this.insnList = insnList;
+    }
+
+    @NotNull
+    private BoxedBasicValue createNewBoxing(
+            @NotNull AbstractInsnNode insn, @NotNull Type type, @Nullable RangeIteratorBasicValue numberIterator
+    ) {
+        int index = insnList.indexOf(insn);
+        if (!boxingPlaces.containsKey(index)) {
+            BoxedBasicValue boxedBasicValue = new BoxedBasicValue(type, insn, numberIterator);
+            onNewBoxedValue(boxedBasicValue);
+            boxingPlaces.put(index, boxedBasicValue);
+        }
+
+        return boxingPlaces.get(index);
+    }
+
     @Override
     @Nullable
     public BasicValue naryOperation(@NotNull AbstractInsnNode insn, @NotNull List<? extends BasicValue> values) throws AnalyzerException {
         BasicValue value = super.naryOperation(insn, values);
 
         if (isBoxing(insn)) {
-            int index = insnList.indexOf(insn);
-            if (!boxingPlaces.containsKey(index)) {
-                BoxedBasicValue boxedBasicValue = new BoxedBasicValue(value.getType(), insn);
-                onNewBoxedValue(boxedBasicValue);
-                boxingPlaces.put(index, boxedBasicValue);
-            }
-
-            return boxingPlaces.get(index);
+            return createNewBoxing(insn, value.getType(), null);
         }
         else if (isUnboxing(insn) &&
                  values.get(0) instanceof BoxedBasicValue &&
                  value.getType().equals(((BoxedBasicValue) values.get(0)).getPrimitiveType())) {
-
             onUnboxing((BoxedBasicValue) values.get(0), insn);
+        }
+        else if (isIteratorMethodCallOfProgression(insn, values)) {
+            return new RangeIteratorBasicValue(
+                    getValuesTypePartOfProgressionClass(values.get(0).getType().getInternalName())
+            );
+        }
+        else if (isNextMethodCallOfProgressionIterator(insn, values)) {
+            RangeIteratorBasicValue numberIterator = (RangeIteratorBasicValue) values.get(0);
+            return createNewBoxing(
+                    insn,
+                    AsmUtil.boxType(numberIterator.getValuesPrimitiveType()),
+                    numberIterator
+            );
         }
         else {
             for (BasicValue arg : values) {
@@ -118,10 +174,15 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         return value;
     }
 
+    private static boolean isExactValue(@NotNull BasicValue value) {
+        return value instanceof RangeIteratorBasicValue ||
+               value instanceof BoxedBasicValue ||
+               (value.getType() != null && isProgressionClass(value.getType().getInternalName()));
+    }
+
     @Override
-    @Nullable
     public BasicValue unaryOperation(@NotNull AbstractInsnNode insn, @NotNull BasicValue value) throws AnalyzerException {
-        if (insn.getOpcode() == Opcodes.CHECKCAST && value instanceof BoxedBasicValue) {
+        if (insn.getOpcode() == Opcodes.CHECKCAST && isExactValue(value)) {
             return value;
         }
 
@@ -132,23 +193,22 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     @NotNull
     public BasicValue merge(@NotNull BasicValue v, @NotNull BasicValue w) {
         if (v instanceof BoxedBasicValue && ((BoxedBasicValue) v).typeEquals(w)) {
-            ((BoxedBasicValue) v).mergeWith((BoxedBasicValue) w);
+            onMergeSuccess((BoxedBasicValue) v, (BoxedBasicValue) w);
             return v;
         }
 
-        if (v instanceof BoxedBasicValue) {
+        if (v instanceof BoxedBasicValue && w != BasicValue.UNINITIALIZED_VALUE) {
             onMergeFail((BoxedBasicValue) v);
             v = new BasicValue(v.getType());
         }
 
-        if (w instanceof BoxedBasicValue) {
+        if (w instanceof BoxedBasicValue && v != BasicValue.UNINITIALIZED_VALUE) {
             onMergeFail((BoxedBasicValue) w);
             w = new BasicValue(w.getType());
         }
 
         return super.merge(v, w);
     }
-
 
     protected void onNewBoxedValue(@NotNull BoxedBasicValue value) {
 
@@ -163,6 +223,10 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     }
 
     protected void onMergeFail(@NotNull BoxedBasicValue value) {
+
+    }
+
+    protected void onMergeSuccess(@NotNull BoxedBasicValue v, @NotNull BoxedBasicValue w) {
 
     }
 }
