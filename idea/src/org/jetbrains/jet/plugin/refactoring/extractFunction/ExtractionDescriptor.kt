@@ -37,6 +37,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Error
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import com.intellij.openapi.util.text.StringUtil
 
 trait Parameter {
     val argumentText: String
@@ -193,21 +194,21 @@ class AnalysisResult (
         }
 
         fun renderMessage(): String {
-            val message = JetRefactoringBundle.message(when(this) {
-                NO_EXPRESSION -> "cannot.refactor.no.expression"
-                NO_CONTAINER -> "cannot.refactor.no.container"
-                SUPER_CALL -> "cannot.extract.super.call"
-                DENOTABLE_TYPES -> "parameter.types.are.not.denotable"
-                MULTIPLE_OUTPUT -> "selected.code.fragment.has.multiple.output.values"
-                OUTPUT_AND_EXIT_POINT -> "selected.code.fragment.has.output.values.and.exit.points"
-                MULTIPLE_EXIT_POINTS -> "selected.code.fragment.has.multiple.exit.points"
-                DECLARATIONS_ARE_USED_OUTSIDE -> "declarations.are.used.outside.of.selected.code.fragment"
-                DECLARATIONS_OUT_OF_SCOPE -> "declarations.will.move.out.of.scope"
-            })!!
-            if (additionalInfo != null) {
-                return "$message\n${additionalInfo?.makeString("\n")}"
-            }
-            return message
+            val message = JetRefactoringBundle.message(
+                    when (this) {
+                        NO_EXPRESSION -> "cannot.refactor.no.expression"
+                        NO_CONTAINER -> "cannot.refactor.no.container"
+                        SUPER_CALL -> "cannot.extract.super.call"
+                        DENOTABLE_TYPES -> "parameter.types.are.not.denotable"
+                        MULTIPLE_OUTPUT -> "selected.code.fragment.has.multiple.output.values"
+                        OUTPUT_AND_EXIT_POINT -> "selected.code.fragment.has.output.values.and.exit.points"
+                        MULTIPLE_EXIT_POINTS -> "selected.code.fragment.has.multiple.exit.points"
+                        DECLARATIONS_ARE_USED_OUTSIDE -> "declarations.are.used.outside.of.selected.code.fragment"
+                        DECLARATIONS_OUT_OF_SCOPE -> "declarations.will.move.out.of.scope"
+                    }
+            )
+
+            return additionalInfo?.let { "$message\n\n${it.map { StringUtil.htmlEmphasize(it) }.joinToString("\n")}" } ?: message
         }
     }
 }

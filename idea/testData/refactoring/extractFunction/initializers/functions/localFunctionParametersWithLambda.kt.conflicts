@@ -1,1 +1,1 @@
-Cannot extract method since following types are not denotable in the target scope: [ERROR : ]
+Cannot extract method since following types are not denotable in the target scope:  [ERROR : &lt;ERROR FUNCTION RETURN TYPE&gt;]

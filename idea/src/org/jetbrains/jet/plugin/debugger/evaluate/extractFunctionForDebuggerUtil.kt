@@ -47,8 +47,7 @@ fun getFunctionForExtractedFragment(
 ): JetNamedFunction? {
 
     fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult): String {
-        return analysisResult.messages.map {
-            errorMessage ->
+        return analysisResult.messages.map { errorMessage ->
             val message = when(errorMessage) {
                 ErrorMessage.NO_EXPRESSION -> "Cannot perform an action without an expression"
                 ErrorMessage.NO_CONTAINER -> "Cannot perform an action at this breakpoint ${breakpointFile.getName()}:${breakpointLine}"
@@ -60,8 +59,8 @@ fun getFunctionForExtractedFragment(
                 ErrorMessage.MULTIPLE_EXIT_POINTS,
                 ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE -> "Cannot perform an action for this expression"
             }
-            if (errorMessage.additionalInfo == null) message else "$message: ${errorMessage.additionalInfo?.makeString(", ")}"
-        }.makeString(", ")
+            errorMessage.additionalInfo?.let { "$message: ${it.joinToString(", ")}" } ?: message
+        }.joinToString(", ")
     }
 
     return ApplicationManager.getApplication()?.runReadAction(object: Computable<JetNamedFunction> {

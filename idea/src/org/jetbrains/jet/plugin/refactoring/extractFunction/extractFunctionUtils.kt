@@ -68,10 +68,20 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import com.intellij.openapi.util.text.StringUtil
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
 private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
+
+private fun DeclarationDescriptor.renderForMessage(): String =
+        DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
+
+private fun JetType.renderForMessage(): String =
+        DescriptorRenderer.SOURCE_CODE.renderType(this)
+
+private fun JetDeclaration.renderForMessage(bindingContext: BindingContext): String? =
+    bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]?.renderForMessage()
 
 private fun JetType.isDefault(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
 
@@ -203,7 +213,7 @@ private fun ExtractionData.analyzeControlFlow(
     val defaultControlFlow = DefaultControlFlow(if (returnValueType.isMeaningful()) returnValueType else typeOfDefaultFlow, declarationsToCopy)
 
     if (declarationsToReport.isNotEmpty()) {
-        val localVarStr = declarationsToReport.map { it.getName()!! }.sort()
+        val localVarStr = declarationsToReport.map { it.renderForMessage(bindingContext)!! }.distinct().sort()
         return Pair(defaultControlFlow, ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE.addAdditionalInfo(localVarStr))
     }
 
@@ -214,7 +224,9 @@ private fun ExtractionData.analyzeControlFlow(
     val outValuesCount = outDeclarations.size + outParameters.size
     when {
         outValuesCount > 1 -> {
-            val outValuesStr = (outParameters.map { it.argumentText } + outDeclarations.map { it.getName()!! }).sort()
+            val outValuesStr =
+                    (outParameters.map { it.originalDescriptor.renderForMessage() }
+                            + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sort()
             return Pair(defaultControlFlow, ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr))
         }
 
@@ -532,7 +544,8 @@ private fun ExtractionData.inferParametersInfo(
 
 private fun ExtractionData.checkDeclarationsMovingOutOfScope(
         enclosingDeclaration: JetDeclaration,
-        controlFlow: ControlFlow
+        controlFlow: ControlFlow,
+        bindingContext: BindingContext
 ): ErrorMessage? {
     val declarationsOutOfScope = HashSet<JetNamedDeclaration>()
     if (controlFlow is JumpBasedControlFlow) {
@@ -551,7 +564,7 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
     }
 
     if (declarationsOutOfScope.isNotEmpty()) {
-        val declStr = declarationsOutOfScope.map { it.getName()!! }.sort()
+        val declStr = declarationsOutOfScope.map { it.renderForMessage(bindingContext)!! }.sort()
         return ErrorMessage.DECLARATIONS_OUT_OF_SCOPE.addAdditionalInfo(declStr)
     }
 
@@ -614,7 +627,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     controlFlow.returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes)
 
     if (paramsInfo.nonDenotableTypes.isNotEmpty()) {
-        val typeStr = paramsInfo.nonDenotableTypes.map {DescriptorRenderer.HTML.renderType(it)}.sort()
+        val typeStr = paramsInfo.nonDenotableTypes.map {it.renderForMessage()}.sort()
         return AnalysisResult(
                 null,
                 Status.CRITICAL_ERROR,
@@ -622,7 +635,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         )
     }
 
-    checkDeclarationsMovingOutOfScope(enclosingDeclaration!!, controlFlow)?.let { messages.add(it) }
+    checkDeclarationsMovingOutOfScope(enclosingDeclaration!!, controlFlow, bindingContext)?.let { messages.add(it) }
 
     val functionNameValidator =
             JetNameValidatorImpl(
@@ -689,9 +702,9 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
         && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 
         if (diagnostics.any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
-        || (currentDescriptor != null
-        && !ErrorUtils.isError(currentDescriptor)
-        && !comparePossiblyOverridingDescriptors(currentDescriptor, resolveResult.descriptor))) {
+                || (currentDescriptor != null
+                && !ErrorUtils.isError(currentDescriptor)
+                && !comparePossiblyOverridingDescriptors(currentDescriptor, resolveResult.descriptor))) {
             conflicts.putValue(
                     resolveResult.originalRefExpr,
                     JetRefactoringBundle.message(
