@@ -515,14 +515,19 @@ private fun ExtractionData.inferParametersInfo(
     return null
 }
 
-private fun ExtractionData.checkDeclarationsMovingOutOfScope(controlFlow: ControlFlow): ErrorMessage? {
+private fun ExtractionData.checkDeclarationsMovingOutOfScope(
+        enclosingDeclaration: JetDeclaration,
+        controlFlow: ControlFlow
+): ErrorMessage? {
     val declarationsOutOfScope = HashSet<JetNamedDeclaration>()
     if (controlFlow is JumpBasedControlFlow) {
         controlFlow.elementToInsertAfterCall.accept(
                 object: JetTreeVisitorVoid() {
                     override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
                         val target = expression.getReference()?.resolve()
-                        if (target is JetNamedDeclaration && target.isInsideOf(originalElements)) {
+                        if (target is JetNamedDeclaration
+                                && target.isInsideOf(originalElements)
+                                && target.getParentByType(javaClass<JetDeclaration>(), true) == enclosingDeclaration) {
                             declarationsOutOfScope.add(target)
                         }
                     }
@@ -608,7 +613,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         )
     }
 
-    checkDeclarationsMovingOutOfScope(controlFlow)?.let { messages.add(it) }
+    checkDeclarationsMovingOutOfScope(enclosingDeclaration!!, controlFlow)?.let { messages.add(it) }
 
     val functionNameValidator =
             JetNameValidatorImpl(

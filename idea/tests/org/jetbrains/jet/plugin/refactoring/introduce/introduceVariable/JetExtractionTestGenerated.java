@@ -590,6 +590,16 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithWhenElse.kt");
                 }
                 
+                @TestMetadata("valuesUsedInLambdaOnly.kt")
+                public void testValuesUsedInLambdaOnly() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/valuesUsedInLambdaOnly.kt");
+                }
+                
+                @TestMetadata("valuesUsedInNestedBlock.kt")
+                public void testValuesUsedInNestedBlock() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/valuesUsedInNestedBlock.kt");
+                }
+                
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws")

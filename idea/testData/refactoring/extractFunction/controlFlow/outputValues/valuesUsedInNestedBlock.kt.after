@@ -1,0 +1,13 @@
+class T(val n: Int)
+
+// SIBLING:
+fun foo() {
+    unit()
+}
+
+fun unit() {
+    if (true) {
+        val k = 1
+        T().n + k + 1
+    }
+}
