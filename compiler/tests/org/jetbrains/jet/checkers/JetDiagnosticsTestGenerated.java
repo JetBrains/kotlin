@@ -2596,6 +2596,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/extensionProperty.kt");
                 }
                 
+                @TestMetadata("labeledDelegatedExpression.kt")
+                public void testLabeledDelegatedExpression() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/labeledDelegatedExpression.kt");
+                }
+                
                 @TestMetadata("noErrorsForImplicitConstraints.kt")
                 public void testNoErrorsForImplicitConstraints() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/noErrorsForImplicitConstraints.kt");
