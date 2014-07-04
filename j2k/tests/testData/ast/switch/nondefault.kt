@@ -5,15 +5,9 @@ public class NonDefault {
             val value = 3
             var valueString = ""
             when (value) {
-                1 -> {
-                    valueString = "ONE"
-                }
-                2 -> {
-                    valueString = "TWO"
-                }
-                3 -> {
-                    valueString = "THREE"
-                }
+                1 -> valueString = "ONE"
+                2 -> valueString = "TWO"
+                3 -> valueString = "THREE"
             }
             System.out.println(valueString)
         }

@@ -157,14 +157,9 @@ class WhenStatement(val subject: Expression, val caseContainers: List<WhenEntry>
     }
 }
 
-class WhenEntry(val selectors: List<WhenEntrySelector>, statements: List<Statement>) : Statement() {
-    private val block = run {
-        val filteredStatements = statements.filterNot { it is BreakStatement || it is ContinueStatement }
-        Block(filteredStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
-    }
-
+class WhenEntry(val selectors: List<WhenEntrySelector>, val body: Statement) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(selectors, ", ").append(" -> ").append(block)
+        builder.append(selectors, ", ").append(" -> ").append(body)
     }
 }
 

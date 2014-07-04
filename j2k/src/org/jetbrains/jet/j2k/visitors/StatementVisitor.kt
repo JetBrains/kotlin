@@ -210,38 +210,45 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
     }
 
     private fun switchBodyToWhenEntries(body: PsiCodeBlock?): List<WhenEntry> {
-        val cases: List<List<PsiElement>> = splitToCases(body)
-        val allSwitchStatements = ArrayList<PsiElement>()
-        if (body != null) {
-            allSwitchStatements.addAll(body.getStatements())
+        //TODO: this code is to be changed when continue in when is supported by Kotlin
+
+        val cases = splitToCases(body)
+
+        fun isSwitchBreak(statement: PsiStatement) = statement is PsiBreakStatement && statement.getLabelIdentifier() == null
+
+        fun convertStatements(statements: List<PsiStatement>): List<Statement>
+                = statements.filterNot(::isSwitchBreak).map { converter.convertStatement(it) }
+
+        fun convertCaseStatements(caseIndex: Int): List<Statement> {
+            val case = cases[caseIndex]
+            return if (case.statements.any { it is PsiBreakStatement || it is PsiContinueStatement || it is PsiReturnStatement || it is PsiThrowStatement } ||
+                    caseIndex == cases.lastIndex) {
+                convertStatements(case.statements)
+            }
+            else { // otherwise we fall through into the next case
+                convertStatements(case.statements) + convertCaseStatements(caseIndex + 1)
+            }
         }
+
+        fun convertCaseStatementsToBody(caseIndex: Int): Statement {
+            val statements = convertCaseStatements(caseIndex)
+            return if (statements.size == 1)
+                statements.single()
+            else
+                Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
+        }
+
         val result = ArrayList<WhenEntry>()
         var pendingSelectors = ArrayList<WhenEntrySelector>()
-        var i = 0
-        var hasDefaultCase = false
-        for (ls in cases) {
-            if (ls.isNotEmpty()) {
-                val label = ls[0] as PsiSwitchLabelStatement
-                hasDefaultCase = hasDefaultCase || label.isDefaultCase()
-                // TODO assert {(label is PsiSwitchLabelStatement?)}
-                // TODO assert("not a right index") {allSwitchStatements?.get(i) == label}
-                pendingSelectors.add(converter.convertStatement(label) as WhenEntrySelector)
-                if (ls.size() > 1) {
-                    val slice = ls.drop(1)
-
-                    fun convertStatements(elements: List<PsiElement>): List<Statement>
-                            = elements.map { if (it is PsiStatement) converter.convertStatement(it) else null }.filterNotNull()
-
-                    if (!containsBreak(slice)) {
-                        val statements = convertStatements(slice) + convertStatements(getAllToNextBreak(allSwitchStatements, i + ls.size()))
-                        result.add(WhenEntry(pendingSelectors, statements).assignNoPrototype())
-                    }
-                    else {
-                        result.add(WhenEntry(pendingSelectors, convertStatements(slice)).assignNoPrototype())
-                    }
-                    pendingSelectors = ArrayList()
-                }
-                i += ls.size()
+        for ((i, case) in cases.withIndices()) {
+            if (case.label == null) { // invalid switch - no case labels
+                result.add(WhenEntry(listOf(ValueWhenEntrySelector(Expression.Empty).assignNoPrototype()), convertCaseStatementsToBody(i)).assignNoPrototype())
+                continue
+            }
+            pendingSelectors.add(converter.convertStatement(case.label) as WhenEntrySelector)
+            if (case.statements.isNotEmpty()) {
+                result.add(WhenEntry(pendingSelectors, convertCaseStatementsToBody(i)).assignNoPrototype())
+                pendingSelectors = ArrayList()
             }
         }
         return result
@@ -359,44 +366,28 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 (this is PsiPrefixExpression && this.getOperationTokenType() == JavaTokenType.PLUSPLUS)
     }
 
-    private fun containsBreak(slice: List<PsiElement?>) = slice.any { it is PsiBreakStatement }
+    private data class SwitchCase(val label: PsiSwitchLabelStatement?, val statements: List<PsiStatement>)
 
-    private fun getAllToNextBreak(allStatements: List<PsiElement>, start: Int): List<PsiElement> {
-        val result = ArrayList<PsiElement>()
-        for (i in start..allStatements.size() - 1) {
-            val s = allStatements[i]
-            if (s is PsiBreakStatement || s is PsiReturnStatement) {
-                return result
-            }
-
-            if (s !is PsiSwitchLabelStatement) {
-                result.add(s)
-            }
-
-        }
-        return result
-    }
-
-    private fun splitToCases(body: PsiCodeBlock?): List<List<PsiElement>> {
-        val cases = ArrayList<List<PsiElement>>()
-        var currentCaseStatements = ArrayList<PsiElement>()
+    private fun splitToCases(body: PsiCodeBlock?): List<SwitchCase> {
+        val cases = ArrayList<SwitchCase>()
+        var currentCaseStatements = ArrayList<PsiStatement>()
         if (body != null) {
-            var isFirst = true
-            for (s in body.getChildren()) {
-                if (s !is PsiStatement && s !is PsiComment) continue
-                if (s is PsiSwitchLabelStatement) {
-                    if (isFirst) {
-                        isFirst = false
-                    }
-                    else {
-                        cases.add(currentCaseStatements)
+            var label: PsiSwitchLabelStatement? = null
+            for (statement in body.getStatements()) {
+                if (statement is PsiSwitchLabelStatement) {
+                    if (label != null) {
+                        cases.add(SwitchCase(label, currentCaseStatements))
                         currentCaseStatements = ArrayList()
                     }
+                    label = statement
                 }
-
-                currentCaseStatements.add(s)
+                else {
+                    currentCaseStatements.add(statement)
+                }
             }
-            cases.add(currentCaseStatements)
+            if (label != null || currentCaseStatements.isNotEmpty()) {
+                cases.add(SwitchCase(label, currentCaseStatements))
+            }
         }
 
         return cases

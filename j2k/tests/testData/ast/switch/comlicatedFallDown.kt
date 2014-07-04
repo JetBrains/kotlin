@@ -31,9 +31,7 @@ public class SwitchDemo {
                     print(4)
                     print(5)
                 }
-                5 -> {
-                    print(5)
-                }
+                5 -> print(5)
                 6 -> {
                     print(6)
                     print(7)
@@ -73,12 +71,8 @@ public class SwitchDemo {
                     print(11)
                     monthString = "December"
                 }
-                12 -> {
-                    monthString = "December"
-                }
-                else -> {
-                    monthString = "Invalid month"
-                }
+                12 -> monthString = "December"
+                else -> monthString = "Invalid month"
             }
             System.out.println(monthString)
         }

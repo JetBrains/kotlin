@@ -2601,6 +2601,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/switch/comlicatedFallDown.java");
         }
         
+        @TestMetadata("continueAndBreakWithLabel.java")
+        public void testContinueAndBreakWithLabel() throws Exception {
+            doTest("j2k/tests/testData/ast/switch/continueAndBreakWithLabel.java");
+        }
+        
         @TestMetadata("emptySwitch.java")
         public void testEmptySwitch() throws Exception {
             doTest("j2k/tests/testData/ast/switch/emptySwitch.java");
@@ -2611,6 +2616,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/switch/fallDown.java");
         }
         
+        @TestMetadata("invalidSwitch.java")
+        public void testInvalidSwitch() throws Exception {
+            doTest("j2k/tests/testData/ast/switch/invalidSwitch.java");
+        }
+        
         @TestMetadata("kt-539.java")
         public void testKt_539() throws Exception {
             doTest("j2k/tests/testData/ast/switch/kt-539.java");
@@ -2619,6 +2629,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("nondefault.java")
         public void testNondefault() throws Exception {
             doTest("j2k/tests/testData/ast/switch/nondefault.java");
+        }
+        
+        @TestMetadata("returnsAndThrows.java")
+        public void testReturnsAndThrows() throws Exception {
+            doTest("j2k/tests/testData/ast/switch/returnsAndThrows.java");
         }
         
     }
