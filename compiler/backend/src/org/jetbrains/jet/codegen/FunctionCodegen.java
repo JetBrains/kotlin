@@ -196,7 +196,7 @@ public class FunctionCodegen extends ParentCodegenAware {
     }
 
     @SuppressWarnings("deprecation")
-    private void generateJetValueParameterAnnotations(
+    private static void generateJetValueParameterAnnotations(
             @NotNull MethodVisitor mv,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JvmMethodSignature jvmSignature
@@ -206,10 +206,7 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
-            if (kind.isSkippedInGenericSignature()) {
-                markEnumOrInnerConstructorParameterAsSynthetic(mv, i);
-                continue;
-            }
+            if (kind.isSkippedInGenericSignature()) continue;
 
             String name;
             boolean nullableType;
