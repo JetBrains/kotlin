@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate
 public abstract class OperationInstruction protected(
         element: JetElement,
         lexicalScope: LexicalScope,
-        public override val inputValues: List<PseudoValue>
+        override val inputValues: List<PseudoValue>
 ) : InstructionWithNext(element, lexicalScope), InstructionWithValue {
     protected var resultValue: PseudoValue? = null
 
@@ -62,7 +62,7 @@ public class CallInstruction private(
         element: JetElement,
         lexicalScope: LexicalScope,
         val resolvedCall: ResolvedCall<*>,
-        public override val receiverValues: Map<PseudoValue, ReceiverValue>,
+        override val receiverValues: Map<PseudoValue, ReceiverValue>,
         public val arguments: Map<PseudoValue, ValueParameterDescriptor>
 ) : OperationInstruction(element, lexicalScope, receiverValues.keySet() + arguments.keySet()), InstructionWithReceivers {
     override fun accept(visitor: InstructionVisitor) {

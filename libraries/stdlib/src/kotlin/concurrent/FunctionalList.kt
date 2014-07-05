@@ -46,7 +46,7 @@ abstract class FunctionalList<T>(public val size: Int) {
             get() = throw java.util.NoSuchElementException()
         }
 
-        class Standard<T>(public override val head: T, public override val tail: FunctionalList<T>) : FunctionalList<T>(tail.size+1)
+        class Standard<T>(override val head: T, override val tail: FunctionalList<T>) : FunctionalList<T>(tail.size+1)
 
         public fun <T> emptyList() : FunctionalList<T> = Empty<T>()
 

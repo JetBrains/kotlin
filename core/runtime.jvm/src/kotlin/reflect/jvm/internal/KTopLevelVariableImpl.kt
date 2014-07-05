@@ -20,7 +20,7 @@ import java.lang.reflect.*
 import kotlin.reflect.*
 
 open class KTopLevelVariableImpl<out R>(
-        public override val name: String,
+        override val name: String,
         protected val owner: KPackageImpl
 ) : KTopLevelVariable<R>, KVariableImpl<R> {
     // TODO: load the field from the corresponding package part

@@ -66,9 +66,9 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             out.println(
 """public class $progression(
-        public override val start: $t,
-        public override val end: $t,
-        public override val increment: $incrementType
+        override val start: $t,
+        override val end: $t,
+        override val increment: $incrementType
 ) : Progression<$t> {
     {
         $constructor

@@ -38,8 +38,8 @@ public trait OutputFile {
 }
 
 class SimpleOutputFile(
-        public override val sourceFiles: List<File>,
-        public override val relativePath: String,
+        override val sourceFiles: List<File>,
+        override val relativePath: String,
         private val content: String
 ) : OutputFile {
     override fun asByteArray(): ByteArray = content.toByteArray()

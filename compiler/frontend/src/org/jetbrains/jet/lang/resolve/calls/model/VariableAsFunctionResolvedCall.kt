@@ -34,8 +34,8 @@ public trait VariableAsFunctionResolvedCall {
 }
 
 class VariableAsFunctionResolvedCallImpl(
-        public override val functionCall: MutableResolvedCall<FunctionDescriptor>,
-        public override val variableCall: MutableResolvedCall<VariableDescriptor>
+        override val functionCall: MutableResolvedCall<FunctionDescriptor>,
+        override val variableCall: MutableResolvedCall<VariableDescriptor>
 ) : VariableAsFunctionResolvedCall, MutableResolvedCall<FunctionDescriptor> by functionCall {
 
     override fun markCallAsCompleted() {

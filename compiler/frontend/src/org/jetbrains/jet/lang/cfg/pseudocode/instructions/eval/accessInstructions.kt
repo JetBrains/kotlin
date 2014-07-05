@@ -39,7 +39,7 @@ public abstract class AccessValueInstruction protected (
         element: JetElement,
         lexicalScope: LexicalScope,
         public val target: AccessTarget,
-        public override val receiverValues: Map<PseudoValue, ReceiverValue>
+        override val receiverValues: Map<PseudoValue, ReceiverValue>
 ) : InstructionWithNext(element, lexicalScope), InstructionWithReceivers
 
 public class ReadValueInstruction private (

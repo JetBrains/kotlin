@@ -1,8 +1,8 @@
 package kotlin
 
 public class ComparableRange<T: Comparable<T>> (
-        public override val start: T,
-        public override val end: T
+        override val start: T,
+        override val end: T
 ): Range<T> {
     override fun contains(item: T): Boolean {
         return start <= item && item <= end

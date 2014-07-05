@@ -26,7 +26,7 @@ fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
 
 class Identifier(
         val name: String,
-        public override val isNullable: Boolean = true,
+        override val isNullable: Boolean = true,
         private val quotingNeeded: Boolean = true
 ) : Expression() {
 

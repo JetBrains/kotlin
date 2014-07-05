@@ -20,9 +20,9 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithValue
 
 class PseudoValueImpl(
-        public override val debugName: String,
-        public override val element: JetElement?,
-        public override val createdAt: InstructionWithValue
+        override val debugName: String,
+        override val element: JetElement?,
+        override val createdAt: InstructionWithValue
 ) : PseudoValue {
     override fun toString(): String = debugName
 }

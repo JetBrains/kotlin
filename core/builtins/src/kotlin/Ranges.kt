@@ -18,7 +18,7 @@
 
 package kotlin
 
-public class ByteRange(public override val start: Byte, public override val end: Byte) : Range<Byte>, Progression<Byte> {
+public class ByteRange(override val start: Byte, override val end: Byte) : Range<Byte>, Progression<Byte> {
     override val increment: Int
         get() = 1
 
@@ -40,7 +40,7 @@ public class ByteRange(public override val start: Byte, public override val end:
     }
 }
 
-public class CharRange(public override val start: Char, public override val end: Char) : Range<Char>, Progression<Char> {
+public class CharRange(override val start: Char, override val end: Char) : Range<Char>, Progression<Char> {
     override val increment: Int
         get() = 1
 
@@ -62,7 +62,7 @@ public class CharRange(public override val start: Char, public override val end:
     }
 }
 
-public class ShortRange(public override val start: Short, public override val end: Short) : Range<Short>, Progression<Short> {
+public class ShortRange(override val start: Short, override val end: Short) : Range<Short>, Progression<Short> {
     override val increment: Int
         get() = 1
 
@@ -84,7 +84,7 @@ public class ShortRange(public override val start: Short, public override val en
     }
 }
 
-public class IntRange(public override val start: Int, public override val end: Int) : Range<Int>, Progression<Int> {
+public class IntRange(override val start: Int, override val end: Int) : Range<Int>, Progression<Int> {
     override val increment: Int
         get() = 1
 
@@ -106,7 +106,7 @@ public class IntRange(public override val start: Int, public override val end: I
     }
 }
 
-public class LongRange(public override val start: Long, public override val end: Long) : Range<Long>, Progression<Long> {
+public class LongRange(override val start: Long, override val end: Long) : Range<Long>, Progression<Long> {
     override val increment: Long
         get() = 1
 
@@ -128,7 +128,7 @@ public class LongRange(public override val start: Long, public override val end:
     }
 }
 
-public class FloatRange(public override val start: Float, public override val end: Float) : Range<Float>, Progression<Float> {
+public class FloatRange(override val start: Float, override val end: Float) : Range<Float>, Progression<Float> {
     override val increment: Float
         get() = 1.0f
 
@@ -150,7 +150,7 @@ public class FloatRange(public override val start: Float, public override val en
     }
 }
 
-public class DoubleRange(public override val start: Double, public override val end: Double) : Range<Double>, Progression<Double> {
+public class DoubleRange(override val start: Double, override val end: Double) : Range<Double>, Progression<Double> {
     override val increment: Double
         get() = 1.0
 

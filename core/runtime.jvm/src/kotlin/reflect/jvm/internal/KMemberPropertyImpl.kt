@@ -22,7 +22,7 @@ import kotlin.reflect.*
 // TODO: properties of built-in classes
 
 open class KMemberPropertyImpl<T : Any, out R>(
-        public override val name: String,
+        override val name: String,
         protected val owner: KClassImpl<T>
 ) : KMemberProperty<T, R>, KPropertyImpl<R> {
     override val field: Field?
