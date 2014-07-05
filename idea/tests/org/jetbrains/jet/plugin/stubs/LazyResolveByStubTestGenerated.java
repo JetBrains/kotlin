@@ -1491,6 +1491,16 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelVal.kt");
             }
             
+            @TestMetadata("PropertyInConstructor.kt")
+            public void testPropertyInConstructor() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/visibility/PropertyInConstructor.kt");
+            }
+            
+            @TestMetadata("PropertyInConstructorExplicitVisibility.kt")
+            public void testPropertyInConstructorExplicitVisibility() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/visibility/PropertyInConstructorExplicitVisibility.kt");
+            }
+            
             @TestMetadata("TopLevelVarWithPrivateSetter.kt")
             public void testTopLevelVarWithPrivateSetter() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/visibility/TopLevelVarWithPrivateSetter.kt");

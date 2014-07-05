@@ -6117,6 +6117,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/override/ParentInheritsManyImplementations.kt");
             }
             
+            @TestMetadata("PropertyInConstructor.kt")
+            public void testPropertyInConstructor() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/PropertyInConstructor.kt");
+            }
+            
             @TestMetadata("ProtectedAndPrivateFromSupertypes.kt")
             public void testProtectedAndPrivateFromSupertypes() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/ProtectedAndPrivateFromSupertypes.kt");

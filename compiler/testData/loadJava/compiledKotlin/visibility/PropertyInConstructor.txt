@@ -1,0 +1,21 @@
+package test
+
+internal open class Base {
+    /*primary*/ public constructor Base()
+    internal open val int: kotlin.Int = 1
+        internal open fun <get-int>(): kotlin.Int
+    protected open val prot: kotlin.Int = 1
+        protected open fun <get-prot>(): kotlin.Int
+    public open val pub: kotlin.Int = 1
+        public open fun <get-pub>(): kotlin.Int
+}
+
+internal final class Child : test.Base {
+    /*primary*/ public constructor Child(/*0*/ prot: kotlin.Int, /*1*/ int: kotlin.Int, /*2*/ pub: kotlin.Int)
+    internal open override /*1*/ val int: kotlin.Int
+        internal open override /*1*/ fun <get-int>(): kotlin.Int
+    protected open override /*1*/ val prot: kotlin.Int
+        protected open override /*1*/ fun <get-prot>(): kotlin.Int
+    public open override /*1*/ val pub: kotlin.Int
+        public open override /*1*/ fun <get-pub>(): kotlin.Int
+}
