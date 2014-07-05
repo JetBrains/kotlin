@@ -477,6 +477,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeInvokeOnString.kt")
+        public void testInvokeOnString() throws Exception {
+            doTest("idea/testData/quickfix/checkArguments/beforeInvokeOnString.kt");
+        }
+        
         @TestMetadata("beforeMixedNamedAndPositionalArguments.kt")
         public void testMixedNamedAndPositionalArguments() throws Exception {
             doTest("idea/testData/quickfix/checkArguments/beforeMixedNamedAndPositionalArguments.kt");

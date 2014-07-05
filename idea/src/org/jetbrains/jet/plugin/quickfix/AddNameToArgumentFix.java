@@ -63,9 +63,6 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         JetCallElement callElement = PsiTreeUtil.getParentOfType(argument, JetCallElement.class);
         assert callElement != null : "The argument has to be inside a function or constructor call";
 
-        JetExpression callee = callElement.getCalleeExpression();
-        if (!(callee instanceof JetReferenceExpression)) return Collections.emptyList();
-
         BindingContext context = ResolvePackage.getBindingContext(argument.getContainingJetFile());
         ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(callElement, context);
         if (resolvedCall == null) return Collections.emptyList();
