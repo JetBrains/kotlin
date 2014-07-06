@@ -233,9 +233,7 @@ public abstract class LazyJavaMemberScope(
 
         val field = memberIndex().findFieldByName(name)
         if (field != null && !field.isEnumEntry()) {
-            if (!DescriptorUtils.isEnumClassObject(_containingDeclaration)) {
-                properties.add(resolveProperty(field))
-            }
+            properties.add(resolveProperty(field))
         }
 
         computeNonDeclaredProperties(name, properties)

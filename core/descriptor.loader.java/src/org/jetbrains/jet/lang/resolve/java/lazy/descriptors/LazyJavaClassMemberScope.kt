@@ -43,12 +43,11 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
         containingDeclaration: ClassDescriptor,
-        private val jClass: JavaClass,
-        private val enumClassObject: Boolean = false
+        private val jClass: JavaClass
 ) : LazyJavaMemberScope(c, containingDeclaration) {
 
     override fun computeMemberIndex(): MemberIndex {
-        return object : ClassMemberIndex(jClass, { !enumClassObject && !it.isStatic() }) {
+        return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
             // For SAM-constructors
             override fun getAllMethodNames(): Collection<Name> = super.getAllMethodNames() + getAllClassNames()
         }
@@ -239,7 +238,7 @@ public class LazyJavaClassMemberScope(
         }
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? = if (enumClassObject) null else nestedClasses(name)
+    override fun getClassifier(name: Name): ClassifierDescriptor? = nestedClasses(name)
     override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet() + enumEntryIndex().keySet()
 
     // TODO
