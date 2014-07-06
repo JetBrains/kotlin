@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveRecursiveComparing
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
+import org.jetbrains.jet.repl.AbstractReplInterpreterTest
 import org.jetbrains.jet.cfg.AbstractControlFlowTest
 import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
@@ -250,6 +251,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractKotlincExecutableTest>()) {
             model("cli/jvm", extension = "args", testMethod = "doJvmTest")
             model("cli/js", extension = "args", testMethod = "doJsTest")
+        }
+
+        testClass(javaClass<AbstractReplInterpreterTest>()) {
+            model("repl", extension = "repl")
         }
 
         testClass(javaClass<AbstractControlFlowTest>()) {
