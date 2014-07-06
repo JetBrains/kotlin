@@ -59,7 +59,6 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 import static org.jetbrains.jet.lexer.JetTokens.VARARG_KEYWORD;
-import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 
 public class DescriptorResolver {
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");
@@ -1373,39 +1372,6 @@ public class DescriptorResolver {
                 trace.report(UPPER_BOUND_VIOLATED.on(jetTypeArgument, substitutedBound, typeArgument));
             }
         }
-    }
-
-    @NotNull
-    public static SimpleFunctionDescriptor createEnumClassObjectValuesMethod(
-            @NotNull ClassDescriptor classObject,
-            @NotNull BindingTrace trace
-    ) {
-        final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
-        assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "values should be created in enum class: " + enumClassDescriptor;
-        return DescriptorFactory
-                .createEnumClassObjectValuesMethod(classObject, DeferredType.create(NO_LOCKS, trace, new Function0<JetType>() {
-                    @Override
-                    public JetType invoke() {
-                        return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
-                    }
-                }));
-    }
-
-
-    @NotNull
-    public static SimpleFunctionDescriptor createEnumClassObjectValueOfMethod(
-            @NotNull ClassDescriptor classObject,
-            @NotNull BindingTrace trace
-    ) {
-        final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
-        assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "valueOf should be created in enum class: " + enumClassDescriptor;
-        return DescriptorFactory
-                .createEnumClassObjectValueOfMethod(classObject, DeferredType.create(NO_LOCKS, trace, new Function0<JetType>() {
-                    @Override
-                    public JetType invoke() {
-                        return enumClassDescriptor.getDefaultType();
-                    }
-                }));
     }
 
     public static boolean checkHasOuterClassInstance(

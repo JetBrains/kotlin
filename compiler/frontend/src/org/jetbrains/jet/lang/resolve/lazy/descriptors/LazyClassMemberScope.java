@@ -148,7 +148,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
         }
         result.addAll(generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_FUNCTIONS, result));
-        generateEnumClassObjectMethods(result, name);
         generateDataClassMethods(result, name);
         generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
     }
@@ -182,21 +181,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                     constructor.getValueParameters(),
                     thisDescriptor, trace);
             result.add(copyFunctionDescriptor);
-        }
-    }
-
-    private void generateEnumClassObjectMethods(@NotNull Collection<? super FunctionDescriptor> result, @NotNull Name name) {
-        if (!DescriptorUtils.isEnumClassObject(thisDescriptor)) return;
-
-        if (name.equals(DescriptorFactory.VALUES_METHOD_NAME)) {
-            SimpleFunctionDescriptor valuesMethod = DescriptorResolver
-                    .createEnumClassObjectValuesMethod(thisDescriptor, trace);
-            result.add(valuesMethod);
-        }
-        else if (name.equals(DescriptorFactory.VALUE_OF_METHOD_NAME)) {
-            SimpleFunctionDescriptor valueOfMethod = DescriptorResolver
-                    .createEnumClassObjectValueOfMethod(thisDescriptor, trace);
-            result.add(valueOfMethod);
         }
     }
 
@@ -310,9 +294,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 // Nothing else is inherited
             }
         }
-
-        result.addAll(getFunctions(DescriptorFactory.VALUES_METHOD_NAME));
-        result.addAll(getFunctions(DescriptorFactory.VALUE_OF_METHOD_NAME));
 
         addDataClassMethods(result);
 
