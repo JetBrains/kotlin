@@ -1,0 +1,13 @@
+>>> class A {
+...     fun foo() = "Old"
+... }
+>>> val oldA = A()
+>>> class A {
+...     fun foo() = "New"
+... }
+>>> oldA.foo()
+Old
+>>> A().foo()
+New
+>>> oldA.javaClass == javaClass<A>()
+false

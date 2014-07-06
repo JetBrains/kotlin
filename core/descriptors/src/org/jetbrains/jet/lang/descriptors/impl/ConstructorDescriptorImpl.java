@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
@@ -71,7 +70,10 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     @Nullable
     private static ReceiverParameterDescriptor getExpectedThisObject(@NotNull ClassDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        return DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration);
+        if (containingDeclaration instanceof ClassDescriptor) {
+            return ((ClassDescriptor) containingDeclaration).getThisAsReceiverParameter();
+        }
+        return NO_RECEIVER_PARAMETER;
     }
 
     @NotNull

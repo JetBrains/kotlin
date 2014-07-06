@@ -309,6 +309,11 @@ public class CodegenBinding {
             return fqName.isRoot() ? shortName : fqName.asString().replace('.', '/') + '/' + shortName;
         }
 
+        if (container instanceof ScriptDescriptor) {
+            Type scriptType = asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) container);
+            return scriptType.getInternalName() + "$" + name.getIdentifier();
+        }
+
         assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
 
         String containerInternalName = getAsmType(bindingContext, (ClassDescriptor) container).getInternalName();

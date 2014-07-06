@@ -26,8 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetScript;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -215,7 +214,12 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
 
     private void genMembers() {
         for (JetDeclaration declaration : scriptDeclaration.getDeclarations()) {
-            genFunctionOrProperty(declaration);
+            if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                genFunctionOrProperty(declaration);
+            }
+            else if (declaration instanceof JetClassOrObject) {
+                genClassOrObject((JetClassOrObject) declaration);
+            }
         }
     }
 }

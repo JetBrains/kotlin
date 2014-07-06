@@ -1,0 +1,6 @@
+>>> open class A(val result: String) {
+...     fun foo() = result
+... }
+>>> class B : A("OK")
+>>> B().foo()
+OK

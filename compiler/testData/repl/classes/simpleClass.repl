@@ -1,0 +1,6 @@
+>>> class A { override fun toString() = "A" }
+>>> val a = A()
+>>> a
+A
+>>> a.toString()
+A

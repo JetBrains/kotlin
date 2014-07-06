@@ -81,6 +81,11 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
         doTest("compiler/testData/codegen/script/secondLevelVal.kts");
     }
     
+    @TestMetadata("simpleClass.kts")
+    public void testSimpleClass() throws Exception {
+        doTest("compiler/testData/codegen/script/simpleClass.kts");
+    }
+    
     @TestMetadata("string.kts")
     public void testString() throws Exception {
         doTest("compiler/testData/codegen/script/string.kts");

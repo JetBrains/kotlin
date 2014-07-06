@@ -77,6 +77,9 @@ public class OverloadResolver {
             else if (containingDeclaration instanceof PackageFragmentDescriptor) {
                 inPackages.put(getFqName(klass), klass.getConstructors());
             }
+            else if (containingDeclaration instanceof ScriptDescriptor) {
+                // TODO: check overload conflicts of functions with constructors in scripts
+            }
             else if (!(containingDeclaration instanceof FunctionDescriptor)) {
                 throw new IllegalStateException("Illegal class container: " + containingDeclaration);
             }
