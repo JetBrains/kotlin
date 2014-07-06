@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors.impl
 
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.name.SpecialNames
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
@@ -31,6 +32,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope.LockLevel
 import org.jetbrains.jet.lang.types.DelegatingType
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public class EnumClassObjectDescriptor(
         storageManager: StorageManager,
@@ -53,9 +56,9 @@ public class EnumClassObjectDescriptor(
         val enumType = object : DelegatingType() {
             override fun getDelegate() = (getContainingDeclaration() as ClassDescriptor).getDefaultType()
         }
-        val enumArrayType = KotlinBuiltIns.getInstance().getArrayType(enumType)
-        scope.addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValuesMethod(this, enumArrayType))
-        scope.addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValueOfMethod(this, enumType))
+
+        scope.addFunctionDescriptor(createEnumClassObjectValuesMethod(enumType))
+        scope.addFunctionDescriptor(createEnumClassObjectValueOfMethod(enumType))
 
         val sink = object : OverridingUtil.DescriptorSink {
             override fun addToScope(fakeOverride: CallableMemberDescriptor) {
@@ -78,6 +81,19 @@ public class EnumClassObjectDescriptor(
         }
 
         scope.changeLockLevel(LockLevel.READING)
+    }
+
+    private fun createEnumClassObjectValuesMethod(enumType: JetType): SimpleFunctionDescriptor {
+        val enumArrayType = KotlinBuiltIns.getInstance().getArrayType(enumType)
+        val values = SimpleFunctionDescriptorImpl.create(this, Annotations.EMPTY, Name.identifier("values"), SYNTHESIZED)
+        return values.initialize(null, getThisAsReceiverParameter(), listOf(), listOf(), enumArrayType, Modality.FINAL, Visibilities.PUBLIC)
+    }
+
+    private fun createEnumClassObjectValueOfMethod(enumType: JetType): SimpleFunctionDescriptor {
+        val values = SimpleFunctionDescriptorImpl.create(this, Annotations.EMPTY, Name.identifier("valueOf"), SYNTHESIZED)
+        val parameter = ValueParameterDescriptorImpl(values, null, 0, Annotations.EMPTY, Name.identifier("value"),
+                                                     KotlinBuiltIns.getInstance().getStringType(), false, null)
+        return values.initialize(null, getThisAsReceiverParameter(), listOf(), listOf(parameter), enumType, Modality.FINAL, Visibilities.PUBLIC)
     }
 
     override fun getScopeForMemberLookup(): JetScope = scope
