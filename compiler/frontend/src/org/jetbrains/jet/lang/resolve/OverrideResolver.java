@@ -85,9 +85,9 @@ public class OverrideResolver {
             if (ourClasses.contains(klass)) {
                 generateOverridesAndDelegationInAClass(klass, processed, ourClasses);
 
-                MutableClassDescriptor classObject = klass.getClassObjectDescriptor();
-                if (classObject != null) {
-                    generateOverridesAndDelegationInAClass(classObject, processed, ourClasses);
+                ClassDescriptor classObject = klass.getClassObjectDescriptor();
+                if (classObject instanceof MutableClassDescriptor) {
+                    generateOverridesAndDelegationInAClass((MutableClassDescriptor) classObject, processed, ourClasses);
                 }
             }
         }

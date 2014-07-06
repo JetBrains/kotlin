@@ -50,7 +50,9 @@ public class EnumClassObjectDescriptor(
     private val scope = WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "MemberLookup")
 
     ;{
-        val enumType = (getContainingDeclaration() as ClassDescriptor).getDefaultType()
+        val enumType = object : DelegatingType() {
+            override fun getDelegate() = (getContainingDeclaration() as ClassDescriptor).getDefaultType()
+        }
         val enumArrayType = KotlinBuiltIns.getInstance().getArrayType(enumType)
         scope.addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValuesMethod(this, enumArrayType))
         scope.addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValueOfMethod(this, enumType))
