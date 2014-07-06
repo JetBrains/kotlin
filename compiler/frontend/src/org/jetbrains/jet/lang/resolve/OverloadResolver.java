@@ -78,7 +78,7 @@ public class OverloadResolver {
                 inPackages.put(getFqName(klass), klass.getConstructors());
             }
             else if (!(containingDeclaration instanceof FunctionDescriptor)) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("Illegal class container: " + containingDeclaration);
             }
         }
     }
