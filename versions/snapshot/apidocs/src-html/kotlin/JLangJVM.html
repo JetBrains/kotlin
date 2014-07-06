@@ -29,10 +29,20 @@
 <a href='#28' name='28'>28</a>
 <a href='#29' name='29'>29</a>
 <a href='#30' name='30'>30</a>
+<a href='#31' name='31'>31</a>
+<a href='#32' name='32'>32</a>
+<a href='#33' name='33'>33</a>
+<a href='#34' name='34'>34</a>
+<a href='#35' name='35'>35</a>
+<a href='#36' name='36'>36</a>
+<a href='#37' name='37'>37</a>
+<a href='#38' name='38'>38</a>
+<a href='#39' name='39'>39</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>lang</span><span class='DOT'>.</span><span class='IDENTIFIER'>annotation</span><span class='DOT'>.</span><span class='IDENTIFIER'>Retention</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>lang</span><span class='DOT'>.</span><span class='IDENTIFIER'>annotation</span><span class='DOT'>.</span><span class='IDENTIFIER'>RetentionPolicy</span><span>
+</span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>jvm</span><span class='DOT'>.</span><span class='IDENTIFIER'>internal</span><span class='DOT'>.</span><span class='IDENTIFIER'>unsafe</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>jvm</span><span class='DOT'>.</span><span class='IDENTIFIER'>internal</span><span class='DOT'>.</span><span class='IDENTIFIER'>Intrinsic</span><span>
 
 </span><span class='KDOC_START'>/**</span><span>
@@ -55,7 +65,15 @@
 
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.javaClass.function</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='reified'>reified</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>javaClass</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Class</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>Class</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span>
 
-</span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.synchronized</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>synchronized</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+</span><span class='public'>public</span><span> </span><span class='IDENTIFIER'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>synchronized</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='IDENTIFIER'>monitorEnter</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='RPAR'>)</span><span>
+    </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+    </span><span class='finally'>finally</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='IDENTIFIER'>monitorExit</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
 
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Annotation</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='DOT'>.</span><span class='IDENTIFIER'>annotationType</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Class</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span>
     </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>lang</span><span class='DOT'>.</span><span class='IDENTIFIER'>annotation</span><span class='DOT'>.</span><span class='IDENTIFIER'>Annotation</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>annotationType</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>Class</span><span class='LT'>&lt;</span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span>

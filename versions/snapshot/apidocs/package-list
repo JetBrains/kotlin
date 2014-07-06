@@ -6,9 +6,11 @@ kotlin.internal
 kotlin.io
 kotlin.jdbc
 kotlin.jvm
+kotlin.jvm.internal.unsafe
 kotlin.math
 kotlin.modules
 kotlin.platform
+kotlin.reflect
 kotlin.swing
 kotlin.template
 kotlin.test
