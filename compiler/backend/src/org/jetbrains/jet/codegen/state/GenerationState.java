@@ -23,6 +23,7 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.jet.codegen.optimization.OptimizationClassBuilderFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
@@ -146,7 +147,7 @@ public class GenerationState {
 
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory(this, new BuilderFactoryForDuplicateSignatureDiagnostics(
-                builderFactory, this.bindingContext, diagnostics));
+                new OptimizationClassBuilderFactory(builderFactory), this.bindingContext, diagnostics));
 
         this.generateNotNullAssertions = generateNotNullAssertions;
         this.generateNotNullParamAssertions = generateNotNullParamAssertions;
