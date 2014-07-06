@@ -43,6 +43,7 @@ import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobal
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.descriptors.serialization.ClassData
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)

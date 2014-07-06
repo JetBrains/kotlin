@@ -17,32 +17,19 @@
 package org.jetbrains.jet.plugin.libraries
 
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptorImpl
+import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
 import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl
-import org.jetbrains.jet.lang.types.ErrorUtils.getErrorModule
-import org.jetbrains.jet.lang.descriptors.Modality
-import java.util.Collections
-import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeSubstitutor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.types.TypeProjection
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.types.ErrorUtils.createErrorType
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 
 private class PackageFragmentWithMissingDependencies(override val fqName: FqName, moduleDescriptor: ModuleDescriptor) :
         PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
@@ -75,7 +62,7 @@ private class PackageFragmentProviderForMissingDependencies(val moduleDescriptor
 }
 
 private class MissingDependencyErrorClassDescriptor(containing: DeclarationDescriptor, override val fullFqName: FqName)
-: MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, Collections.emptyList<JetType>()) {
+: MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, listOf()) {
 
     private val scope = ScopeWithMissingDependencies(fullFqName, this)
 
@@ -98,8 +85,8 @@ private class MissingDependencyErrorClassDescriptor(containing: DeclarationDescr
 
     {
         val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true)
-        emptyConstructor.initialize(Collections.emptyList<TypeParameterDescriptor>(), Collections.emptyList<ValueParameterDescriptor>(), Visibilities.INTERNAL, false)
+        emptyConstructor.initialize(listOf(), listOf(), Visibilities.INTERNAL, false)
         emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))
-        initialize(JetScope.EMPTY, Collections.singleton<ConstructorDescriptor>(emptyConstructor), emptyConstructor)
+        initialize(JetScope.EMPTY, setOf(emptyConstructor), emptyConstructor)
     }
 }

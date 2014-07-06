@@ -17,10 +17,8 @@
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
@@ -29,10 +27,8 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl implements LazyEntity {
-    private final ResolveSession resolveSession;
     private final JetScope memberScope;
     private final PackageMemberDeclarationProvider declarationProvider;
 
@@ -43,13 +39,12 @@ public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl impleme
             @NotNull PackageMemberDeclarationProvider declarationProvider
     ) {
         super(module, fqName);
-        this.resolveSession = resolveSession;
         this.declarationProvider = declarationProvider;
 
         this.memberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
 
         for (JetFile file : declarationProvider.getPackageFiles()) {
-            this.resolveSession.getTrace().record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, this);
+            resolveSession.getTrace().record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, this);
         }
     }
 

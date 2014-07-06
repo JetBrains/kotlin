@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.descriptors;
+package org.jetbrains.jet.lang.descriptors.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -22,10 +22,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.CompositePackageFragmentProvider;
-import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.PackageViewDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -37,7 +35,6 @@ import java.util.Map;
 
 public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ModuleDescriptor {
     private static final Logger LOG = Logger.getInstance(ModuleDescriptorImpl.class);
-
 
     private final Map<DependencyKind, List<PackageFragmentProvider>> prioritizedFragmentProviders = Maps.newHashMap();
     private final List<PackageFragmentProvider> fragmentProviders = Lists.newArrayList();

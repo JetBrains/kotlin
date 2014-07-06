@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.descriptors
+package org.jetbrains.jet.lang.descriptors.impl
 
-import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorNonRootImpl
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 
 public abstract class PackageFragmentDescriptorImpl(
