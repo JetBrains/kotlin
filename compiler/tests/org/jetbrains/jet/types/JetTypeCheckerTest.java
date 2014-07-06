@@ -547,7 +547,13 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     private void assertType(String contextType, final String expression, String expectedType) {
         final JetType thisType = makeType(contextType);
-        JetScope scope = new JetScopeAdapter(scopeWithImports) {
+        JetScope scope = new AbstractScopeAdapter() {
+            @NotNull
+            @Override
+            protected JetScope getWorkerScope() {
+                return scopeWithImports;
+            }
+
             @NotNull
             @Override
             public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {

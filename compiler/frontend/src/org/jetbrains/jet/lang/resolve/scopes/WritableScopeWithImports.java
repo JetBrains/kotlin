@@ -27,7 +27,9 @@ import org.jetbrains.jet.utils.Printer;
 
 import java.util.*;
 
-public abstract class WritableScopeWithImports extends JetScopeAdapter implements WritableScope {
+public abstract class WritableScopeWithImports extends AbstractScopeAdapter implements WritableScope {
+    @NotNull
+    private final JetScope workerScope;
 
     @NotNull
     private final String debugName;
@@ -39,7 +41,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     private List<ReceiverParameterDescriptor> implicitReceiverHierarchy;
 
     public WritableScopeWithImports(@NotNull JetScope scope, @NotNull RedeclarationHandler redeclarationHandler, @NotNull String debugName) {
-        super(scope);
+        this.workerScope = scope;
         this.redeclarationHandler = redeclarationHandler;
         this.debugName = debugName;
     }
@@ -77,6 +79,12 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
 
 
+
+    @NotNull
+    @Override
+    protected final JetScope getWorkerScope() {
+        return workerScope;
+    }
 
     @NotNull
     protected final List<JetScope> getImports() {
