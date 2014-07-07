@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.EditorTextField;
+import com.intellij.ui.TitledSeparator;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +42,7 @@ import java.util.Map;
 
 public class KotlinExtractFunctionDialog extends DialogWrapper {
     private JPanel contentPane;
-    private JPanel inputParametersPanel;
+    private TitledSeparator inputParametersPanel;
     private JComboBox visibilityBox;
     private KotlinFunctionSignatureComponent signaturePreviewField;
     private EditorTextField functionNameField;
@@ -150,6 +151,9 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             }
         };
         parameterTablePanel.init(originalDescriptor.getDescriptor().getParameters());
+
+        inputParametersPanel.setText("&Parameters");
+        inputParametersPanel.setLabelFor(parameterTablePanel.getTable());
         inputParametersPanel.add(parameterTablePanel);
     }
 
