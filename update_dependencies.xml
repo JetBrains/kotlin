@@ -159,8 +159,8 @@
         <get-maven-library prefix="org/fusesource/jansi" lib="jansi" version="1.9"/>
         -->
 
-        <!-- Guava 14 sources-->
-        <get-maven-library prefix="com/google/guava" lib="guava" version="14.0.1" bin="false"/>
+        <!-- Guava 17 sources-->
+        <get-maven-library prefix="com/google/guava" lib="guava" version="17.0" bin="false"/>
 
         <!-- ASM -->
         <get src="https://raw.github.com/JetBrains/intellij-community/master/lib/src/asm5-src.zip"
@@ -260,7 +260,7 @@
                     <mkdir dir="${jps-test}"/>
                     <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/core/guava-14.0.1.jar" dest="${core}/guava-14.0.1.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/guava-17.0.jar" dest="${core}/guava-17.0.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
                     <!--<get src="@{base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar" usetimestamp="true"/>-->
