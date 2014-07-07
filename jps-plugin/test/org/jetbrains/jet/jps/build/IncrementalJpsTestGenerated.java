@@ -66,6 +66,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/classInlineFunctionUnchanged/");
     }
     
+    @TestMetadata("classObjectConstantChanged")
+    public void testClassObjectConstantChanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/classObjectConstantChanged/");
+    }
+    
     @TestMetadata("classRecreated")
     public void testClassRecreated() throws Exception {
         doTest("jps-plugin/testData/incremental/classRecreated/");
@@ -84,11 +89,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestMetadata("constantUnchanged")
     public void testConstantUnchanged() throws Exception {
         doTest("jps-plugin/testData/incremental/constantUnchanged/");
-    }
-    
-    @TestMetadata("constantValue")
-    public void testConstantValue() throws Exception {
-        doTest("jps-plugin/testData/incremental/constantValue/");
     }
     
     @TestMetadata("dependencyClassReferenced")
@@ -121,6 +121,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/ourClassReferenced/");
     }
     
+    @TestMetadata("packageConstantChanged")
+    public void testPackageConstantChanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/packageConstantChanged/");
+    }
+    
     @TestMetadata("packageFileAdded")
     public void testPackageFileAdded() throws Exception {
         doTest("jps-plugin/testData/incremental/packageFileAdded/");
@@ -150,7 +155,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     public void testPackageInlineFunctionAccessingField() throws Exception {
         doTest("jps-plugin/testData/incremental/packageInlineFunctionAccessingField/");
     }
-
+    
     @TestMetadata("packageInlineFunctionChanged")
     public void testPackageInlineFunctionChanged() throws Exception {
         doTest("jps-plugin/testData/incremental/packageInlineFunctionChanged/");
