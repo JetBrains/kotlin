@@ -35,10 +35,9 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.lang.psi.ValueArgument
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getParentCall
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCallWithAssert
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getParentResolvedCall
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
@@ -51,9 +50,8 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
 
         val element = jetFile.findElementAt(text.indexOf("<caret>"))
         val expression = PsiTreeUtil.getParentOfType(element, javaClass<JetExpression>())
-        val call = expression?.getParentCall(bindingContext)
 
-        val cachedCall = call?.getResolvedCallWithAssert(bindingContext)
+        val cachedCall = expression?.getParentResolvedCall(bindingContext, strict = false)
 
         val resolvedCall = if (cachedCall !is VariableAsFunctionResolvedCall) cachedCall
             else if ("(" == element?.getText()) cachedCall.functionCall

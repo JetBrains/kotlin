@@ -71,11 +71,16 @@ public fun JetElement.getCall(context: BindingContext): Call? {
     return context[CALL, element]
 }
 
-public fun JetExpression.getParentCall(context: BindingContext): Call? {
-    val parent = PsiTreeUtil.getNonStrictParentOfType<JetElement>(
-            this,
+public fun JetElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
+    val callExpressionTypes = array<Class<out JetElement>?>(
             javaClass<JetSimpleNameExpression>(), javaClass<JetCallElement>(), javaClass<JetBinaryExpression>(),
             javaClass<JetUnaryExpression>(), javaClass<JetArrayAccessExpression>())
+
+    val parent = if (strict) {
+        PsiTreeUtil.getParentOfType(this, *callExpressionTypes)
+    } else {
+        PsiTreeUtil.getNonStrictParentOfType(this, *callExpressionTypes)
+    }
     return parent?.getCall(context)
 }
 
@@ -85,6 +90,10 @@ public fun Call?.getResolvedCall(context: BindingContext): ResolvedCall<out Call
 
 public fun JetElement?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? {
     return this?.getCall(context)?.getResolvedCall(context)
+}
+
+public fun JetElement?.getParentResolvedCall(context: BindingContext, strict: Boolean = true): ResolvedCall<out CallableDescriptor>? {
+    return this?.getParentCall(context, strict)?.getResolvedCall(context)
 }
 
 public fun JetElement.getCallWithAssert(context: BindingContext): Call {
