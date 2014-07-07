@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetConstantExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.ArrayList
 import java.util.LinkedList
+import org.jetbrains.jet.plugin.JetBundle
 
 public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingIntention<JetPrefixExpression>(
         "convert.negated.expression.with.demorgans.law", javaClass()
@@ -41,10 +42,11 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
 
         val parenthesizedExpression = element.getBaseExpression() as? JetParenthesizedExpression
         val baseExpression = parenthesizedExpression?.getExpression() as? JetBinaryExpression ?: return false
-        val operatorToken = baseExpression.getOperationToken() ?: return false
 
-        if (!(operatorToken == JetTokens.ANDAND || operatorToken == JetTokens.OROR)) {
-            return false
+        when (baseExpression.getOperationToken()) {
+            JetTokens.ANDAND -> setText(JetBundle.message("convert.negated.expression.with.demorgans.law.andToOr"))
+            JetTokens.OROR -> setText(JetBundle.message("convert.negated.expression.with.demorgans.law.orToAnd"))
+            else -> return false
         }
 
         val elements = splitBooleanSequence(baseExpression) ?: return false
@@ -54,7 +56,7 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
     override fun applyTo(element: JetPrefixExpression, editor: Editor) {
         val parenthesizedExpression = element.getBaseExpression() as JetParenthesizedExpression
         val baseExpression = parenthesizedExpression.getExpression() as JetBinaryExpression
-        val operatorText = when(baseExpression.getOperationToken()) {
+        val operatorText = when (baseExpression.getOperationToken()) {
             JetTokens.ANDAND -> JetTokens.OROR.getValue()
             JetTokens.OROR -> JetTokens.ANDAND.getValue()
             else -> throw IllegalArgumentException(
@@ -70,7 +72,7 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
     }
 
     fun handleSpecial(expression: JetExpression): String {
-        return when(expression) {
+        return when (expression) {
             is JetSimpleNameExpression, is JetConstantExpression, is JetPrefixExpression,
             is JetParenthesizedExpression -> "!${expression.getText()}"
             else -> "!(${expression.getText()})"
