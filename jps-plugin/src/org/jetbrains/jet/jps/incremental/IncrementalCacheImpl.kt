@@ -190,7 +190,8 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
             ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
                 override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-                    if (value != null) {
+                    val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL
+                    if (value != null && access and staticFinal == staticFinal) {
                         result[name] = value
                     }
                     return null

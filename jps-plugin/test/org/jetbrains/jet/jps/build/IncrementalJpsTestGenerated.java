@@ -116,6 +116,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/multiplePackagesModified/");
     }
     
+    @TestMetadata("objectValChanged")
+    public void testObjectValChanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/objectValChanged/");
+    }
+    
     @TestMetadata("ourClassReferenced")
     public void testOurClassReferenced() throws Exception {
         doTest("jps-plugin/testData/incremental/ourClassReferenced/");
@@ -204,6 +209,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestMetadata("topLevelMembersInTwoFiles")
     public void testTopLevelMembersInTwoFiles() throws Exception {
         doTest("jps-plugin/testData/incremental/topLevelMembersInTwoFiles/");
+    }
+    
+    @TestMetadata("traitClassObjectConstantChanged")
+    public void testTraitClassObjectConstantChanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/traitClassObjectConstantChanged/");
     }
     
 }
