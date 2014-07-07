@@ -16,277 +16,55 @@
 
 package org.jetbrains.jet.plugin.intentions;
 
-import com.intellij.codeInsight.editorActions.JoinLinesHandler;
+import com.google.common.collect.Lists;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import com.intellij.util.PathUtil;
-import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
-import org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.*;
-import org.jetbrains.jet.plugin.intentions.declarations.ConvertMemberToExtension;
-import org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 import org.junit.Assert;
 
 import java.io.File;
+import java.util.List;
 
 public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
-    public void doTestDoubleBangToIfThen(@NotNull String path) throws Exception {
-        doTestIntention(path, new DoubleBangToIfThenIntention());
+    private static IntentionAction createIntention(File testDataFile) throws Exception {
+        List<File> candidateFiles = Lists.newArrayList();
+
+        File current = testDataFile.getParentFile();
+        while (current != null) {
+            File candidate = new File(current, ".intention");
+            if (candidate.exists()) {
+                candidateFiles.add(candidate);
+            }
+            current = current.getParentFile();
+        }
+
+        if (candidateFiles.isEmpty()) {
+            throw new AssertionError(".intention file is not found for " + testDataFile +
+                                     "\nAdd it to base directory of test data. It should contain fully-qualified name of intention class.");
+        }
+        if (candidateFiles.size() > 1) {
+            throw new AssertionError("Several .intention files are available for " + testDataFile +
+                                     "\nPlease remove some of them\n" + candidateFiles);
+        }
+
+        String className = FileUtil.loadFile(candidateFiles.get(0)).trim();
+        return (IntentionAction) Class.forName(className).newInstance();
     }
 
-    public void doTestIfThenToDoubleBang(@NotNull String path) throws Exception {
-        doTestIntention(path, new IfThenToDoubleBangIntention());
-    }
+    protected void doTest(@NotNull String path) throws Exception {
+        IntentionAction intentionAction = createIntention(new File(path));
 
-    public void doTestElvisToIfThen(@NotNull String path) throws Exception {
-        doTestIntention(path, new ElvisToIfThenIntention());
-    }
-
-    public void doTestIfThenToElvis(@NotNull String path) throws Exception {
-        doTestIntention(path, new IfThenToElvisIntention());
-    }
-
-    public void doTestSafeAccessToIfThen(@NotNull String path) throws Exception {
-        doTestIntention(path, new SafeAccessToIfThenIntention());
-    }
-
-    public void doTestIfThenToSafeAccess(@NotNull String path) throws Exception {
-        doTestIntention(path, new IfThenToSafeAccessIntention());
-    }
-
-    public void doTestConvertToStringTemplate(@NotNull String path) throws Exception {
-        doTestIntention(path, new ConvertToStringTemplateIntention());
-    }
-
-    public void doTestConvertToConcatenatedStringIntention(@NotNull String path) throws Exception {
-        doTestIntention(path, new ConvertToConcatenatedStringIntention());
-    }
-
-    public void doTestFoldIfToAssignment(@NotNull String path) throws Exception {
-        doTestIntention(path, new FoldIfToAssignmentIntention());
-    }
-
-    public void doTestFoldIfToReturn(@NotNull String path) throws Exception {
-        doTestIntention(path, new FoldIfToReturnIntention());
-    }
-
-    public void doTestFoldIfToReturnAsymmetrically(@NotNull String path) throws Exception {
-        doTestIntention(path, new FoldIfToReturnAsymmetricallyIntention());
-    }
-
-    public void doTestFoldWhenToAssignment(@NotNull String path) throws Exception {
-        doTestIntention(path, new FoldWhenToAssignmentIntention());
-    }
-
-    public void doTestFoldWhenToReturn(@NotNull String path) throws Exception {
-        doTestIntention(path, new FoldWhenToReturnIntention());
-    }
-
-    public void doTestUnfoldAssignmentToIf(@NotNull String path) throws Exception {
-        doTestIntention(path, new UnfoldAssignmentToIfIntention());
-    }
-
-    public void doTestUnfoldAssignmentToWhen(@NotNull String path) throws Exception {
-        doTestIntention(path, new UnfoldAssignmentToWhenIntention());
-    }
-
-    public void doTestUnfoldPropertyToIf(@NotNull String path) throws Exception {
-        doTestIntention(path, new UnfoldPropertyToIfIntention());
-    }
-
-    public void doTestUnfoldPropertyToWhen(@NotNull String path) throws Exception {
-        doTestIntention(path, new UnfoldPropertyToWhenIntention());
-    }
-
-    public void doTestUnfoldReturnToIf(@NotNull String path) throws Exception {
-        doTestIntention(path, new UnfoldReturnToIfIntention());
-    }
-
-    public void doTestUnfoldReturnToWhen(@NotNull String path) throws Exception {
-        doTestIntention(path, new UnfoldReturnToWhenIntention());
-    }
-
-    public void doTestIfToWhen(@NotNull String path) throws Exception {
-        doTestIntention(path, new IfToWhenIntention());
-    }
-
-    public void doTestWhenToIf(@NotNull String path) throws Exception {
-        doTestIntention(path, new WhenToIfIntention());
-    }
-
-    public void doTestFlattenWhen(@NotNull String path) throws Exception {
-        doTestIntention(path, new FlattenWhenIntention());
-    }
-
-    public void doTestMergeWhen(@NotNull String path) throws Exception {
-        doTestIntention(path, new MergeWhenIntention());
-    }
-
-    public void doTestIntroduceWhenSubject(@NotNull String path) throws Exception {
-        doTestIntention(path, new IntroduceWhenSubjectIntention());
-    }
-
-    public void doTestEliminateWhenSubject(@NotNull String path) throws Exception {
-        doTestIntention(path, new EliminateWhenSubjectIntention());
-    }
-
-    public void doTestSplitProperty(@NotNull String path) throws Exception {
-        doTestIntention(path, new SplitPropertyDeclarationIntention());
-    }
-
-    public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {
-        doTestIntention(path, new RemoveUnnecessaryParenthesesIntention());
-    }
-
-    public void doTestRemoveCurlyFromTemplate(@NotNull String path) throws Exception {
-        doTestIntention(path, new RemoveCurlyBracesFromTemplateIntention());
-    }
-
-    public void doTestInsertCurlyToTemplate(@NotNull String path) throws Exception {
-        doTestIntention(path, new InsertCurlyBracesToTemplateIntention());
-    }
-
-    public void doTestMoveLambdaInsideParentheses(@NotNull String path) throws Exception {
-        doTestIntention(path, new MoveLambdaInsideParenthesesIntention());
-    }
-    public void doTestMoveLambdaOutsideParentheses(@NotNull String path) throws Exception {
-        doTestIntention(path, new MoveLambdaOutsideParenthesesIntention());
-    }
-
-    public void doTestSwapBinaryExpression(@NotNull String path) throws Exception {
-        doTestIntention(path, new SwapBinaryExpression());
-    }
-
-    public void doTestRemoveExplicitTypeArguments(@NotNull String path) throws Exception {
-        doTestIntention(path, new RemoveExplicitTypeArguments());
-    }
-
-    public void doTestConvertMemberToExtension(@NotNull String path) throws Exception {
-        doTestIntention(path, new ConvertMemberToExtension());
-    }
-
-    public void doTestReconstructType(@NotNull String path) throws Exception {
-        doTestIntention(path, new ReconstructTypeInCastOrIsAction());
-    }
-
-    public void doTestReplaceWithDotQualifiedMethodCall(@NotNull String path) throws Exception {
-        doTestIntention(path, new ReplaceWithDotQualifiedMethodCallIntention());
-    }
-
-    public void doTestReplaceWithInfixFunctionCall(@NotNull String path) throws Exception {
-        doTestIntention(path, new TestableReplaceWithInfixFunctionCallIntention());
-    }
-
-    public void doTestReplaceExplicitFunctionLiteralParamWithIt(@NotNull String path) throws Exception {
-        doTestIntention(path, new ReplaceExplicitFunctionLiteralParamWithItIntention());
-    }
-
-    public void doTestConvertNegatedExpressionWithDemorgansLaw(@NotNull String path) throws Exception {
-        doTestIntention(path, new ConvertNegatedExpressionWithDemorgansLawIntention());
-    }
-
-    public void doTestReplaceItWithExplicitFunctionLiteralParam(@NotNull String path) throws Exception {
-        doTestIntention(path, new ReplaceItWithExplicitFunctionLiteralParamIntention());
-    }
-
-    public void doTestRemoveBraces(@NotNull String path) throws Exception {
-        doTestIntention(path, new RemoveBracesIntention());
-    }
-
-    public void doTestAddBraces(@NotNull String path) throws Exception {
-        doTestIntention(path, new AddBracesIntention());
-    }
-
-    public void doTestConvertNegatedBooleanSequence(@NotNull String path) throws Exception {
-		 doTestIntention(path, new ConvertNegatedBooleanSequenceIntention());
-    }
-
-    public void doTestReplaceGetIntention(@NotNull String path) throws Exception {
-        doTestIntention(path, new TestableReplaceGetIntention());
-    }
-
-    public void doTestReplaceContainsIntention(@NotNull String path) throws Exception {
-        doTestIntention(path, new TestableReplaceContainsIntention());
-    }
-
-    public void doTestReplaceBinaryInfixIntention(@NotNull String path) throws Exception {
-        doTestIntention(path, new TestableReplaceBinaryInfixIntention());
-    }
-
-    public void doTestReplaceUnaryPrefixIntention(@NotNull String path) throws Exception {
-        doTestIntention(path, new TestableReplaceUnaryPrefixIntention());
-    }
-
-    public void doTestReplaceInvokeIntention(@NotNull String path) throws Exception {
-        doTestIntention(path, new TestableReplaceInvokeIntention());
-    }
-
-    public void doTestSimplifyNegatedBinaryExpressionIntention(@NotNull String path) throws Exception {
-        doTestIntention(path, new SimplifyNegatedBinaryExpressionIntention());
-    }
-
-    public void doTestInsertExplicitTypeArguments(@NotNull String path) throws Exception {
-        doTestIntention(path, new InsertExplicitTypeArguments());
-    }
-
-    public void doTestConvertAssertToIfWithThrowIntention(@NotNull String path) throws Exception {
-        doTestIntention(path, new ConvertAssertToIfWithThrowIntention());
-    }
-
-    public void doTestConvertIfWithThrowToAssertIntention(@NotNull String path) throws Exception {
-        doTestIntention(path, new ConvertIfWithThrowToAssertIntention());
-    }
-
-    public void doTestSplitIf(@NotNull String path) throws Exception {
-        doTestIntention(path, new SplitIfIntention());
-    }
-
-    public void doTestReplaceWithOperatorAssign(@NotNull String path) throws Exception {
-        doTestIntention(path, new ReplaceWithOperatorAssignIntention());
-    }
-
-    public void doTestReplaceWithTraditionalAssignment(@NotNull String path) throws Exception {
-        doTestIntention(path, new ReplaceWithTraditionalAssignmentIntention());
-    }
-
-    public void doTestSimplifyBooleanWithConstants(@NotNull String path) throws Exception {
-        doTestIntention(path, new SimplifyBooleanWithConstantsIntention());
-    }
-
-    public void doTestInvertIfCondition(@NotNull String path) throws Exception {
-        doTestIntention(path, new InvertIfConditionIntention());
-    }
-
-    public void doTestMakeTypeExplicitInLambda(@NotNull String path) throws Exception {
-        doTestIntention(path, new MakeTypeExplicitInLambdaIntention());
-    }
-
-    public void doTestMakeTypeImplicitInLambda(@NotNull String path) throws Exception {
-        doTestIntention(path, new MakeTypeImplicitInLambdaIntention());
-    }
-
-    public void doTestOperatorToFunction(@NotNull String path) throws Exception {
-        doTestIntention(path, new OperatorToFunctionIntention());
-    }
-
-    public void doTestConvertToForEachLoop(@NotNull String path) throws Exception {
-        doTestIntention(path, new ConvertToForEachLoopIntention());
-    }
-
-    public void doTestConvertToForEachFunctionCall(@NotNull String path) throws Exception {
-        doTestIntention(path, new ConvertToForEachFunctionCallIntention());
-    }
-
-    private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
         String fileText = FileUtil.loadFile(new File(path), true);
@@ -351,6 +129,6 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
     }
 
     protected static Sdk getFullJavaJDK() {
-        return JavaSdk.getInstance().createJdk("JDK", SystemUtils.getJavaHome().getAbsolutePath());
+        return PluginTestCaseBase.fullJdk();
     }
 }

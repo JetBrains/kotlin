@@ -87,7 +87,6 @@ import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
 import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
-import org.jetbrains.jet.plugin.intentions.AbstractIntentionTest
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithStdLib
 import org.jetbrains.jet.plugin.codeInsight.AbstractInsertImportOnPasteTest
 import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTest
@@ -313,14 +312,6 @@ fun main(args: Array<String>) {
             model("quickfix", pattern = "^before(\\w+)\\.kt$")
         }
 
-        testClass(javaClass<AbstractIntentionTest>(), "ConvertToExpressionBodyTestGenerated") {
-            model("intentions/convertToExpressionBody", pattern = "^before(\\w+)\\.kt$")
-        }
-
-        testClass(javaClass<AbstractIntentionTest>(), "ConvertToBlockBodyTestGenerated") {
-            model("intentions/convertToBlockBody", pattern = "^before(\\w+)\\.kt$")
-        }
-
         testClass(javaClass<AbstractJSBasicCompletionTest>()) {
             model("completion/basic/common")
             model("completion/basic/js")
@@ -391,68 +382,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractCodeTransformationTest>()) {
-            model("intentions/branched/doubleBangToIfThen", testMethod = "doTestDoubleBangToIfThen")
-            model("intentions/branched/ifThenToDoubleBang", testMethod = "doTestIfThenToDoubleBang")
-            model("intentions/branched/elvisToIfThen", testMethod = "doTestElvisToIfThen")
-            model("intentions/branched/ifThenToElvis", testMethod = "doTestIfThenToElvis")
-            model("intentions/branched/safeAccessToIfThen", testMethod = "doTestSafeAccessToIfThen")
-            model("intentions/branched/ifThenToSafeAccess", testMethod = "doTestIfThenToSafeAccess")
-            model("intentions/branched/folding/ifToAssignment", testMethod = "doTestFoldIfToAssignment")
-            model("intentions/branched/folding/ifToReturn", testMethod = "doTestFoldIfToReturn")
-            model("intentions/branched/folding/ifToReturnAsymmetrically", testMethod = "doTestFoldIfToReturnAsymmetrically")
-            model("intentions/branched/folding/whenToAssignment", testMethod = "doTestFoldWhenToAssignment")
-            model("intentions/branched/folding/whenToReturn", testMethod = "doTestFoldWhenToReturn")
-            model("intentions/branched/unfolding/assignmentToIf", testMethod = "doTestUnfoldAssignmentToIf")
-            model("intentions/branched/unfolding/assignmentToWhen", testMethod = "doTestUnfoldAssignmentToWhen")
-            model("intentions/branched/unfolding/propertyToIf", testMethod = "doTestUnfoldPropertyToIf")
-            model("intentions/branched/unfolding/propertyToWhen", testMethod = "doTestUnfoldPropertyToWhen")
-            model("intentions/branched/unfolding/returnToIf", testMethod = "doTestUnfoldReturnToIf")
-            model("intentions/branched/unfolding/returnToWhen", testMethod = "doTestUnfoldReturnToWhen")
-            model("intentions/branched/ifWhen/ifToWhen", testMethod = "doTestIfToWhen")
-            model("intentions/branched/ifWhen/whenToIf", testMethod = "doTestWhenToIf")
-            model("intentions/branched/when/flatten", testMethod = "doTestFlattenWhen")
-            model("intentions/branched/when/merge", testMethod = "doTestMergeWhen")
-            model("intentions/branched/when/introduceSubject", testMethod = "doTestIntroduceWhenSubject")
-            model("intentions/branched/when/eliminateSubject", testMethod = "doTestEliminateWhenSubject")
-            model("intentions/declarations/split", testMethod = "doTestSplitProperty")
-            model("intentions/declarations/convertMemberToExtension", testMethod = "doTestConvertMemberToExtension")
-            model("intentions/reconstructedType", testMethod = "doTestReconstructType")
-            model("intentions/removeUnnecessaryParentheses", testMethod = "doTestRemoveUnnecessaryParentheses")
-            model("intentions/replaceWithDotQualifiedMethodCall", testMethod = "doTestReplaceWithDotQualifiedMethodCall")
-            model("intentions/replaceWithInfixFunctionCall", testMethod = "doTestReplaceWithInfixFunctionCall")
-            model("intentions/removeCurlyBracesFromTemplate", testMethod = "doTestRemoveCurlyFromTemplate")
-            model("intentions/convertToStringTemplateIntention", testMethod = "doTestConvertToStringTemplate")
-            model("intentions/convertToConcatenatedStringIntention", testMethod = "doTestConvertToConcatenatedStringIntention")
-            model("intentions/insertCurlyBracestsToTemplate", testMethod = "doTestInsertCurlyToTemplate")
-            model("intentions/moveLambdaInsideParentheses", testMethod = "doTestMoveLambdaInsideParentheses")
-            model("intentions/moveLambdaOutsideParentheses", testMethod = "doTestMoveLambdaOutsideParentheses")
-            model("intentions/replaceExplicitFunctionLiteralParamWithIt", testMethod = "doTestReplaceExplicitFunctionLiteralParamWithIt")
-            model("intentions/replaceItWithExplicitFunctionLiteralParam", testMethod = "doTestReplaceItWithExplicitFunctionLiteralParam")
-            model("intentions/removeBraces", testMethod = "doTestRemoveBraces")
-            model("intentions/addBraces", testMethod = "doTestAddBraces")
-            model("intentions/attributeCallReplacements/replaceGetIntention", testMethod = "doTestReplaceGetIntention")
-            model("intentions/attributeCallReplacements/replaceContainsIntention", testMethod = "doTestReplaceContainsIntention")
-            model("intentions/attributeCallReplacements/replaceBinaryInfixIntention", testMethod = "doTestReplaceBinaryInfixIntention")
-            model("intentions/attributeCallReplacements/replaceUnaryPrefixIntention", testMethod = "doTestReplaceUnaryPrefixIntention")
-            model("intentions/attributeCallReplacements/replaceInvokeIntention", testMethod = "doTestReplaceInvokeIntention")
-            model("intentions/simplifyNegatedBinaryExpressionIntention", testMethod = "doTestSimplifyNegatedBinaryExpressionIntention")
-            model("intentions/convertNegatedBooleanSequence", testMethod="doTestConvertNegatedBooleanSequence")
-            model("intentions/convertNegatedExpressionWithDemorgansLaw", testMethod = "doTestConvertNegatedExpressionWithDemorgansLaw")
-            model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
-            model("intentions/splitIf", testMethod = "doTestSplitIf")
-            model("intentions/replaceWithOperatorAssign", testMethod = "doTestReplaceWithOperatorAssign")
-            model("intentions/replaceWithTraditionalAssignment", testMethod = "doTestReplaceWithTraditionalAssignment")
-            model("intentions/simplifyBooleanWithConstants", testMethod = "doTestSimplifyBooleanWithConstants")
-            model("intentions/insertExplicitTypeArguments", testMethod = "doTestInsertExplicitTypeArguments")
-            model("intentions/removeExplicitTypeArguments", testMethod = "doTestRemoveExplicitTypeArguments")
-            model("intentions/convertAssertToIf", testMethod = "doTestConvertAssertToIfWithThrowIntention")
-            model("intentions/convertIfToAssert", testMethod = "doTestConvertIfWithThrowToAssertIntention")
-            model("intentions/makeTypeExplicitInLambda", testMethod = "doTestMakeTypeExplicitInLambda")
-            model("intentions/makeTypeImplicitInLambda", testMethod = "doTestMakeTypeImplicitInLambda")
-            model("intentions/invertIfCondition", testMethod = "doTestInvertIfCondition")
-            model("intentions/operatorToFunction", testMethod = "doTestOperatorToFunction")
-            model("intentions/convertToForEachLoop", testMethod = "doTestConvertToForEachLoop")
-            model("intentions/convertToForEachFunctionCall", testMethod = "doTestConvertToForEachFunctionCall")
+            model("intentions", testMethod = "doTest")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
