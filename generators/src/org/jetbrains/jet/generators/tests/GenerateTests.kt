@@ -116,6 +116,7 @@ import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterTest
 import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.jet.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
+import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -385,6 +386,10 @@ fun main(args: Array<String>) {
             model("codeInsight/surroundWith/functionLiteral", testMethod = "doTestWithFunctionLiteralSurrounder")
         }
 
+        testClass(javaClass<AbstractJoinLinesTest>()) {
+            model("joinLines", testMethod = "doTest")
+        }
+
         testClass(javaClass<AbstractCodeTransformationTest>()) {
             model("intentions/branched/doubleBangToIfThen", testMethod = "doTestDoubleBangToIfThen")
             model("intentions/branched/ifThenToDoubleBang", testMethod = "doTestIfThenToDoubleBang")
@@ -410,7 +415,6 @@ fun main(args: Array<String>) {
             model("intentions/branched/when/introduceSubject", testMethod = "doTestIntroduceWhenSubject")
             model("intentions/branched/when/eliminateSubject", testMethod = "doTestEliminateWhenSubject")
             model("intentions/declarations/split", testMethod = "doTestSplitProperty")
-            model("intentions/declarations/join", testMethod = "doTestJoinProperty")
             model("intentions/declarations/convertMemberToExtension", testMethod = "doTestConvertMemberToExtension")
             model("intentions/reconstructedType", testMethod = "doTestReconstructType")
             model("intentions/removeUnnecessaryParentheses", testMethod = "doTestRemoveUnnecessaryParentheses")

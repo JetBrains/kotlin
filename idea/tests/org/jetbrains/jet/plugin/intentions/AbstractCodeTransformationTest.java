@@ -143,10 +143,6 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new SplitPropertyDeclarationIntention());
     }
 
-    public void doTestJoinProperty(@NotNull String path) throws Exception {
-        doTestAction(path, new JoinLinesHandler(null));
-    }
-
     public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {
         doTestIntention(path, new RemoveUnnecessaryParenthesesIntention());
     }
@@ -346,12 +342,6 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         catch (IntentionTestException e) {
             assertEquals("Failure message mismatch.", shouldFailString, e.getMessage());
         }
-    }
-
-    private void doTestAction(@NotNull String path, @NotNull EditorActionHandler actionHandler) throws Exception {
-        configureByFile(path);
-        actionHandler.execute(getEditor(), getCurrentEditorDataContext());
-        checkResultByFile(path + ".after");
     }
 
     @NotNull
