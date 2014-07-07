@@ -19,10 +19,7 @@ package org.jetbrains.jet.codegen.optimization.boxing;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.InsnList;
-import org.jetbrains.org.objectweb.asm.tree.InsnNode;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.tree.*;
 import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame;
@@ -60,7 +57,7 @@ public class RedundantNullCheckMethodTransformer extends MethodTransformer {
             Frame<BasicValue> frame = frames[i];
             AbstractInsnNode insn = insnList.get(i);
 
-            if (insn.getOpcode() == Opcodes.IFNULL &&
+            if ((insn.getOpcode() == Opcodes.IFNULL || insn.getOpcode() == Opcodes.IFNONNULL) &&
                 frame.getStack(frame.getStackSize() - 1) instanceof BoxedBasicValue) {
 
                 insnsToOptimize.add(insn);
@@ -75,7 +72,18 @@ public class RedundantNullCheckMethodTransformer extends MethodTransformer {
                 insnList.insertBefore(insn, new InsnNode(Opcodes.POP));
             }
 
-            insnList.remove(insn);
+            assert insn.getOpcode() == Opcodes.IFNULL
+                   || insn.getOpcode() == Opcodes.IFNONNULL : "only IFNULL/IFNONNULL are supported";
+
+            if (insn.getOpcode() == Opcodes.IFNULL) {
+                insnList.remove(insn);
+            }
+            else {
+                insnList.set(
+                        insn,
+                        new JumpInsnNode(Opcodes.GOTO, ((JumpInsnNode) insn).label)
+                );
+            }
         }
 
         return insnsToOptimize.size() > 0;
