@@ -158,7 +158,7 @@ public interface BindingContext {
             backingFieldRequired = valueNotFound ? false : backingFieldRequired;
             assert backingFieldRequired != null;
             // TODO: user BindingContextAccessors
-            PsiElement declarationPsiElement = map.get(BindingContextUtils.DESCRIPTOR_TO_DECLARATION, propertyDescriptor);
+            PsiElement declarationPsiElement = BindingContextUtils.descriptorToDeclaration(null, propertyDescriptor);
             if (declarationPsiElement instanceof JetParameter) {
                 JetParameter jetParameter = (JetParameter) declarationPsiElement;
                 return jetParameter.hasValOrVarNode() ||
@@ -193,35 +193,21 @@ public interface BindingContext {
         }
     };
 
-    WritableSlice<PsiElement, ClassDescriptor> CLASS =
-            Slices.<PsiElement, ClassDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
-                    .build();
-    WritableSlice<PsiElement, ScriptDescriptor> SCRIPT =
-            Slices.<PsiElement, ScriptDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
-                    .build();
+    WritableSlice<PsiElement, ClassDescriptor> CLASS = Slices.<PsiElement, ClassDescriptor>sliceBuilder().build();
+    WritableSlice<PsiElement, ScriptDescriptor> SCRIPT = Slices.<PsiElement, ScriptDescriptor>sliceBuilder().build();
     WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER =
-            Slices.<JetTypeParameter, TypeParameterDescriptor>sliceBuilder()
-                    .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+            Slices.<JetTypeParameter, TypeParameterDescriptor>sliceBuilder().build();
     /**
      * @see BindingContextUtils#recordFunctionDeclarationToDescriptor(BindingTrace, PsiElement, SimpleFunctionDescriptor)}
      */
-    WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.<PsiElement, SimpleFunctionDescriptor>sliceBuilder()
-            .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.<PsiElement, ConstructorDescriptor>sliceBuilder()
-            .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, VariableDescriptor> VARIABLE =
-            Slices.<PsiElement, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
-                    .build();
-    WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.<JetParameter, VariableDescriptor>sliceBuilder()
-            .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.<PsiElement, SimpleFunctionDescriptor>sliceBuilder().build();
+    WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.<PsiElement, ConstructorDescriptor>sliceBuilder().build();
+    WritableSlice<PsiElement, VariableDescriptor> VARIABLE = Slices.<PsiElement, VariableDescriptor>sliceBuilder().build();
+    WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.<JetParameter, VariableDescriptor>sliceBuilder().build();
     WritableSlice<JetPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR =
-            Slices.<JetPropertyAccessor, PropertyAccessorDescriptor>sliceBuilder()
-                    .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-
-    // normalize value to getOriginal(value)
+            Slices.<JetPropertyAccessor, PropertyAccessorDescriptor>sliceBuilder().build();
     WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER =
-            Slices.<PsiElement, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
-                    .build();
+            Slices.<PsiElement, PropertyDescriptor>sliceBuilder().build();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
             CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
