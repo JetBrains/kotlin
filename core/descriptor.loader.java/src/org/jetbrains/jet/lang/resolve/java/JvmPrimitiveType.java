@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public enum JvmPrimitiveType {
     BOOLEAN(PrimitiveType.BOOLEAN, "boolean", "java.lang.Boolean"),
     CHAR(PrimitiveType.CHAR, "char", "java.lang.Character"),
@@ -30,7 +33,21 @@ public enum JvmPrimitiveType {
     LONG(PrimitiveType.LONG, "long", "java.lang.Long"),
     DOUBLE(PrimitiveType.DOUBLE, "double", "java.lang.Double"),
     ;
-    
+
+    private static final Set<FqName> WRAPPERS_CLASS_NAMES;
+
+    static {
+        WRAPPERS_CLASS_NAMES = new HashSet<FqName>();
+
+        for (JvmPrimitiveType primitiveType : values()) {
+            WRAPPERS_CLASS_NAMES.add(primitiveType.getWrapperFqName());
+        }
+    }
+
+    public static boolean isWrapperClassName(@NotNull FqName className) {
+        return WRAPPERS_CLASS_NAMES.contains(className);
+    }
+
     private final PrimitiveType primitiveType;
     private final String name;
     private final FqName wrapperFqName;
