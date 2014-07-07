@@ -27,14 +27,14 @@
 
     <property name="continuous.idea.version" value=".lastSuccessful"/>
 
-    <target name="update" depends="fetch-third-party,fetch-annotations">
+    <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
         <execute_update
             base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"
         />
     </target>
 
-    <target name="jb_update" depends="fetch-third-party,fetch-annotations">
+    <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
         <execute_update
             base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"
