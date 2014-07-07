@@ -16,41 +16,37 @@
 
 package org.jetbrains.jet.codegen.optimization.boxing;
 
+import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
-public class RangeIteratorBasicValue extends BasicValue {
-    private static Type getValuesType(@NotNull String valuesTypeName) {
-        if (valuesTypeName.equals("Byte")) {
-            return Type.BYTE_TYPE;
-        }
-        if (valuesTypeName.equals("Char")) {
-            return Type.CHAR_TYPE;
-        }
-        if (valuesTypeName.equals("Short")) {
-            return Type.SHORT_TYPE;
-        }
-        if (valuesTypeName.equals("Int")) {
-            return Type.INT_TYPE;
-        }
-        if (valuesTypeName.equals("Long")) {
-            return Type.LONG_TYPE;
-        }
-        if (valuesTypeName.equals("Float")) {
-            return Type.FLOAT_TYPE;
-        }
-        if (valuesTypeName.equals("Double")) {
-            return Type.DOUBLE_TYPE;
-        }
+public class ProgressionIteratorBasicValue extends BasicValue {
+    private final static ImmutableMap<String, Type> VALUES_TYPENAME_TO_TYPE;
 
-        throw new RuntimeException("Unexpected type " + valuesTypeName);
+    static {
+        VALUES_TYPENAME_TO_TYPE = ImmutableMap.<String, Type>builder().
+                put("Byte", Type.BYTE_TYPE).
+                put("Char", Type.CHAR_TYPE).
+                put("Short", Type.SHORT_TYPE).
+                put("Int", Type.INT_TYPE).
+                put("Long", Type.LONG_TYPE).
+                put("Float", Type.FLOAT_TYPE).
+                put("Double", Type.DOUBLE_TYPE).
+                build();
+    }
+
+    @NotNull
+    private static Type getValuesType(@NotNull String valuesTypeName) {
+        Type type = VALUES_TYPENAME_TO_TYPE.get(valuesTypeName);
+        assert type != null : "Unexpected type " + valuesTypeName;
+        return type;
     }
 
     private final Type valuesPrimitiveType;
     private final String valuesPrimitiveTypeName;
 
-    public RangeIteratorBasicValue(@NotNull String valuesPrimitiveTypeName) {
+    public ProgressionIteratorBasicValue(@NotNull String valuesPrimitiveTypeName) {
         super(Type.getObjectType("kotlin/" + valuesPrimitiveTypeName + "Iterator"));
         this.valuesPrimitiveType = getValuesType(valuesPrimitiveTypeName);
         this.valuesPrimitiveTypeName = valuesPrimitiveTypeName;
@@ -70,7 +66,7 @@ public class RangeIteratorBasicValue extends BasicValue {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        RangeIteratorBasicValue value = (RangeIteratorBasicValue) o;
+        ProgressionIteratorBasicValue value = (ProgressionIteratorBasicValue) o;
 
         if (!valuesPrimitiveType.equals(value.valuesPrimitiveType)) return false;
 

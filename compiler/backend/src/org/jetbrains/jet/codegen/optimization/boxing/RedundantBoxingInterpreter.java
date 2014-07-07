@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 class RedundantBoxingInterpreter extends BoxingInterpreter {
-    private static final ImmutableSet<Integer> unsafeOperationsOpcodes;
+    private static final ImmutableSet<Integer> UNSAFE_OPERATIONS_OPCODES;
 
     static {
         ImmutableSet.Builder<Integer> unsafeOperationsOpcodesBuilder = ImmutableSet.builder();
@@ -39,12 +39,12 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
                 Opcodes.IFNONNULL, Opcodes.IFNULL, Opcodes.IF_ACMPEQ, Opcodes.IF_ACMPNE
         );
 
-        unsafeOperationsOpcodes = unsafeOperationsOpcodesBuilder.build();
+        UNSAFE_OPERATIONS_OPCODES = unsafeOperationsOpcodesBuilder.build();
     }
 
     private final Set<BoxedBasicValue> candidatesBoxedValues = new HashSet<BoxedBasicValue>();
 
-    RedundantBoxingInterpreter(InsnList insnList) {
+    public RedundantBoxingInterpreter(InsnList insnList) {
         super(insnList);
     }
 
@@ -60,7 +60,7 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
 
     private static void processOperationWithBoxedValue(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
         if (value instanceof BoxedBasicValue) {
-            if (unsafeOperationsOpcodes.contains(insnNode.getOpcode())) {
+            if (UNSAFE_OPERATIONS_OPCODES.contains(insnNode.getOpcode())) {
                 markValueAsDirty((BoxedBasicValue) value);
             }
             else {
@@ -76,6 +76,7 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
             @NotNull BasicValue value2
     ) throws AnalyzerException {
 
+        processOperationWithBoxedValue(value1, insn);
         processOperationWithBoxedValue(value2, insn);
 
         return super.binaryOperation(insn, value1, value2);
@@ -87,6 +88,7 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
             @NotNull BasicValue value1, @NotNull BasicValue value2, @NotNull BasicValue value3
     ) throws AnalyzerException {
 
+        // in a valid code only aastore could happen with boxed value
         processOperationWithBoxedValue(value3, insn);
 
         return super.ternaryOperation(insn, value1, value2, value3);
