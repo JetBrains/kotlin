@@ -908,7 +908,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         FunctionDescriptor valuesFunction = findEnumFunction("values", new Function1<FunctionDescriptor, Boolean>() {
             @Override
             public Boolean invoke(FunctionDescriptor descriptor) {
-                return DescriptorUtils.isEnumValuesMethod(descriptor);
+                return isEnumValuesMethod(descriptor);
             }
         });
         MethodVisitor mv = v.newMethod(OtherOrigin(myClass, valuesFunction), ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
@@ -926,7 +926,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         FunctionDescriptor valueOfFunction = findEnumFunction("valueOf", new Function1<FunctionDescriptor, Boolean>() {
             @Override
             public Boolean invoke(FunctionDescriptor descriptor) {
-                return DescriptorUtils.isEnumValueOfMethod(descriptor);
+                return isEnumValueOfMethod(descriptor);
             }
         });
         MethodVisitor mv = v.newMethod(OtherOrigin(myClass, valueOfFunction),
