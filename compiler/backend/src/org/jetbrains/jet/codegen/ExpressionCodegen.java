@@ -1533,7 +1533,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    public boolean hasFinallyBLocks() {
+    public boolean hasFinallyBlocks() {
         for (BlockStackElement element : blockStackElements) {
             if (element instanceof FinallyBlockStackElement) {
                 return true;
@@ -1546,7 +1546,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Nullable FinallyBlockStackElement finallyBlockStackElement,
             @Nullable Label tryCatchBlockEnd
     ) {
-
         if (finallyBlockStackElement != null) {
             assert finallyBlockStackElement.gaps.size() % 2 == 0 : "Finally block gaps are inconsistent";
 
@@ -1601,7 +1600,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void generateFinallyBlocksIfNeeded(Type returnType) {
-        if (hasFinallyBLocks()) {
+        if (hasFinallyBlocks()) {
             if (!Type.VOID_TYPE.equals(returnType)) {
                 int returnValIndex = myFrameMap.enterTemp(returnType);
                 StackValue.local(returnValIndex, returnType).store(returnType, v);

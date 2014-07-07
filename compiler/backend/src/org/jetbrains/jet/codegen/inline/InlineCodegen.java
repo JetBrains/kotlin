@@ -25,9 +25,6 @@ import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
@@ -39,6 +36,9 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -53,11 +53,12 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
-import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
-import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.jet.codegen.AsmUtil.isStatic;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 
 public class InlineCodegen implements CallGenerator {
     private final GenerationState state;
@@ -494,7 +495,7 @@ public class InlineCodegen implements CallGenerator {
 
 
     public void generateAndInsertFinallyBlocks(MethodNode intoNode, List<MethodInliner.FinallyBlockInfo> insertPoints) {
-        if (!codegen.hasFinallyBLocks()) return;
+        if (!codegen.hasFinallyBlocks()) return;
 
         for (MethodInliner.FinallyBlockInfo insertPoint : insertPoints) {
             MethodNode finallyNode = InlineCodegenUtil.createEmptyMethodNode();
