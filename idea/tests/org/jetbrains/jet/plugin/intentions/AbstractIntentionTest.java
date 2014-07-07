@@ -36,7 +36,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.util.List;
 
-public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
+public abstract class AbstractIntentionTest extends LightCodeInsightTestCase {
     private static IntentionAction createIntention(File testDataFile) throws Exception {
         List<File> candidateFiles = Lists.newArrayList();
 

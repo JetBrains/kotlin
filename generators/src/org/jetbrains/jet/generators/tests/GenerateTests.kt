@@ -55,7 +55,7 @@ import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest
-import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest
+import org.jetbrains.jet.plugin.intentions.AbstractIntentionTest
 import org.jetbrains.jet.plugin.AbstractSmartSelectionTest
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest
 import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest
@@ -381,7 +381,7 @@ fun main(args: Array<String>) {
             model("joinLines", testMethod = "doTest")
         }
 
-        testClass(javaClass<AbstractCodeTransformationTest>()) {
+        testClass(javaClass<AbstractIntentionTest>()) {
             model("intentions", testMethod = "doTest")
         }
 
