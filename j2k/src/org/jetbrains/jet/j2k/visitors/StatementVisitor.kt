@@ -216,17 +216,32 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
 
         fun isSwitchBreak(statement: PsiStatement) = statement is PsiBreakStatement && statement.getLabelIdentifier() == null
 
-        fun convertStatements(statements: List<PsiStatement>): List<Statement>
-                = statements.filterNot(::isSwitchBreak).map { converter.convertStatement(it) }
+        fun convertStatements(statements: List<PsiStatement>): List<Statement> {
+            val statementsToKeep = statements.filterNot(::isSwitchBreak)
+            if (statementsToKeep.size == 1) {
+                val block = statementsToKeep.single() as? PsiBlockStatement
+                if (block != null) {
+                    return listOf(converter.convertBlock(block.getCodeBlock(), true, { !isSwitchBreak(it) }))
+                }
+            }
+            return statementsToKeep.map { converter.convertStatement(it) }
+        }
 
         fun convertCaseStatements(caseIndex: Int): List<Statement> {
             val case = cases[caseIndex]
-            return if (case.statements.any { it is PsiBreakStatement || it is PsiContinueStatement || it is PsiReturnStatement || it is PsiThrowStatement } ||
-                    caseIndex == cases.lastIndex) {
-                convertStatements(case.statements)
+            val fallsThrough = if (caseIndex == cases.lastIndex) {
+                false
             }
-            else { // otherwise we fall through into the next case
+            else {
+                val block = case.statements.singleOrNull2() as? PsiBlockStatement
+                val statements = if (block != null) block.getCodeBlock().getStatements().toList() else case.statements
+                !statements.any { it is PsiBreakStatement || it is PsiContinueStatement || it is PsiReturnStatement || it is PsiThrowStatement }
+            }
+            return if (fallsThrough) { // we fall through into the next case
                 convertStatements(case.statements) + convertCaseStatements(caseIndex + 1)
+            }
+            else {
+                convertStatements(case.statements)
             }
         }
 
@@ -399,4 +414,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         else
             converter.convertStatement(statement)
     }
+
+    private fun <T: Any> List<T>.singleOrNull2(): T?
+            = if (size == 1) this[0] else null
 }
