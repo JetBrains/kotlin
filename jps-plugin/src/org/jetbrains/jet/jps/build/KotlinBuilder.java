@@ -223,7 +223,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         IncrementalCacheImpl cache = new IncrementalCacheImpl(KotlinBuilderModuleScriptGenerator.getIncrementalCacheDir(context));
 
         try {
-            List<Pair<String, File>> moduleIdsAndFiles = new ArrayList<Pair<String, File>>();
+            List<Pair<String, File>> moduleIdsAndSourceFiles = new ArrayList<Pair<String, File>>();
             Map<String, File> outDirectories = new HashMap<String, File>();
 
             for (ModuleBuildTarget target : chunk.getTargets()) {
@@ -231,10 +231,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 outDirectories.put(targetId, target.getOutputDir());
 
                 for (String file : dirtyFilesHolder.getRemovedFiles(target)) {
-                    moduleIdsAndFiles.add(new Pair<String, File>(targetId, new File(file)));
+                    moduleIdsAndSourceFiles.add(new Pair<String, File>(targetId, new File(file)));
                 }
             }
-            cache.clearCacheForRemovedFiles(moduleIdsAndFiles, outDirectories);
+            cache.clearCacheForRemovedFiles(moduleIdsAndSourceFiles, outDirectories);
 
             IncrementalCacheImpl.RecompilationDecision recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING;
 

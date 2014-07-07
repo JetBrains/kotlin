@@ -92,8 +92,8 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         return DO_NOTHING
     }
 
-    public fun clearCacheForRemovedFiles(moduleIdsAndFiles: Collection<Pair<String, File>>, outDirectories: Map<String, File>) {
-        for ((moduleId, sourceFile) in moduleIdsAndFiles) {
+    public fun clearCacheForRemovedFiles(moduleIdsAndSourceFiles: Collection<Pair<String, File>>, outDirectories: Map<String, File>) {
+        for ((moduleId, sourceFile) in moduleIdsAndSourceFiles) {
             constantsMap.remove(moduleId, sourceFile)
             inlineFunctionsMap.remove(moduleId, sourceFile)
             packagePartMap.remove(moduleId, sourceFile)
