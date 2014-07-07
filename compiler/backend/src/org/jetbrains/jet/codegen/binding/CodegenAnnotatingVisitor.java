@@ -100,8 +100,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @NotNull
     private ClassDescriptor recordClassForFunction(@NotNull FunctionDescriptor funDescriptor, @NotNull Collection<JetType> supertypes) {
-        ClassDescriptorImpl classDescriptor =
-                new ClassDescriptorImpl(funDescriptor.getContainingDeclaration(), Name.special("<closure>"), Modality.FINAL, supertypes);
+        ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
+                funDescriptor.getContainingDeclaration(), Name.special("<closure>"), Modality.FINAL, supertypes, SourceElement.NO_SOURCE
+        );
         classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
 
         bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);

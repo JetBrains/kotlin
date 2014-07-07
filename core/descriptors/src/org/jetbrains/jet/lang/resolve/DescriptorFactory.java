@@ -34,8 +34,8 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getDefaultConstruct
 
 public class DescriptorFactory {
     private static class DefaultConstructorDescriptor extends ConstructorDescriptorImpl {
-        public DefaultConstructorDescriptor(@NotNull ClassDescriptor containingClass) {
-            super(containingClass, null, Annotations.EMPTY, true, Kind.DECLARATION);
+        public DefaultConstructorDescriptor(@NotNull ClassDescriptor containingClass, @NotNull SourceElement source) {
+            super(containingClass, null, Annotations.EMPTY, true, Kind.DECLARATION, source);
             initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                        getDefaultConstructorVisibility(containingClass), true);
         }
@@ -54,7 +54,7 @@ public class DescriptorFactory {
         PropertySetterDescriptorImpl setterDescriptor =
                 new PropertySetterDescriptorImpl(propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
                                                  propertyDescriptor.getVisibility(), !isDefault, isDefault,
-                                                 CallableMemberDescriptor.Kind.DECLARATION, null);
+                                                 CallableMemberDescriptor.Kind.DECLARATION, null, SourceElement.NO_SOURCE);
         setterDescriptor.initializeDefault();
         return setterDescriptor;
     }
@@ -68,12 +68,15 @@ public class DescriptorFactory {
     public static PropertyGetterDescriptorImpl createGetter(@NotNull PropertyDescriptor propertyDescriptor, boolean isDefault) {
         return new PropertyGetterDescriptorImpl(propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
                                                 propertyDescriptor.getVisibility(), !isDefault, isDefault,
-                                                CallableMemberDescriptor.Kind.DECLARATION, null);
+                                                CallableMemberDescriptor.Kind.DECLARATION, null, SourceElement.NO_SOURCE);
     }
 
     @NotNull
-    public static ConstructorDescriptorImpl createPrimaryConstructorForObject(@NotNull ClassDescriptor containingClass) {
-        return new DefaultConstructorDescriptor(containingClass);
+    public static ConstructorDescriptorImpl createPrimaryConstructorForObject(
+            @NotNull ClassDescriptor containingClass,
+            @NotNull SourceElement source
+    ) {
+        return new DefaultConstructorDescriptor(containingClass, source);
     }
 
     public static boolean isDefaultPrimaryConstructor(@NotNull ConstructorDescriptor constructor) {

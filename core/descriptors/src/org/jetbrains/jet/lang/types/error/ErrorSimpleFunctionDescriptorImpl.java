@@ -31,7 +31,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
     private final ErrorUtils.ErrorScope ownerScope;
 
     public ErrorSimpleFunctionDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull ErrorUtils.ErrorScope ownerScope) {
-        super(containingDeclaration, null, Annotations.EMPTY, Name.special("<ERROR FUNCTION>"), Kind.DECLARATION);
+        super(containingDeclaration, null, Annotations.EMPTY, Name.special("<ERROR FUNCTION>"), Kind.DECLARATION, SourceElement.NO_SOURCE);
         this.ownerScope = ownerScope;
     }
 

@@ -22,6 +22,7 @@ import com.intellij.util.containers.ComparatorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
@@ -211,7 +212,9 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                     altName != null ? altName : originalParameterDescriptor.getName(),
                     alternativeType,
                     originalParameterDescriptor.declaresDefaultValue(),
-                    alternativeVarargElementType));
+                    alternativeVarargElementType,
+                    SourceElement.NO_SOURCE
+                    ));
         }
 
         altValueParameters = altParamDescriptors;

@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.resolve.source.toSourceElement
 
 public class LazyScriptDescriptor(
         val resolveSession: ResolveSession,
@@ -52,9 +53,9 @@ public class LazyScriptDescriptor(
             resolveSession.getPackageFragment(fqName).sure("Package not found $fqName")
         },
         Annotations.EMPTY,
-        ScriptDescriptor.NAME
+        ScriptDescriptor.NAME,
+        jetScript.toSourceElement()
  ) {
-
     {
         resolveSession.getTrace().record(BindingContext.SCRIPT, jetScript, this)
     }
@@ -80,6 +81,7 @@ public class LazyScriptDescriptor(
         )
         result
     }
+
     override fun getScriptCodeDescriptor() = _scriptCodeDescriptor()
 
     override fun getScopeForBodyResolution(): JetScope {

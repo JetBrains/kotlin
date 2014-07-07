@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 
+//TODO: drop
 public interface SynthesizedCallableMemberDescriptor<D extends DeclarationDescriptor> extends CallableMemberDescriptor {
     @NotNull
     D getBaseForSynthesized();

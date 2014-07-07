@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -25,8 +26,9 @@ public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
     public AnonymousFunctionDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, null, annotations, Name.special("<anonymous>"), kind);
+        super(containingDeclaration, null, annotations, Name.special("<anonymous>"), kind, source);
     }
 }

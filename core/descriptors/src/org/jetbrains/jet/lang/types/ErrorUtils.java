@@ -229,9 +229,9 @@ public class ErrorUtils {
     private static class ErrorClassDescriptor extends ClassDescriptorImpl {
         public ErrorClassDescriptor(@Nullable String name) {
             super(getErrorModule(), Name.special(name == null ? "<ERROR CLASS>" : "<ERROR CLASS: " + name + ">"),
-                  Modality.OPEN, Collections.<JetType>emptyList());
+                  Modality.OPEN, Collections.<JetType>emptyList(), SourceElement.NO_SOURCE);
 
-            ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true);
+            ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE);
             errorConstructor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                         Visibilities.INTERNAL, false);
             JetScope memberScope = createErrorScope(getName().asString());
@@ -300,7 +300,8 @@ public class ErrorUtils {
                 Visibilities.INTERNAL,
                 true,
                 Name.special("<ERROR PROPERTY>"),
-                CallableMemberDescriptor.Kind.DECLARATION
+                CallableMemberDescriptor.Kind.DECLARATION,
+                SourceElement.NO_SOURCE
         );
         descriptor.setType(ERROR_PROPERTY_TYPE,
                            Collections.<TypeParameterDescriptor>emptyList(),

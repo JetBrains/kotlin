@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 
@@ -33,18 +34,20 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @Nullable JavaConstructorDescriptor original,
             @NotNull Annotations annotations,
             boolean isPrimary,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, original, annotations, isPrimary, kind);
+        super(containingDeclaration, original, annotations, isPrimary, kind, source);
     }
 
     @NotNull
     public static JavaConstructorDescriptor createJavaConstructor(
             @NotNull ClassDescriptor containingDeclaration,
             @NotNull Annotations annotations,
-            boolean isPrimary
+            boolean isPrimary,
+            @NotNull SourceElement source
     ) {
-        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION);
+        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
     }
 
     @Override
@@ -80,8 +83,9 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
                                             "newOwner: " + newOwner + "\n" +
                                             "kind: " + kind);
         }
-        JavaConstructorDescriptor result =
-                new JavaConstructorDescriptor((ClassDescriptor) newOwner, this, Annotations.EMPTY /* TODO */, isPrimary, kind);
+        JavaConstructorDescriptor result = new JavaConstructorDescriptor(
+                (ClassDescriptor) newOwner, this, Annotations.EMPTY /* TODO */, isPrimary, kind, SourceElement.NO_SOURCE
+        );
         result.setHasStableParameterNames(hasStableParameterNames());
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;

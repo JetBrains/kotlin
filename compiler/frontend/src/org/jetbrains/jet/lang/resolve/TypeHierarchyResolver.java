@@ -44,6 +44,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
 
 public class TypeHierarchyResolver {
     private static final DFS.Neighbors<ClassDescriptor> CLASS_INHERITANCE_EDGES = new DFS.Neighbors<ClassDescriptor>() {
@@ -431,8 +432,9 @@ public class TypeHierarchyResolver {
 
         @NotNull
         private MutableClassDescriptor createSyntheticClassObjectForSingleton(@NotNull ClassDescriptor classDescriptor) {
-            MutableClassDescriptor classObject = new MutableClassDescriptor(classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false,
-                                                                            getClassObjectName(classDescriptor.getName()));
+            MutableClassDescriptor classObject =
+                    new MutableClassDescriptor(classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false,
+                                               getClassObjectName(classDescriptor.getName()), SourceElement.NO_SOURCE);
 
             classObject.setModality(Modality.FINAL);
             classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
@@ -450,8 +452,9 @@ public class TypeHierarchyResolver {
             // Kind check is needed in order to not consider enums as inner in any case
             // (otherwise it would be impossible to create a class object in the enum)
             boolean isInner = kind == ClassKind.CLASS && klass.isInner();
-            MutableClassDescriptor descriptor = new MutableClassDescriptor(containingDeclaration, outerScope, kind, isInner,
-                                                                           JetPsiUtil.safeName(klass.getName()));
+            MutableClassDescriptor descriptor = new MutableClassDescriptor(
+                    containingDeclaration, outerScope, kind, isInner, JetPsiUtil.safeName(klass.getName()),
+                    toSourceElement(klass));
             c.getDeclaredClasses().put(klass, descriptor);
             trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetNamedDeclarationUtil.getUnsafeFQName(klass), descriptor);
 
@@ -471,7 +474,8 @@ public class TypeHierarchyResolver {
                 @NotNull Name name,
                 @NotNull ClassKind kind
         ) {
-            MutableClassDescriptor descriptor = new MutableClassDescriptor(owner.getOwnerForChildren(), outerScope, kind, false, name);
+            MutableClassDescriptor descriptor = new MutableClassDescriptor(owner.getOwnerForChildren(), outerScope, kind, false, name,
+                                                                           toSourceElement(declaration));
 
             prepareForDeferredCall(descriptor.getScopeForMemberDeclarationResolution(), descriptor, declaration);
 
@@ -485,7 +489,7 @@ public class TypeHierarchyResolver {
 
         @NotNull
         private ConstructorDescriptorImpl createPrimaryConstructorForObject(
-                @Nullable PsiElement object,
+                @Nullable JetClassOrObject object,
                 @NotNull MutableClassDescriptor mutableClassDescriptor
         ) {
             ConstructorDescriptorImpl constructorDescriptor = DescriptorResolver

@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -43,9 +42,11 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             boolean hasBody,
             boolean isDefault,
             @NotNull Kind kind,
-            @Nullable PropertySetterDescriptor original
+            @Nullable PropertySetterDescriptor original,
+            @NotNull SourceElement source
     ) {
-        super(modality, visibility, correspondingProperty, annotations, Name.special("<set-" + correspondingProperty.getName() + ">"), hasBody, isDefault, kind);
+        super(modality, visibility, correspondingProperty, annotations, Name.special("<set-" + correspondingProperty.getName() + ">"),
+              hasBody, isDefault, kind, source);
         this.original = original != null ? original : this;
     }
 
@@ -64,7 +65,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull JetType type
     ) {
         return new ValueParameterDescriptorImpl(
-                setterDescriptor, null, 0, Annotations.EMPTY, Name.special("<set-?>"), type, false, null
+                setterDescriptor, null, 0, Annotations.EMPTY, Name.special("<set-?>"), type, false, null, SourceElement.NO_SOURCE
         );
     }
 

@@ -103,7 +103,8 @@ private fun generatorForTopDownAnalyzerForJvm() =
                     javaClass<PsiBasedMethodSignatureChecker>(),
                     javaClass<PsiBasedExternalAnnotationResolver>(),
                     javaClass<MutablePackageFragmentProvider>(),
-                    javaClass<JavaPropertyInitializerEvaluatorImpl>()
+                    javaClass<JavaPropertyInitializerEvaluatorImpl>(),
+                    javaClass<JavaSourceElementFactoryImpl>()
             )
             field(javaClass<VirtualFileFinder>(), init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
         }
@@ -128,7 +129,8 @@ private fun generatorForJavaDescriptorResolver() =
                     javaClass<TraceBasedErrorReporter>(),
                     javaClass<PsiBasedMethodSignatureChecker>(),
                     javaClass<PsiBasedExternalAnnotationResolver>(),
-                    javaClass<JavaPropertyInitializerEvaluatorImpl>()
+                    javaClass<JavaPropertyInitializerEvaluatorImpl>(),
+                    javaClass<JavaSourceElementFactoryImpl>()
             )
             field(javaClass<VirtualFileFinder>(),
                   init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
@@ -159,7 +161,8 @@ private fun generatorForLazyResolveWithJava() =
                     javaClass<TraceBasedErrorReporter>(),
                     javaClass<PsiBasedMethodSignatureChecker>(),
                     javaClass<PsiBasedExternalAnnotationResolver>(),
-                    javaClass<JavaPropertyInitializerEvaluatorImpl>()
+                    javaClass<JavaPropertyInitializerEvaluatorImpl>(),
+                    javaClass<JavaSourceElementFactoryImpl>()
             )
         }
 

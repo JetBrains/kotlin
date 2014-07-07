@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -38,9 +39,10 @@ public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypePa
             @NotNull Name name,
             @NotNull Variance variance,
             boolean isReified,
-            int index
+            int index,
+            @NotNull SourceElement source
     ) {
-        super(storageManager, containingDeclaration, Annotations.EMPTY /* TODO */, name, variance, isReified, index);
+        super(storageManager, containingDeclaration, Annotations.EMPTY /* TODO */, name, variance, isReified, index, source);
     }
 
     @NotNull

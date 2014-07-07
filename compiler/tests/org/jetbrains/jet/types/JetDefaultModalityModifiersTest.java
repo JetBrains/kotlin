@@ -95,7 +95,8 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, JetClass aClass) {
-            MutableClassDescriptor classDescriptor = new MutableClassDescriptor(root, scope, kind, false, aClass.getNameAsSafeName());
+            MutableClassDescriptor classDescriptor =
+                    new MutableClassDescriptor(root, scope, kind, false, aClass.getNameAsSafeName(), SourceElement.NO_SOURCE);
             TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
                     LockBasedStorageManager.NO_LOCKS, new ExceptionTracker(), Predicates.<PsiFile>alwaysTrue(), false, false
             );

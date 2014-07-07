@@ -24,7 +24,8 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor
 public abstract class PackageFragmentDescriptorImpl(
         module: ModuleDescriptor,
         override val fqName: FqName
-) : DeclarationDescriptorNonRootImpl(module, Annotations.EMPTY, fqName.shortNameOrSpecial()), PackageFragmentDescriptor {
+) : DeclarationDescriptorNonRootImpl(module, Annotations.EMPTY, fqName.shortNameOrSpecial(), SourceElement.NO_SOURCE),
+        PackageFragmentDescriptor {
     override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor? = this
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
@@ -32,5 +33,9 @@ public abstract class PackageFragmentDescriptorImpl(
 
     override fun getContainingDeclaration(): ModuleDescriptor {
         return super<DeclarationDescriptorNonRootImpl>.getContainingDeclaration() as ModuleDescriptor
+    }
+
+    override fun getSource(): SourceElement {
+        return SourceElement.NO_SOURCE
     }
 }

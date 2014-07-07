@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -42,7 +43,8 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             @NotNull Name name,
             int index
     ) {
-        TypeParameterDescriptorImpl typeParameterDescriptor = createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index);
+        TypeParameterDescriptorImpl typeParameterDescriptor =
+                createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index, SourceElement.NO_SOURCE);
         typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getDefaultBound());
         typeParameterDescriptor.setInitialized();
         return typeParameterDescriptor;
@@ -54,9 +56,10 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             boolean reified,
             @NotNull Variance variance,
             @NotNull Name name,
-            int index
+            int index,
+            @NotNull SourceElement source
     ) {
-        return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index);
+        return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index, source);
     }
 
     private final Set<JetType> upperBounds = Sets.newLinkedHashSet();
@@ -68,9 +71,10 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             boolean reified,
             @NotNull Variance variance,
             @NotNull Name name,
-            int index
+            int index,
+            @NotNull SourceElement source
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, annotations, name, variance, reified, index);
+        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, annotations, name, variance, reified, index, source);
     }
 
     @NotNull

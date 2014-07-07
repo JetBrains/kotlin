@@ -57,12 +57,14 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
             @NotNull DeclarationDescriptor containingDeclaration,
             int priority,
             @NotNull JetScope scriptScope,
-            @NotNull Name className
+            @NotNull Name className,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, Annotations.EMPTY, NAME);
+        super(containingDeclaration, Annotations.EMPTY, NAME, source);
         this.priority = priority;
 
-        classDescriptor = new MutableClassDescriptor(containingDeclaration, scriptScope, ClassKind.CLASS, false, className);
+        classDescriptor = new MutableClassDescriptor(containingDeclaration, scriptScope, ClassKind.CLASS,
+                                                     false, className, SourceElement.NO_SOURCE);
         classDescriptor.addSupertype(KotlinBuiltIns.getInstance().getAnyType());
         classDescriptor.setModality(Modality.FINAL);
         classDescriptor.setVisibility(Visibilities.PUBLIC);
@@ -102,7 +104,8 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
                                                                                   Visibilities.PUBLIC,
                                                                                   false,
                                                                                   Name.identifier(LAST_EXPRESSION_VALUE_FIELD_NAME),
-                                                                                  CallableMemberDescriptor.Kind.DECLARATION);
+                                                                                  CallableMemberDescriptor.Kind.DECLARATION,
+                                                                                  SourceElement.NO_SOURCE);
         JetType returnType = scriptDescriptor.getScriptCodeDescriptor().getReturnType();
         assert returnType != null : "Return type not initialized for " + scriptDescriptor;
         propertyDescriptor.setType(
@@ -164,7 +167,7 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
     public static ConstructorDescriptorImpl createConstructor(
             @NotNull ScriptDescriptor scriptDescriptor, @NotNull List<ValueParameterDescriptor> valueParameters
     ) {
-        return ConstructorDescriptorImpl.create(scriptDescriptor.getClassDescriptor(), Annotations.EMPTY, true)
+        return ConstructorDescriptorImpl.create(scriptDescriptor.getClassDescriptor(), Annotations.EMPTY, true, SourceElement.NO_SOURCE)
                 .initialize(
                         Collections.<TypeParameterDescriptor>emptyList(),
                         valueParameters,
@@ -178,13 +181,16 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull ValueParameterDescriptor parameter
     ) {
-        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(scriptDescriptor.getClassDescriptor(),
-                                                                                  Annotations.EMPTY,
-                                                                                  Modality.FINAL,
-                                                                                  Visibilities.PUBLIC,
-                                                                                  false,
-                                                                                  parameter.getName(),
-                                                                                  CallableMemberDescriptor.Kind.DECLARATION);
+        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
+                scriptDescriptor.getClassDescriptor(),
+                Annotations.EMPTY,
+                Modality.FINAL,
+                Visibilities.PUBLIC,
+                false,
+                parameter.getName(),
+                CallableMemberDescriptor.Kind.DECLARATION,
+                SourceElement.NO_SOURCE
+        );
         propertyDescriptor.setType(
                 parameter.getType(),
                 Collections.<TypeParameterDescriptor>emptyList(),

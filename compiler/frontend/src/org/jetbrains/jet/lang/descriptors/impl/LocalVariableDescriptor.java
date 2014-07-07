@@ -18,10 +18,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.Visibilities;
-import org.jetbrains.jet.lang.descriptors.Visibility;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -35,9 +32,10 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
             @NotNull Annotations annotations,
             @NotNull Name name,
             @Nullable JetType type,
-            boolean mutable
+            boolean mutable,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, annotations, name, type);
+        super(containingDeclaration, annotations, name, type, source);
         isVar = mutable;
     }
 

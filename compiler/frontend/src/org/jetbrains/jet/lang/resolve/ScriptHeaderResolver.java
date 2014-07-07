@@ -34,6 +34,8 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
+
 // SCRIPT: Resolve declarations in scripts
 public class ScriptHeaderResolver {
 
@@ -65,7 +67,7 @@ public class ScriptHeaderResolver {
 
         FqName nameForScript = ScriptNameUtil.classNameForScript(script);
         Name className = nameForScript.shortName();
-        ScriptDescriptorImpl scriptDescriptor = new ScriptDescriptorImpl(ns, priority, outerScope, className);
+        ScriptDescriptorImpl scriptDescriptor = new ScriptDescriptorImpl(ns, priority, outerScope, className, toSourceElement(script));
 
         WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");
         scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);

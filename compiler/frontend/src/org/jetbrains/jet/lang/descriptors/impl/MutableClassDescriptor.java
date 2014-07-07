@@ -65,9 +65,10 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
             @NotNull JetScope outerScope,
             @NotNull ClassKind kind,
             boolean isInner,
-            @NotNull Name name
+            @NotNull Name name,
+            @NotNull SourceElement source
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name);
+        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
         this.kind = kind;
         this.isInner = isInner;
 

@@ -112,7 +112,9 @@ public abstract class LazyJavaMemberScope(
 
     fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): JavaMethodDescriptor {
 
-        val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(_containingDeclaration, c.resolveAnnotations(method), method.getName())
+        val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(
+                _containingDeclaration, c.resolveAnnotations(method), method.getName(), c.sourceElementFactory.source(method)
+        )
 
         val c = c.child(functionDescriptorImpl, method.getTypeParameters().toSet())
 
@@ -210,7 +212,8 @@ public abstract class LazyJavaMemberScope(
                     name,
                     outType,
                     false,
-                    varargElementType
+                    varargElementType,
+                    SourceElement.NO_SOURCE
             )
         }.toList()
         return ResolvedValueParameters(descriptors, synthesizedNames)
@@ -273,7 +276,8 @@ public abstract class LazyJavaMemberScope(
         val annotations = c.resolveAnnotations(field)
         val propertyName = field.getName()
 
-        return JavaPropertyDescriptor(_containingDeclaration, annotations, visibility, isVar, propertyName)
+        return JavaPropertyDescriptor(_containingDeclaration, annotations, visibility, isVar, propertyName,
+                                      c.sourceElementFactory.source(field))
     }
 
     private fun getPropertyType(field: JavaField): JetType {

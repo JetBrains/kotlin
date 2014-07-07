@@ -45,7 +45,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
     ) {
         super(containingDeclaration, null, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
               original.isVar(), Name.identifier(original.getName() + "$b$" + index),
-              Kind.DECLARATION);
+              Kind.DECLARATION, SourceElement.NO_SOURCE);
 
         setType(propertyType, Collections.<TypeParameterDescriptorImpl>emptyList(), expectedThisObject, receiverType);
         initialize(new Getter(this), new Setter(this));
@@ -54,15 +54,15 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
     public static class Getter extends PropertyGetterDescriptorImpl {
         public Getter(AccessorForPropertyDescriptor property) {
             super(property, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
-                  false,
-                  false, Kind.DECLARATION, null);
+                  false, false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initialize(property.getType());
         }
     }
 
     public static class Setter extends PropertySetterDescriptorImpl {
         public Setter(AccessorForPropertyDescriptor property) {
-            super(property, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL, false, false, Kind.DECLARATION, null);
+            super(property, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
+                  false, false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initializeDefault();
         }
     }

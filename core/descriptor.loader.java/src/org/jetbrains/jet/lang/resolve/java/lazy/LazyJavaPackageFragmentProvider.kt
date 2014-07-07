@@ -46,7 +46,8 @@ public class LazyJavaPackageFragmentProvider(
             outerContext.errorReporter,
             outerContext.methodSignatureChecker,
             outerContext.javaResolverCache,
-            outerContext.javaPropertyInitializerEvaluator
+            outerContext.javaPropertyInitializerEvaluator,
+            outerContext.sourceElementFactory
     )
 
     override fun getModule() = _module

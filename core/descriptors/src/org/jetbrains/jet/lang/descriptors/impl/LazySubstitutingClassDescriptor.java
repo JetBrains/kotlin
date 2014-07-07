@@ -202,4 +202,10 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
         return original.getUnsubstitutedPrimaryConstructor();
     }
+
+    @NotNull
+    @Override
+    public SourceElement getSource() {
+        return SourceElement.NO_SOURCE;
+    }
 }

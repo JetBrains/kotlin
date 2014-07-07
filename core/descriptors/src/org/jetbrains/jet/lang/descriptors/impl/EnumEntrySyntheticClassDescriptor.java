@@ -58,11 +58,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull StorageManager storageManager,
             @NotNull ClassDescriptor enumClass,
             @NotNull Name name,
-            @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames
+            @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
+            @NotNull SourceElement source
     ) {
         JetType enumType = enumClass.getDefaultType();
 
-        return new EnumEntrySyntheticClassDescriptor(storageManager, enumClass, enumType, name, ClassKind.ENUM_ENTRY, enumMemberNames);
+        return new EnumEntrySyntheticClassDescriptor(storageManager, enumClass, enumType, name, ClassKind.ENUM_ENTRY, enumMemberNames, source);
     }
 
     private EnumEntrySyntheticClassDescriptor(
@@ -71,9 +72,10 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull JetType supertype,
             @NotNull Name name,
             @NotNull ClassKind kind,
-            @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames
+            @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
+            @NotNull SourceElement source
     ) {
-        super(storageManager, containingClass, name);
+        super(storageManager, containingClass, name, source);
         this.kind = kind;
 
         this.typeConstructor =
@@ -83,7 +85,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         this.scope = new EnumEntryScope(storageManager);
         this.enumMemberNames = enumMemberNames;
 
-        ConstructorDescriptorImpl primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(this);
+        ConstructorDescriptorImpl primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(this, source);
         primaryConstructor.setReturnType(getDefaultType());
         this.primaryConstructor = primaryConstructor;
 
@@ -91,7 +93,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
                 kind == ClassKind.CLASS_OBJECT
                 ? null
                 : new EnumEntrySyntheticClassDescriptor(storageManager, this, getDefaultType(), SpecialNames.getClassObjectName(name),
-                                                        ClassKind.CLASS_OBJECT, enumMemberNames);
+                                                        ClassKind.CLASS_OBJECT, enumMemberNames, SourceElement.NO_SOURCE);
     }
 
     @NotNull

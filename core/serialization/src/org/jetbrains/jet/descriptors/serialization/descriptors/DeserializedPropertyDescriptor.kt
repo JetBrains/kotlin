@@ -26,6 +26,7 @@ import org.jetbrains.jet.descriptors.serialization.NameResolver
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind
+import org.jetbrains.jet.lang.descriptors.SourceElement
 
 public class DeserializedPropertyDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -39,7 +40,7 @@ public class DeserializedPropertyDescriptor(
         override public val proto: ProtoBuf.Callable,
         override public val nameResolver: NameResolver
 ) : DeserializedCallableMemberDescriptor,
-    PropertyDescriptorImpl(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind) {
+    PropertyDescriptorImpl(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE) {
 
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,

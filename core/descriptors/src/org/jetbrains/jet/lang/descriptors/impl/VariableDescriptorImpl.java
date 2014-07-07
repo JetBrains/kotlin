@@ -37,8 +37,10 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @Nullable JetType outType) {
-        super(containingDeclaration, annotations, name);
+            @Nullable JetType outType,
+            @NotNull SourceElement source
+    ) {
+        super(containingDeclaration, annotations, name, source);
 
         this.outType = outType;
     }

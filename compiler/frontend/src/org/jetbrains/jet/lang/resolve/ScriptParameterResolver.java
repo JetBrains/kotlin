@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
@@ -57,7 +58,7 @@ public final class ScriptParameterResolver {
             @NotNull ScriptDescriptor script
     ) {
         return new ValueParameterDescriptorImpl(script, null, index, Annotations.EMPTY, scriptParameter.getName(),
-                                                scriptParameter.getType(), false, null);
+                                                scriptParameter.getType(), false, null, SourceElement.NO_SOURCE);
     }
 
     private ScriptParameterResolver() {

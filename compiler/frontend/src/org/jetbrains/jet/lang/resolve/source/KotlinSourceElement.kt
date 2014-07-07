@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.descriptors;
+package org.jetbrains.jet.lang.resolve.source
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.descriptors.SourceElement
+import com.intellij.psi.PsiElement
 
-public interface DeclarationDescriptorNonRoot extends DeclarationDescriptorWithSource {
+public class KotlinSourceElement(override val psi: JetElement) : PsiSourceElement
 
-    @Override
-    @NotNull
-    DeclarationDescriptor getContainingDeclaration();
+public fun JetElement?.toSourceElement(): SourceElement = if (this == null) SourceElement.NO_SOURCE else KotlinSourceElement(this)
 
-}
+public fun SourceElement.getPsi(): PsiElement? = (this as? PsiSourceElement)?.psi

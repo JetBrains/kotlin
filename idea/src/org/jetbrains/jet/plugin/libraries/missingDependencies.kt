@@ -62,7 +62,7 @@ private class PackageFragmentProviderForMissingDependencies(val moduleDescriptor
 }
 
 private class MissingDependencyErrorClassDescriptor(containing: DeclarationDescriptor, override val fullFqName: FqName)
-: MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, listOf()) {
+: MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, listOf(), SourceElement.NO_SOURCE) {
 
     private val scope = ScopeWithMissingDependencies(fullFqName, this)
 
@@ -84,7 +84,7 @@ private class MissingDependencyErrorClassDescriptor(containing: DeclarationDescr
     }
 
     {
-        val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true)
+        val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE)
         emptyConstructor.initialize(listOf(), listOf(), Visibilities.INTERNAL, false)
         emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))
         initialize(JetScope.EMPTY, setOf(emptyConstructor), emptyConstructor)

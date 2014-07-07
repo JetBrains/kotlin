@@ -74,6 +74,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
+import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
@@ -532,7 +533,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(),
                 Annotations.EMPTY,
-                CallableMemberDescriptor.Kind.DECLARATION
+                CallableMemberDescriptor.Kind.DECLARATION,
+                toSourceElement(expression)
         );
 
         FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, type, null, Modality.FINAL, Visibilities.PUBLIC);
@@ -560,7 +562,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         LocalVariableDescriptor localVariable =
                 new LocalVariableDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY, Name.special("<anonymous>"),
-                                            type, /* mutable = */ false);
+                                            type, /* mutable = */ false, toSourceElement(expression));
 
         context.trace.record(VARIABLE, expression, localVariable);
 

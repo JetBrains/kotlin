@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -52,9 +53,10 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
             @NotNull Name name,
             @NotNull Variance variance,
             boolean isReified,
-            int index
+            int index,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, annotations, name);
+        super(containingDeclaration, annotations, name, source);
         this.variance = variance;
         this.reified = isReified;
         this.index = index;

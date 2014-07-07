@@ -200,7 +200,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
         ProtoBuf.Class.PrimaryConstructor constructorProto = classProto.getPrimaryConstructor();
         if (!constructorProto.hasData()) {
-            ConstructorDescriptorImpl descriptor = DescriptorFactory.createPrimaryConstructorForObject(this);
+            ConstructorDescriptorImpl descriptor = DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE);
             descriptor.setReturnType(getDefaultType());
             return descriptor;
         }
@@ -265,6 +265,12 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     public String toString() {
         // not using descriptor render to preserve laziness
         return "deserialized class " + getName().toString();
+    }
+
+    @NotNull
+    @Override
+    public SourceElement getSource() {
+        return SourceElement.NO_SOURCE;
     }
 
     private class DeserializedClassTypeConstructor extends AbstractClassTypeConstructor {
@@ -441,7 +447,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                 public ClassDescriptor invoke(Name name) {
                     if (enumEntryNames.contains(name)) {
                         return EnumEntrySyntheticClassDescriptor
-                                .create(storageManager, DeserializedClassDescriptor.this, name, enumMemberNames);
+                                .create(storageManager, DeserializedClassDescriptor.this, name, enumMemberNames, SourceElement.NO_SOURCE);
                     }
                     if (nestedClassNames.contains(name)) {
                         return ContextPackage.deserializeClass(context, classId.createNestedClassId(name));

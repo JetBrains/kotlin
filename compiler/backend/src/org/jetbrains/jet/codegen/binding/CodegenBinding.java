@@ -142,7 +142,7 @@ public class CodegenBinding {
     ) {
         ClassDescriptorImpl classDescriptor =
                 new ClassDescriptorImpl(scriptDescriptor, Name.special("<script-" + asmType.getInternalName() + ">"), Modality.FINAL,
-                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
+                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()), SourceElement.NO_SOURCE);
         classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
 
         recordClosure(bindingTrace, null, classDescriptor, null, asmType);

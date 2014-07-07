@@ -71,7 +71,8 @@ public class JvmCodegenUtil {
                 ? KotlinBuiltIns.getInstance().getExtensionFunction(arity) : KotlinBuiltIns.getInstance().getFunction(arity),
                 Annotations.EMPTY,
                 Name.identifier("invoke"),
-                CallableMemberDescriptor.Kind.DECLARATION
+                CallableMemberDescriptor.Kind.DECLARATION,
+                SourceElement.NO_SOURCE
         );
 
         invokeDescriptor.initialize(DescriptorUtils.getReceiverParameterType(fd.getReceiverParameter()),

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.sam;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 
@@ -24,7 +25,8 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
     private final JavaMethodDescriptor declaration;
 
     public SamAdapterFunctionDescriptor(@NotNull JavaMethodDescriptor declaration) {
-        super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(), declaration.getName(), Kind.SYNTHESIZED);
+        super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(),
+              declaration.getName(), Kind.SYNTHESIZED, declaration.getSource());
         this.declaration = declaration;
         setHasStableParameterNames(declaration.hasStableParameterNames());
         setHasSynthesizedParameterNames(declaration.hasSynthesizedParameterNames());

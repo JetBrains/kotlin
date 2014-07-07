@@ -114,7 +114,9 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor, isStaticClass: Boolean): JavaConstructorDescriptor {
-        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(classDescriptor, Annotations.EMPTY, /* isPrimary = */ false)
+        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
+                classDescriptor, Annotations.EMPTY, /* isPrimary = */ false, c.sourceElementFactory.source(constructor)
+        )
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
         val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
@@ -147,7 +149,9 @@ public class LazyJavaClassMemberScope(
             return null
 
         val classDescriptor = getContainingDeclaration()
-        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(classDescriptor, Annotations.EMPTY, /* isPrimary = */ true)
+        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
+                classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.sourceElementFactory.source(jClass)
+        )
         val typeParameters = classDescriptor.getTypeConstructor().getParameters()
         val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
                               else Collections.emptyList<ValueParameterDescriptor>()
@@ -198,7 +202,8 @@ public class LazyJavaClassMemberScope(
                     TypeUtils.makeNotNullable(returnType),
                     method.hasAnnotationParameterDefaultValue(),
                     // Nulls are not allowed in annotation arguments in Java
-                    varargElementType?.let { TypeUtils.makeNotNullable(it) }
+                    varargElementType?.let { TypeUtils.makeNotNullable(it) },
+                    SourceElement.NO_SOURCE
             ))
         }
 
@@ -222,7 +227,7 @@ public class LazyJavaClassMemberScope(
                 EnumEntrySyntheticClassDescriptor.create(c.storageManager, getContainingDeclaration(), name,
                                                          c.storageManager.createLazyValue {
                                                              memberIndex().getAllFieldNames() + memberIndex().getAllMethodNames()
-                                                         })
+                                                         }, SourceElement.NO_SOURCE)
             }
             else null
         }

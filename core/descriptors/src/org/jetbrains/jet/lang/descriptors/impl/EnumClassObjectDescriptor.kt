@@ -39,8 +39,8 @@ import kotlin.properties.Delegates
 public class EnumClassObjectDescriptor(
         storageManager: StorageManager,
         enumClass: ClassDescriptor
-) : ClassDescriptorBase(storageManager, enumClass, SpecialNames.getClassObjectName(enumClass.getName())) {
-    private val primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(this)
+) : ClassDescriptorBase(storageManager, enumClass, SpecialNames.getClassObjectName(enumClass.getName()), SourceElement.NO_SOURCE) {
+    private val primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE)
 
     ;{
         primaryConstructor.setReturnType(object : DelegatingType() {
@@ -112,14 +112,14 @@ public class EnumClassObjectDescriptor(
 
         private fun createEnumClassObjectValuesMethod(enumType: JetType): SimpleFunctionDescriptor {
             val enumArrayType = KotlinBuiltIns.getInstance().getArrayType(enumType)
-            val values = SimpleFunctionDescriptorImpl.create(enumClassObject, Annotations.EMPTY, Name.identifier("values"), SYNTHESIZED)
+            val values = SimpleFunctionDescriptorImpl.create(enumClassObject, Annotations.EMPTY, Name.identifier("values"), SYNTHESIZED, SourceElement.NO_SOURCE)
             return values.initialize(null, getThisAsReceiverParameter(), listOf(), listOf(), enumArrayType, Modality.FINAL, Visibilities.PUBLIC)
         }
 
         private fun createEnumClassObjectValueOfMethod(enumType: JetType): SimpleFunctionDescriptor {
-            val values = SimpleFunctionDescriptorImpl.create(enumClassObject, Annotations.EMPTY, Name.identifier("valueOf"), SYNTHESIZED)
+            val values = SimpleFunctionDescriptorImpl.create(enumClassObject, Annotations.EMPTY, Name.identifier("valueOf"), SYNTHESIZED, SourceElement.NO_SOURCE)
             val parameter = ValueParameterDescriptorImpl(values, null, 0, Annotations.EMPTY, Name.identifier("value"),
-                                                         KotlinBuiltIns.getInstance().getStringType(), false, null)
+                                                         KotlinBuiltIns.getInstance().getStringType(), false, null, SourceElement.NO_SOURCE)
             return values.initialize(null, getThisAsReceiverParameter(), listOf(), listOf(parameter), enumType, Modality.FINAL, Visibilities.PUBLIC)
         }
 

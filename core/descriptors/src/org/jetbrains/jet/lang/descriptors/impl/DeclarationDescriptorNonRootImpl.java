@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorNonRoot;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -29,19 +30,31 @@ public abstract class DeclarationDescriptorNonRootImpl
     @NotNull
     private final DeclarationDescriptor containingDeclaration;
 
+    @NotNull
+    private final SourceElement source;
+
     protected DeclarationDescriptorNonRootImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
-            @NotNull Name name) {
+            @NotNull Name name,
+            @NotNull SourceElement source
+    ) {
         super(annotations, name);
 
         this.containingDeclaration = containingDeclaration;
+        this.source = source;
     }
 
     @Override
     @NotNull
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;
+    }
+
+    @Override
+    @NotNull
+    public SourceElement getSource() {
+        return source;
     }
 
 }

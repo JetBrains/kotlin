@@ -49,13 +49,15 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFra
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
 import org.jetbrains.jet.lang.resolve.java.lazy.resolveTopLevelClassInModule
 import org.jetbrains.jet.lang.descriptors.impl.EnumClassObjectDescriptor
+import org.jetbrains.jet.lang.descriptors.SourceElement
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
         containingDeclaration: DeclarationDescriptor,
         internal val fqName: FqName,
         private val jClass: JavaClass
-) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName()), LazyJavaDescriptor, JavaClassDescriptor {
+) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName(),
+                        outerC.sourceElementFactory.source(jClass)), LazyJavaDescriptor, JavaClassDescriptor {
 
     private val c: LazyJavaResolverContextWithTypes = outerC.child(this, jClass.getTypeParameters().toSet());
 

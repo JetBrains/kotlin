@@ -62,6 +62,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.CLASS_OBJECT_NOT_ALLOWED
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes, LazyEntity {
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
@@ -100,7 +101,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull Name name,
             @NotNull JetClassLikeInfo classLikeInfo
     ) {
-        super(resolveSession.getStorageManager(), containingDeclaration, name);
+        super(resolveSession.getStorageManager(), containingDeclaration, name,
+              toSourceElement(classLikeInfo.getCorrespondingClassOrObject())
+        );
         this.resolveSession = resolveSession;
 
         if (classLikeInfo.getCorrespondingClassOrObject() != null) {
