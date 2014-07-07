@@ -36,27 +36,26 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     @Override
-    public void transform(@NotNull String owner, @NotNull MethodNode node) {
+    public void transform(@NotNull String internalClassName, @NotNull MethodNode node) {
         RedundantBoxingInterpreter interpreter = new RedundantBoxingInterpreter(node.instructions);
         Analyzer<BasicValue> analyzer = new Analyzer<BasicValue>(interpreter);
 
-        Frame<BasicValue>[] frames = runAnalyzer(analyzer, owner, node);
+        Frame<BasicValue>[] frames = runAnalyzer(analyzer, internalClassName, node);
         Set<BoxedBasicValue> valuesToOptimize = filterSafeToRemoveValues(interpreter.getCandidatesBoxedValues());
 
-        if (valuesToOptimize.size() > 0) {
+        if (!valuesToOptimize.isEmpty()) {
             findValuesClashingWithVariables(node, frames);
 
             valuesToOptimize = filterSafeToRemoveValues(valuesToOptimize);
 
             adaptLocalVariableTableForBoxedValues(node, frames);
 
-            int[] remapping = buildVariablesRemapping(valuesToOptimize, node);
-            applyVariablesRemapping(node, remapping);
+            applyVariablesRemapping(node, buildVariablesRemapping(valuesToOptimize, node));
 
             adaptInstructionsForBoxedValues(node, frames, valuesToOptimize);
         }
 
-        super.transform(owner, node);
+        super.transform(internalClassName, node);
     }
 
     @NotNull
@@ -108,12 +107,12 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     private static void findValuesClashingWithVariables(
             @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames
     ) {
-
-        while (findValuesClashingWithVariablesIteration(node, frames)) {
+        while (findValuesClashingWithVariablesPass(node, frames)) {
+            // do nothing
         }
     }
 
-    private static boolean findValuesClashingWithVariablesIteration(
+    private static boolean findValuesClashingWithVariablesPass(
             @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames
     ) {
         InsnList insnList = node.instructions;
@@ -154,7 +153,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         Type usedAsType = null;
 
         for (int i = from; i <= to; i++) {
-            AbstractInsnNode insn = insnList.get(i);
+            AbstractInsnNode insn = insnList.get(i); //TODO: handle exception?
             if (insn.getOpcode() == Opcodes.ASTORE && ((VarInsnNode) insn).var == varIndex) {
                 if (frames[i] == null) {
                     return true;
@@ -207,21 +206,21 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
 
     @NotNull
     private static int[] buildVariablesRemapping(@NotNull Iterable<BoxedBasicValue> values, @NotNull MethodNode node) {
-        Set<Integer> longTypesVars = new HashSet<Integer>();
+        Set<Integer> doubleSizedVars = new HashSet<Integer>();
         for (BoxedBasicValue value : values) {
             if (value.getPrimitiveType().getSize() == 2) {
-                longTypesVars.addAll(value.getVariablesIndexes());
+                doubleSizedVars.addAll(value.getVariablesIndexes());
             }
         }
 
-        node.maxLocals += longTypesVars.size();
+        node.maxLocals += doubleSizedVars.size();
         int[] remapping = new int[node.maxLocals];
         for (int i = 0; i < remapping.length; i++) {
             remapping[i] = i;
         }
 
-        for (int longVarIndex : longTypesVars) {
-            for (int i = longVarIndex + 1; i < remapping.length; i++) {
+        for (int varIndex : doubleSizedVars) {
+            for (int i = varIndex + 1; i < remapping.length; i++) {
                 remapping[i]++;
             }
         }
@@ -247,14 +246,14 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     private static void adaptInstructionsForBoxedValues(
             @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames, @NotNull Set<BoxedBasicValue> values
     ) {
-        collectPopInstructionsForBoxedValues(node, frames);
+        addPopInstructionsForBoxedValues(node, frames);
 
         for (BoxedBasicValue value : values) {
             adaptInstructionsForBoxedValue(node, value);
         }
     }
 
-    private static void collectPopInstructionsForBoxedValues(
+    private static void addPopInstructionsForBoxedValues(
             @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames
     ) {
         for (int i = 0; i < node.instructions.size(); i++) {
@@ -279,12 +278,12 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     private static void adaptBoxingInstruction(@NotNull MethodNode node, @NotNull BoxedBasicValue value) {
-        if (!value.isFromNumberIterator()) {
+        if (!value.isFromProgressionIterator()) {
             node.instructions.remove(value.getBoxingInsn());
         }
         else {
-            RangeIteratorBasicValue iterator = value.getNumberIterator();
-            assert iterator != null : "iterator should not be null because isFromNumberIterator returns true";
+            ProgressionIteratorBasicValue iterator = value.getProgressionIterator();
+            assert iterator != null : "iterator should not be null because isFromProgressionIterator returns true";
 
             //add checkcast to kotlin/<T>Iterator before next() call
             node.instructions.insertBefore(

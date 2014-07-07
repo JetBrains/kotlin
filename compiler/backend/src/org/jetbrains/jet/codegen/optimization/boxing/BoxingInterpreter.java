@@ -20,8 +20,11 @@ import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.AsmUtil;
+import org.jetbrains.jet.codegen.RangeCodegenUtil;
 import org.jetbrains.jet.codegen.optimization.common.OptimizationBasicInterpreter;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
@@ -35,11 +38,17 @@ import java.util.List;
 import java.util.Map;
 
 public class BoxingInterpreter extends OptimizationBasicInterpreter {
-    private static boolean isProgressionClass(String internalName) {
-        return internalName.startsWith("kotlin/") && (
-                internalName.endsWith("Progression") ||
-                internalName.endsWith("Range")
+    private static final ImmutableSet<String> UNBOXING_METHOD_NAMES;
+
+    static {
+        UNBOXING_METHOD_NAMES = ImmutableSet.of(
+                "booleanValue", "charValue", "byteValue", "shortValue", "intValue", "floatValue", "longValue", "doubleValue"
         );
+    }
+
+
+    private static boolean isProgressionClass(String internalClassName) {
+        return RangeCodegenUtil.isRangeOrProgression(buildFqNameByInternal(internalClassName));
     }
 
     /**
@@ -47,42 +56,40 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
      *
      * @param progressionClassInternalName
      * @return
+     * @throws java.lang.AssertionError if progressionClassInternalName is not progression class internal name
      */
-    private static String getValuesTypePartOfProgressionClass(String progressionClassInternalName) {
-        progressionClassInternalName = progressionClassInternalName.substring("kotlin/".length());
+    @NotNull
+    private static String getValuesTypeOfProgressionClass(String progressionClassInternalName) {
+        PrimitiveType type = RangeCodegenUtil.getPrimitiveRangeOrProgressionElementType(
+                buildFqNameByInternal(progressionClassInternalName)
+        );
 
-        int cutAtTheEnd = (progressionClassInternalName.endsWith("Progression")) ? "Progression".length() : "Range".length();
-        return progressionClassInternalName.substring(0, progressionClassInternalName.length() - cutAtTheEnd);
+        assert type != null : "type should be not null";
+
+        return type.getTypeName().asString();
     }
 
-    private static final ImmutableSet<String> wrappersClassNames;
-
-    static {
-        ImmutableSet.Builder<String> wrappersClassesBuilder = ImmutableSet.builder();
-
-        for (JvmPrimitiveType primitiveType : JvmPrimitiveType.values()) {
-            wrappersClassesBuilder.add(AsmUtil.internalNameByFqNameWithoutInnerClasses(primitiveType.getWrapperFqName()));
-        }
-
-        wrappersClassNames = wrappersClassesBuilder.build();
+    private static boolean isWrapperClassName(@NotNull String internalClassName) {
+        return JvmPrimitiveType.isWrapperClassName(
+                buildFqNameByInternal(internalClassName)
+        );
     }
 
-    private static boolean isWrapperClassName(@NotNull String owner) {
-        return wrappersClassNames.contains(owner);
+    @NotNull
+    private static FqName buildFqNameByInternal(@NotNull String internalClassName) {
+        return new FqName(Type.getObjectType(internalClassName).getClassName());
     }
 
-    private static boolean isWrapperClassNameOrNumber(@NotNull String owner) {
-        return isWrapperClassName(owner) || owner.equals(Type.getInternalName(Number.class));
+    private static boolean isWrapperClassNameOrNumber(@NotNull String internalClassName) {
+        return isWrapperClassName(internalClassName) || internalClassName.equals(Type.getInternalName(Number.class));
     }
 
     private static boolean isUnboxingMethodName(@NotNull String name) {
-        return name.endsWith("Value");
+        return UNBOXING_METHOD_NAMES.contains(name);
     }
 
     private static boolean isUnboxing(@NotNull AbstractInsnNode insn) {
-        if (insn.getOpcode() != Opcodes.INVOKEVIRTUAL) {
-            return false;
-        }
+        if (insn.getOpcode() != Opcodes.INVOKEVIRTUAL) return false;
 
         MethodInsnNode methodInsn = (MethodInsnNode) insn;
 
@@ -90,13 +97,11 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     }
 
     private static boolean isBoxing(@NotNull AbstractInsnNode insn) {
-        if (insn.getOpcode() != Opcodes.INVOKESTATIC) {
-            return false;
-        }
+        if (insn.getOpcode() != Opcodes.INVOKESTATIC) return false;
 
         MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
 
-        return isWrapperClassName(methodInsnNode.owner) && methodInsnNode.name.equals("valueOf");
+        return isWrapperClassName(methodInsnNode.owner) && "valueOf".equals(methodInsnNode.name);
     }
 
     private static boolean isIteratorMethodCallOfProgression(
@@ -105,31 +110,32 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         return (insn.getOpcode() == Opcodes.INVOKEINTERFACE &&
                 values.get(0).getType() != null &&
                 isProgressionClass(values.get(0).getType().getInternalName()) &&
-                ((MethodInsnNode) insn).name.equals("iterator"));
+                "iterator".equals(((MethodInsnNode) insn).name));
     }
 
     private static boolean isNextMethodCallOfProgressionIterator(
             @NotNull AbstractInsnNode insn, @NotNull List<? extends BasicValue> values
     ) {
         return (insn.getOpcode() == Opcodes.INVOKEINTERFACE &&
-                values.get(0) instanceof RangeIteratorBasicValue &&
-                ((MethodInsnNode) insn).name.equals("next"));
+                values.get(0) instanceof ProgressionIteratorBasicValue &&
+                "next".equals(((MethodInsnNode) insn).name));
     }
 
     private final Map<Integer, BoxedBasicValue> boxingPlaces = new HashMap<Integer, BoxedBasicValue>();
     private final InsnList insnList;
 
-    BoxingInterpreter(InsnList insnList) {
+    public BoxingInterpreter(InsnList insnList) {
         this.insnList = insnList;
     }
 
     @NotNull
     private BoxedBasicValue createNewBoxing(
-            @NotNull AbstractInsnNode insn, @NotNull Type type, @Nullable RangeIteratorBasicValue numberIterator
+            @NotNull AbstractInsnNode insn, @NotNull Type type,
+            @Nullable ProgressionIteratorBasicValue progressionIterator
     ) {
         int index = insnList.indexOf(insn);
         if (!boxingPlaces.containsKey(index)) {
-            BoxedBasicValue boxedBasicValue = new BoxedBasicValue(type, insn, numberIterator);
+            BoxedBasicValue boxedBasicValue = new BoxedBasicValue(type, insn, progressionIterator);
             onNewBoxedValue(boxedBasicValue);
             boxingPlaces.put(index, boxedBasicValue);
         }
@@ -142,28 +148,37 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     public BasicValue naryOperation(@NotNull AbstractInsnNode insn, @NotNull List<? extends BasicValue> values) throws AnalyzerException {
         BasicValue value = super.naryOperation(insn, values);
 
+        if (values.isEmpty()) return value;
+
+        BasicValue firstArg = values.get(0);
+
         if (isBoxing(insn)) {
             return createNewBoxing(insn, value.getType(), null);
         }
         else if (isUnboxing(insn) &&
-                 values.get(0) instanceof BoxedBasicValue &&
-                 value.getType().equals(((BoxedBasicValue) values.get(0)).getPrimitiveType())) {
-            onUnboxing((BoxedBasicValue) values.get(0), insn);
+                 firstArg instanceof BoxedBasicValue &&
+                 value.getType().equals(((BoxedBasicValue) firstArg).getPrimitiveType())) {
+            onUnboxing((BoxedBasicValue) firstArg, insn);
         }
         else if (isIteratorMethodCallOfProgression(insn, values)) {
-            return new RangeIteratorBasicValue(
-                    getValuesTypePartOfProgressionClass(values.get(0).getType().getInternalName())
+            return new ProgressionIteratorBasicValue(
+                    getValuesTypeOfProgressionClass(firstArg.getType().getInternalName())
             );
         }
         else if (isNextMethodCallOfProgressionIterator(insn, values)) {
-            RangeIteratorBasicValue numberIterator = (RangeIteratorBasicValue) values.get(0);
+            assert firstArg instanceof ProgressionIteratorBasicValue : "firstArg should be progression iterator";
+
+            ProgressionIteratorBasicValue progressionIterator = (ProgressionIteratorBasicValue) firstArg;
             return createNewBoxing(
                     insn,
-                    AsmUtil.boxType(numberIterator.getValuesPrimitiveType()),
-                    numberIterator
+                    AsmUtil.boxType(progressionIterator.getValuesPrimitiveType()),
+                    progressionIterator
             );
         }
         else {
+            // nary operation should be a method call or multinewarray
+            // arguments for multinewarray could be only numeric
+            // so if there are boxed values in args, it's not a case of multinewarray
             for (BasicValue arg : values) {
                 if (arg instanceof BoxedBasicValue) {
                     onMethodCallWithBoxedValue((BoxedBasicValue) arg);
@@ -175,7 +190,7 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     }
 
     private static boolean isExactValue(@NotNull BasicValue value) {
-        return value instanceof RangeIteratorBasicValue ||
+        return value instanceof ProgressionIteratorBasicValue ||
                value instanceof BoxedBasicValue ||
                (value.getType() != null && isProgressionClass(value.getType().getInternalName()));
     }

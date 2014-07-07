@@ -36,22 +36,22 @@ public class RedundantNullCheckMethodTransformer extends MethodTransformer {
     }
 
     @Override
-    public void transform(@NotNull String owner, @NotNull MethodNode methodNode) {
+    public void transform(@NotNull String internalClassName, @NotNull MethodNode methodNode) {
 
-        while (removeRedundantNullCheck(owner, methodNode)) {
-
+        while (removeRedundantNullCheckPass(internalClassName, methodNode)) {
+            //do nothing
         }
 
-        super.transform(owner, methodNode);
+        super.transform(internalClassName, methodNode);
     }
 
-    private static boolean removeRedundantNullCheck(@NotNull String owner, @NotNull MethodNode methodNode) {
+    private static boolean removeRedundantNullCheckPass(@NotNull String internalClassName, @NotNull MethodNode methodNode) {
         InsnList insnList = methodNode.instructions;
         Frame<BasicValue>[] frames = runAnalyzer(
                 new Analyzer<BasicValue>(
                         new BoxingInterpreter(insnList)
                 ),
-                owner, methodNode
+                internalClassName, methodNode
         );
 
         List<AbstractInsnNode> insnsToOptimize = new ArrayList<AbstractInsnNode>();

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OptimizationMethodVisitor extends MethodVisitor {
-    private final MethodTransformer methodTransformer = new RedundantNullCheckMethodTransformer(
+    private static final MethodTransformer MAIN_METHOD_TRANSFORMER = new RedundantNullCheckMethodTransformer(
             new RedundantBoxingMethodTransformer(null)
     );
 
@@ -62,15 +62,14 @@ public class OptimizationMethodVisitor extends MethodVisitor {
         super.visitEnd();
 
         if (methodNode.instructions.size() > 0) {
-            methodTransformer.transform("fake", methodNode);
+            MAIN_METHOD_TRANSFORMER.transform("fake", methodNode);
         }
 
         methodNode.accept(new EndIgnoringMethodVisitorDecorator(OptimizationUtils.API, delegate));
 
-        /*
-        In case of empty instructions list MethodNode.accept doesn't call visitLocalVariables of delegate
-        So we just do it here
-         */
+
+        // In case of empty instructions list MethodNode.accept doesn't call visitLocalVariables of delegate
+        // So we just do it here
         if (methodNode.instructions.size() == 0) {
             List<LocalVariableNode> localVariables = methodNode.localVariables;
             // visits local variables
