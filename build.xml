@@ -626,7 +626,7 @@
 
     <!-- builds redistributables from sources -->
     <target name="dist"
-            depends="clean,init,prepareDist,preloader,builtins,compiler,compilerSources,antTools,jdkAnnotations,androidSdkAnnotations,runtime,runtime_sources,jslib,kotlin-for-upsource"/>
+            depends="clean,init,prepareDist,preloader,builtins,compiler,compilerSources,antTools,jdkAnnotations,androidSdkAnnotations,runtime,runtime_sources,jslib"/>
 
     <!-- builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc -->
     <target name="dist_quick"
@@ -645,7 +645,7 @@
         <echo message="##teamcity[publishArtifacts '${output.relative}/${output.name}.zip']"/>
     </target>
 
-    <target name="kotlin-for-upsource">
+    <target name="kotlin-for-upsource" depends="dist">
         <jar jarfile="${output}/kotlin-for-upsource0.jar">
             <fileset dir="${output}/classes/compiler"/>
             <fileset dir="${output}/classes/runtime"/>
