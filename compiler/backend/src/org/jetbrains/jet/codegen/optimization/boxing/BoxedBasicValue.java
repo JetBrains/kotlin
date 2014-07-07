@@ -34,14 +34,18 @@ public class BoxedBasicValue extends BasicValue {
     private final Set<Integer> associatedVariables = new HashSet<Integer>();
     private final Set<BoxedBasicValue> mergedWith = new HashSet<BoxedBasicValue>();
     private final Type primitiveType;
-    private final RangeIteratorBasicValue numberIterator;
+    private final ProgressionIteratorBasicValue progressionIterator;
     private boolean isSafeToRemove = true;
 
-    public BoxedBasicValue(Type boxedType, AbstractInsnNode boxingInsn, @Nullable RangeIteratorBasicValue numberIterator) {
+    public BoxedBasicValue(
+            @NotNull Type boxedType,
+            @NotNull AbstractInsnNode boxingInsn,
+            @Nullable ProgressionIteratorBasicValue progressionIterator
+    ) {
         super(boxedType);
         this.primitiveType = AsmUtil.unboxType(boxedType);
         this.boxingInsn = boxingInsn;
-        this.numberIterator = numberIterator;
+        this.progressionIterator = progressionIterator;
     }
 
     @Override
@@ -122,12 +126,12 @@ public class BoxedBasicValue extends BasicValue {
         return boxingInsn;
     }
 
-    public boolean isFromNumberIterator() {
-        return numberIterator != null;
+    public boolean isFromProgressionIterator() {
+        return progressionIterator != null;
     }
 
     @Nullable
-    public RangeIteratorBasicValue getNumberIterator() {
-        return numberIterator;
+    public ProgressionIteratorBasicValue getProgressionIterator() {
+        return progressionIterator;
     }
 }

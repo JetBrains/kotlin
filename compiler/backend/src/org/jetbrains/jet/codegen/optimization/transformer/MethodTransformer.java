@@ -32,20 +32,20 @@ public abstract class MethodTransformer {
 
     protected static <V extends Value> Frame<V>[] runAnalyzer(
             @NotNull Analyzer<V> analyzer,
-            @NotNull String owner,
+            @NotNull String internalClassName,
             @NotNull MethodNode node
     ) {
         try {
-            return analyzer.analyze(owner, node);
+            return analyzer.analyze(internalClassName, node);
         }
         catch (AnalyzerException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void transform(@NotNull String owner, @NotNull MethodNode methodNode) {
+    public void transform(@NotNull String internalClassName, @NotNull MethodNode methodNode) {
         if (delegate != null) {
-            delegate.transform(owner, methodNode);
+            delegate.transform(internalClassName, methodNode);
         }
     }
 }
