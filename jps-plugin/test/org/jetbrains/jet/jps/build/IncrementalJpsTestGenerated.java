@@ -86,9 +86,9 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/classSignatureUnchanged/");
     }
     
-    @TestMetadata("constantUnchanged")
-    public void testConstantUnchanged() throws Exception {
-        doTest("jps-plugin/testData/incremental/constantUnchanged/");
+    @TestMetadata("constantsUnchanged")
+    public void testConstantsUnchanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/constantsUnchanged/");
     }
     
     @TestMetadata("dependencyClassReferenced")
