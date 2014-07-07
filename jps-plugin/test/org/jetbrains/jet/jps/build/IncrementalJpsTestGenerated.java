@@ -61,11 +61,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         doTest("jps-plugin/testData/incremental/classInlineFunctionChanged/");
     }
     
-    @TestMetadata("classInlineFunctionUnchanged")
-    public void testClassInlineFunctionUnchanged() throws Exception {
-        doTest("jps-plugin/testData/incremental/classInlineFunctionUnchanged/");
-    }
-    
     @TestMetadata("classObjectConstantChanged")
     public void testClassObjectConstantChanged() throws Exception {
         doTest("jps-plugin/testData/incremental/classObjectConstantChanged/");
@@ -109,6 +104,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestMetadata("inlineFunctionsCircularDependency")
     public void testInlineFunctionsCircularDependency() throws Exception {
         doTest("jps-plugin/testData/incremental/inlineFunctionsCircularDependency/");
+    }
+    
+    @TestMetadata("inlineFunctionsUnchanged")
+    public void testInlineFunctionsUnchanged() throws Exception {
+        doTest("jps-plugin/testData/incremental/inlineFunctionsUnchanged/");
     }
     
     @TestMetadata("multiplePackagesModified")
@@ -164,11 +164,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestMetadata("packageInlineFunctionFromOurPackage")
     public void testPackageInlineFunctionFromOurPackage() throws Exception {
         doTest("jps-plugin/testData/incremental/packageInlineFunctionFromOurPackage/");
-    }
-    
-    @TestMetadata("packageInlineFunctionUnchanged")
-    public void testPackageInlineFunctionUnchanged() throws Exception {
-        doTest("jps-plugin/testData/incremental/packageInlineFunctionUnchanged/");
     }
     
     @TestMetadata("packageRecreated")
