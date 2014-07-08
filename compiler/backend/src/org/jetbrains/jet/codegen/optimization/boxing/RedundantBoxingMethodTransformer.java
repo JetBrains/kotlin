@@ -26,7 +26,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.tree.*;
-import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame;
 
@@ -40,9 +39,8 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     @Override
     public void transform(@NotNull String internalClassName, @NotNull MethodNode node) {
         RedundantBoxingInterpreter interpreter = new RedundantBoxingInterpreter(node.instructions);
-        Frame<BasicValue>[] frames = runAnalyzer(
-                new Analyzer<BasicValue>(interpreter),
-                internalClassName, node
+        Frame<BasicValue>[] frames = analyze(
+                internalClassName, node, interpreter
         );
         interpretPopInstructionsForBoxedValues(interpreter, node, frames);
 
