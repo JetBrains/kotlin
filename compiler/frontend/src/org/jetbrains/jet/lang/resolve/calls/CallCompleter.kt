@@ -69,18 +69,24 @@ public class CallCompleter(
             results: OverloadResolutionResultsImpl<D>,
             tracing: TracingStrategy
     ): OverloadResolutionResultsImpl<D> {
-        // for the case 'foo(a)' where 'foo' is a variable, the call 'foo.invoke(a)' shouldn't be completed separately,
-        // it's completed when the outer (variable as function call) is completed
-        if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return results
 
         val resolvedCall = if (results.isSingleResult()) results.getResultingCall() else null
-        val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a resulting call")
 
-        completeResolvedCallAndArguments(resolvedCall, results, context.replaceBindingTrace(temporaryTrace), tracing)
+        // for the case 'foo(a)' where 'foo' is a variable, the call 'foo.invoke(a)' shouldn't be completed separately,
+        // it's completed when the outer (variable as function call) is completed
+        if (!CallResolverUtil.isInvokeCallOnVariable(context.call)) {
 
-        completeAllCandidates(context, results)
+            val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a resulting call")
 
-        temporaryTrace.commit()
+            completeResolvedCallAndArguments(resolvedCall, results, context.replaceBindingTrace(temporaryTrace), tracing)
+
+            completeAllCandidates(context, results)
+
+            temporaryTrace.commit()
+        }
+
+        resolvedCall?.let { context.callResolverExtension.run(it, context) }
+
         if (results.isSingleResult() && results.getResultingCall().getStatus().isSuccess()) {
             return results.changeStatusToSuccess()
         }

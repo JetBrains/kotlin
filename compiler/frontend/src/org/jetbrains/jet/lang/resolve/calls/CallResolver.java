@@ -363,10 +363,6 @@ public class CallResolver {
             results = callCompleter.completeCall(context, results, tracing);
         }
 
-        if (results.isSingleResult()) {
-            context.callResolverExtension.run(results.getResultingCall(), context);
-        }
-
         return results;
     }
 
