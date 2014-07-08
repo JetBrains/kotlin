@@ -106,16 +106,19 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             return ExitCode.NOTHING_DONE;
         }
 
-        if (hasKotlinFiles(chunk)) {
-            messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION);
-        }
-
         ModuleBuildTarget representativeTarget = chunk.representativeTarget();
 
         // For non-incremental build: take all sources
         if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()) {
             return ExitCode.NOTHING_DONE;
         }
+
+        boolean hasKotlinFiles = hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk);
+        if (!hasKotlinFiles) {
+            return ExitCode.NOTHING_DONE;
+        }
+
+        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION);
 
         File outputDir = representativeTarget.getOutputDir();
 
@@ -128,10 +131,6 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 }
         );
         if (!environment.success()) {
-            if (!hasKotlinFiles(chunk)) {
-                // Configuration is bad, but there's nothing to compile anyways
-                return ExitCode.NOTHING_DONE;
-            }
             environment.reportErrorsTo(messageCollector);
             return ExitCode.ABORT;
         }
@@ -189,7 +188,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
             boolean haveRemovedFiles = false;
             for (ModuleBuildTarget target : chunk.getTargets()) {
-                if (!dirtyFilesHolder.getRemovedFiles(target).isEmpty()) {
+                if (!KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target).isEmpty()) {
                     if (processedTargetsWithRemoved.add(target)) {
                         haveRemovedFiles = true;
                     }
@@ -230,7 +229,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 String targetId = target.getId();
                 outDirectories.put(targetId, target.getOutputDir());
 
-                for (String file : dirtyFilesHolder.getRemovedFiles(target)) {
+                for (String file : KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target)) {
                     moduleIdsAndSourceFiles.add(new Pair<String, File>(targetId, new File(file)));
                 }
             }
@@ -302,16 +301,22 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         return set;
     }
 
-    private static boolean hasKotlinFiles(@NotNull ModuleChunk chunk) {
-        boolean hasKotlinFiles = false;
+    private static boolean hasKotlinDirtyOrRemovedFiles(
+            @NotNull DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
+            @NotNull ModuleChunk chunk
+    )
+            throws IOException {
+        if (!KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder).isEmpty()) {
+            return true;
+        }
+
         for (ModuleBuildTarget target : chunk.getTargets()) {
-            Collection<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(target);
-            if (!sourceFiles.isEmpty()) {
-                hasKotlinFiles = true;
-                break;
+            if (!KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target).isEmpty()) {
+                return true;
             }
         }
-        return hasKotlinFiles;
+
+        return false;
     }
 
     private static boolean isJavaPluginEnabled(@NotNull CompileContext context) {
