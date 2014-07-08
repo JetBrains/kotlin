@@ -47,4 +47,8 @@ public class InliningInstructionAdapter extends InstructionAdapter {
         return null;
     }
 
+    @Override
+    public void visitEnd() {
+
+    }
 }
