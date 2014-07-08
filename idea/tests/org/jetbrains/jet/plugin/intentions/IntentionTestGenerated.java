@@ -3883,64 +3883,64 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/removeBraces"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("doWhile.kt")
+        public void testDoWhile() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/doWhile.kt");
+        }
+        
+        @TestMetadata("doWhileWithTwoStatements.kt")
+        public void testDoWhileWithTwoStatements() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/doWhileWithTwoStatements.kt");
+        }
+        
+        @TestMetadata("else.kt")
+        public void testElse() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/else.kt");
+        }
+        
+        @TestMetadata("for.kt")
+        public void testFor() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/for.kt");
+        }
+        
         @TestMetadata("forWithLocalVariable.kt")
         public void testForWithLocalVariable() throws Exception {
             doTest("idea/testData/intentions/removeBraces/forWithLocalVariable.kt");
         }
         
-        @TestMetadata("removeBracesForDoWhile.kt")
-        public void testRemoveBracesForDoWhile() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForDoWhile.kt");
+        @TestMetadata("if.kt")
+        public void testIf() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/if.kt");
         }
         
-        @TestMetadata("removeBracesForDoWhileWithTwoStatements.kt")
-        public void testRemoveBracesForDoWhileWithTwoStatements() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForDoWhileWithTwoStatements.kt");
+        @TestMetadata("ifWithComment.kt")
+        public void testIfWithComment() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/ifWithComment.kt");
         }
         
-        @TestMetadata("removeBracesForElse.kt")
-        public void testRemoveBracesForElse() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForElse.kt");
+        @TestMetadata("ifWithNoStatement.kt")
+        public void testIfWithNoStatement() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/ifWithNoStatement.kt");
         }
         
-        @TestMetadata("removeBracesForFor.kt")
-        public void testRemoveBracesForFor() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForFor.kt");
+        @TestMetadata("ifWithSemicolon.kt")
+        public void testIfWithSemicolon() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/ifWithSemicolon.kt");
         }
         
-        @TestMetadata("removeBracesForIf.kt")
-        public void testRemoveBracesForIf() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForIf.kt");
+        @TestMetadata("ifWithTwoStatements.kt")
+        public void testIfWithTwoStatements() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/ifWithTwoStatements.kt");
         }
         
-        @TestMetadata("removeBracesForIfWithComment.kt")
-        public void testRemoveBracesForIfWithComment() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForIfWithComment.kt");
+        @TestMetadata("while.kt")
+        public void testWhile() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/while.kt");
         }
         
-        @TestMetadata("removeBracesForIfWithNoStatement.kt")
-        public void testRemoveBracesForIfWithNoStatement() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForIfWithNoStatement.kt");
-        }
-        
-        @TestMetadata("removeBracesForIfWithSemicolon.kt")
-        public void testRemoveBracesForIfWithSemicolon() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForIfWithSemicolon.kt");
-        }
-        
-        @TestMetadata("removeBracesForIfWithTwoStatements.kt")
-        public void testRemoveBracesForIfWithTwoStatements() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForIfWithTwoStatements.kt");
-        }
-        
-        @TestMetadata("removeBracesForWhile.kt")
-        public void testRemoveBracesForWhile() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForWhile.kt");
-        }
-        
-        @TestMetadata("removeBracesForWhileWithTwoStatements.kt")
-        public void testRemoveBracesForWhileWithTwoStatements() throws Exception {
-            doTest("idea/testData/intentions/removeBraces/removeBracesForWhileWithTwoStatements.kt");
+        @TestMetadata("whileWithTwoStatements.kt")
+        public void testWhileWithTwoStatements() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/whileWithTwoStatements.kt");
         }
         
     }
