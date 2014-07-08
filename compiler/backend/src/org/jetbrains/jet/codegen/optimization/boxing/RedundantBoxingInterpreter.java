@@ -29,17 +29,9 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
 class RedundantBoxingInterpreter extends BoxingInterpreter {
-    private static final ImmutableSet<Integer> UNSAFE_OPERATIONS_OPCODES;
-
-    static {
-        ImmutableSet.Builder<Integer> unsafeOperationsOpcodesBuilder = ImmutableSet.builder();
-        unsafeOperationsOpcodesBuilder.add(
-                Opcodes.AASTORE, Opcodes.PUTFIELD, Opcodes.PUTSTATIC, Opcodes.ARETURN,
-                Opcodes.IFNONNULL, Opcodes.IFNULL, Opcodes.IF_ACMPEQ, Opcodes.IF_ACMPNE
-        );
-
-        UNSAFE_OPERATIONS_OPCODES = unsafeOperationsOpcodesBuilder.build();
-    }
+    private static final ImmutableSet<Integer> PERMITTED_OPERATIONS_OPCODES = ImmutableSet.of(
+            Opcodes.ASTORE, Opcodes.ALOAD, Opcodes.POP, Opcodes.DUP, Opcodes.CHECKCAST, Opcodes.INSTANCEOF
+    );
 
     private final RedundantBoxedValuesCollection values = new RedundantBoxedValuesCollection();
 
@@ -78,7 +70,8 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
             @NotNull AbstractInsnNode insn, @NotNull BasicValue value
     ) throws AnalyzerException {
 
-        if (insn.getOpcode() == Opcodes.CHECKCAST && value instanceof BoxedBasicValue) {
+        if ((insn.getOpcode() == Opcodes.CHECKCAST || insn.getOpcode() == Opcodes.INSTANCEOF) &&
+            value instanceof BoxedBasicValue) {
             TypeInsnNode typeInsn = (TypeInsnNode) insn;
 
             if (!isSafeCast((BoxedBasicValue) value, typeInsn.desc)) {
@@ -114,6 +107,9 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
         return super.copyOperation(insn, value);
     }
 
+    public void processPopInstruction(@NotNull AbstractInsnNode insnNode, @NotNull BasicValue value) {
+        processOperationWithBoxedValue(value, insnNode);
+    }
 
     @Override
     protected void onNewBoxedValue(@NotNull BoxedBasicValue value) {
@@ -151,7 +147,7 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
 
     private void processOperationWithBoxedValue(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
         if (value instanceof BoxedBasicValue) {
-            if (UNSAFE_OPERATIONS_OPCODES.contains(insnNode.getOpcode())) {
+            if (!PERMITTED_OPERATIONS_OPCODES.contains(insnNode.getOpcode())) {
                 markValueAsDirty((BoxedBasicValue) value);
             }
             else {
