@@ -88,31 +88,17 @@ public class BoxedBasicValue extends BasicValue {
         return primitiveType;
     }
 
-    public void mergeWith(BoxedBasicValue value) {
-        if (this == value) {
-            return;
-        }
-
-        if (!value.isSafeToRemove) {
-            propagateRemovingAsUnsafe();
-        }
-
-        if (!isSafeToRemove) {
-            value.propagateRemovingAsUnsafe();
-        }
-
+    public void addMergedWith(@NotNull BoxedBasicValue value) {
         mergedWith.add(value);
-        value.mergedWith.add(this);
     }
 
-    public void propagateRemovingAsUnsafe() {
-        isSafeToRemove = false;
+    @NotNull
+    public Iterable<BoxedBasicValue> getMergedWith() {
+        return mergedWith;
+    }
 
-        for (BoxedBasicValue value : mergedWith) {
-            if (value.isSafeToRemove()) {
-                value.propagateRemovingAsUnsafe();
-            }
-        }
+    public void markAsUnsafeToRemove() {
+        isSafeToRemove = false;
     }
 
     public boolean isSafeToRemove() {
