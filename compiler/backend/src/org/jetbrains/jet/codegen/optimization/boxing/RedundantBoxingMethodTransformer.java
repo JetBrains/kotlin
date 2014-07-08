@@ -44,6 +44,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
                 new Analyzer<BasicValue>(interpreter),
                 internalClassName, node
         );
+        interpretPopInstructionsForBoxedValues(interpreter, node, frames);
 
         RedundantBoxedValuesCollection valuesToOptimize = interpreter.getCandidatesBoxedValues();
 
@@ -55,10 +56,30 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
 
             applyVariablesRemapping(node, buildVariablesRemapping(valuesToOptimize, node));
 
-            adaptInstructionsForBoxedValues(node, frames, valuesToOptimize);
+            adaptInstructionsForBoxedValues(node, valuesToOptimize);
         }
 
         super.transform(internalClassName, node);
+    }
+
+    private static void interpretPopInstructionsForBoxedValues(
+            @NotNull RedundantBoxingInterpreter interpreter,
+            @NotNull MethodNode node,
+            @NotNull Frame<BasicValue>[] frames
+    ) {
+        for (int i = 0; i < node.instructions.size(); i++) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if ((insn.getOpcode() != Opcodes.POP && insn.getOpcode() != Opcodes.POP2) || frames[i] == null) {
+                continue;
+            }
+
+            BasicValue top = frames[i].getStack(frames[i].getStackSize() - 1);
+            interpreter.processPopInstruction(insn, top);
+
+            if (top.getSize() == 1 && insn.getOpcode() == Opcodes.POP2) {
+                interpreter.processPopInstruction(insn, frames[i].getStack(frames[i].getStackSize() - 2));
+            }
+        }
     }
 
     private static void removeValuesClashingWithVariables(
@@ -206,28 +227,11 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     private static void adaptInstructionsForBoxedValues(
-            @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames, @NotNull RedundantBoxedValuesCollection values
+            @NotNull MethodNode node,
+            @NotNull RedundantBoxedValuesCollection values
     ) {
-        addPopInstructionsForBoxedValues(node, frames);
-
         for (BoxedBasicValue value : values) {
             adaptInstructionsForBoxedValue(node, value);
-        }
-    }
-
-    private static void addPopInstructionsForBoxedValues(
-            @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames
-    ) {
-        for (int i = 0; i < node.instructions.size(); i++) {
-            AbstractInsnNode insn = node.instructions.get(i);
-            if (insn.getOpcode() != Opcodes.POP || frames[i] == null) {
-                continue;
-            }
-
-            BasicValue top = frames[i].getStack(frames[i].getStackSize() - 1);
-            if (top instanceof BoxedBasicValue && ((BoxedBasicValue) top).isSafeToRemove()) {
-                ((BoxedBasicValue) top).addInsn(node.instructions.get(i));
-            }
         }
     }
 
@@ -320,7 +324,15 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
                         )
                 );
                 break;
+            case Opcodes.INSTANCEOF:
+                node.instructions.insertBefore(
+                        insn,
+                        new InsnNode(isDoubleSize ? Opcodes.POP2 : Opcodes.POP)
+                );
+                node.instructions.set(insn, new InsnNode(Opcodes.ICONST_1));
+                break;
             default:
+                // CHECKCAST or unboxing-method call
                 node.instructions.remove(insn);
         }
     }
