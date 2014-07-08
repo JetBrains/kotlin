@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen.optimization.boxing;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
@@ -28,8 +30,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class RedundantBoxingMethodTransformer extends MethodTransformer {
     public RedundantBoxingMethodTransformer(MethodTransformer methodTransformer) {
@@ -64,32 +65,9 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
                 continue;
             }
 
-            adaptLocalVariableTableEntryForBoxedValues(node, frames, localVariableNode);
-        }
-    }
-
-    private static void adaptLocalVariableTableEntryForBoxedValues(
-            @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames, @NotNull LocalVariableNode localVariableNode
-    ) {
-        InsnList insnList = node.instructions;
-        int from = insnList.indexOf(localVariableNode.start) + 1;
-        int to = insnList.indexOf(localVariableNode.end) - 1;
-
-        for (int i = from; i <= to; i++) {
-            AbstractInsnNode insn = insnList.get(i);
-            if (insn.getOpcode() == Opcodes.ASTORE && ((VarInsnNode) insn).var == localVariableNode.index) {
-                if (frames[i] == null) {
-                    return;
-                }
-
-                BasicValue top = frames[i].getStack(frames[i].getStackSize() - 1);
-                if (!(top instanceof BoxedBasicValue) || !((BoxedBasicValue) top).isSafeToRemove()) {
-                    return;
-                }
-
-                localVariableNode.desc = ((BoxedBasicValue) top).getPrimitiveType().getDescriptor();
-
-                return;
+            for (BasicValue value : getValuesStoredOrLoadedToVariable(localVariableNode, node, frames)) {
+                if (value == null || !(value instanceof BoxedBasicValue) || !((BoxedBasicValue) value).isSafeToRemove()) continue;
+                localVariableNode.desc = ((BoxedBasicValue) value).getPrimitiveType().getDescriptor();
             }
         }
     }
@@ -109,7 +87,6 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
             @NotNull MethodNode node,
             @NotNull Frame<BasicValue>[] frames
     ) {
-        InsnList insnList = node.instructions;
         boolean needToRepeat = false;
 
         for (LocalVariableNode localVariableNode : node.localVariables) {
@@ -117,86 +94,74 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
                 continue;
             }
 
-            int index = localVariableNode.index;
-            int from = insnList.indexOf(localVariableNode.start) + 1;
-            int to = insnList.indexOf(localVariableNode.end) - 1;
+            List<BasicValue> usedValues = getValuesStoredOrLoadedToVariable(localVariableNode, node, frames);
 
-            if (isThereUnsafeStoreInstruction(insnList, frames, from, to, index)) {
-                needToRepeat |= markAllBoxedValuesStoredAsUnsafeToRemove(insnList, frames, values, from, to, index);
+            Collection<BasicValue> boxed = Collections2.filter(usedValues, new Predicate<BasicValue>() {
+                @Override
+                public boolean apply(BasicValue input) {
+                    return input instanceof BoxedBasicValue;
+                }
+            });
+
+            if (boxed.isEmpty()) continue;
+
+            final BoxedBasicValue firstBoxed = (BoxedBasicValue) boxed.iterator().next();
+
+            if (!Collections2.filter(usedValues, new Predicate<BasicValue>() {
+                @Override
+                public boolean apply(BasicValue input) {
+                    return input == null ||
+                           !(input instanceof BoxedBasicValue) ||
+                           !((BoxedBasicValue) input).isSafeToRemove() ||
+                           !((BoxedBasicValue) input).getPrimitiveType().equals(firstBoxed.getPrimitiveType());
+                }
+            }).isEmpty()) {
+                for (BasicValue value : usedValues) {
+                    if (value instanceof BoxedBasicValue && ((BoxedBasicValue) value).isSafeToRemove()) {
+                        values.remove((BoxedBasicValue) value);
+                        needToRepeat = true;
+                    }
+                }
             }
         }
 
         return needToRepeat;
     }
 
-    /**
-     * Check if there are unsafe ASTORE instructions, that put into var something but boxed values of the same type
-     *
-     * @param insnList
-     * @param frames
-     * @param from
-     * @param to
-     * @param varIndex
-     * @return
-     */
-    private static boolean isThereUnsafeStoreInstruction(
-            @NotNull InsnList insnList,
-            @NotNull Frame<BasicValue>[] frames,
-            int from, int to, int varIndex
+    @NotNull
+    private static List<BasicValue> getValuesStoredOrLoadedToVariable(
+            @NotNull LocalVariableNode localVariableNode,
+            @NotNull MethodNode node,
+            @NotNull Frame<BasicValue>[] frames
     ) {
-        Type usedAsType = null;
+        List<BasicValue> values = new ArrayList<BasicValue>();
+        InsnList insnList = node.instructions;
+        int from = insnList.indexOf(localVariableNode.start) + 1;
+        int to = insnList.indexOf(localVariableNode.end) - 1;
 
         for (int i = from; i <= to; i++) {
-            AbstractInsnNode insn = insnList.get(i); //TODO: handle exception?
-            if (insn.getOpcode() == Opcodes.ASTORE && ((VarInsnNode) insn).var == varIndex) {
-                if (frames[i] == null) {
-                    return true;
-                }
+            if (i < 0 || i >= insnList.size()) continue;
 
-                BasicValue top = frames[i].getStack(frames[i].getStackSize() - 1);
-                if (!(top instanceof BoxedBasicValue) || !((BoxedBasicValue) top).isSafeToRemove()) {
-                    return true;
-                }
-
-                if (usedAsType == null) {
-                    usedAsType = ((BoxedBasicValue) top).getPrimitiveType();
-                }
-
-                if (!usedAsType.equals(((BoxedBasicValue) top).getPrimitiveType())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean markAllBoxedValuesStoredAsUnsafeToRemove(
-            @NotNull InsnList insnList,
-            @NotNull Frame<BasicValue>[] frames,
-            @NotNull RedundantBoxedValuesCollection values,
-            int from, int to, int varIndex
-    ) {
-        boolean wasChanges = false;
-
-        for (int i = from; i <= to; i++) {
             AbstractInsnNode insn = insnList.get(i);
-            if (insn.getOpcode() == Opcodes.ASTORE && ((VarInsnNode) insn).var == varIndex) {
+            if ((insn.getOpcode() == Opcodes.ASTORE || insn.getOpcode() == Opcodes.ALOAD) &&
+                ((VarInsnNode) insn).var == localVariableNode.index) {
+
+                // frames[i] can be null in case of exception handlers
                 if (frames[i] == null) {
+                    values.add(null);
                     continue;
                 }
 
-                BasicValue top = frames[i].getStack(frames[i].getStackSize() - 1);
-                if (!(top instanceof BoxedBasicValue) || !((BoxedBasicValue) top).isSafeToRemove()) {
-                    continue;
+                if (insn.getOpcode() == Opcodes.ASTORE) {
+                    values.add(frames[i].getStack(frames[i].getStackSize() - 1));
                 }
-
-                wasChanges |= true;
-                values.remove((BoxedBasicValue) top);
+                else {
+                    values.add(frames[i].getLocal(((VarInsnNode) insn).var));
+                }
             }
         }
 
-        return wasChanges;
+        return values;
     }
 
     @NotNull
