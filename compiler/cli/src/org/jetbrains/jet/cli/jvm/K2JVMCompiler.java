@@ -27,6 +27,7 @@ import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
 import org.jetbrains.jet.cli.jvm.compiler.CommandLineScriptUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -128,7 +129,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
             if (arguments.module != null) {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
-                CompileEnvironmentUtil.ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(
+                ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(
                         paths, arguments.module, sanitizedCollector);
                 if (moduleScript.getIncrementalCacheDir() != null) {
                     configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR, new File(moduleScript.getIncrementalCacheDir()));

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
+import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -231,7 +232,7 @@ public class BytecodeCompiler {
             @Nullable String[] externalAnnotationsPath, boolean enableInline
     ) {
         try {
-            CompileEnvironmentUtil.ModuleScriptData moduleScriptData =
+            ModuleScriptData moduleScriptData =
                     loadModuleDescriptions(getKotlinPathsForAntTask(), module, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
             List<Module> modules = moduleScriptData.getModules();
             List<String> sourcesRoots = new ArrayList<String>();

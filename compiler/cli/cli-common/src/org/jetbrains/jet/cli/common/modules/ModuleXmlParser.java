@@ -16,11 +16,14 @@
 
 package org.jetbrains.jet.cli.common.modules;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.SmartList;
+import kotlin.modules.Module;
+import kotlin.modules.ModuleBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.messages.MessageCollectorUtil;
+import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -29,11 +32,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
-import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.*;
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class ModuleXmlParser {
 
@@ -48,7 +50,7 @@ public class ModuleXmlParser {
     public static final String EXTERNAL_ANNOTATIONS = "externalAnnotations";
 
     @NotNull
-    public static Pair<List<ModuleDescription>, String> parseModuleDescriptionsAndIncrementalCacheDir(
+    public static ModuleScriptData parseModuleScript(
             @NotNull String xmlFile,
             @NotNull MessageCollector messageCollector
     ) {
@@ -60,7 +62,7 @@ public class ModuleXmlParser {
         }
         catch (FileNotFoundException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
-            return Pair.create(Collections.<ModuleDescription>emptyList(), null);
+            return ModuleScriptData.EMPTY;
         }
         finally {
             StreamUtil.closeStream(stream);
@@ -69,7 +71,7 @@ public class ModuleXmlParser {
 
     private final MessageCollector messageCollector;
     private String incrementalCacheDir;
-    private final List<ModuleDescription> descriptions = new SmartList<ModuleDescription>();
+    private final List<Module> modules = new SmartList<Module>();
     private DefaultHandler currentState;
 
     private ModuleXmlParser(@NotNull MessageCollector messageCollector) {
@@ -80,7 +82,7 @@ public class ModuleXmlParser {
         this.currentState = currentState;
     }
 
-    private Pair<List<ModuleDescription>, String> parse(@NotNull InputStream xml) {
+    private ModuleScriptData parse(@NotNull InputStream xml) {
         try {
             setCurrentState(initial);
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -91,7 +93,7 @@ public class ModuleXmlParser {
                     return currentState;
                 }
             });
-            return Pair.create(descriptions, incrementalCacheDir);
+            return new ModuleScriptData(modules, incrementalCacheDir);
         }
         catch (ParserConfigurationException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
@@ -102,7 +104,7 @@ public class ModuleXmlParser {
         catch (IOException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
         }
-        return Pair.create(Collections.<ModuleDescription>emptyList(), null);
+        return ModuleScriptData.EMPTY;
     }
 
     private final DefaultHandler initial = new DefaultHandler() {
@@ -140,27 +142,25 @@ public class ModuleXmlParser {
 
     private class InsideModule extends DefaultHandler {
 
-        private final ModuleDescription.Impl moduleDescription;
+        private final ModuleBuilder moduleBuilder;
         private InsideModule(String name, String outputDir) {
-            this.moduleDescription = new ModuleDescription.Impl();
-            this.moduleDescription.setName(name);
-            this.moduleDescription.setOutputDir(outputDir);
-            descriptions.add(moduleDescription);
+            this.moduleBuilder = new ModuleBuilder(name, outputDir);
+            modules.add(moduleBuilder);
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             if (SOURCES.equalsIgnoreCase(qName)) {
                 String path = getAttribute(attributes, PATH, qName);
-                moduleDescription.addSourcePath(path);
+                moduleBuilder.addSourceFiles(path);
             }
             else if (CLASSPATH.equalsIgnoreCase(qName)) {
                 String path = getAttribute(attributes, PATH, qName);
-                moduleDescription.addClassPath(path);
+                moduleBuilder.addClasspathEntry(path);
             }
             else if (EXTERNAL_ANNOTATIONS.equalsIgnoreCase(qName)) {
                 String path = getAttribute(attributes, PATH, qName);
-                moduleDescription.addAnnotationPath(path);
+                moduleBuilder.addAnnotationsPathEntry(path);
             }
             else {
                 throw createError(qName);
