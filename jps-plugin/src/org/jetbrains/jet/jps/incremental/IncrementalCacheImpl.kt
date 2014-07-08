@@ -36,11 +36,10 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache
 import java.util.HashMap
-import com.google.common.collect.Maps
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.util.containers.MultiMap
 import com.intellij.openapi.util.io.FileUtil
-import com.google.common.hash.Hashing
+import java.security.MessageDigest
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
@@ -251,7 +250,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
         override fun read(`in`: DataInput): Map<String, Any>? {
             val size = `in`.readInt()
-            val map = Maps.newHashMapWithExpectedSize<String, Any>(size)!!
+            val map = HashMap<String, Any>(size)
 
             for (i in size.indices) {
                 val name = IOUtil.readString(`in`)!!
@@ -301,7 +300,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
                         override fun visitEnd() {
                             if (hasInlineAnnotation) {
                                 val dummyBytes = dummyClassWriter.toByteArray()!!
-                                val hash = Hashing.md5()!!.hashBytes(dummyBytes)!!.asLong()
+                                val hash = dummyBytes.md5()
 
                                 result[name + desc] = hash
                             }
@@ -343,7 +342,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
         override fun read(`in`: DataInput): Map<String, Long>? {
             val size = `in`.readInt()
-            val map = Maps.newHashMapWithExpectedSize<String, Long>(size)!!
+            val map = HashMap<String, Long>(size)
 
             for (i in size.indices) {
                 val name = IOUtil.readString(`in`)!!
@@ -436,6 +435,19 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             return if (other.ordinal() > this.ordinal()) other else this
         }
     }
+}
+
+private fun ByteArray.md5(): Long {
+    val d = MessageDigest.getInstance("MD5").digest(this)!!
+    return ((d[0].toLong() and 0xFFL)
+                    or ((d[1].toLong() and 0xFFL) shl 8)
+                    or ((d[2].toLong() and 0xFFL) shl 16)
+                    or ((d[3].toLong() and 0xFFL) shl 24)
+                    or ((d[4].toLong() and 0xFFL) shl 32)
+                    or ((d[5].toLong() and 0xFFL) shl 40)
+                    or ((d[6].toLong() and 0xFFL) shl 48)
+                    or ((d[7].toLong() and 0xFFL) shl 56)
+            )
 }
 
 private object ByteArrayExternalizer: DataExternalizer<ByteArray> {
