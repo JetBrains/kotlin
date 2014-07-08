@@ -83,7 +83,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public final ClassDescriptor getThisDescriptor() {
         if (thisDescriptor == null) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Context doesn't have a \"this\": " + this);
         }
         return thisDescriptor;
     }
