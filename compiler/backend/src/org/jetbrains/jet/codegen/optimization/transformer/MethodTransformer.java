@@ -18,10 +18,7 @@ package org.jetbrains.jet.codegen.optimization.transformer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
-import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.jetbrains.org.objectweb.asm.tree.analysis.Frame;
-import org.jetbrains.org.objectweb.asm.tree.analysis.Value;
+import org.jetbrains.org.objectweb.asm.tree.analysis.*;
 
 public abstract class MethodTransformer {
     private final MethodTransformer delegate;
@@ -41,6 +38,13 @@ public abstract class MethodTransformer {
         catch (AnalyzerException e) {
             throw new RuntimeException(e);
         }
+    }
+    protected static <V extends Value> Frame<V>[] analyze(
+            @NotNull String internalClassName,
+            @NotNull MethodNode node,
+            @NotNull Interpreter<V> interpreter
+    ) {
+        return runAnalyzer(new Analyzer<V>(interpreter), internalClassName, node);
     }
 
     public void transform(@NotNull String internalClassName, @NotNull MethodNode methodNode) {

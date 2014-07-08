@@ -44,11 +44,9 @@ public class RedundantNullCheckMethodTransformer extends MethodTransformer {
 
     private static boolean removeRedundantNullCheckPass(@NotNull String internalClassName, @NotNull MethodNode methodNode) {
         InsnList insnList = methodNode.instructions;
-        Frame<BasicValue>[] frames = runAnalyzer(
-                new Analyzer<BasicValue>(
-                        new BoxingInterpreter(insnList)
-                ),
-                internalClassName, methodNode
+        Frame<BasicValue>[] frames = analyze(
+                internalClassName, methodNode,
+                new BoxingInterpreter(insnList)
         );
 
         List<AbstractInsnNode> insnsToOptimize = new ArrayList<AbstractInsnNode>();
