@@ -4679,6 +4679,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/labeledReturn.kt");
                 }
                 
+                @TestMetadata("lambdaWithGlobalReturnsInsideOnlyLocalOne.kt")
+                public void testLambdaWithGlobalReturnsInsideOnlyLocalOne() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/lambdaWithGlobalReturnsInsideOnlyLocalOne.kt");
+                }
+                
                 @TestMetadata("localFun.kt")
                 public void testLocalFun() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/localFun.kt");
@@ -4697,6 +4702,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("nonInlinedClass.kt")
                 public void testNonInlinedClass() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/nonInlinedClass.kt");
+                }
+                
+                @TestMetadata("onlyLocalReturnLambda.kt")
+                public void testOnlyLocalReturnLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/onlyLocalReturnLambda.kt");
+                }
+                
+                @TestMetadata("onlyLocalReturnLambdaBinaryExpr.kt")
+                public void testOnlyLocalReturnLambdaBinaryExpr() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/onlyLocalReturnLambdaBinaryExpr.kt");
                 }
                 
                 @TestMetadata("propertyAccessorsAndConstructor.kt")

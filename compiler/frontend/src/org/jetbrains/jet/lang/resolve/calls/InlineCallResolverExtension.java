@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.InlineDescriptorUtils;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
@@ -43,6 +42,9 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.InlineDescriptorUtils.allowsNonLocalReturns;
+import static org.jetbrains.jet.lang.resolve.InlineDescriptorUtils.checkNonLocalReturnUsage;
 
 public class InlineCallResolverExtension implements CallResolverExtension {
 
@@ -263,7 +265,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
     ) {
         if (!allowsNonLocalReturns(inlinableParameterDescriptor)) return;
 
-        if (!InlineDescriptorUtils.checkNonLocalReturnUsage(descriptor, parameterUsage, context.trace)) {
+        if (!checkNonLocalReturnUsage(descriptor, parameterUsage, context.trace)) {
             context.trace.report(Errors.NON_LOCAL_RETURN_NOT_ALLOWED.on(parameterUsage, parameterUsage, inlinableParameterDescriptor, descriptor));
         }
     }
@@ -276,13 +278,4 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         return expression;
     }
 
-    private static boolean allowsNonLocalReturns(CallableDescriptor lambdaDescriptor) {
-        if (lambdaDescriptor instanceof ValueParameterDescriptor) {
-            if (InlineUtil.hasOnlyLocalReturn((ValueParameterDescriptor) lambdaDescriptor)) {
-                //annotated
-                return false;
-            }
-        }
-        return true;
-    }
 }
