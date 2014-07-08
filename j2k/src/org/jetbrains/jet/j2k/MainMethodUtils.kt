@@ -16,80 +16,52 @@
 
 package org.jetbrains.jet.j2k
 
-import java.text.MessageFormat
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaFile
 import java.util.ArrayList
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiArrayType
 
-fun createMainFunction(file: PsiFile): String {
+fun createMainFunction(file: PsiJavaFile): String {
     val classNamesWithMains = ArrayList<Pair<String, PsiMethod>>()
-    for (c in (file as PsiJavaFile).getClasses()) {
+    for (c in file.getClasses()) {
         val main = findMainMethod(c)
         val name = c.getName()
         if (name != null && main != null) {
-            classNamesWithMains.add(Pair(name, main))
+            classNamesWithMains.add(name to main)
         }
     }
 
-    if (classNamesWithMains.size() > 0) {
-        var className = classNamesWithMains[0].first
-        return MessageFormat.format("fun main(args : Array<String>) = {0}.main(args as Array<String?>?)", className)
+    if (classNamesWithMains.isNotEmpty()) {
+        var className = classNamesWithMains.first().first
+        return "fun main(args : Array<String>) = $className.main(args)"
     }
 
     return ""
-
 }
 
-private fun findMainMethod(aClass: PsiClass): PsiMethod? {
-    if (isMainClass(aClass)) {
-        return findMainMethod(aClass.findMethodsByName("main", false))
-    }
-    return null
-}
+private fun findMainMethod(aClass: PsiClass): PsiMethod?
+        = if (isMainClass(aClass)) aClass.findMethodsByName("main", false).firstOrNull { it.isMainMethod() } else null
 
-private fun isMainClass(psiClass: PsiClass): Boolean {
-    if (psiClass is PsiAnonymousClass)
-        return false
+private fun isMainClass(psiClass: PsiClass): Boolean
+        = psiClass !is PsiAnonymousClass &&
+            !psiClass.isInterface() &&
+            (psiClass.getContainingClass() == null || psiClass.hasModifierProperty(PsiModifier.STATIC))
 
-    if (psiClass.isInterface())
-        return false
+fun PsiMethod.isMainMethod(): Boolean {
+    if (getReturnType() != PsiType.VOID) return false
+    if (!hasModifierProperty(PsiModifier.STATIC)) return false
+    if (!hasModifierProperty(PsiModifier.PUBLIC)) return false
 
-    return psiClass.getContainingClass() == null || psiClass.hasModifierProperty(PsiModifier.STATIC)
+    val parameters = getParameterList().getParameters()
+    if (parameters.size != 1) return false
 
-}
-
-private fun findMainMethod(mainMethods: Array<PsiMethod>): PsiMethod? {
-    return mainMethods.find { isMainMethod(it) }
-}
-
-fun isMainMethod(method: PsiMethod): Boolean {
-    if (method.getContainingClass() == null)
-        return false
-
-    if (PsiType.VOID != method.getReturnType())
-        return false
-
-    if (!method.hasModifierProperty(PsiModifier.STATIC))
-        return false
-
-    if (!method.hasModifierProperty(PsiModifier.PUBLIC))
-        return false
-
-    val parameters = method.getParameterList().getParameters()
-    if (parameters.size != 1)
-        return false
-
-    val `type` = parameters[0].getType()
-    if (`type` !is PsiArrayType)
-        return false
+    val `type` = parameters.single().getType()
+    if (`type` !is PsiArrayType) return false
 
     val componentType = `type`.getComponentType()
     return componentType.equalsToText("java.lang.String")
 }
-

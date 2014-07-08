@@ -31,4 +31,4 @@ public class User {
         }
     }
 }
-fun main(args: Array<String>) = User.main(args as Array<String?>?)
+fun main(args: Array<String>) = User.main(args)

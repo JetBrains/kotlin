@@ -13,4 +13,4 @@ public class SwitchDemo {
         }
     }
 }
-fun main(args: Array<String>) = SwitchDemo.main(args as Array<String?>?)
+fun main(args: Array<String>) = SwitchDemo.main(args)

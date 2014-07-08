@@ -11,4 +11,4 @@ public class NonDefault {
         }
     }
 }
-fun main(args: Array<String>) = NonDefault.main(args as Array<String?>?)
+fun main(args: Array<String>) = NonDefault.main(args)

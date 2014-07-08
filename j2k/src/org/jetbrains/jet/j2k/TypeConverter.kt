@@ -29,6 +29,9 @@ import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import org.jetbrains.jet.j2k.ast.assignNoPrototype
 import org.jetbrains.jet.j2k.ast.ErrorType
 import com.intellij.codeInsight.NullableNotNullManager
+import org.jetbrains.jet.j2k.ast.ArrayType
+import org.jetbrains.jet.j2k.ast.ClassType
+import org.jetbrains.jet.j2k.ast.Identifier
 
 class TypeConverter(val settings: ConverterSettings, val conversionScope: ConversionScope) {
     private val nullabilityCache = HashMap<PsiElement, Nullability>()
@@ -59,8 +62,17 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
     public fun convertTypes(types: Array<PsiType>): List<Type>
             = types.map { convertType(it) }
 
-    public fun convertVariableType(variable: PsiVariable): Type
-            = convertType(variable.getType(), variableNullability(variable)).assignPrototype(variable.getTypeElement())
+    public fun convertVariableType(variable: PsiVariable): Type {
+        val result = if (variable.isMainMethodParameter()) {
+            ArrayType(ClassType(Identifier("String").assignNoPrototype(), listOf(), Nullability.NotNull, settings).assignNoPrototype(),
+                      Nullability.NotNull,
+                      settings)
+        }
+        else {
+            convertType(variable.getType(), variableNullability(variable))
+        }
+        return result.assignPrototype(variable.getTypeElement())
+    }
 
     public fun variableNullability(variable: PsiVariable): Nullability {
         val cached = nullabilityCache[variable]
@@ -106,6 +118,10 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
         // variables of types like Integer are most likely nullable
         if (nullability == Nullability.Default && variableType.getCanonicalText() in boxingTypes) {
             return Nullability.Nullable
+        }
+
+        if (nullability == Nullability.Default && variable.isMainMethodParameter() ) {
+            return Nullability.NotNull
         }
 
         if (!conversionScope.contains(variable)) { // do not analyze usages out of our conversion scope
@@ -157,6 +173,8 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
 
         return nullability
     }
+
+    private fun PsiVariable.isMainMethodParameter() = this is PsiParameter && (getDeclarationScope() as? PsiMethod)?.isMainMethod() ?: false
 
     public fun convertMethodReturnType(method: PsiMethod): Type
             = convertType(method.getReturnType(), methodNullability(method)).assignPrototype(method.getReturnTypeElement())

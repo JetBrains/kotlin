@@ -1391,6 +1391,16 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/function/main.java");
         }
         
+        @TestMetadata("main2.java")
+        public void testMain2() throws Exception {
+            doTest("j2k/tests/testData/ast/function/main2.java");
+        }
+        
+        @TestMetadata("mainAndNullabilitySetting.java")
+        public void testMainAndNullabilitySetting() throws Exception {
+            doTest("j2k/tests/testData/ast/function/mainAndNullabilitySetting.java");
+        }
+        
         @TestMetadata("methodClassType.java")
         public void testMethodClassType() throws Exception {
             doTest("j2k/tests/testData/ast/function/methodClassType.java");
