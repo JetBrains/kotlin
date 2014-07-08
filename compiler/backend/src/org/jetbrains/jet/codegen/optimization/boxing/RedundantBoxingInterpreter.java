@@ -28,9 +28,6 @@ import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
-import java.util.HashSet;
-import java.util.Set;
-
 class RedundantBoxingInterpreter extends BoxingInterpreter {
     private static final ImmutableSet<Integer> UNSAFE_OPERATIONS_OPCODES;
 
@@ -44,14 +41,14 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
         UNSAFE_OPERATIONS_OPCODES = unsafeOperationsOpcodesBuilder.build();
     }
 
-    private final Set<BoxedBasicValue> candidatesBoxedValues = new HashSet<BoxedBasicValue>();
+    private final RedundantBoxedValuesCollection values = new RedundantBoxedValuesCollection();
 
     public RedundantBoxingInterpreter(InsnList insnList) {
         super(insnList);
     }
 
-    private static void markValueAsDirty(@NotNull BoxedBasicValue value) {
-        value.propagateRemovingAsUnsafe();
+    private void markValueAsDirty(@NotNull BoxedBasicValue value) {
+        values.remove(value);
     }
 
     private static void addAssociatedInsn(@NotNull BoxedBasicValue value, @NotNull AbstractInsnNode insn) {
@@ -60,7 +57,7 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
         }
     }
 
-    private static void processOperationWithBoxedValue(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
+    private void processOperationWithBoxedValue(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
         if (value instanceof BoxedBasicValue) {
             if (UNSAFE_OPERATIONS_OPCODES.contains(insnNode.getOpcode())) {
                 markValueAsDirty((BoxedBasicValue) value);
@@ -141,7 +138,7 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
 
     @Override
     protected void onNewBoxedValue(@NotNull BoxedBasicValue value) {
-        candidatesBoxedValues.add(value);
+        values.add(value);
     }
 
     @Override
@@ -170,11 +167,11 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
     protected void onMergeSuccess(
             @NotNull BoxedBasicValue v, @NotNull BoxedBasicValue w
     ) {
-        v.mergeWith(w);
+        values.merge(v, w);
     }
 
     @NotNull
-    public Set<BoxedBasicValue> getCandidatesBoxedValues() {
-        return candidatesBoxedValues;
+    public RedundantBoxedValuesCollection getCandidatesBoxedValues() {
+        return values;
     }
 }

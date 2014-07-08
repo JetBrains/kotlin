@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.codegen.optimization.boxing;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
@@ -44,12 +42,11 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         Analyzer<BasicValue> analyzer = new Analyzer<BasicValue>(interpreter);
 
         Frame<BasicValue>[] frames = runAnalyzer(analyzer, internalClassName, node);
-        Set<BoxedBasicValue> valuesToOptimize = filterSafeToRemoveValues(interpreter.getCandidatesBoxedValues());
+        RedundantBoxedValuesCollection valuesToOptimize = interpreter.getCandidatesBoxedValues();
 
         if (!valuesToOptimize.isEmpty()) {
-            findValuesClashingWithVariables(node, frames);
-
-            valuesToOptimize = filterSafeToRemoveValues(valuesToOptimize);
+            // has side effect on valuesToOptimize and frames, containing BoxedBasicValues that are unsafe to remove
+            removeValuesClashingWithVariables(valuesToOptimize, node, frames);
 
             adaptLocalVariableTableForBoxedValues(node, frames);
 
@@ -59,16 +56,6 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         }
 
         super.transform(internalClassName, node);
-    }
-
-    @NotNull
-    private static Set<BoxedBasicValue> filterSafeToRemoveValues(@NotNull Set<BoxedBasicValue> values) {
-        return new HashSet<BoxedBasicValue>(Collections2.filter(values, new Predicate<BoxedBasicValue>() {
-            @Override
-            public boolean apply(BoxedBasicValue input) {
-                return input.isSafeToRemove();
-            }
-        }));
     }
 
     private static void adaptLocalVariableTableForBoxedValues(@NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames) {
@@ -107,16 +94,20 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         }
     }
 
-    private static void findValuesClashingWithVariables(
-            @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames
+    private static void removeValuesClashingWithVariables(
+            @NotNull RedundantBoxedValuesCollection values,
+            @NotNull MethodNode node,
+            @NotNull Frame<BasicValue>[] frames
     ) {
-        while (findValuesClashingWithVariablesPass(node, frames)) {
+        while (removeValuesClashingWithVariablesPass(values, node, frames)) {
             // do nothing
         }
     }
 
-    private static boolean findValuesClashingWithVariablesPass(
-            @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames
+    private static boolean removeValuesClashingWithVariablesPass(
+            @NotNull RedundantBoxedValuesCollection values,
+            @NotNull MethodNode node,
+            @NotNull Frame<BasicValue>[] frames
     ) {
         InsnList insnList = node.instructions;
         boolean needToRepeat = false;
@@ -131,7 +122,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
             int to = insnList.indexOf(localVariableNode.end) - 1;
 
             if (isThereUnsafeStoreInstruction(insnList, frames, from, to, index)) {
-                needToRepeat |= markAllBoxedValuesStoredAsUnsafeToRemove(insnList, frames, from, to, index);
+                needToRepeat |= markAllBoxedValuesStoredAsUnsafeToRemove(insnList, frames, values, from, to, index);
             }
         }
 
@@ -183,6 +174,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     private static boolean markAllBoxedValuesStoredAsUnsafeToRemove(
             @NotNull InsnList insnList,
             @NotNull Frame<BasicValue>[] frames,
+            @NotNull RedundantBoxedValuesCollection values,
             int from, int to, int varIndex
     ) {
         boolean wasChanges = false;
@@ -200,7 +192,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
                 }
 
                 wasChanges |= true;
-                ((BoxedBasicValue) top).propagateRemovingAsUnsafe();
+                values.remove((BoxedBasicValue) top);
             }
         }
 
@@ -208,7 +200,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     @NotNull
-    private static int[] buildVariablesRemapping(@NotNull Iterable<BoxedBasicValue> values, @NotNull MethodNode node) {
+    private static int[] buildVariablesRemapping(@NotNull RedundantBoxedValuesCollection values, @NotNull MethodNode node) {
         Set<Integer> doubleSizedVars = new HashSet<Integer>();
         for (BoxedBasicValue value : values) {
             if (value.getPrimitiveType().getSize() == 2) {
@@ -247,7 +239,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     private static void adaptInstructionsForBoxedValues(
-            @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames, @NotNull Set<BoxedBasicValue> values
+            @NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames, @NotNull RedundantBoxedValuesCollection values
     ) {
         addPopInstructionsForBoxedValues(node, frames);
 
