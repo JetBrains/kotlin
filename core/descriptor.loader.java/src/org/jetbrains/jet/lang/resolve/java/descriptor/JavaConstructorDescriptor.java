@@ -74,7 +74,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind
     ) {
-        if (kind != Kind.DECLARATION) {
+        if (kind != Kind.DECLARATION && kind != Kind.SYNTHESIZED) {
             throw new IllegalStateException("Attempt at creating a constructor that is not a declaration: \n" +
                                             "copy from: " + this + "\n" +
                                             "newOwner: " + newOwner + "\n" +

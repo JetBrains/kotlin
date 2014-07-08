@@ -5151,6 +5151,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/j+k/recursiveRawUpperBound.kt");
             }
             
+            @TestMetadata("samInConstructorWithGenerics.kt")
+            public void testSamInConstructorWithGenerics() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/samInConstructorWithGenerics.kt");
+            }
+            
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/Simple.kt");
