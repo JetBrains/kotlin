@@ -3883,6 +3883,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/removeBraces"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("forWithLocalVariable.kt")
+        public void testForWithLocalVariable() throws Exception {
+            doTest("idea/testData/intentions/removeBraces/forWithLocalVariable.kt");
+        }
+        
         @TestMetadata("removeBracesForDoWhile.kt")
         public void testRemoveBracesForDoWhile() throws Exception {
             doTest("idea/testData/intentions/removeBraces/removeBracesForDoWhile.kt");

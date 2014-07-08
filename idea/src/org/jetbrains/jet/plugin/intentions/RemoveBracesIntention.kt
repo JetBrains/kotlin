@@ -28,6 +28,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
+import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.plugin.intentions.declarations.JetDeclarationJoinLinesHandler
+import org.jetbrains.jet.lang.psi.JetProperty
 
 public class RemoveBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("remove.braces", javaClass()) {
     override fun isApplicableTo(element: JetExpressionImpl): Boolean {
@@ -56,10 +59,11 @@ public class RemoveBracesIntention : JetSelfTargetingIntention<JetExpressionImpl
 
         handleComments(element, jetBlockElement)
 
-        val newElement = jetBlockElement.replace(JetPsiFactory.createExpression(element.getProject(), firstStatement.getText()))
+        val project = element.getProject()
+        val newElement = jetBlockElement.replace(firstStatement.copy())
 
         if (expressionKind == ExpressionKind.DOWHILE) {
-            newElement.getParent()!!.addAfter(JetPsiFactory.createNewLine(element.getProject()), newElement)
+            newElement.getParent()!!.addAfter(JetPsiFactory.createNewLine(project), newElement)
         }
     }
 
