@@ -597,7 +597,7 @@ fun main(args: Array<String>) {
 
     testGroup("jps-plugin/test", "jps-plugin/testData") {
         testClass(javaClass<AbstractIncrementalJpsTest>()) {
-            model("incremental", extension = null, recursive = false)
+            model("incremental", extension = null, excludeParentDirs = true)
         }
     }
 }
@@ -628,6 +628,7 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
         fun model(
                 relativeRootPath: String,
                 recursive: Boolean = true,
+                excludeParentDirs: Boolean = false,
                 extension: String? = "kt", // null string means dir (name without dot)
                 pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
                 testMethod: String = "doTest",
@@ -640,7 +641,7 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
             testModels.add(if (singleClass)
                                SingleClassTestModel(rootFile, compiledPattern, testMethod, className)
                            else
-                               SimpleTestClassModel(rootFile, recursive, compiledPattern, testMethod, className))
+                               SimpleTestClassModel(rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className))
         }
     }
 
