@@ -78,8 +78,7 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
                 if (variableDescriptor != null) {
                     val containingDescriptor = variableDescriptor.getContainingDeclaration()
                     if (containingDescriptor is AnonymousFunctionDescriptor) {
-                        val context = AnalyzerFacadeWithCache.getContextForElement(expression)
-                        return BindingContextUtils.descriptorToDeclaration(context, containingDescriptor) as? JetFunctionLiteral
+                        return BindingContextUtils.descriptorToDeclaration(containingDescriptor) as? JetFunctionLiteral
                     }
                 }
 

@@ -57,16 +57,15 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     private static final Logger LOG = Logger.getInstance(OverrideImplementMethodsHandler.class.getCanonicalName());
 
     public static List<DescriptorClassMember> membersFromDescriptors(
-            JetFile file, Iterable<CallableMemberDescriptor> missingImplementations,
-            BindingContext bindingContext
+            JetFile file, Iterable<CallableMemberDescriptor> missingImplementations
     ) {
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
-
-            PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(file, memberDescriptor, bindingContext);
+            PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(file, memberDescriptor);
             if (declaration == null) {
                 LOG.error("Can not find declaration for descriptor " + memberDescriptor);
-            } else {
+            }
+            else {
                 DescriptorClassMember member = new DescriptorClassMember(declaration, memberDescriptor);
                 members.add(member);
             }
@@ -254,7 +253,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint());
             return;
         }
-        List<DescriptorClassMember> members = membersFromDescriptors((JetFile) file, missingImplementations, bindingContext);
+        List<DescriptorClassMember> members = membersFromDescriptors((JetFile) file, missingImplementations);
 
         final List<DescriptorClassMember> selectedElements;
         if (implementAll) {

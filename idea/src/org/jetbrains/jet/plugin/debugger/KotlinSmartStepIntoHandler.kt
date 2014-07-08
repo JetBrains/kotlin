@@ -131,7 +131,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                         if (getterDescriptor != null && !getterDescriptor.isDefault()) {
                             val delegatedResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor]
                             if (delegatedResolvedCall == null) {
-                                val getter = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, getterDescriptor)
+                                val getter = BindingContextUtils.callableDescriptorToDeclaration(getterDescriptor)
                                 if (getter is JetPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
                                     val psiMethod = LightClassUtil.getLightClassAccessorMethod(getter)
                                     if (psiMethod != null) {
@@ -142,7 +142,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                             else {
                                 val delegatedPropertyGetterDescriptor = delegatedResolvedCall.getResultingDescriptor()
                                 if (delegatedPropertyGetterDescriptor is CallableMemberDescriptor) {
-                                    val function = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, delegatedPropertyGetterDescriptor)
+                                    val function = BindingContextUtils.callableDescriptorToDeclaration(delegatedPropertyGetterDescriptor)
                                     if (function is JetNamedFunction) {
                                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                                         if (psiMethod != null) {
@@ -163,7 +163,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
                 val descriptor = resolvedCall.getResultingDescriptor()
                 if (descriptor is CallableMemberDescriptor) {
-                    val function = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, descriptor)
+                    val function = BindingContextUtils.callableDescriptorToDeclaration(descriptor)
                     if (function is JetNamedFunction) {
                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                         if (psiMethod != null) {

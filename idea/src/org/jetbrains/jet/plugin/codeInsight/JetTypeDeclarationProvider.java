@@ -40,7 +40,7 @@ public class JetTypeDeclarationProvider implements TypeDeclarationProvider {
                 if (type != null) {
                     ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
                     if (classifierDescriptor != null) {
-                        PsiElement typeElement = BindingContextUtils.descriptorToDeclaration(bindingContext, classifierDescriptor);
+                        PsiElement typeElement = BindingContextUtils.descriptorToDeclaration(classifierDescriptor);
                         if (typeElement != null) {
                             return new PsiElement[] {typeElement};
                         }

@@ -60,7 +60,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                                             JetObjectDeclaration.class);
         if (declaration == null) return;
 
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
 
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
@@ -102,7 +102,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                 if (KotlinBuiltIns.getInstance().getAny() == descriptor) {
                     return null;
                 }
-                return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+                return BindingContextUtils.descriptorToDeclaration(descriptor);
             }
         });
         if (superDeclarations.isEmpty()) return;

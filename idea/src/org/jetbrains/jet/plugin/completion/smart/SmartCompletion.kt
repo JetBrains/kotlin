@@ -96,7 +96,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                     else -> ExpectedInfoClassification.NOT_MATCHES
                 }
             }
-            result.addLookupElements(expectedInfos, classifier, { createLookupElement(descriptor, resolveSession, bindingContext) })
+            result.addLookupElements(expectedInfos, classifier, { createLookupElement(descriptor, resolveSession) })
 
             if (receiver == null) {
                 toFunctionReferenceLookupElement(descriptor, functionExpectedInfos)?.let { result.add(it) }
@@ -104,7 +104,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         }
 
         if (receiver == null) {
-            TypeInstantiationItems(bindingContext, resolveSession, visibilityFilter).addToCollection(result, expectedInfos)
+            TypeInstantiationItems(resolveSession, visibilityFilter).addToCollection(result, expectedInfos)
 
             StaticMembers(bindingContext, resolveSession).addToCollection(result, expectedInfos, expression, itemsToSkip)
 
@@ -177,7 +177,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             val matchedExpectedInfos = functionExpectedInfos.filter { functionType.isSubtypeOf(it.`type`) }
             if (matchedExpectedInfos.isEmpty()) return null
 
-            var lookupElement = createLookupElement(descriptor, resolveSession, bindingContext)
+            var lookupElement = createLookupElement(descriptor, resolveSession)
             val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
             lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = text

@@ -41,8 +41,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBa
         val simpleNameReference = simpleNameExpression.getReference() as JetReference?
         val target = simpleNameReference?.resolveToDescriptors()?.first()!!
 
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(simpleNameExpression)
-        val funcExpr = BindingContextUtils.descriptorToDeclaration(bindingContext, target.getContainingDeclaration()!!) as JetFunctionLiteral
+        val funcExpr = BindingContextUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral
 
         val newExpr = JetPsiFactory.createExpression(project, "{ it -> 42 }") as JetFunctionLiteralExpression
         funcExpr.addRangeAfter(newExpr.getFunctionLiteral().getValueParameterList(),

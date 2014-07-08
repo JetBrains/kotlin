@@ -165,10 +165,9 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
             @Override
             protected void run(Result result) throws Throwable {
-                OverrideImplementMethodsHandler.generateMethods(
-                        myFixture.getEditor(), classOrObject,
-                        OverrideImplementMethodsHandler
-                                .membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride), resolveSession.getBindingContext()));
+                OverrideImplementMethodsHandler.generateMethods(myFixture.getEditor(), classOrObject,
+                        OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride))
+                );
             }
         }.execute();
     }
@@ -179,7 +178,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = classOrObject.getContainingJetFile();
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
         Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
         final ArrayList<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
@@ -195,7 +194,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
             protected void run(Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(
                         myFixture.getEditor(), classOrObject,
-                        OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, descriptorsList, bindingContext));
+                        OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, descriptorsList));
             }
         }.execute();
     }

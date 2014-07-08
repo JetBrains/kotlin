@@ -142,7 +142,7 @@ public class LabelResolver {
         DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
         JetElement element;
         if (declarationDescriptor instanceof FunctionDescriptor || declarationDescriptor instanceof ClassDescriptor) {
-            element = (JetElement) BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
+            element = (JetElement) BindingContextUtils.descriptorToDeclaration(declarationDescriptor);
         }
         else {
             throw new UnsupportedOperationException(declarationDescriptor.getClass().toString()); // TODO
@@ -198,7 +198,7 @@ public class LabelResolver {
             else {
                 throw new UnsupportedOperationException("Unsupported descriptor: " + declarationDescriptor); // TODO
             }
-            PsiElement element = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(declarationDescriptor);
             assert element != null : "No PSI element for descriptor: " + declarationDescriptor;
             context.trace.record(LABEL_TARGET, targetLabel, element);
             context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor);

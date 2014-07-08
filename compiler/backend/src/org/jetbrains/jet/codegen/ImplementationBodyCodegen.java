@@ -1530,7 +1530,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateDelegationToTraitImpl(@NotNull final FunctionDescriptor traitFun, @NotNull FunctionDescriptor inheritedFun) {
         functionCodegen.generateMethod(
-                DelegationToTraitImpl(descriptorToDeclaration(bindingContext, traitFun), traitFun),
+                DelegationToTraitImpl(descriptorToDeclaration(traitFun), traitFun),
                 typeMapper.mapSignature(inheritedFun),
                 inheritedFun,
                 new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, inheritedFun) {

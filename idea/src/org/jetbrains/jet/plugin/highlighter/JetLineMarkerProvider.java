@@ -299,7 +299,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         if (overriddenMembers.isEmpty()) return;
         List<PsiElement> list = Lists.newArrayList();
         for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
-            PsiElement declarationPsiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, overriddenMember);
+            PsiElement declarationPsiElement = BindingContextUtils.descriptorToDeclaration(overriddenMember);
             list.add(declarationPsiElement);
         }
         if (list.isEmpty()) {

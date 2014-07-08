@@ -57,7 +57,7 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
         val originalDeclaration = method.unwrapped
         if (originalDeclaration !is PsiMethod && originalDeclaration !is JetDeclaration) return
 
-        if (originalDeclaration != BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor)) return
+        if (originalDeclaration != BindingContextUtils.descriptorToDeclaration(descriptor)) return
 
         val args = callExpression.getValueArguments()
 

@@ -156,9 +156,7 @@ public interface BindingContext {
                 return false;
             }
             backingFieldRequired = valueNotFound ? false : backingFieldRequired;
-            assert backingFieldRequired != null;
-            // TODO: user BindingContextAccessors
-            PsiElement declarationPsiElement = BindingContextUtils.descriptorToDeclaration(null, propertyDescriptor);
+            PsiElement declarationPsiElement = BindingContextUtils.descriptorToDeclaration(propertyDescriptor);
             if (declarationPsiElement instanceof JetParameter) {
                 JetParameter jetParameter = (JetParameter) declarationPsiElement;
                 return jetParameter.hasValOrVarNode() ||

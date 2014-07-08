@@ -126,7 +126,7 @@ public class InlineCodegen implements CallGenerator {
         }
         catch (Exception e) {
             boolean generateNodeText = !(e instanceof InlineException);
-            PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, this.codegen.getContext().getContextDescriptor());
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(this.codegen.getContext().getContextDescriptor());
             throw new CompilationException("Couldn't inline method call '" +
                                        functionDescriptor.getName() +
                                        "' into \n" + (element != null ? element.getText() : "null psi element " + this.codegen.getContext().getContextDescriptor()) +
@@ -165,7 +165,7 @@ public class InlineCodegen implements CallGenerator {
             }
         }
         else {
-            PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, functionDescriptor);
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(functionDescriptor);
 
             if (element == null) {
                 throw new RuntimeException("Couldn't find declaration for function " + descriptorName(functionDescriptor));

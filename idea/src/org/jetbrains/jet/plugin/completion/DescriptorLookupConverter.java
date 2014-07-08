@@ -122,24 +122,21 @@ public final class DescriptorLookupConverter {
     }
 
     @NotNull
-    public static LookupElement createLookupElement(
-            @NotNull KotlinCodeAnalyzer analyzer,
-            @NotNull BindingContext bindingContext,
-            @NotNull DeclarationDescriptor descriptor) {
+    public static LookupElement createLookupElement(@NotNull KotlinCodeAnalyzer analyzer, @NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
             descriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
         }
-        return createLookupElement(analyzer, descriptor, BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
+        return createLookupElement(analyzer, descriptor, BindingContextUtils.descriptorToDeclaration(descriptor));
     }
 
     public static LookupElement[] collectLookupElements(
             @NotNull KotlinCodeAnalyzer analyzer,
-            @NotNull BindingContext bindingContext,
-            @NotNull Iterable<DeclarationDescriptor> descriptors) {
+            @NotNull Iterable<DeclarationDescriptor> descriptors
+    ) {
         List<LookupElement> result = Lists.newArrayList();
 
         for (DeclarationDescriptor descriptor : descriptors) {
-            result.add(createLookupElement(analyzer, bindingContext, descriptor));
+            result.add(createLookupElement(analyzer, descriptor));
         }
 
         return result.toArray(new LookupElement[result.size()]);

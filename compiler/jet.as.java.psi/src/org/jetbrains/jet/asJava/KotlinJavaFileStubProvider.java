@@ -61,6 +61,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+
 public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostics> implements CachedValueProvider<T> {
 
     @NotNull
@@ -166,9 +168,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                         Map<JetClassOrObject, InnerKotlinClassLightClassData> innerClassesMap = ContainerUtil.newHashMap();
                         for (ClassDescriptor innerClassDescriptor : allInnerClasses) {
-                            JetClassOrObject innerClass = (JetClassOrObject) BindingContextUtils.descriptorToDeclaration(
-                                    bindingContext, innerClassDescriptor
-                            );
+                            JetClassOrObject innerClass = (JetClassOrObject) descriptorToDeclaration(innerClassDescriptor);
                             if (innerClass == null) continue;
 
                             InnerKotlinClassLightClassData innerLightClassData = new InnerKotlinClassLightClassData(

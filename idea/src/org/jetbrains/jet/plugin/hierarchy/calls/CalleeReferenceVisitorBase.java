@@ -50,7 +50,7 @@ public abstract class CalleeReferenceVisitorBase extends JetTreeVisitorVoid {
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (descriptor == null) return;
 
-        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(descriptor);
         if (declaration == null) return;
 
         if (isProperty(descriptor, declaration) || isCallable(descriptor, declaration, expression)) {

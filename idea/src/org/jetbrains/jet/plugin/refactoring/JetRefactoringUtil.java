@@ -141,7 +141,7 @@ public class JetRefactoringUtil {
                     @Override
                     public Pair<PsiElement, CallableDescriptor> fun(CallableDescriptor descriptor) {
                         return new Pair<PsiElement, CallableDescriptor>(
-                                DescriptorToDeclarationUtil.getDeclaration(project, descriptor, bindingContext),
+                                DescriptorToDeclarationUtil.getDeclaration(project, descriptor),
                                 descriptor
                         );
                     }
@@ -220,12 +220,8 @@ public class JetRefactoringUtil {
     }
 
     @NotNull
-    public static String formatClass(
-            @NotNull DeclarationDescriptor classDescriptor,
-            @NotNull BindingContext bindingContext,
-            boolean inCode
-    ) {
-        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, classDescriptor);
+    public static String formatClass(@NotNull DeclarationDescriptor classDescriptor, boolean inCode) {
+        PsiElement element = BindingContextUtils.descriptorToDeclaration(classDescriptor);
         if (element instanceof PsiClass) {
             return formatPsiClass((PsiClass) element, false, inCode);
         }
@@ -234,12 +230,8 @@ public class JetRefactoringUtil {
     }
 
     @NotNull
-    public static String formatFunction(
-            @NotNull DeclarationDescriptor functionDescriptor,
-            @NotNull BindingContext bindingContext,
-            boolean inCode
-    ) {
-        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, functionDescriptor);
+    public static String formatFunction(@NotNull DeclarationDescriptor functionDescriptor, boolean inCode) {
+        PsiElement element = BindingContextUtils.descriptorToDeclaration(functionDescriptor);
         if (element instanceof PsiMethod) {
             return formatPsiMethod((PsiMethod) element, false, inCode);
         }

@@ -78,7 +78,7 @@ public class JetCompletionResultSet {
             return;
         }
 
-        addElement(DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor));
+        addElement(DescriptorLookupConverter.createLookupElement(resolveSession, descriptor));
 
         // add special item for function with one argument of function type with more than one parameter
         if (descriptor instanceof FunctionDescriptor) {
@@ -89,7 +89,7 @@ public class JetCompletionResultSet {
                 if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
                     int parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size();
                     if (parameterCount > 1) {
-                        LookupElement lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor);
+                        LookupElement lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, descriptor);
                         addElement(new LookupElementDecorator<LookupElement>(lookupElement) {
                             @Override
                             public void renderElement(@NotNull LookupElementPresentation presentation) {

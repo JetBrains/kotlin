@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -32,6 +33,8 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
+
+import java.util.Collection;
 
 /**
  * Performs completion in package directive. Should suggest only packages and avoid showing fake package produced by
@@ -75,8 +78,9 @@ public class JetPackagesContributor extends CompletionContributor {
                                        ResolvePackage.getLazyResolveSession(simpleNameReference.getExpression());
                                BindingContext bindingContext = resolveSession.resolveToElement(simpleNameReference.getExpression());
 
-                               for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(
-                                       resolveSession, bindingContext, TipsManager.getPackageReferenceVariants(simpleNameReference.getExpression(), bindingContext))) {
+                               Collection<DeclarationDescriptor> variants =
+                                       TipsManager.getPackageReferenceVariants(simpleNameReference.getExpression(), bindingContext);
+                               for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(resolveSession, variants)) {
                                    if (!variant.getLookupString().contains(DUMMY_IDENTIFIER)) {
                                        result.addElement(variant);
                                    }

@@ -450,7 +450,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         );
 
         if (!bridgesToGenerate.isEmpty()) {
-            PsiElement origin = descriptor.getKind() == DECLARATION ? callableDescriptorToDeclaration(bindingContext, descriptor) : null;
+            PsiElement origin = descriptor.getKind() == DECLARATION ? callableDescriptorToDeclaration(descriptor) : null;
             for (Bridge<Method> bridge : bridgesToGenerate) {
                 generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo());
             }
@@ -570,7 +570,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             if (this.owner instanceof PackageFacadeContext) {
                 mv.visitCode();
                 generateStaticDelegateMethodBody(mv, defaultMethod, (PackageFacadeContext) this.owner);
-                endVisit(mv, "default method delegation", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+                endVisit(mv, "default method delegation", callableDescriptorToDeclaration(functionDescriptor));
             }
             else {
                 generateDefaultImpl(owner, signature, functionDescriptor, isStatic(kind), mv, loadStrategy, function);
@@ -589,7 +589,7 @@ public class FunctionCodegen extends ParentCodegenAware {
     ) {
         mv.visitCode();
         generateDefaultImplBody(methodContext, signature, functionDescriptor, isStatic, mv, loadStrategy, function, getParentCodegen(), state);
-        endVisit(mv, "default method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+        endVisit(mv, "default method", callableDescriptorToDeclaration(functionDescriptor));
     }
 
     public static void generateDefaultImplBody(

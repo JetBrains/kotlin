@@ -125,7 +125,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
         ClassDescriptor classDescriptor = getTrace().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe());
         if (classDescriptor != null) {
-            PsiElement element = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+            PsiElement element = BindingContextUtils.classDescriptorToDeclaration(classDescriptor);
             if (element != null && PsiSearchScopeUtil.isInScope(searchScope, element)) {
                 return Collections.singletonList((JetClassOrObject) element);
             }

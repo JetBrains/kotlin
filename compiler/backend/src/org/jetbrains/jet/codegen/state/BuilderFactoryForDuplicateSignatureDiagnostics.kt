@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
-        private val bindingContext: BindingContext,
+        bindingContext: BindingContext,
         private val diagnostics: DiagnosticHolder
 ) : SignatureCollectingClassBuilderFactory(builderFactory) {
 
@@ -79,9 +79,9 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
                     if (member.getKind() != DELEGATION) {
                         // Delegates don't have declarations in the code
-                        memberElement = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, member)
+                        memberElement = BindingContextUtils.callableDescriptorToDeclaration(member)
                         if (memberElement == null && member is PropertyAccessorDescriptor) {
-                            memberElement = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, member.getCorrespondingProperty())
+                            memberElement = BindingContextUtils.callableDescriptorToDeclaration(member.getCorrespondingProperty())
                         }
                     }
                 }

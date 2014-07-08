@@ -110,7 +110,7 @@ public class QuickFixUtil {
         BindingContext context = ResolvePackage.getBindingContext(callExpression.getContainingJetFile());
         ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(callExpression, context);
         if (resolvedCall == null) return null;
-        PsiElement declaration = safeGetDeclaration(context, resolvedCall);
+        PsiElement declaration = safeGetDeclaration(resolvedCall);
         if (declaration instanceof JetFunction) {
             return ((JetFunction) declaration).getValueParameterList();
         }
@@ -121,8 +121,8 @@ public class QuickFixUtil {
     }
 
     @Nullable
-    public static PsiElement safeGetDeclaration(@NotNull BindingContext context, @NotNull ResolvedCall<?> resolvedCall) {
-        List<PsiElement> declarations = BindingContextUtils.descriptorToDeclarations(context, resolvedCall.getResultingDescriptor());
+    public static PsiElement safeGetDeclaration(@NotNull ResolvedCall<?> resolvedCall) {
+        List<PsiElement> declarations = BindingContextUtils.descriptorToDeclarations(resolvedCall.getResultingDescriptor());
         //do not create fix if descriptor has more than one overridden declaration
         if (declarations.size() == 1) {
             return declarations.iterator().next();

@@ -52,7 +52,7 @@ public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<Tr
             when (memberDescriptor.getKind()) {
                 CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
                 CallableMemberDescriptor.Kind.DELEGATION -> {
-                    val superTypeMember = DescriptorToDeclarationUtil.getDeclaration(project, memberDescriptor, context)
+                    val superTypeMember = DescriptorToDeclarationUtil.getDeclaration(project, memberDescriptor)
                     if (superTypeMember is NavigatablePsiElement) {
                         children.add(JetStructureViewElement(superTypeMember, memberDescriptor, true))
                     }

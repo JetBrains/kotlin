@@ -310,12 +310,12 @@ public class JetTypeMapper {
 
     @NotNull
     private String generateErrorMessageForErrorType(@NotNull JetType type, @NotNull DeclarationDescriptor descriptor) {
-        PsiElement declarationElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+        PsiElement declarationElement = BindingContextUtils.descriptorToDeclaration(descriptor);
         PsiElement parentDeclarationElement = null;
         if (declarationElement != null) {
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
             if (containingDeclaration != null) {
-                parentDeclarationElement = BindingContextUtils.descriptorToDeclaration(bindingContext, containingDeclaration);
+                parentDeclarationElement = BindingContextUtils.descriptorToDeclaration(containingDeclaration);
             }
         }
 

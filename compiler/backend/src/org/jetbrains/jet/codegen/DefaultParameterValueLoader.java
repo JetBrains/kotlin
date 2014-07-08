@@ -32,7 +32,7 @@ public interface DefaultParameterValueLoader {
                 ValueParameterDescriptor descriptor,
                 ExpressionCodegen codegen
         ) {
-            JetParameter jetParameter = (JetParameter) descriptorToDeclaration(codegen.getBindingContext(), descriptor);
+            JetParameter jetParameter = (JetParameter) descriptorToDeclaration(descriptor);
             assert jetParameter != null;
             Type propertyType = codegen.typeMapper.mapType(descriptor.getType());
             codegen.gen(jetParameter.getDefaultValue(), propertyType);

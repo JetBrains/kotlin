@@ -67,7 +67,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
         for (CallableMemberDescriptor overriddenDescriptor : getAllDeclaredNonOverridableOverriddenDescriptors(
                 (CallableMemberDescriptor) descriptor)) {
             assert overriddenDescriptor.getKind() == DECLARATION : "Can only be applied to declarations.";
-            PsiElement overriddenMember = descriptorToDeclaration(resolveSession.getBindingContext(), overriddenDescriptor);
+            PsiElement overriddenMember = descriptorToDeclaration(overriddenDescriptor);
             if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember)) {
                 return false;
             }

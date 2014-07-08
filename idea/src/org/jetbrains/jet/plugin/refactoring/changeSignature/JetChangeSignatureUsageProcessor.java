@@ -146,7 +146,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!changeInfo.isConstructor() && functionScope != null && !info.getNewName().isEmpty()) {
             for (FunctionDescriptor conflict : functionScope.getFunctions(Name.identifier(info.getNewName()))) {
                 if (conflict != oldDescriptor && getFunctionParameterTypes(conflict).equals(getFunctionParameterTypes(oldDescriptor))) {
-                    PsiElement conflictElement = BindingContextUtils.descriptorToDeclaration(bindingContext, conflict);
+                    PsiElement conflictElement = BindingContextUtils.descriptorToDeclaration(conflict);
                     result.putValue(conflictElement, "Function already exists: '" + DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict) + "'");
                     break;
                 }
@@ -163,7 +163,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             if (parametersScope != null) {
                 if (changeInfo.isConstructor() && valOrVar != JetValVar.None) {
                     for (VariableDescriptor property : parametersScope.getProperties(Name.identifier(parameterName))) {
-                        PsiElement propertyDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, property);
+                        PsiElement propertyDeclaration = BindingContextUtils.descriptorToDeclaration(property);
 
                         if (propertyDeclaration != null && !(propertyDeclaration.getParent() instanceof JetParameterList)) {
                             result.putValue(propertyDeclaration, "Duplicating property '" + parameterName + "'");
@@ -175,7 +175,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     VariableDescriptor variable = parametersScope.getLocalVariable(Name.identifier(parameterName));
 
                     if (variable != null && !(variable instanceof ValueParameterDescriptor)) {
-                        PsiElement conflictElement = BindingContextUtils.descriptorToDeclaration(bindingContext, variable);
+                        PsiElement conflictElement = BindingContextUtils.descriptorToDeclaration(variable);
                         result.putValue(conflictElement, "Duplicating local variable '" + parameterName + "'");
                     }
                 }
@@ -190,7 +190,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (containingDeclaration instanceof ClassDescriptor)
             return ((ClassDescriptor) containingDeclaration).getMemberScope(ContainerUtil.<TypeProjection>emptyList());
         else if (containingDeclaration instanceof FunctionDescriptorImpl) {
-            PsiElement container = BindingContextUtils.descriptorToDeclaration(bindingContext, containingDeclaration);
+            PsiElement container = BindingContextUtils.descriptorToDeclaration(containingDeclaration);
 
             if (container instanceof JetFunction)
                 return getFunctionBodyScope((JetFunction) container, bindingContext);

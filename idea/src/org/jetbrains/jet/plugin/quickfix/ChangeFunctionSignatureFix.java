@@ -79,8 +79,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             return false;
         }
 
-        BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) file);
-        List<PsiElement> declarations = BindingContextUtils.callableDescriptorToDeclarations(bindingContext, functionDescriptor);
+        List<PsiElement> declarations = BindingContextUtils.callableDescriptorToDeclarations(functionDescriptor);
         if (declarations.isEmpty()) {
             return false;
         }

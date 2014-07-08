@@ -49,20 +49,16 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
     @NotNull
     private final List<JetParameterInfo> parameters;
     @NotNull
-    private final BindingContext bindingContext;
-    @NotNull
     private final Collection<FunctionDescriptor> descriptorsForSignatureChange;
     private Collection<PsiElement> affectedFunctions = null;
 
     public JetChangeSignatureData(
             @NotNull FunctionDescriptor baseDescriptor,
             @NotNull PsiElement baseDeclaration,
-            @NotNull BindingContext bindingContext,
             @NotNull Collection<FunctionDescriptor> descriptorsForSignatureChange
     ) {
         this.baseDescriptor = baseDescriptor;
         this.baseDeclaration = baseDeclaration;
-        this.bindingContext = bindingContext;
         this.descriptorsForSignatureChange = descriptorsForSignatureChange;
         final List<JetParameter> valueParameters = this.baseDeclaration instanceof JetFunction
                                                    ? ((JetFunction) this.baseDeclaration).getValueParameters()
@@ -110,7 +106,7 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
 
     @NotNull
     private Collection<PsiElement> computeHierarchyFrom(@NotNull FunctionDescriptor baseDescriptor) {
-        PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(baseDeclaration.getProject(), baseDescriptor, bindingContext);
+        PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(baseDeclaration.getProject(), baseDescriptor);
         Set<PsiElement> result = Sets.newHashSet();
         result.add(declaration);
         if (!(declaration instanceof JetNamedFunction)) {

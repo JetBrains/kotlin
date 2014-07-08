@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.types.JetTypeImpl
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
 public class MyDeclarations(
-        private val context: BindingContext,
+        context: BindingContext,
         private val project: Project,
         private val typeResolver: TypeResolver
 ) {
@@ -40,7 +40,7 @@ public class MyDeclarations(
     {
         val functions = context.getSliceContents(BindingContext.FUNCTION)
         functionFoo = findFunctionByName(functions.values(), "foo")
-        val function = (BindingContextUtils.descriptorToDeclaration(context, functionFoo) as JetFunction)
+        val function = BindingContextUtils.descriptorToDeclaration(functionFoo) as JetFunction
         val fooBody = function.getBodyExpression()
         scopeToResolveTypeParameters = context.get(BindingContext.RESOLUTION_SCOPE, fooBody)!!
     }

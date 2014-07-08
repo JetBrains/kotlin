@@ -50,7 +50,7 @@ trait CallInfo {
     fun constructSafeCallIsNeeded(result: JsExpression): JsExpression
 
     override fun toString(): String {
-        val location = DiagnosticUtils.atLocation(context.bindingContext(), callableDescriptor)
+        val location = DiagnosticUtils.atLocation(callableDescriptor)
         val name = callableDescriptor.getName().asString()
         return "callableDescriptor: $name at $location; thisObject: $thisObject; receiverObject: $receiverObject"
     }

@@ -73,7 +73,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
         if (expression instanceof JetOperationExpression) {
             ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, context);
             if (resolvedCall != null) {
-                JetFunction declaration = getFunctionDeclaration(context, resolvedCall);
+                JetFunction declaration = getFunctionDeclaration(resolvedCall);
                 if (declaration != null) {
                     actions.add(new ChangeFunctionReturnTypeFix(declaration, expectedType));
                 }
@@ -84,7 +84,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
             if (parentBinary.getRight() == expression) {
                 ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(parentBinary, context);
                 if (resolvedCall != null) {
-                    JetFunction declaration = getFunctionDeclaration(context, resolvedCall);
+                    JetFunction declaration = getFunctionDeclaration(resolvedCall);
                     if (declaration != null) {
                         JetParameter binaryOperatorParameter = declaration.getValueParameterList().getParameters().get(0);
                         actions.add(new ChangeParameterTypeFix(binaryOperatorParameter, expressionType));
@@ -97,7 +97,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
         if (expression instanceof JetCallExpression) {
             ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, context);
             if (resolvedCall != null) {
-                JetFunction declaration = getFunctionDeclaration(context, resolvedCall);
+                JetFunction declaration = getFunctionDeclaration(resolvedCall);
                 if (declaration != null) {
                     actions.add(new ChangeFunctionReturnTypeFix(declaration, expectedType));
                 }
@@ -131,8 +131,8 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
     }
 
     @Nullable
-    private static JetFunction getFunctionDeclaration(@NotNull BindingContext context, @NotNull ResolvedCall<?> resolvedCall) {
-        PsiElement result = QuickFixUtil.safeGetDeclaration(context, resolvedCall);
+    private static JetFunction getFunctionDeclaration(@NotNull ResolvedCall<?> resolvedCall) {
+        PsiElement result = QuickFixUtil.safeGetDeclaration(resolvedCall);
         if (result instanceof JetFunction) {
             return (JetFunction) result;
         }

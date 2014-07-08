@@ -105,7 +105,7 @@ class ExtractionData(
     val refOffsetToDeclaration by Delegates.lazy {
         fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
             if (!(descriptor is ValueParameterDescriptor && (context[BindingContext.AUTO_CREATED_IT, descriptor] ?: false))) return false
-            val function = BindingContextUtils.descriptorToDeclaration(context, descriptor.getContainingDeclaration()) as? JetFunctionLiteral
+            val function = BindingContextUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) as? JetFunctionLiteral
             return function == null || !function.isInsideOf(originalElements)
         }
 
@@ -122,7 +122,7 @@ class ExtractionData(
                 val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
                 if (descriptor == null) continue
 
-                val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor, context) as? PsiNamedElement
+                val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor) as? PsiNamedElement
                         ?: if (isExtractableIt(descriptor, context)) itFakeDeclaration else continue
 
                 val offset = ref.getTextRange()!!.getStartOffset() - originalStartOffset

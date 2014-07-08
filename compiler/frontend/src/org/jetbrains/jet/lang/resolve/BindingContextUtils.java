@@ -74,7 +74,7 @@ public class BindingContextUtils {
         DeclarationDescriptor descriptor = findTopLevelParent(declarationDescriptor);
         if (descriptor == null) return null;
 
-        PsiElement declaration = descriptorToDeclaration(context, descriptor);
+        PsiElement declaration = descriptorToDeclaration(descriptor);
         if (declaration == null) return null;
 
         PsiFile containingFile = declaration.getContainingFile();
@@ -105,12 +105,12 @@ public class BindingContextUtils {
 
     // NOTE this is also used by KDoc
     @Nullable
-    public static PsiElement descriptorToDeclaration(@Nullable BindingContext context, @NotNull DeclarationDescriptor descriptor) {
+    public static PsiElement descriptorToDeclaration(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
-            return callableDescriptorToDeclaration(context, (CallableMemberDescriptor) descriptor);
+            return callableDescriptorToDeclaration((CallableMemberDescriptor) descriptor);
         }
         else if (descriptor instanceof ClassDescriptor) {
-            return classDescriptorToDeclaration(context, (ClassDescriptor) descriptor);
+            return classDescriptorToDeclaration((ClassDescriptor) descriptor);
         }
         else {
             return doGetDescriptorToDeclaration(descriptor);
@@ -118,12 +118,12 @@ public class BindingContextUtils {
     }
 
     @NotNull
-    public static List<PsiElement> descriptorToDeclarations(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
+    public static List<PsiElement> descriptorToDeclarations(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
-            return callableDescriptorToDeclarations(context, (CallableMemberDescriptor) descriptor);
+            return callableDescriptorToDeclarations((CallableMemberDescriptor) descriptor);
         }
         else {
-            PsiElement psiElement = descriptorToDeclaration(context, descriptor);
+            PsiElement psiElement = descriptorToDeclaration(descriptor);
             if (psiElement != null) {
                 return Lists.newArrayList(psiElement);
             } else {
@@ -133,7 +133,7 @@ public class BindingContextUtils {
     }
 
     @Nullable
-    public static PsiElement callableDescriptorToDeclaration(@Nullable BindingContext context, @NotNull CallableMemberDescriptor callable) {
+    public static PsiElement callableDescriptorToDeclaration(@NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == DECLARATION || callable.getKind() == SYNTHESIZED) {
             return doGetDescriptorToDeclaration(callable);
         }
@@ -146,10 +146,7 @@ public class BindingContextUtils {
     }
 
     @NotNull
-    public static List<PsiElement> callableDescriptorToDeclarations(
-            @NotNull BindingContext context,
-            @NotNull CallableMemberDescriptor callable
-    ) {
+    public static List<PsiElement> callableDescriptorToDeclarations(@NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == DECLARATION || callable.getKind() == SYNTHESIZED) {
             PsiElement psiElement = doGetDescriptorToDeclaration(callable);
             return psiElement != null ? Lists.newArrayList(psiElement) : Lists.<PsiElement>newArrayList();
@@ -158,13 +155,13 @@ public class BindingContextUtils {
         List<PsiElement> r = new ArrayList<PsiElement>();
         Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
         for (CallableMemberDescriptor overridden : overriddenDescriptors) {
-            r.addAll(callableDescriptorToDeclarations(context, overridden));
+            r.addAll(callableDescriptorToDeclarations(overridden));
         }
         return r;
     }
 
     @Nullable
-    public static PsiElement classDescriptorToDeclaration(@NotNull BindingContext context, @NotNull ClassDescriptor clazz) {
+    public static PsiElement classDescriptorToDeclaration(@NotNull ClassDescriptor clazz) {
         return doGetDescriptorToDeclaration(clazz);
     }
 
@@ -224,7 +221,7 @@ public class BindingContextUtils {
     ) {
         Collection<PsiElement> targets = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : declarationsByLabel) {
-            PsiElement element = descriptorToDeclaration(trace.getBindingContext(), descriptor);
+            PsiElement element = descriptorToDeclaration(descriptor);
             assert element != null : "Label can only point to something in the same lexical scope";
             targets.add(element);
         }
@@ -279,16 +276,15 @@ public class BindingContextUtils {
 
     @NotNull
     public static Pair<FunctionDescriptor, PsiElement> getContainingFunctionSkipFunctionLiterals(
-            @NotNull BindingContext context,
             @Nullable DeclarationDescriptor startDescriptor,
             boolean strict
     ) {
         FunctionDescriptor containingFunctionDescriptor = DescriptorUtils.getParentOfType(startDescriptor, FunctionDescriptor.class, strict);
-        PsiElement containingFunction = containingFunctionDescriptor != null ? callableDescriptorToDeclaration(context, containingFunctionDescriptor) : null;
+        PsiElement containingFunction =
+                containingFunctionDescriptor != null ? callableDescriptorToDeclaration(containingFunctionDescriptor) : null;
         while (containingFunction instanceof JetFunctionLiteral) {
             containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
-            containingFunction = containingFunctionDescriptor != null ? callableDescriptorToDeclaration(context,
-                                                                                                        containingFunctionDescriptor) : null;
+            containingFunction = containingFunctionDescriptor != null ? callableDescriptorToDeclaration(containingFunctionDescriptor) : null;
         }
 
         return new Pair<FunctionDescriptor, PsiElement>(containingFunctionDescriptor, containingFunction);

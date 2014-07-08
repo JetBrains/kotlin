@@ -103,7 +103,7 @@ fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean
         val descriptor = getCallDescriptor(bindingContext)
         if (descriptor !is ConstructorDescriptor) return false
 
-        return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor.getContainingDeclaration()) == jetClassOrObject
+        return BindingContextUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) == jetClassOrObject
     }
 
     checkJavaUsage() || checkKotlinUsage()

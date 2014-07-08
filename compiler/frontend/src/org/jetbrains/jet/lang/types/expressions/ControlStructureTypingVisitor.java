@@ -366,7 +366,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
             VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
             if (olderVariable != null && isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
+                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(variableDescriptor);
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
             }
         }
@@ -450,8 +450,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             assert parentDeclaration != null;
             DeclarationDescriptor declarationDescriptor = context.trace.get(DECLARATION_TO_DESCRIPTOR, parentDeclaration);
             Pair<FunctionDescriptor, PsiElement> containingFunInfo =
-                    BindingContextUtils.getContainingFunctionSkipFunctionLiterals(context.trace.getBindingContext(), declarationDescriptor,
-                                                                                  false);
+                    BindingContextUtils.getContainingFunctionSkipFunctionLiterals(declarationDescriptor, false);
             FunctionDescriptor containingFunctionDescriptor = containingFunInfo.getFirst();
 
             if (containingFunctionDescriptor != null) {

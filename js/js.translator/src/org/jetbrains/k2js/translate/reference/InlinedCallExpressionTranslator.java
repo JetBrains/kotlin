@@ -88,7 +88,7 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
 
     @NotNull
     private JetFunction getFunctionBody() {
-        return getFunctionForDescriptor(bindingContext(), getFunctionDescriptor());
+        return getFunctionForDescriptor(getFunctionDescriptor());
     }
 
     @NotNull

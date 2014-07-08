@@ -469,7 +469,7 @@ public class JetFlowInformationProvider {
         if (variableDescriptor instanceof PropertyDescriptor && !ctxt.enterInitState.isInitialized && ctxt.exitInitState.isInitialized) {
             if (!variableDescriptor.isVar()) return false;
             if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) return false;
-            PsiElement property = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), variableDescriptor);
+            PsiElement property = BindingContextUtils.descriptorToDeclaration(variableDescriptor);
             assert property instanceof JetProperty;
             if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.FINAL && ((JetProperty) property).getSetter() == null) {
                 return false;
@@ -505,7 +505,7 @@ public class JetFlowInformationProvider {
             report(Errors.NOT_PROPERTY_BACKING_FIELD.on(element), cxtx);
             return true;
         }
-        PsiElement property = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), variableDescriptor);
+        PsiElement property = BindingContextUtils.descriptorToDeclaration(variableDescriptor);
         boolean insideSelfAccessors = PsiTreeUtil.isAncestor(property, element, false);
         if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor) &&
                 // not to generate error in accessors of abstract properties, there is one: declared accessor of abstract property

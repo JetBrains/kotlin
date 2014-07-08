@@ -68,7 +68,7 @@ class ThisItems(val bindingContext: BindingContext) {
         val name: Name = descriptor.getName()
         if (!name.isSpecial()) return name.asString()
 
-        val psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor)
+        val psiElement = BindingContextUtils.descriptorToDeclaration(descriptor)
         val expression: JetExpression? = when (psiElement) {
             is JetFunctionLiteral -> psiElement.getParent() as? JetFunctionLiteralExpression
             is JetObjectDeclaration -> psiElement.getParent() as? JetObjectLiteralExpression

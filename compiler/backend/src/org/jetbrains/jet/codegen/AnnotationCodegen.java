@@ -105,7 +105,7 @@ public abstract class AnnotationCodegen {
             psiElement = null;
         }
         else {
-            psiElement = descriptorToDeclaration(bindingContext, (DeclarationDescriptor) annotated);
+            psiElement = descriptorToDeclaration((DeclarationDescriptor) annotated);
         }
 
         JetModifierList modifierList = null;

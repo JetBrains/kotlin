@@ -279,7 +279,7 @@ public abstract class ExpectedResolveData {
 
             PsiElement actual = referenceTarget == null
                                 ? bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression)
-                                : BindingContextUtils.descriptorToDeclaration(bindingContext, referenceTarget);
+                                : BindingContextUtils.descriptorToDeclaration(referenceTarget);
             if (actual instanceof JetSimpleNameExpression) {
                 actual = ((JetSimpleNameExpression)actual).getIdentifier();
             }

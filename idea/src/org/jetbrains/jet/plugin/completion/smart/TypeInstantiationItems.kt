@@ -38,9 +38,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.plugin.util.makeNotNullable
 
-class TypeInstantiationItems(val bindingContext: BindingContext,
-                             val resolveSession: ResolveSessionForBodies,
-                             val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
         val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.`type`.makeNotNullable() }
         for ((jetType, types) in expectedInfosGrouped) {
@@ -65,7 +63,7 @@ class TypeInstantiationItems(val bindingContext: BindingContext,
         }
         if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return
 
-        var lookupElement = createLookupElement(classifier, resolveSession, bindingContext)
+        var lookupElement = createLookupElement(classifier, resolveSession)
 
         var lookupString = lookupElement.getLookupString()
 

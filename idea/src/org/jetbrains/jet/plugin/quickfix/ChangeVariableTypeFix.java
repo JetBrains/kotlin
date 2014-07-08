@@ -112,7 +112,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                 BindingContext context = ResolvePackage.getBindingContext(entry.getContainingJetFile());
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
-                JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
                 if (componentFunction == null) return null;
                 JetType expectedType = resolvedCall.getCandidateDescriptor().getReturnType();
                 return expectedType == null ? null : new ChangeVariableTypeFix(entry, expectedType);
@@ -168,7 +168,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                     }
 
                     if (overriddenMismatchingProperties.size() == 1 && canChangeOverriddenPropertyType) {
-                        PsiElement overriddenProperty = BindingContextUtils.descriptorToDeclaration(context, overriddenMismatchingProperties.get(0));
+                        PsiElement overriddenProperty = BindingContextUtils.descriptorToDeclaration(overriddenMismatchingProperties.get(0));
                         if (overriddenProperty instanceof JetProperty) {
                             actions.add(new ChangeVariableTypeFix((JetProperty) overriddenProperty, propertyType));
                         }

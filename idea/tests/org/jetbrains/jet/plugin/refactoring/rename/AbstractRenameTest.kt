@@ -190,7 +190,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             val bindingContext = jetFile.getBindingContext()
             val classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, classFqName)!!
 
-            val psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, findDescriptorToRename(classDescriptor))!!
+            val psiElement = BindingContextUtils.descriptorToDeclaration(findDescriptorToRename(classDescriptor))!!
 
             val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
 

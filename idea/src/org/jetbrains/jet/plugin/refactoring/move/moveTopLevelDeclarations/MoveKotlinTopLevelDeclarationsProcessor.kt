@@ -179,7 +179,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
                 val referenceToContext = JetFileReferencesResolver.resolve(element = declaration, visitReceivers = false)
                 for ((refExpr, bindingContext) in referenceToContext) {
                     val refTarget = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.let { descriptor ->
-                        DescriptorToDeclarationUtil.getDeclaration(declaration.getProject(), descriptor, bindingContext)
+                        DescriptorToDeclarationUtil.getDeclaration(declaration.getProject(), descriptor)
                     }
                     if (refTarget == null || refTarget.isInsideOf(elementsToMove)) continue
 

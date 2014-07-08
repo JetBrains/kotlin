@@ -54,7 +54,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
         for (ValueParameterDescriptor valueParameter : descriptor.getValueParameters()) {
             if (valueParameter.hasDefaultValue()) {
                 JsNameRef jsNameRef = functionBodyContext.getNameForDescriptor(valueParameter).makeRef();
-                JetExpression defaultArgument = getDefaultArgument(functionBodyContext.bindingContext(), valueParameter);
+                JetExpression defaultArgument = getDefaultArgument(valueParameter);
                 JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext);
 
                 JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, functionBodyContext.namer().getUndefinedExpression());

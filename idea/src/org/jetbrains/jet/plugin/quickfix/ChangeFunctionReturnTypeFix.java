@@ -145,7 +145,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 BindingContext context = ResolvePackage.getBindingContext((JetFile) entry.getContainingFile().getContainingFile());
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
-                JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
                 JetType expectedType = context.get(BindingContext.TYPE, entry.getTypeRef());
                 if (componentFunction != null && expectedType != null) {
                     return new ChangeFunctionReturnTypeFix(componentFunction, expectedType);
@@ -166,7 +166,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 BindingContext context = ResolvePackage.getBindingContext(expression.getContainingJetFile());
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression);
                 if (resolvedCall == null) return null;
-                JetFunction hasNextFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                JetFunction hasNextFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
                 if (hasNextFunction != null) {
                     return new ChangeFunctionReturnTypeFix(hasNextFunction, KotlinBuiltIns.getInstance().getBooleanType());
                 }
@@ -186,7 +186,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 BindingContext context = ResolvePackage.getBindingContext(expression.getContainingJetFile());
                 ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, context);
                 if (resolvedCall == null) return null;
-                PsiElement compareTo = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                PsiElement compareTo = BindingContextUtils.descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
                 if (!(compareTo instanceof JetFunction)) return null;
                 return new ChangeFunctionReturnTypeFix((JetFunction) compareTo, KotlinBuiltIns.getInstance().getIntType());
             }
@@ -224,7 +224,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                     }
 
                     if (overriddenMismatchingFunctions.size() == 1) {
-                        PsiElement overriddenFunction = BindingContextUtils.descriptorToDeclaration(context, overriddenMismatchingFunctions.get(0));
+                        PsiElement overriddenFunction = BindingContextUtils.descriptorToDeclaration(overriddenMismatchingFunctions.get(0));
                         if (overriddenFunction instanceof JetFunction) {
                             actions.add(new ChangeFunctionReturnTypeFix((JetFunction) overriddenFunction, functionType));
                         }

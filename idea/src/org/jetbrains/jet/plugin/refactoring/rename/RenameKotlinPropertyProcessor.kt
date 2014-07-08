@@ -185,7 +185,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
                 // Take one of supers for now - API doesn't support substitute to several elements (IDEA-48796)
                 val deepest = supers.first()
                 if (deepest != descriptor) {
-                    val superPsiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, deepest)
+                    val superPsiElement = BindingContextUtils.descriptorToDeclaration(deepest)
                     return superPsiElement as? JetProperty
                 }
             }
