@@ -70,7 +70,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
-private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getAnyType()
+private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
 
 private fun JetType.isDefault(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
 
