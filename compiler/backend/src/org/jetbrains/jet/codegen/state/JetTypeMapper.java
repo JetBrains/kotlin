@@ -29,12 +29,12 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
@@ -805,17 +805,12 @@ public class JetTypeMapper {
             }
         }
 
-        JetDelegatorToSuperCall superCall = closure.getSuperCall();
-        if (superCall != null) {
-            DeclarationDescriptor superDescriptor = bindingContext
-                    .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
-
-            if (superDescriptor instanceof ConstructorDescriptor && isAnonymousObject(descriptor.getContainingDeclaration())) {
-                for (JvmMethodParameterSignature parameter : mapSignature((ConstructorDescriptor) superDescriptor).getValueParameters()) {
-                    signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM);
-                    signatureWriter.writeAsmType(parameter.getAsmType());
-                    signatureWriter.writeParameterTypeEnd();
-                }
+        ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
+        if (superCall != null && isAnonymousObject(descriptor.getContainingDeclaration())) {
+            for (JvmMethodParameterSignature parameter : mapSignature(superCall.getResultingDescriptor()).getValueParameters()) {
+                signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM);
+                signatureWriter.writeAsmType(parameter.getAsmType());
+                signatureWriter.writeParameterTypeEnd();
             }
         }
     }

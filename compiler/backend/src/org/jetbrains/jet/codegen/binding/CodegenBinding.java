@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -42,6 +43,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
@@ -170,7 +172,7 @@ public class CodegenBinding {
             @Nullable ClassDescriptor enclosing,
             @NotNull Type asmType
     ) {
-        JetDelegatorToSuperCall superCall = findSuperCall(bindingTrace.getBindingContext(), element);
+        ResolvedCall<ConstructorDescriptor> superCall = findSuperCall(bindingTrace.getBindingContext(), element);
 
         CallableDescriptor enclosingReceiver = null;
         if (classDescriptor.getContainingDeclaration() instanceof CallableDescriptor) {
@@ -324,7 +326,11 @@ public class CodegenBinding {
         return closure != null && closure.getCaptureThis() != null;
     }
 
-    private static JetDelegatorToSuperCall findSuperCall(BindingContext bindingContext, JetElement classOrObject) {
+    @Nullable
+    private static ResolvedCall<ConstructorDescriptor> findSuperCall(
+            @NotNull BindingContext bindingContext,
+            @Nullable JetElement classOrObject
+    ) {
         if (!(classOrObject instanceof JetClassOrObject)) {
             return null;
         }
@@ -335,16 +341,17 @@ public class CodegenBinding {
 
         for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
             if (specifier instanceof JetDelegatorToSuperCall) {
-                JetTypeReference typeReference = specifier.getTypeReference();
-
-                JetType superType = bindingContext.get(TYPE, typeReference);
-                assert superType != null: String.format(
+                JetType supertype = bindingContext.get(TYPE, specifier.getTypeReference());
+                assert supertype != null : String.format(
                         "No type in binding context for  \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(specifier));
 
-                ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                assert superClassDescriptor != null;
-                if (!isInterface(superClassDescriptor)) {
-                    return (JetDelegatorToSuperCall) specifier;
+                ClassifierDescriptor superClass = supertype.getConstructor().getDeclarationDescriptor();
+                if (superClass != null && !isInterface(superClass)) {
+                    ResolvedCall<?> resolvedCall = getResolvedCall(specifier, bindingContext);
+                    if (resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor) {
+                        //noinspection unchecked
+                        return (ResolvedCall<ConstructorDescriptor>) resolvedCall;
+                    }
                 }
             }
         }

@@ -1334,11 +1334,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         pushClosureOnStack(closure, false, defaultCallGenerator);
 
-        JetDelegatorToSuperCall superCall = closure.getSuperCall();
+        ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
         if (superCall != null) {
-            ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(superCall, bindingContext);
-            ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
-            List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
+            ConstructorDescriptor superConstructor = superCall.getResultingDescriptor();
+            List<ResolvedValueArgument> valueArguments = superCall.getValueArgumentsByIndex();
             assert valueArguments != null : "Failed to arrange value arguments by index: " + superConstructor;
             ArgumentGenerator argumentGenerator =
                     new CallBasedArgumentGenerator(this, defaultCallGenerator, superConstructor.getValueParameters(),
