@@ -33,6 +33,10 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
             Opcodes.ASTORE, Opcodes.ALOAD, Opcodes.POP, Opcodes.DUP, Opcodes.CHECKCAST, Opcodes.INSTANCEOF
     );
 
+    private static final ImmutableSet<Integer> PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER = ImmutableSet.of(
+            Type.BYTE, Type.SHORT, Type.INT, Type.FLOAT, Type.LONG, Type.DOUBLE
+    );
+
     private final RedundantBoxedValuesCollection values = new RedundantBoxedValuesCollection();
 
     public RedundantBoxingInterpreter(InsnList insnList) {
@@ -84,15 +88,16 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
         return super.unaryOperation(insn, value);
     }
 
-    private static boolean isSafeCast(@NotNull BoxedBasicValue value, @NotNull String descTo) {
-        try {
-            return Class.forName(Type.getObjectType(descTo).getClassName()).isAssignableFrom(
-                    Class.forName(value.getType().getClassName())
+    private static boolean isSafeCast(@NotNull BoxedBasicValue value, @NotNull String targetInternalName) {
+        if (targetInternalName.equals(Type.getInternalName(Object.class))) return true;
+
+        if (targetInternalName.equals(Type.getInternalName(Number.class))) {
+            return PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(
+                    value.getPrimitiveType().getSort()
             );
         }
-        catch (ClassNotFoundException e) {
-            return false;
-        }
+
+        return value.getType().getInternalName().equals(targetInternalName);
     }
 
     @Override
