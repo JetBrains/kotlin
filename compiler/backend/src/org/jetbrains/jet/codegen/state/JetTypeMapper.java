@@ -31,7 +31,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
@@ -131,7 +134,7 @@ public class JetTypeMapper {
             boolean insideModule
     ) {
         if (insideModule) {
-            JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
+            JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
             if (file != null) {
                 return PackagePartClassUtils.getPackagePartInternalName(file);
             }

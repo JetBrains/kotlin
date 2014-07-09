@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,33 +59,6 @@ public class BindingContextUtils {
             return (VariableDescriptor) descriptor;
         }
         return null;
-    }
-
-    @Nullable
-    public static JetFile getContainingFile(@NotNull BindingContext context, @NotNull DeclarationDescriptor declarationDescriptor) {
-        // declarationDescriptor may describe a synthesized element which doesn't have PSI
-        // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
-        DeclarationDescriptor descriptor = findTopLevelParent(declarationDescriptor);
-        if (descriptor == null) return null;
-
-        PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
-        if (declaration == null) return null;
-
-        PsiFile containingFile = declaration.getContainingFile();
-        if (!(containingFile instanceof JetFile)) return null;
-        return (JetFile) containingFile;
-    }
-
-    @Nullable
-    private static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
-        DeclarationDescriptor descriptor = declarationDescriptor;
-        if (declarationDescriptor instanceof PropertyAccessorDescriptor) {
-            descriptor = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
-        }
-        while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor))) {
-            descriptor = descriptor.getContainingDeclaration();
-        }
-        return descriptor;
     }
 
     public static void recordFunctionDeclarationToDescriptor(@NotNull BindingTrace trace,

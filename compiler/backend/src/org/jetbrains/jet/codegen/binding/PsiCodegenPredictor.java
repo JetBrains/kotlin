@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -157,7 +157,7 @@ public final class PsiCodegenPredictor {
         for (ClassDescriptor classDescriptor : trace.getKeys(CodegenBinding.ASM_TYPE)) {
             Type type = trace.get(CodegenBinding.ASM_TYPE, classDescriptor);
             if (type != null && classInternalName.equals(type.getInternalName())) {
-                return BindingContextUtils.getContainingFile(trace.getBindingContext(), classDescriptor);
+                return DescriptorToSourceUtils.getContainingFile(classDescriptor);
             }
         }
 

@@ -18,12 +18,11 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithSource;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.source.SourcePackage;
 
 import java.util.ArrayList;
@@ -107,6 +106,33 @@ public final class DescriptorToSourceUtils {
     }
 
     private DescriptorToSourceUtils() {}
+
+    @Nullable
+    public static JetFile getContainingFile(@NotNull DeclarationDescriptor declarationDescriptor) {
+        // declarationDescriptor may describe a synthesized element which doesn't have PSI
+        // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
+        DeclarationDescriptor descriptor = findTopLevelParent(declarationDescriptor);
+        if (descriptor == null) return null;
+
+        PsiElement declaration = descriptorToDeclaration(descriptor);
+        if (declaration == null) return null;
+
+        PsiFile containingFile = declaration.getContainingFile();
+        if (!(containingFile instanceof JetFile)) return null;
+        return (JetFile) containingFile;
+    }
+
+    @Nullable
+    private static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
+        DeclarationDescriptor descriptor = declarationDescriptor;
+        if (declarationDescriptor instanceof PropertyAccessorDescriptor) {
+            descriptor = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
+        }
+        while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor))) {
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return descriptor;
+    }
 }
 
 
