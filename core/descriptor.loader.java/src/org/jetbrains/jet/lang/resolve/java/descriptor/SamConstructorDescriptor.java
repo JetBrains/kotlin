@@ -18,13 +18,9 @@ package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.SourceElement;
-import org.jetbrains.jet.lang.descriptors.SynthesizedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 
-public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl
-        implements SynthesizedCallableMemberDescriptor<JavaClassDescriptor> {
-    private final JavaClassDescriptor samInterface;
+public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl {
 
     public SamConstructorDescriptor(
             @NotNull ClassOrPackageFragmentDescriptor containingDeclaration,
@@ -32,12 +28,5 @@ public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl
     ) {
         super(containingDeclaration, null, samInterface.getAnnotations(), samInterface.getName(),
               Kind.SYNTHESIZED, samInterface.getSource());
-        this.samInterface = samInterface;
-    }
-
-    @NotNull
-    @Override
-    public JavaClassDescriptor getBaseForSynthesized() {
-        return samInterface;
     }
 }

@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.sam;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 
@@ -34,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 
     @NotNull
     @Override
-    public JavaConstructorDescriptor getBaseForSynthesized() {
+    public JavaConstructorDescriptor getOriginForSam() {
         return declaration;
     }
 }
