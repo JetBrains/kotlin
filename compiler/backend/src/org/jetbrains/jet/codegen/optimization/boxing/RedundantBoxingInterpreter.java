@@ -100,9 +100,28 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
             @NotNull AbstractInsnNode insn, @NotNull BasicValue value
     ) throws AnalyzerException {
 
+        if (insn.getOpcode() == Opcodes.CHECKCAST && value instanceof BoxedBasicValue) {
+            TypeInsnNode typeInsn = (TypeInsnNode) insn;
+
+            if (!isSafeCast((BoxedBasicValue) value, typeInsn.desc)) {
+                markValueAsDirty((BoxedBasicValue) value);
+            }
+        }
+
         processOperationWithBoxedValue(value, insn);
 
         return super.unaryOperation(insn, value);
+    }
+
+    private static boolean isSafeCast(@NotNull BoxedBasicValue value, @NotNull String descTo) {
+        try {
+            return Class.forName(Type.getObjectType(descTo).getClassName()).isAssignableFrom(
+                    Class.forName(value.getType().getClassName())
+            );
+        }
+        catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     @Override
