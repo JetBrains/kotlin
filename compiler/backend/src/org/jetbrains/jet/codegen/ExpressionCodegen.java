@@ -77,7 +77,8 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
@@ -2167,41 +2168,36 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                                   (CallableMemberDescriptor) descriptor.getOriginal()), callElement);
     }
 
-    public void generateFromResolvedCall(@NotNull ReceiverValue descriptor, @NotNull Type type) {
-        if (descriptor instanceof ClassReceiver) {
-            Type exprType = asmType(descriptor.getType());
-            ClassReceiver classReceiver = (ClassReceiver) descriptor;
-            ClassDescriptor classReceiverDeclarationDescriptor = classReceiver.getDeclarationDescriptor();
-            if (DescriptorUtils.isClassObject(classReceiverDeclarationDescriptor)) {
-                if (context.getContextDescriptor() instanceof FunctionDescriptor &&
-                    classReceiverDeclarationDescriptor == context.getContextDescriptor().getContainingDeclaration()) {
+    public void generateReceiverValue(@NotNull ReceiverValue receiverValue, @NotNull Type type) {
+        if (receiverValue instanceof ClassReceiver) {
+            ClassDescriptor receiverDescriptor = ((ClassReceiver) receiverValue).getDeclarationDescriptor();
+            if (DescriptorUtils.isClassObject(receiverDescriptor)) {
+                CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
+                if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
                     v.load(0, OBJECT_TYPE);
                 }
                 else {
-                    FieldInfo info = FieldInfo.createForSingleton(classReceiverDeclarationDescriptor, typeMapper);
+                    FieldInfo info = FieldInfo.createForSingleton(receiverDescriptor, typeMapper);
                     v.getstatic(info.getOwnerInternalName(), info.getFieldName(), info.getFieldType().getDescriptor());
                 }
-                StackValue.onStack(exprType).put(type, v);
+                StackValue.onStack(asmType(receiverValue.getType())).put(type, v);
             }
             else {
-                StackValue.thisOrOuter(this, classReceiverDeclarationDescriptor, false, false).put(type, v);
+                StackValue.thisOrOuter(this, receiverDescriptor, false, false).put(type, v);
             }
         }
-        else if (descriptor instanceof ScriptReceiver) {
+        else if (receiverValue instanceof ScriptReceiver) {
             // SCRIPT: generate script
-            generateScript((ScriptReceiver) descriptor);
+            generateScript((ScriptReceiver) receiverValue);
         }
-        else if (descriptor instanceof ExtensionReceiver) {
-            ExtensionReceiver extensionReceiver = (ExtensionReceiver) descriptor;
-            generateReceiver(extensionReceiver.getDeclarationDescriptor()).put(type, v);
+        else if (receiverValue instanceof ExtensionReceiver) {
+            generateReceiver(((ExtensionReceiver) receiverValue).getDeclarationDescriptor()).put(type, v);
         }
-        else if (descriptor instanceof ExpressionReceiver) {
-            ExpressionReceiver expressionReceiver = (ExpressionReceiver) descriptor;
-            JetExpression expr = expressionReceiver.getExpression();
-            gen(expr, type);
+        else if (receiverValue instanceof ExpressionReceiver) {
+            gen(((ExpressionReceiver) receiverValue).getExpression(), type);
         }
         else {
-            throw new UnsupportedOperationException("Unsupported receiver type: " + descriptor);
+            throw new UnsupportedOperationException("Unsupported receiver value: " + receiverValue);
         }
     }
 
@@ -2214,12 +2210,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return null;
     }
 
-    private StackValue generateReceiver(DeclarationDescriptor provided) {
-        if (context.getCallableDescriptorWithReceiver() == provided) {
+    @NotNull
+    private StackValue generateReceiver(@NotNull CallableDescriptor descriptor) {
+        if (context.getCallableDescriptorWithReceiver() == descriptor) {
             return context.getReceiverExpression(typeMapper);
         }
 
-        return context.lookupInContext(provided, StackValue.local(0, OBJECT_TYPE), state, false);
+        return context.lookupInContext(descriptor, StackValue.local(0, OBJECT_TYPE), state, false);
     }
 
     // SCRIPT: generate script, move to ScriptingUtil
@@ -3403,12 +3400,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof ClassDescriptor) {
             return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false, true);
         }
-        else {
-            if (descriptor instanceof CallableDescriptor) {
-                return generateReceiver(descriptor);
-            }
-            throw new UnsupportedOperationException("neither this nor receiver");
+        if (descriptor instanceof CallableDescriptor) {
+            return generateReceiver((CallableDescriptor) descriptor);
         }
+        throw new UnsupportedOperationException("Neither this nor receiver: " + descriptor);
     }
 
     @Override
