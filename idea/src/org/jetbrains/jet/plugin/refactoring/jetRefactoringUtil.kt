@@ -46,7 +46,22 @@ import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.util.containers.MultiMap
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
-import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ide.util.PsiElementListCellRenderer
+import com.intellij.openapi.ui.popup.JBPopup
+import com.intellij.openapi.ui.popup.PopupChooserBuilder
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
+import com.intellij.codeInsight.unwrap.RangeSplitter
+import com.intellij.codeInsight.unwrap.UnwrapHandler
+import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.editor.markup.RangeHighlighter
+import java.util.Collections
+import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.ui.components.JBList
+import com.intellij.openapi.ui.popup.JBPopupAdapter
+import com.intellij.openapi.ui.popup.LightweightWindowEvent
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -164,4 +179,74 @@ public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
     CommandProcessor.getInstance()!!.executeCommand(
             this, { ApplicationManager.getApplication()!!.runWriteAction(command) }, name, null
     )
+}
+
+public fun <T : PsiElement> getPsiElementPopup(
+        editor: Editor,
+        elements: Array<T>,
+        renderer: PsiElementListCellRenderer<T>,
+        title: String? = null,
+        processor: (T) -> Boolean): JBPopup {
+    val highlighter = SelectionAwareScopeHighlighter(editor)
+
+    val list = JBList(elements.toList())
+    list.setCellRenderer(renderer)
+    list.addListSelectionListener { e ->
+        highlighter.dropHighlight()
+        val index = list.getSelectedIndex()
+        if (index >= 0) {
+            highlighter.highlight(list.getModel()!!.getElementAt(index) as PsiElement)
+        }
+    }
+
+    return with(PopupChooserBuilder(list)) {
+        title?.let { setTitle(it) }
+        renderer.installSpeedSearch(this, true)
+        setItemChoosenCallback {
+            for (element in list.getSelectedValues()) {
+                element.let {
+                    [suppress("UNCHECKED_CAST")]
+                    processor(it as T)
+                }
+            }
+        }
+        addListener(object: JBPopupAdapter() {
+            override fun onClosed(event: LightweightWindowEvent?) {
+                highlighter.dropHighlight();
+            }
+        })
+
+        createPopup()
+    }
+}
+
+public class SelectionAwareScopeHighlighter(val editor: Editor) {
+    private val highlighters = ArrayList<RangeHighlighter>()
+
+    private fun addHighlighter(r: TextRange, attr: TextAttributes) {
+        highlighters.add(
+                editor.getMarkupModel().addRangeHighlighter(
+                        r.getStartOffset(),
+                        r.getEndOffset(),
+                        UnwrapHandler.HIGHLIGHTER_LEVEL,
+                        attr,
+                        HighlighterTargetArea.EXACT_RANGE
+                )
+        )
+    }
+
+    public fun highlight(wholeAffected: PsiElement) {
+        dropHighlight()
+
+        val attributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)!!
+        val selectedRange = with(editor.getSelectionModel()) { TextRange(getSelectionStart(), getSelectionEnd()) }
+        for (r in RangeSplitter.split(wholeAffected.getTextRange()!!, Collections.singletonList(selectedRange))) {
+            addHighlighter(r, attributes)
+        }
+    }
+
+    public fun dropHighlight() {
+        highlighters.forEach { it.dispose() }
+        highlighters.clear()
+    }
 }

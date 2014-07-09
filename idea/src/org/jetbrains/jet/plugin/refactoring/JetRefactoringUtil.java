@@ -57,6 +57,7 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.util.UtilPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
@@ -509,11 +510,7 @@ public class JetRefactoringUtil {
     }
 
     public static String getExpressionShortText(@NotNull JetElement element) { //todo: write appropriate implementation
-        String expressionText = element.getText();
-        if (expressionText.length() > 20) {
-            expressionText = expressionText.substring(0, 17) + "...";
-        }
-        return expressionText;
+        return UtilPackage.collapseSpaces(StringUtil.shortenTextWithEllipsis(element.getText(), 53, 0));
     }
 
     @Nullable

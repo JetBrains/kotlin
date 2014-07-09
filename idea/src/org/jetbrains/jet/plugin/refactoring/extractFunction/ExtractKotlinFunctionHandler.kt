@@ -32,8 +32,6 @@ import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.refactoring.getAllExtractionContainers
-import com.intellij.refactoring.IntroduceTargetChooser
-import com.intellij.openapi.util.Pass
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.psi.psiUtil.getOutermostParentContainedIn
 import org.jetbrains.jet.plugin.refactoring.checkConflictsInteractively
@@ -56,6 +54,17 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetParameterList
 import org.jetbrains.jet.lang.psi.JetClassInitializer
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import com.intellij.ide.util.PsiElementListCellRenderer
+import com.intellij.openapi.util.text.StringUtil
+import javax.swing.Icon
+import org.jetbrains.jet.plugin.refactoring.getPsiElementPopup
+import com.intellij.psi.PsiNamedElement
+import org.jetbrains.jet.plugin.util.collapseSpaces
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 
 public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boolean = false) : RefactoringActionHandler {
@@ -222,33 +231,61 @@ fun selectElements(
             return
         }
 
-        IntroduceTargetChooser.showChooser(
+        getPsiElementPopup(
                 editor,
-                containers,
-                object: Pass<JetElement>() {
-                    override fun pass(targetContainer: JetElement?) {
-                        if (targetContainer == null) {
-                            noContainerError()
-                            return
+                containers.copyToArray(),
+                object: PsiElementListCellRenderer<JetElement>() {
+                    private fun JetElement.renderName(): String? {
+                        if (this is JetPropertyAccessor) {
+                            return (getParent() as JetProperty).renderName() + if (isGetter()) ".get" else ".set"
                         }
+                        return (this as? PsiNamedElement)?.getName() ?: "<anonymous>"
+                    }
 
-                        onSelectionComplete(parent, elements, targetContainer)
+                    private fun JetElement.renderDeclaration(): String? {
+                        val name = renderName()
+                        val descriptor = AnalyzerFacadeWithCache.getContextForElement(this)[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+                        val params = (descriptor as? FunctionDescriptor)?.let { descriptor ->
+                            descriptor.getValueParameters()
+                                    .map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it.getType()) }
+                                    .joinToString(", ", "(", ")")
+                        } ?: ""
+                        return "$name$params"
                     }
+
+                    private fun JetElement.renderText(): String {
+                        return StringUtil.shortenTextWithEllipsis(getText()!!.collapseSpaces(), 53, 0)
+                    }
+
+                    private fun JetElement.getRepresentativeElement(): JetElement {
+                        return when (this) {
+                            is JetBlockExpression -> (getParent() as? JetDeclarationWithBody) ?: this
+                            is JetClassBody -> getParent() as JetClassOrObject
+                            else -> this
+                        }
+                    }
+
+                    override fun getElementText(element: JetElement): String? {
+                        val representativeElement = element.getRepresentativeElement()
+                        return when (representativeElement) {
+                            is JetFile, is JetDeclarationWithBody, is JetClassOrObject -> representativeElement.renderDeclaration()
+                            else -> representativeElement.renderText()
+                        }
+                    }
+
+                    override fun getContainerText(element: JetElement?, name: String?): String? = null
+
+                    override fun getIconFlags(): Int = 0
+
+                    override fun getIcon(element: PsiElement?): Icon? =
+                            super.getIcon((element as? JetElement)?.getRepresentativeElement())
                 },
+                "Select target code block",
                 {
-                    when (it) {
-                        is JetFile -> "File: ${it.getName()}"
-                        is JetBlockExpression -> {
-                            (it.getParent() as? JetDeclarationWithBody)?.getText() ?: "...${it.getStatements().first?.getText()}"
-                        }
-                        is JetClassBody -> {
-                            (it.getParent() as? JetClassOrObject)?.getText()
-                        }
-                        else -> it?.getText()
-                    }
-                },
-                "Select target code block"
-        )
+                    onSelectionComplete(parent, elements, it)
+                    true
+                }
+        ).showInBestPositionFor(editor)
     }
 
     fun selectMultipleExpressions() {
