@@ -137,9 +137,9 @@ class LambdaExpression(val arguments: String?, val block: Block) : Expression() 
     }
 }
 
-class StarExpression(val methodCall: MethodCallExpression) : Expression() {
+class StarExpression(val operand: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
-        builder append "*" append methodCall
+        builder.append("*").appendOperand(this, operand)
     }
 }
 

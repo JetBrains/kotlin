@@ -37,7 +37,7 @@ fun CodeBuilder.appendOperand(expression: Expression, operand: Expression, paren
 
 private fun Expression.precedence(): Int? {
     return when(this) {
-        is QualifiedExpression, is MethodCallExpression, is ArrayAccessExpression, is PostfixOperator, is BangBangExpression -> 0
+        is QualifiedExpression, is MethodCallExpression, is ArrayAccessExpression, is PostfixOperator, is BangBangExpression, is StarExpression -> 0
 
         is PrefixOperator -> 1
 

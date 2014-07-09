@@ -375,13 +375,18 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
             arguments = arguments.drop(1)
         }
         val resolved = expression.resolveMethod()
-        val expectedTypes = if (resolved != null)
-            resolved.getParameterList().getParameters().map { it.getType() }
-        else
-            listOf()
+        val parameters = resolved?.getParameterList()?.getParameters()
+        val expectedTypes = parameters?.map { it.getType() } ?: listOf()
 
         return if (arguments.size == expectedTypes.size())
-            (0..expectedTypes.lastIndex).map { i -> converter.convertExpression(arguments[i], expectedTypes[i]) }
+            (0..arguments.lastIndex).map { i ->
+                val argument = arguments[i]
+                val converted = converter.convertExpression(argument, expectedTypes[i])
+                if (parameters != null && i == arguments.lastIndex && parameters[i].isVarArgs() && argument.getType() is PsiArrayType)
+                    StarExpression(converted).assignNoPrototype()
+                else
+                    converted
+            }
         else
             arguments.map { converter.convertExpression(it) }
     }
