@@ -143,6 +143,12 @@ class StarExpression(val operand: Expression) : Expression() {
     }
 }
 
+class RangeExpression(val start: Expression, val end: Expression): Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, start).append("..").appendOperand(this, end)
+    }
+}
+
 fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean) : MethodCallExpression {
     val elementType = arrayType.elementType
     val createArrayFunction = if (elementType is PrimitiveType)

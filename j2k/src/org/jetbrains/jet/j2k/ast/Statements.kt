@@ -88,9 +88,10 @@ class DoWhileStatement(val condition: Expression, val body: Element, singleLine:
     }
 }
 
+//TODO: explicit type (if option)
 class ForeachStatement(
-        val variable: Parameter,
-        val expression: Expression,
+        val variableName: Identifier,
+        val collection: Expression,
         val body: Element,
         singleLine: Boolean
 ) : Statement() {
@@ -98,7 +99,7 @@ class ForeachStatement(
     private val br = if (singleLine) " " else "\n"
 
     override fun generateCode(builder: CodeBuilder) {
-        builder append "for (" append variable.identifier append " in " append expression append ")" append br append body
+        builder append "for (" append variableName append " in " append collection append ")" append br append body
     }
 }
 

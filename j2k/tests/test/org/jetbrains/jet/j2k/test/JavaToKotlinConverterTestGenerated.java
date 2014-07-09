@@ -1222,6 +1222,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/for/commonCaseForTest.java");
         }
         
+        @TestMetadata("falseForRange.java")
+        public void testFalseForRange() throws Exception {
+            doTest("j2k/tests/testData/ast/for/falseForRange.java");
+        }
+        
         @TestMetadata("forRangeWithBlock.java")
         public void testForRangeWithBlock() throws Exception {
             doTest("j2k/tests/testData/ast/for/forRangeWithBlock.java");
@@ -1235,6 +1240,26 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("forRangeWithLT.java")
         public void testForRangeWithLT() throws Exception {
             doTest("j2k/tests/testData/ast/for/forRangeWithLT.java");
+        }
+        
+        @TestMetadata("forThroughArrayIndices.java")
+        public void testForThroughArrayIndices() throws Exception {
+            doTest("j2k/tests/testData/ast/for/forThroughArrayIndices.java");
+        }
+        
+        @TestMetadata("forThroughListIndices.java")
+        public void testForThroughListIndices() throws Exception {
+            doTest("j2k/tests/testData/ast/for/forThroughListIndices.java");
+        }
+        
+        @TestMetadata("forThroughNonArrayIndices.java")
+        public void testForThroughNonArrayIndices() throws Exception {
+            doTest("j2k/tests/testData/ast/for/forThroughNonArrayIndices.java");
+        }
+        
+        @TestMetadata("forThroughNonCollectionIndices.java")
+        public void testForThroughNonCollectionIndices() throws Exception {
+            doTest("j2k/tests/testData/ast/for/forThroughNonCollectionIndices.java");
         }
         
         @TestMetadata("forWithBlock.java")
