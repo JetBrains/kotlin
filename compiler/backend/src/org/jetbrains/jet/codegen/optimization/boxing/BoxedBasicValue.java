@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.optimization.boxing;
 
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.AsmUtil;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 public class BoxedBasicValue extends BasicValue {
     private final Set<AbstractInsnNode> associatedInsns = new HashSet<AbstractInsnNode>();
+    private final Set<Pair<AbstractInsnNode, Type>> unboxingWithCastInsns = new HashSet<Pair<AbstractInsnNode, Type>>();
     private final AbstractInsnNode boxingInsn;
     private final Set<Integer> associatedVariables = new HashSet<Integer>();
     private final Set<BoxedBasicValue> mergedWith = new HashSet<BoxedBasicValue>();
@@ -133,5 +135,14 @@ public class BoxedBasicValue extends BasicValue {
     @Nullable
     public ProgressionIteratorBasicValue getProgressionIterator() {
         return progressionIterator;
+    }
+
+    public void addUnboxingWithCastTo(@NotNull AbstractInsnNode insn, @NotNull Type type) {
+        unboxingWithCastInsns.add(Pair.create(insn, type));
+    }
+
+    @NotNull
+    public Set<Pair<AbstractInsnNode, Type>> getUnboxingWithCastInsns() {
+        return unboxingWithCastInsns;
     }
 }
