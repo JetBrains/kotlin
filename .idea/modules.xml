@@ -18,6 +18,7 @@
       <module fileurl="file://$PROJECT_DIR$/core/descriptors/descriptors.iml" filepath="$PROJECT_DIR$/core/descriptors/descriptors.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/eval4j/eval4j.iml" filepath="$PROJECT_DIR$/eval4j/eval4j.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/compiler/frontend/frontend.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/frontend.android/frontend.android.iml" filepath="$PROJECT_DIR$/compiler/frontend.android/frontend.android.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/generators/generators.iml" filepath="$PROJECT_DIR$/generators/generators.iml" group="infrastructure" />
       <module fileurl="file://$PROJECT_DIR$/grammar/grammar.iml" filepath="$PROJECT_DIR$/grammar/grammar.iml" group="compiler" />
