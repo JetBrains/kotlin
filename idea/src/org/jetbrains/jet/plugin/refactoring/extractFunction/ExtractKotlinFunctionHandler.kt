@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.psi.psiUtil.getOutermostParentContainedIn
 import org.jetbrains.jet.plugin.refactoring.checkConflictsInteractively
 import org.jetbrains.jet.plugin.refactoring.executeWriteCommand
 import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetClassBody
 import kotlin.test.fail
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
@@ -56,8 +55,8 @@ import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetParameterList
 import org.jetbrains.jet.lang.psi.JetClassInitializer
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.psi.JetClassOrObject
 
 public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boolean = false) : RefactoringActionHandler {
     fun doInvoke(
@@ -194,11 +193,7 @@ fun selectElements(
         return when (parent) {
             is JetFile -> Collections.singletonList(parent)
             is JetClassBody -> {
-                element.getAllExtractionContainers(strict)
-                        .filter {
-                            it is JetClassBody || (it is JetBlockExpression && it.getParent() is JetDeclarationWithBody)
-                        }
-                        .dropWhile { it !is JetClassBody }
+                element.getAllExtractionContainers(strict).filterIsInstance(javaClass<JetClassBody>())
             }
             else -> {
                 val enclosingDeclaration =
