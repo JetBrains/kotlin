@@ -246,22 +246,6 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         var wrapResultStatement: (Expression) -> Statement = { it }
         var converterForBody = converter
 
-        val returns = collectReturns(tryBlock)
-        //TODO: support other returns when non-local returns supported by Kotlin
-        if (returns.size == 1 && returns.single() == tryBlock!!.getStatements().last()) {
-            wrapResultStatement = { ReturnStatement(it).assignPrototype(returns.single()) }
-            converterForBody = converter.withStatementVisitor { object : StatementVisitor(it) {
-                override fun visitReturnStatement(statement: PsiReturnStatement) {
-                    if (statement == returns.single()) {
-                        result = converter.convertExpression(statement.getReturnValue(), tryBlock!!.getContainingMethod()?.getReturnType())
-                    }
-                    else {
-                        super.visitReturnStatement(statement)
-                    }
-                }
-            }}
-        }
-
         var block = converterForBody.convertBlock(tryBlock)
         var expression: Expression = Expression.Empty
         for (variable in resourceVariables.reverse()) {
