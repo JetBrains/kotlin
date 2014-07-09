@@ -47,27 +47,6 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
         super(insnList);
     }
 
-    private void markValueAsDirty(@NotNull BoxedBasicValue value) {
-        values.remove(value);
-    }
-
-    private static void addAssociatedInsn(@NotNull BoxedBasicValue value, @NotNull AbstractInsnNode insn) {
-        if (value.isSafeToRemove()) {
-            value.addInsn(insn);
-        }
-    }
-
-    private void processOperationWithBoxedValue(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
-        if (value instanceof BoxedBasicValue) {
-            if (UNSAFE_OPERATIONS_OPCODES.contains(insnNode.getOpcode())) {
-                markValueAsDirty((BoxedBasicValue) value);
-            }
-            else {
-                addAssociatedInsn((BoxedBasicValue) value, insnNode);
-            }
-        }
-    }
-
     @Override
     public BasicValue binaryOperation(
             @NotNull AbstractInsnNode insn,
@@ -168,6 +147,27 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
             @NotNull BoxedBasicValue v, @NotNull BoxedBasicValue w
     ) {
         values.merge(v, w);
+    }
+
+    private void processOperationWithBoxedValue(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
+        if (value instanceof BoxedBasicValue) {
+            if (UNSAFE_OPERATIONS_OPCODES.contains(insnNode.getOpcode())) {
+                markValueAsDirty((BoxedBasicValue) value);
+            }
+            else {
+                addAssociatedInsn((BoxedBasicValue) value, insnNode);
+            }
+        }
+    }
+
+    private void markValueAsDirty(@NotNull BoxedBasicValue value) {
+        values.remove(value);
+    }
+
+    private static void addAssociatedInsn(@NotNull BoxedBasicValue value, @NotNull AbstractInsnNode insn) {
+        if (value.isSafeToRemove()) {
+            value.addInsn(insn);
+        }
     }
 
     @NotNull
