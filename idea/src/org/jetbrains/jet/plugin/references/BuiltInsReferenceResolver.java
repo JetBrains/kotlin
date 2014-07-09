@@ -174,14 +174,14 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     @Nullable
     private DeclarationDescriptor findCurrentDescriptorForClass(@NotNull ClassDescriptor originalDescriptor) {
-        if (originalDescriptor.getKind().isSingleton()) {
+        // BindingContext doesn't contain an information about class descriptor of class object. For example see testEmptyRange.
+        if (DescriptorUtils.isClassObject(originalDescriptor)) {
             DeclarationDescriptor currentParent = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
             if (currentParent == null) return null;
             return ((ClassDescriptor) currentParent).getClassObjectDescriptor();
         }
-        else {
-            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(originalDescriptor));
-        }
+
+        return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(originalDescriptor));
     }
 
     @Nullable

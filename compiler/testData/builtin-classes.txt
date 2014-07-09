@@ -1266,6 +1266,16 @@ public abstract class Number {
     public abstract fun toShort(): kotlin.Short
 }
 
+private open class OldUnit {
+    /*primary*/ public constructor OldUnit()
+
+    private class object <class-object-for-OldUnit> {
+        /*primary*/ private constructor <class-object-for-OldUnit>()
+        public final val VALUE: kotlin.Unit
+            public final fun <get-VALUE>(): kotlin.Unit
+    }
+}
+
 public trait Progression</*0*/ out N : kotlin.Any> : kotlin.Iterable<N> {
     public abstract val end: N
         public abstract fun <get-end>(): N
@@ -1450,13 +1460,15 @@ public open class Throwable {
     public final fun printStackTrace(): kotlin.Unit
 }
 
-public final class Unit {
+public object Unit : kotlin.OldUnit {
     /*primary*/ private constructor Unit()
+    public final val VALUE: kotlin.Unit
+        public final fun <get-VALUE>(): kotlin.Unit
     
-    public class object <class-object-for-Unit> {
+    public class object <class-object-for-Unit> : kotlin.Unit {
         /*primary*/ private constructor <class-object-for-Unit>()
-        public final val VALUE: kotlin.Unit
-            public final fun <get-VALUE>(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ val VALUE: kotlin.Unit
+            public final override /*1*/ /*fake_override*/ fun <get-VALUE>(): kotlin.Unit
     }
 }
 
