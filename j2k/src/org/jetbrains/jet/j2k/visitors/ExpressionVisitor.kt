@@ -240,6 +240,34 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
             return
         }
 
+        //TODO: type arguments maybe required if we are in initializer of variable with no explicit type
+        if (target is PsiMethod && isCollectionsEmptyList(target) && arguments.size == 0) {
+            result = MethodCallExpression.build(null, "listOf", listOf(), listOf(), false)
+            return
+        }
+
+        //TODO: type arguments maybe required if we are in initializer of variable with no explicit type
+        if (target is PsiMethod && isCollectionsEmptySet(target) && arguments.size == 0) {
+            result = MethodCallExpression.build(null, "setOf", listOf(), listOf(), false)
+            return
+        }
+
+        //TODO: type arguments maybe required if we are in initializer of variable with no explicit type
+        if (target is PsiMethod && isCollectionsEmptyMap(target) && arguments.size == 0) {
+            result = MethodCallExpression.build(null, "mapOf", listOf(), listOf(), false)
+            return
+        }
+
+        if (target is PsiMethod && isCollectionsSingletonList(target) && arguments.size == 1) {
+            result = MethodCallExpression.build(null, "listOf", listOf(converter.convertExpression(arguments.single())), listOf(), false)
+            return
+        }
+
+        if (target is PsiMethod && isCollectionsSingleton(target) && arguments.size == 1) {
+            result = MethodCallExpression.build(null, "setOf", listOf(converter.convertExpression(arguments.single())), listOf(), false)
+            return
+        }
+
         result = MethodCallExpression(converter.convertExpression(methodExpr),
                                       convertArguments(expression),
                                       typeArguments,
@@ -256,6 +284,36 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
         return method.getName() == "equals" &&
                 method.getParameterList().getParameters().size == 2 &&
                 method.getContainingClass()?.getQualifiedName() == "java.util.Objects"
+    }
+
+    private fun isCollectionsEmptyList(method: PsiMethod): Boolean {
+        return method.getName() == "emptyList" &&
+                method.getParameterList().getParameters().size == 0 &&
+                method.getContainingClass()?.getQualifiedName() == "java.util.Collections"
+    }
+
+    private fun isCollectionsEmptySet(method: PsiMethod): Boolean {
+        return method.getName() == "emptySet" &&
+                method.getParameterList().getParameters().size == 0 &&
+                method.getContainingClass()?.getQualifiedName() == "java.util.Collections"
+    }
+
+    private fun isCollectionsEmptyMap(method: PsiMethod): Boolean {
+        return method.getName() == "emptyMap" &&
+                method.getParameterList().getParameters().size == 0 &&
+                method.getContainingClass()?.getQualifiedName() == "java.util.Collections"
+    }
+
+    private fun isCollectionsSingletonList(method: PsiMethod): Boolean {
+        return method.getName() == "singletonList" &&
+                method.getParameterList().getParameters().size == 1 &&
+                method.getContainingClass()?.getQualifiedName() == "java.util.Collections"
+    }
+
+    private fun isCollectionsSingleton(method: PsiMethod): Boolean {
+        return method.getName() == "singleton" &&
+                method.getParameterList().getParameters().size == 1 &&
+                method.getContainingClass()?.getQualifiedName() == "java.util.Collections"
     }
 
     override fun visitNewExpression(expression: PsiNewExpression) {
