@@ -350,18 +350,23 @@ public abstract class AnnotationCodegen {
     @NotNull
     private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
         AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
-        if (retentionAnnotation == null) return RetentionPolicy.CLASS;
+        if (retentionAnnotation != null) {
+            Collection<CompileTimeConstant<?>> valueArguments = retentionAnnotation.getAllValueArguments().values();
+            if (!valueArguments.isEmpty()) {
+                CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
+                if (compileTimeConstant instanceof EnumValue) {
+                    ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
+                    JetType classObjectType = enumEntry.getClassObjectType();
+                    if (classObjectType != null) {
+                        if ("java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName())) {
+                            return RetentionPolicy.valueOf(enumEntry.getName().asString());
+                        }
+                    }
+                }
+            }
+        }
 
-        Collection<CompileTimeConstant<?>> valueArguments = retentionAnnotation.getAllValueArguments().values();
-        assert valueArguments.size() == 1 : "Retention should have an argument: " + retentionAnnotation + " on " + descriptor;
-        CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
-        assert compileTimeConstant instanceof EnumValue : "Retention argument should be enum value: " + compileTimeConstant;
-        ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
-        JetType classObjectType = enumEntry.getClassObjectType();
-        assert classObjectType != null : "Enum entry should have a class object: " + enumEntry;
-        assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName()) :
-                "Retention argument should be of type RetentionPolicy: " + enumEntry;
-        return RetentionPolicy.valueOf(enumEntry.getName().asString());
+        return RetentionPolicy.CLASS;
     }
 
     @NotNull
