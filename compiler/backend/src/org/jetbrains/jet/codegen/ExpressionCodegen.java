@@ -1937,7 +1937,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         funDescriptor = accessibleFunctionDescriptor((FunctionDescriptor) funDescriptor);
 
         if (funDescriptor instanceof ConstructorDescriptor) {
-            return generateNewCall(expression, resolvedCall, receiver);
+            return generateNewCall(expression, resolvedCall);
         }
 
         if (funDescriptor.getOriginal() instanceof SamConstructorDescriptor) {
@@ -2537,7 +2537,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     result = StackValue.onStack(returnType);
                 }
                 else {
-                    result = codegen.generateConstructorCall(fakeResolvedCall, StackValue.none(), returnType);
+                    result = codegen.generateConstructorCall(fakeResolvedCall, returnType);
                 }
             }
             else {
@@ -3233,39 +3233,37 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue generateNewCall(
-            @NotNull JetCallExpression expression,
-            @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull StackValue receiver
-    ) {
+    private StackValue generateNewCall(@NotNull JetCallExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
         Type type = expressionType(expression);
         if (type.getSort() == Type.ARRAY) {
             generateNewArray(expression);
             return StackValue.onStack(type);
         }
 
-        return generateConstructorCall(resolvedCall, receiver, type);
+        return generateConstructorCall(resolvedCall, type);
     }
 
     @NotNull
-    private StackValue generateConstructorCall(@NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver, @NotNull Type type) {
+    private StackValue generateConstructorCall(@NotNull ResolvedCall<?> resolvedCall, @NotNull Type type) {
         v.anew(type);
         v.dup();
 
-        receiver = StackValue.receiver(resolvedCall, receiver, this, null);
-        receiver.put(receiver.type, v);
+        ConstructorDescriptor constructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
 
-        ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
-        MutableClosure closure = bindingContext.get(CLOSURE, constructorDescriptor.getContainingDeclaration());
+        ReceiverParameterDescriptor expectedThisObject = constructor.getExpectedThisObject();
+        if (expectedThisObject != null) {
+            Type receiverType = typeMapper.mapType(expectedThisObject.getType());
+            generateReceiverValue(resolvedCall.getThisObject(), receiverType);
+        }
 
-        //Resolved call to local class constructor doesn't have resolvedCall.getThisObject() and resolvedCall.getReceiverArgument()
-        //so we need generate closure on stack
-        //See StackValue.receiver for more info
-        pushClosureOnStack(closure, resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists(),
-                           defaultCallGenerator);
+        MutableClosure closure = bindingContext.get(CLOSURE, constructor.getContainingDeclaration());
 
-        ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(constructorDescriptor);
-        CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructorDescriptor : originalOfSamAdapter);
+        // Resolved call to local class constructor doesn't have expectedThisObject, so we need to generate closure on stack
+        // See StackValue.receiver for more info
+        pushClosureOnStack(closure, expectedThisObject != null, defaultCallGenerator);
+
+        ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(constructor);
+        CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructor : originalOfSamAdapter);
         invokeMethodWithArguments(null, method, resolvedCall, StackValue.none());
 
         return StackValue.onStack(type);
