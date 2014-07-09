@@ -190,6 +190,7 @@ public class AnonymousObjectTransformer {
 
         InlineResult result = inliner.doInline(resultVisitor, new LocalVarRemapper(parameters, 0), false, LabelOwner.NOT_APPLICABLE);
         resultVisitor.visitMaxs(-1, -1);
+        resultVisitor.visitEnd();
         return result;
     }
 
@@ -276,6 +277,7 @@ public class AnonymousObjectTransformer {
         InlineResult result = inliner.doInline(capturedFieldInitializer, new LocalVarRemapper(constructorParameters, 0), false,
                                                LabelOwner.NOT_APPLICABLE);
         constructorVisitor.visitMaxs(-1, -1);
+        constructorVisitor.visitEnd();
 
         AsmUtil.genClosureFields(capturedFieldsToGenerate, classBuilder);
         //TODO for inline method make public class
