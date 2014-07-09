@@ -213,7 +213,7 @@ public abstract class LazyJavaMemberScope(
                     outType,
                     false,
                     varargElementType,
-                    SourceElement.NO_SOURCE
+                    c.sourceElementFactory.source(javaParameter)
             )
         }.toList()
         return ResolvedValueParameters(descriptors, synthesizedNames)
