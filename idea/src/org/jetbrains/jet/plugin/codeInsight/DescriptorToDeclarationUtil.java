@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 
@@ -41,7 +41,7 @@ public final class DescriptorToDeclarationUtil {
 
     @Nullable
     public static PsiElement getDeclaration(@NotNull Project project, @NotNull DeclarationDescriptor descriptor) {
-        Collection<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(descriptor);
+        Collection<PsiElement> elements = DescriptorToSourceUtils.descriptorToDeclarations(descriptor);
         if (elements.isEmpty()) {
             elements = findDecompiledAndBuiltInDeclarations(project, descriptor);
         }

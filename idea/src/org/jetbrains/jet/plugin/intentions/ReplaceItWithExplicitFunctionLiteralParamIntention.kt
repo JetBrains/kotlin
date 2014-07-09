@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBaseIntentionAction() {
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
@@ -41,7 +42,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBa
         val simpleNameReference = simpleNameExpression.getReference() as JetReference?
         val target = simpleNameReference?.resolveToDescriptors()?.first()!!
 
-        val funcExpr = BindingContextUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral
+        val funcExpr = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral
 
         val newExpr = JetPsiFactory.createExpression(project, "{ it -> 42 }") as JetFunctionLiteralExpression
         funcExpr.addRangeAfter(newExpr.getFunctionLiteral().getValueParameterList(),

@@ -40,7 +40,7 @@ public class MyDeclarations(
     {
         val functions = context.getSliceContents(BindingContext.FUNCTION)
         functionFoo = findFunctionByName(functions.values(), "foo")
-        val function = BindingContextUtils.descriptorToDeclaration(functionFoo) as JetFunction
+        val function = DescriptorToSourceUtils.descriptorToDeclaration(functionFoo) as JetFunction
         val fooBody = function.getBodyExpression()
         scopeToResolveTypeParameters = context.get(BindingContext.RESOLUTION_SCOPE, fooBody)!!
     }

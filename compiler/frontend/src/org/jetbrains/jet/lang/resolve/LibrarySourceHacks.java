@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.callableDescriptorToDeclaration;
 
 public class LibrarySourceHacks {
     private LibrarySourceHacks() {

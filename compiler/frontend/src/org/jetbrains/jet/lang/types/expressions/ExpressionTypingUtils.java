@@ -142,7 +142,7 @@ public class ExpressionTypingUtils {
             @NotNull DeclarationDescriptor scopeContainer,
             @NotNull DeclarationDescriptor variableParent
     ) {
-        PsiElement scopeDeclaration = BindingContextUtils.descriptorToDeclaration(scopeContainer);
+        PsiElement scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer);
         if (!(scopeDeclaration instanceof JetFunctionLiteral)) {
             return false;
         }
@@ -429,7 +429,7 @@ public class ExpressionTypingUtils {
 
     public static void checkVariableShadowing(@NotNull ExpressionTypingContext context, @NotNull VariableDescriptor variableDescriptor, VariableDescriptor oldDescriptor) {
         if (oldDescriptor != null && isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
-            PsiElement declaration = BindingContextUtils.descriptorToDeclaration(variableDescriptor);
+            PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
             if (declaration != null) {
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
             }

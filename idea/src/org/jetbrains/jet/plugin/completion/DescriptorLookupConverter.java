@@ -25,8 +25,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
@@ -126,7 +125,7 @@ public final class DescriptorLookupConverter {
         if (descriptor instanceof CallableMemberDescriptor) {
             descriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
         }
-        return createLookupElement(analyzer, descriptor, BindingContextUtils.descriptorToDeclaration(descriptor));
+        return createLookupElement(analyzer, descriptor, DescriptorToSourceUtils.descriptorToDeclaration(descriptor));
     }
 
     public static LookupElement[] collectLookupElements(

@@ -110,7 +110,7 @@ public class OverrideResolver {
             }
         }
 
-        JetClassOrObject classOrObject = (JetClassOrObject) BindingContextUtils.classDescriptorToDeclaration(classDescriptor);
+        JetClassOrObject classOrObject = (JetClassOrObject) DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
         if (classOrObject != null) {
             DelegationResolver.generateDelegatesInAClass(classDescriptor, trace, classOrObject);
         }
@@ -154,7 +154,7 @@ public class OverrideResolver {
 
                         @Override
                         public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                            JetDeclaration declaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(fromCurrent);
+                            JetDeclaration declaration = (JetDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent);
                             //noinspection ConstantConditions
                             trace.report(CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()));
                         }
@@ -188,7 +188,7 @@ public class OverrideResolver {
                     reportOn = descriptor;
                 }
                 //noinspection ConstantConditions
-                PsiElement element = BindingContextUtils.descriptorToDeclaration(reportOn);
+                PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(reportOn);
                 if (element instanceof JetDeclaration) {
                     trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element, descriptor));
                 }
@@ -609,7 +609,7 @@ public class OverrideResolver {
             return;
         }
 
-        final JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(declared);
+        final JetNamedDeclaration member = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(declared);
         if (member == null) {
             throw new IllegalStateException("declared descriptor is not resolved to declaration: " + declared);
         }
@@ -862,7 +862,7 @@ public class OverrideResolver {
         boolean isDeclaration = declared.getKind() == CallableMemberDescriptor.Kind.DECLARATION;
         if (isDeclaration) {
             // No check if the function is not marked as 'override'
-            JetModifierListOwner declaration = (JetModifierListOwner) BindingContextUtils.descriptorToDeclaration(declared);
+            JetModifierListOwner declaration = (JetModifierListOwner) DescriptorToSourceUtils.descriptorToDeclaration(declared);
             if (declaration != null && !declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
                 return;
             }
@@ -892,7 +892,7 @@ public class OverrideResolver {
     }
 
     private void checkNameAndDefaultForDeclaredParameter(@NotNull ValueParameterDescriptor descriptor, boolean multipleDefaultsInSuper) {
-        JetParameter parameter = (JetParameter) BindingContextUtils.descriptorToDeclaration(descriptor);
+        JetParameter parameter = (JetParameter) DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
         assert parameter != null : "Declaration not found for parameter: " + descriptor;
 
         if (descriptor.declaresDefaultValue()) {
@@ -921,7 +921,7 @@ public class OverrideResolver {
             boolean multipleDefaultsInSuper
     ) {
         DeclarationDescriptor containingClass = containingFunction.getContainingDeclaration();
-        JetClassOrObject classElement = (JetClassOrObject) BindingContextUtils.descriptorToDeclaration(containingClass);
+        JetClassOrObject classElement = (JetClassOrObject) DescriptorToSourceUtils.descriptorToDeclaration(containingClass);
         assert classElement != null : "Declaration not found for class: " + containingClass;
 
         if (multipleDefaultsInSuper) {

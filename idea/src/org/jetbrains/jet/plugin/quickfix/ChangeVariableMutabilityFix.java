@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
@@ -73,7 +74,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
             BindingContext bindingContext = ResolvePackage.getBindingContext(file);
             VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, simpleNameExpression, true);
             if (descriptor != null) {
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(descriptor);
+                PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
                 if (declaration instanceof JetProperty) {
                     return (JetProperty) declaration;
                 }

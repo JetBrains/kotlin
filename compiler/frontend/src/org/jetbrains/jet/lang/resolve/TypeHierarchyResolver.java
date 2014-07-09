@@ -284,7 +284,7 @@ public class TypeHierarchyResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull ClassDescriptor superclass
     ) {
-        PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(classDescriptor);
+        PsiElement psiElement = DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
 
         PsiElement elementToMark = null;
         if (psiElement instanceof JetClassOrObject) {

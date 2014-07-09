@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.utils.keysToMap
 import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.search.allScope
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 public trait JetReference : PsiPolyVariantReference {
     public fun resolveToDescriptors(): Collection<DeclarationDescriptor>
@@ -114,7 +115,7 @@ abstract class AbstractJetReference<T : JetElement>(element: T)
     private fun resolveToPsiElements(targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
         val result = HashSet<PsiElement>()
         val project = expression.getProject()
-        result.addAll(BindingContextUtils.descriptorToDeclarations(targetDescriptor))
+        result.addAll(DescriptorToSourceUtils.descriptorToDeclarations(targetDescriptor))
         result.addAll(DescriptorToDeclarationUtil.findDecompiledAndBuiltInDeclarations(project, targetDescriptor))
 
         if (targetDescriptor is PackageViewDescriptor) {

@@ -42,7 +42,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
 public final class PsiCodegenPredictor {
     private PsiCodegenPredictor() {

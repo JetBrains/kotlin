@@ -65,6 +65,7 @@ import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.resolve.OverridingUtil
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -291,7 +292,7 @@ private fun JetType.processTypeIfExtractable(
     return collectReferencedTypes(processTypeArguments).fold(true) { (extractable, typeToCheck) ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
-            BindingContextUtils.descriptorToDeclaration(it)
+            DescriptorToSourceUtils.descriptorToDeclaration(it)
         } as? JetTypeParameter
 
         when {

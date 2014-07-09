@@ -330,7 +330,7 @@ public class DeclarationResolver {
             });
         }
         else {
-            declarations = Collections.singletonList(BindingContextUtils.descriptorToDeclaration(declarationDescriptor));
+            declarations = Collections.singletonList(DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor));
         }
         return declarations;
     }
@@ -379,11 +379,11 @@ public class DeclarationResolver {
                             }
 
                             redeclarations.add(Pair.create(
-                                    BindingContextUtils.classDescriptorToDeclaration((ClassDescriptor) descriptor), descriptor.getName()
+                                    DescriptorToSourceUtils.classDescriptorToDeclaration((ClassDescriptor) descriptor), descriptor.getName()
                             ));
                             if (descriptor2 instanceof PropertyDescriptor) {
                                 redeclarations.add(Pair.create(
-                                        BindingContextUtils.descriptorToDeclaration(descriptor2), descriptor2.getName()
+                                        DescriptorToSourceUtils.descriptorToDeclaration(descriptor2), descriptor2.getName()
                                 ));
                             }
                         }

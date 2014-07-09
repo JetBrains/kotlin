@@ -121,7 +121,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
                     @Override
                     public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                        JetDeclaration declaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(fromCurrent);
+                        JetDeclaration declaration = (JetDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent);
                         assert declaration != null : "fromCurrent can not be a fake override";
                         trace.report(Errors.CONFLICTING_OVERLOADS
                                              .on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()));

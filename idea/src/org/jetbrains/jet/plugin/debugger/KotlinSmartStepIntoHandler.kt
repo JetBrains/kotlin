@@ -39,6 +39,7 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
@@ -131,7 +132,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                         if (getterDescriptor != null && !getterDescriptor.isDefault()) {
                             val delegatedResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor]
                             if (delegatedResolvedCall == null) {
-                                val getter = BindingContextUtils.callableDescriptorToDeclaration(getterDescriptor)
+                                val getter = DescriptorToSourceUtils.callableDescriptorToDeclaration(getterDescriptor)
                                 if (getter is JetPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
                                     val psiMethod = LightClassUtil.getLightClassAccessorMethod(getter)
                                     if (psiMethod != null) {
@@ -142,7 +143,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                             else {
                                 val delegatedPropertyGetterDescriptor = delegatedResolvedCall.getResultingDescriptor()
                                 if (delegatedPropertyGetterDescriptor is CallableMemberDescriptor) {
-                                    val function = BindingContextUtils.callableDescriptorToDeclaration(delegatedPropertyGetterDescriptor)
+                                    val function = DescriptorToSourceUtils.callableDescriptorToDeclaration(delegatedPropertyGetterDescriptor)
                                     if (function is JetNamedFunction) {
                                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                                         if (psiMethod != null) {
@@ -163,7 +164,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
                 val descriptor = resolvedCall.getResultingDescriptor()
                 if (descriptor is CallableMemberDescriptor) {
-                    val function = BindingContextUtils.callableDescriptorToDeclaration(descriptor)
+                    val function = DescriptorToSourceUtils.callableDescriptorToDeclaration(descriptor)
                     if (function is JetNamedFunction) {
                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                         if (psiMethod != null) {

@@ -48,10 +48,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -469,7 +466,7 @@ public class JetFlowInformationProvider {
         if (variableDescriptor instanceof PropertyDescriptor && !ctxt.enterInitState.isInitialized && ctxt.exitInitState.isInitialized) {
             if (!variableDescriptor.isVar()) return false;
             if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) return false;
-            PsiElement property = BindingContextUtils.descriptorToDeclaration(variableDescriptor);
+            PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
             assert property instanceof JetProperty;
             if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.FINAL && ((JetProperty) property).getSetter() == null) {
                 return false;
@@ -505,7 +502,7 @@ public class JetFlowInformationProvider {
             report(Errors.NOT_PROPERTY_BACKING_FIELD.on(element), cxtx);
             return true;
         }
-        PsiElement property = BindingContextUtils.descriptorToDeclaration(variableDescriptor);
+        PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
         boolean insideSelfAccessors = PsiTreeUtil.isAncestor(property, element, false);
         if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor) &&
                 // not to generate error in accessors of abstract properties, there is one: declared accessor of abstract property

@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -102,7 +102,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                 if (KotlinBuiltIns.getInstance().getAny() == descriptor) {
                     return null;
                 }
-                return BindingContextUtils.descriptorToDeclaration(descriptor);
+                return DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
             }
         });
         if (superDeclarations.isEmpty()) return;

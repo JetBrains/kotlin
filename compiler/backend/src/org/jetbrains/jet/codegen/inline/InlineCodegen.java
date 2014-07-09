@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
@@ -126,7 +126,7 @@ public class InlineCodegen implements CallGenerator {
         }
         catch (Exception e) {
             boolean generateNodeText = !(e instanceof InlineException);
-            PsiElement element = BindingContextUtils.descriptorToDeclaration(this.codegen.getContext().getContextDescriptor());
+            PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(this.codegen.getContext().getContextDescriptor());
             throw new CompilationException("Couldn't inline method call '" +
                                        functionDescriptor.getName() +
                                        "' into \n" + (element != null ? element.getText() : "null psi element " + this.codegen.getContext().getContextDescriptor()) +
@@ -165,7 +165,7 @@ public class InlineCodegen implements CallGenerator {
             }
         }
         else {
-            PsiElement element = BindingContextUtils.descriptorToDeclaration(functionDescriptor);
+            PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
 
             if (element == null) {
                 throw new RuntimeException("Couldn't find declaration for function " + descriptorName(functionDescriptor));

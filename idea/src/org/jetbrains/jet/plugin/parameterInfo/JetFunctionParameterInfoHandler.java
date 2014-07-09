@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -161,7 +161,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 .append(": ")
                 .append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(parameter)));
         if (parameter.hasDefaultValue()) {
-            PsiElement parameterDeclaration = BindingContextUtils.descriptorToDeclaration(parameter);
+            PsiElement parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
             builder.append(" = ").append(getDefaultExpressionString(parameterDeclaration));
         }
         if (named) builder.append("]");

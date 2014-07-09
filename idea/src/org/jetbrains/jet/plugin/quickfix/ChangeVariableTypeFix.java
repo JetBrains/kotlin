@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -112,7 +112,8 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                 BindingContext context = ResolvePackage.getBindingContext(entry.getContainingJetFile());
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
-                JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
+                JetFunction componentFunction = (JetFunction) DescriptorToSourceUtils
+                        .descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
                 if (componentFunction == null) return null;
                 JetType expectedType = resolvedCall.getCandidateDescriptor().getReturnType();
                 return expectedType == null ? null : new ChangeVariableTypeFix(entry, expectedType);
@@ -168,7 +169,8 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                     }
 
                     if (overriddenMismatchingProperties.size() == 1 && canChangeOverriddenPropertyType) {
-                        PsiElement overriddenProperty = BindingContextUtils.descriptorToDeclaration(overriddenMismatchingProperties.get(0));
+                        PsiElement overriddenProperty = DescriptorToSourceUtils
+                                .descriptorToDeclaration(overriddenMismatchingProperties.get(0));
                         if (overriddenProperty instanceof JetProperty) {
                             actions.add(new ChangeVariableTypeFix((JetProperty) overriddenProperty, propertyType));
                         }

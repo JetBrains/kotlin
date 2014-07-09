@@ -73,6 +73,7 @@ import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import org.jetbrains.jet.lang.diagnostics
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -572,7 +573,7 @@ public class CreateFunctionFromUsageFix internal (
         // gather relevant information
         ownerClassDescriptor = DescriptorUtils.getClassDescriptorForType(selectedReceiverType.theType)
         val receiverType = ownerClassDescriptor.getDefaultType()
-        val classDeclaration = BindingContextUtils.classDescriptorToDeclaration(ownerClassDescriptor)
+        val classDeclaration = DescriptorToSourceUtils.classDescriptorToDeclaration(ownerClassDescriptor)
         if (classDeclaration is JetClass) {
             ownerClass = classDeclaration
             isExtension = !ownerClass.isWritable()

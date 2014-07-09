@@ -70,7 +70,7 @@ public class InlineDescriptorUtils {
             containingFunctionDescriptor = getContainingClassOrFunctionDescriptor(containingFunctionDescriptor, true);
 
             containingFunction = containingFunctionDescriptor != null
-                                 ? BindingContextUtils.descriptorToDeclaration(containingFunctionDescriptor)
+                                 ? DescriptorToSourceUtils.descriptorToDeclaration(containingFunctionDescriptor)
                                  : null;
         }
 
