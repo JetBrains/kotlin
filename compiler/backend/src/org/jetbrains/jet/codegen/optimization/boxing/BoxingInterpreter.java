@@ -47,80 +47,6 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     }
 
 
-    private static boolean isProgressionClass(String internalClassName) {
-        return RangeCodegenUtil.isRangeOrProgression(buildFqNameByInternal(internalClassName));
-    }
-
-    /**
-     * e.g. for "kotlin/IntRange" it returns "Int"
-     *
-     * @param progressionClassInternalName
-     * @return
-     * @throws java.lang.AssertionError if progressionClassInternalName is not progression class internal name
-     */
-    @NotNull
-    private static String getValuesTypeOfProgressionClass(String progressionClassInternalName) {
-        PrimitiveType type = RangeCodegenUtil.getPrimitiveRangeOrProgressionElementType(
-                buildFqNameByInternal(progressionClassInternalName)
-        );
-
-        assert type != null : "type should be not null";
-
-        return type.getTypeName().asString();
-    }
-
-    private static boolean isWrapperClassName(@NotNull String internalClassName) {
-        return JvmPrimitiveType.isWrapperClassName(
-                buildFqNameByInternal(internalClassName)
-        );
-    }
-
-    @NotNull
-    private static FqName buildFqNameByInternal(@NotNull String internalClassName) {
-        return new FqName(Type.getObjectType(internalClassName).getClassName());
-    }
-
-    private static boolean isWrapperClassNameOrNumber(@NotNull String internalClassName) {
-        return isWrapperClassName(internalClassName) || internalClassName.equals(Type.getInternalName(Number.class));
-    }
-
-    private static boolean isUnboxingMethodName(@NotNull String name) {
-        return UNBOXING_METHOD_NAMES.contains(name);
-    }
-
-    private static boolean isUnboxing(@NotNull AbstractInsnNode insn) {
-        if (insn.getOpcode() != Opcodes.INVOKEVIRTUAL) return false;
-
-        MethodInsnNode methodInsn = (MethodInsnNode) insn;
-
-        return isWrapperClassNameOrNumber(methodInsn.owner) && isUnboxingMethodName(methodInsn.name);
-    }
-
-    private static boolean isBoxing(@NotNull AbstractInsnNode insn) {
-        if (insn.getOpcode() != Opcodes.INVOKESTATIC) return false;
-
-        MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
-
-        return isWrapperClassName(methodInsnNode.owner) && "valueOf".equals(methodInsnNode.name);
-    }
-
-    private static boolean isIteratorMethodCallOfProgression(
-            @NotNull AbstractInsnNode insn, @NotNull List<? extends BasicValue> values
-    ) {
-        return (insn.getOpcode() == Opcodes.INVOKEINTERFACE &&
-                values.get(0).getType() != null &&
-                isProgressionClass(values.get(0).getType().getInternalName()) &&
-                "iterator".equals(((MethodInsnNode) insn).name));
-    }
-
-    private static boolean isNextMethodCallOfProgressionIterator(
-            @NotNull AbstractInsnNode insn, @NotNull List<? extends BasicValue> values
-    ) {
-        return (insn.getOpcode() == Opcodes.INVOKEINTERFACE &&
-                values.get(0) instanceof ProgressionIteratorBasicValue &&
-                "next".equals(((MethodInsnNode) insn).name));
-    }
-
     private final Map<Integer, BoxedBasicValue> boxingPlaces = new HashMap<Integer, BoxedBasicValue>();
     private final InsnList insnList;
 
@@ -188,10 +114,78 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         return value;
     }
 
-    private static boolean isExactValue(@NotNull BasicValue value) {
-        return value instanceof ProgressionIteratorBasicValue ||
-               value instanceof BoxedBasicValue ||
-               (value.getType() != null && isProgressionClass(value.getType().getInternalName()));
+    private static boolean isWrapperClassNameOrNumber(@NotNull String internalClassName) {
+        return isWrapperClassName(internalClassName) || internalClassName.equals(Type.getInternalName(Number.class));
+    }
+
+    private static boolean isWrapperClassName(@NotNull String internalClassName) {
+        return JvmPrimitiveType.isWrapperClassName(
+                buildFqNameByInternal(internalClassName)
+        );
+    }
+
+    @NotNull
+    private static FqName buildFqNameByInternal(@NotNull String internalClassName) {
+        return new FqName(Type.getObjectType(internalClassName).getClassName());
+    }
+
+    private static boolean isUnboxing(@NotNull AbstractInsnNode insn) {
+        if (insn.getOpcode() != Opcodes.INVOKEVIRTUAL) return false;
+
+        MethodInsnNode methodInsn = (MethodInsnNode) insn;
+
+        return isWrapperClassNameOrNumber(methodInsn.owner) && isUnboxingMethodName(methodInsn.name);
+    }
+
+    private static boolean isUnboxingMethodName(@NotNull String name) {
+        return UNBOXING_METHOD_NAMES.contains(name);
+    }
+
+    private static boolean isBoxing(@NotNull AbstractInsnNode insn) {
+        if (insn.getOpcode() != Opcodes.INVOKESTATIC) return false;
+
+        MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
+
+        return isWrapperClassName(methodInsnNode.owner) && "valueOf".equals(methodInsnNode.name);
+    }
+
+    private static boolean isNextMethodCallOfProgressionIterator(
+            @NotNull AbstractInsnNode insn, @NotNull List<? extends BasicValue> values
+    ) {
+        return (insn.getOpcode() == Opcodes.INVOKEINTERFACE &&
+                values.get(0) instanceof ProgressionIteratorBasicValue &&
+                "next".equals(((MethodInsnNode) insn).name));
+    }
+
+    private static boolean isIteratorMethodCallOfProgression(
+            @NotNull AbstractInsnNode insn, @NotNull List<? extends BasicValue> values
+    ) {
+        return (insn.getOpcode() == Opcodes.INVOKEINTERFACE &&
+                values.get(0).getType() != null &&
+                isProgressionClass(values.get(0).getType().getInternalName()) &&
+                "iterator".equals(((MethodInsnNode) insn).name));
+    }
+
+    private static boolean isProgressionClass(String internalClassName) {
+        return RangeCodegenUtil.isRangeOrProgression(buildFqNameByInternal(internalClassName));
+    }
+
+    /**
+     * e.g. for "kotlin/IntRange" it returns "Int"
+     *
+     * @param progressionClassInternalName
+     * @return
+     * @throws java.lang.AssertionError if progressionClassInternalName is not progression class internal name
+     */
+    @NotNull
+    private static String getValuesTypeOfProgressionClass(String progressionClassInternalName) {
+        PrimitiveType type = RangeCodegenUtil.getPrimitiveRangeOrProgressionElementType(
+                buildFqNameByInternal(progressionClassInternalName)
+        );
+
+        assert type != null : "type should be not null";
+
+        return type.getTypeName().asString();
     }
 
     @Override
@@ -201,6 +195,12 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         }
 
         return super.unaryOperation(insn, value);
+    }
+
+    private static boolean isExactValue(@NotNull BasicValue value) {
+        return value instanceof ProgressionIteratorBasicValue ||
+               value instanceof BoxedBasicValue ||
+               (value.getType() != null && isProgressionClass(value.getType().getInternalName()));
     }
 
     @Override

@@ -40,9 +40,11 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     @Override
     public void transform(@NotNull String internalClassName, @NotNull MethodNode node) {
         RedundantBoxingInterpreter interpreter = new RedundantBoxingInterpreter(node.instructions);
-        Analyzer<BasicValue> analyzer = new Analyzer<BasicValue>(interpreter);
+        Frame<BasicValue>[] frames = runAnalyzer(
+                new Analyzer<BasicValue>(interpreter),
+                internalClassName, node
+        );
 
-        Frame<BasicValue>[] frames = runAnalyzer(analyzer, internalClassName, node);
         RedundantBoxedValuesCollection valuesToOptimize = interpreter.getCandidatesBoxedValues();
 
         if (!valuesToOptimize.isEmpty()) {
@@ -57,19 +59,6 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         }
 
         super.transform(internalClassName, node);
-    }
-
-    private static void adaptLocalVariableTableForBoxedValues(@NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames) {
-        for (LocalVariableNode localVariableNode : node.localVariables) {
-            if (Type.getType(localVariableNode.desc).getSort() != Type.OBJECT) {
-                continue;
-            }
-
-            for (BasicValue value : getValuesStoredOrLoadedToVariable(localVariableNode, node, frames)) {
-                if (value == null || !(value instanceof BoxedBasicValue) || !((BoxedBasicValue) value).isSafeToRemove()) continue;
-                localVariableNode.desc = ((BoxedBasicValue) value).getPrimitiveType().getDescriptor();
-            }
-        }
     }
 
     private static void removeValuesClashingWithVariables(
@@ -126,6 +115,19 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         }
 
         return needToRepeat;
+    }
+
+    private static void adaptLocalVariableTableForBoxedValues(@NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames) {
+        for (LocalVariableNode localVariableNode : node.localVariables) {
+            if (Type.getType(localVariableNode.desc).getSort() != Type.OBJECT) {
+                continue;
+            }
+
+            for (BasicValue value : getValuesStoredOrLoadedToVariable(localVariableNode, node, frames)) {
+                if (value == null || !(value instanceof BoxedBasicValue) || !((BoxedBasicValue) value).isSafeToRemove()) continue;
+                localVariableNode.desc = ((BoxedBasicValue) value).getPrimitiveType().getDescriptor();
+            }
+        }
     }
 
     @NotNull
