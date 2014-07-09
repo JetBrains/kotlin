@@ -18,10 +18,13 @@ package org.jetbrains.jet.codegen.optimization.boxing;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.tree.*;
 import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
@@ -272,6 +275,10 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     private static void adaptInstructionsForBoxedValue(@NotNull MethodNode node, @NotNull BoxedBasicValue value) {
         adaptBoxingInstruction(node, value);
 
+        for (Pair<AbstractInsnNode, Type> cast : value.getUnboxingWithCastInsns()) {
+            adaptCastInstruction(node, value, cast);
+        }
+
         for (AbstractInsnNode insn : value.getAssociatedInsns()) {
             adaptInstruction(node, insn, value);
         }
@@ -303,6 +310,22 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
                     )
             );
         }
+    }
+
+    private static void adaptCastInstruction(
+            @NotNull MethodNode node,
+            @NotNull BoxedBasicValue value,
+            @NotNull Pair<AbstractInsnNode, Type> castWithType
+    ) {
+        AbstractInsnNode castInsn = castWithType.getFirst();
+        MethodNode castInsnsListener = new MethodNode(OptimizationUtils.API);
+        new InstructionAdapter(castInsnsListener).cast(value.getPrimitiveType(), castWithType.getSecond());
+
+        for (AbstractInsnNode insn : castInsnsListener.instructions.toArray()) {
+            node.instructions.insertBefore(castInsn, insn);
+        }
+
+        node.instructions.remove(castInsn);
     }
 
     private static void adaptInstruction(
