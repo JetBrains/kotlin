@@ -20,8 +20,10 @@ import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.InsnList;
+import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
@@ -144,9 +146,14 @@ class RedundantBoxingInterpreter extends BoxingInterpreter {
 
     @Override
     protected void onUnboxing(
-            @NotNull BoxedBasicValue value, @NotNull AbstractInsnNode insn
+            @NotNull AbstractInsnNode insn, @NotNull BoxedBasicValue value, @NotNull Type resultType
     ) {
-        addAssociatedInsn(value, insn);
+        if (value.getPrimitiveType().equals(resultType)) {
+            addAssociatedInsn(value, insn);
+        }
+        else {
+            value.addUnboxingWithCastTo(insn, resultType);
+        }
     }
 
     @Override

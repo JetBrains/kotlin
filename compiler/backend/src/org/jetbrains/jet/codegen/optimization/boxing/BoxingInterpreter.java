@@ -157,9 +157,8 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
             return createNewBoxing(insn, value.getType(), null);
         }
         else if (isUnboxing(insn) &&
-                 firstArg instanceof BoxedBasicValue &&
-                 value.getType().equals(((BoxedBasicValue) firstArg).getPrimitiveType())) {
-            onUnboxing((BoxedBasicValue) firstArg, insn);
+                 firstArg instanceof BoxedBasicValue) {
+            onUnboxing(insn, (BoxedBasicValue) firstArg, value.getType());
         }
         else if (isIteratorMethodCallOfProgression(insn, values)) {
             return new ProgressionIteratorBasicValue(
@@ -230,7 +229,7 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
 
     }
 
-    protected void onUnboxing(@NotNull BoxedBasicValue value, @NotNull AbstractInsnNode insn) {
+    protected void onUnboxing(@NotNull AbstractInsnNode insn, @NotNull BoxedBasicValue value, @NotNull Type resultType) {
 
     }
 
