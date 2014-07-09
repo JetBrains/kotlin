@@ -1146,6 +1146,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/equals/Equals4.java");
         }
         
+        @TestMetadata("ObjectsEquals.java")
+        public void testObjectsEquals() throws Exception {
+            doTest("j2k/tests/testData/ast/equals/ObjectsEquals.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/field")

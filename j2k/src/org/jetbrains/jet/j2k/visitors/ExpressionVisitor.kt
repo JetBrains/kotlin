@@ -235,6 +235,11 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
             }
         }
 
+        if (target is PsiMethod && isObjectsEquals(target) && arguments.size == 2) {
+            result = BinaryExpression(converter.convertExpression(arguments[0]), converter.convertExpression(arguments[1]), "==")
+            return
+        }
+
         result = MethodCallExpression(converter.convertExpression(methodExpr),
                                       convertArguments(expression),
                                       typeArguments,
@@ -245,6 +250,12 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
         return method.getName() == "equals" &&
                 method.getParameterList().getParameters().size == 1 &&
                 method.getParameterList().getParameters().single().getType().getCanonicalText() == JAVA_LANG_OBJECT
+    }
+
+    private fun isObjectsEquals(method: PsiMethod): Boolean {
+        return method.getName() == "equals" &&
+                method.getParameterList().getParameters().size == 2 &&
+                method.getContainingClass()?.getQualifiedName() == "java.util.Objects"
     }
 
     override fun visitNewExpression(expression: PsiNewExpression) {
