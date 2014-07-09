@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -76,4 +77,30 @@ public class RemapVisitor extends InliningInstructionAdapter {
             super.visitFieldInsn(opcode, owner, name, desc);
         }
     }
+
+    @Override
+    public AnnotationVisitor visitAnnotationDefault() {
+        return null;
+    }
+
+    @Override
+    public void visitMaxs(int maxStack, int maxLocals) {
+
+    }
+
+    @Override
+    public void visitEnd() {
+
+    }
+
+    @Override
+    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        return null;
+    }
+
+    @Override
+    public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
+        return null;
+    }
+
 }
