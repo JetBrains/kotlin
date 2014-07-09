@@ -2564,6 +2564,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/settings/specifyLocalVariableTypeByDefault.java");
         }
         
+        @TestMetadata("specifyLocalVariableTypeByDefaultInFor.java")
+        public void testSpecifyLocalVariableTypeByDefaultInFor() throws Exception {
+            doTest("j2k/tests/testData/ast/settings/specifyLocalVariableTypeByDefaultInFor.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/starProjectionType")

@@ -122,7 +122,8 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                             && update.getChildren().size == 1
                             && update.getChildren().single().isPlusPlusExpression()) {
                         val range = forIterationRange(start, upperBound, operationTokenType).assignNoPrototype()
-                        result = ForeachStatement(loopVar.declarationIdentifier(), range, convertStatementOrBlock(body), statement.isInSingleLine())
+                        val explicitType = if (converter.settings.specifyLocalVariableTypeByDefault) PrimitiveType(Identifier("Int").assignNoPrototype()).assignNoPrototype() else null
+                        result = ForeachStatement(loopVar.declarationIdentifier(), explicitType, range, convertStatementOrBlock(body), statement.isInSingleLine())
                         return
                     }
                 }
@@ -212,7 +213,9 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
     override fun visitForeachStatement(statement: PsiForeachStatement) {
         val iteratorExpr = converter.convertExpression(statement.getIteratedValue())
         val iterator = if (iteratorExpr.isNullable) BangBangExpression(iteratorExpr).assignNoPrototype() else iteratorExpr
-        result = ForeachStatement(statement.getIterationParameter().declarationIdentifier(),
+        val iterationParameter = statement.getIterationParameter()
+        result = ForeachStatement(iterationParameter.declarationIdentifier(),
+                                  if (converter.settings.specifyLocalVariableTypeByDefault) converter.typeConverter.convertVariableType(iterationParameter) else null,
                                   iterator,
                                   convertStatementOrBlock(statement.getBody()),
                                   statement.isInSingleLine())
