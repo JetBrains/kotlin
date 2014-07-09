@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.LineAndColumn
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lexer.JetTokens
@@ -460,7 +460,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
 
     fun getPsiElement(descriptor: DeclarationDescriptor): PsiElement? {
         return try {
-            BindingContextUtils.descriptorToDeclaration(context, descriptor)
+            DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
         } catch (e: Throwable) {
             // ignore exceptions on fake descriptors
             null
