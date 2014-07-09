@@ -305,7 +305,7 @@ public class JetControlFlowProcessor {
             ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
-                generateCall(expression, variableAsFunctionResolvedCall.getVariableCall());
+                generateCall(variableAsFunctionResolvedCall.getVariableCall());
             }
             else if (!generateCall(expression) && !(expression.getParent() instanceof JetCallExpression)) {
                 createNonSyntheticValue(expression, generateAndGetReceiverIfAny(expression));
@@ -339,7 +339,7 @@ public class JetControlFlowProcessor {
             else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
                 ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
                 if (resolvedCall != null) {
-                    PseudoValue rhsValue = generateCall(expression, resolvedCall).getOutputValue();
+                    PseudoValue rhsValue = generateCall(resolvedCall).getOutputValue();
                     Name assignMethodName = OperatorConventions.getNameForOperationSymbol((JetToken) expression.getOperationToken());
                     if (!resolvedCall.getResultingDescriptor().getName().equals(assignMethodName)) {
                         /* At this point assignment of the form a += b actually means a = a + b
@@ -588,7 +588,7 @@ public class JetControlFlowProcessor {
 
             PseudoValue rhsValue;
             if (resolvedCall != null) {
-                rhsValue = generateCall(expression, resolvedCall).getOutputValue();
+                rhsValue = generateCall(resolvedCall).getOutputValue();
             }
             else {
                 generateInstructions(baseExpression);
@@ -1412,15 +1412,17 @@ public class JetControlFlowProcessor {
                 builder.compilationError(callElement, "No resolved call");
                 return false;
             }
-            generateCall(callElement, resolvedCall);
+            generateCall(resolvedCall);
             return true;
         }
 
         @NotNull
-        private InstructionWithValue generateCall(@NotNull JetElement callElement, @NotNull ResolvedCall<?> resolvedCall) {
+        private InstructionWithValue generateCall(@NotNull ResolvedCall<?> resolvedCall) {
+            JetElement callElement = resolvedCall.getCall().getCallElement();
+
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
-                return generateCall(callElement, variableAsFunctionResolvedCall.getFunctionCall());
+                return generateCall(variableAsFunctionResolvedCall.getFunctionCall());
             }
 
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
