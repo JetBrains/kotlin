@@ -80,7 +80,8 @@ import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.*;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCallWithAssert;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
@@ -2049,7 +2050,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (callable instanceof CallableMethod) {
             CallableMethod callableMethod = (CallableMethod) callable;
-            invokeMethodWithArguments(call, callableMethod, resolvedCall, receiver);
+            invokeMethodWithArguments(callableMethod, resolvedCall, receiver);
             //noinspection ConstantConditions
             Type returnType = typeMapper.mapReturnType(resolvedCall.getResultingDescriptor());
             StackValue.coerce(callableMethod.getReturnType(), returnType, v);
@@ -2112,27 +2113,34 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void invokeMethodWithArguments(
-            @Nullable Call call,
             @NotNull CallableMethod callableMethod,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull StackValue receiver
     ) {
-        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-        JetElement callElement = call != null ? call.getCallElement() : null;
-
-        CallGenerator callGenerator = getOrCreateCallGenerator(descriptor, callElement);
-
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
         }
 
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+        CallGenerator callGenerator = getOrCreateCallGenerator(descriptor, resolvedCall.getCall().getCallElement());
+
         assert callGenerator == defaultCallGenerator || !tailRecursionCodegen.isTailRecursion(resolvedCall) :
-                "Tail recursive method couldn't be inlined " + descriptor;
+                "Tail recursive method can't be inlined: " + descriptor;
 
         ArgumentGenerator argumentGenerator = new CallBasedArgumentGenerator(this, callGenerator, descriptor.getValueParameters(),
                                                                              callableMethod.getValueParameterTypes());
 
-        if (!(descriptor instanceof ConstructorDescriptor)) { // otherwise already
+        invokeMethodWithArguments(callableMethod, resolvedCall, receiver, callGenerator, argumentGenerator);
+    }
+
+    private void invokeMethodWithArguments(
+            @NotNull CallableMethod callableMethod,
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull StackValue receiver,
+            @NotNull CallGenerator callGenerator,
+            @NotNull ArgumentGenerator argumentGenerator
+    ) {
+        if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
             receiver.put(receiver.type, v);
         }
@@ -2140,7 +2148,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         callGenerator.putHiddenParams();
 
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
-        assert valueArguments != null : "Failed to arrange value arguments by index: " + descriptor;
+        assert valueArguments != null : "Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor();
 
         int mask = argumentGenerator.generate(valueArguments);
 
@@ -2159,13 +2167,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     protected CallGenerator getOrCreateCallGenerator(@NotNull CallableDescriptor descriptor, @Nullable JetElement callElement) {
+        if (callElement == null) return defaultCallGenerator;
+
         boolean isInline = state.isInlineEnabled() &&
                            descriptor instanceof SimpleFunctionDescriptor &&
                            ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
+        if (!isInline) return defaultCallGenerator;
 
-        return !isInline || callElement == null ? defaultCallGenerator :
-                          new InlineCodegen(this, state, (SimpleFunctionDescriptor) DescriptorUtils.unwrapFakeOverride(
-                                  (CallableMemberDescriptor) descriptor.getOriginal()), callElement);
+        SimpleFunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((SimpleFunctionDescriptor) descriptor.getOriginal());
+        return new InlineCodegen(this, state, original, callElement);
     }
 
     public void generateReceiverValue(@NotNull ReceiverValue receiverValue, @NotNull Type type) {
@@ -2949,8 +2959,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull Type lhsType,
             boolean keepReturnValue
     ) {
-        Call call = getCallWithAssert(expression, bindingContext);
-
         StackValue value = gen(expression.getLeft());
         if (keepReturnValue) {
             value.dupReceiver(v);
@@ -2958,7 +2966,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         value.put(lhsType, v);
         StackValue receiver = StackValue.onStack(lhsType);
 
-        invokeMethodWithArguments(call, callable, resolvedCall, receiver);
+        invokeMethodWithArguments(callable, resolvedCall, receiver);
 
         if (keepReturnValue) {
             value.store(callable.getReturnType(), v);
@@ -3264,7 +3272,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(constructor);
         CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructor : originalOfSamAdapter);
-        invokeMethodWithArguments(null, method, resolvedCall, StackValue.none());
+        invokeMethodWithArguments(method, resolvedCall, StackValue.none());
 
         return StackValue.onStack(type);
     }
