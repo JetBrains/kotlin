@@ -231,6 +231,10 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     @NotNull
     public Collection<PsiElement> resolveBuiltInSymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
+        if (bindingContext == null) {
+            return Collections.emptyList();
+        }
+
         DeclarationDescriptor descriptor = findCurrentDescriptor(declarationDescriptor.getOriginal());
         if (descriptor != null) {
             return DescriptorToSourceUtils.descriptorToDeclarations(descriptor);
