@@ -137,6 +137,11 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest("idea/testData/resolve/references/InSecondClassObject.kt");
     }
     
+    @TestMetadata("JavaEnumEntry.kt")
+    public void testJavaEnumEntry() throws Exception {
+        doTest("idea/testData/resolve/references/JavaEnumEntry.kt");
+    }
+    
     @TestMetadata("JavaParameter.kt")
     public void testJavaParameter() throws Exception {
         doTest("idea/testData/resolve/references/JavaParameter.kt");
