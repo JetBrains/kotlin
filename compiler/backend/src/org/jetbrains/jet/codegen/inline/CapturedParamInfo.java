@@ -73,6 +73,6 @@ public class CapturedParamInfo extends ParameterInfo {
 
     @NotNull
     public String getContainingLambdaName() {
-        return desc.getContainingLambda().getType().getInternalName();
+        return desc.getContainingLambdaName();
     }
 }

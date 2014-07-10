@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.codegen.context;
 
-import org.jetbrains.jet.codegen.JvmCodegenUtil;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
+import org.jetbrains.jet.codegen.JvmCodegenUtil;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_RECEIVER_FIELD;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
@@ -132,8 +133,9 @@ public interface LocalLookup {
                 return innerValue;
             }
 
+            @NotNull
             @Override
-            public StackValue outerValue(EnclosedValueDescriptor d, ExpressionCodegen expressionCodegen) {
+            public StackValue outerValue(@NotNull EnclosedValueDescriptor d, @NotNull ExpressionCodegen codegen) {
                 CallableDescriptor descriptor = (CallableDescriptor) d.getDescriptor();
                 return StackValue.local(descriptor.getExpectedThisObject() != null ? 1 : 0, d.getType());
             }
@@ -149,8 +151,9 @@ public interface LocalLookup {
                 Type classType
         );
 
-        public StackValue outerValue(EnclosedValueDescriptor d, ExpressionCodegen expressionCodegen) {
-            int idx = expressionCodegen.lookupLocalIndex(d.getDescriptor());
+        @NotNull
+        public StackValue outerValue(@NotNull EnclosedValueDescriptor d, @NotNull ExpressionCodegen codegen) {
+            int idx = codegen.lookupLocalIndex(d.getDescriptor());
             assert idx != -1;
 
             return StackValue.local(idx, d.getType());
