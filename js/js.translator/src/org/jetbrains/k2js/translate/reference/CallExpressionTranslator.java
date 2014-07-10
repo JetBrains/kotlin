@@ -31,10 +31,11 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context
     ) {
-        if (InlinedCallExpressionTranslator.shouldBeInlined(expression, context)) {
-            return InlinedCallExpressionTranslator.translate(expression, receiver, context);
-        }
         return (new CallExpressionTranslator(expression, receiver, context)).translate();
+    }
+
+    public static boolean shouldBeInlined(@NotNull JetCallExpression expression, @NotNull TranslationContext context) {
+        return false;
     }
 
     private CallExpressionTranslator(

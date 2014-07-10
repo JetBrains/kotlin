@@ -48,6 +48,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.k2js.translate.context.Namer.getCapturedVarAccessor;
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
+import static org.jetbrains.k2js.translate.reference.CallExpressionTranslator.shouldBeInlined;
 import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
@@ -185,7 +186,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitCallExpression(@NotNull JetCallExpression expression,
             @NotNull TranslationContext context) {
-        if (InlinedCallExpressionTranslator.shouldBeInlined(expression, context) &&
+        if (shouldBeInlined(expression, context) &&
             BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext())) {
             TemporaryVariable temporaryVariable = context.declareTemporary(null);
             JsExpression callResult = CallExpressionTranslator.translate(expression, null, context).source(expression);
