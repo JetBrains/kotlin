@@ -37,7 +37,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 public class ChangeVariableMutabilityFix implements IntentionAction {
     private boolean isVar;
-    
+
     public ChangeVariableMutabilityFix(boolean isVar) {
         this.isVar = isVar;
     }
@@ -45,7 +45,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     public ChangeVariableMutabilityFix() {
         this(false);
     }
-    
+
     @NotNull
     @Override
     public String getText() {
@@ -86,11 +86,8 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetProperty property = getCorrespondingProperty(editor, (JetFile)file);
-        assert property != null && !property.isVar();
-
-        JetProperty newElement = JetPsiFactory.createProperty(project, property.getText().replaceFirst(
-                property.isVar() ? "var" : "val", property.isVar() ? "val" : "var"));
-        property.replace(newElement);
+        assert property != null;
+        property.getValOrVarNode().getPsi().replace(JetPsiFactory.createValOrVarNode(project, isVar ? "val" : "var").getPsi());
     }
 
     @Override
