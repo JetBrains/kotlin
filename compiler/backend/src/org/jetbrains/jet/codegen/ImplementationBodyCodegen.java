@@ -813,6 +813,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 @Override
                 public void generateBody(
                         @NotNull MethodVisitor mv,
+                        @NotNull FrameMap frameMap,
                         @NotNull JvmMethodSignature signature,
                         @NotNull MethodContext context,
                         @NotNull MemberCodegen<?> parentCodegen
@@ -839,6 +840,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 @Override
                 public void generateBody(
                         @NotNull MethodVisitor mv,
+                        @NotNull FrameMap frameMap,
                         @NotNull JvmMethodSignature signature,
                         @NotNull MethodContext context,
                         @NotNull MemberCodegen<?> parentCodegen
@@ -1151,16 +1153,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             lookupConstructorExpressionsInClosureIfPresent(constructorContext);
         }
 
-        final JvmMethodSignature signature = typeMapper.mapSignature(constructorDescriptor);
+        JvmMethodSignature signature = typeMapper.mapSignature(constructorDescriptor);
 
         functionCodegen.generateMethod(OtherOrigin(myClass, constructorDescriptor), signature, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
-                       @NotNull
-                       @Override
-                       protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull MethodContext context) {
-                           return new ConstructorFrameMap(signature);
-                       }
-
                        @Override
                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                            generatePrimaryConstructorImpl(callableDescriptor, codegen, delegationFieldsInfo);

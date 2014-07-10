@@ -178,6 +178,7 @@ public class PackageCodegen {
                                                                          @Override
                                                                          public void generateBody(
                                                                                  @NotNull MethodVisitor mv,
+                                                                                 @NotNull FrameMap frameMap,
                                                                                  @NotNull JvmMethodSignature signature,
                                                                                  @NotNull MethodContext context,
                                                                                  @NotNull MemberCodegen<?> parentCodegen

@@ -40,7 +40,6 @@ import java.util.Map;
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -198,24 +197,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     ) {
         ClassDescriptor classDescriptor = anonymousClassForFunction(typeMapper.getBindingContext(), funDescriptor);
         return new ClosureContext(typeMapper, funDescriptor, classDescriptor, this, localLookup);
-    }
-
-    @NotNull
-    public FrameMap prepareFrame(@NotNull JetTypeMapper typeMapper) {
-        FrameMap frameMap = new FrameMap();
-
-        if (getContextKind() != OwnerKind.PACKAGE) {
-            frameMap.enterTemp(OBJECT_TYPE);  // 0 slot for this
-        }
-
-        CallableDescriptor receiverDescriptor = getCallableDescriptorWithReceiver();
-        if (receiverDescriptor != null) {
-            //noinspection ConstantConditions
-            Type type = typeMapper.mapType(receiverDescriptor.getReceiverParameter().getType());
-            frameMap.enterTemp(type);  // Next slot for receiver
-        }
-
-        return frameMap;
     }
 
     @Nullable

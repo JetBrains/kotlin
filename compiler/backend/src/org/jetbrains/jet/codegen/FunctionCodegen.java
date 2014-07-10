@@ -297,8 +297,15 @@ public class FunctionCodegen extends ParentCodegenAware {
             generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
         }
         else {
-            FrameMap frameMap = strategy.getFrameMap(typeMapper, context);
-
+            FrameMap frameMap = new FrameMap();
+            if (context.getContextKind() == OwnerKind.IMPLEMENTATION) {
+                frameMap.enterTemp(OBJECT_TYPE); // 0 slot for this
+            }
+            for (JvmMethodParameterSignature parameter : signature.getValueParameters()) {
+                if (parameter.getKind() != JvmMethodParameterKind.VALUE) {
+                    frameMap.enterTemp(parameter.getAsmType());
+                }
+            }
             for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
                 frameMap.enter(parameter, typeMapper.mapType(parameter));
             }
@@ -311,7 +318,7 @@ public class FunctionCodegen extends ParentCodegenAware {
                 genNotNullAssertionsForParameters(new InstructionAdapter(mv), parentCodegen.state, functionDescriptor, frameMap);
             }
 
-            strategy.generateBody(mv, signature, context, parentCodegen);
+            strategy.generateBody(mv, frameMap, signature, context, parentCodegen);
         }
 
         Label methodEnd = new Label();
@@ -777,45 +784,45 @@ public class FunctionCodegen extends ParentCodegenAware {
             final JvmMethodSignature jvmDelegateMethodSignature,
             final JvmMethodSignature jvmOverriddenMethodSignature
     ) {
-        generateMethod(OtherOrigin(functionDescriptor),
-                       jvmDelegateMethodSignature,
-                       functionDescriptor,
-                       new FunctionGenerationStrategy() {
-                           @Override
-                           public void generateBody(
-                                   @NotNull MethodVisitor mv,
-                                   @NotNull JvmMethodSignature signature,
-                                   @NotNull MethodContext context,
-                                   @NotNull MemberCodegen<?> parentCodegen
-                           ) {
-                               Method overriddenMethod = jvmOverriddenMethodSignature.getAsmMethod();
-                               Method delegateMethod = jvmDelegateMethodSignature.getAsmMethod();
+        generateMethod(
+                OtherOrigin(functionDescriptor), jvmDelegateMethodSignature, functionDescriptor,
+                new FunctionGenerationStrategy() {
+                    @Override
+                    public void generateBody(
+                            @NotNull MethodVisitor mv,
+                            @NotNull FrameMap frameMap,
+                            @NotNull JvmMethodSignature signature,
+                            @NotNull MethodContext context,
+                            @NotNull MemberCodegen<?> parentCodegen
+                    ) {
+                        Method overriddenMethod = jvmOverriddenMethodSignature.getAsmMethod();
+                        Method delegateMethod = jvmDelegateMethodSignature.getAsmMethod();
 
-                               Type[] argTypes = delegateMethod.getArgumentTypes();
-                               Type[] originalArgTypes = overriddenMethod.getArgumentTypes();
+                        Type[] argTypes = delegateMethod.getArgumentTypes();
+                        Type[] originalArgTypes = overriddenMethod.getArgumentTypes();
 
-                               InstructionAdapter iv = new InstructionAdapter(mv);
-                               iv.load(0, OBJECT_TYPE);
-                               field.put(field.type, iv);
-                               for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                                   StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
-                                   //noinspection AssignmentToForLoopParameter
-                                   reg += argTypes[i].getSize();
-                               }
+                        InstructionAdapter iv = new InstructionAdapter(mv);
+                        iv.load(0, OBJECT_TYPE);
+                        field.put(field.type, iv);
+                        for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
+                            //noinspection AssignmentToForLoopParameter
+                            reg += argTypes[i].getSize();
+                        }
 
-                               String internalName = typeMapper.mapType(toClass).getInternalName();
-                               if (toClass.getKind() == ClassKind.TRAIT) {
-                                   iv.invokeinterface(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
-                               }
-                               else {
-                                   iv.invokevirtual(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
-                               }
+                        String internalName = typeMapper.mapType(toClass).getInternalName();
+                        if (toClass.getKind() == ClassKind.TRAIT) {
+                            iv.invokeinterface(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
+                        }
+                        else {
+                            iv.invokevirtual(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
+                        }
 
-                               StackValue.onStack(overriddenMethod.getReturnType()).put(delegateMethod.getReturnType(), iv);
+                        StackValue.onStack(overriddenMethod.getReturnType()).put(delegateMethod.getReturnType(), iv);
 
-                               iv.areturn(delegateMethod.getReturnType());
-                           }
-                       }
+                        iv.areturn(delegateMethod.getReturnType());
+                    }
+                }
         );
     }
 }
