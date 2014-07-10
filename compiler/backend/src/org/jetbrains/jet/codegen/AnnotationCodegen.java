@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
@@ -119,9 +118,8 @@ public abstract class AnnotationCodegen {
         Set<String> annotationDescriptorsAlreadyPresent = new HashSet<String>();
 
         if (modifierList == null) {
-            if (annotated instanceof DeserializedCallableMemberDescriptor ||
-                annotated instanceof PropertyAccessorDescriptor &&
-                ((PropertyAccessorDescriptor) annotated).getCorrespondingProperty() instanceof DeserializedPropertyDescriptor) {
+            if (annotated instanceof CallableMemberDescriptor &&
+                JvmCodegenUtil.getDirectMember((CallableMemberDescriptor) annotated) instanceof DeserializedCallableMemberDescriptor) {
                 for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
                     String descriptor = genAnnotation(annotation);
                     if (descriptor != null) {

@@ -581,12 +581,7 @@ public class JetTypeMapper {
             writeVoidReturn(sw);
         }
         else {
-            if (f instanceof PropertyAccessorDescriptor) {
-                writeFormalTypeParameters(((PropertyAccessorDescriptor) f).getCorrespondingProperty().getTypeParameters(), sw);
-            }
-            else {
-                writeFormalTypeParameters(f.getTypeParameters(), sw);
-            }
+            writeFormalTypeParameters(getDirectMember(f).getTypeParameters(), sw);
 
             sw.writeParametersStart();
             writeThisIfNeeded(f, kind, sw);
