@@ -395,10 +395,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        if (kind != OwnerKind.IMPLEMENTATION) {
-            throw new IllegalStateException("must be impl to reach this code: " + kind);
-        }
-
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
             if (specifier instanceof JetDelegatorToSuperClass || specifier instanceof JetDelegatorToSuperCall) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
@@ -1147,10 +1143,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
         if (ignoreIfTraitOrAnnotation()) return;
-
-        if (kind != OwnerKind.IMPLEMENTATION) {
-            throw new IllegalStateException("incorrect kind for primary constructor: " + kind);
-        }
 
         final MutableClosure closure = context.closure;
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, myClass);
