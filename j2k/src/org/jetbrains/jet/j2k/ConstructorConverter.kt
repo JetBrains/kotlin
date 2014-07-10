@@ -109,15 +109,10 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             val targetParameter = targetParameters[i]
             if (parameter.getName() != targetParameter.getName() || parameter.getType() != targetParameter.getType()) return null
             val arg = args[i]
-            if (arg !is PsiReferenceExpression || arg.getQualifier() != null) return null
-            if (arg.resolve() != parameter) return null
+            if (arg !is PsiReferenceExpression || arg.resolve() != parameter) return null
         }
 
-        val result = ArrayList<PsiExpression>(args.size - parameters.size)
-        for (i in (parameters.size..args.size-1)) {
-            result.add(args[i])
-        }
-        return result
+        return args.drop(parameters.size)
     }
 
     private fun dropConstructorsForDefaultValues(primary: PsiMethod, toTargetConstructorMap: Map<PsiMethod, TargetConstructorInfo>) {
@@ -136,7 +131,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             val defaults = toTargetConstructorMap[constructor]!!.parameterDefaults!!
             assert(defaults.size == primaryParamCount - paramCount)
 
-            for (i in (0..defaults.size-1)) {
+            for (i in defaults.indices) {
                 val default = defaults[defaults.size - i - 1]
                 if (i < lastParamDefaults.size) { // default for this parameter has already been assigned
                     if (lastParamDefaults[i].getText() != default.getText()) continue@DropCandidatesLoop
