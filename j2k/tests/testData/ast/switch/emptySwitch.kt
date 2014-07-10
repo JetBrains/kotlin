@@ -11,4 +11,5 @@ public class NonDefault {
         }
     }
 }
+
 fun main(args: Array<String>) = NonDefault.main(args)

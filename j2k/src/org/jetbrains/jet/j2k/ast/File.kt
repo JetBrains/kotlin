@@ -29,7 +29,7 @@ class File(val elements: List<Element>, val mainFunction: String?) : Element() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append(elements, "\n")
         if (mainFunction != null) {
-            builder.append(mainFunction)
+            builder append "\n\n" append mainFunction
         }
     }
 }

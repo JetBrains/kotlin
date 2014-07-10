@@ -7,4 +7,5 @@ class Program {
         }
     }
 }
+
 fun main(args: Array<String>) = Program.main(args)

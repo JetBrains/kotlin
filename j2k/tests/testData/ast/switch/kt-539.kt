@@ -25,4 +25,5 @@ public class SwitchDemo {
         }
     }
 }
+
 fun main(args: Array<String>) = SwitchDemo.main(args)

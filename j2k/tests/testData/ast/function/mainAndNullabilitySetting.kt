@@ -5,4 +5,5 @@ public class A {
         }
     }
 }
+
 fun main(args: Array<String>) = A.main(args)

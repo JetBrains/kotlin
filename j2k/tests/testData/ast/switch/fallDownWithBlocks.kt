@@ -21,4 +21,5 @@ public class C {
         }
     }
 }
+
 fun main(args: Array<String>) = C.main(args)
