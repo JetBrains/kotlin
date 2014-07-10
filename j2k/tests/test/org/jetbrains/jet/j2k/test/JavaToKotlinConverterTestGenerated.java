@@ -2691,6 +2691,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/switch/fallDown.java");
         }
         
+        @TestMetadata("fallDownWithBlocks.java")
+        public void testFallDownWithBlocks() throws Exception {
+            doTest("j2k/tests/testData/ast/switch/fallDownWithBlocks.java");
+        }
+        
         @TestMetadata("invalidSwitch.java")
         public void testInvalidSwitch() throws Exception {
             doTest("j2k/tests/testData/ast/switch/invalidSwitch.java");

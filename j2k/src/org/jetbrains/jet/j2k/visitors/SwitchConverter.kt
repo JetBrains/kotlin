@@ -50,32 +50,36 @@ class SwitchConverter(private val converter: Converter) {
 
     private fun splitToCases(body: PsiCodeBlock?): List<Case> {
         val cases = ArrayList<Case>()
-        var currentCaseStatements = ArrayList<PsiStatement>()
         if (body != null) {
-            var label: PsiSwitchLabelStatement? = null
+            var currentLabel: PsiSwitchLabelStatement? = null
+            var currentCaseStatements = ArrayList<PsiStatement>()
+
+            fun flushCurrentCase() {
+                if (currentLabel != null || currentCaseStatements.isNotEmpty()) {
+                    cases.add(Case(currentLabel, currentCaseStatements))
+                }
+            }
+
             for (statement in body.getStatements()) {
                 if (statement is PsiSwitchLabelStatement) {
-                    if (label != null) {
-                        cases.add(Case(label, currentCaseStatements))
-                        currentCaseStatements = ArrayList()
-                    }
-                    label = statement
+                    flushCurrentCase()
+                    currentLabel = statement
+                    currentCaseStatements = ArrayList()
                 }
                 else {
                     currentCaseStatements.add(statement)
                 }
             }
-            if (label != null || currentCaseStatements.isNotEmpty()) {
-                cases.add(Case(label, currentCaseStatements))
-            }
+
+            flushCurrentCase()
         }
 
         return cases
     }
 
-    private fun convertCaseStatements(statements: List<PsiStatement>): List<Statement> {
+    private fun convertCaseStatements(statements: List<PsiStatement>, allowBlock: Boolean = true): List<Statement> {
         val statementsToKeep = statements.filter { !isSwitchBreak(it) }
-        if (statementsToKeep.size == 1) {
+        if (allowBlock && statementsToKeep.size == 1) {
             val block = statementsToKeep.single() as? PsiBlockStatement
             if (block != null) {
                 return listOf(converter.convertBlock(block.getCodeBlock(), true, { !isSwitchBreak(it) }))
@@ -84,7 +88,7 @@ class SwitchConverter(private val converter: Converter) {
         return statementsToKeep.map { converter.convertStatement(it) }
     }
 
-    private fun convertCaseStatements(cases: List<Case>, caseIndex: Int): List<Statement> {
+    private fun convertCaseStatements(cases: List<Case>, caseIndex: Int, allowBlock: Boolean = true): List<Statement> {
         val case = cases[caseIndex]
         val fallsThrough = if (caseIndex == cases.lastIndex) {
             false
@@ -94,12 +98,10 @@ class SwitchConverter(private val converter: Converter) {
             val statements = if (block != null) block.getCodeBlock().getStatements().toList() else case.statements
             !statements.any { it is PsiBreakStatement || it is PsiContinueStatement || it is PsiReturnStatement || it is PsiThrowStatement }
         }
-        return if (fallsThrough) { // we fall through into the next case
-            convertCaseStatements(case.statements) + convertCaseStatements(cases, caseIndex + 1)
-        }
-        else {
-            convertCaseStatements(case.statements)
-        }
+        return if (fallsThrough) // we fall through into the next case
+            convertCaseStatements(case.statements, allowBlock = false) + convertCaseStatements(cases, caseIndex + 1, allowBlock = false)
+        else
+            convertCaseStatements(case.statements, allowBlock)
     }
 
     private fun convertCaseStatementsToBody(cases: List<Case>, caseIndex: Int): Statement {
