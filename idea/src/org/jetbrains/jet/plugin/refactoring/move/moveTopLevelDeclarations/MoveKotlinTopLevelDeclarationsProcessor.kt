@@ -38,8 +38,6 @@ import com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.psi.psiUtil.getPackage
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.move.PackageNameInfo
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.refactoring.createKotlinFile
 import org.jetbrains.jet.plugin.refactoring.move.updateInternalReferencesOnPackageNameChange
 import org.jetbrains.jet.plugin.codeInsight.addToShorteningWaitSet
@@ -52,7 +50,6 @@ import java.util.ArrayList
 import java.util.HashSet
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
@@ -72,6 +69,11 @@ import com.intellij.openapi.util.Ref
 import org.jetbrains.jet.plugin.refactoring.getKotlinFqName
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.jet.plugin.search.projectScope
+import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.JetImportDirective
 
 public class MoveKotlinTopLevelDeclarationsOptions(
         val elementsToMove: Collection<JetNamedDeclaration>,
@@ -80,6 +82,14 @@ public class MoveKotlinTopLevelDeclarationsOptions(
         val searchInNonCode: Boolean = true,
         val moveCallback: MoveCallback? = null
 )
+
+class MoveRenameUsageInfoForExtension(
+        element: PsiElement,
+        reference: PsiReference,
+        startOffset: Int,
+        endOffset: Int,
+        referencedElement: PsiElement
+): MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
 
 public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val options: MoveKotlinTopLevelDeclarationsOptions) : BaseRefactoringProcessor(project) {
     class object {
@@ -101,6 +111,21 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
     }
 
     override fun findUsages(): Array<UsageInfo> {
+        fun createUsageInfo(
+                element: PsiElement,
+                reference: PsiReference,
+                startOffset: Int,
+                endOffset: Int,
+                referencedElement: PsiElement
+        ): UsageInfo {
+            if (reference is JetReference
+                    && referencedElement.namedUnwrappedElement!!.isExtensionDeclaration()
+                    && element.getParentByType(javaClass<JetImportDirective>()) == null) {
+                return MoveRenameUsageInfoForExtension(element, reference, startOffset, endOffset, referencedElement)
+            }
+            return MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
+        }
+
         val newPackageName = options.moveTarget.packageWrapper?.getQualifiedName() ?: ""
 
         fun collectUsages(): List<UsageInfo> {
@@ -114,7 +139,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
                         .mapTo(ArrayList<UsageInfo?>()) { ref ->
                             if (foundReferences.add(ref)) {
                                 val range = ref.getRangeInElement()!!
-                                MoveRenameUsageInfo(ref.getElement(), ref, range.getStartOffset(), range.getEndOffset(), lightElement, false)
+                                createUsageInfo(ref.getElement(), ref, range.getStartOffset(), range.getEndOffset(), lightElement)
                             }
                             else null
                         }
@@ -274,7 +299,20 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
                 }
             }
 
-            nonCodeUsages = CommonMoveUtil.retargetUsages(usages, oldToNewElementsMapping)
+            if (usages == null) return
+
+            nonCodeUsages = CommonMoveUtil.retargetUsages(
+                    usages.filter { it !is MoveRenameUsageInfoForExtension }.copyToArray(),
+                    oldToNewElementsMapping
+            )
+            for (usage in usages.filterIsInstance(javaClass<MoveRenameUsageInfoForExtension>())) {
+                val newElement = oldToNewElementsMapping[usage.getReferencedElement()]
+
+                ImportInsertHelper.addImportDirectiveIfNeeded(
+                        newElement!!.getKotlinFqName()!!,
+                        usage.getElement()!!.getContainingFile() as JetFile
+                )
+            }
         }
         catch (e: IncorrectOperationException) {
             nonCodeUsages = null
