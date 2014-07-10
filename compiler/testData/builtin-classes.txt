@@ -802,30 +802,30 @@ public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
     /*primary*/ private constructor InlineStrategy()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     public class object <class-object-for-InlineStrategy> {
         /*primary*/ private constructor <class-object-for-InlineStrategy>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineStrategy
         public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineStrategy>
     }
-    
+
     public enum entry AS_FUNCTION : kotlin.InlineStrategy {
         /*primary*/ private constructor AS_FUNCTION()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-AS_FUNCTION> : kotlin.InlineStrategy.AS_FUNCTION {
             /*primary*/ private constructor <class-object-for-AS_FUNCTION>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
+
     public enum entry IN_PLACE : kotlin.InlineStrategy {
         /*primary*/ private constructor IN_PLACE()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-IN_PLACE> : kotlin.InlineStrategy.IN_PLACE {
             /*primary*/ private constructor <class-object-for-IN_PLACE>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
@@ -963,7 +963,7 @@ public final class IntRange : kotlin.Range<kotlin.Int>, kotlin.Progression<kotli
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Int): kotlin.Boolean
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.IntIterator
-    
+
     public class object <class-object-for-IntRange> {
         /*primary*/ private constructor <class-object-for-IntRange>()
         public final val EMPTY: kotlin.IntRange
@@ -1132,7 +1132,7 @@ public final class LongRange : kotlin.Range<kotlin.Long>, kotlin.Progression<kot
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Long): kotlin.Boolean
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.LongIterator
-    
+
     public class object <class-object-for-LongRange> {
         /*primary*/ private constructor <class-object-for-LongRange>()
         public final val EMPTY: kotlin.LongRange
@@ -1149,7 +1149,7 @@ public trait Map</*0*/ K, /*1*/ out V> {
     public abstract fun keySet(): kotlin.Set<K>
     public abstract fun size(): kotlin.Int
     public abstract fun values(): kotlin.Collection<V>
-    
+
     public trait Entry</*0*/ out K, /*1*/ out V> {
         public abstract fun getKey(): K
         public abstract fun getValue(): V
@@ -1229,7 +1229,7 @@ public trait MutableMap</*0*/ K, /*1*/ V> : kotlin.Map<K, V> {
     public abstract fun remove(/*0*/ key: kotlin.Any?): V?
     public abstract override /*1*/ /*fake_override*/ fun size(): kotlin.Int
     public abstract override /*1*/ fun values(): kotlin.MutableCollection<V>
-    
+
     public trait MutableEntry</*0*/ K, /*1*/ V> : kotlin.Map.Entry<K, V> {
         public abstract override /*1*/ /*fake_override*/ fun getKey(): K
         public abstract override /*1*/ /*fake_override*/ fun getValue(): V
@@ -1264,16 +1264,6 @@ public abstract class Number {
     public abstract fun toInt(): kotlin.Int
     public abstract fun toLong(): kotlin.Long
     public abstract fun toShort(): kotlin.Short
-}
-
-private open class OldUnit {
-    /*primary*/ public constructor OldUnit()
-
-    private class object <class-object-for-OldUnit> {
-        /*primary*/ private constructor <class-object-for-OldUnit>()
-        public final val VALUE: kotlin.Unit
-            public final fun <get-VALUE>(): kotlin.Unit
-    }
 }
 
 public trait Progression</*0*/ out N : kotlin.Any> : kotlin.Iterable<N> {
@@ -1436,7 +1426,7 @@ public final class ShortRange : kotlin.Range<kotlin.Short>, kotlin.Progression<k
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Short): kotlin.Boolean
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ShortIterator
-    
+
     public class object <class-object-for-ShortRange> {
         /*primary*/ private constructor <class-object-for-ShortRange>()
         public final val EMPTY: kotlin.ShortRange
@@ -1460,15 +1450,13 @@ public open class Throwable {
     public final fun printStackTrace(): kotlin.Unit
 }
 
-public object Unit : kotlin.OldUnit {
-    /*primary*/ private constructor Unit()
-    public final val VALUE: kotlin.Unit
-        public final fun <get-VALUE>(): kotlin.Unit
-    
+public open class Unit {
+    /*primary*/ internal constructor Unit()
+
     public class object <class-object-for-Unit> : kotlin.Unit {
         /*primary*/ private constructor <class-object-for-Unit>()
-        public final override /*1*/ /*fake_override*/ val VALUE: kotlin.Unit
-            public final override /*1*/ /*fake_override*/ fun <get-VALUE>(): kotlin.Unit
+        public final val VALUE: kotlin.Unit
+            public final fun <get-VALUE>(): kotlin.Unit
     }
 }
 
