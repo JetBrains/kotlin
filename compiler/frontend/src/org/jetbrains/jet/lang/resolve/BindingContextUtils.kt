@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.util.sure
 import org.jetbrains.jet.lang.psi.JetCallElement
 import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 import org.jetbrains.jet.lang.psi.JetInstanceExpressionWithLabel
+import org.jetbrains.jet.lang.psi.JetConstructorCalleeExpression
+import org.jetbrains.jet.lang.psi.JetUserType
 
 /**
  *  For expressions like <code>a(), a[i], a.b.c(), +a, a + b, (a()), a(): Int, @label a()</code>
@@ -64,6 +66,7 @@ public fun JetElement.getCall(context: BindingContext): Call? {
     val parent = element.getParent()
     val reference = when {
         parent is JetInstanceExpressionWithLabel -> parent : JetInstanceExpressionWithLabel
+        parent is JetUserType -> parent.getParent()?.getParent() as? JetConstructorCalleeExpression
         else -> element.getCalleeExpressionIfAny()
     }
     if (reference != null) {

@@ -1,0 +1,16 @@
+fun foo(array: Array<Int>) {
+    array<caret>[1]
+}
+
+
+Resolved call:
+
+Resulting descriptor: fun get(index: Int): Int
+
+Explicit receiver kind = THIS_OBJECT
+This object = array {Array<Int>}
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  index : Int = 1
