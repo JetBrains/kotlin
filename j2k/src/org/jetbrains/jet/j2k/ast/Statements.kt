@@ -107,18 +107,6 @@ class ForeachStatement(
     }
 }
 
-class ForeachWithRangeStatement(val identifier: Identifier,
-                                val start: Expression,
-                                val end: Expression,
-                                val body: Element,
-                                singleLine: Boolean) : Statement() {
-    private val br = if (singleLine) " " else "\n"
-
-    override fun generateCode(builder: CodeBuilder) {
-        builder append "for (" append identifier append " in " append start append ".." append end append ")" append br append body
-    }
-}
-
 class BreakStatement(val label: Identifier = Identifier.Empty) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("break").appendWithPrefix(label, "@")
