@@ -36,6 +36,8 @@ public abstract class VirtualFileKotlinClassFinder implements VirtualFileFinder 
     @Nullable
     public KotlinJvmBinaryClass findKotlinClass(@NotNull JavaClass javaClass) {
         VirtualFile file = ((JavaClassImpl) javaClass).getPsi().getContainingFile().getVirtualFile();
+        if (file == null) return null;
+
         if (javaClass.getOuterClass() != null) {
             // For nested classes we get a file of the containing class, to get the actual class file for A.B.C,
             // we take the file for A, take its parent directory, then in this directory we look for A$B$C.class
