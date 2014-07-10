@@ -105,6 +105,9 @@ public class GenerationState {
     @Nullable
     private final String moduleId; // for PackageCodegen in incremental compilation mode
 
+    @Nullable
+    private final File outDirectory; // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
+
     public GenerationState(
             @NotNull Project project,
             @NotNull ClassBuilderFactory builderFactory,
@@ -144,6 +147,7 @@ public class GenerationState {
         this.bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
         this.bindingContext = bindingTrace.getBindingContext();
 
+        this.outDirectory = outDirectory;
         this.typeMapper = new JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, outDirectory);
 
         this.intrinsics = new IntrinsicMethods();
@@ -268,5 +272,10 @@ public class GenerationState {
     @Nullable
     public String getModuleId() {
         return moduleId;
+    }
+
+    @Nullable
+    public File getOutDirectory() {
+        return outDirectory;
     }
 }

@@ -77,6 +77,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest("compiler/testData/codegen/bytecodeText/defaultDelegation.kt");
     }
     
+    @TestMetadata("inlineFromOtherModule.kt")
+    public void testInlineFromOtherModule() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/inlineFromOtherModule.kt");
+    }
+    
     @TestMetadata("intConstantNotNull.kt")
     public void testIntConstantNotNull() throws Exception {
         doTest("compiler/testData/codegen/bytecodeText/intConstantNotNull.kt");

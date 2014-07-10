@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.vfs.StandardFileSystems;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.Stack;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -26,20 +29,26 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.config.IncrementalCompilation;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentScopeForJavaPackage;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -173,12 +182,55 @@ public class JvmCodegenUtil {
         return false;
     }
 
-    public static boolean isCallInsideSameModuleAsDeclared(CallableMemberDescriptor declarationDescriptor, CodegenContext context) {
+    public static boolean isCallInsideSameModuleAsDeclared(
+            @NotNull CallableMemberDescriptor declarationDescriptor,
+            @NotNull CodegenContext context,
+            @Nullable File outDirectory
+    ) {
         if (context == CodegenContext.STATIC) {
             return true;
         }
         DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
-        return DescriptorUtils.areInSameModule(declarationDescriptor, contextDescriptor);
+
+        CallableMemberDescriptor directMember = getDirectMember(declarationDescriptor);
+        if (directMember instanceof DeserializedCallableMemberDescriptor) {
+            return isContainedByCompiledPartOfOurModule(((DeserializedCallableMemberDescriptor) directMember), outDirectory);
+        }
+        else {
+            return DescriptorUtils.areInSameModule(directMember, contextDescriptor);
+        }
+    }
+
+    private static boolean isContainedByCompiledPartOfOurModule(
+            @NotNull DeserializedCallableMemberDescriptor descriptor,
+            @Nullable File outDirectory
+    ) {
+        if (descriptor.getContainingDeclaration() instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
+            return true;
+        }
+
+        if (outDirectory == null) {
+            return false;
+        }
+
+        if (!(descriptor.getContainingDeclaration() instanceof JavaPackageFragmentDescriptor)) {
+            return false;
+        }
+        JavaPackageFragmentDescriptor packageFragment = (JavaPackageFragmentDescriptor) descriptor.getContainingDeclaration();
+        JetScope packageScope = packageFragment.getMemberScope();
+        if (!(packageScope instanceof LazyPackageFragmentScopeForJavaPackage)) {
+            return false;
+        }
+        KotlinJvmBinaryClass binaryClass = ((LazyPackageFragmentScopeForJavaPackage) packageScope).getKotlinBinaryClass();
+
+        if (binaryClass instanceof VirtualFileKotlinClass) {
+            VirtualFile file = ((VirtualFileKotlinClass) binaryClass).getFile();
+            if (file.getFileSystem().getProtocol() == StandardFileSystems.FILE_PROTOCOL) {
+                File ioFile = VfsUtilCore.virtualToIoFile(file);
+                return ioFile.getAbsolutePath().startsWith(outDirectory.getAbsolutePath() + File.separator);
+            }
+        }
+        return false;
     }
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
@@ -266,5 +318,12 @@ public class JvmCodegenUtil {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
         return "values".equals(functionDescriptor.getName().asString())
                && methodTypeParameters.isEmpty();
+    }
+
+    @NotNull
+    public static CallableMemberDescriptor getDirectMember(@NotNull CallableMemberDescriptor descriptor) {
+        return descriptor instanceof PropertyAccessorDescriptor
+               ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
+               : descriptor;
     }
 }

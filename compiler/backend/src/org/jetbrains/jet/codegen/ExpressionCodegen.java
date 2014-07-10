@@ -1899,7 +1899,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
         if (callableMethod == null) {
             owner = typeMapper.mapOwner(isBackingFieldInAnotherClass ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
-                                        isCallInsideSameModuleAsDeclared(propertyDescriptor, context));
+                                        isCallInsideSameModuleAsDeclared(propertyDescriptor, context, state.getOutDirectory()));
         }
         else {
             owner = callableMethod.getOwner();

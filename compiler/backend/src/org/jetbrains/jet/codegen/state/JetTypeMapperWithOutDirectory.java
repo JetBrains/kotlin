@@ -16,22 +16,12 @@
 
 package org.jetbrains.jet.codegen.state;
 
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentScopeForJavaPackage;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.io.File;
-import java.util.Set;
 
 // TODO Temporary hack until modules infrastructure is implemented.
 // This class is necessary for detecting if compiled class is from the same module as callee.
@@ -42,37 +32,15 @@ public class JetTypeMapperWithOutDirectory extends JetTypeMapper {
     public JetTypeMapperWithOutDirectory(
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
-            @Nullable File outDirectory
+            @NotNull File outDirectory
     ) {
         super(bindingContext, classBuilderMode);
         this.outDirectory = outDirectory;
     }
 
+    @Nullable
     @Override
-    protected boolean isContainedByCompiledPartOfOurModule(@NotNull DeclarationDescriptor descriptor) {
-        if (outDirectory == null) {
-            return false;
-        }
-
-        if (!(descriptor.getContainingDeclaration() instanceof JavaPackageFragmentDescriptor)) {
-            return false;
-        }
-        JavaPackageFragmentDescriptor packageFragment = (JavaPackageFragmentDescriptor) descriptor.getContainingDeclaration();
-        JetScope packageScope = packageFragment.getMemberScope();
-        if (!(packageScope instanceof LazyPackageFragmentScopeForJavaPackage)) {
-            return false;
-        }
-        KotlinJvmBinaryClass binaryClass = ((LazyPackageFragmentScopeForJavaPackage) packageScope).getKotlinBinaryClass();
-
-        if (binaryClass instanceof VirtualFileKotlinClass) {
-            VirtualFile file = ((VirtualFileKotlinClass) binaryClass).getFile();
-            if (file.getFileSystem().getProtocol() == StandardFileSystems.FILE_PROTOCOL) {
-                File ioFile = VfsUtilCore.virtualToIoFile(file);
-                return ioFile.getAbsolutePath().startsWith(outDirectory.getAbsolutePath() + File.separator);
-            }
-        }
-        return false;
+    public File getOutDirectory() {
+        return outDirectory;
     }
-
-
 }

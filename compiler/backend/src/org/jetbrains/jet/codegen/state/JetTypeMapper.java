@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignat
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.*;
@@ -54,6 +53,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +110,11 @@ public class JetTypeMapper {
             return mapClass(((JavaClassStaticsPackageFragmentDescriptor) container).getCorrespondingClass());
         }
         else if (container instanceof PackageFragmentDescriptor) {
-            return Type.getObjectType(internalNameForPackage((PackageFragmentDescriptor) container, descriptor, isInsideModule));
+            return Type.getObjectType(internalNameForPackage(
+                    (PackageFragmentDescriptor) container,
+                    (CallableMemberDescriptor) descriptor,
+                    isInsideModule
+            ));
         }
         else if (container instanceof ClassDescriptor) {
             return mapClass((ClassDescriptor) container);
@@ -123,14 +127,10 @@ public class JetTypeMapper {
         }
     }
 
-    protected boolean isContainedByCompiledPartOfOurModule(@NotNull DeclarationDescriptor descriptor) {
-        return false;
-    }
-
     @NotNull
-    private String internalNameForPackage(
+    private static String internalNameForPackage(
             @NotNull PackageFragmentDescriptor packageFragment,
-            @NotNull DeclarationDescriptor descriptor,
+            @NotNull CallableMemberDescriptor descriptor,
             boolean insideModule
     ) {
         if (insideModule) {
@@ -139,17 +139,11 @@ public class JetTypeMapper {
                 return PackagePartClassUtils.getPackagePartInternalName(file);
             }
 
-            DeclarationDescriptor descriptorToCheck = descriptor instanceof PropertyAccessorDescriptor
-                                                      ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
-                                                      : descriptor;
+            CallableMemberDescriptor directMember = getDirectMember(descriptor);
 
-            if (descriptorToCheck instanceof DeserializedCallableMemberDescriptor) {
-                // TODO Temporary hack until modules infrastructure is implemented. See JetTypeMapperWithOutDirectory for details
-                if (descriptor.getContainingDeclaration() instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment ||
-                    isContainedByCompiledPartOfOurModule(descriptor)) {
-                    FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) descriptorToCheck);
-                    return AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName);
-                }
+            if (directMember instanceof DeserializedCallableMemberDescriptor) {
+                FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) directMember);
+                return AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName);
             }
         }
 
@@ -469,7 +463,7 @@ public class JetTypeMapper {
         }
         else {
             signature = mapSignature(functionDescriptor.getOriginal());
-            owner = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context));
+            owner = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
             ownerForDefaultParam = owner;
             ownerForDefaultImpl = owner;
             if (functionParent instanceof PackageFragmentDescriptor) {
@@ -620,7 +614,7 @@ public class JetTypeMapper {
     @NotNull
     public Method mapDefaultMethod(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind, @NotNull CodegenContext<?> context) {
         Method jvmSignature = mapSignature(functionDescriptor, kind).getAsmMethod();
-        Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context));
+        Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
         String descriptor = jvmSignature.getDescriptor().replace(")", "I)");
         boolean isConstructor = "<init>".equals(jvmSignature.getName());
         if (!isStatic(kind) && !isConstructor) {
@@ -863,6 +857,12 @@ public class JetTypeMapper {
             JetType outType = ((VariableDescriptor) descriptor).getType();
             return StackValue.sharedTypeForType(mapType(outType));
         }
+        return null;
+    }
+
+    // TODO Temporary hack until modules infrastructure is implemented. See JetTypeMapperWithOutDirectory for details
+    @Nullable
+    protected File getOutDirectory() {
         return null;
     }
 }
