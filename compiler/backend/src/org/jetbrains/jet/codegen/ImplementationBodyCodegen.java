@@ -975,16 +975,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             final PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
             final PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
 
-            PropertyGetterDescriptor getter = bridge.getGetter();
-            assert getter != null;
-            functionCodegen.generateMethod(OtherOrigin(original.getGetter()), typeMapper.mapSignature(getter), getter,
-                                           new FunctionGenerationStrategy.CodegenBased<PropertyGetterDescriptor>(state, getter) {
+            class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
+                public PropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor callableDescriptor) {
+                    super(ImplementationBodyCodegen.this.state, callableDescriptor);
+                }
+
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                    InstructionAdapter iv = codegen.v;
-                    boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) && !isClassObject(bridge.getContainingDeclaration());
+                    boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
+                                         !isClassObject(bridge.getContainingDeclaration());
                     StackValue property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
 
+                    InstructionAdapter iv = codegen.v;
                     Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                     for (int i = 0, reg = 0; i < argTypes.length; i++) {
                         Type argType = argTypes[i];
@@ -993,10 +995,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         reg += argType.getSize();
                     }
 
-                    property.put(property.type, iv);
+                    if (callableDescriptor instanceof PropertyGetterDescriptor) {
+                        property.put(property.type, iv);
+                    }
+                    else {
+                        property.store(property.type, iv);
+                    }
+
                     iv.areturn(signature.getReturnType());
                 }
-            });
+            }
+
+            PropertyGetterDescriptor getter = bridge.getGetter();
+            assert getter != null;
+            functionCodegen.generateMethod(OtherOrigin(original.getGetter()), typeMapper.mapSignature(getter), getter,
+                                           new PropertyAccessorStrategy(getter));
 
 
             if (bridge.isVar()) {
@@ -1004,25 +1017,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 assert setter != null;
 
                 functionCodegen.generateMethod(OtherOrigin(original.getSetter()), typeMapper.mapSignature(setter), setter,
-                                               new FunctionGenerationStrategy.CodegenBased<PropertySetterDescriptor>(state, setter) {
-                    @Override
-                    public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                        boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) && !isClassObject(bridge.getContainingDeclaration());
-                        StackValue property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
-                        InstructionAdapter iv = codegen.v;
-
-                        Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
-                        for (int i = 0, reg = 0; i < argTypes.length; i++) {
-                            Type argType = argTypes[i];
-                            iv.load(reg, argType);
-                            //noinspection AssignmentToForLoopParameter
-                            reg += argType.getSize();
-                        }
-                        property.store(property.type, iv);
-
-                        iv.areturn(signature.getReturnType());
-                    }
-                });
+                                               new PropertyAccessorStrategy(setter));
             }
         }
         else {
