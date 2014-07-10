@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetUnaryExpression
+import org.jetbrains.jet.lang.psi.JetProperty
 
 class AfterConversionPass(val project: Project) {
     public fun run(kotlinCode: String): String {
@@ -58,11 +59,19 @@ class AfterConversionPass(val project: Project) {
     }
 
     private fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
+        val psiElement = problem.getPsiElement()
         return when (problem.getFactory()) {
             Errors.UNNECESSARY_NOT_NULL_ASSERTION -> { () ->
-                val exclExclOp = problem.getPsiElement() as JetSimpleNameExpression
+                val exclExclOp = psiElement as JetSimpleNameExpression
                 val exclExclExpr = exclExclOp.getParent() as JetUnaryExpression
                 exclExclExpr.replace(exclExclExpr.getBaseExpression()!!)
+            }
+
+            Errors.VAL_REASSIGNMENT -> { () ->
+                val property = (psiElement as? JetSimpleNameExpression)?.getReference()?.resolve() as? JetProperty
+                if (property != null && !property.isVar()) {
+                    property.getValOrVarNode().getPsi()!!.replace(JetPsiFactory.createVarNode(project).getPsi()!!)
+                }
             }
 
             else -> null

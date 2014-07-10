@@ -2037,6 +2037,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/localVariable/varTypeDoNotMatch.java");
         }
         
+        @TestMetadata("varWithNoInitializer.java")
+        public void testVarWithNoInitializer() throws Exception {
+            doTest("j2k/tests/testData/ast/localVariable/varWithNoInitializer.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/methodCallExpression")
