@@ -9,6 +9,8 @@ trait A {
 
 Resolved call:
 
+Resulting descriptor: val foo: Int.() -> Unit
+
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = Class{A}
 Receiver argument = NO_RECEIVER

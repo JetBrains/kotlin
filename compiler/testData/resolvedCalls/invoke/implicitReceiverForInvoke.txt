@@ -13,6 +13,8 @@ fun <T, R> with(receiver: T, f: T.() -> R) : R = throw Exception()
 
 Resolved call:
 
+Resulting descriptor: fun Int.invoke(): Unit
+
 Explicit receiver kind = THIS_OBJECT
-This object = f
-Receiver argument = Int
+This object = f {Foo}
+Receiver argument = IntExt{fun Int.<anonymous>(): Unit}

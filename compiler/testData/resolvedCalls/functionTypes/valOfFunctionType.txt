@@ -9,6 +9,8 @@ fun test(a: A) {
 
 Resolved call:
 
+Resulting descriptor: val foo: (Int) -> Int
+
 Explicit receiver kind = THIS_OBJECT
-This object = a
+This object = a {A}
 Receiver argument = NO_RECEIVER

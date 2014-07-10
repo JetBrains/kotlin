@@ -9,6 +9,8 @@ fun A.bar() {
 
 Resolved call:
 
+Resulting descriptor: fun foo(): Unit
+
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = A
+This object = AExt{fun A.bar(): Unit}
 Receiver argument = NO_RECEIVER

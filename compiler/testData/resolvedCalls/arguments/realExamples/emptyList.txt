@@ -11,6 +11,9 @@ fun bar() {
 
 Resolved call:
 
+Candidate descriptor: fun <T> foo(t: T): Unit
+Resulting descriptor: fun <T> foo(t: List<???>): Unit
+
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER
 Receiver argument = NO_RECEIVER

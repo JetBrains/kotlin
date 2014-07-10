@@ -7,6 +7,8 @@ class A {
 
 Resolved call:
 
+Resulting descriptor: Class{A}::this
+
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER
 Receiver argument = NO_RECEIVER

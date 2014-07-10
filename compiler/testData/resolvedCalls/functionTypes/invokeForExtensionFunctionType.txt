@@ -5,6 +5,8 @@ fun bar(f: Int.()->Unit) {
 
 Resolved call:
 
+Resulting descriptor: fun Int.invoke(): Unit
+
 Explicit receiver kind = BOTH_RECEIVERS
-This object = f
-Receiver argument = 1
+This object = f {ExtensionFunction0<Int, Unit>}
+Receiver argument = 1 {Int}
