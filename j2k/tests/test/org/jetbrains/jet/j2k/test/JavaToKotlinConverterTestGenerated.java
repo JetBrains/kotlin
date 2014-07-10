@@ -811,6 +811,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/constructors"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("artificialPrimary.java")
+        public void testArtificialPrimary() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/artificialPrimary.java");
+        }
+        
         @TestMetadata("chain.java")
         public void testChain() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/chain.java");

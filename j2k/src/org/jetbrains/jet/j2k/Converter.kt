@@ -149,10 +149,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
             else if (member is FactoryFunction) {
                 factoryFunctions.add(member)
             }
-            else if (useClassObject &&
-                    psiMember.hasModifierProperty(PsiModifier.STATIC) &&
-                    // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
-                    (psiMember !is PsiClass || (member as Class).body.factoryFunctions.isNotEmpty())) {
+            else if (useClassObject
+                    && (if (member is Class) shouldGenerateIntoClassObject(member) else psiMember.hasModifierProperty(PsiModifier.STATIC))) {
                 classObjectMembers.add(member)
             }
             else {
@@ -169,8 +167,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     private fun shouldGenerateClassObject(psiClass: PsiClass, convertedMembers: Map<PsiMember, Member>): Boolean {
         if (psiClass.isEnum()) return false
 
-        // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
-        if (convertedMembers.values().any { it is Class && !it.modifiers.contains(Modifier.INNER) && it.body.factoryFunctions.isNotEmpty() }) return true
+        if (convertedMembers.values().any { it is Class && shouldGenerateIntoClassObject(it) }) return true
 
         val members = convertedMembers.keySet().filter { !it.isConstructor() }
         val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
@@ -182,6 +179,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
             return true
         }
     }
+
+    // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
+    private fun shouldGenerateIntoClassObject(nestedClass: Class)
+            = !nestedClass.modifiers.contains(Modifier.INNER) && nestedClass.body.factoryFunctions.isNotEmpty()
 
     private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>, constructorConverter: ConstructorConverter?): Member? = when (member) {
         is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter)
