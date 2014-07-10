@@ -2199,6 +2199,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/nullability"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("autoNotNull.java")
+        public void testAutoNotNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/autoNotNull.java");
+        }
+        
         @TestMetadata("FieldAssignedWithNull.java")
         public void testFieldAssignedWithNull() throws Exception {
             doTest("j2k/tests/testData/ast/nullability/FieldAssignedWithNull.java");

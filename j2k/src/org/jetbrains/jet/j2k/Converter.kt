@@ -61,7 +61,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val converted = convertTopElement(element) ?: return ""
         val builder = CodeBuilder(element)
         builder.append(converted)
-        return builder.result
+        return AfterConversionPass(project).run(builder.result)
     }
 
     private fun convertTopElement(element: PsiElement?): Element? = when (element) {
@@ -78,7 +78,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         else -> null
     }
 
-    fun convertFile(javaFile: PsiJavaFile): File {
+    private fun convertFile(javaFile: PsiJavaFile): File {
         var convertedChildren = javaFile.getChildren().map {
             if (it is PsiImportList) {
                 val importList = convertImportList(it)

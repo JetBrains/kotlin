@@ -144,23 +144,23 @@ public class JetPsiFactory {
     }
 
     @NotNull
-    public static JetClass createClass(Project project, String text) {
+    public static JetClass createClass(@NotNull Project project, @NotNull String text) {
         return createDeclaration(project, text, JetClass.class);
     }
 
     @NotNull
-    public static JetFile createFile(Project project, String text) {
+    public static JetFile createFile(@NotNull Project project, @NotNull String text) {
         return createFile(project, "dummy.kt", text);
     }
 
     @NotNull
-    public static JetFile createFile(Project project, String fileName, String text) {
+    public static JetFile createFile(@NotNull Project project, @NotNull String fileName, @NotNull String text) {
         return (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text,
                                                                                 LocalTimeCounter.currentTime(), false);
     }
 
     @NotNull
-    public static JetFile createPhysicalFile(Project project, String fileName, String text) {
+    public static JetFile createPhysicalFile(@NotNull Project project, @NotNull String fileName, @NotNull String text) {
         return (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text,
                                                                                 LocalTimeCounter.currentTime(), true);
     }

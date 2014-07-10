@@ -17,6 +17,6 @@ class Test {
         barNotNull.fooNotNull.execute()
         barNotNull.fooNullable!!.execute()
         barNullable!!.fooNotNull.execute()
-        barNullable!!.fooNullable!!.execute()
+        barNullable.fooNullable!!.execute()
     }
 }
