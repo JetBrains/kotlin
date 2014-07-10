@@ -24,44 +24,16 @@ import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiArrayType
+import com.intellij.psi.util.PsiMethodUtil
 
 fun createMainFunction(file: PsiJavaFile): String {
-    val classNamesWithMains = ArrayList<Pair<String, PsiMethod>>()
-    for (c in file.getClasses()) {
-        val main = findMainMethod(c)
-        val name = c.getName()
-        if (name != null && main != null) {
-            classNamesWithMains.add(name to main)
+    for (`class` in file.getClasses()) {
+        val mainMethod = PsiMethodUtil.findMainMethod(`class`)
+        if (mainMethod != null) {
+            return "fun main(args: Array<String>) = ${`class`.getName()}.${mainMethod.getName()}(args)"
         }
     }
-
-    if (classNamesWithMains.isNotEmpty()) {
-        var className = classNamesWithMains.first().first
-        return "fun main(args : Array<String>) = $className.main(args)"
-    }
-
     return ""
 }
 
-private fun findMainMethod(aClass: PsiClass): PsiMethod?
-        = if (isMainClass(aClass)) aClass.findMethodsByName("main", false).firstOrNull { it.isMainMethod() } else null
-
-private fun isMainClass(psiClass: PsiClass): Boolean
-        = psiClass !is PsiAnonymousClass &&
-            !psiClass.isInterface() &&
-            (psiClass.getContainingClass() == null || psiClass.hasModifierProperty(PsiModifier.STATIC))
-
-fun PsiMethod.isMainMethod(): Boolean {
-    if (getReturnType() != PsiType.VOID) return false
-    if (!hasModifierProperty(PsiModifier.STATIC)) return false
-    if (!hasModifierProperty(PsiModifier.PUBLIC)) return false
-
-    val parameters = getParameterList().getParameters()
-    if (parameters.size != 1) return false
-
-    val `type` = parameters.single().getType()
-    if (`type` !is PsiArrayType) return false
-
-    val componentType = `type`.getComponentType()
-    return componentType.equalsToText("java.lang.String")
-}
+fun PsiMethod.isMainMethod(): Boolean = PsiMethodUtil.isMainMethod(this)
