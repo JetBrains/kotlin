@@ -93,8 +93,8 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             case ANNOTATION_CLASS:
                 return JetHighlightingColors.ANNOTATION;
             case OBJECT:
+                return JetHighlightingColors.OBJECT;
             case ENUM_ENTRY:
-                // Treat object accesses as variables to simulate the old behaviour (when variables were created for objects)
                 return JetHighlightingColors.INSTANCE_PROPERTY;
             default:
                 return descriptor.getModality() == Modality.ABSTRACT
