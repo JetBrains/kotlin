@@ -22,6 +22,7 @@ import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.jet.j2k.ast.*
+import com.intellij.psi.util.PsiMethodUtil
 
 fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier.toKotlin(it) }.joinToString(".")
 
@@ -133,3 +134,5 @@ fun PsiModifierListOwner.accessModifier(): String = when {
     hasModifierProperty(PsiModifier.PROTECTED) -> PsiModifier.PROTECTED
     else -> PsiModifier.PACKAGE_LOCAL
 }
+
+fun PsiMethod.isMainMethod(): Boolean = PsiMethodUtil.isMainMethod(this)

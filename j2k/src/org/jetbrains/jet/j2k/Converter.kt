@@ -23,6 +23,7 @@ import java.util.*
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.PsiMethodUtil
 
 public trait ConversionScope {
     public fun contains(element: PsiElement): Boolean
@@ -98,6 +99,16 @@ public class Converter private(val project: Project, val settings: ConverterSett
         }
 
         return File(convertedChildren, createMainFunction(javaFile)).assignPrototype(javaFile)
+    }
+
+    private fun createMainFunction(file: PsiJavaFile): String? {
+        for (`class` in file.getClasses()) {
+            val mainMethod = PsiMethodUtil.findMainMethod(`class`)
+            if (mainMethod != null) {
+                return "fun main(args: Array<String>) = ${`class`.getName()}.${mainMethod.getName()}(args)"
+            }
+        }
+        return null
     }
 
     fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
