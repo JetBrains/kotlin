@@ -16,16 +16,10 @@
 
 package kotlin
 
-// Temporary class for backward compatibility with Java code
-private open class OldUnit() {
-    class object {
-        public val VALUE: Unit = Unit
-    }
-}
-
-public object Unit : OldUnit() {
-    public val VALUE: Unit
-        get() = this
-
+public open class Unit internal () {
     override fun toString() = "Unit.VALUE"
+
+    public class object : Unit() {
+        public val VALUE: Unit = this: Any as Unit
+    }
 }
