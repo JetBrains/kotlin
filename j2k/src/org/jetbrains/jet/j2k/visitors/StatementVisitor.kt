@@ -24,6 +24,7 @@ import java.util.ArrayList
 import org.jetbrains.jet.j2k.hasWriteAccesses
 import org.jetbrains.jet.j2k.isInSingleLine
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.jet.j2k.singleOrNull2
 
 open class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     public var result: Statement = Statement.Empty
@@ -102,12 +103,11 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         val condition = statement.getCondition()
         val body = statement.getBody()
 
-        if (initialization is PsiDeclarationStatement && initialization.getFirstChild()!!.getNextSibling() == null) {
-            val loopVar = initialization.getFirstChild() as? PsiLocalVariable
+        if (initialization is PsiDeclarationStatement) {
+            val loopVar = initialization.getDeclaredElements().singleOrNull2() as? PsiLocalVariable
             if (loopVar != null
                     && !loopVar.hasWriteAccesses(body)
                     && !loopVar.hasWriteAccesses(condition)
-                    && loopVar.countWriteAccesses(update) == 1
                     && condition is PsiBinaryExpression) {
                 val operationTokenType = condition.getOperationTokenType()
                 val lowerBound = condition.getLOperand()
@@ -117,10 +117,8 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                         lowerBound.resolve() == loopVar &&
                         upperBound != null) {
                     val start = loopVar.getInitializer()
-                    if (start != null
-                            && update != null
-                            && update.getChildren().size == 1
-                            && update.getChildren().single().isPlusPlusExpression()) {
+                    if (start != null &&
+                            (update as? PsiExpressionStatement)?.getExpression()?.isVariablePlusPlus(loopVar) ?: false) {
                         val range = forIterationRange(start, upperBound, operationTokenType).assignNoPrototype()
                         val explicitType = if (converter.settings.specifyLocalVariableTypeByDefault) PrimitiveType(Identifier("Int").assignNoPrototype()).assignNoPrototype() else null
                         result = ForeachStatement(loopVar.declarationIdentifier(), explicitType, range, convertStatementOrBlock(body), statement.isInSingleLine())
@@ -171,6 +169,16 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
             val block = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
             result = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
         }
+    }
+
+    private fun PsiElement.isVariablePlusPlus(variable: PsiVariable): Boolean {
+        //TODO: simplify code when KT-5453 fixed
+        val pair = when (this) {
+            is PsiPostfixExpression -> getOperationTokenType() to getOperand()
+            is PsiPrefixExpression -> getOperationTokenType() to getOperand()
+            else -> return false
+        }
+        return pair.first == JavaTokenType.PLUSPLUS && (pair.second as? PsiReferenceExpression)?.resolve() == variable
     }
 
     private fun forIterationRange(start: PsiExpression, upperBound: PsiExpression, comparisonTokenType: IElementType): Expression {
@@ -335,11 +343,6 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
 
     override fun visitEmptyStatement(statement: PsiEmptyStatement) {
         result = Statement.Empty
-    }
-
-    private fun PsiElement.isPlusPlusExpression(): Boolean {
-        return (this is PsiPostfixExpression && this.getOperationTokenType() == JavaTokenType.PLUSPLUS) ||
-                (this is PsiPrefixExpression && this.getOperationTokenType() == JavaTokenType.PLUSPLUS)
     }
 
     private fun convertStatementOrBlock(statement: PsiStatement?): Statement {

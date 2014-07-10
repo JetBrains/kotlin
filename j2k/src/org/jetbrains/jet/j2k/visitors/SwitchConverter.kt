@@ -20,6 +20,7 @@ import com.intellij.psi.*
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.Converter
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.singleOrNull2
 
 class SwitchConverter(private val converter: Converter) {
     public fun convert(statement: PsiSwitchStatement): WhenStatement
@@ -113,6 +114,4 @@ class SwitchConverter(private val converter: Converter) {
     }
 
     private fun isSwitchBreak(statement: PsiStatement) = statement is PsiBreakStatement && statement.getLabelIdentifier() == null
-
-    private fun <T: Any> List<T>.singleOrNull2(): T? = if (size == 1) this[0] else null
 }

@@ -136,3 +136,6 @@ fun PsiModifierListOwner.accessModifier(): String = when {
 }
 
 fun PsiMethod.isMainMethod(): Boolean = PsiMethodUtil.isMainMethod(this)
+
+fun <T: Any> List<T>.singleOrNull2(): T? = if (size == 1) this[0] else null
+fun <T: Any> Array<T>.singleOrNull2(): T? = if (size == 1) this[0] else null
