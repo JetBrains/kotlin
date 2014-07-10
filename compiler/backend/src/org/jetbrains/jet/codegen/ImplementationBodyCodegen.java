@@ -1139,35 +1139,34 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
         if (ignoreIfTraitOrAnnotation()) return;
 
-        final MutableClosure closure = context.closure;
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, myClass);
+        assert constructorDescriptor != null : "Constructor not found for class: " + descriptor;
 
-        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, closure);
+        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             lookupConstructorExpressionsInClosureIfPresent(constructorContext);
         }
 
-        assert constructorDescriptor != null : "Constructor not found for class: " + descriptor;
-        final JvmMethodSignature constructorSignature = typeMapper.mapSignature(constructorDescriptor);
+        final JvmMethodSignature signature = typeMapper.mapSignature(constructorDescriptor);
 
-        functionCodegen.generateMethod(OtherOrigin(myClass, constructorDescriptor), constructorSignature, constructorDescriptor, constructorContext,
+        functionCodegen.generateMethod(OtherOrigin(myClass, constructorDescriptor), signature, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
                        @NotNull
                        @Override
                        protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull MethodContext context) {
-                           return new ConstructorFrameMap(constructorSignature);
+                           return new ConstructorFrameMap(signature);
                        }
 
                        @Override
                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                           generatePrimaryConstructorImpl(callableDescriptor, codegen, closure, delegationFieldsInfo);
+                           generatePrimaryConstructorImpl(callableDescriptor, codegen, delegationFieldsInfo);
                        }
                    }
         );
 
-        functionCodegen.generateDefaultIfNeeded(constructorContext, constructorSignature, constructorDescriptor,
-                                                OwnerKind.IMPLEMENTATION, DefaultParameterValueLoader.DEFAULT, null);
+        functionCodegen.generateDefaultIfNeeded(constructorContext, signature, constructorDescriptor, OwnerKind.IMPLEMENTATION,
+                                                DefaultParameterValueLoader.DEFAULT, null);
 
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor);
         FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v);
@@ -1178,17 +1177,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generatePrimaryConstructorImpl(
-            @Nullable ConstructorDescriptor constructorDescriptor,
+            @NotNull ConstructorDescriptor constructorDescriptor,
             @NotNull final ExpressionCodegen codegen,
-            @Nullable MutableClosure closure,
             @NotNull DelegationFieldsInfo fieldsInfo
     ) {
-        List<ValueParameterDescriptor> paramDescrs = constructorDescriptor != null
-                                                     ? constructorDescriptor.getValueParameters()
-                                                     : Collections.<ValueParameterDescriptor>emptyList();
-
         InstructionAdapter iv = codegen.v;
 
+        MutableClosure closure = context.closure;
         if (closure != null) {
             List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, classAsmType);
             int k = 1;
@@ -1218,10 +1213,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         int curParam = 0;
-        List<JetParameter> constructorParameters = getPrimaryConstructorParameters();
-        for (JetParameter parameter : constructorParameters) {
+        List<ValueParameterDescriptor> parameters = constructorDescriptor.getValueParameters();
+        for (JetParameter parameter : getPrimaryConstructorParameters()) {
             if (parameter.hasValOrVarNode()) {
-                VariableDescriptor descriptor = paramDescrs.get(curParam);
+                VariableDescriptor descriptor = parameters.get(curParam);
                 Type type = typeMapper.mapType(descriptor);
                 iv.load(0, classAsmType);
                 iv.load(codegen.myFrameMap.getIndex(descriptor), type);
