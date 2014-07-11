@@ -6,10 +6,6 @@
 
 package foo
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual: $actual")
-}
-
 fun stringLen(s : String?) : Int {
     val s1 : String = s ?: return 0
     return s1.length

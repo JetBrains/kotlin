@@ -48,10 +48,6 @@ fun box(): String {
 
 // Helpers
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual: $actual");
-}
-
 native
 fun String.replace(regexp: RegExp, replacement: String): String = noImpl
 

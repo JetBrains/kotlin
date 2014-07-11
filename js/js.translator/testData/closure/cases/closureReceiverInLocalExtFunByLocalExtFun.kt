@@ -1,9 +1,5 @@
 package foo
 
-fun assertEquals<T>(expected: T, actual: T, message: String) {
-    if (expected != actual) throw Exception("Failed when $message, expected = $expected, actual = $actual")
-}
-
 // workaround for Rhino
 var n = 0
 class A {

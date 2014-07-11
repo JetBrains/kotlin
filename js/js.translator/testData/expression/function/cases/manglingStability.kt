@@ -115,15 +115,6 @@ class TestMixed {
 val mixed_in_class_f = TestMixed().f
 val mixed_in_class_b = TestMixed().b
 
-// Helpers
-native
-fun String.replace(regexp: RegExp, replacement: String): String = noImpl
-
-fun String.replaceAll(regexp: String, replacement: String): String = replace(RegExp(regexp, "g"), replacement)
-
-native
-class RegExp(regexp: String, flags: String)
-
 //Testing
 
 fun test(testName: String, ff: Any, fb: Any) {

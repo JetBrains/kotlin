@@ -6,10 +6,6 @@ class A<T>(val a: T) {
 
 fun <T> T.bar() = { this }
 
-fun assertEquals(expected: String, actual: String) {
-    if (expected != actual) throw Exception("Expected: $expected, actual: $actual")
-}
-
 fun box(): String {
     assertEquals("ok", A("ok").foo())
     assertEquals("a42", "a42".bar()())
