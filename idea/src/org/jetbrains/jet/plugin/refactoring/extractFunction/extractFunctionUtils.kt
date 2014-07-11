@@ -210,7 +210,11 @@ private fun ExtractionData.analyzeControlFlow(
 
     val typeOfDefaultFlow = defaultExits.getResultType(pseudocode, bindingContext, options)
     val returnValueType = valuedReturnExits.getResultType(pseudocode, bindingContext, options)
-    val defaultControlFlow = DefaultControlFlow(if (returnValueType.isMeaningful()) returnValueType else typeOfDefaultFlow, declarationsToCopy)
+
+    val defaultReturnType = if (returnValueType.isMeaningful()) returnValueType else typeOfDefaultFlow
+    if (defaultReturnType.isError()) return Pair(DefaultControlFlow(DEFAULT_RETURN_TYPE, declarationsToCopy), ErrorMessage.ERROR_TYPES)
+
+    val defaultControlFlow = DefaultControlFlow(defaultReturnType, declarationsToCopy)
 
     if (declarationsToReport.isNotEmpty()) {
         val localVarStr = declarationsToReport.map { it.renderForMessage(bindingContext)!! }.distinct().sort()
@@ -356,6 +360,9 @@ private fun JetType.processTypeIfExtractable(
 
             typeToCheck.canBeReferencedViaImport() ->
                 extractable
+
+            typeToCheck.isError() ->
+                false
 
             else -> {
                 nonDenotableTypes.add(typeToCheck)
@@ -756,7 +763,7 @@ fun ExtractionDescriptor.getFunctionText(
         }
 
         with(controlFlow.returnType) {
-            if (isDefault()) builder.noReturnType() else builder.returnType(descriptorRenderer.renderType(this))
+            if (isDefault() || isError()) builder.noReturnType() else builder.returnType(descriptorRenderer.renderType(this))
         }
 
         builder.typeConstraints(typeParameters.flatMap { it.originalConstraints }.map { it.getText()!! })

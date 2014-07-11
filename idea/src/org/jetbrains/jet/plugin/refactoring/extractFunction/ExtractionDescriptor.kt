@@ -180,6 +180,7 @@ class AnalysisResult (
         NO_CONTAINER
         SUPER_CALL
         DENOTABLE_TYPES
+        ERROR_TYPES
         MULTIPLE_OUTPUT
         OUTPUT_AND_EXIT_POINT
         MULTIPLE_EXIT_POINTS
@@ -200,6 +201,7 @@ class AnalysisResult (
                         NO_CONTAINER -> "cannot.refactor.no.container"
                         SUPER_CALL -> "cannot.extract.super.call"
                         DENOTABLE_TYPES -> "parameter.types.are.not.denotable"
+                        ERROR_TYPES -> "error.types.in.generated.function"
                         MULTIPLE_OUTPUT -> "selected.code.fragment.has.multiple.output.values"
                         OUTPUT_AND_EXIT_POINT -> "selected.code.fragment.has.output.values.and.exit.points"
                         MULTIPLE_EXIT_POINTS -> "selected.code.fragment.has.multiple.exit.points"

@@ -53,6 +53,7 @@ fun getFunctionForExtractedFragment(
                 ErrorMessage.NO_CONTAINER -> "Cannot perform an action at this breakpoint ${breakpointFile.getName()}:${breakpointLine}"
                 ErrorMessage.SUPER_CALL -> "Cannot perform an action for expression with super call"
                 ErrorMessage.DENOTABLE_TYPES -> "Cannot perform an action because following types are unavailable from debugger scope"
+                ErrorMessage.ERROR_TYPES -> "Cannot perform an action because this code fragment contains erroneous types"
                 ErrorMessage.MULTIPLE_OUTPUT -> "Cannot perform an action because this code fragment changes more than one variable"
                 ErrorMessage.DECLARATIONS_OUT_OF_SCOPE,
                 ErrorMessage.OUTPUT_AND_EXIT_POINT,
