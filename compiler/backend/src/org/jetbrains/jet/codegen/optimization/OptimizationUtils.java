@@ -20,4 +20,5 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 
 public class OptimizationUtils {
     public final static int API = Opcodes.ASM5;
+    public static final boolean DEFAULT_OPTIMIZATION_FLAG = true;
 }
