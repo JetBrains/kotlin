@@ -19,7 +19,7 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.*
 
 class NewClassExpression(
-        val name: Element,
+        val name: ReferenceElement?,
         val arguments: List<Expression>,
         val qualifier: Expression = Expression.Empty,
         val anonymousClass: AnonymousClassBody? = null
@@ -34,7 +34,9 @@ class NewClassExpression(
             builder.append(qualifier).append(if (qualifier.isNullable) "!!." else ".")
         }
 
-        builder.append(name)
+        if (name != null) {
+            builder.append(name)
+        }
 
         if (anonymousClass == null || !anonymousClass.extendsTrait) {
             builder.append("(").append(arguments, ", ").append(")")

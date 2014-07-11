@@ -254,17 +254,15 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
                     converter.convertExpressions(expression.getArrayDimensions()))
         }
         else {
-            result = createNewClassExpression(expression)
+            val anonymousClass = expression.getAnonymousClass()
+            val qualifier = expression.getQualifier()
+            val classRef = expression.getClassOrAnonymousClassReference()
+            val classRefConverted = if (classRef != null) converter.convertCodeReferenceElement(classRef, hasExternalQualifier = qualifier != null) else null
+            result = NewClassExpression(classRefConverted,
+                                      convertArguments(expression),
+                                      converter.convertExpression(qualifier),
+                                      if (anonymousClass != null) converter.convertAnonymousClassBody(anonymousClass) else null)
         }
-    }
-
-    private fun createNewClassExpression(expression: PsiNewExpression): Expression {
-        val anonymousClass = expression.getAnonymousClass()
-        val classReference = expression.getClassOrAnonymousClassReference()
-        return NewClassExpression(converter.convertElement(classReference),
-                                  convertArguments(expression),
-                                  converter.convertExpression(expression.getQualifier()),
-                                  if (anonymousClass != null) converter.convertAnonymousClassBody(anonymousClass) else null)
     }
 
     override fun visitParenthesizedExpression(expression: PsiParenthesizedExpression) {
@@ -317,16 +315,18 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
             }
 
             // add qualification for static members from base classes and also this works for enum constants in switch
+            val context = converter.specialContext ?: expression
             if (target is PsiMember
                     && target.hasModifierProperty(PsiModifier.STATIC)
                     && target.getContainingClass() != null
-                    && !PsiTreeUtil.isAncestor(target.getContainingClass(), expression, true)
-                    && !isStaticallyImported(target, expression)) {
+                    && !PsiTreeUtil.isAncestor(target.getContainingClass(), context, true)
+                    && !target.isImported(context.getContainingFile() as PsiJavaFile)) {
                 var member: PsiMember = target
                 var code = Identifier.toKotlin(referenceName)
-                while (member.getContainingClass() != null) {
-                    code = Identifier.toKotlin(member.getContainingClass()!!.getName()!!) + "." + code
-                    member = member.getContainingClass()!!
+                while (true) {
+                    val containingClass = member.getContainingClass() ?: break
+                    code = Identifier.toKotlin(containingClass.getName()!!) + "." + code
+                    member = containingClass
                 }
                 result = Identifier(code, false, false)
                 return
@@ -432,24 +432,5 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
             context = _context.getContext()
         }
         return ""
-    }
-
-    private fun isStaticallyImported(member: PsiMember, context: PsiElement): Boolean {
-        val containingFile = context.getContainingFile()
-        val targetContainingClass = member.getContainingClass()
-        if (containingFile is PsiJavaFile && targetContainingClass != null) {
-            val importList = containingFile.getImportList();
-            if (importList != null) {
-                return importList.getImportStaticStatements().any { importResolvesTo(it, member) }
-            }
-        }
-        return false
-    }
-
-    private fun importResolvesTo(importStatement: PsiImportStaticStatement, member: PsiMember): Boolean {
-        val targetContainingClass = member.getContainingClass()
-        val importedClass = importStatement.resolveTargetClass()
-        return importedClass == targetContainingClass
-                && (importStatement.isOnDemand() || importStatement.getReferenceName() == member.getName())
     }
 }

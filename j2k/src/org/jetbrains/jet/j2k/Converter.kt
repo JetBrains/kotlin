@@ -24,6 +24,7 @@ import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiMethodUtil
+import com.intellij.psi.util.PsiTreeUtil
 
 public trait ConversionScope {
     public fun contains(element: PsiElement): Boolean
@@ -34,29 +35,53 @@ public class FilesConversionScope(val files: Collection<PsiJavaFile>) : Conversi
 }
 
 public class Converter private(val project: Project, val settings: ConverterSettings, val conversionScope: ConversionScope, val state: Converter.State) {
-    private class State(val typeConverter: TypeConverter,
-                        val methodReturnType: PsiType?,
+    private class State(val methodReturnType: PsiType?,
                         val expressionVisitorFactory: (Converter) -> ExpressionVisitor,
-                        val statementVisitorFactory: (Converter) -> StatementVisitor)
-    val typeConverter: TypeConverter = state.typeConverter
+                        val statementVisitorFactory: (Converter) -> StatementVisitor,
+                        val specialContext: PsiElement?,
+                        val importList: ImportList?,
+                        val importsToAdd: MutableCollection<String>?)
+
+    val typeConverter: TypeConverter = TypeConverter(this)
+
     val methodReturnType: PsiType? = state.methodReturnType
+    val specialContext: PsiElement? = state.specialContext
+    val importNames: Set<String> = state.importList?.imports?.mapTo(HashSet<String>()) { it.name } ?: setOf()
+    val importsToAdd: MutableCollection<String>? = state.importsToAdd
 
     private val expressionVisitor = state.expressionVisitorFactory(this)
     private val statementVisitor = state.statementVisitorFactory(this)
 
     class object {
-        public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope): Converter
-                = Converter(project, settings, conversionScope, State(TypeConverter(settings, conversionScope), null, { ExpressionVisitor(it) }, { StatementVisitor(it) }))
+        public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope): Converter {
+            val state = State(null, { ExpressionVisitor(it) }, { StatementVisitor(it) }, null, null, null)
+            return Converter(project, settings, conversionScope, state)
+        }
     }
 
     fun withMethodReturnType(methodReturnType: PsiType?): Converter
-            = Converter(project, settings, conversionScope, State(typeConverter, methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory))
+            = Converter(project, settings, conversionScope,
+                        State(methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withExpressionVisitor(factory: (Converter) -> ExpressionVisitor): Converter
-            = Converter(project, settings, conversionScope, State(typeConverter, state.methodReturnType, factory, state.statementVisitorFactory))
+            = Converter(project, settings, conversionScope,
+                        State(state.methodReturnType, factory, state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withStatementVisitor(factory: (Converter) -> StatementVisitor): Converter
-            = Converter(project, settings, conversionScope, State(typeConverter, state.methodReturnType, state.expressionVisitorFactory, factory))
+            = Converter(project, settings, conversionScope,
+                        State(state.methodReturnType, state.expressionVisitorFactory, factory, state.specialContext, state.importList, state.importsToAdd))
+
+    fun withSpecialContext(context: PsiElement): Converter
+            = Converter(project, settings, conversionScope,
+                        State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, context, state.importList, state.importsToAdd))
+
+    private fun withImportList(importList: ImportList): Converter
+            = Converter(project, settings, conversionScope,
+                        State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, importList, state.importsToAdd))
+
+    private fun withImportsToAdd(importsToAdd: MutableCollection<String>): Converter
+            = Converter(project, settings, conversionScope,
+                        State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, state.importList, importsToAdd))
 
     public fun elementToKotlin(element: PsiElement): String {
         val converted = convertTopElement(element) ?: return ""
@@ -80,21 +105,22 @@ public class Converter private(val project: Project, val settings: ConverterSett
     }
 
     private fun convertFile(javaFile: PsiJavaFile): File {
+        val importsToAdd = LinkedHashSet<String>()
+        var converter = this.withImportsToAdd(importsToAdd)
         var convertedChildren = javaFile.getChildren().map {
             if (it is PsiImportList) {
                 val importList = convertImportList(it)
-                typeConverter.importList = importList
+                converter = converter.withImportList(importList)
                 importList
             }
             else {
-                convertTopElement(it)
+                converter.convertTopElement(it)
             }
         }.filterNotNull()
 
-        typeConverter.importList = null
-        if (typeConverter.importsToAdd.isNotEmpty()) {
+        if (importsToAdd.isNotEmpty()) {
             val importList = convertedChildren.filterIsInstance(javaClass<ImportList>()).first()
-            val newImportList = ImportList(importList.imports + typeConverter.importsToAdd).assignPrototypesFrom(importList)
+            val newImportList = ImportList(importList.imports + importsToAdd.map { Import(it).assignNoPrototype() }).assignPrototypesFrom(importList)
             convertedChildren = convertedChildren.map { if (it == importList) newImportList else it }
         }
 
@@ -392,12 +418,53 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return expressionVisitor.result.assignPrototype(expression)
     }
 
+    //TODO: drop this method - it has unclear semantics
     fun convertElement(element: PsiElement?): Element {
         if (element == null) return Element.Empty
 
         val elementVisitor = ElementVisitor(this)
         element.accept(elementVisitor)
         return elementVisitor.result.assignPrototype(element)
+    }
+
+    fun convertCodeReferenceElement(element: PsiJavaCodeReferenceElement, hasExternalQualifier: Boolean, typeArgsConverted: List<Element>? = null): ReferenceElement {
+        val typeArgs = typeArgsConverted ?: typeConverter.convertTypes(element.getTypeParameters())
+
+        if (element.isQualified()) {
+            var result = Identifier.toKotlin(element.getReferenceName()!!)
+            var qualifier = element.getQualifier()
+            while (qualifier != null) {
+                val codeRefElement = qualifier as PsiJavaCodeReferenceElement
+                result = Identifier.toKotlin(codeRefElement.getReferenceName()!!) + "." + result
+                qualifier = codeRefElement.getQualifier()
+            }
+            return ReferenceElement(Identifier(result).assignNoPrototype(), typeArgs).assignPrototype(element)
+        }
+        else {
+            if (!hasExternalQualifier) {
+                // references to nested classes may need correction
+                val targetClass = element.resolve() as? PsiClass
+                if (targetClass != null) {
+                    val identifier = constructNestedClassReferenceIdentifier(targetClass, specialContext ?: element)
+                    if (identifier != null) {
+                        return ReferenceElement(identifier, typeArgs).assignPrototype(element)
+                    }
+                }
+            }
+
+            return ReferenceElement(Identifier(element.getReferenceName()!!).assignNoPrototype(), typeArgs).assignPrototype(element)
+        }
+    }
+
+    private fun constructNestedClassReferenceIdentifier(psiClass: PsiClass, context: PsiElement): Identifier? {
+        val outerClass = psiClass.getContainingClass()
+        if (outerClass != null
+                && !PsiTreeUtil.isAncestor(outerClass, context, true)
+                && !psiClass.isImported(context.getContainingFile() as PsiJavaFile)) {
+            val qualifier = constructNestedClassReferenceIdentifier(outerClass, context)?.name ?: outerClass.getName()!!
+            return Identifier(Identifier.toKotlin(qualifier) + "." + Identifier.toKotlin(psiClass.getName()!!)).assignNoPrototype()
+        }
+        return null
     }
 
     fun convertTypeElement(element: PsiTypeElement?): TypeElement

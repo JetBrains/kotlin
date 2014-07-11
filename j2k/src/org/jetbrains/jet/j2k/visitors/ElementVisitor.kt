@@ -42,23 +42,6 @@ class ElementVisitor(private val converter: Converter) : JavaElementVisitor() {
         result = ExpressionList(converter.convertExpressions(list.getExpressions()))
     }
 
-    override fun visitReferenceElement(reference: PsiJavaCodeReferenceElement) {
-        val types = typeConverter.convertTypes(reference.getTypeParameters())
-        if (!reference.isQualified()) {
-            result = ReferenceElement(Identifier(reference.getReferenceName()!!).assignNoPrototype(), types)
-        }
-        else {
-            var code = Identifier.toKotlin(reference.getReferenceName()!!)
-            var qualifier = reference.getQualifier()
-            while (qualifier != null) {
-                val p = qualifier as PsiJavaCodeReferenceElement
-                code = Identifier.toKotlin(p.getReferenceName()!!) + "." + code
-                qualifier = p.getQualifier()
-            }
-            result = ReferenceElement(Identifier(code).assignNoPrototype(), types)
-        }
-    }
-
     override fun visitTypeElement(`type`: PsiTypeElement) {
         result = TypeElement(typeConverter.convertType(`type`.getType()))
     }

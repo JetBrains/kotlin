@@ -78,15 +78,15 @@ class ErrorType : NotNullType() {
     }
 }
 
-class ClassType(val name: Identifier, val typeArgs: List<Element>, nullability: Nullability, settings: ConverterSettings)
+class ClassType(val referenceElement: ReferenceElement, nullability: Nullability, settings: ConverterSettings)
   : MayBeNullableType(nullability, settings) {
 
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(name).append(typeArgs, ", ", "<", ">").append(isNullableStr)
+        builder append referenceElement append isNullableStr
     }
 
-    override fun toNotNullType(): Type = ClassType(name, typeArgs, Nullability.NotNull, settings).assignPrototypesFrom(this)
-    override fun toNullableType(): Type = ClassType(name, typeArgs, Nullability.Nullable, settings).assignPrototypesFrom(this)
+    override fun toNotNullType(): Type = ClassType(referenceElement, Nullability.NotNull, settings).assignPrototypesFrom(this)
+    override fun toNullableType(): Type = ClassType(referenceElement, Nullability.Nullable, settings).assignPrototypesFrom(this)
 }
 
 class ArrayType(val elementType: Type, nullability: Nullability, settings: ConverterSettings)

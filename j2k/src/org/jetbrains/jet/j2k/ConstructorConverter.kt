@@ -183,8 +183,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             var body = postProcessBody(bodyConverter.convertBlock(constructor.getBody()))
             val containingClass = constructor.getContainingClass()
             val typeParameterList = converter.convertTypeParameterList(containingClass?.getTypeParameterList())
-            val factoryFunctionType = ClassType(containingClass?.declarationIdentifier() ?: Identifier.Empty,
-                                                typeParameterList.parameters,
+            val factoryFunctionType = ClassType(ReferenceElement(containingClass?.declarationIdentifier() ?: Identifier.Empty, typeParameterList.parameters).assignNoPrototype(),
                                                 Nullability.NotNull,
                                                 converter.settings).assignNoPrototype()
             return FactoryFunction(constructor.declarationIdentifier(), annotations, correctFactoryFunctionAccess(modifiers),
@@ -201,13 +200,14 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         val body = primaryConstructor.getBody()
 
         val parameterUsageReplacementMap = HashMap<String, String>()
+        val correctedTypeConverter = converter.withSpecialContext(psiClass).typeConverter /* to correct nested class references */
         val block = if (body != null) {
             val statementsToRemove = HashSet<PsiStatement>()
             for (parameter in params) {
                 val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, primaryConstructor) ?: continue
 
-                val fieldType = typeConverter.convertVariableType(field)
-                val parameterType = typeConverter.convertVariableType(parameter)
+                val fieldType = correctedTypeConverter.convertVariableType(field)
+                val parameterType = correctedTypeConverter.convertVariableType(parameter)
                 // types can be different only in nullability
                 val `type` = if (fieldType == parameterType) {
                     fieldType
@@ -244,6 +244,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values
         val correctedConverter = converter.withExpressionVisitor { ReplacingExpressionVisitor(this, parameterUsageReplacementMap, it) }
+                                          .withSpecialContext(psiClass) /* to correct nested class references */
 
         val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
@@ -259,7 +260,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             else
                 null
             if (!parameterToField.containsKey(parameter)) {
-                converter.convertParameter(parameter, defaultValue = defaultValue)
+                correctedConverter.convertParameter(parameter, defaultValue = defaultValue)
             }
             else {
                 val (field, `type`) = parameterToField[parameter]!!

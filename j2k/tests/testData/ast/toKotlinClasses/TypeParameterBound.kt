@@ -1,6 +1,6 @@
 import java.util.*
-import kotlin.List
 import kotlin.Iterator
+import kotlin.List
 
 trait I<T : List<Iterator<String>>>
 

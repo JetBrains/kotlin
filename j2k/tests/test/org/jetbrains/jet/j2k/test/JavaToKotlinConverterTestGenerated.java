@@ -891,6 +891,31 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/constructors/methodCallInFactoryFun.java");
         }
         
+        @TestMetadata("nestedClassNameInParameterDefaults.java")
+        public void testNestedClassNameInParameterDefaults() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInParameterDefaults.java");
+        }
+        
+        @TestMetadata("nestedClassNameInParameterDefaults2.java")
+        public void testNestedClassNameInParameterDefaults2() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInParameterDefaults2.java");
+        }
+        
+        @TestMetadata("nestedClassNameInParameterDefaults3.java")
+        public void testNestedClassNameInParameterDefaults3() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInParameterDefaults3.java");
+        }
+        
+        @TestMetadata("nestedClassNameInParameterDefaults4.java")
+        public void testNestedClassNameInParameterDefaults4() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInParameterDefaults4.java");
+        }
+        
+        @TestMetadata("nestedClassNameInSuperParameters.java")
+        public void testNestedClassNameInSuperParameters() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInSuperParameters.java");
+        }
+        
         @TestMetadata("noPrimary.java")
         public void testNoPrimary() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/noPrimary.java");
@@ -1730,6 +1755,16 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("kt-1074.java")
         public void testKt_1074() throws Exception {
             doTest("j2k/tests/testData/ast/issues/kt-1074.java");
+        }
+        
+        @TestMetadata("kt-5294.java")
+        public void testKt_5294() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/kt-5294.java");
+        }
+        
+        @TestMetadata("kt-5400.java")
+        public void testKt_5400() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/kt-5400.java");
         }
         
         @TestMetadata("kt-543.java")
