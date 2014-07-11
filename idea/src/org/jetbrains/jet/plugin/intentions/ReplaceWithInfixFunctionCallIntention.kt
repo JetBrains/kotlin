@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.types.PackageType
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.codeInsight.hint.HintManager
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 
 public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetCallExpression): Boolean {

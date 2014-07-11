@@ -53,7 +53,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -325,7 +325,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         ResolveSessionForBodies resolveSessionForBodies = ResolvePackage.getLazyResolveSession(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             BindingContext context = resolveSessionForBodies.resolveToElement(inlinedExpression);
-            Call call = BindingContextUtilPackage.getCallWithAssert(inlinedExpression, context);
+            Call call = CallUtilPackage.getCallWithAssert(inlinedExpression, context);
 
             JetElement callElement = call.getCallElement();
             if (callElement instanceof JetCallExpression && hasIncompleteTypeInferenceDiagnostic(call, context) &&
@@ -344,7 +344,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     @Nullable
     private static String getTypeArgumentsStringForCall(@NotNull JetExpression initializer) {
         BindingContext context = AnalyzerFacadeWithCache.getContextForElement(initializer);
-        ResolvedCall<?> call = BindingContextUtilPackage.getResolvedCall(initializer, context);
+        ResolvedCall<?> call = CallUtilPackage.getResolvedCall(initializer, context);
         if (call == null) return null;
 
         List<JetType> typeArguments = Lists.newArrayList();

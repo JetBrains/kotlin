@@ -33,7 +33,7 @@ import org.jetbrains.jet.JetNodeTypes
 import java.math.BigInteger
 import org.jetbrains.jet.lang.diagnostics.Errors
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 
 public class ConstantExpressionEvaluator private (val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
 

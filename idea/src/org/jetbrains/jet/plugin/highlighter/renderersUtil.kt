@@ -19,12 +19,8 @@ package org.jetbrains.jet.plugin.highlighter.renderersUtil
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.calls.util.*
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
+import org.jetbrains.jet.lang.resolve.calls.callUtil.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.highlighter.IdeRenderers

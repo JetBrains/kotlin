@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -187,7 +187,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
     ) {
         if (!(expression instanceof JetSimpleNameExpression || expression instanceof JetThisExpression)) return null;
 
-        ResolvedCall<?> thisCall = BindingContextUtilPackage.getResolvedCall(expression, context.trace.getBindingContext());
+        ResolvedCall<?> thisCall = CallUtilPackage.getResolvedCall(expression, context.trace.getBindingContext());
         if (unwrapVariableAsFunction && thisCall instanceof VariableAsFunctionResolvedCall) {
             return ((VariableAsFunctionResolvedCall) thisCall).getVariableCall().getResultingDescriptor();
         }

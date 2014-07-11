@@ -62,7 +62,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 
 public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 

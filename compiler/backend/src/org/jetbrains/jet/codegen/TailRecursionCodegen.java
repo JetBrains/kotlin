@@ -34,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.TAIL_RECURSION_CALL;
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 
 public class TailRecursionCodegen {
 

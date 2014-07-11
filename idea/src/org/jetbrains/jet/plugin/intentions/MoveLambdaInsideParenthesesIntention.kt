@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 
 public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(
         "move.lambda.inside.parentheses", javaClass()) {

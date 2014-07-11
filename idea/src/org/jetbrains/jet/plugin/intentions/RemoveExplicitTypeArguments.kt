@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetTypeArgumentList
 import org.jetbrains.jet.lang.psi.JetReturnExpression
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 
 public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgumentList>(

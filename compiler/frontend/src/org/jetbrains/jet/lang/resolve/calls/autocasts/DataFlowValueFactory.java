@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetModuleUtil;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -166,7 +166,7 @@ public class DataFlowValueFactory {
     ) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, simpleNameExpression);
         if (declarationDescriptor instanceof VariableDescriptor) {
-            ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(simpleNameExpression, bindingContext);
+            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(simpleNameExpression, bindingContext);
             // todo uncomment assert
             // KT-4113
             // for now it fails for resolving 'invoke' convention, return it after 'invoke' algorithm changes

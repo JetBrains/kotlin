@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping;
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -50,7 +50,7 @@ public class InlineDescriptorUtils {
             boolean allowsNonLocalReturns = false;
             JetExpression call = JetPsiUtil.getParentCallIfPresent((JetFunctionLiteralExpression) containingFunction);
             if (call != null) {
-                ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(call, bindingContext);
+                ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(call, bindingContext);
                 CallableDescriptor resultingDescriptor = resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
                 if (resultingDescriptor instanceof SimpleFunctionDescriptor &&
                     ((SimpleFunctionDescriptor) resultingDescriptor).getInlineStrategy().isInline()) {

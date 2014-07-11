@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
@@ -38,7 +38,7 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
             @NotNull JetReferenceExpression referenceExpression,
             @Nullable JsExpression receiver
     ) {
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCallWithAssert(referenceExpression, context.bindingContext());
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(referenceExpression, context.bindingContext());
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall();
         }

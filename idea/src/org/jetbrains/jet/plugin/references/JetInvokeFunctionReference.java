@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -47,8 +47,8 @@ class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> i
     @Override
     @NotNull
     protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
-        Call call = BindingContextUtilPackage.getCall(getElement(), context);
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(call, context);
+        Call call = CallUtilPackage.getCall(getElement(), context);
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(call, context);
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return Collections.<DeclarationDescriptor>singleton(
                     ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall().getCandidateDescriptor());

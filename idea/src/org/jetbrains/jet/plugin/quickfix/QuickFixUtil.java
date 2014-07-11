@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
@@ -108,7 +108,7 @@ public class QuickFixUtil {
     @Nullable
     public static JetParameterList getParameterListOfCallee(@NotNull JetCallExpression callExpression) {
         BindingContext context = ResolvePackage.getBindingContext(callExpression.getContainingJetFile());
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(callExpression, context);
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(callExpression, context);
         if (resolvedCall == null) return null;
         PsiElement declaration = safeGetDeclaration(resolvedCall);
         if (declaration instanceof JetFunction) {

@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
@@ -67,7 +67,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     @Override
     public void visitCallExpression(@NotNull JetCallExpression expression) {
         JetExpression callee = expression.getCalleeExpression();
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, bindingContext);
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, bindingContext);
         if (callee instanceof JetReferenceExpression && resolvedCall != null) {
             DeclarationDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {

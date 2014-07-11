@@ -28,7 +28,7 @@ import java.io.File
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
-import org.jetbrains.jet.lang.resolve.calls.util.getAllValueArguments
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getAllValueArguments
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.lang.psi.ValueArgument
@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getParentResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor

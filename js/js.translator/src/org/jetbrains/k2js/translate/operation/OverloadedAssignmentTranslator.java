@@ -20,7 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -39,7 +39,7 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
     private OverloadedAssignmentTranslator(@NotNull JetBinaryExpression expression,
             @NotNull TranslationContext context) {
         super(expression, context);
-        resolvedCall = BindingContextUtilPackage.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
+        resolvedCall = CallUtilPackage.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
     }
 
     @NotNull

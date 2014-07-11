@@ -20,7 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -35,7 +35,7 @@ public final class OverloadedIncrementTranslator extends IncrementTranslator {
             @NotNull TranslationContext context
     ) {
         super(expression, context);
-        this.resolvedCall = BindingContextUtilPackage.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
+        this.resolvedCall = CallUtilPackage.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
     }
 
 

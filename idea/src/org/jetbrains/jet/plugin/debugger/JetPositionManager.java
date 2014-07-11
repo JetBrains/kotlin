@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension;
@@ -284,7 +284,7 @@ public class JetPositionManager implements PositionManager {
 
         if (!(parent instanceof JetElement)) return false;
 
-        ResolvedCall<?> call = BindingContextUtilPackage.getResolvedCall((JetElement) parent, context);
+        ResolvedCall<?> call = CallUtilPackage.getResolvedCall((JetElement) parent, context);
         if (call == null) return false;
 
         InlineStrategy inlineType = InlineUtil.getInlineType(call.getResultingDescriptor());

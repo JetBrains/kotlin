@@ -32,7 +32,7 @@ import org.jetbrains.jet.plugin.util.Maybe
 import org.jetbrains.jet.plugin.util.MaybeError
 import org.jetbrains.jet.plugin.util.MaybeValue
 import com.intellij.codeInsight.hint.HintManager
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 
 // Internal because you shouldn't construct this manually. You can end up with an inconsistant CallDescription.
 public class CallDescription internal (
