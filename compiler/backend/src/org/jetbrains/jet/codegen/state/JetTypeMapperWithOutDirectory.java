@@ -32,7 +32,7 @@ public class JetTypeMapperWithOutDirectory extends JetTypeMapper {
     public JetTypeMapperWithOutDirectory(
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
-            @NotNull File outDirectory
+            @Nullable File outDirectory
     ) {
         super(bindingContext, classBuilderMode);
         this.outDirectory = outDirectory;
