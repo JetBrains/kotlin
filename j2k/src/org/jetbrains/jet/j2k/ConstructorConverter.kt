@@ -121,12 +121,10 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
     }
 
     private fun dropConstructorsForDefaultValues(primary: PsiMethod, toTargetConstructorMap: Map<PsiMethod, TargetConstructorInfo>) {
-        //TODO: should we drop when annotations exist?
-
         val dropCandidates = toTargetConstructorMap
                 .filter { it.value.parameterDefaults != null }
                 .map { it.key }
-                .filter { it.accessModifier() == primary.accessModifier() }
+                .filter { it.accessModifier() == primary.accessModifier() && it.getModifierList().getAnnotations().isEmpty() /* do not drop constructors with annotations */ }
                 .sortBy { -it.getParameterList().getParametersCount() } // we will try to drop them starting from ones with more parameters
         val primaryParamCount = primary.getParameterList().getParametersCount()
         @DropCandidatesLoop
@@ -340,7 +338,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         //TODO: we can generate it private when secondary constructors are supported by Kotlin
         //val modifiers = Modifiers(listOf(Modifier.PRIVATE)).assignNoPrototype()
         val parameterList = ParameterList(parameters).assignNoPrototype()
-        val constructorSignature = PrimaryConstructorSignature(modifiers, parameterList).assignNoPrototype()
+        val constructorSignature = PrimaryConstructorSignature(Annotations.Empty, modifiers, parameterList).assignNoPrototype()
         val updatedMembers = classBody.members.filter { !fieldsToInitialize.contains(it) }
         return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, updatedFactoryFunctions, classBody.lBrace, classBody.rBrace)
     }

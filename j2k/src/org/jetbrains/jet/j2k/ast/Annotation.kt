@@ -66,3 +66,6 @@ class Annotations(val annotations: List<Annotation>, val newLines: Boolean) : El
         val Empty = Annotations(listOf(), false)
     }
 }
+
+fun Annotations.withBrackets(): Annotations
+        = Annotations(annotations.map { Annotation(it.name, it.arguments, true).assignPrototypesFrom(it) }, newLines).assignPrototypesFrom(this)

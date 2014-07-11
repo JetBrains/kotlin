@@ -821,6 +821,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/constructors/chain.java");
         }
         
+        @TestMetadata("constructorAnnotations.java")
+        public void testConstructorAnnotations() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/constructorAnnotations.java");
+        }
+        
         @TestMetadata("customerBuilder.java")
         public void testCustomerBuilder() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/customerBuilder.java");
