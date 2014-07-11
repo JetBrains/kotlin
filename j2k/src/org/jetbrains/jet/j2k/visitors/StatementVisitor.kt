@@ -73,7 +73,13 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
     }
 
     override fun visitDeclarationStatement(statement: PsiDeclarationStatement) {
-        result = DeclarationStatement(statement.getDeclaredElements().map { converter.convertElement(it) })
+        result = DeclarationStatement(statement.getDeclaredElements().map {
+            when (it) {
+                is PsiLocalVariable -> converter.convertLocalVariable(it)
+                is PsiClass -> converter.convertClass(it)
+                else -> Element.Empty //what else can be here?
+            }
+        })
     }
 
     override fun visitDoWhileStatement(statement: PsiDoWhileStatement) {

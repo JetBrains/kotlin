@@ -122,10 +122,6 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
                              expression.isInSingleLine())
     }
 
-    override fun visitExpressionList(list: PsiExpressionList) {
-        result = ExpressionList(converter.convertExpressions(list.getExpressions()))
-    }
-
     override fun visitInstanceOfExpression(expression: PsiInstanceOfExpression) {
         val checkType = expression.getCheckType()
         result = IsOperator(converter.convertExpression(expression.getOperand()),

@@ -218,7 +218,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         else -> throw IllegalArgumentException("Unknown member: $member")
     }
 
-    private fun convertClass(psiClass: PsiClass): Class {
+    fun convertClass(psiClass: PsiClass): Class {
         val annotations = convertAnnotations(psiClass)
         var modifiers = convertModifiers(psiClass)
         val typeParameters = convertTypeParameterList(psiClass.getTypeParameterList())
@@ -258,11 +258,12 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val modifiers = convertModifiers(field)
         val name = field.declarationIdentifier()
         val converted = if (field is PsiEnumConstant) {
+            val argumentList = field.getArgumentList()
             EnumConstant(name,
                          annotations,
                          modifiers,
                          typeConverter.convertType(field.getType(), Nullability.NotNull),
-                         convertElement(field.getArgumentList()))
+                         ExpressionList(convertExpressions(argumentList?.getExpressions())).assignPrototype(argumentList))
         }
         else {
             val isVal = isVal(field)
@@ -418,13 +419,16 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return expressionVisitor.result.assignPrototype(expression)
     }
 
-    //TODO: drop this method - it has unclear semantics
-    fun convertElement(element: PsiElement?): Element {
-        if (element == null) return Element.Empty
-
-        val elementVisitor = ElementVisitor(this)
-        element.accept(elementVisitor)
-        return elementVisitor.result.assignPrototype(element)
+    fun convertLocalVariable(variable: PsiLocalVariable): LocalVariable {
+        val isVal = variable.hasModifierProperty(PsiModifier.FINAL) ||
+                variable.getInitializer() == null/* we do not know actually and prefer val until we have better analysis*/ ||
+                !variable.hasWriteAccesses(variable.getContainingMethod())
+        return LocalVariable(variable.declarationIdentifier(),
+                               convertAnnotations(variable),
+                               convertModifiers(variable),
+                               variableTypeToDeclare(variable, settings.specifyLocalVariableTypeByDefault, isVal),
+                               convertExpression(variable.getInitializer(), variable.getType()),
+                               isVal).assignPrototype(variable)
     }
 
     fun convertCodeReferenceElement(element: PsiJavaCodeReferenceElement, hasExternalQualifier: Boolean, typeArgsConverted: List<Element>? = null): ReferenceElement {

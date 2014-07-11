@@ -2364,6 +2364,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/nullability/MethodReturnsNullInAnonymousClass.java");
         }
         
+        @TestMetadata("MethodReturnsNullInLocalClass.java")
+        public void testMethodReturnsNullInLocalClass() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodReturnsNullInLocalClass.java");
+        }
+        
         @TestMetadata("MethodReturnsTernaryNull.java")
         public void testMethodReturnsTernaryNull() throws Exception {
             doTest("j2k/tests/testData/ast/nullability/MethodReturnsTernaryNull.java");
