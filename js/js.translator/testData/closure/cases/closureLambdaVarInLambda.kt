@@ -2,10 +2,6 @@
 
 package foo
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected = $expected, actual = $actual")
-}
-
 fun box(): String {
     var foo = { 1 }
     var bar = 1

@@ -2,47 +2,38 @@ package foo
 
 fun run<T>(f: () -> T) = f()
 
-class Fail(val message: String) : RuntimeException(message) {
-    val isFail = true // workaround for exception handling
-}
-
-
 class A {
-    var testName = ""
-    fun assertEquals(actual: Int, expected: Int, message: String) =
-            if (actual != expected) throw Fail("$message in $testName test.")
-
     val a = 12
     var b = 1
 
     fun boo(c: Int) = c
 
     fun litlit() {
-        testName = "litlit"
+        val testName = "litlit"
         run {
             run {
-                assertEquals(a, 12, "a != 12")
+                assertEquals(12, a, testName)
 
-                assertEquals(b, 1, "b != 1")
+                assertEquals(1, b, testName)
                 b = 23
-                assertEquals(b, 23, "b != 23")
+                assertEquals(23, b, testName)
 
-                assertEquals(boo(34), 34, "boo(34) != 34")
+                assertEquals(34, boo(34), testName)
             }
         }
     }
 
     fun funfun() {
-        testName = "funfun"
+        val testName = "funfun"
         fun foo() {
             fun bar() {
-                assertEquals(a, 12, "a != 12")
+                assertEquals(12, a, testName)
 
-                assertEquals(b, 1, "b != 1")
+                assertEquals(1, b, testName)
                 b = 23
-                assertEquals(b, 23, "b != 23")
+                assertEquals(23, b, testName)
 
-                assertEquals(boo(34), 34, "boo(34) != 34")
+                assertEquals(34, boo(34), testName)
             }
             bar()
         }
@@ -50,32 +41,32 @@ class A {
     }
 
     fun litfun() {
-        testName = "litfun"
+        val testName = "litfun"
         run {
             fun bar() {
-                assertEquals(a, 12, "a != 12")
+                assertEquals(12, a, testName)
 
-                assertEquals(b, 1, "b != 1")
+                assertEquals(1, b, testName)
                 b = 23
-                assertEquals(b, 23, "b != 23")
+                assertEquals(23, b, testName)
 
-                assertEquals(boo(34), 34, "boo(34) != 34")
+                assertEquals(34, boo(34), testName)
             }
             bar()
         }
     }
 
     fun funlit() {
-        testName = "funlit"
+        val testName = "funlit"
         fun foo() {
             run {
-                assertEquals(a, 12, "a != 12")
+                assertEquals(12, a, testName)
 
-                assertEquals(b, 1, "b != 1")
+                assertEquals(1, b, testName)
                 b = 23
-                assertEquals(b, 23, "b != 23")
+                assertEquals(23, b, testName)
 
-                assertEquals(boo(34), 34, "boo(34) != 34")
+                assertEquals(34, boo(34), testName)
             }
         }
         foo()
@@ -83,16 +74,10 @@ class A {
 }
 
 fun box(): String {
-    try {
-        A().litlit()
-        A().funfun()
-        A().litfun()
-        A().funlit()
-    }
-    catch(f: Fail) {
-        if (!f.isFail) throw f
-        return f.message
-    }
+    A().litlit()
+    A().funfun()
+    A().litfun()
+    A().funlit()
 
     return "OK"
 }

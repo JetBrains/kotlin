@@ -28,10 +28,6 @@ fun test2(): String {
     return "$f | $s"
 }
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual: $actual")
-}
-
 fun box(): String {
     assertEquals("a b c | a b c", test1())
     assertEquals("a b c | a b c", test2())

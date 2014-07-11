@@ -17,10 +17,6 @@ class A(val a: String) {
     }
 }
 
-fun assertEquals(expected: String, actual: String) {
-    if (expected != actual) throw Exception("Expected: $expected, actual: $actual")
-}
-
 fun box(): String {
     val a = A("a")
     val b = A("b")

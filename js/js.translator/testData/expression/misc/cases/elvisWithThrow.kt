@@ -1,9 +1,5 @@
 package foo
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual: $actual")
-}
-
 var i = 0
 fun bar(): Any? {
     i++
