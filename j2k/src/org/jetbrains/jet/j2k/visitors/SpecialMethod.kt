@@ -24,6 +24,9 @@ import org.jetbrains.jet.j2k.ast.Expression
 import org.jetbrains.jet.j2k.ast.MethodCallExpression
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import com.intellij.psi.PsiSuperExpression
+import org.jetbrains.jet.j2k.ast.QualifiedExpression
+import org.jetbrains.jet.j2k.ast.Identifier
+import org.jetbrains.jet.j2k.ast.assignNoPrototype
 
 enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String, val parameterCount: Int) {
     OBJECT_EQUALS: SpecialMethod(null, "equals", 1) {
@@ -33,6 +36,13 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter): Expression? {
             if (qualifier == null || qualifier is PsiSuperExpression) return null
             return BinaryExpression(converter.convertExpression(qualifier), converter.convertExpression(arguments.single()), "==")
+        }
+    }
+
+    OBJECT_GET_CLASS: SpecialMethod("java.lang.Object", "getClass", 0) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter): Expression {
+            val identifier = Identifier("javaClass", false).assignNoPrototype()
+            return if (qualifier != null) QualifiedExpression(converter.convertExpression(qualifier), identifier) else identifier
         }
     }
 
