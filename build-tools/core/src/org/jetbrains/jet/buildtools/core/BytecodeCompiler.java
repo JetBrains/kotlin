@@ -40,9 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
-import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
-import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ENABLE_INLINE;
+import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.*;
 import static org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil.loadModuleDescriptions;
 
 
@@ -65,6 +63,7 @@ public class BytecodeCompiler {
      * @param classpath compilation classpath, only used if not null and not empty
      * @param sourceRoots
      * @param enableInline
+     * @param enableOptimizations
      * @return compile environment instance
      */
     private JetCoreEnvironment env(
@@ -72,9 +71,12 @@ public class BytecodeCompiler {
             String[] classpath,
             String[] externalAnnotationsPath,
             String[] sourceRoots,
-            boolean enableInline
+            boolean enableInline,
+            boolean enableOptimizations
     ) {
-        CompilerConfiguration configuration = createConfiguration(stdlib, classpath, externalAnnotationsPath, sourceRoots, enableInline);
+        CompilerConfiguration configuration = createConfiguration(
+                stdlib, classpath, externalAnnotationsPath, sourceRoots, enableInline, enableOptimizations
+        );
 
         return JetCoreEnvironment.createForProduction(Disposer.newDisposable(), configuration);
     }
@@ -84,7 +86,8 @@ public class BytecodeCompiler {
             @Nullable String[] classpath,
             @Nullable String[] externalAnnotationsPath,
             @NotNull String[] sourceRoots,
-            boolean enableInline
+            boolean enableInline,
+            boolean enableOptimizations
     ) {
         KotlinPaths paths = getKotlinPathsForAntTask();
         CompilerConfiguration configuration = new CompilerConfiguration();
@@ -123,6 +126,7 @@ public class BytecodeCompiler {
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         configuration.put(ENABLE_INLINE, enableInline);
+        configuration.put(ENABLE_OPTIMIZATIONS, enableOptimizations);
 
         // lets register any compiler plugins
         configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, getCompilerPlugins());
@@ -169,9 +173,10 @@ public class BytecodeCompiler {
             @Nullable String stdlib,
             @Nullable String[] classpath,
             @Nullable String[] externalAnnotationsPath,
-            boolean enableInline) {
+            boolean enableInline,
+            boolean enableOptimizations) {
         try {
-            JetCoreEnvironment environment = env(stdlib, classpath, externalAnnotationsPath, src, enableInline);
+            JetCoreEnvironment environment = env(stdlib, classpath, externalAnnotationsPath, src, enableInline, enableOptimizations);
 
             boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, null, new File(output), true);
             if (!success) {
@@ -199,9 +204,10 @@ public class BytecodeCompiler {
             @Nullable String stdlib,
             @Nullable String[] classpath,
             @Nullable String[] externalAnnotationsPath,
-            boolean enableInline) {
+            boolean enableInline,
+            boolean enableOptimizations) {
         try {
-            JetCoreEnvironment environment = env(stdlib, classpath, externalAnnotationsPath, src, enableInline);
+            JetCoreEnvironment environment = env(stdlib, classpath, externalAnnotationsPath, src, enableInline, enableOptimizations);
 
             boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, new File(jar), null, includeRuntime);
             if (!success) {
@@ -222,6 +228,7 @@ public class BytecodeCompiler {
      * @param stdlib         "kotlin-runtime.jar" path
      * @param classpath      compilation classpath, can be <code>null</code> or empty
      * @param enableInline
+     * @param enableOptimizations
      */
     public void moduleToJar(
             @NotNull String module,
@@ -229,7 +236,7 @@ public class BytecodeCompiler {
             boolean includeRuntime,
             @Nullable String stdlib,
             @Nullable String[] classpath,
-            @Nullable String[] externalAnnotationsPath, boolean enableInline
+            @Nullable String[] externalAnnotationsPath, boolean enableInline, boolean enableOptimizations
     ) {
         try {
             ModuleScriptData moduleScriptData =
@@ -240,7 +247,7 @@ public class BytecodeCompiler {
                 sourcesRoots.addAll(m.getSourceFiles());
             }
             CompilerConfiguration configuration = createConfiguration(stdlib, classpath, externalAnnotationsPath, sourcesRoots.toArray(new String[0]),
-                                                                      enableInline);
+                                                                      enableInline, enableOptimizations);
             File directory = new File(module).getParentFile();
             boolean success = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules, directory, new File(jar), includeRuntime);
             if (!success) {

@@ -79,6 +79,10 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("{on,off}")
     public String inline;
 
+    @Argument(value = "optimizations", description = "Optimizations mode (default is on)")
+    @ValueDescription("{on,off}")
+    public String optimizations;
+
     @Override
     @NotNull
     public String executableScriptFileName() {

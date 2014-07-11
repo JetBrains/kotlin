@@ -297,6 +297,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     /*not-null assertions*/false, false,
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
                     /*to generate inline flag on methods*/true,
+                    /*optimizations on*/true,
                     null,
                     null,
                     forExtraDiagnostics,

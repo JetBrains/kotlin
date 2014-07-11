@@ -24,6 +24,7 @@ import org.jetbrains.jet.buildtools.core.Util;
 import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
+import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -50,6 +51,7 @@ public class BytecodeCompilerTask extends Task {
     private Path compileClasspath;
     private boolean includeRuntime = true;
     private String inline;
+    private String optimizations;
 
     public void setOutput(File output) {
         this.output = output;
@@ -95,6 +97,10 @@ public class BytecodeCompilerTask extends Task {
 
     public void setInline(String inline) {
         this.inline = inline;
+    }
+
+    public void setOptimizations(String optimizations) {
+        this.optimizations = optimizations;
     }
 
     /**
@@ -144,10 +150,15 @@ public class BytecodeCompilerTask extends Task {
         String[] externalAnnotationsPath = (this.externalAnnotations != null) ? this.externalAnnotations.list() : null;
 
         if (!CompilerArgumentsUtil.checkOption(inline)) {
-            throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongInlineOptionErrorMessage(inline));
+            throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", inline));
+        }
+
+        if (!CompilerArgumentsUtil.checkOption(optimizations)) {
+            throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimizations", optimizations));
         }
 
         boolean enableInline = CompilerArgumentsUtil.optionToBooleanFlag(inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG);
+        boolean enableOptimizations = CompilerArgumentsUtil.optionToBooleanFlag(optimizations, OptimizationUtils.DEFAULT_OPTIMIZATIONS_FLAG);
 
         if (this.src != null) {
 
@@ -161,10 +172,16 @@ public class BytecodeCompilerTask extends Task {
             log(String.format("Compiling [%s] => [%s]", Arrays.toString(source), destination));
 
             if (this.output != null) {
-                compiler.sourcesToDir(source, destination, stdlibPath, classpath, externalAnnotationsPath, enableInline);
+                compiler.sourcesToDir(
+                        source, destination, stdlibPath, classpath, externalAnnotationsPath,
+                        enableInline, enableOptimizations
+                );
             }
             else {
-                compiler.sourcesToJar(source, destination, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath, enableInline);
+                compiler.sourcesToJar(
+                        source, destination, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath,
+                        enableInline, enableOptimizations
+                );
             }
         }
         else if (this.module != null) {
@@ -179,7 +196,10 @@ public class BytecodeCompilerTask extends Task {
             log(jarPath != null ? String.format("Compiling [%s] => [%s]", modulePath, jarPath) :
                 String.format("Compiling [%s]", modulePath));
 
-            compiler.moduleToJar(modulePath, jarPath, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath, enableInline);
+            compiler.moduleToJar(
+                    modulePath, jarPath, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath,
+                    enableInline, enableOptimizations
+            );
         }
         else {
             throw new CompileEnvironmentException("\"src\" or \"module\" should be specified");

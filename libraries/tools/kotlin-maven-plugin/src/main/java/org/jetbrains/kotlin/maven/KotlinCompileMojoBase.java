@@ -35,6 +35,7 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
+import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -157,6 +158,13 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      * @parameter
      */
     public String inline;
+
+    /**
+     * Switch method optimizations on/off: possible values are "on" and "off".
+     *
+     * @parameter
+     */
+    public String optimizations;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -314,10 +322,23 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         arguments.annotations = getFullAnnotationsPath(log, annotationPaths);
         log.info("Using kotlin annotations from " + arguments.annotations);
         arguments.inline = inline;
+        arguments.optimizations = optimizations;
+
         if (!CompilerArgumentsUtil.checkOption(arguments.inline)) {
-            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongInlineOptionErrorMessage(arguments.inline));
+            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", arguments.inline));
         }
+
+        if (!CompilerArgumentsUtil.checkOption(arguments.optimizations)) {
+            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimizations", arguments.optimizations));
+        }
+
         log.info("Method inlining is " + CompilerArgumentsUtil.optionToBooleanFlag(arguments.inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG));
+        log.info(
+                "Optimizations mode is " + CompilerArgumentsUtil.optionToBooleanFlag(
+                        arguments.optimizations,
+                        OptimizationUtils.DEFAULT_OPTIMIZATIONS_FLAG
+                )
+        );
     }
 
     protected String getFullAnnotationsPath(Log log, List<String> annotations) {
