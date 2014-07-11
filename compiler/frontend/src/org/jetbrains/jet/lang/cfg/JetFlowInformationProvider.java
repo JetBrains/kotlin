@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitState;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState;
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeUtil;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
@@ -121,6 +122,10 @@ public class JetFlowInformationProvider {
         markUnusedVariables();
 
         markUnusedLiteralsInBlock();
+
+        markStatements();
+
+        markWhenWithoutElse();
     }
 
     public void checkFunction(@Nullable JetType expectedReturnType) {
@@ -689,6 +694,48 @@ public class JetFlowInformationProvider {
                                 }
                                 else {
                                     report(Errors.UNUSED_EXPRESSION.on(element), ctxt);
+                                }
+                            }
+                        }
+                    }
+                }
+        );
+    }
+
+////////////////////////////////////////////////////////////////////////////////
+// Statements
+
+    public void markStatements() {
+        PseudocodeTraverserPackage.traverse(
+                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
+                    @Override
+                    public void execute(@NotNull Instruction instruction) {
+                        PseudoValue value = instruction instanceof InstructionWithValue
+                                            ? ((InstructionWithValue) instruction).getOutputValue()
+                                            : null;
+                        Pseudocode pseudocode = instruction.getOwner();
+                        boolean isUsedAsExpression = !pseudocode.getUsages(value).isEmpty();
+                        for (JetElement element : pseudocode.getValueElements(value)) {
+                            trace.record(BindingContext.USED_AS_EXPRESSION, element, isUsedAsExpression);
+                        }
+                    }
+                }
+        );
+    }
+
+    public void markWhenWithoutElse() {
+        PseudocodeTraverserPackage.traverse(
+                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
+                    @Override
+                    public void execute(@NotNull Instruction instruction) {
+                        PseudoValue value = instruction instanceof InstructionWithValue
+                                            ? ((InstructionWithValue) instruction).getOutputValue()
+                                            : null;
+                        for (JetElement element : instruction.getOwner().getValueElements(value)) {
+                            if (element instanceof JetWhenExpression) {
+                                JetWhenExpression whenExpression = (JetWhenExpression) element;
+                                if (whenExpression.getElseExpression() == null && WhenChecker.mustHaveElse(whenExpression, trace)) {
+                                    trace.report(NO_ELSE_IN_WHEN.on(whenExpression));
                                 }
                             }
                         }

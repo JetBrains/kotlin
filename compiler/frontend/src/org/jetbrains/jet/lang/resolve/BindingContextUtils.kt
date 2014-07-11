@@ -139,3 +139,6 @@ public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingConte
             .dropWhile { it is AnonymousFunctionDescriptor }
             .firstOrNull()
 }
+
+public fun JetExpression.isUsedAsExpression(context: BindingContext): Boolean = context[BindingContext.USED_AS_EXPRESSION, this]!!
+public fun JetExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)

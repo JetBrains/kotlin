@@ -21,10 +21,10 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 import org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator;
@@ -39,7 +39,7 @@ public final class WhenTranslator extends AbstractTranslator {
     public static JsNode translate(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
         WhenTranslator translator = new WhenTranslator(expression, context);
 
-        if (BindingUtils.isStatement(context.bindingContext(), expression)) {
+        if (BindingContextUtilPackage.isUsedAsStatement(expression, context.bindingContext())) {
             JsBlock jsBlock = new JsBlock();
             translator.translateAsStatement(jsBlock.getStatements());
             return jsBlock;
@@ -83,25 +83,25 @@ public final class WhenTranslator extends AbstractTranslator {
 
         JsIf prevIf = null;
         for (JetWhenEntry entry : whenExpression.getEntries()) {
-            JsStatement statement = withReturnValueCaptured(translateEntryExpression(entry));
-            if (entry.isElse()) {
-                if (prevIf == null) {
-                    statements.add(statement);
-                }
-                else {
-                    prevIf.setElseStatement(statement);
-                }
-                break;
+            JsBlock entryBody = new JsBlock();
+            JsStatement statement = withReturnValueCaptured(translateEntryExpression(entry, context().innerBlock(entryBody)));
+            if (!entryBody.isEmpty()) {
+                entryBody.getStatements().add(statement);
+                statement = entryBody;
             }
 
-            JsIf ifStatement = new JsIf(translateConditions(entry), statement);
+            JsStatement statementToAdd = entry.isElse() ? statement : new JsIf(translateConditions(entry), statement);
             if (prevIf == null) {
-                statements.add(ifStatement);
+                statements.add(statementToAdd);
             }
             else {
-                prevIf.setElseStatement(ifStatement);
+                prevIf.setElseStatement(statementToAdd);
             }
-            prevIf = ifStatement;
+
+            if (entry.isElse()) break;
+
+            assert statementToAdd instanceof JsIf : "Non-else entry expected: " + entry.getText();
+            prevIf = (JsIf) statementToAdd;
         }
     }
 
@@ -127,10 +127,10 @@ public final class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsNode translateEntryExpression(@NotNull JetWhenEntry entry) {
+    private JsNode translateEntryExpression(@NotNull JetWhenEntry entry, @NotNull TranslationContext context) {
         JetExpression expressionToExecute = entry.getExpression();
         assert expressionToExecute != null : "WhenEntry should have whenExpression to execute.";
-        return Translation.translateExpression(expressionToExecute, context());
+        return Translation.translateExpression(expressionToExecute, context);
     }
 
     @NotNull

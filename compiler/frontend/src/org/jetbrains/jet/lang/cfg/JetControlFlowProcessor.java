@@ -1252,8 +1252,6 @@ public class JetControlFlowProcessor {
                 generateInstructions(subjectExpression);
             }
 
-            boolean hasElse = false;
-
             List<JetExpression> branches = new ArrayList<JetExpression>();
 
             Label doneLabel = builder.createUnboundLabel();
@@ -1265,7 +1263,6 @@ public class JetControlFlowProcessor {
 
                 boolean isElse = whenEntry.isElse();
                 if (isElse) {
-                    hasElse = true;
                     if (iterator.hasNext()) {
                         trace.report(ELSE_MISPLACED_IN_WHEN.on(whenEntry));
                     }
@@ -1300,9 +1297,6 @@ public class JetControlFlowProcessor {
                 }
             }
             builder.bindLabel(doneLabel);
-            if (!hasElse && WhenChecker.mustHaveElse(expression, trace)) {
-                trace.report(NO_ELSE_IN_WHEN.on(expression));
-            }
 
             mergeValues(branches, expression);
         }
@@ -1405,6 +1399,11 @@ public class JetControlFlowProcessor {
                 expectedTypePredicate = AllTypes.INSTANCE$;
             }
             builder.magic(specifier, specifier, arguments, PseudocodePackage.expectedTypeFor(expectedTypePredicate, arguments), MagicKind.VALUE_CONSUMER);
+        }
+
+        @Override
+        public void visitDelegationSpecifierList(@NotNull JetDelegationSpecifierList list) {
+            list.acceptChildren(this);
         }
 
         @Override

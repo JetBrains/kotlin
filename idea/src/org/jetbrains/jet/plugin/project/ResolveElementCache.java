@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
+import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.psi.*;
@@ -173,6 +174,8 @@ public class ResolveElementCache {
             assert false : "Invalid type of the topmost parent";
         }
 
+        new JetFlowInformationProvider(resolveElement, trace).checkDeclaration();
+
         return trace.getBindingContext();
     }
 
@@ -315,6 +318,10 @@ public class ResolveElementCache {
         }
 
         bodyResolver.resolvePropertyAccessors(bodyResolveContext, jetProperty, descriptor);
+
+        for (JetPropertyAccessor accessor : jetProperty.getAccessors()) {
+            new JetFlowInformationProvider(accessor, trace).checkDeclaration();
+        }
     }
 
     private static void functionAdditionalResolve(

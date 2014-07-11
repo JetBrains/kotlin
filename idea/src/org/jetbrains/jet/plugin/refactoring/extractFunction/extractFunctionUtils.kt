@@ -64,6 +64,7 @@ import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.resolve.OverridingUtil
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
@@ -93,7 +94,6 @@ private fun List<Instruction>.getExitPoints(): List<Instruction> =
         filter { localInstruction -> localInstruction.nextInstructions.any { it !in this } }
 
 private fun List<Instruction>.getResultType(
-        pseudocode: Pseudocode,
         bindingContext: BindingContext,
         options: ExtractionOptions): JetType {
     fun instructionToType(instruction: Instruction): JetType? {
@@ -106,7 +106,7 @@ private fun List<Instruction>.getResultType(
         }
 
         if (expression == null) return null
-        if (options.inferUnitTypeForUnusedValues && expression.isStatement(pseudocode)) return null
+        if (options.inferUnitTypeForUnusedValues && expression.isUsedAsStatement(bindingContext)) return null
 
         return bindingContext[BindingContext.EXPRESSION_TYPE, expression]
     }
@@ -206,8 +206,8 @@ private fun ExtractionData.analyzeControlFlow(
     val nonLocallyUsedDeclarations = getLocalDeclarationsWithNonLocalUsages(pseudocode, localInstructions, bindingContext)
     val (declarationsToCopy, declarationsToReport) = nonLocallyUsedDeclarations.partition { it is JetProperty && it.isLocal() }
 
-    val typeOfDefaultFlow = defaultExits.getResultType(pseudocode, bindingContext, options)
-    val returnValueType = valuedReturnExits.getResultType(pseudocode, bindingContext, options)
+    val typeOfDefaultFlow = defaultExits.getResultType(bindingContext, options)
+    val returnValueType = valuedReturnExits.getResultType(bindingContext, options)
 
     val defaultReturnType = if (returnValueType.isMeaningful()) returnValueType else typeOfDefaultFlow
     if (defaultReturnType.isError()) return Pair(DefaultControlFlow(DEFAULT_RETURN_TYPE, declarationsToCopy), ErrorMessage.ERROR_TYPES)

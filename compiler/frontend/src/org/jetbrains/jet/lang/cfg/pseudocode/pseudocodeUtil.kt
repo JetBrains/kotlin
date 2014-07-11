@@ -33,9 +33,6 @@ import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 
-fun JetExpression.isStatement(pseudocode: Pseudocode): Boolean =
-        pseudocode.getUsages(pseudocode.getElementValue(this)).isEmpty()
-
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
     val callableDescriptor = resolvedCall.getResultingDescriptor()
     if (callableDescriptor == null) return null

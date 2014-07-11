@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStatement
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStableVariable
+import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStatement
 
 public class SafeAccessToIfThenIntention : JetSelfTargetingIntention<JetSafeQualifiedExpression>("safe.access.to.if.then", javaClass()) {
     override fun isApplicableTo(element: JetSafeQualifiedExpression): Boolean = true

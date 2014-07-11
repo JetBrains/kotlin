@@ -42,6 +42,7 @@ public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpres
                             else -> null
                         }
                     }
+                    else -> null
                 }
             }
             is JetBinaryExpression -> element.getRight()
