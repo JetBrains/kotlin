@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import com.google.common.collect.*;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.util.containers.BidirectionalMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
@@ -88,7 +89,7 @@ public class PseudocodeImpl implements Pseudocode {
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
 
-    private final Map<JetElement, PseudoValue> elementsToValues = new HashMap<JetElement, PseudoValue>();
+    private final BidirectionalMap<JetElement, PseudoValue> elementsToValues = new BidirectionalMap<JetElement, PseudoValue>();
 
     private final NotNullLazyValue<Map<PseudoValue, List<? extends Instruction>>> valueUsages =
             new NotNullLazyValue<Map<PseudoValue, List<? extends Instruction>>>() {
@@ -259,6 +260,13 @@ public class PseudocodeImpl implements Pseudocode {
     @Override
     public PseudoValue getElementValue(@Nullable JetElement element) {
         return elementsToValues.get(element);
+    }
+
+    @NotNull
+    @Override
+    public List<? extends JetElement> getValueElements(@Nullable PseudoValue value) {
+        List<? extends JetElement> result = elementsToValues.getKeysByValue(value);
+        return result != null ? result : Collections.<JetElement>emptyList();
     }
 
     @NotNull
