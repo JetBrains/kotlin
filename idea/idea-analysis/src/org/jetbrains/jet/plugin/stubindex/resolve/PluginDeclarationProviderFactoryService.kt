@@ -32,7 +32,8 @@ public class PluginDeclarationProviderFactoryService : DeclarationProviderFactor
             syntheticFiles: Collection<JetFile>,
             filesScope: GlobalSearchScope
     ): DeclarationProviderFactory {
-        return PluginDeclarationProviderFactory(project, JetSourceFilterScope.kotlinSources(filesScope, project),
+        //NOTE: we include libraries here to support analyzing JavaScript libraries which are kotlin sources in classes root
+        return PluginDeclarationProviderFactory(project, JetSourceFilterScope.kotlinSourcesAndLibraries(filesScope, project),
                                                 storageManager, syntheticFiles)
     }
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.stubindex;
 
-import com.intellij.ide.highlighter.JavaClassFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -24,17 +23,22 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
 
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
     @NotNull
     public static GlobalSearchScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+        if (delegate instanceof JetSourceFilterScope) {
+            return delegate;
+        }
         return new JetSourceFilterScope(delegate, true, project);
     }
 
     @NotNull
     public static GlobalSearchScope kotlinSources(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+        if (delegate instanceof JetSourceFilterScope) {
+            delegate = ((JetSourceFilterScope) delegate).myBaseScope;
+        }
         return new JetSourceFilterScope(delegate, false, project);
     }
 
@@ -44,9 +48,9 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
 
     private JetSourceFilterScope(@NotNull GlobalSearchScope delegate, boolean includeLibraries, @NotNull Project project) {
         super(delegate);
-        this.includeLibraries = includeLibraries;
         this.index = ProjectRootManager.getInstance(project).getFileIndex();
         this.project = project;
+        this.includeLibraries = includeLibraries;
     }
 
     @Override
@@ -55,15 +59,12 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
             return false;
         }
 
-        if (includeLibraries && JavaClassFileType.INSTANCE == file.getFileType()) {
-            return index.isInLibraryClasses(file);
+        if (index.isInSourceContent(file)) {
+            return !JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(file, project);
         }
 
-        if (JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(file, getProject())) {
-            return false;
-        }
+        if (!includeLibraries) return false;
 
-        return file.getFileType().equals(JetFileType.INSTANCE) &&
-               (index.isInSourceContent(file) || includeLibraries && index.isInLibrarySource(file));
+        return index.isInLibraryClasses(file) || index.isInLibrarySource(file);
     }
 }
