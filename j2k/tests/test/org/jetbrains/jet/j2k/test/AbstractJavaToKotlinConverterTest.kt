@@ -18,8 +18,6 @@ package org.jetbrains.jet.j2k.test
 
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiFile
 import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.JavaToKotlinTranslator
 import org.jetbrains.jet.j2k.ConverterSettings
@@ -61,9 +59,13 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
         val javaFile = File(javaPath)
         val fileContents = FileUtil.loadFile(javaFile, true)
         val matcher = testHeaderPattern.matcher(fileContents)
-        matcher.find()
-        val prefix = matcher.group().trim().substring(2)
-        val javaCode = matcher.replaceFirst("")
+
+        val (prefix, javaCode) = if (matcher.find()) {
+            Pair(matcher.group().trim().substring(2), matcher.replaceFirst(""))
+        }
+        else {
+            Pair("file", fileContents)
+        }
 
         fun parseBoolean(text: String): Boolean = when (text) {
             "true" -> true

@@ -1,4 +1,3 @@
-//file
 class Outer {
     private class Inner1 {
         public Inner1(){}

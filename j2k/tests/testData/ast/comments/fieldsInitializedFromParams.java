@@ -1,4 +1,3 @@
-//file
 class C {
     private final int p1; // field p1
 

@@ -1,4 +1,3 @@
-//file
 package pack
 
 class C {

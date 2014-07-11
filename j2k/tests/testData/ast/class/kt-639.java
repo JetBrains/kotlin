@@ -1,4 +1,3 @@
-//file
 package demo;
 
 import java.util.HashMap;

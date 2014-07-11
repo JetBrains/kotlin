@@ -1,4 +1,3 @@
-//file
 class C{
     public boolean equals(C c) {
         return false;

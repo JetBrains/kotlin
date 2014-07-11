@@ -1,4 +1,3 @@
-//file
 class Outer {
     private static class Nested1 {
         public Nested1(){}
