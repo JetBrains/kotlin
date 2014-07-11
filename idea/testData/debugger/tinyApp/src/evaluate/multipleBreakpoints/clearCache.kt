@@ -5,7 +5,7 @@ import java.util.HashSet
 
 fun primitiveTypes() {
     if (true) {
-        val a: Any = 0
+        val a: Any = if (1 == 1) 0 else "abc"
         // EXPRESSION: a
         // RESULT: instance of java.lang.Integer(id=ID): Ljava/lang/Integer;
         //Breakpoint!
