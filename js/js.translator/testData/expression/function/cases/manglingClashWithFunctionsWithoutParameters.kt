@@ -17,15 +17,6 @@ public class A : T {
     fun boo(i: Int): String = "A.boo" + i
 }
 
-// Helpers
-native
-fun String.replace(regexp: RegExp, replacement: String): String = noImpl
-
-fun String.replaceAll(regexp: String, replacement: String): String = replace(RegExp(regexp, "g"), replacement)
-
-native
-class RegExp(regexp: String, flags: String)
-
 //Testing
 
 fun test(testName: String, ff: Any, fb: Any) {
@@ -33,10 +24,6 @@ fun test(testName: String, ff: Any, fb: Any) {
     val b = fb.toString().replaceAll("boo", "foo")
 
     if (f != b) throw Exception("FAILED on ${testName}:\n f = \"$f\"\n b = \"$b\"")
-}
-
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual: $actual")
 }
 
 fun box(): String {

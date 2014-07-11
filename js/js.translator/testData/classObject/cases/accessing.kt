@@ -33,10 +33,6 @@ class Foo() {
     }
 }
 
-fun assertEquals<T>(expected: T, actual: T, id: String) {
-    if (expected != actual) throw Exception("Failed on $id, expected = '$expected', actual = '$actual'")
-}
-
 fun box(): String {
     assertEquals("Foo.baz() Foo.bar Implicit", Foo.testImplicitThis(), "testImplicitThis")
     assertEquals("Foo.baz() Foo.bar Explicit", Foo.testExplicitThis(), "testExplicitThis")

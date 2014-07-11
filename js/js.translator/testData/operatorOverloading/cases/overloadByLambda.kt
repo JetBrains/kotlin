@@ -7,10 +7,6 @@ val times = { A.(a: Int) -> this.v * a }
 
 fun test(div: A.(Int) -> Int) = A(20) / 4
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual: $actual")
-}
-
 fun box(): String {
     val compareTo = { A.(a: A) -> this.v - a.v }
 

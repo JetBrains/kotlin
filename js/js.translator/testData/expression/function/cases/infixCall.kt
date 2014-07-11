@@ -7,10 +7,6 @@ val bar = { Int.(a: Int) -> this * a }
 
 fun test(op: Int.(Int) -> Int) = 3 op 20
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual: $actual")
-}
-
 fun box(): String {
     val op = { Int.(a: Int) -> this / a }
 

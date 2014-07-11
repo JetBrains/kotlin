@@ -6,10 +6,6 @@ data class Dat(val start: String, val end: String)
 
 class Obj(val start: String, val end: String)
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual, $actual")
-}
-
 fun box(): String {
     val d = Dat("a", "b")
 

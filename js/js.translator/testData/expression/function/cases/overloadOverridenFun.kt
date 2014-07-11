@@ -2,10 +2,6 @@
 
 package foo
 
-fun assertEquals(expected: Any, actual: Any) {
-    if (expected != actual) throw Exception("expected = $expected, actual = $actual")
-}
-
 trait I {
     fun test(): String
 }

@@ -11,10 +11,6 @@ data class Dat(val start: String, middle: String, val end: String) {
     }
 }
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual, $actual")
-}
-
 fun box(): String {
     val d = Dat("max", "-", "min")
     val other = Dat("other", "-", "instance")
