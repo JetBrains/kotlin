@@ -503,7 +503,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
             PsiModifier.PRIVATE to Modifier.PRIVATE
     )
 
-    fun convertAnnotations(owner: PsiModifierListOwner): Annotations {
+    fun convertAnnotations(owner: PsiModifierListOwner): Annotations
+            = (convertAnnotationsOnly(owner) + convertModifiersToAnnotations(owner)).assignNoPrototype()
+
+    private fun convertAnnotationsOnly(owner: PsiModifierListOwner): Annotations {
         val modifierList = owner.getModifierList()
         val annotations = modifierList?.getAnnotations()?.filter { it.getQualifiedName() !in ANNOTATIONS_TO_REMOVE }
         if (annotations == null || annotations.isEmpty()) return Annotations.Empty
@@ -525,6 +528,20 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable) }.filterNotNull() //TODO: brackets are also needed for local classes
         return Annotations(list, newLines).assignNoPrototype()
     }
+
+    private fun convertModifiersToAnnotations(owner: PsiModifierListOwner): Annotations {
+        val list = MODIFIER_TO_ANNOTATION
+                .filter { owner.hasModifierProperty(it.first) }
+                .map { Annotation(Identifier(it.second).assignNoPrototype(), listOf(), false).assignNoPrototype() }
+        return Annotations(list, false).assignNoPrototype()
+    }
+
+    private val MODIFIER_TO_ANNOTATION = listOf(
+            PsiModifier.SYNCHRONIZED to "synchronized",
+            PsiModifier.VOLATILE to "volatile",
+            PsiModifier.STRICTFP to "strictfp",
+            PsiModifier.TRANSIENT to "transient"
+    )
 
     private fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean): Annotation? {
         val qualifiedName = annotation.getQualifiedName()

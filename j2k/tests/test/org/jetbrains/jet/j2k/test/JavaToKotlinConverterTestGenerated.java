@@ -1219,6 +1219,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/field/varWithoutInit.java");
         }
         
+        @TestMetadata("volatileTransientAndStrictFp.java")
+        public void testVolatileTransientAndStrictFp() throws Exception {
+            doTest("j2k/tests/testData/ast/field/volatileTransientAndStrictFp.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/for")
@@ -1514,6 +1519,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("public.java")
         public void testPublic() throws Exception {
             doTest("j2k/tests/testData/ast/function/public.java");
+        }
+        
+        @TestMetadata("synchronizedMethod.java")
+        public void testSynchronizedMethod() throws Exception {
+            doTest("j2k/tests/testData/ast/function/synchronizedMethod.java");
         }
         
         @TestMetadata("throws.java")
