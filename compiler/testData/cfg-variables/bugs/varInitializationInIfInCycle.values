@@ -21,7 +21,7 @@ numbers   <v1>: {<: Iterable<Int>}     NEW: r(numbers) -> <v1>
 1 < 2     <v5>: Boolean                NEW: call(1 < 2, compareTo|<v3>, <v4>) -> <v5>                
 false     <v6>: Boolean                NEW: r(false) -> <v6>                                         
 true      <v7>: Boolean                NEW: r(true) -> <v7>                                          
-b         <v8>: {<: Any?}              NEW: r(b) -> <v8>                                             
+b         <v8>: *                      NEW: r(b) -> <v8>
 use(b)    <v9>: *                      NEW: call(use(b), use|<v8>) -> <v9>                           
 =====================
 == use ==

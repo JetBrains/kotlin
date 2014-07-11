@@ -30,11 +30,11 @@ genfun<Any>()                                                                   
 {1}                                                                                                      <v9>: {<: () -> Any}            NEW: r({1}) -> <v9>                                
 flfun {1}                                                                                                <v10>: *                        NEW: call(flfun {1}, flfun|<v9>) -> <v10>          
 3                                                                                                        <v11>: OR{{<: Any}, {<: Any}}   NEW: r(3) -> <v11>                                 
-4                                                                                                        <v12>: {<: Any?}                NEW: r(4) -> <v12>                                 
+4                                                                                                        <v12>: *                        NEW: r(4) -> <v12>
 equals(4)                                                                                                <v13>: *                        NEW: call(equals(4), equals|<v11>, <v12>) -> <v13> 
 3.equals(4)                                                                                              <v13>: *                        COPY                                               
 3                                                                                                        <v14>: OR{{<: Any}, {<: Any}}   NEW: r(3) -> <v14>                                 
-4                                                                                                        <v15>: {<: Any?}                NEW: r(4) -> <v15>                                 
+4                                                                                                        <v15>: *                        NEW: r(4) -> <v15>
 3 equals 4                                                                                               <v16>: *                        NEW: call(3 equals 4, equals|<v14>, <v15>) -> <v16>
 1                                                                                                        <v17>: Int                      NEW: r(1) -> <v17>                                 
 2                                                                                                        <v18>: Int                      NEW: r(2) -> <v18>                                 

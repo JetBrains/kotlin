@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.util.SmartFMap
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.TypeUtils
 
 public trait TypePredicate: (JetType) -> Boolean {
@@ -71,8 +72,14 @@ fun or(predicates: Collection<TypePredicate>): TypePredicate? =
             else -> ForSomeType(predicates.toList())
         }
 
-fun JetType.getSubtypesPredicate(): TypePredicate? =
-        if (TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, this)) AllSubtypes(this) else SingleType(this)
+fun JetType.getSubtypesPredicate(): TypePredicate? {
+    return when {
+        KotlinBuiltIns.getInstance().isAnyOrNullableAny(this) && isNullable() -> AllTypes
+        TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, this) -> AllSubtypes(this)
+        else -> SingleType(this)
+    }
+}
+
 
 private fun JetType.render(): String = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
 
