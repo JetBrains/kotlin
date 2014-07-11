@@ -58,7 +58,7 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
 
 fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
     val pseudocode = value.createdAt.owner
-    val typePredicates = HashSet<TypePredicate?>()
+    val typePredicates = LinkedHashSet<TypePredicate?>()
 
     fun addSubtypesOf(jetType: JetType?) = typePredicates.add(jetType?.getSubtypesPredicate())
 
