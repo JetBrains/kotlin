@@ -18,14 +18,19 @@ package org.jetbrains.jet.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.jet.j2k.ast.*
+import com.intellij.codeInsight.NullableNotNullManager
 
 class AnnotationConverter(private val converter: Converter) {
+    public val annotationsToRemove: Set<String> = (NullableNotNullManager.getInstance(converter.project).getNotNulls()
+            + NullableNotNullManager.getInstance(converter.project).getNullables()
+            + listOf(CommonClassNames.JAVA_LANG_OVERRIDE)).toSet()
+
     public fun convertAnnotations(owner: PsiModifierListOwner): Annotations
             = (convertAnnotationsOnly(owner) + convertModifiersToAnnotations(owner)).assignNoPrototype()
 
     private fun convertAnnotationsOnly(owner: PsiModifierListOwner): Annotations {
         val modifierList = owner.getModifierList()
-        val annotations = modifierList?.getAnnotations()?.filter { it.getQualifiedName() !in ANNOTATIONS_TO_REMOVE }
+        val annotations = modifierList?.getAnnotations()?.filter { it.getQualifiedName() !in annotationsToRemove }
         if (annotations == null || annotations.isEmpty()) return Annotations.Empty
 
         val newLines = run {

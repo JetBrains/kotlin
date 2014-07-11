@@ -52,7 +52,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     private val expressionVisitor = state.expressionVisitorFactory(this)
     private val statementVisitor = state.statementVisitorFactory(this)
 
-    private val annotationConverter = AnnotationConverter(this)
+    val annotationConverter = AnnotationConverter(this)
 
     class object {
         public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope): Converter {
@@ -594,10 +594,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return Annotations(listOf(annotation.assignPrototype(throwsList)), true).assignPrototype(throwsList)
     }
 }
-
-val NOT_NULL_ANNOTATIONS: Set<String> = setOf("org.jetbrains.annotations.NotNull", "com.sun.istack.internal.NotNull", "javax.annotation.Nonnull")
-val NULLABLE_ANNOTATIONS: Set<String> = setOf("org.jetbrains.annotations.Nullable", "com.sun.istack.internal.Nullable", "javax.annotation.Nullable")
-val ANNOTATIONS_TO_REMOVE: Set<String> = HashSet(NOT_NULL_ANNOTATIONS + NULLABLE_ANNOTATIONS + listOf(CommonClassNames.JAVA_LANG_OVERRIDE))
 
 val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = mapOf(
         "byte" to BYTE.asString(),
