@@ -368,6 +368,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         public void testAssignments() throws Exception {
             doTest("compiler/testData/cfg/expressions/Assignments.kt");
         }
+
+        @TestMetadata("callableReferences.kt")
+        public void testCallableReferences() throws Exception {
+            doTest("compiler/testData/cfg/expressions/callableReferences.kt");
+        }
         
         @TestMetadata("chainedQualifiedExpression.kt")
         public void testChainedQualifiedExpression() throws Exception {

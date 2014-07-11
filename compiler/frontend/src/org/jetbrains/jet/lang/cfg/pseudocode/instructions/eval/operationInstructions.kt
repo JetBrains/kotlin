@@ -139,6 +139,7 @@ public enum class MagicKind {
     NOT_NULL_ASSERTION
     EQUALS_IN_WHEN_CONDITION
     IS
+    CALLABLE_REFERENCE
     // implicit operations
     LOOP_RANGE_ITERATION
     IMPLICIT_RECEIVER

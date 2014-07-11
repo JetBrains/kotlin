@@ -1415,6 +1415,12 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression) {
+            mark(expression);
+            createNonSyntheticValue(expression, MagicKind.CALLABLE_REFERENCE);
+        }
+
+        @Override
         public void visitJetElement(@NotNull JetElement element) {
             builder.unsupported(element);
         }

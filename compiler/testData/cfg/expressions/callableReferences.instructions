@@ -1,0 +1,29 @@
+== bar ==
+fun bar(): Int = 1
+---------------------
+L0:
+  1 <START>
+    r(1) -> <v0>
+    ret(*|<v0>) L1
+L1:
+    <END>             NEXT:[<SINK>]
+error:
+    <ERROR>           PREV:[]
+sink:
+    <SINK>            PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(): Any = ::bar
+---------------------
+L0:
+  1 <START>
+    mark(::bar)
+    magic[CALLABLE_REFERENCE](::bar) -> <v0>
+    ret(*|<v0>) L1
+L1:
+    <END>                                       NEXT:[<SINK>]
+error:
+    <ERROR>                                     PREV:[]
+sink:
+    <SINK>                                      PREV:[<ERROR>, <END>]
+=====================
