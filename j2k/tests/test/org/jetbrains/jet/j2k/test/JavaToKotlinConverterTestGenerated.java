@@ -2701,6 +2701,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/switch/emptySwitch.java");
         }
         
+        @TestMetadata("enumConstants.java")
+        public void testEnumConstants() throws Exception {
+            doTest("j2k/tests/testData/ast/switch/enumConstants.java");
+        }
+        
         @TestMetadata("fallDown.java")
         public void testFallDown() throws Exception {
             doTest("j2k/tests/testData/ast/switch/fallDown.java");

@@ -316,6 +316,7 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
                 }
             }
 
+            // add qualification for static members from base classes and also this works for enum constants in switch
             if (target is PsiMember
                     && target.hasModifierProperty(PsiModifier.STATIC)
                     && target.getContainingClass() != null
