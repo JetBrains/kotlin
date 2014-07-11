@@ -1762,6 +1762,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/issues/kt-794-mixed.java");
         }
         
+        @TestMetadata("kt-807.java")
+        public void testKt_807() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/kt-807.java");
+        }
+        
         @TestMetadata("kt-809.java")
         public void testKt_809() throws Exception {
             doTest("j2k/tests/testData/ast/issues/kt-809.java");
@@ -1835,6 +1840,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("kt-893.java")
         public void testKt_893() throws Exception {
             doTest("j2k/tests/testData/ast/issues/kt-893.java");
+        }
+        
+        @TestMetadata("kt-899.java")
+        public void testKt_899() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/kt-899.java");
         }
         
         @TestMetadata("kt-963.java")
