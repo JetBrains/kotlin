@@ -1,9 +1,9 @@
 fun main(args: Array<String>?) {
-    val y: Unit = Unit.VALUE //do not compile
+    val y: Unit = Unit //do not compile
     A<Unit>()        //do not compile
-    C<Unit>(Unit.VALUE)      //do not compile
+    C<Unit>(Unit)      //do not compile
         //do not compile
-    System.out?.println(fff<Unit>(Unit.VALUE))  //do not compile
+    System.out?.println(fff<Unit>(Unit))  //do not compile
     System.out?.println(id<Unit>(y))  //do not compile
     System.out?.println(fff<Unit>(id<Unit>(y)) == id<Unit>(foreach(Array<Int>(0,{0}),{(e : Int) : Unit -> })))  //do not compile
 }

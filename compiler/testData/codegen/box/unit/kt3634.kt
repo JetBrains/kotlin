@@ -1,4 +1,4 @@
-val c = Unit.VALUE
+val c = Unit
 val d = c
 
 fun box(): String {

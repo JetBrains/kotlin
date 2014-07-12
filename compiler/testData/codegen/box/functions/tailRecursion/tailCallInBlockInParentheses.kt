@@ -2,7 +2,7 @@ tailRecursive fun foo(x: Int) {
     return if (x > 0) {
         (foo(x - 1))
     }
-    else Unit.VALUE
+    else Unit
 }
 
 fun box(): String {

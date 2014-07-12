@@ -14,7 +14,7 @@ val baz: String by StringHandler
 
 val metadatas = IdentityHashMap<PropertyMetadata, Unit>()
 
-fun record(p: PropertyMetadata) = metadatas.put(p, Unit.VALUE)
+fun record(p: PropertyMetadata) = metadatas.put(p, Unit)
 
 object IntHandler {
     fun get(t: Any?, p: PropertyMetadata): Int { record(p); return 42 }

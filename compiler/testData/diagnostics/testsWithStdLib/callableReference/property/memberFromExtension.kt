@@ -1,7 +1,7 @@
 import kotlin.reflect.*
 
 class A {
-    val foo: Unit = Unit.VALUE
+    val foo: Unit = Unit
     var bar: String = ""
     var self: A
         get() = this

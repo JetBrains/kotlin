@@ -20,7 +20,7 @@ fun foo(a: A) {
             a.gen()  // unit can be inferred
         }
         else {
-            Unit.VALUE
+            Unit
         }
     }
 

@@ -20,7 +20,7 @@ fun f9(init : A?) {
     a?.<!UNRESOLVED_REFERENCE!>bar<!>()
     a?.foo()
   }
-  if (!(a is B) || <!DEBUG_INFO_AUTOCAST!>a<!>.bar() == Unit.VALUE) {
+  if (!(a is B) || <!DEBUG_INFO_AUTOCAST!>a<!>.bar() == Unit) {
       a?.<!UNRESOLVED_REFERENCE!>bar<!>()
   }
   if (!(a is B)) {
@@ -102,7 +102,7 @@ fun f13(a : A?) {
   }
 
   a?.foo()
-  if (a is B && <!DEBUG_INFO_AUTOCAST!>a<!>.foo() == Unit.VALUE) {
+  if (a is B && <!DEBUG_INFO_AUTOCAST!>a<!>.foo() == Unit) {
     <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
     <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
   }

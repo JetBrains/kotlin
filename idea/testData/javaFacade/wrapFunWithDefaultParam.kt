@@ -1,1 +1,1 @@
-fun <caret>test(a : Int = 1) = Unit.VALUE
+fun <caret>test(a : Int = 1) = Unit

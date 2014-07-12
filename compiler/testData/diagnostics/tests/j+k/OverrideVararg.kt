@@ -8,5 +8,5 @@ public abstract class Aaa {
 // FILE: bbb.kt
 
 class Bbb() : Aaa() {
-    override fun foo(vararg args: String?) = Unit.VALUE
+    override fun foo(vararg args: String?) = Unit
 }

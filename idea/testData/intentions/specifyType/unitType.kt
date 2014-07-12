@@ -1,1 +1,1 @@
-val x <caret>= Unit.VALUE
+val x <caret>= Unit
