@@ -1490,11 +1490,17 @@ public class JetControlFlowProcessor {
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
             Map<PseudoValue, ReceiverValue> receivers = getReceiverValues(resolvedCall);
             SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues = SmartFMap.emptyMap();
-            for (ValueParameterDescriptor parameterDescriptor : resultingDescriptor.getValueParameters()) {
-                ResolvedValueArgument argument = resolvedCall.getValueArguments().get(parameterDescriptor);
-                if (argument == null) continue;
-
-                parameterValues = generateValueArgument(argument, parameterDescriptor, parameterValues);
+            List<ValueArgument> valueArguments = CallUtilPackage.getAllValueArguments(resolvedCall.getCall());
+            for (ValueArgument argument : valueArguments) {
+                ArgumentMapping argumentMapping = resolvedCall.getArgumentMapping(argument);
+                JetExpression argumentExpression = argument.getArgumentExpression();
+                if (argumentMapping instanceof ArgumentMatch) {
+                    parameterValues = generateValueArgument(argument, ((ArgumentMatch) argumentMapping).getValueParameter(), parameterValues);
+                }
+                else if (argumentExpression != null) {
+                    generateInstructions(argumentExpression);
+                    createSyntheticValue(argumentExpression, MagicKind.VALUE_CONSUMER, argumentExpression);
+                }
             }
 
             if (resultingDescriptor instanceof VariableDescriptor) {
@@ -1550,19 +1556,6 @@ public class JetControlFlowProcessor {
             }
 
             return receiverValues;
-        }
-
-        @NotNull
-        private SmartFMap<PseudoValue, ValueParameterDescriptor> generateValueArgument(
-                ResolvedValueArgument argument,
-                ValueParameterDescriptor parameterDescriptor,
-                SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues
-        ) {
-            for (ValueArgument valueArgument : argument.getArguments()) {
-                parameterValues = generateValueArgument(valueArgument, parameterDescriptor, parameterValues);
-            }
-
-            return parameterValues;
         }
 
         @NotNull

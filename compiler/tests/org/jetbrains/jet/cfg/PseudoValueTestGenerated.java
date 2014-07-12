@@ -474,6 +474,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest("compiler/testData/cfg/functions/DefaultValuesForArguments.kt");
             }
             
+            @TestMetadata("unmappedArgs.kt")
+            public void testUnmappedArgs() throws Exception {
+                doTest("compiler/testData/cfg/functions/unmappedArgs.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/cfg/tailCalls")

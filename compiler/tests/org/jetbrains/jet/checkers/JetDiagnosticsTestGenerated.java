@@ -1435,6 +1435,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/UninitializedOrReassignedVariables.kt");
             }
             
+            @TestMetadata("unmappedArgs.kt")
+            public void testUnmappedArgs() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unmappedArgs.kt");
+            }
+            
             @TestMetadata("varInitializationInIfInCycle.kt")
             public void testVarInitializationInIfInCycle() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/varInitializationInIfInCycle.kt");
@@ -3804,6 +3809,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("unresolvedArguments.kt")
             public void testUnresolvedArguments() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/unresolvedArguments.kt");
+            }
+            
+            @TestMetadata("unresolvedOperation.kt")
+            public void testUnresolvedOperation() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/unresolvedOperation.kt");
             }
             
             @TestMetadata("variableDeclarationInSelector.kt")

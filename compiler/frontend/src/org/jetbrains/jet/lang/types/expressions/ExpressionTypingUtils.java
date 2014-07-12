@@ -84,9 +84,15 @@ public class ExpressionTypingUtils {
 
     @NotNull
     protected static ExpressionReceiver safeGetExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
-        JetType type = facade.safeGetTypeInfo(expression, context).getType();
-        assert type != null : "safeGetTypeInfo should return @NotNull type";
+        JetType type = safeGetType(facade.safeGetTypeInfo(expression, context));
         return new ExpressionReceiver(expression, type);
+    }
+
+    @NotNull
+    public static JetType safeGetType(@NotNull JetTypeInfo typeInfo) {
+        JetType type = typeInfo.getType();
+        assert type != null : "safeGetType should be invoked on safe JetTypeInfo; safeGetTypeInfo should return @NotNull type";
+        return type;
     }
 
     @NotNull
