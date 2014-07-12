@@ -48,10 +48,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
         val css = javaClass<Html2CompilerPlugin>().getClassLoader()!!.getResourceAsStream(
                 "org/jetbrains/kotlin/doc/highlighter2/hightlight.css")!!
 
-        File(srcOutputRoot, "highlight.css").write { outputStream ->
-            css.copyTo(outputStream)
-            Unit.VALUE
-        }
+        File(srcOutputRoot, "highlight.css").write { outputStream -> css.copyTo(outputStream) }
 
         for (sourceInfo in model.sourcesInfo) {
             processFile(sourceInfo)

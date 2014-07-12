@@ -71,7 +71,7 @@ public fun JetElement.getDebugText(): String? {
         }
         return "package " + fqName.asString()
     }
-    return accept(DebugTextBuildingVisitor, Unit.VALUE)
+    return accept(DebugTextBuildingVisitor, Unit)
 }
 
 

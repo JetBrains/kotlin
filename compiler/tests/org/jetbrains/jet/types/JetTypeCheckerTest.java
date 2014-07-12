@@ -128,7 +128,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("\"d\"", builtIns.getStringType());
         assertType("\"\"\"d\"\"\"", builtIns.getStringType());
 
-        assertType("Unit.VALUE", KotlinBuiltIns.getInstance().getUnitType());
+        assertType("Unit", KotlinBuiltIns.getInstance().getUnitType());
 
         assertType("null", KotlinBuiltIns.getInstance().getNullableNothingType());
     }

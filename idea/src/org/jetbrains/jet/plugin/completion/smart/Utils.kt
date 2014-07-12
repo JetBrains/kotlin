@@ -95,7 +95,7 @@ fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPL
 val KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY = Key<Unit>("KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY")
 
 fun LookupElement.keepOldArgumentListOnTab(): LookupElement {
-    putUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY, Unit.VALUE)
+    putUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY, Unit)
     return this
 }
 
