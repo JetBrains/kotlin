@@ -156,12 +156,7 @@ public class ExpressionTypingUtils {
 
         PsiElement parent = scopeDeclaration.getParent();
         assert parent instanceof JetFunctionLiteralExpression : "parent of JetFunctionLiteral is " + parent;
-        JetCallExpression callExpression = getCallExpression((JetFunctionLiteralExpression) parent);
-        if (callExpression == null) {
-            return false;
-        }
-
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(callExpression, context);
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getParentResolvedCall((JetFunctionLiteralExpression) parent, context, true);
         if (resolvedCall == null) {
             return false;
         }
@@ -177,26 +172,6 @@ public class ExpressionTypingUtils {
         }
     }
 
-    @Nullable
-    private static JetCallExpression getCallExpression(@NotNull JetFunctionLiteralExpression functionLiteralExpression) {
-        PsiElement parent = functionLiteralExpression.getParent();
-        if (parent instanceof JetValueArgument) {
-            // foo({ ... })    or     foo(f = { ... })
-
-            PsiElement valueArgumentList = parent.getParent();
-            assert valueArgumentList instanceof JetValueArgumentList : "parent of value argument is " + valueArgumentList;
-
-            if (valueArgumentList.getParent() instanceof JetCallExpression) { // may be argument list of annotation
-                return (JetCallExpression) valueArgumentList.getParent();
-            }
-        }
-        else if (parent instanceof JetCallExpression) {
-            // foo { ... }
-
-            return  (JetCallExpression) parent;
-        }
-        return null;
-    }
     public static void checkCapturingInClosure(JetSimpleNameExpression expression, BindingTrace trace, JetScope scope) {
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
         if (variable != null) {

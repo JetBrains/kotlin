@@ -16,13 +16,11 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +47,7 @@ public class JetCallExpression extends JetExpressionImpl implements JetCallEleme
         return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
+    @Override
     @Nullable
     public JetTypeArgumentList getTypeArgumentList() {
         return (JetTypeArgumentList) findChildByType(JetNodeTypes.TYPE_ARGUMENT_LIST);
@@ -61,40 +60,26 @@ public class JetCallExpression extends JetExpressionImpl implements JetCallEleme
      */
     @Override
     @NotNull
-    public List<JetExpression> getFunctionLiteralArguments() {
-        JetExpression calleeExpression = getCalleeExpression();
-        ASTNode node;
-        if (calleeExpression instanceof JetFunctionLiteralExpression) {
-            node = calleeExpression.getNode().getTreeNext();
-        }
-        else {
-            node = getNode().getFirstChildNode();
-        }
-        List<JetExpression> result = new SmartList<JetExpression>();
-        while (node != null) {
-            PsiElement psi = node.getPsi();
-            if (psi instanceof JetFunctionLiteralExpression) {
-                result.add((JetFunctionLiteralExpression) psi);
-            }
-            else if (psi instanceof JetLabeledExpression) {
-                JetLabeledExpression labeledExpression = (JetLabeledExpression) psi;
-                JetExpression baseExpression = labeledExpression.getBaseExpression();
-                if (baseExpression instanceof JetFunctionLiteralExpression) {
-                    result.add(labeledExpression);
-                }
-            }
-            node = node.getTreeNext();
-        }
-        return result;
+    public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
+        return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL_ARGUMENT);
     }
 
     @Override
     @NotNull
     public List<? extends ValueArgument> getValueArguments() {
         JetValueArgumentList list = getValueArgumentList();
-        return list != null ? list.getArguments() : Collections.<JetValueArgument>emptyList();
+        List<JetValueArgument> valueArgumentsInParentheses = list != null ? list.getArguments() : Collections.<JetValueArgument>emptyList();
+        List<JetFunctionLiteralArgument> functionLiteralArguments = getFunctionLiteralArguments();
+        if (functionLiteralArguments.isEmpty()) {
+            return valueArgumentsInParentheses;
+        }
+        List<ValueArgument> allValueArguments = Lists.newArrayList();
+        allValueArguments.addAll(valueArgumentsInParentheses);
+        allValueArguments.addAll(functionLiteralArguments);
+        return allValueArguments;
     }
 
+    @Override
     @NotNull
     public List<JetTypeProjection> getTypeArguments() {
         JetTypeArgumentList list = getTypeArgumentList();

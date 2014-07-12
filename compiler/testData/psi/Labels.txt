@@ -176,38 +176,39 @@ JetFile: Labels.kt
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('filter')
           PsiWhiteSpace(' ')
-          LABELED_EXPRESSION
-            LABEL_QUALIFIER
-              LABEL
-                PsiElement(LABEL_IDENTIFIER)('@f')
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                BLOCK
-                  IF
-                    PsiElement(if)('if')
-                    PsiWhiteSpace(' ')
-                    PsiElement(LPAR)('(')
-                    CONDITION
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('1')
-                    PsiElement(RPAR)(')')
-                    PsiWhiteSpace(' ')
-                    THEN
-                      RETURN
-                        PsiElement(return)('return')
+          FUNCTION_LITERAL_ARGUMENT
+            LABELED_EXPRESSION
+              LABEL_QUALIFIER
+                LABEL
+                  PsiElement(LABEL_IDENTIFIER)('@f')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
-                  RETURN
-                    PsiElement(return)('return')
-                    LABEL_QUALIFIER
-                      LABEL
-                        PsiElement(LABEL_IDENTIFIER)('@f')
-                    PsiWhiteSpace(' ')
-                    BOOLEAN_CONSTANT
-                      PsiElement(true)('true')
-                PsiWhiteSpace('\n  ')
-                PsiElement(RBRACE)('}')
+                  BLOCK
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('1')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      THEN
+                        RETURN
+                          PsiElement(return)('return')
+                    PsiWhiteSpace('\n      ')
+                    RETURN
+                      PsiElement(return)('return')
+                      LABEL_QUALIFIER
+                        LABEL
+                          PsiElement(LABEL_IDENTIFIER)('@f')
+                      PsiWhiteSpace(' ')
+                      BOOLEAN_CONSTANT
+                        PsiElement(true)('true')
+                  PsiWhiteSpace('\n  ')
+                  PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
@@ -217,36 +218,37 @@ JetFile: Labels.kt
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('filter')
           PsiWhiteSpace(' ')
-          LABELED_EXPRESSION
-            PsiErrorElement:Label must be named
-              PsiElement(LABEL_IDENTIFIER)('@')
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                BLOCK
-                  IF
-                    PsiElement(if)('if')
-                    PsiWhiteSpace(' ')
-                    PsiElement(LPAR)('(')
-                    CONDITION
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('1')
-                    PsiElement(RPAR)(')')
-                    PsiWhiteSpace(' ')
-                    THEN
-                      RETURN
-                        PsiElement(return)('return')
+          FUNCTION_LITERAL_ARGUMENT
+            LABELED_EXPRESSION
+              PsiErrorElement:Label must be named
+                PsiElement(LABEL_IDENTIFIER)('@')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
-                  RETURN
-                    PsiElement(return)('return')
-                    PsiErrorElement:Label must be named
-                      PsiElement(LABEL_IDENTIFIER)('@')
-                    PsiWhiteSpace(' ')
-                    BOOLEAN_CONSTANT
-                      PsiElement(true)('true')
-                PsiWhiteSpace('\n  ')
-                PsiElement(RBRACE)('}')
+                  BLOCK
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('1')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      THEN
+                        RETURN
+                          PsiElement(return)('return')
+                    PsiWhiteSpace('\n      ')
+                    RETURN
+                      PsiElement(return)('return')
+                      PsiErrorElement:Label must be named
+                        PsiElement(LABEL_IDENTIFIER)('@')
+                      PsiWhiteSpace(' ')
+                      BOOLEAN_CONSTANT
+                        PsiElement(true)('true')
+                  PsiWhiteSpace('\n  ')
+                  PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
       THIS_EXPRESSION
         REFERENCE_EXPRESSION

@@ -68,6 +68,8 @@ import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.lang.psi.psiUtil.isFunctionLiteralOutsideParentheses
+import org.jetbrains.jet.plugin.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -915,23 +917,13 @@ fun ExtractionDescriptor.generateFunction(
         }
 
         val firstExpression = extractionData.getExpressions().firstOrNull()
-        val enclosingCall = firstExpression?.getParent() as? JetCallExpression
-        if (enclosingCall == null || firstExpression !in enclosingCall.getFunctionLiteralArguments()) {
-            anchor.replace(wrappedCall)
+        if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
+            val functionLiteralArgument = PsiTreeUtil.getParentOfType(firstExpression, javaClass<JetFunctionLiteralArgument>())!!
+            //todo use the right binding context
+            functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, BindingContext.EMPTY)
             return
         }
-
-        val argumentListExt = psiFactory.createCallArguments("(${wrappedCall.getText()})")
-        val argumentList = enclosingCall.getValueArgumentList()
-        if (argumentList == null) {
-            (anchor.getPrevSibling() as? PsiWhiteSpace)?.let { it.delete() }
-            anchor.replace(argumentListExt)
-            return
-        }
-
-        val newArgText = (argumentList.getArguments() + argumentListExt.getArguments()).map { it.getText() }.joinToString(", ", "(", ")")
-        argumentList.replace(psiFactory.createCallArguments(newArgText))
-        anchor.delete()
+        anchor.replace(wrappedCall)
     }
 
     fun makeCall(function: JetNamedFunction): JetNamedFunction {

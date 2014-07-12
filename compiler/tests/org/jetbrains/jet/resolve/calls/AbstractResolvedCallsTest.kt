@@ -28,7 +28,6 @@ import java.io.File
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getAllValueArguments
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.lang.psi.ValueArgument
@@ -102,14 +101,14 @@ private fun ResolvedCall<*>.renderToText(): String {
         appendln("This object = ${getThisObject().getText()}")
         appendln("Receiver argument = ${getReceiverArgument().getText()}")
 
-        val valueArguments = getCall().getAllValueArguments()
+        val valueArguments = getCall().getValueArguments()
         if (!valueArguments.isEmpty()) {
             appendln()
             appendln("Value arguments mapping:")
             appendln()
 
             for (valueArgument in valueArguments) {
-                val argumentText = valueArgument.getText()
+                val argumentText = valueArgument!!.getText()
                 val argumentMappingText = getArgumentMapping(valueArgument).getText()
 
                 appendln("$argumentMappingText $argumentText")

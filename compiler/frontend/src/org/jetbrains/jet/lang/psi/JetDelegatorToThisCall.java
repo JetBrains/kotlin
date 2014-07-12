@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -47,11 +46,13 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
         return getThisReference();
     }
 
+    @Override
     @Nullable
     public JetValueArgumentList getValueArgumentList() {
         return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
+    @Override
     @NotNull
     public List<? extends ValueArgument> getValueArguments() {
         JetValueArgumentList list = getValueArgumentList();
@@ -60,7 +61,7 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
 
     @NotNull
     @Override
-    public List<JetExpression> getFunctionLiteralArguments() {
+    public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
         return Collections.emptyList();
     }
 

@@ -57,6 +57,7 @@ import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 
 enum class Tail {
     COMMA
@@ -82,18 +83,18 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
     private fun calculateForArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val argument = expressionWithType.getParent() as? JetValueArgument ?: return null
         if (argument.isNamed()) return null //TODO - support named arguments (also do not forget to check for presence of named arguments before)
-        val argumentList = argument.getParent() as JetValueArgumentList
+        val argumentList = argument.getParent() as? JetValueArgumentList ?: return null
         val argumentIndex = argumentList.getArguments().indexOf(argument)
         val callElement = argumentList.getParent() as? JetCallElement ?: return null
         return calculateForArgument(callElement, argumentIndex, false)
     }
 
     private fun calculateForFunctionLiteralArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
-        val callExpression = expressionWithType.getParent() as? JetCallExpression
+        val functionLiteralArgument = expressionWithType.getParent() as? JetFunctionLiteralArgument
+        val callExpression = functionLiteralArgument?.getParent() as? JetCallExpression
         if (callExpression != null) {
-            val arguments = callExpression.getFunctionLiteralArguments()
-            if (arguments.firstOrNull() == expressionWithType) {
-                return calculateForArgument(callExpression, callExpression.getValueArguments().size, true)
+            if (callExpression.getFunctionLiteralArguments().head?.getArgumentExpression() == expressionWithType) {
+                return calculateForArgument(callExpression, callExpression.getValueArguments().size - 1, true)
             }
         }
         return null

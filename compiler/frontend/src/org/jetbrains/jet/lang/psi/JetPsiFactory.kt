@@ -279,8 +279,13 @@ public class JetPsiFactory(private val project: Project) {
         return createExpression(JetPsiUnparsingUtils.toIf(condition, thenExpr, elseExpr)) as JetIfExpression
     }
 
-    public fun createArgumentWithName(name: String, argumentExpression: JetExpression): JetValueArgument {
-        return createCallArguments("(" + name + " = " + argumentExpression.getText() + ")").getArguments().first()
+    public fun createArgumentWithName(name: String?, argumentExpression: JetExpression): JetValueArgument {
+        val argumentText = (if (name != null) "$name = " else "") + argumentExpression.getText()
+        return createCallArguments("($argumentText)").getArguments().first()
+    }
+
+    public fun createArgument(argumentExpression: JetExpression): JetValueArgument {
+        return createArgumentWithName(null, argumentExpression)
     }
 
     public inner class IfChainBuilder() {

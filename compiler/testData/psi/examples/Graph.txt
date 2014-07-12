@@ -422,39 +422,41 @@ JetFile: Graph.kt
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('filter')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BLOCK
-                    BINARY_EXPRESSION
-                      DOT_QUALIFIED_EXPRESSION
+              FUNCTION_LITERAL_ARGUMENT
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    BLOCK
+                      BINARY_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('it')
+                          PsiElement(DOT)('.')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('from')
+                        PsiWhiteSpace(' ')
+                        OPERATION_REFERENCE
+                          PsiElement(EQEQ)('==')
+                        PsiWhiteSpace(' ')
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('it')
-                        PsiElement(DOT)('.')
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('from')
-                      PsiWhiteSpace(' ')
-                      OPERATION_REFERENCE
-                        PsiElement(EQEQ)('==')
-                      PsiWhiteSpace(' ')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('v')
-                  PsiElement(RBRACE)('}')
+                          PsiElement(IDENTIFIER)('v')
+                    PsiElement(RBRACE)('}')
           PsiElement(DOT)('.')
           CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('map')
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                BLOCK
-                  DOT_QUALIFIED_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('it')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('to')
-                PsiElement(RBRACE)('}')
+            FUNCTION_LITERAL_ARGUMENT
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('it')
+                      PsiElement(DOT)('.')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('to')
+                  PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
       PsiComment(EOL_COMMENT)('// type is IIterable<Vertex<V>>')
       PsiWhiteSpace('\n\n  ')
@@ -528,30 +530,31 @@ JetFile: Graph.kt
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foreach')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BLOCK
-                    CALL_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('dfs')
-                      VALUE_ARGUMENT_LIST
-                        PsiElement(LPAR)('(')
-                        VALUE_ARGUMENT
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('it')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        VALUE_ARGUMENT
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('visited')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        VALUE_ARGUMENT
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('handler')
-                        PsiElement(RPAR)(')')
-                  PsiElement(RBRACE)('}')
+              FUNCTION_LITERAL_ARGUMENT
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    BLOCK
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('dfs')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          VALUE_ARGUMENT
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('it')
+                          PsiElement(COMMA)(',')
+                          PsiWhiteSpace(' ')
+                          VALUE_ARGUMENT
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('visited')
+                          PsiElement(COMMA)(',')
+                          PsiWhiteSpace(' ')
+                          VALUE_ARGUMENT
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('handler')
+                          PsiElement(RPAR)(')')
+                    PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n\n    ')
           FUN
             PsiElement(fun)('fun')
@@ -683,30 +686,31 @@ JetFile: Graph.kt
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foreach')
-                  FUNCTION_LITERAL_EXPRESSION
-                    FUNCTION_LITERAL
-                      PsiElement(LBRACE)('{')
-                      BLOCK
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('dfs')
-                          VALUE_ARGUMENT_LIST
-                            PsiElement(LPAR)('(')
-                            VALUE_ARGUMENT
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('it')
-                            PsiElement(COMMA)(',')
-                            PsiWhiteSpace(' ')
-                            VALUE_ARGUMENT
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('visited')
-                            PsiElement(COMMA)(',')
-                            PsiWhiteSpace(' ')
-                            VALUE_ARGUMENT
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('handler')
-                            PsiElement(RPAR)(')')
-                      PsiElement(RBRACE)('}')
+                  FUNCTION_LITERAL_ARGUMENT
+                    FUNCTION_LITERAL_EXPRESSION
+                      FUNCTION_LITERAL
+                        PsiElement(LBRACE)('{')
+                        BLOCK
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('dfs')
+                            VALUE_ARGUMENT_LIST
+                              PsiElement(LPAR)('(')
+                              VALUE_ARGUMENT
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('it')
+                              PsiElement(COMMA)(',')
+                              PsiWhiteSpace(' ')
+                              VALUE_ARGUMENT
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('visited')
+                              PsiElement(COMMA)(',')
+                              PsiWhiteSpace(' ')
+                              VALUE_ARGUMENT
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('handler')
+                              PsiElement(RPAR)(')')
+                        PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n    ')
               PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n  ')
@@ -810,174 +814,176 @@ JetFile: Graph.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foreach')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  PsiWhiteSpace('\n      ')
-                  BLOCK
-                    IF
-                      PsiElement(if)('if')
-                      PsiWhiteSpace(' ')
-                      PsiElement(LPAR)('(')
-                      CONDITION
-                        PREFIX_EXPRESSION
-                          OPERATION_REFERENCE
-                            PsiElement(EXCL)('!')
-                          DOT_QUALIFIED_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('visited')
-                            PsiElement(DOT)('.')
-                            CALL_EXPRESSION
+              FUNCTION_LITERAL_ARGUMENT
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n      ')
+                    BLOCK
+                      IF
+                        PsiElement(if)('if')
+                        PsiWhiteSpace(' ')
+                        PsiElement(LPAR)('(')
+                        CONDITION
+                          PREFIX_EXPRESSION
+                            OPERATION_REFERENCE
+                              PsiElement(EXCL)('!')
+                            DOT_QUALIFIED_EXPRESSION
                               REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('add')
-                              VALUE_ARGUMENT_LIST
-                                PsiElement(LPAR)('(')
-                                VALUE_ARGUMENT
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('it')
-                                PsiElement(RPAR)(')')
-                      PsiElement(RPAR)(')')
-                      PsiWhiteSpace('\n        ')
-                      THEN
-                        CONTINUE
-                          PsiElement(continue)('continue')
-                    PsiWhiteSpace('\n      ')
-                    DOT_QUALIFIED_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('pending')
-                      PsiElement(DOT)('.')
-                      CALL_EXPRESSION
+                                PsiElement(IDENTIFIER)('visited')
+                              PsiElement(DOT)('.')
+                              CALL_EXPRESSION
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('add')
+                                VALUE_ARGUMENT_LIST
+                                  PsiElement(LPAR)('(')
+                                  VALUE_ARGUMENT
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('it')
+                                  PsiElement(RPAR)(')')
+                        PsiElement(RPAR)(')')
+                        PsiWhiteSpace('\n        ')
+                        THEN
+                          CONTINUE
+                            PsiElement(continue)('continue')
+                      PsiWhiteSpace('\n      ')
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('push')
-                        VALUE_ARGUMENT_LIST
-                          PsiElement(LPAR)('(')
-                          VALUE_ARGUMENT
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('it')
-                          PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n      ')
-                    WHILE
-                      PsiElement(while)('while')
-                      PsiWhiteSpace(' ')
-                      PsiElement(LPAR)('(')
-                      CONDITION
-                        PREFIX_EXPRESSION
-                          OPERATION_REFERENCE
-                            PsiElement(EXCL)('!')
-                          DOT_QUALIFIED_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('pending')
-                            PsiElement(DOT)('.')
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('isEmpty')
-                      PsiElement(RPAR)(')')
-                      PsiWhiteSpace(' ')
-                      BODY
-                        BLOCK
-                          PsiElement(LBRACE)('{')
-                          PsiWhiteSpace('\n        ')
-                          PROPERTY
-                            PsiElement(val)('val')
-                            PsiWhiteSpace(' ')
-                            PsiElement(IDENTIFIER)('current')
-                            PsiWhiteSpace(' ')
-                            PsiElement(EQ)('=')
-                            PsiWhiteSpace(' ')
+                          PsiElement(IDENTIFIER)('pending')
+                        PsiElement(DOT)('.')
+                        CALL_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('push')
+                          VALUE_ARGUMENT_LIST
+                            PsiElement(LPAR)('(')
+                            VALUE_ARGUMENT
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('it')
+                            PsiElement(RPAR)(')')
+                      PsiWhiteSpace('\n      ')
+                      WHILE
+                        PsiElement(while)('while')
+                        PsiWhiteSpace(' ')
+                        PsiElement(LPAR)('(')
+                        CONDITION
+                          PREFIX_EXPRESSION
+                            OPERATION_REFERENCE
+                              PsiElement(EXCL)('!')
                             DOT_QUALIFIED_EXPRESSION
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('pending')
                               PsiElement(DOT)('.')
-                              CALL_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('isEmpty')
+                        PsiElement(RPAR)(')')
+                        PsiWhiteSpace(' ')
+                        BODY
+                          BLOCK
+                            PsiElement(LBRACE)('{')
+                            PsiWhiteSpace('\n        ')
+                            PROPERTY
+                              PsiElement(val)('val')
+                              PsiWhiteSpace(' ')
+                              PsiElement(IDENTIFIER)('current')
+                              PsiWhiteSpace(' ')
+                              PsiElement(EQ)('=')
+                              PsiWhiteSpace(' ')
+                              DOT_QUALIFIED_EXPRESSION
                                 REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('pop')
-                                VALUE_ARGUMENT_LIST
-                                  PsiElement(LPAR)('(')
-                                  PsiElement(RPAR)(')')
-                          PsiWhiteSpace('\n        ')
-                          CALL_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('handler')
-                            VALUE_ARGUMENT_LIST
-                              PsiElement(LPAR)('(')
-                              VALUE_ARGUMENT
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('current')
-                              PsiElement(RPAR)(')')
-                          PsiElement(SEMICOLON)(';')
-                          PsiWhiteSpace('\n        ')
-                          DOT_QUALIFIED_EXPRESSION
+                                  PsiElement(IDENTIFIER)('pending')
+                                PsiElement(DOT)('.')
+                                CALL_EXPRESSION
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('pop')
+                                  VALUE_ARGUMENT_LIST
+                                    PsiElement(LPAR)('(')
+                                    PsiElement(RPAR)(')')
+                            PsiWhiteSpace('\n        ')
                             CALL_EXPRESSION
                               REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('neighbours')
+                                PsiElement(IDENTIFIER)('handler')
                               VALUE_ARGUMENT_LIST
                                 PsiElement(LPAR)('(')
                                 VALUE_ARGUMENT
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('current')
                                 PsiElement(RPAR)(')')
-                            PsiElement(DOT)('.')
-                            CALL_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('foreach')
-                              PsiWhiteSpace(' ')
-                              FUNCTION_LITERAL_EXPRESSION
-                                FUNCTION_LITERAL
-                                  PsiElement(LBRACE)('{')
-                                  PsiWhiteSpace(' ')
-                                  VALUE_PARAMETER_LIST
-                                    VALUE_PARAMETER
-                                      PsiElement(IDENTIFIER)('n')
-                                  PsiWhiteSpace(' ')
-                                  PsiElement(ARROW)('->')
-                                  PsiWhiteSpace('\n          ')
-                                  BLOCK
-                                    IF
-                                      PsiElement(if)('if')
+                            PsiElement(SEMICOLON)(';')
+                            PsiWhiteSpace('\n        ')
+                            DOT_QUALIFIED_EXPRESSION
+                              CALL_EXPRESSION
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('neighbours')
+                                VALUE_ARGUMENT_LIST
+                                  PsiElement(LPAR)('(')
+                                  VALUE_ARGUMENT
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('current')
+                                  PsiElement(RPAR)(')')
+                              PsiElement(DOT)('.')
+                              CALL_EXPRESSION
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('foreach')
+                                PsiWhiteSpace(' ')
+                                FUNCTION_LITERAL_ARGUMENT
+                                  FUNCTION_LITERAL_EXPRESSION
+                                    FUNCTION_LITERAL
+                                      PsiElement(LBRACE)('{')
                                       PsiWhiteSpace(' ')
-                                      PsiElement(LPAR)('(')
-                                      CONDITION
-                                        DOT_QUALIFIED_EXPRESSION
-                                          REFERENCE_EXPRESSION
-                                            PsiElement(IDENTIFIER)('visited')
-                                          PsiElement(DOT)('.')
-                                          CALL_EXPRESSION
-                                            REFERENCE_EXPRESSION
-                                              PsiElement(IDENTIFIER)('add')
-                                            VALUE_ARGUMENT_LIST
-                                              PsiElement(LPAR)('(')
-                                              VALUE_ARGUMENT
-                                                REFERENCE_EXPRESSION
-                                                  PsiElement(IDENTIFIER)('n')
-                                              PsiElement(RPAR)(')')
-                                      PsiElement(RPAR)(')')
+                                      VALUE_PARAMETER_LIST
+                                        VALUE_PARAMETER
+                                          PsiElement(IDENTIFIER)('n')
                                       PsiWhiteSpace(' ')
-                                      THEN
-                                        BLOCK
-                                          PsiElement(LBRACE)('{')
-                                          PsiWhiteSpace('\n            ')
-                                          DOT_QUALIFIED_EXPRESSION
-                                            REFERENCE_EXPRESSION
-                                              PsiElement(IDENTIFIER)('pending')
-                                            PsiElement(DOT)('.')
-                                            CALL_EXPRESSION
+                                      PsiElement(ARROW)('->')
+                                      PsiWhiteSpace('\n          ')
+                                      BLOCK
+                                        IF
+                                          PsiElement(if)('if')
+                                          PsiWhiteSpace(' ')
+                                          PsiElement(LPAR)('(')
+                                          CONDITION
+                                            DOT_QUALIFIED_EXPRESSION
                                               REFERENCE_EXPRESSION
-                                                PsiElement(IDENTIFIER)('push')
-                                              VALUE_ARGUMENT_LIST
-                                                PsiElement(LPAR)('(')
-                                                VALUE_ARGUMENT
+                                                PsiElement(IDENTIFIER)('visited')
+                                              PsiElement(DOT)('.')
+                                              CALL_EXPRESSION
+                                                REFERENCE_EXPRESSION
+                                                  PsiElement(IDENTIFIER)('add')
+                                                VALUE_ARGUMENT_LIST
+                                                  PsiElement(LPAR)('(')
+                                                  VALUE_ARGUMENT
+                                                    REFERENCE_EXPRESSION
+                                                      PsiElement(IDENTIFIER)('n')
+                                                  PsiElement(RPAR)(')')
+                                          PsiElement(RPAR)(')')
+                                          PsiWhiteSpace(' ')
+                                          THEN
+                                            BLOCK
+                                              PsiElement(LBRACE)('{')
+                                              PsiWhiteSpace('\n            ')
+                                              DOT_QUALIFIED_EXPRESSION
+                                                REFERENCE_EXPRESSION
+                                                  PsiElement(IDENTIFIER)('pending')
+                                                PsiElement(DOT)('.')
+                                                CALL_EXPRESSION
                                                   REFERENCE_EXPRESSION
-                                                    PsiElement(IDENTIFIER)('n')
-                                                PsiElement(RPAR)(')')
-                                          PsiWhiteSpace('\n          ')
-                                          PsiElement(RBRACE)('}')
-                                  PsiWhiteSpace('\n        ')
-                                  PsiElement(RBRACE)('}')
-                          PsiWhiteSpace('\n    ')
-                          PsiComment(BLOCK_COMMENT)('/* alternative\n        pending->push(neighbours(current).filter{n => !visited[n])})\n        // -> means that if push(x : T) and actual parameter y is IIterable<T>, this compiles into\n          y.foreach{ n => push(n) }\n     */')
-                          PsiWhiteSpace('\n      ')
-                          PsiElement(RBRACE)('}')
-                  PsiWhiteSpace('\n    ')
-                  PsiElement(RBRACE)('}')
+                                                    PsiElement(IDENTIFIER)('push')
+                                                  VALUE_ARGUMENT_LIST
+                                                    PsiElement(LPAR)('(')
+                                                    VALUE_ARGUMENT
+                                                      REFERENCE_EXPRESSION
+                                                        PsiElement(IDENTIFIER)('n')
+                                                    PsiElement(RPAR)(')')
+                                              PsiWhiteSpace('\n          ')
+                                              PsiElement(RBRACE)('}')
+                                      PsiWhiteSpace('\n        ')
+                                      PsiElement(RBRACE)('}')
+                            PsiWhiteSpace('\n    ')
+                            PsiComment(BLOCK_COMMENT)('/* alternative\n        pending->push(neighbours(current).filter{n => !visited[n])})\n        // -> means that if push(x : T) and actual parameter y is IIterable<T>, this compiles into\n          y.foreach{ n => push(n) }\n     */')
+                            PsiWhiteSpace('\n      ')
+                            PsiElement(RBRACE)('}')
+                    PsiWhiteSpace('\n    ')
+                    PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')

@@ -121,8 +121,7 @@ public class JetPsiMatcher {
 
             if (!checkElementMatch(call1.getCalleeExpression(), call2.getCalleeExpression())) return false;
 
-            return checkListMatch(call1.getValueArguments(), call2.getValueArguments(), VALUE_ARGUMENT_CHECKER) &&
-                   checkListMatch(call1.getFunctionLiteralArguments(), call2.getFunctionLiteralArguments());
+            return checkListMatch(call1.getValueArguments(), call2.getValueArguments(), VALUE_ARGUMENT_CHECKER);
         }
 
         @Override

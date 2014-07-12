@@ -20,12 +20,16 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
@@ -49,7 +53,6 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.NOT_A_CLASS;
 import static org.jetbrains.jet.lang.diagnostics.Errors.NO_CONSTRUCTOR;
@@ -484,7 +487,7 @@ public class CallResolver {
 
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> performResolutionGuardedForExtraFunctionLiteralArguments(
-            @NotNull ResolutionTask<D, F> task,
+            @NotNull final ResolutionTask<D, F> task,
             @NotNull CallTransformer<D, F> callTransformer
     ) {
         OverloadResolutionResultsImpl<F> results = performResolution(task, callTransformer);
@@ -514,7 +517,13 @@ public class CallResolver {
             DelegatingCall callWithoutFLArgs = new DelegatingCall(task.call) {
                 @NotNull
                 @Override
-                public List<JetExpression> getFunctionLiteralArguments() {
+                public List<? extends ValueArgument> getValueArguments() {
+                    return CallUtilPackage.getValueArgumentsInParentheses(task.call);
+                }
+
+                @NotNull
+                @Override
+                public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
                     return Collections.emptyList();
                 }
             };

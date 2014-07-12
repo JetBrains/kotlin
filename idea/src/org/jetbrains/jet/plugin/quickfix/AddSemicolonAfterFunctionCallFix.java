@@ -23,20 +23,17 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class AddSemicolonAfterFunctionCallFix extends JetIntentionAction<JetCallExpression> {
-    JetFunctionLiteralExpression literal;
+    private final JetFunctionLiteralArgument functionLiteralArgument;
 
-    public AddSemicolonAfterFunctionCallFix(@NotNull JetCallExpression element, @NotNull JetFunctionLiteralExpression literal) {
+    public AddSemicolonAfterFunctionCallFix(@NotNull JetCallExpression element, @NotNull JetFunctionLiteralArgument functionLiteralArgument) {
         super(element);
-        this.literal = literal;
+        this.functionLiteralArgument = functionLiteralArgument;
     }
 
     @NotNull
@@ -59,8 +56,8 @@ public class AddSemicolonAfterFunctionCallFix extends JetIntentionAction<JetCall
         assert argumentList != null;
         PsiElement afterArgumentList = argumentList.getNextSibling();
         int caretOffset = editor.getCaretModel().getOffset();
-        element.getParent().addRangeAfter(afterArgumentList, literal, element);
-        element.deleteChildRange(afterArgumentList, literal);
+        element.getParent().addRangeAfter(afterArgumentList, functionLiteralArgument, element);
+        element.deleteChildRange(afterArgumentList, functionLiteralArgument);
         element.getParent().addAfter(JetPsiFactory(file).createSemicolon(), element);
         editor.getCaretModel().moveToOffset(caretOffset + 1);
     }
@@ -71,9 +68,10 @@ public class AddSemicolonAfterFunctionCallFix extends JetIntentionAction<JetCall
             @Override
             public JetIntentionAction createAction(Diagnostic diagnostic) {
                 JetCallExpression callExpression = QuickFixUtil.getParentElementOfType(diagnostic, JetCallExpression.class);
-                JetFunctionLiteralExpression literalExpression = QuickFixUtil.getParentElementOfType(diagnostic, JetFunctionLiteralExpression.class);
-                if (callExpression == null || literalExpression == null) return null;
-                return new AddSemicolonAfterFunctionCallFix(callExpression, literalExpression);
+                JetFunctionLiteralArgument functionLiteralArgument =
+                        QuickFixUtil.getParentElementOfType(diagnostic, JetFunctionLiteralArgument.class);
+                if (callExpression == null || functionLiteralArgument == null) return null;
+                return new AddSemicolonAfterFunctionCallFix(callExpression, functionLiteralArgument);
             }
         };
     }

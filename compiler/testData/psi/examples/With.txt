@@ -105,40 +105,41 @@ JetFile: With.kt
                 PsiElement(IDENTIFIER)('out')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_EXPRESSION
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            BLOCK
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('println')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    STRING_TEMPLATE
-                      PsiElement(OPEN_QUOTE)('"')
-                      LITERAL_STRING_TEMPLATE_ENTRY
-                        PsiElement(REGULAR_STRING_PART)('foo')
-                      PsiElement(CLOSING_QUOTE)('"')
-                  PsiElement(RPAR)(')')
-              PsiElement(SEMICOLON)(';')
+        FUNCTION_LITERAL_ARGUMENT
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n    ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('print')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    STRING_TEMPLATE
-                      PsiElement(OPEN_QUOTE)('"')
-                      LITERAL_STRING_TEMPLATE_ENTRY
-                        PsiElement(REGULAR_STRING_PART)('bar')
-                      PsiElement(CLOSING_QUOTE)('"')
-                  PsiElement(RPAR)(')')
-              PsiElement(SEMICOLON)(';')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
+              BLOCK
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('println')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)('foo')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiElement(RPAR)(')')
+                PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace('\n    ')
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('print')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)('bar')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiElement(RPAR)(')')
+                PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION

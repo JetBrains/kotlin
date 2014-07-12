@@ -3314,7 +3314,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         for (ValueArgument va : expression.getValueArguments()) {
             args.add(va.getArgumentExpression());
         }
-        args.addAll(expression.getFunctionLiteralArguments());
 
         boolean isArray = KotlinBuiltIns.getInstance().isArray(arrayType);
         if (!isArray && args.size() != 1) {

@@ -46,11 +46,13 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
         return getRequiredStubOrPsiChild(JetStubElementTypes.CONSTRUCTOR_CALLEE);
     }
 
+    @Override
     @Nullable
     public JetValueArgumentList getValueArgumentList() {
         return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
+    @Override
     @NotNull
     public List<? extends ValueArgument> getValueArguments() {
         JetValueArgumentList list = getValueArgumentList();
@@ -59,7 +61,7 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
 
     @NotNull
     @Override
-    public List<JetExpression> getFunctionLiteralArguments() {
+    public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
         return Collections.emptyList();
     }
 

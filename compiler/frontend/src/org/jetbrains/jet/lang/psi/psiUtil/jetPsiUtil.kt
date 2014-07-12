@@ -319,3 +319,12 @@ public fun JetSimpleNameExpression.isImportDirectiveExpression(): Boolean {
 }
 
 public fun JetElement.getTextWithLocation(): String = "'${this.getText()}' at ${DiagnosticUtils.atLocation(this)}"
+
+public fun JetExpression.isFunctionLiteralOutsideParentheses(): Boolean {
+    val parent = getParent()
+    return when (parent) {
+        is JetFunctionLiteralArgument -> true
+        is JetLabeledExpression -> parent.isFunctionLiteralOutsideParentheses()
+        else -> false
+    }
+}

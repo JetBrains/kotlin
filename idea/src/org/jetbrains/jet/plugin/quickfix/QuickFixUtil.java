@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.sun.codemodel.internal.JVar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
@@ -130,12 +131,15 @@ public class QuickFixUtil {
         return null;
     }
 
+    //todo remove, use value argument to parameter map
     @Nullable
     public static JetParameter getParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(@NotNull JetFunctionLiteralExpression functionLiteralExpression) {
-        if (!(functionLiteralExpression.getParent() instanceof JetCallExpression)) {
+        JetFunctionLiteralArgument functionLiteralArgument = PsiTreeUtil.getParentOfType(functionLiteralExpression, JetFunctionLiteralArgument.class);
+        if (functionLiteralArgument == null || functionLiteralArgument.getFunctionLiteral() != functionLiteralExpression) return null;
+        if (!(functionLiteralArgument.getParent() instanceof JetCallExpression)) {
             return null;
         }
-        JetCallExpression callExpression = (JetCallExpression) functionLiteralExpression.getParent();
+        JetCallExpression callExpression = (JetCallExpression) functionLiteralArgument.getParent();
         JetParameterList parameterList = getParameterListOfCallee(callExpression);
         if (parameterList == null) return null;
         return parameterList.getParameters().get(parameterList.getParameters().size() - 1);

@@ -31,10 +31,12 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
@@ -57,6 +59,7 @@ import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 import org.jetbrains.jet.plugin.refactoring.introduce.KotlinIntroduceHandlerBase;
+import org.jetbrains.jet.plugin.util.psiModificationUtil.PsiModificationUtilPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
@@ -98,7 +101,6 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         }
         final JetExpression expression = _expression;
         boolean noTypeInference = false;
-        boolean needParentheses = false;
         if (expression.getParent() instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression)expression.getParent();
             if (qualifiedExpression.getReceiverExpression() != expression) {
@@ -109,13 +111,6 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         else if (expression instanceof JetStatementExpression) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
             return;
-        } else if (expression.getParent() instanceof JetCallElement) {
-            if (expression instanceof JetFunctionLiteralExpression) {
-                needParentheses = true;
-            } else {
-                showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
-                return;
-            }
         }
         else if (expression.getParent() instanceof JetOperationExpression) {
             JetOperationExpression operationExpression = (JetOperationExpression)expression.getParent();
@@ -126,7 +121,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         }
         ResolveSessionForBodies resolveSession =
                 ResolvePackage.getLazyResolveSession(expression);
-        BindingContext bindingContext = resolveSession.resolveToElement(expression);
+        final BindingContext bindingContext = resolveSession.resolveToElement(expression);
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope != null) {
@@ -176,7 +171,6 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         }
 
         final boolean finalNoTypeInference = noTypeInference;
-        final boolean finalNeedParentheses = needParentheses;
         Pass<OccurrencesChooser.ReplaceChoice> callback = new Pass<OccurrencesChooser.ReplaceChoice>() {
             @Override
             public void pass(OccurrencesChooser.ReplaceChoice replaceChoice) {
@@ -203,9 +197,10 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();
-                final Runnable introduceRunnable = introduceVariable(expression, suggestedNames, allReplaces, commonContainer,
-                                                                     commonParent, replaceOccurrence, propertyRef, references,
-                                                                     reference, finalNoTypeInference, finalNeedParentheses, expressionType);
+                final Runnable introduceRunnable = introduceVariable(
+                        expression, suggestedNames, allReplaces, commonContainer,
+                        commonParent, replaceOccurrence, propertyRef, references,
+                        reference, finalNoTypeInference, expressionType, bindingContext);
                 final boolean finalReplaceOccurrence = replaceOccurrence;
                 CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                     @Override
@@ -250,9 +245,10 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             final ArrayList<JetExpression> references,
             final Ref<JetExpression> reference,
             final boolean noTypeInference,
-            final boolean needParentheses,
-            final JetType expressionType
+            final JetType expressionType,
+            final BindingContext bindingContext
     ) {
+        final JetPsiFactory psiFactory = JetPsiFactory(expression);
         return new Runnable() {
             @Override
             public void run() {
@@ -274,7 +270,6 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 else {
                     variableText += expression.getText();
                 }
-                JetPsiFactory psiFactory = JetPsiFactory(expression);
                 JetProperty property = psiFactory.createProperty(variableText);
                 PsiElement anchor = calculateAnchor(commonParent, commonContainer, allReplaces);
                 if (anchor == null) return;
@@ -291,15 +286,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild);
                     if (replaceOccurrence && commonContainer != null) {
                         for (JetExpression replace : allReplaces) {
-                            boolean isActualExpression = expression == replace;
-                            if (!needParentheses && !(replace.getParent() instanceof JetCallExpression)) {
-                                JetExpression element = (JetExpression) replace.replace(psiFactory.createExpression(suggestedNames[0]));
-                                if (isActualExpression) reference.set(element);
-                            } else {
-                                JetValueArgumentList argumentList = psiFactory.createCallArguments("(" + suggestedNames[0] + ")");
-                                JetValueArgumentList element = (JetValueArgumentList) replace.replace(argumentList);
-                                if (isActualExpression) reference.set(element.getArguments().get(0).getArgumentExpression());
-                            }
+                            replaceExpression(replace);
                         }
                         PsiElement oldElement = commonContainer;
                         if (commonContainer instanceof JetWhenEntry) {
@@ -390,22 +377,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 }
                 for (JetExpression replace : allReplaces) {
                     if (replaceOccurrence && !needBraces) {
-                        boolean isActualExpression = expression == replace;
-
-                        if (!needParentheses && !(replace.getParent() instanceof JetCallExpression)) {
-                            JetExpression element =
-                                    (JetExpression)replace.replace(psiFactory.createExpression(suggestedNames[0]));
-                            references.add(element);
-                            if (isActualExpression) reference.set(element);
-                        } else {
-                            JetValueArgumentList argumentList = psiFactory.createCallArguments("(" + suggestedNames[0] + ")");
-                            JetValueArgumentList element = (JetValueArgumentList) replace.replace(argumentList);
-                            JetExpression argumentExpression = element.getArguments().get(0).getArgumentExpression();
-                            references.add(argumentExpression);
-                            if (isActualExpression) {
-                                reference.set(argumentExpression);
-                            }
-                        }
+                        replaceExpression(replace);
                     }
                     else if (!needBraces) {
                         replace.delete();
@@ -415,6 +387,25 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 if (noTypeInference) {
                     ShortenReferences.INSTANCE$.process(property);
                 }
+            }
+
+            private void replaceExpression(JetExpression replace) {
+                boolean isActualExpression = expression == replace;
+
+                JetExpression replacement = psiFactory.createExpression(suggestedNames[0]);
+                JetExpression result;
+                if (PsiUtilPackage.isFunctionLiteralOutsideParentheses(replace)) {
+                    JetFunctionLiteralArgument functionLiteralArgument =
+                            PsiTreeUtil.getParentOfType(replace, JetFunctionLiteralArgument.class);
+                    JetCallExpression newCallExpression = PsiModificationUtilPackage
+                            .moveInsideParenthesesAndReplaceWith(functionLiteralArgument, replacement, bindingContext);
+                    result = KotlinPackage.last(newCallExpression.getValueArguments()).getArgumentExpression();
+                }
+                else {
+                    result = (JetExpression)replace.replace(replacement);
+                }
+                references.add(result);
+                if (isActualExpression) reference.set(result);
             }
         };
     }

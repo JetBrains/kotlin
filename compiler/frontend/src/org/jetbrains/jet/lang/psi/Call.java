@@ -46,9 +46,9 @@ public interface Call {
     @NotNull
     List<? extends ValueArgument> getValueArguments();
 
-    @KotlinSignature("fun getFunctionLiteralArguments(): List<JetExpression>")
+    @KotlinSignature("fun getFunctionLiteralArguments(): List<JetFunctionLiteralArgument>")
     @NotNull
-    List<JetExpression> getFunctionLiteralArguments();
+    List<JetFunctionLiteralArgument> getFunctionLiteralArguments();
 
     @KotlinSignature("fun getTypeArguments(): List<JetTypeProjection>")
     @NotNull

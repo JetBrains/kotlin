@@ -105,8 +105,9 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
 
         // Change type of a function parameter in case TYPE_MISMATCH is reported on expression passed as value argument of call.
         // 1) When an argument is a dangling function literal:
-        JetFunctionLiteralExpression functionLiteralExpression =
-                QuickFixUtil.getParentElementOfType(diagnostic, JetFunctionLiteralExpression.class);
+        JetFunctionLiteralArgument functionLiteralArgument =
+                QuickFixUtil.getParentElementOfType(diagnostic, JetFunctionLiteralArgument.class);
+        JetFunctionLiteralExpression functionLiteralExpression = functionLiteralArgument != null ? functionLiteralArgument.getFunctionLiteral() : null;
         if (functionLiteralExpression != null && functionLiteralExpression.getBodyExpression() == expression) {
             JetParameter correspondingParameter =
                     QuickFixUtil.getParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(functionLiteralExpression);

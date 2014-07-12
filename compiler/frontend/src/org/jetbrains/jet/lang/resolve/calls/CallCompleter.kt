@@ -211,10 +211,8 @@ public class CallCompleter(
             getDataFlowInfoForArgument = { context.dataFlowInfo }
         }
 
-        val arguments = context.call.getAllValueArguments()
-
-        for (valueArgument in arguments) {
-            val argumentMapping = getArgumentMapping(valueArgument)
+        for (valueArgument in context.call.getValueArguments()) {
+            val argumentMapping = getArgumentMapping(valueArgument!!)
             val expectedType = when (argumentMapping) {
                 is ArgumentMatch -> CandidateResolver.getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument)
                 else -> TypeUtils.NO_EXPECTED_TYPE

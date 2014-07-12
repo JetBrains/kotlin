@@ -81,19 +81,13 @@ class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> i
             }
         }
 
-        List<JetExpression> functionLiteralArguments = getExpression().getFunctionLiteralArguments();
-        for (JetExpression functionLiteralArgument : functionLiteralArguments) {
-            while (functionLiteralArgument instanceof JetLabeledExpression) {
-                functionLiteralArgument = ((JetLabeledExpression) functionLiteralArgument).getBaseExpression();
-            }
-
-            if (functionLiteralArgument instanceof JetFunctionLiteralExpression) {
-                JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) functionLiteralArgument;
-                list.add(getRange(functionLiteralExpression.getLeftCurlyBrace()));
-                ASTNode rightCurlyBrace = functionLiteralExpression.getRightCurlyBrace();
-                if (rightCurlyBrace != null) {
-                    list.add(getRange(rightCurlyBrace));
-                }
+        List<JetFunctionLiteralArgument> functionLiteralArguments = getExpression().getFunctionLiteralArguments();
+        for (JetFunctionLiteralArgument functionLiteralArgument : functionLiteralArguments) {
+            JetFunctionLiteralExpression functionLiteralExpression = functionLiteralArgument.getFunctionLiteral();
+            list.add(getRange(functionLiteralExpression.getLeftCurlyBrace()));
+            ASTNode rightCurlyBrace = functionLiteralExpression.getRightCurlyBrace();
+            if (rightCurlyBrace != null) {
+                list.add(getRange(rightCurlyBrace));
             }
         }
 

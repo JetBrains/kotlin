@@ -146,12 +146,13 @@ JetFile: ByClauses.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                BLOCK
-                  <empty list>
-                PsiElement(RBRACE)('}')
+            FUNCTION_LITERAL_ARGUMENT
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
+                    <empty list>
+                  PsiElement(RBRACE)('}')
           PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     CLASS_BODY
@@ -194,12 +195,13 @@ JetFile: ByClauses.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BLOCK
-                    <empty list>
-                  PsiElement(RBRACE)('}')
+              FUNCTION_LITERAL_ARGUMENT
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    BLOCK
+                      <empty list>
+                    PsiElement(RBRACE)('}')
             PsiElement(RBRACKET)(']')
     PsiWhiteSpace(' ')
     CLASS_BODY
@@ -243,12 +245,13 @@ JetFile: ByClauses.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    BLOCK
-                      <empty list>
-                    PsiElement(RBRACE)('}')
+                FUNCTION_LITERAL_ARGUMENT
+                  FUNCTION_LITERAL_EXPRESSION
+                    FUNCTION_LITERAL
+                      PsiElement(LBRACE)('{')
+                      BLOCK
+                        <empty list>
+                      PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     CLASS_BODY
@@ -303,12 +306,13 @@ JetFile: ByClauses.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace(' ')
-                  FUNCTION_LITERAL_EXPRESSION
-                    FUNCTION_LITERAL
-                      PsiElement(LBRACE)('{')
-                      BLOCK
-                        <empty list>
-                      PsiElement(RBRACE)('}')
+                  FUNCTION_LITERAL_ARGUMENT
+                    FUNCTION_LITERAL_EXPRESSION
+                      FUNCTION_LITERAL
+                        PsiElement(LBRACE)('{')
+                        BLOCK
+                          <empty list>
+                        PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n')
               PsiElement(RBRACE)('}')
     PsiWhiteSpace(' ')

@@ -1113,10 +1113,6 @@ public class JetControlFlowProcessor {
                         inputExpressions.add(argumentExpression);
                     }
                 }
-                for (JetExpression functionLiteral : expression.getFunctionLiteralArguments()) {
-                    generateInstructions(functionLiteral);
-                    inputExpressions.add(functionLiteral);
-                }
                 JetExpression calleeExpression = expression.getCalleeExpression();
                 generateInstructions(calleeExpression);
                 inputExpressions.add(calleeExpression);
@@ -1490,8 +1486,7 @@ public class JetControlFlowProcessor {
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
             Map<PseudoValue, ReceiverValue> receivers = getReceiverValues(resolvedCall);
             SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues = SmartFMap.emptyMap();
-            List<ValueArgument> valueArguments = CallUtilPackage.getAllValueArguments(resolvedCall.getCall());
-            for (ValueArgument argument : valueArguments) {
+            for (ValueArgument argument : resolvedCall.getCall().getValueArguments()) {
                 ArgumentMapping argumentMapping = resolvedCall.getArgumentMapping(argument);
                 JetExpression argumentExpression = argument.getArgumentExpression();
                 if (argumentMapping instanceof ArgumentMatch) {

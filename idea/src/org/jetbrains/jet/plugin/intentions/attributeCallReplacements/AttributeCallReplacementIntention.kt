@@ -44,7 +44,7 @@ public class CallDescription internal (
         get() = callElement.getCalleeExpression()?.getText()
 
     public val argumentCount: Int
-        get() = callElement.getValueArguments().size + callElement.getFunctionLiteralArguments().size
+        get() = callElement.getValueArguments().size
 
     public val hasTypeArguments: Boolean
         get() = callElement.getTypeArgumentList() != null
