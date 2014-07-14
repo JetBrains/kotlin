@@ -3814,10 +3814,12 @@ The "returned" value of try expression with no finally is either the last expres
         }
     }
 
-    private StackValue generateSwitch(@NotNull JetWhenExpression expression, @NotNull Type subjectType, @NotNull Type resultType, boolean isStatement) {
-        JetType subjectJetType = bindingContext.get(EXPRESSION_TYPE, expression.getSubjectExpression());
-        assert subjectJetType != null : "Subject expression in when should not be null";
-
+    private StackValue generateSwitch(
+            @NotNull JetWhenExpression expression,
+            @NotNull Type subjectType,
+            @NotNull Type resultType,
+            boolean isStatement
+    ) {
         Map<Integer, Label> transitions = Maps.newTreeMap();
 
         Label[] entryLabels = new Label[expression.getEntries().size()];
