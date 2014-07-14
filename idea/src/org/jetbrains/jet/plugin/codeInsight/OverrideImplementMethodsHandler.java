@@ -82,8 +82,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     ) {
         JetClassBody body = classOrObject.getBody();
         if (body == null) {
-            Project project = classOrObject.getProject();
-            JetPsiFactory psiFactory = JetPsiFactory(project);
+            JetPsiFactory psiFactory = JetPsiFactory(classOrObject);
             classOrObject.add(psiFactory.createWhiteSpace());
             body = (JetClassBody) classOrObject.add(psiFactory.createEmptyClassBody());
         }

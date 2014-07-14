@@ -271,7 +271,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             }
         }
 
-        JetPsiFactory psiFactory = JetPsiFactory(containingFile.getProject());
+        JetPsiFactory psiFactory = JetPsiFactory(containingFile);
         for (JetFunctionLiteralExpression functionLiteralExpression : functionsToAddParameters) {
             JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
 
@@ -334,7 +334,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             }
         }
 
-        JetPsiFactory psiFactory = JetPsiFactory(containingFile.getProject());
+        JetPsiFactory psiFactory = JetPsiFactory(containingFile);
         for (JetCallExpression call : callsToAddArguments) {
             call.addAfter(psiFactory.createTypeArguments("<" + typeArguments + ">"), call.getCalleeExpression());
             ShortenReferences.instance$.process(call.getTypeArgumentList());
@@ -379,11 +379,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             @NotNull PsiElement referenceElement,
             @NotNull JetExpression newExpression
     ) {
-        if (referenceElement.getParent() instanceof JetSimpleNameStringTemplateEntry &&
+        PsiElement parent = referenceElement.getParent();
+        if (parent instanceof JetSimpleNameStringTemplateEntry &&
             !(newExpression instanceof JetSimpleNameExpression)) {
             JetBlockStringTemplateEntry templateEntry =
-                    (JetBlockStringTemplateEntry) referenceElement.getParent().replace(
-                            JetPsiFactory(referenceElement.getProject()).createBlockStringTemplateEntry(newExpression));
+                    (JetBlockStringTemplateEntry) parent.replace(
+                            JetPsiFactory((JetElement) parent).createBlockStringTemplateEntry(newExpression));
             JetExpression expression = templateEntry.getExpression();
             assert expression != null;
             return expression;

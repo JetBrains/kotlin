@@ -64,7 +64,7 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
         val negatedExpression = negatedElements.subList(0, negatedElements.lastIndex).foldRight(
                 "${negatedElements.last()}", { negated, exp -> "$exp $operatorText $negated" })
 
-        val newExpression = JetPsiFactory(element.getProject()).createExpression(negatedExpression)
+        val newExpression = JetPsiFactory(element).createExpression(negatedExpression)
         element.replace(newExpression)
     }
 

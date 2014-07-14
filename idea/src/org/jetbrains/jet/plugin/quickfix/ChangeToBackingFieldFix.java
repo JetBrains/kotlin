@@ -46,7 +46,7 @@ public class ChangeToBackingFieldFix extends JetIntentionAction<JetSimpleNameExp
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetSimpleNameExpression backingField = (JetSimpleNameExpression) JetPsiFactory(project).createExpression("$" + element.getText());
+        JetSimpleNameExpression backingField = (JetSimpleNameExpression) JetPsiFactory(file).createExpression("$" + element.getText());
         element.replace(backingField);
     }
 

@@ -42,7 +42,7 @@ public open class ReplaceContainsIntention : AttributeCallReplacementIntention("
         val argument = (handleErrors(editor, call.getPositionalArguments()) ?: return)[0].getArgumentExpression()
 
         // Append semicolon to previous statement if needed
-        val psiFactory = JetPsiFactory(call.element.getProject())
+        val psiFactory = JetPsiFactory(call.element)
         if (argument is JetFunctionLiteralExpression) {
             val previousElement = JetPsiUtil.skipSiblingsBackwardByPredicate(call.element) {
                 // I checked, it can't be null.

@@ -64,7 +64,7 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
 
                 //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
                 if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText))
-                    ChangeFunctionReturnTypeFix.addReturnTypeAnnotation(getProject(), function, returnTypeText);
+                    ChangeFunctionReturnTypeFix.addReturnTypeAnnotation(function, returnTypeText);
             }
         }
         else

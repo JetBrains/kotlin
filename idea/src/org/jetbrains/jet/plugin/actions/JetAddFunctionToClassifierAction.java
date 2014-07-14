@@ -65,7 +65,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
     }
 
     private static void addFunction(
-            @NotNull final Project project,
+            @NotNull Project project,
             @NotNull final ClassDescriptor typeDescriptor,
             @NotNull final FunctionDescriptor functionDescriptor
     ) {
@@ -82,7 +82,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
-                        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
+                        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(classifierDeclaration);
                         JetClassBody body = classifierDeclaration.getBody();
                         if (body == null) {
                             PsiElement whitespaceBefore = classifierDeclaration.add(psiFactory.createWhiteSpace());

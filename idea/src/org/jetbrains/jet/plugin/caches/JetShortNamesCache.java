@@ -244,7 +244,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                     }
                 });
         for (FqName fqName : topLevelFunctionFqNames) {
-            JetImportDirective importDirective = JetPsiFactory(project).createImportDirective(new ImportPath(fqName, false));
+            JetImportDirective importDirective = JetPsiFactory(expression).createImportDirective(new ImportPath(fqName, false));
             Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver().analyseImportReference(
                     importDirective, jetScope, new BindingTraceContext(), resolveSession.getModuleDescriptor());
             for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
@@ -314,7 +314,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         // Iterate through the function with attempt to resolve found functions
         for (FqName functionFQN : functionFQNs) {
             for (CallableDescriptor functionDescriptor : ExpressionTypingUtils.canFindSuitableCall(
-                    functionFQN, project, receiverExpression, expressionType, scope, resolveSession.getModuleDescriptor())) {
+                    functionFQN, receiverExpression, expressionType, scope, resolveSession.getModuleDescriptor())) {
 
                 resultDescriptors.add(functionDescriptor);
             }

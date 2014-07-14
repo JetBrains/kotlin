@@ -620,10 +620,9 @@ public class CreateFunctionFromUsageFix internal (
     }
 
     private fun createFunctionSkeleton(): JetNamedFunction {
-        val project = currentFile.getProject()
         val parametersString = parameters.indices.map { i -> "p$i: Any" }.makeString(", ")
         val returnTypeString = if (isUnit) "" else ": Any"
-        val psiFactory = JetPsiFactory(project)
+        val psiFactory = JetPsiFactory(currentFile)
         if (isExtension) {
             // create as extension function
             val ownerTypeString = selectedReceiverType.renderedType!!
@@ -638,7 +637,7 @@ public class CreateFunctionFromUsageFix internal (
             containingFile = ownerClass.getContainingJetFile()
 
             NavigationUtil.activateFileWithPsiElement(containingFile)
-            containingFileEditor = FileEditorManager.getInstance(project)!!.getSelectedTextEditor()!!
+            containingFileEditor = FileEditorManager.getInstance(currentFile.getProject())!!.getSelectedTextEditor()!!
 
             var classBody = ownerClass.getBody()
             if (classBody == null) {
@@ -738,7 +737,7 @@ public class CreateFunctionFromUsageFix internal (
             typeRefsToShorten: MutableList<JetTypeReference>, parameterTypeExpressions: List<TypeExpression>,
             returnTypeExpression: TypeExpression?) {
         if (isExtension) {
-            val receiverTypeRef = JetPsiFactory(func.getProject()).createType(selectedReceiverType.theType.renderLong(typeParameterNameMap))
+            val receiverTypeRef = JetPsiFactory(func).createType(selectedReceiverType.theType.renderLong(typeParameterNameMap))
             replaceWithLongerName(receiverTypeRef, selectedReceiverType.theType)
 
             val funcReceiverTypeRef = func.getReceiverTypeRef()
@@ -799,7 +798,7 @@ public class CreateFunctionFromUsageFix internal (
             throw IncorrectOperationException("Failed to parse file template", e)
         }
 
-        val newBodyExpression = JetPsiFactory(func.getProject()).createFunctionBody(bodyText)
+        val newBodyExpression = JetPsiFactory(func).createFunctionBody(bodyText)
         func.getBodyExpression()!!.replace(newBodyExpression)
     }
 
@@ -867,8 +866,7 @@ public class CreateFunctionFromUsageFix internal (
     }
 
     private fun replaceWithLongerName(typeRef: JetTypeReference, theType: JetType) {
-        val project = typeRef.getProject()
-        val fullyQualifiedReceiverTypeRef = JetPsiFactory(project).createType(theType.renderLong(typeParameterNameMap))
+        val fullyQualifiedReceiverTypeRef = JetPsiFactory(typeRef).createType(theType.renderLong(typeParameterNameMap))
         typeRef.replace(fullyQualifiedReceiverTypeRef)
     }
 

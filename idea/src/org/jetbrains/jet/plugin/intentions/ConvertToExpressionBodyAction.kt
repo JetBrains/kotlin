@@ -46,7 +46,7 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
         }
 
         val body = declaration.getBodyExpression()!!
-        declaration.addBefore(JetPsiFactory(project).createEQ(), body)
+        declaration.addBefore(JetPsiFactory(declaration).createEQ(), body)
         body.replace(value)
     }
 

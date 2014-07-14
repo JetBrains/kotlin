@@ -64,7 +64,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
 
         fun isNegatableOperator(token: IElementType): Boolean {
             return token in array(JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ, JetTokens.IS_KEYWORD, JetTokens.NOT_IS, JetTokens.IN_KEYWORD, JetTokens.NOT_IN, JetTokens.LT, JetTokens.LTEQ, JetTokens.GT, JetTokens.GTEQ)

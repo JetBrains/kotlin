@@ -44,7 +44,7 @@ public class KotlinStringTemplateSurrounder extends KotlinExpressionSurrounder {
     @Nullable
     @Override
     public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetStringTemplateExpression stringTemplateExpression = (JetStringTemplateExpression) JetPsiFactory(project).createExpression(
+        JetStringTemplateExpression stringTemplateExpression = (JetStringTemplateExpression) JetPsiFactory(expression).createExpression(
                 getCodeTemplate(expression)
         );
         JetStringTemplateEntry templateEntry = stringTemplateExpression.getEntries()[0];

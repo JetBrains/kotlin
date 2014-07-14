@@ -49,7 +49,7 @@ public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     @Nullable
     @Override
     public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetWhenExpression whenExpression = (JetWhenExpression) JetPsiFactory(project).createExpression(getCodeTemplate(expression));
+        JetWhenExpression whenExpression = (JetWhenExpression) JetPsiFactory(expression).createExpression(getCodeTemplate(expression));
         JetExpression subjectExpression = whenExpression.getSubjectExpression();
         assert subjectExpression != null : "JetExpression should exists for " + whenExpression.getText() + " expression";
         subjectExpression.replace(expression);

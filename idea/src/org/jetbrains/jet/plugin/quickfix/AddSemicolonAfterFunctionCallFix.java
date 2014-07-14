@@ -61,7 +61,7 @@ public class AddSemicolonAfterFunctionCallFix extends JetIntentionAction<JetCall
         int caretOffset = editor.getCaretModel().getOffset();
         element.getParent().addRangeAfter(afterArgumentList, literal, element);
         element.deleteChildRange(afterArgumentList, literal);
-        element.getParent().addAfter(JetPsiFactory(project).createSemicolon(), element);
+        element.getParent().addAfter(JetPsiFactory(file).createSemicolon(), element);
         editor.getCaretModel().moveToOffset(caretOffset + 1);
     }
 

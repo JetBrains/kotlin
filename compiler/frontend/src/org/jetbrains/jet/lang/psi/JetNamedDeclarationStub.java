@@ -77,7 +77,7 @@ abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends J
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return getNameIdentifier().replace(JetPsiFactory(getProject()).createNameIdentifier(name));
+        return getNameIdentifier().replace(JetPsiFactory(this).createNameIdentifier(name));
     }
 
     @Override

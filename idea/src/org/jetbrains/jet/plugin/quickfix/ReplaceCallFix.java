@@ -77,7 +77,7 @@ public class ReplaceCallFix implements IntentionAction {
 
         JetExpression selector = callExpression.getSelectorExpression();
         if (selector != null) {
-            JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory(project).createExpression(
+            JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory(callExpression).createExpression(
                     callExpression.getReceiverExpression().getText() + (toSafe ? "?." : ".") + selector.getText()
             );
 

@@ -42,7 +42,7 @@ public class ReplaceWithDotQualifiedMethodCallIntention : JetSelfTargetingIntent
                 }
         )
 
-        val replacement = JetPsiFactory(element.getProject()).createExpression(replacementExpressionStringBuilder.toString())
+        val replacement = JetPsiFactory(element).createExpression(replacementExpressionStringBuilder.toString())
         element.replace(replacement)
     }
 }

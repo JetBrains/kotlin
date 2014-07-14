@@ -109,7 +109,7 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
                     functionLiteralArguments.first().getText()
         )
 
-        val replacement = JetPsiFactory(element.getProject()).createExpression("$leftHandText $operatorText ${rightHandTextStringBuilder.toString()}")
+        val replacement = JetPsiFactory(element).createExpression("$leftHandText $operatorText ${rightHandTextStringBuilder.toString()}")
 
         parent.replace(replacement)
     }

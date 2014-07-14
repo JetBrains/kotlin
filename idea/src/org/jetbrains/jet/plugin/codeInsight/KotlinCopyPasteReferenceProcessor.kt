@@ -311,8 +311,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
 
     private object LengthenReferences {
 
-        private fun createQualifiedExpression(project: Project, text: String): JetDotQualifiedExpression {
-            val newExpression = JetPsiFactory(project).createExpression(text)
+        private fun createQualifiedExpression(psiFactory: JetPsiFactory, text: String): JetDotQualifiedExpression {
+            val newExpression = psiFactory.createExpression(text)
             LOG.assertTrue(newExpression is JetDotQualifiedExpression,
                            "\"${newExpression.getText()}\" is ${newExpression.javaClass}," +
                            "not ${javaClass<JetDotQualifiedExpression>().getSimpleName()}."
@@ -325,18 +325,19 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             val project = expression.getProject()
             val parent = expression.getParent()
             val prefixToInsert = fqName.parent().asString()
+            val psiFactory = JetPsiFactory(expression)
             if (parent is JetCallExpression) {
                 val text = "$prefixToInsert.${parent.getText()}"
-                parent.replace(createQualifiedExpression(project, text))
+                parent.replace(createQualifiedExpression(psiFactory, text))
             }
             else if (parent is JetUserType) {
                 val typeReference = PsiTreeUtil.getParentOfType(expression, javaClass<JetTypeReference>())
                 LOG.assertTrue(typeReference != null, "JetUserType is expected to have parent of type JetTypeReference:\n" +
                     "At: ${DiagnosticUtils.atLocation(expression)}\nFILE:\n${expression.getContainingFile()!!.getText()}")
-                typeReference!!.replace(JetPsiFactory(project).createType("$prefixToInsert.${typeReference.getText()}"))
+                typeReference!!.replace(psiFactory.createType("$prefixToInsert.${typeReference.getText()}"))
             }
             else {
-                expression.replace(createQualifiedExpression(project, fqName.asString()))
+                expression.replace(createQualifiedExpression(psiFactory, fqName.asString()))
             }
         }
 

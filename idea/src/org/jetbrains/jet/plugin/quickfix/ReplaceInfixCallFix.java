@@ -54,7 +54,7 @@ public class ReplaceInfixCallFix extends JetIntentionAction<JetBinaryExpression>
         assert left != null && right != null : "Preconditions checked by factory";
         String newText = left.getText() + "?." + element.getOperationReference().getText()
                          + "(" + right.getText() + ")";
-        JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory(project).createExpression(newText);
+        JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory(file).createExpression(newText);
         element.replace(newElement);
     }
 

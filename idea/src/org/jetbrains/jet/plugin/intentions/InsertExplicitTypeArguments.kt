@@ -55,7 +55,7 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
         val args = resolvedCall.getTypeArguments()
         val types = resolvedCall.getCandidateDescriptor().getTypeParameters()
 
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
         val typeArgs = types.map {
             assert(args[it] != null, "there is a null in the type arguments to transform")
             val typeToCompute = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(args[it]!!);

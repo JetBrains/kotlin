@@ -110,12 +110,12 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         else {
             SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
             if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
-                addReturnTypeAnnotation(project, element, renderedType);
+                addReturnTypeAnnotation(element, renderedType);
             }
         }
     }
 
-    public static void addReturnTypeAnnotation(Project project, JetFunction function, String typeText) {
+    public static void addReturnTypeAnnotation(JetFunction function, String typeText) {
         PsiElement elementToPrecedeType = function.getValueParameterList();
         if (elementToPrecedeType == null) elementToPrecedeType = function.getNameIdentifier();
         assert elementToPrecedeType != null : "Return type of function without name can't mismatch anything";
@@ -123,7 +123,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             // if a function doesn't have a value parameter list, a syntax error is raised, and it should follow the function name
             elementToPrecedeType = elementToPrecedeType.getNextSibling();
         }
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactory(function);
         function.addAfter(psiFactory.createType(typeText), elementToPrecedeType);
         function.addAfter(psiFactory.createColon(), elementToPrecedeType);
     }

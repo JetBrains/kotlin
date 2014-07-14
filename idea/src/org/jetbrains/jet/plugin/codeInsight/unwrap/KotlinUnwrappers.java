@@ -74,7 +74,7 @@ public class KotlinUnwrappers {
         @Override
         protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
             JetIfExpression ifExpr = (JetIfExpression) element;
-            context.replace(ifExpr, JetPsiFactory(ifExpr.getProject()).createIf(ifExpr.getCondition(), ifExpr.getThen(), null));
+            context.replace(ifExpr, JetPsiFactory(ifExpr).createIf(ifExpr.getCondition(), ifExpr.getThen(), null));
         }
     }
 

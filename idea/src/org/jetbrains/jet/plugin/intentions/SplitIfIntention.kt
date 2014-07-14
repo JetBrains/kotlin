@@ -59,7 +59,7 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>("split.
         val elseExpression = ifExpression.getElse()
         val thenExpression = ifExpression.getThen()
 
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
         if (currentElement.getReferencedNameElementType() == JetTokens.ANDAND) {
             ifExpression.replace(
                     psiFactory.createIf(leftExpression, psiFactory.wrapInABlock(
@@ -80,7 +80,7 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>("split.
         val startOffset = element.getRight()!!.getTextOffset() - condition.getTextOffset()
         val rightString = condition.getText()!![startOffset, condition.getTextLength()].toString()
 
-        return JetPsiFactory(element.getProject()).createExpression(rightString)
+        return JetPsiFactory(element).createExpression(rightString)
     }
 
     fun isCursorOnIfKeyword(element: JetIfExpression, editor: Editor): Boolean {

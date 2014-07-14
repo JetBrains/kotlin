@@ -166,8 +166,6 @@ public class BranchedFoldingUtils {
     }
 
     public static void foldIfExpressionWithAssignments(JetIfExpression ifExpression) {
-        Project project = ifExpression.getProject();
-
         JetBinaryExpression thenAssignment = getFoldableBranchedAssignment(ifExpression.getThen());
 
         assertNotNull(thenAssignment);
@@ -175,7 +173,7 @@ public class BranchedFoldingUtils {
         String op = thenAssignment.getOperationReference().getText();
         JetSimpleNameExpression lhs = (JetSimpleNameExpression) thenAssignment.getLeft();
 
-        JetBinaryExpression assignment = JetPsiFactory(project).createBinaryExpression(lhs, op, ifExpression);
+        JetBinaryExpression assignment = JetPsiFactory(ifExpression).createBinaryExpression(lhs, op, ifExpression);
         JetIfExpression newIfExpression = (JetIfExpression)assignment.getRight();
 
         assertNotNull(newIfExpression);
@@ -202,9 +200,7 @@ public class BranchedFoldingUtils {
     }
 
     public static void foldIfExpressionWithReturns(JetIfExpression ifExpression) {
-        Project project = ifExpression.getProject();
-
-        JetReturnExpression newReturnExpression = JetPsiFactory(project).createReturn(ifExpression);
+        JetReturnExpression newReturnExpression = JetPsiFactory(ifExpression).createReturn(ifExpression);
         JetIfExpression newIfExpression = (JetIfExpression)newReturnExpression.getReturnedExpression();
 
         assertNotNull(newIfExpression);
@@ -231,8 +227,6 @@ public class BranchedFoldingUtils {
     }
 
     public static void foldIfExpressionWithAsymmetricReturns(JetIfExpression ifExpression) {
-        Project project = ifExpression.getProject();
-
         JetExpression condition = ifExpression.getCondition();
         JetExpression thenRoot = ifExpression.getThen();
         JetExpression elseRoot = (JetExpression)JetPsiUtil.skipTrailingWhitespacesAndComments(ifExpression);
@@ -242,7 +236,7 @@ public class BranchedFoldingUtils {
         assertNotNull(elseRoot);
 
         //noinspection ConstantConditions
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactory(ifExpression);
         JetIfExpression newIfExpression = psiFactory.createIf(condition, thenRoot, elseRoot);
         JetReturnExpression newReturnExpression = psiFactory.createReturn(newIfExpression);
 
@@ -274,8 +268,6 @@ public class BranchedFoldingUtils {
 
     @SuppressWarnings("ConstantConditions")
     public static void foldWhenExpressionWithAssignments(JetWhenExpression whenExpression) {
-        Project project = whenExpression.getProject();
-
         assert !whenExpression.getEntries().isEmpty() : FOLD_WITHOUT_CHECK;
 
         JetBinaryExpression firstAssignment = getFoldableBranchedAssignment(whenExpression.getEntries().get(0).getExpression());
@@ -285,7 +277,7 @@ public class BranchedFoldingUtils {
         String op = firstAssignment.getOperationReference().getText();
         JetSimpleNameExpression lhs = (JetSimpleNameExpression) firstAssignment.getLeft();
 
-        JetBinaryExpression assignment = JetPsiFactory(project).createBinaryExpression(lhs, op, whenExpression);
+        JetBinaryExpression assignment = JetPsiFactory(whenExpression).createBinaryExpression(lhs, op, whenExpression);
         JetWhenExpression newWhenExpression = (JetWhenExpression)assignment.getRight();
 
         assertNotNull(newWhenExpression);
@@ -306,11 +298,9 @@ public class BranchedFoldingUtils {
     }
 
     public static void foldWhenExpressionWithReturns(JetWhenExpression whenExpression) {
-        Project project = whenExpression.getProject();
-
         assert !whenExpression.getEntries().isEmpty() : FOLD_WITHOUT_CHECK;
 
-        JetReturnExpression newReturnExpression = JetPsiFactory(project).createReturn(whenExpression);
+        JetReturnExpression newReturnExpression = JetPsiFactory(whenExpression).createReturn(whenExpression);
         JetWhenExpression newWhenExpression = (JetWhenExpression)newReturnExpression.getReturnedExpression();
 
         assertNotNull(newWhenExpression);

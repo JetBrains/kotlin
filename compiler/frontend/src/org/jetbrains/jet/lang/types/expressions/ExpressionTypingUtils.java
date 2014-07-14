@@ -209,19 +209,17 @@ public class ExpressionTypingUtils {
      * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
      *
      * @param callableFQN
-     * @param project
      * @param scope
      * @return
      */
     public static List<CallableDescriptor> canFindSuitableCall(
             @NotNull FqName callableFQN,
-            @NotNull Project project,
             @NotNull JetExpression receiverExpression,
             @NotNull JetType receiverType,
             @NotNull JetScope scope,
             @NotNull ModuleDescriptor module
     ) {
-        JetImportDirective importDirective = JetPsiFactory(project).createImportDirective(callableFQN.asString());
+        JetImportDirective importDirective = JetPsiFactory(receiverExpression).createImportDirective(callableFQN.asString());
 
         Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver()
                 .analyseImportReference(importDirective, scope, new BindingTraceContext(), module);

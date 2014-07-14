@@ -119,14 +119,14 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
         };
     }
 
-    private static void changeSignature(final JetNamedFunction element, final Project project, FunctionDescriptor signature) {
+    private static void changeSignature(final JetNamedFunction element, Project project, FunctionDescriptor signature) {
         final String signatureString = CodeInsightUtils.createFunctionSignatureStringFromDescriptor(
                 signature,
                 /* shortTypeNames = */ false);
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-        final JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
+        final JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(element);
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
             @Override
             public void run() {

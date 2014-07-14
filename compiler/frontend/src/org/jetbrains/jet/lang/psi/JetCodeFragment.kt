@@ -100,7 +100,7 @@ public abstract class JetCodeFragment(
     }
 
     fun importsAsImportList(): JetImportList? {
-        return JetPsiFactory(_project).createFile(_myImports.makeString("\n")).getImportList()
+        return JetPsiFactory(this).createFile(_myImports.makeString("\n")).getImportList()
     }
 
     override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }

@@ -264,7 +264,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             this.outerCall = call;
             this.explicitExtensionReceiver = explicitExtensionReceiver;
             this.calleeExpressionAsThisObject = calleeExpressionAsThisObject;
-            this.fakeInvokeExpression = (JetSimpleNameExpression) JetPsiFactory(call.getCallElement().getProject()).createExpression( "invoke");
+            this.fakeInvokeExpression = (JetSimpleNameExpression) JetPsiFactory(call.getCallElement()).createExpression( "invoke");
         }
 
         @NotNull

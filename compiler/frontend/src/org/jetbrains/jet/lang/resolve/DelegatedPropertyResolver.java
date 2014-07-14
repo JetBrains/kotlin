@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -173,17 +172,17 @@ public class DelegatedPropertyResolver {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, trace, scope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
-        Project project = expressionTypingServices.getProject();
 
         boolean hasThis = propertyDescriptor.getReceiverParameter() != null || propertyDescriptor.getExpectedThisObject() != null;
 
         List<JetExpression> arguments = Lists.newArrayList();
-        arguments.add(JetPsiFactory(project).createExpression(hasThis ? "this" : "null"));
+        JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
+        arguments.add(psiFactory.createExpression(hasThis ? "this" : "null"));
 
-        arguments.add(JetPsiFactory(project).createExpression(KotlinBuiltIns.getInstance().getPropertyMetadataImpl().getName().asString() +
-                                                              "(\"" +
-                                                              propertyDescriptor.getName().asString() +
-                                                              "\")"));
+        arguments.add(psiFactory.createExpression(KotlinBuiltIns.getInstance().getPropertyMetadataImpl().getName().asString() +
+                                               "(\"" +
+                                               propertyDescriptor.getName().asString() +
+                                               "\")"));
 
         if (!isGet) {
             JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(expressionTypingServices.getProject(), trace,
@@ -195,7 +194,7 @@ public class DelegatedPropertyResolver {
         }
 
         Name functionName = Name.identifier(isGet ? "get" : "set");
-        JetReferenceExpression fakeCalleeExpression = JetPsiFactory(project).createSimpleName(functionName.asString());
+        JetReferenceExpression fakeCalleeExpression = psiFactory.createSimpleName(functionName.asString());
 
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
         Call call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);

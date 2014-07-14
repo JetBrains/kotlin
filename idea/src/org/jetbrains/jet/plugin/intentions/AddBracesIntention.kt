@@ -53,7 +53,7 @@ public class AddBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("
         if (element.getNextSibling()?.getText() == ";") {
             element.getNextSibling()!!.delete()
         }
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
         val newElement = bodyNode!!.getPsi()!!.replace(psiFactory.createFunctionBody(bodyNode.getText()))
 
         //handles the case of the block statement being on a new line

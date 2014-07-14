@@ -49,6 +49,6 @@ public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<Je
             sb.append("$literalName = ")
         }
         val newExpression = "$funName${sb.toString()}${element.getFunctionLiteralArguments()[0].getText()})"
-        element.replace(JetPsiFactory(element.getProject()).createExpression(newExpression))
+        element.replace(JetPsiFactory(element).createExpression(newExpression))
     }
 }

@@ -797,9 +797,7 @@ fun ExtractionDescriptor.generateFunction(
         inTempFile: Boolean = false,
         nameByOffset: MutableMap<Int, JetElement> = HashMap()
 ): JetNamedFunction {
-    val project = extractionData.project
-
-    val psiFactory = JetPsiFactory(project)
+    val psiFactory = JetPsiFactory(extractionData.originalFile)
     fun createFunction(): JetNamedFunction {
         return with(extractionData) {
             if (inTempFile) {

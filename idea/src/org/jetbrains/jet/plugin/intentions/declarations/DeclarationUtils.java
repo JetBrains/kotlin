@@ -96,8 +96,6 @@ public class DeclarationUtils {
     // returns assignment which replaces initializer
     @NotNull
     public static JetBinaryExpression splitPropertyDeclaration(@NotNull JetProperty property) {
-        Project project = property.getProject();
-
         PsiElement parent = property.getParent();
         assertNotNull(parent);
 
@@ -105,7 +103,7 @@ public class DeclarationUtils {
         JetExpression initializer = property.getInitializer();
         assertNotNull(initializer);
 
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactory(property);
         //noinspection ConstantConditions, unchecked
         JetBinaryExpression newInitializer = psiFactory.createBinaryExpression(
                 psiFactory.createSimpleName(property.getName()), "=", initializer

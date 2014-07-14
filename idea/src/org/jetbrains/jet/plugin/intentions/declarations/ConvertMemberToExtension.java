@@ -114,7 +114,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
                                (returnTypeRef != null ? ": " + returnTypeRef.getText() : "") +
                                body(member);
 
-        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
+        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(member);
         JetDeclaration extension = psiFactory.<JetDeclaration>createDeclaration(extensionText);
 
         PsiElement added = file.addAfter(extension, outermostParent);

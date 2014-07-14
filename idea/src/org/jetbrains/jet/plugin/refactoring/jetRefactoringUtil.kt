@@ -71,10 +71,8 @@ import com.intellij.openapi.ui.popup.LightweightWindowEvent
 fun JetSimpleNameExpression.changeQualifiedName(fqName: FqName): JetElement {
     assert (!fqName.isRoot(), "Can't set empty FqName for element $this")
 
-    val project = getProject()
-
     val shortName = fqName.shortName().asString()
-    val psiFactory = JetPsiFactory(project)
+    val psiFactory = JetPsiFactory(this)
     val fqNameBase = (getParent() as? JetCallExpression)?.let { parent ->
         val callCopy = parent.copy() as JetCallExpression
         callCopy.getCalleeExpression()!!.replace(psiFactory.createSimpleName(shortName)).getParent()!!.getText()
@@ -143,7 +141,7 @@ public fun PsiElement.isInJavaSourceRoot(): Boolean =
         !JavaProjectRootsUtil.isOutsideJavaSourceRoot(getContainingFile())
 
 public inline fun JetFile.createTempCopy(textTransform: (String) -> String): JetFile {
-    val tmpFile = JetPsiFactory(getProject()).createFile(getName(), textTransform(getText() ?: ""))
+    val tmpFile = JetPsiFactory(this).createFile(getName(), textTransform(getText() ?: ""))
     tmpFile.setOriginalFile(this)
     tmpFile.skipVisibilityCheck = skipVisibilityCheck
     return tmpFile

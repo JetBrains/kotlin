@@ -191,7 +191,7 @@ public object ShortenReferences {
             if (referenceExpression == null) return
             val typeArgumentList = userType.getTypeArgumentList()
             val text = referenceExpression.getText() + (if (typeArgumentList != null) typeArgumentList.getText() else "")
-            val newUserType = JetPsiFactory(userType.getProject()).createType(text).getTypeElement()!!
+            val newUserType = JetPsiFactory(userType).createType(text).getTypeElement()!!
             userType.replace(newUserType)
         }
     }

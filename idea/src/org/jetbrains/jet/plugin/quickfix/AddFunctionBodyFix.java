@@ -58,7 +58,7 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetFunction newElement = (JetFunction) element.copy();
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactory(file);
         if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
             newElement.add(psiFactory.createWhiteSpace());
         }

@@ -49,7 +49,7 @@ public class JetObjectDeclarationName extends JetExpressionImpl {
     }
 
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return getNameIdentifier().replace(PsiPackage.JetPsiFactory(getProject()).createNameIdentifier(name));
+        return getNameIdentifier().replace(PsiPackage.JetPsiFactory(this).createNameIdentifier(name));
     }
 
     @Override

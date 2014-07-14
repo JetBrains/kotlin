@@ -28,6 +28,6 @@ public class InsertCurlyBracesToTemplateIntention : JetSelfTargetingIntention<Je
     override fun applyTo(element: JetSimpleNameStringTemplateEntry, editor: Editor) {
         val expression = element.getExpression()
         if (expression == null) return
-        element.replace(JetPsiFactory(element.getProject()).createBlockStringTemplateEntry(expression))
+        element.replace(JetPsiFactory(element).createBlockStringTemplateEntry(expression))
     }
 }

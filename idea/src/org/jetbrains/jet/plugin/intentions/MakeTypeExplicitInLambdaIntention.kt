@@ -63,7 +63,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         val parameterString = valueParameters.map({descriptor -> "" + descriptor.getName() +
                                                       ": " + DescriptorRenderer.SOURCE_CODE.renderType(descriptor.getType())
                                                   }).makeString(", ", "(", ")")
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
         val newParameterList = psiFactory.createParameterList(parameterString)
         val oldParameterList = functionLiteral.getValueParameterList()
         if (oldParameterList != null) {

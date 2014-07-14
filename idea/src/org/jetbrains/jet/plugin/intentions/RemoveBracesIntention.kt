@@ -50,11 +50,10 @@ public class RemoveBracesIntention : JetSelfTargetingIntention<JetExpressionImpl
 
         handleComments(element, jetBlockElement)
 
-        val project = element.getProject()
         val newElement = jetBlockElement.replace(firstStatement.copy())
 
         if (expressionKind == ExpressionKind.DOWHILE) {
-            newElement.getParent()!!.addAfter(JetPsiFactory(project).createNewLine(), newElement)
+            newElement.getParent()!!.addAfter(JetPsiFactory(element).createNewLine(), newElement)
         }
     }
 
@@ -64,11 +63,12 @@ public class RemoveBracesIntention : JetSelfTargetingIntention<JetExpressionImpl
         while (sibling != null) {
             if (sibling is PsiComment) {
                 //cleans up extra whitespace
+                val psiFactory = JetPsiFactory(element)
                 if (element.getPrevSibling() is PsiWhiteSpace) {
-                    element.getPrevSibling()!!.replace(JetPsiFactory(element.getProject()).createNewLine())
+                    element.getPrevSibling()!!.replace(psiFactory.createNewLine())
                 }
                 val commentElement = element.getParent()!!.addBefore(sibling as PsiComment, element.getPrevSibling())
-                element.getParent()!!.addBefore(JetPsiFactory(element.getProject()).createNewLine(), commentElement)
+                element.getParent()!!.addBefore(psiFactory.createNewLine(), commentElement)
             }
             sibling = sibling!!.getNextSibling()
         }

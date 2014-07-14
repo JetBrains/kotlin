@@ -42,7 +42,7 @@ public class MakeTypeImplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         val functionLiteral = element.getFunctionLiteral()
         val oldParameterList = functionLiteral.getValueParameterList()
 
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
         if (hasExplicitReturnType(element)) {
             val childAfterParamList = oldParameterList?.getNextSibling()
             val arrow = functionLiteral.getArrowNode()?.getPsi()

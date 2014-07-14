@@ -44,7 +44,7 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
 
             val oldBodyText = body.getText()!!
             val newBodyText = if (needReturn) "return ${oldBodyText}" else oldBodyText
-            return JetPsiFactory(project).createFunctionBody(newBodyText)
+            return JetPsiFactory(declaration).createFunctionBody(newBodyText)
         }
 
         if (declaration is JetNamedFunction) {

@@ -88,7 +88,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetProperty property = getCorrespondingProperty(editor, (JetFile)file);
         assert property != null;
-        property.getValOrVarNode().getPsi().replace(JetPsiFactory(project).createValOrVarNode(isVar ? "val" : "var").getPsi());
+        property.getValOrVarNode().getPsi().replace(JetPsiFactory(property).createValOrVarNode(isVar ? "val" : "var").getPsi());
     }
 
     @Override

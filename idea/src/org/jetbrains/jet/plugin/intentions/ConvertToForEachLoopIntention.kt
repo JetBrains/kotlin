@@ -113,6 +113,6 @@ public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpres
 
         val functionLiteral = getFunctionLiteralArgument(element)!!
 
-        element.replace(JetPsiFactory(element.getProject()).createExpression(generateLoopText(receiver, functionLiteral)))
+        element.replace(JetPsiFactory(element).createExpression(generateLoopText(receiver, functionLiteral)))
     }
 }

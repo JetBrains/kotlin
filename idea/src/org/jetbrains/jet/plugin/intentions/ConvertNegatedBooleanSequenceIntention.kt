@@ -54,7 +54,7 @@ public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingIntention<
                 "!(${bareExpressions.last()}", { negated, expression -> "$expression $operatorText $negated" }
         )
 
-        val newExpression = JetPsiFactory(element.getProject()).createExpression("$negatedExpression)")
+        val newExpression = JetPsiFactory(element).createExpression("$negatedExpression)")
 
         val insertedElement = element.replace(newExpression)
         val insertedElementParent = insertedElement.getParent() as? JetParenthesizedExpression ?: return

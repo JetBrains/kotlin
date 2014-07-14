@@ -46,7 +46,7 @@ public abstract class JetExpressionImpl extends JetElementImpl implements JetExp
         PsiElement parent = getParent();
         if (parent instanceof JetExpression && newElement instanceof JetExpression &&
             JetPsiUtil.areParenthesesNecessary((JetExpression) newElement, this, (JetExpression) parent)) {
-            return super.replace(PsiPackage.JetPsiFactory(getProject()).createExpression("(" + newElement.getText() + ")"));
+            return super.replace(PsiPackage.JetPsiFactory(this).createExpression("(" + newElement.getText() + ")"));
         }
         return super.replace(newElement);
     }

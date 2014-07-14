@@ -45,7 +45,7 @@ public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionActi
         assert typeRef != null : "Must be checked by isAvailable(): " + element;
 
         JetType type = getReconstructedType(typeRef);
-        JetTypeReference newType = JetPsiFactory(project).createType(DescriptorRenderer.SOURCE_CODE.renderType(type));
+        JetTypeReference newType = JetPsiFactory(typeRef).createType(DescriptorRenderer.SOURCE_CODE.renderType(type));
         JetTypeReference replaced = (JetTypeReference) typeRef.replace(newType);
         ShortenReferences.instance$.process(replaced);
     }

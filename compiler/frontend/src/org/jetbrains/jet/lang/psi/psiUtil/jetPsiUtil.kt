@@ -110,7 +110,7 @@ public fun JetBlockExpression.prependElement(element: JetElement): JetElement =
         addBefore(element, getLBrace()!!.getNextSibling()!!)!! as JetElement
 
 public fun JetElement.wrapInBlock(): JetBlockExpression {
-    val block = JetPsiFactory(getProject()).createEmptyBody() as JetBlockExpression
+    val block = JetPsiFactory(this).createEmptyBody() as JetBlockExpression
     block.appendElement(this)
     return block
 }

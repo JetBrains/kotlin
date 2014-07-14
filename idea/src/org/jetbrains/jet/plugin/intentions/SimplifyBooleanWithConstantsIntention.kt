@@ -67,7 +67,7 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<J
     }
 
     private fun simplifyBoolean(element: JetExpression) : JetExpression {
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
         if (element.canBeReducedToTrue())
             return psiFactory.createExpression("true")
         if (element.canBeReducedToFalse())
@@ -115,7 +115,7 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<J
             operation: IElementType
     ): JetExpression {
         assert(booleanConstantOperand.canBeReducedToBooleanConstant(null), "should only be called when we know it can be reduced")
-        val psiFactory = JetPsiFactory(otherOperand.getProject())
+        val psiFactory = JetPsiFactory(otherOperand)
         if (booleanConstantOperand.canBeReducedToTrue() && operation == JetTokens.OROR)
             return psiFactory.createExpression("true")
         if (booleanConstantOperand.canBeReducedToFalse() && operation == JetTokens.ANDAND)

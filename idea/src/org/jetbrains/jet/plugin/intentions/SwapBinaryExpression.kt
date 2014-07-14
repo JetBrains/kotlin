@@ -61,7 +61,7 @@ public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpressio
         }
         val left = leftSubject(element)!!
         val right = rightSubject(element)!!
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
         val newRight = psiFactory.createExpression(left.getText()!!)
         val newLeft = psiFactory.createExpression(right.getText()!!)
         left.replace(newLeft)

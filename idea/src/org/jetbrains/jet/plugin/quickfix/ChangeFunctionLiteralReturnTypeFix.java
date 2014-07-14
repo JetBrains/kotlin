@@ -120,7 +120,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         if (functionLiteralReturnTypeRef != null) {
-            functionLiteralReturnTypeRef.replace(JetPsiFactory(project).createType(renderedType));
+            functionLiteralReturnTypeRef.replace(JetPsiFactory(file).createType(renderedType));
         }
         if (appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor, file)) {
             appropriateQuickFix.invoke(project, editor, file);

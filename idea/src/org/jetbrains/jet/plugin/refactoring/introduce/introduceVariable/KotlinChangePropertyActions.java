@@ -26,9 +26,9 @@ public class KotlinChangePropertyActions {
     private KotlinChangePropertyActions() {
     }
 
-    public static void declareValueOrVariable(Project project, boolean isVariable, JetProperty property) {
+    public static void declareValueOrVariable(boolean isVariable, JetProperty property) {
         ASTNode node;
-        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
+        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(property);
         if (isVariable) {
             node = psiFactory.createVarNode();
         }

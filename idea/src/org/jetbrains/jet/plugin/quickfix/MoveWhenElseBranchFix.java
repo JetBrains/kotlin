@@ -73,7 +73,7 @@ public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression>
         int cursorOffset = editor.getCaretModel().getOffset() - elseEntry.getTextOffset();
 
         PsiElement insertedBranch = element.addAfter(elseEntry, lastEntry);
-        element.addAfter(JetPsiFactory(project).createNewLine(), lastEntry);
+        element.addAfter(JetPsiFactory(file).createNewLine(), lastEntry);
         element.deleteChildRange(elseEntry, elseEntry);
         JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
 

@@ -71,7 +71,7 @@ public class ConvertIfWithThrowToAssertIntention :
                 ""
             }
 
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
         val negatedCondition = psiFactory.createExpression("!true") as JetPrefixExpression
         negatedCondition.getBaseExpression()!!.replace(condition)
         condition.replace(negatedCondition)

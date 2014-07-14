@@ -27,21 +27,20 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 
 fun specifyTypeExplicitly(declaration: JetNamedFunction, typeText: String) {
-    specifyTypeExplicitly(declaration, JetPsiFactory(declaration.getProject()).createType(typeText))
+    specifyTypeExplicitly(declaration, JetPsiFactory(declaration).createType(typeText))
 }
 
 fun specifyTypeExplicitly(declaration: JetNamedFunction, `type`: JetType) {
     if (`type`.isError()) return
-    val typeReference = JetPsiFactory(declaration.getProject()).createType(DescriptorRenderer.SOURCE_CODE.renderType(`type`))
+    val typeReference = JetPsiFactory(declaration).createType(DescriptorRenderer.SOURCE_CODE.renderType(`type`))
     specifyTypeExplicitly(declaration, typeReference)
     ShortenReferences.process(declaration.getReturnTypeRef()!!)
 }
 
 fun specifyTypeExplicitly(declaration: JetNamedFunction, typeReference: JetTypeReference) {
-    val project = declaration.getProject()
     val anchor = declaration.getValueParameterList() ?: return/*incomplete declaration*/
     declaration.addAfter(typeReference, anchor)
-    declaration.addAfter(JetPsiFactory(project).createColon(), anchor)
+    declaration.addAfter(JetPsiFactory(declaration).createColon(), anchor)
 }
 
 fun expressionType(expression: JetExpression): JetType? {

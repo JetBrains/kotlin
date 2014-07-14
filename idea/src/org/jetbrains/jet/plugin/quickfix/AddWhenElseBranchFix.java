@@ -65,7 +65,7 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
         PsiElement whenCloseBrace = element.getCloseBrace();
         assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
 
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactory(file);
         JetWhenEntry entry = psiFactory.createWhenEntry(ELSE_ENTRY_TEXT);
 
         PsiElement insertedBranch = element.addBefore(entry, whenCloseBrace);

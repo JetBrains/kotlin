@@ -61,7 +61,7 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
         val condition = args[0]?.getArgumentExpression()
         val lambdas = element.getFunctionLiteralArguments()
 
-        val psiFactory = JetPsiFactory(element.getProject())
+        val psiFactory = JetPsiFactory(element)
         val messageExpr =
                 if (args.size == 2) {
                     args[1]?.getArgumentExpression()

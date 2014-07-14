@@ -139,7 +139,7 @@ public fun JetWhenExpression.flatten(): JetWhenExpression {
 
     val outerEntries = getEntries()
     val innerEntries = nestedWhenExpression.getEntries()
-    val builder = JetPsiFactory(getProject()).WhenBuilder(subjectExpression)
+    val builder = JetPsiFactory(this).WhenBuilder(subjectExpression)
     for (entry in outerEntries) {
         if (entry.isElse())
             continue
@@ -156,7 +156,7 @@ public fun JetWhenExpression.flatten(): JetWhenExpression {
 public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
     val subject = getSubjectCandidate()!!
 
-    val builder = JetPsiFactory(getProject()).WhenBuilder(subject)
+    val builder = JetPsiFactory(this).WhenBuilder(subject)
     for (entry in getEntries()) {
         val branchExpression = entry.getExpression()
         if (entry.isElse()) {
@@ -203,7 +203,7 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
 public fun JetWhenExpression.eliminateSubject(): JetWhenExpression {
     val subject = getSubjectExpression()!!
 
-    val builder = JetPsiFactory(getProject()).WhenBuilder()
+    val builder = JetPsiFactory(this).WhenBuilder()
     for (entry in getEntries()) {
         val branchExpression = entry.getExpression()
 
@@ -264,7 +264,7 @@ public fun JetIfExpression.transformToWhen() {
         override fun hasNext(): Boolean = expression != null
     }
 
-    val builder = JetPsiFactory(getProject()).WhenBuilder()
+    val builder = JetPsiFactory(this).WhenBuilder()
     branchIterator(this).forEach { ifExpression ->
         ifExpression.getCondition()?.let { condition ->
             val orBranches = condition.splitToOrBranches()
@@ -304,7 +304,7 @@ public fun JetWhenExpression.transformToIf() {
         }
     }
 
-    val builder = JetPsiFactory(getProject()).IfChainBuilder()
+    val builder = JetPsiFactory(this).IfChainBuilder()
 
     for (entry in getEntries()) {
         val branch = entry.getExpression()
@@ -365,7 +365,7 @@ public fun JetWhenExpression.mergeWithNext() {
             val block = if (this is JetBlockExpression) this else replaced(wrapInBlock())
             for (element in that.blockExpressionsOrSingle()) {
                 val expression = block.appendElement(element)
-                block.addBefore(JetPsiFactory(getProject()).createNewLine(), expression)
+                block.addBefore(JetPsiFactory(this).createNewLine(), expression)
             }
             block
         }

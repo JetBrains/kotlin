@@ -42,7 +42,7 @@ public class KotlinParenthesesSurrounder extends KotlinExpressionSurrounder {
     @Nullable
     @Override
     public TextRange surroundExpression( @NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) JetPsiFactory(project).createExpression("(a)");
+        JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) JetPsiFactory(expression).createExpression("(a)");
         JetExpression expressionWithoutParentheses = parenthesizedExpression.getExpression();
         assert expressionWithoutParentheses != null : "JetExpression should exists for " + parenthesizedExpression.getText() + " expression";
         expressionWithoutParentheses.replace(expression);

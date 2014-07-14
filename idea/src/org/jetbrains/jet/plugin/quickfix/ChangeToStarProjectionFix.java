@@ -53,7 +53,7 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         for (JetTypeReference typeReference : element.getTypeArgumentsAsTypes()) {
             if (typeReference != null) {
-                typeReference.replace(JetPsiFactory(project).createStar());
+                typeReference.replace(JetPsiFactory(file).createStar());
             }
         }
     }

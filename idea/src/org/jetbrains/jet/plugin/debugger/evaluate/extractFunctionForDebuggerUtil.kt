@@ -110,7 +110,7 @@ private fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
     if (newImportList != null) {
         val tmpFileImportList = tmpFile.getImportList()
         val packageDirective = tmpFile.getPackageDirective()
-        val psiFactory = JetPsiFactory(tmpFile.getProject())
+        val psiFactory = JetPsiFactory(tmpFile)
         if (tmpFileImportList == null) {
             tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
             tmpFile.addAfter(newImportList, tmpFile.getPackageDirective())
@@ -126,7 +126,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
     val parent = contextElement.getParent()
     if (parent == null) return null
 
-    val psiFactory = JetPsiFactory(contextElement.getProject())
+    val psiFactory = JetPsiFactory(codeFragment)
     parent.addBefore(psiFactory.createNewLine(), contextElement)
 
     val debugExpression = codeFragment.getContentElement()

@@ -27,6 +27,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken
 import org.jetbrains.jet.plugin.JetFileType
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
+public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
 
 public class JetPsiFactory(private val project: Project) {
 
@@ -190,7 +191,7 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createWhenEntry(entryText: String): JetWhenEntry {
-        val function = createFunction("fun foo() { when(12) { $entryText } }")
+        val function = createFunction("fun foo() { when(12) { " + entryText + " } }")
         val whenEntry = PsiTreeUtil.findChildOfType(function, javaClass<JetWhenEntry>())
 
         assert(whenEntry != null, "Couldn't generate when entry")
@@ -200,8 +201,8 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createBlockStringTemplateEntry(expression: JetExpression): JetStringTemplateEntryWithExpression {
-        val stringTemplateExpression = createExpression("\"\${${expression.getText()}}\"") as JetStringTemplateExpression
-        return stringTemplateExpression.getEntries().first() as JetStringTemplateEntryWithExpression
+        val stringTemplateExpression = createExpression("\"\${" + expression.getText() + "}\"") as JetStringTemplateExpression
+        return stringTemplateExpression.getEntries()[0] as JetStringTemplateEntryWithExpression
     }
 
     public fun createImportDirective(path: String): JetImportDirective {
@@ -235,15 +236,15 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createClassLabel(labelName: String): JetSimpleNameExpression {
-        return (createExpression("this@$labelName") as JetThisExpression).getTargetLabel()!!
+        return (createExpression("this@" + labelName) as JetThisExpression).getTargetLabel()!!
     }
 
     public fun createFieldIdentifier(fieldName: String): JetExpression {
-        return createExpression("$$fieldName")
+        return createExpression("$" + fieldName)
     }
 
     public fun createBinaryExpression(lhs: String, op: String, rhs: String): JetBinaryExpression {
-        return createExpression("$lhs $op $rhs") as JetBinaryExpression
+        return createExpression(lhs + " " + op + " " + rhs) as JetBinaryExpression
     }
 
     public fun createBinaryExpression(lhs: JetExpression?, op: String, rhs: JetExpression?): JetBinaryExpression {
@@ -549,7 +550,7 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createFunctionBody(bodyText: String): JetExpression {
-        return createFunction("fun foo() {\n$bodyText\n}").getBodyExpression()!!
+        return createFunction("fun foo() {\n" + bodyText + "\n}").getBodyExpression()!!
     }
 
     public fun createEmptyClassObject(): JetClassObject {

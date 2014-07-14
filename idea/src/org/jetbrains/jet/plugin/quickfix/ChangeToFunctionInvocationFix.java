@@ -48,7 +48,7 @@ public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetExpress
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetExpression reference = (JetExpression) element.copy();
-        element.replace(JetPsiFactory(project).createExpression(reference.getText() + "()"));
+        element.replace(JetPsiFactory(file).createExpression(reference.getText() + "()"));
     }
 
     public static JetSingleIntentionActionFactory createFactory() {

@@ -56,7 +56,7 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        element.replace(JetPsiFactory(project).createType(renderedType));
+        element.replace(JetPsiFactory(file).createType(renderedType));
     }
 
     @NotNull

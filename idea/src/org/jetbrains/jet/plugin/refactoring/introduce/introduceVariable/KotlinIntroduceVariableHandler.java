@@ -203,7 +203,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();
-                final Runnable introduceRunnable = introduceVariable(project, expression, suggestedNames, allReplaces, commonContainer,
+                final Runnable introduceRunnable = introduceVariable(expression, suggestedNames, allReplaces, commonContainer,
                                                                      commonParent, replaceOccurrence, propertyRef, references,
                                                                      reference, finalNoTypeInference, finalNeedParentheses, expressionType);
                 final boolean finalReplaceOccurrence = replaceOccurrence;
@@ -241,16 +241,18 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         }
     }
 
-    private static Runnable introduceVariable(final @NotNull Project project, final JetExpression expression,
-                                              final String[] suggestedNames,
-                                              final List<JetExpression> allReplaces, final PsiElement commonContainer,
-                                              final PsiElement commonParent, final boolean replaceOccurrence,
-                                              final Ref<JetProperty> propertyRef,
-                                              final ArrayList<JetExpression> references,
-                                              final Ref<JetExpression> reference, 
-                                              final boolean noTypeInference,
-                                              final boolean needParentheses,
-                                              final JetType expressionType) {
+    private static Runnable introduceVariable(
+            final JetExpression expression,
+            final String[] suggestedNames,
+            final List<JetExpression> allReplaces, final PsiElement commonContainer,
+            final PsiElement commonParent, final boolean replaceOccurrence,
+            final Ref<JetProperty> propertyRef,
+            final ArrayList<JetExpression> references,
+            final Ref<JetExpression> reference,
+            final boolean noTypeInference,
+            final boolean needParentheses,
+            final JetType expressionType
+    ) {
         return new Runnable() {
             @Override
             public void run() {
@@ -272,7 +274,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 else {
                     variableText += expression.getText();
                 }
-                JetPsiFactory psiFactory = JetPsiFactory(project);
+                JetPsiFactory psiFactory = JetPsiFactory(expression);
                 JetProperty property = psiFactory.createProperty(variableText);
                 PsiElement anchor = calculateAnchor(commonParent, commonContainer, allReplaces);
                 if (anchor == null) return;

@@ -95,7 +95,7 @@ public class MoveDeclarationsOutHelper {
     private static JetBinaryExpression createVariableAssignment(@NotNull JetProperty property) {
         String propertyName = property.getName();
         assert propertyName != null : "Property should have a name " + property.getText();
-        JetBinaryExpression assignment = (JetBinaryExpression) JetPsiFactory(property.getProject()).createExpression(propertyName + " = x");
+        JetBinaryExpression assignment = (JetBinaryExpression) JetPsiFactory(property).createExpression(propertyName + " = x");
         JetExpression right = assignment.getRight();
         assert right != null : "Created binary expression should have a right part " + assignment.getText();
         JetExpression initializer = property.getInitializer();
@@ -134,7 +134,7 @@ public class MoveDeclarationsOutHelper {
             typeString = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(propertyType);
         }
 
-        return JetPsiFactory(property.getProject()).createProperty(property.getName(), typeString, property.isVar(), initializer);
+        return JetPsiFactory(property).createProperty(property.getName(), typeString, property.isVar(), initializer);
     }
 
     private static boolean needToDeclareOut(@NotNull PsiElement element, int lastStatementOffset, @NotNull SearchScope scope) {

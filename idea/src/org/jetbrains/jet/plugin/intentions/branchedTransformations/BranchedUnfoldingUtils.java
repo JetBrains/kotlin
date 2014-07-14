@@ -79,7 +79,6 @@ public class BranchedUnfoldingUtils {
     }
 
     public static void unfoldAssignmentToIf(@NotNull JetBinaryExpression assignment, @NotNull Editor editor) {
-        Project project = assignment.getProject();
         String op = assignment.getOperationReference().getText();
         JetExpression lhs = assignment.getLeft();
         JetIfExpression ifExpression = (JetIfExpression) assignment.getRight();
@@ -96,7 +95,7 @@ public class BranchedUnfoldingUtils {
         assertNotNull(elseExpr);
 
         //noinspection ConstantConditions
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactory(assignment);
         thenExpr.replace(psiFactory.createBinaryExpression(lhs, op, thenExpr));
         elseExpr.replace(psiFactory.createBinaryExpression(lhs, op, elseExpr));
 
@@ -106,7 +105,6 @@ public class BranchedUnfoldingUtils {
     }
 
     public static void unfoldAssignmentToWhen(@NotNull JetBinaryExpression assignment, @NotNull Editor editor) {
-        Project project = assignment.getProject();
         String op = assignment.getOperationReference().getText();
         JetExpression lhs = assignment.getLeft();
         JetWhenExpression whenExpression = (JetWhenExpression) assignment.getRight();
@@ -122,7 +120,7 @@ public class BranchedUnfoldingUtils {
             assertNotNull(currExpr);
 
             //noinspection ConstantConditions
-            currExpr.replace(JetPsiFactory(project).createBinaryExpression(lhs, op, currExpr));
+            currExpr.replace(JetPsiFactory(assignment).createBinaryExpression(lhs, op, currExpr));
         }
 
         PsiElement resultElement = assignment.replace(newWhenExpression);
@@ -141,7 +139,6 @@ public class BranchedUnfoldingUtils {
     }
 
     public static void unfoldReturnToIf(@NotNull JetReturnExpression returnExpression) {
-        Project project = returnExpression.getProject();
         JetIfExpression ifExpression = (JetIfExpression) returnExpression.getReturnedExpression();
 
         assertNotNull(ifExpression);
@@ -155,7 +152,7 @@ public class BranchedUnfoldingUtils {
         assertNotNull(thenExpr);
         assertNotNull(elseExpr);
 
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactory(returnExpression);
         thenExpr.replace(psiFactory.createReturn(thenExpr));
         elseExpr.replace(psiFactory.createReturn(elseExpr));
 
@@ -163,7 +160,6 @@ public class BranchedUnfoldingUtils {
     }
 
     public static void unfoldReturnToWhen(@NotNull JetReturnExpression returnExpression) {
-        Project project = returnExpression.getProject();
         JetWhenExpression whenExpression = (JetWhenExpression) returnExpression.getReturnedExpression();
 
         assertNotNull(whenExpression);
@@ -176,7 +172,7 @@ public class BranchedUnfoldingUtils {
 
             assertNotNull(currExpr);
 
-            currExpr.replace(JetPsiFactory(project).createReturn(currExpr));
+            currExpr.replace(JetPsiFactory(returnExpression).createReturn(currExpr));
         }
 
         returnExpression.replace(newWhenExpression);
