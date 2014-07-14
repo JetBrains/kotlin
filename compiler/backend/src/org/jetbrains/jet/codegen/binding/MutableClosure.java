@@ -50,7 +50,6 @@ public final class MutableClosure implements CalculatedClosure {
     }
 
     @Nullable
-    @Override
     public ClassDescriptor getEnclosingClass() {
         return enclosingClass;
     }

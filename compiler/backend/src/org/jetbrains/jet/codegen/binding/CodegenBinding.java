@@ -100,11 +100,6 @@ public class CodegenBinding {
         return asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
     }
 
-    public static ClassDescriptor enclosingClassDescriptor(BindingContext bindingContext, ClassDescriptor descriptor) {
-        CalculatedClosure closure = bindingContext.get(CLOSURE, descriptor);
-        return closure == null ? null : closure.getEnclosingClass();
-    }
-
     @NotNull
     public static ClassDescriptor anonymousClassForFunction(
             @NotNull BindingContext bindingContext,
@@ -157,8 +152,8 @@ public class CodegenBinding {
             return false;
         }
 
-        ClassDescriptor enclosing = enclosingClassDescriptor(bindingContext, classDescriptor);
-        if (enclosing == null) {
+        MutableClosure closure = bindingContext.get(CLOSURE, classDescriptor);
+        if (closure == null || closure.getEnclosingClass() == null) {
             return false;
         }
 

@@ -856,10 +856,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             "constructor: " + constructor.getValueParameters().size();
 
                     MutableClosure closure = ImplementationBodyCodegen.this.context.closure;
-                    if (closure != null && closure.getCaptureThis() != null) {
-                        Type type = typeMapper.mapType(enclosingClassDescriptor(bindingContext, descriptor));
-                        iv.load(0, classAsmType);
-                        iv.getfield(classAsmType.getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
+                    if (closure != null) {
+                        ClassDescriptor captureThis = closure.getCaptureThis();
+                        if (captureThis != null) {
+                            iv.load(0, classAsmType);
+                            Type type = typeMapper.mapType(captureThis);
+                            iv.getfield(classAsmType.getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
+                        }
                     }
 
                     int parameterIndex = 1; // localVariable 0 = this
