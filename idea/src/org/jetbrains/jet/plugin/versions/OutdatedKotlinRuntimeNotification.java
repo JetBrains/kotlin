@@ -69,8 +69,6 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
 
     @Override
     public void projectOpened() {
-        if (ApplicationManager.getApplication().isInternal()) return;
-
         StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
             @Override
             public void run() {
