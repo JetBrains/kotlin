@@ -68,15 +68,14 @@ private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String)
 private fun createCodeFragment(filePath: String, contextElement: PsiElement): JetCodeFragment {
     val fileForFragment = File(filePath + ".fragment")
     val codeFragmentText = FileUtil.loadFile(fileForFragment, true).trim()
+    val psiFactory = JetPsiFactory(contextElement.getProject())
     if (fileForFragment.readLines().size == 1) {
-        return JetPsiFactory.createExpressionCodeFragment(
-                contextElement.getProject(),
+        return psiFactory.createExpressionCodeFragment(
                 codeFragmentText,
                 KotlinCodeFragmentFactory.getContextElement(contextElement)
         )
     }
-    return JetPsiFactory.createBlockCodeFragment(
-            contextElement.getProject(),
+    return psiFactory.createBlockCodeFragment(
             codeFragmentText,
             KotlinCodeFragmentFactory.getContextElement(contextElement)
     )

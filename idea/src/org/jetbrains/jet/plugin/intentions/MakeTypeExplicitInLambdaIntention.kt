@@ -63,7 +63,8 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         val parameterString = valueParameters.map({descriptor -> "" + descriptor.getName() +
                                                       ": " + DescriptorRenderer.SOURCE_CODE.renderType(descriptor.getType())
                                                   }).makeString(", ", "(", ")")
-        val newParameterList = JetPsiFactory.createParameterList(element.getProject(), parameterString)
+        val psiFactory = JetPsiFactory(element.getProject())
+        val newParameterList = psiFactory.createParameterList(parameterString)
         val oldParameterList = functionLiteral.getValueParameterList()
         if (oldParameterList != null) {
             oldParameterList.replace(newParameterList)
@@ -72,11 +73,11 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
             val openBraceElement = functionLiteral.getOpenBraceNode().getPsi()
             val nextSibling = openBraceElement?.getNextSibling()
             val addNewline = nextSibling is PsiWhiteSpace && nextSibling.getText()?.contains("\n") ?: false
-            val (whitespace, arrow) = JetPsiFactory.createWhitespaceAndArrow(element.getProject())
+            val (whitespace, arrow) = psiFactory.createWhitespaceAndArrow()
             functionLiteral.addRangeAfter(whitespace, arrow, openBraceElement)
             functionLiteral.addAfter(newParameterList, openBraceElement)
             if (addNewline) {
-                functionLiteral.addAfter(JetPsiFactory.createNewLine(element.getProject()), openBraceElement)
+                functionLiteral.addAfter(psiFactory.createNewLine(), openBraceElement)
             }
         }
         ShortenReferences.process(element.getValueParameters())
@@ -85,8 +86,8 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         val expectedReturnType = func.getReturnType()
         if (hasImplicitReturnType(element) && expectedReturnType != null) {
             val paramList = functionLiteral.getValueParameterList()
-            val returnTypeColon = JetPsiFactory.createColon(element.getProject())
-            val returnTypeExpr = JetPsiFactory.createType(element.getProject(), DescriptorRenderer.SOURCE_CODE.renderType(expectedReturnType))
+            val returnTypeColon = psiFactory.createColon()
+            val returnTypeExpr = psiFactory.createType(DescriptorRenderer.SOURCE_CODE.renderType(expectedReturnType))
             ShortenReferences.process(returnTypeExpr)
             functionLiteral.addAfter(returnTypeExpr, paramList)
             functionLiteral.addAfter(returnTypeColon, paramList)
@@ -97,7 +98,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         if (hasImplicitReceiverType(element) && expectedReceiverType != null) {
             val receiverTypeString = DescriptorRenderer.SOURCE_CODE.renderType(expectedReceiverType)
             val paramListString = functionLiteral.getValueParameterList()?.getText()
-            val paramListWithReceiver = JetPsiFactory.createExpression(element.getProject(), receiverTypeString + "." + paramListString)
+            val paramListWithReceiver = psiFactory.createExpression(receiverTypeString + "." + paramListString)
             ShortenReferences.process(paramListWithReceiver)
             functionLiteral.getValueParameterList()?.replace(paramListWithReceiver)
         }

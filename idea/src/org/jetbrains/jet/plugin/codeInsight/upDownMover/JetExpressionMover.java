@@ -34,6 +34,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class JetExpressionMover extends AbstractJetUpDownMover {
 
     private static final Predicate<JetElement> IS_CALL_EXPRESSION = new Predicate<JetElement>() {
@@ -549,7 +551,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             PsiElement parent = element.getParent();
             assert parent != null;
 
-            parent.addAfter(JetPsiFactory.createComma(parent.getProject()), element);
+            parent.addAfter(JetPsiFactory(parent.getProject()).createComma(), element);
         }
     }
 

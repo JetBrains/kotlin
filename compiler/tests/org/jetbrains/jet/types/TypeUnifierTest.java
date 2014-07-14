@@ -29,7 +29,6 @@ import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeProjection;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
@@ -43,6 +42,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Map;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class TypeUnifierTest extends JetLiteFixture {
     private Set<TypeConstructor> variables;
@@ -207,7 +208,7 @@ public class TypeUnifierTest extends JetLiteFixture {
         withX.addClassifierDescriptor(y);
         withX.changeLockLevel(WritableScope.LockLevel.READING);
 
-        JetTypeProjection projection = JetPsiFactory.createTypeArguments(getProject(), "<" + typeStr + ">").getArguments().get(0);
+        JetTypeProjection projection = JetPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);
 
         JetTypeReference typeReference = projection.getTypeReference();
         assert typeReference != null;

@@ -27,13 +27,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeVariableMutabilityFix implements IntentionAction {
     private boolean isVar;
@@ -87,7 +88,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetProperty property = getCorrespondingProperty(editor, (JetFile)file);
         assert property != null;
-        property.getValOrVarNode().getPsi().replace(JetPsiFactory.createValOrVarNode(project, isVar ? "val" : "var").getPsi());
+        property.getValOrVarNode().getPsi().replace(JetPsiFactory(project).createValOrVarNode(isVar ? "val" : "var").getPsi());
     }
 
     @Override

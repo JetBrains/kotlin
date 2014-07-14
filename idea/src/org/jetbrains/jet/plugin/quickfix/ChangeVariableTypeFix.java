@@ -83,21 +83,22 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
         SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
         PsiElement nameIdentifier = element.getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
-        element.addAfter(JetPsiFactory.createType(project, renderedType), nameIdentifier);
-        element.addAfter(JetPsiFactory.createColon(project), nameIdentifier);
+        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
+        element.addAfter(psiFactory.createType(renderedType), nameIdentifier);
+        element.addAfter(psiFactory.createColon(), nameIdentifier);
 
         if (element instanceof JetProperty) {
             JetPropertyAccessor getter = ((JetProperty) element).getGetter();
             JetTypeReference getterReturnTypeRef = getter == null ? null : getter.getReturnTypeReference();
             if (getterReturnTypeRef != null) {
-                getterReturnTypeRef.replace(JetPsiFactory.createType(project, renderedType));
+                getterReturnTypeRef.replace(psiFactory.createType(renderedType));
             }
 
             JetPropertyAccessor setter = ((JetProperty) element).getSetter();
             JetParameter setterParameter = setter == null ? null : setter.getParameter();
             JetTypeReference setterParameterTypeRef = setterParameter == null ? null : setterParameter.getTypeReference();
             if (setterParameterTypeRef != null) {
-                setterParameterTypeRef.replace(JetPsiFactory.createType(project, renderedType));
+                setterParameterTypeRef.replace(psiFactory.createType(renderedType));
             }
         }
     }

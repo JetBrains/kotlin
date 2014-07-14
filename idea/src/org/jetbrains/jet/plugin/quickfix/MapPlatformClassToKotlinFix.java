@@ -45,6 +45,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReferenceExpression> {
     private static final String PRIMARY_USAGE = "PrimaryUsage";
     private static final String OTHER_USAGE = "OtherUsage";
@@ -125,7 +127,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
         for (JetUserType usage : usages) {
             JetTypeArgumentList typeArguments = usage.getTypeArgumentList();
             String typeArgumentsString = typeArguments == null ? "" : typeArguments.getText();
-            JetTypeReference replacementType = JetPsiFactory.createType(project, replacementClassName + typeArgumentsString);
+            JetTypeReference replacementType = JetPsiFactory(project).createType(replacementClassName + typeArgumentsString);
             JetTypeElement replacementTypeElement = replacementType.getTypeElement();
             assert replacementTypeElement != null;
             PsiElement replacedElement = usage.replace(replacementTypeElement);

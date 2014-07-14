@@ -47,7 +47,6 @@ import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.lang.psi.JetClassInitializer
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
@@ -104,7 +103,7 @@ class ExtractionData(
 
     val originalStartOffset = originalElements.first?.let { e -> e.getTextRange()!!.getStartOffset() }
 
-    private val itFakeDeclaration by Delegates.lazy { JetPsiFactory.createParameter(project, "it", null) }
+    private val itFakeDeclaration by Delegates.lazy { JetPsiFactory(project).createParameter("it", "Any?") }
 
     val refOffsetToDeclaration by Delegates.lazy {
         fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {

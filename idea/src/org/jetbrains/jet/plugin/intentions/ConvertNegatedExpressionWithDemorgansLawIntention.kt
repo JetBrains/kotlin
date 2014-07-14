@@ -19,16 +19,13 @@ package org.jetbrains.jet.plugin.intentions
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.impl.source.tree.PsiErrorElementImpl
-import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetConstantExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import java.util.ArrayList
 import java.util.LinkedList
 import org.jetbrains.jet.plugin.JetBundle
 
@@ -67,7 +64,7 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
         val negatedExpression = negatedElements.subList(0, negatedElements.lastIndex).foldRight(
                 "${negatedElements.last()}", { negated, exp -> "$exp $operatorText $negated" })
 
-        val newExpression = JetPsiFactory.createExpression(element.getProject(), negatedExpression)
+        val newExpression = JetPsiFactory(element.getProject()).createExpression(negatedExpression)
         element.replace(newExpression)
     }
 

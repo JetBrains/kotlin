@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.UPPER_BOUND;
 
@@ -76,7 +77,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         }
 
         setAnnotated(true);
-        altFunDeclaration = JetPsiFactory.createFunction(project, signature);
+        altFunDeclaration = JetPsiFactory(project).createFunction(signature);
 
         originalToAltTypeParameters = DescriptorResolverUtils.recreateTypeParametersAndReturnMapping(methodTypeParameters, null);
 

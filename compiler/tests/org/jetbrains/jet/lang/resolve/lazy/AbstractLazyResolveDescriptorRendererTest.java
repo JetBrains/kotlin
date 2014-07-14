@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTestWithEnvironment {
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -57,7 +59,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
     protected void doTest(@NotNull String testFile) throws IOException {
         String fileText = FileUtil.loadFile(new File(testFile), true);
 
-        JetFile psiFile = JetPsiFactory.createFile(getProject(), fileText);
+        JetFile psiFile = JetPsiFactory(getProject()).createFile(fileText);
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
         final ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");

@@ -67,10 +67,11 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<J
     }
 
     private fun simplifyBoolean(element: JetExpression) : JetExpression {
+        val psiFactory = JetPsiFactory(element.getProject())
         if (element.canBeReducedToTrue())
-            return JetPsiFactory.createExpression(element.getProject(), "true")
+            return psiFactory.createExpression("true")
         if (element.canBeReducedToFalse())
-            return JetPsiFactory.createExpression(element.getProject(), "false")
+            return psiFactory.createExpression("false")
         when (element) {
             is JetParenthesizedExpression -> {
                 val expr = element.getExpression()
@@ -81,7 +82,7 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<J
                     val simpText = simplified.getText()
                     if (simpText == null) return element
                     // wrap in new parentheses to keep the user's original format
-                    return JetPsiFactory.createExpression(element.getProject(), "($simpText)")
+                    return psiFactory.createExpression("($simpText)")
                 }
                 // if we now have a simpleName, constant, or parenthesized we don't need parentheses
                 return simplified
@@ -102,7 +103,7 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<J
 
                 val opText = element.getOperationReference().getText()
                 if (opText == null) return element
-                return JetPsiFactory.createBinaryExpression(element.getProject(), simpleLeft, opText, simpleRight)
+                return psiFactory.createBinaryExpression(simpleLeft, opText, simpleRight)
             }
             else -> return element
         }
@@ -114,10 +115,11 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<J
             operation: IElementType
     ): JetExpression {
         assert(booleanConstantOperand.canBeReducedToBooleanConstant(null), "should only be called when we know it can be reduced")
+        val psiFactory = JetPsiFactory(otherOperand.getProject())
         if (booleanConstantOperand.canBeReducedToTrue() && operation == JetTokens.OROR)
-            return JetPsiFactory.createExpression(otherOperand.getProject(), "true")
+            return psiFactory.createExpression("true")
         if (booleanConstantOperand.canBeReducedToFalse() && operation == JetTokens.ANDAND)
-            return JetPsiFactory.createExpression(otherOperand.getProject(), "false")
+            return psiFactory.createExpression("false")
         return simplifyBoolean(otherOperand)
     }
 

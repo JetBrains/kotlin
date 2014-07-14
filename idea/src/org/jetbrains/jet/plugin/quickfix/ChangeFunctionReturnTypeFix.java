@@ -49,6 +49,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH;
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction> {
     private final JetType type;
@@ -122,8 +123,9 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             // if a function doesn't have a value parameter list, a syntax error is raised, and it should follow the function name
             elementToPrecedeType = elementToPrecedeType.getNextSibling();
         }
-        function.addAfter(JetPsiFactory.createType(project, typeText), elementToPrecedeType);
-        function.addAfter(JetPsiFactory.createColon(project), elementToPrecedeType);
+        JetPsiFactory psiFactory = JetPsiFactory(project);
+        function.addAfter(psiFactory.createType(typeText), elementToPrecedeType);
+        function.addAfter(psiFactory.createColon(), elementToPrecedeType);
     }
 
     @NotNull

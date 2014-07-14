@@ -29,6 +29,8 @@ import org.jetbrains.jet.plugin.util.JetPsiMatcher;
 
 import java.io.File;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public abstract class AbstractJetPsiMatcherTest extends JetLiteFixture {
     public void doTestExpressions(@NotNull String path) throws Exception {
         String fileText = FileUtil.loadFile(new File(path), true);
@@ -36,8 +38,9 @@ public abstract class AbstractJetPsiMatcherTest extends JetLiteFixture {
 
         boolean equalityExpected = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NOT_EQUAL") == null;
 
-        JetExpression expr = JetPsiFactory.createExpression(getProject(), fileText);
-        JetExpression expr2 = JetPsiFactory.createExpression(getProject(), fileText2);
+        JetPsiFactory psiFactory = JetPsiFactory(getProject());
+        JetExpression expr = psiFactory.createExpression(fileText);
+        JetExpression expr2 = psiFactory.createExpression(fileText2);
 
         assertTrue(
                 "JetPsiMatcher.checkElementMatch() should return " + equalityExpected,
@@ -51,8 +54,9 @@ public abstract class AbstractJetPsiMatcherTest extends JetLiteFixture {
 
         boolean equalityExpected = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NOT_EQUAL") == null;
 
-        JetTypeReference typeRef = JetPsiFactory.createProperty(getProject(), fileText).getTypeRef();
-        JetTypeReference typeRef2 = JetPsiFactory.createProperty(getProject(), fileText2).getTypeRef();
+        JetPsiFactory psiFactory = JetPsiFactory(getProject());
+        JetTypeReference typeRef = psiFactory.createProperty(fileText).getTypeRef();
+        JetTypeReference typeRef2 = psiFactory.createProperty(fileText2).getTypeRef();
 
         assertNotNull(typeRef);
         assertNotNull(typeRef2);

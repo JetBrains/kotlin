@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,713 +14,569 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi;
+package org.jetbrains.jet.lang.psi
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.LocalTimeCounter;
-import kotlin.KotlinPackage;
-import kotlin.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.plugin.JetFileType;
+import com.intellij.lang.ASTNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.LocalTimeCounter
+import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.jet.lexer.JetKeywordToken
+import org.jetbrains.jet.plugin.JetFileType
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 
-public class JetPsiFactory {
+public class JetPsiFactory(private val project: Project) {
 
-    @NotNull
-    public static ASTNode createValNode(Project project) {
-        JetProperty property = createProperty(project, "val x = 1");
-        return property.getValOrVarNode();
+    public fun createValNode(): ASTNode {
+        val property = createProperty("val x = 1")
+        return property.getValOrVarNode()
     }
 
-    @NotNull
-    public static ASTNode createVarNode(Project project) {
-        JetProperty property = createProperty(project, "var x = 1");
-        return property.getValOrVarNode();
+    public fun createVarNode(): ASTNode {
+        val property = createProperty("var x = 1")
+        return property.getValOrVarNode()
     }
 
-    @NotNull
-    public static ASTNode createValOrVarNode(Project project, String text) {
-        return createParameterList(project, "(" + text + " int x)").getParameters().get(0).getValOrVarNode();
+    public fun createValOrVarNode(text: String): ASTNode {
+        return createParameterList("($text int x)").getParameters().first().getValOrVarNode()!!
     }
 
-    @NotNull
-    public static JetExpression createExpression(Project project, String text) {
-        JetProperty property = createProperty(project, "val x = " + text);
-        return property.getInitializer();
+    public fun createExpression(text: String): JetExpression {
+        return createProperty("val x = $text").getInitializer()!!
     }
 
-    @NotNull
-    public static JetValueArgumentList createCallArguments(Project project, String text) {
-        JetProperty property = createProperty(project, "val x = foo" + text);
-        JetExpression initializer = property.getInitializer();
-        JetCallExpression callExpression = (JetCallExpression) initializer;
-        return callExpression.getValueArgumentList();
+    public fun createCallArguments(text: String): JetValueArgumentList {
+        val property = createProperty("val x = foo $text")
+        return (property.getInitializer() as JetCallExpression).getValueArgumentList()!!
     }
 
-    @NotNull
-    public static JetTypeArgumentList createTypeArguments(Project project, String text) {
-        JetProperty property = createProperty(project, "val x = foo" + text + "()");
-        JetExpression initializer = property.getInitializer();
-        JetCallExpression callExpression = (JetCallExpression) initializer;
-        return callExpression.getTypeArgumentList();
+    public fun createTypeArguments(text: String): JetTypeArgumentList {
+        val property = createProperty("val x = foo$text()")
+        return (property.getInitializer() as JetCallExpression).getTypeArgumentList()!!
     }
 
-    @NotNull
-    public static JetTypeReference createType(Project project, String type) {
-        JetProperty property = createProperty(project, "val x : " + type);
-        return property.getTypeRef();
+    public fun createType(`type`: String): JetTypeReference {
+        return createProperty("val x : $`type`").getTypeRef()!!
     }
 
-    @NotNull
-    public static PsiElement createStar(Project project) {
-        PsiElement star = createType(project, "List<*>").findElementAt(5);
-        assert star != null;
-        return star;
+    public fun createStar(): PsiElement {
+        return createType("List<*>").findElementAt(5)!!
     }
 
-    @NotNull
-    public static PsiElement createComma(Project project) {
-        PsiElement comma = createType(project, "T<X, Y>").findElementAt(3);
-        assert comma != null;
-        return comma;
+    public fun createComma(): PsiElement {
+        return createType("T<X, Y>").findElementAt(3)!!
     }
 
-    @NotNull
-    public static PsiElement createColon(Project project) {
-        JetProperty property = createProperty(project, "val x: Int");
-        PsiElement colon = property.findElementAt(5);
-        assert colon != null;
-        return colon;
+    public fun createColon(): PsiElement {
+        return createProperty("val x: Int").findElementAt(5)!!
     }
 
-    @NotNull
-    public static PsiElement createEQ(Project project) {
-        PsiElement eq = createFunction(project, "fun foo() = foo").getEqualsToken();
-        assert eq != null;
-        return eq;
+    public fun createEQ(): PsiElement {
+        return createFunction("fun foo() = foo").getEqualsToken()!!
     }
 
-    @NotNull
-    public static PsiElement createSemicolon(Project project) {
-        JetProperty property = createProperty(project, "val x: Int;");
-        PsiElement semicolon = property.findElementAt(10);
-        assert semicolon != null;
-        return semicolon;
+    public fun createSemicolon(): PsiElement {
+        return createProperty("val x: Int;").findElementAt(10)!!
     }
 
     //the pair contains the first and the last elements of a range
-    @NotNull
-    public static Pair<PsiElement, PsiElement> createWhitespaceAndArrow(Project project) {
-        JetFunctionType functionType = (JetFunctionType) createType(project, "() -> Int").getTypeElement();
-        assert functionType != null;
-        return new Pair<PsiElement, PsiElement>(functionType.findElementAt(2), functionType.findElementAt(3));
+    public fun createWhitespaceAndArrow(): Pair<PsiElement, PsiElement> {
+        val functionType = createType("() -> Int").getTypeElement() as JetFunctionType
+        return Pair(functionType.findElementAt(2)!!, functionType.findElementAt(3)!!)
     }
 
-    @NotNull
-    public static PsiElement createWhiteSpace(Project project) {
-        return createWhiteSpace(project, " ");
+    public fun createWhiteSpace(): PsiElement {
+        return createWhiteSpace(" ")
     }
 
-    @NotNull
-    public static PsiElement createWhiteSpace(Project project, String text) {
-        JetProperty property = createProperty(project, "val" + text + "x");
-        return property.findElementAt(3);
+    public fun createWhiteSpace(text: String): PsiElement {
+        return createProperty("val${text}x").findElementAt(3)!!
     }
 
-    @NotNull
-    public static PsiElement createNewLine(Project project) {
-        return createWhiteSpace(project, "\n");
+    public fun createNewLine(): PsiElement {
+        return createWhiteSpace("\n")
     }
 
-    @NotNull
-    public static JetClass createClass(@NotNull Project project, @NotNull String text) {
-        return createDeclaration(project, text, JetClass.class);
+    public fun createClass(text: String): JetClass {
+        return createDeclaration(text)
     }
 
-    @NotNull
-    public static JetFile createFile(@NotNull Project project, @NotNull String text) {
-        return createFile(project, "dummy.kt", text);
+    public fun createFile(text: String): JetFile {
+        return createFile("dummy.kt", text)
     }
 
-    @NotNull
-    public static JetFile createFile(@NotNull Project project, @NotNull String fileName, @NotNull String text) {
-        return (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text,
-                                                                                LocalTimeCounter.currentTime(), false);
+    public fun createFile(fileName: String, text: String): JetFile {
+        return PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), false) as JetFile
     }
 
-    @NotNull
-    public static JetFile createPhysicalFile(@NotNull Project project, @NotNull String fileName, @NotNull String text) {
-        return (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text,
-                                                                                LocalTimeCounter.currentTime(), true);
+    public fun createPhysicalFile(fileName: String, text: String): JetFile {
+        return PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), true) as JetFile
     }
 
-    @NotNull
-    public static JetProperty createProperty(Project project, String name, String type, boolean isVar, @Nullable String initializer) {
-        String text = (isVar ? "var " : "val ") + name + (type != null ? ":" + type : "") + (initializer == null ? "" : " = " + initializer);
-        return createProperty(project, text);
+    public fun createProperty(name: String, `type`: String?, isVar: Boolean, initializer: String?): JetProperty {
+        val text = (if (isVar) "var " else "val ") + name + (if (`type` != null) ":" + `type` else "") + (if (initializer == null) "" else " = " + initializer)
+        return createProperty(text)
     }
 
-    @NotNull
-    public static JetProperty createProperty(Project project, String name, String type, boolean isVar) {
-        return createProperty(project, name, type, isVar, null);
+    public fun createProperty(name: String, `type`: String?, isVar: Boolean): JetProperty {
+        return createProperty(name, `type`, isVar, null)
     }
 
-    @NotNull
-    public static JetProperty createProperty(Project project, String text) {
-        return createDeclaration(project, text, JetProperty.class);
+    public fun createProperty(text: String): JetProperty {
+        return createDeclaration(text)
     }
 
-    @NotNull
-    public static <T> T createDeclaration(Project project, String text, Class<T> clazz) {
-        JetFile file = createFile(project, text);
-        List<JetDeclaration> dcls = file.getDeclarations();
-        assert dcls.size() == 1 : dcls.size() + " declarations in " + text;
-        @SuppressWarnings("unchecked")
-        T result = (T) dcls.get(0);
-        return result;
+    public fun <T> createDeclaration(text: String): T {
+        val file = createFile(text)
+        val dcls = file.getDeclarations()
+        assert(dcls.size() == 1) { "${dcls.size()} declarations in $text" }
+        [suppress("UNCHECKED_CAST")]
+        val result = dcls.first() as T
+        return result
     }
 
-    @NotNull
-    public static PsiElement createNameIdentifier(Project project, String name) {
-        return createProperty(project, name, null, false).getNameIdentifier();
+    public fun createNameIdentifier(name: String): PsiElement {
+        return createProperty(name, null, false).getNameIdentifier()!!
     }
 
-    @NotNull
-    public static JetSimpleNameExpression createSimpleName(Project project, String name) {
-        return (JetSimpleNameExpression) createProperty(project, name, null, false, name).getInitializer();
+    public fun createSimpleName(name: String): JetSimpleNameExpression {
+        return createProperty(name, null, false, name).getInitializer() as JetSimpleNameExpression
     }
 
-    @NotNull
-    public static PsiElement createIdentifier(Project project, String name) {
-        return createSimpleName(project, name).getIdentifier();
+    public fun createIdentifier(name: String): PsiElement {
+        return createSimpleName(name).getIdentifier()!!
     }
 
-    @NotNull
-    public static JetNamedFunction createFunction(Project project, String funDecl) {
-        return createDeclaration(project, funDecl, JetNamedFunction.class);
+    public fun createFunction(funDecl: String): JetNamedFunction {
+        return createDeclaration(funDecl)
     }
 
-    @NotNull
-    public static JetModifierList createModifierList(Project project, JetKeywordToken modifier) {
-        return createModifierList(project, modifier.getValue());
+    public fun createModifierList(modifier: JetKeywordToken): JetModifierList {
+        return createModifierList(modifier.getValue())
     }
 
-    @NotNull
-    public static JetModifierList createModifierList(Project project, String text) {
-        JetProperty property = createProperty(project, text + " val x");
-        return property.getModifierList();
+    public fun createModifierList(text: String): JetModifierList {
+        return createProperty(text + " val x").getModifierList()!!
     }
 
-    @NotNull
-    public static JetAnnotation createAnnotation(Project project, String text) {
-        JetProperty property = createProperty(project, text + " val x");
-        JetModifierList modifierList = property.getModifierList();
-        assert modifierList != null;
-        return modifierList.getAnnotations().get(0);
+    public fun createAnnotation(text: String): JetAnnotation {
+        val modifierList = createProperty(text + " val x").getModifierList()
+        return modifierList!!.getAnnotations().first()
     }
 
-    @NotNull
-    public static JetModifierList createConstructorModifierList(Project project, JetKeywordToken modifier) {
-        JetClass aClass = createClass(project, "class C " + modifier.getValue() + " (){}");
-        return aClass.getPrimaryConstructorModifierList();
+    public fun createConstructorModifierList(modifier: JetKeywordToken): JetModifierList {
+        val aClass = createClass("class C ${modifier.getValue()} (){}")
+        return aClass.getPrimaryConstructorModifierList()!!
     }
 
-    @NotNull
-    public static JetExpression createEmptyBody(Project project) {
-        JetNamedFunction function = createFunction(project, "fun foo() {}");
-        return function.getBodyExpression();
+    public fun createEmptyBody(): JetExpression {
+        return createFunction("fun foo() {}").getBodyExpression()!!
     }
 
-    @NotNull
-    public static JetClassBody createEmptyClassBody(Project project) {
-        JetClass aClass = createClass(project, "class A(){}");
-        return aClass.getBody();
+    public fun createEmptyClassBody(): JetClassBody {
+        return createClass("class A(){}").getBody()!!
     }
 
-    @NotNull
-    public static JetParameter createParameter(Project project, String name, String type) {
-        JetNamedFunction function = createFunction(project, "fun foo(" + name + " : " + type + ") {}");
-        return function.getValueParameters().get(0);
+    public fun createParameter(name: String, `type`: String): JetParameter {
+        val function = createFunction("fun foo(" + name + " : " + `type` + ") {}")
+        return function.getValueParameters().first()
     }
 
-    @NotNull
-    public static JetParameterList createParameterList(Project project, String text) {
-        JetNamedFunction function = createFunction(project, "fun foo" + text + "{}");
-        return function.getValueParameterList();
+    public fun createParameterList(text: String): JetParameterList {
+        return createFunction("fun foo$text{}").getValueParameterList()!!
     }
 
-    @NotNull
-    public static JetWhenEntry createWhenEntry(@NotNull Project project, @NotNull String entryText) {
-        JetNamedFunction function = createFunction(project, "fun foo() { when(12) { " + entryText + " } }");
-        JetWhenEntry whenEntry = PsiTreeUtil.findChildOfType(function, JetWhenEntry.class);
+    public fun createWhenEntry(entryText: String): JetWhenEntry {
+        val function = createFunction("fun foo() { when(12) { $entryText } }")
+        val whenEntry = PsiTreeUtil.findChildOfType(function, javaClass<JetWhenEntry>())
 
-        assert whenEntry != null : "Couldn't generate when entry";
-        assert entryText.equals(whenEntry.getText()) : "Generate when entry text differs from the given text";
+        assert(whenEntry != null, "Couldn't generate when entry")
+        assert(entryText == whenEntry!!.getText(), "Generate when entry text differs from the given text")
 
-        return whenEntry;
+        return whenEntry
     }
 
-    @NotNull
-    public static JetStringTemplateEntryWithExpression createBlockStringTemplateEntry(@NotNull Project project, @NotNull JetExpression expression) {
-        JetStringTemplateExpression stringTemplateExpression = (JetStringTemplateExpression) createExpression(project,
-                                                                                                 "\"${" + expression.getText() + "}\"");
-        return (JetStringTemplateEntryWithExpression) stringTemplateExpression.getEntries()[0];
+    public fun createBlockStringTemplateEntry(expression: JetExpression): JetStringTemplateEntryWithExpression {
+        val stringTemplateExpression = createExpression("\"\${${expression.getText()}}\"") as JetStringTemplateExpression
+        return stringTemplateExpression.getEntries().first() as JetStringTemplateEntryWithExpression
     }
 
-    @NotNull
-    public static JetImportDirective createImportDirective(Project project, @NotNull String path) {
-        return createImportDirective(project, new ImportPath(path));
+    public fun createImportDirective(path: String): JetImportDirective {
+        return createImportDirective(ImportPath(path))
     }
 
-    @NotNull
-    public static JetImportDirective createImportDirective(Project project, @NotNull ImportPath importPath) {
+    public fun createImportDirective(importPath: ImportPath): JetImportDirective {
         if (importPath.fqnPart().isRoot()) {
-            throw new IllegalArgumentException("import path must not be empty");
+            throw IllegalArgumentException("import path must not be empty")
         }
 
-        StringBuilder importDirectiveBuilder = new StringBuilder("import ");
-        importDirectiveBuilder.append(importPath.getPathStr());
+        val importDirectiveBuilder = StringBuilder("import ")
+        importDirectiveBuilder.append(importPath.getPathStr())
 
-        Name alias = importPath.getAlias();
+        val alias = importPath.getAlias()
         if (alias != null) {
-            importDirectiveBuilder.append(" as ").append(alias.asString());
+            importDirectiveBuilder.append(" as ").append(alias.asString())
         }
 
-        JetFile file = createFile(project, importDirectiveBuilder.toString());
-        return file.getImportDirectives().iterator().next();
+        val file = createFile(importDirectiveBuilder.toString())
+        return file.getImportDirectives().first()
     }
 
-    @NotNull
-    public static JetImportList createImportDirectiveWithImportList(Project project, @NotNull ImportPath importPath) {
-        JetImportDirective importDirective = createImportDirective(project, importPath);
-        return (JetImportList) importDirective.getParent();
+    public fun createImportDirectiveWithImportList(importPath: ImportPath): JetImportList {
+        val importDirective = createImportDirective(importPath)
+        return importDirective.getParent() as JetImportList
     }
 
-    @NotNull
-    public static PsiElement createPrimaryConstructor(Project project) {
-        JetClass aClass = createClass(project, "class A()");
-        return aClass.findElementAt(7).getParent();
+    public fun createPrimaryConstructor(): PsiElement {
+        return createClass("class A()").findElementAt(7)!!.getParent()!!
     }
 
-    @NotNull
-    public static JetSimpleNameExpression createClassLabel(Project project, @NotNull String labelName) {
-        JetThisExpression expression = (JetThisExpression) createExpression(project, "this@" + labelName);
-        return expression.getTargetLabel();
+    public fun createClassLabel(labelName: String): JetSimpleNameExpression {
+        return (createExpression("this@$labelName") as JetThisExpression).getTargetLabel()!!
     }
 
-    @NotNull
-    public static JetExpression createFieldIdentifier(Project project, @NotNull String fieldName) {
-        return createExpression(project, "$" + fieldName);
+    public fun createFieldIdentifier(fieldName: String): JetExpression {
+        return createExpression("$$fieldName")
     }
 
-    @NotNull
-    public static JetBinaryExpression createBinaryExpression(Project project, @NotNull String lhs, @NotNull String op, @NotNull String rhs) {
-        return (JetBinaryExpression) createExpression(project, lhs + " " + op + " " + rhs);
+    public fun createBinaryExpression(lhs: String, op: String, rhs: String): JetBinaryExpression {
+        return createExpression("$lhs $op $rhs") as JetBinaryExpression
     }
 
-    @NotNull
-    public static JetBinaryExpression createBinaryExpression(Project project, @Nullable JetExpression lhs, @NotNull String op, @Nullable JetExpression rhs) {
-        return createBinaryExpression(project, JetPsiUtil.getText(lhs), op, JetPsiUtil.getText(rhs));
+    public fun createBinaryExpression(lhs: JetExpression?, op: String, rhs: JetExpression?): JetBinaryExpression {
+        return createBinaryExpression(JetPsiUtil.getText(lhs), op, JetPsiUtil.getText(rhs))
     }
 
-    @NotNull
-    public static JetTypeCodeFragment createTypeCodeFragment(Project project, String text, PsiElement context) {
-        return new JetTypeCodeFragment(project, "fragment.kt", text, context);
+    public fun createTypeCodeFragment(text: String, context: PsiElement?): JetTypeCodeFragment {
+        return JetTypeCodeFragment(project, "fragment.kt", text, context)
     }
 
-    @NotNull
-    public static JetExpressionCodeFragment createExpressionCodeFragment(Project project, String text, PsiElement context) {
-        return new JetExpressionCodeFragment(project, "fragment.kt", text, context);
+    public fun createExpressionCodeFragment(text: String, context: PsiElement?): JetExpressionCodeFragment {
+        return JetExpressionCodeFragment(project, "fragment.kt", text, context)
     }
 
-    @NotNull
-    public static JetBlockCodeFragment createBlockCodeFragment(Project project, String text, PsiElement context) {
-        return new JetBlockCodeFragment(project, "fragment.kt", text, context);
+    public fun createBlockCodeFragment(text: String, context: PsiElement?): JetBlockCodeFragment {
+        return JetBlockCodeFragment(project, "fragment.kt", text, context)
     }
 
-    @NotNull
-    public static JetReturnExpression createReturn(Project project, @NotNull String text) {
-        return (JetReturnExpression) createExpression(project, "return " + text);
+    public fun createReturn(text: String): JetReturnExpression {
+        return createExpression("return $text") as JetReturnExpression
     }
 
-    @NotNull
-    public static JetReturnExpression createReturn(Project project, @Nullable JetExpression expression) {
-        return createReturn(project, JetPsiUtil.getText(expression));
+    public fun createReturn(expression: JetExpression?): JetReturnExpression {
+        return createReturn(JetPsiUtil.getText(expression))
     }
 
-    @NotNull
-    public static JetIfExpression createIf(Project project,
-            @Nullable JetExpression condition, @Nullable JetExpression thenExpr, @Nullable JetExpression elseExpr) {
-        return (JetIfExpression) createExpression(project, JetPsiUnparsingUtils.toIf(condition, thenExpr, elseExpr));
+    public fun createIf(condition: JetExpression?, thenExpr: JetExpression?, elseExpr: JetExpression?): JetIfExpression {
+        return createExpression(JetPsiUnparsingUtils.toIf(condition, thenExpr, elseExpr)) as JetIfExpression
     }
 
-    @NotNull
-    public static JetValueArgument createArgumentWithName(
-            @NotNull Project project,
-            @NotNull String name,
-            @NotNull JetExpression argumentExpression
-    ) {
-        return createCallArguments(project, "(" + name + " = " + argumentExpression.getText() + ")").getArguments().get(0);
+    public fun createArgumentWithName(name: String, argumentExpression: JetExpression): JetValueArgument {
+        return createCallArguments("(" + name + " = " + argumentExpression.getText() + ")").getArguments().first()
     }
 
-    public static class IfChainBuilder {
-        private final StringBuilder sb = new StringBuilder();
-        private boolean first = true;
-        private boolean frozen = false;
+    public inner class IfChainBuilder() {
+        private val sb = StringBuilder()
+        private var first = true
+        private var frozen = false
 
-        public IfChainBuilder() {
-        }
-
-        @NotNull
-        public IfChainBuilder ifBranch(@NotNull String conditionText, @NotNull String expressionText) {
+        public fun ifBranch(conditionText: String, expressionText: String): IfChainBuilder {
             if (first) {
-                first = false;
-            } else {
-                sb.append("else ");
+                first = false
+            }
+            else {
+                sb.append("else ")
             }
 
-            sb.append("if (").append(conditionText).append(") ").append(expressionText).append("\n");
-            return this;
+            sb.append("if (").append(conditionText).append(") ").append(expressionText).append("\n")
+            return this
         }
 
-        @NotNull
-        public IfChainBuilder ifBranch(@NotNull JetExpression condition, @NotNull JetExpression expression) {
-            return ifBranch(condition.getText(), expression.getText());
+        public fun ifBranch(condition: JetExpression, expression: JetExpression): IfChainBuilder {
+            return ifBranch(condition.getText()!!, expression.getText()!!)
         }
 
-        @NotNull
-        public IfChainBuilder elseBranch(@NotNull String expressionText) {
-            sb.append("else ").append(expressionText);
-            return this;
+        public fun elseBranch(expressionText: String): IfChainBuilder {
+            sb.append("else ").append(expressionText)
+            return this
         }
 
-        @NotNull
-        public IfChainBuilder elseBranch(@Nullable JetExpression expression) {
-            return elseBranch(JetPsiUtil.getText(expression));
+        public fun elseBranch(expression: JetExpression?): IfChainBuilder {
+            return elseBranch(JetPsiUtil.getText(expression))
         }
 
-        @NotNull
-        public JetIfExpression toExpression(Project project) {
+        public fun toExpression(): JetIfExpression {
             if (!frozen) {
-                frozen = true;
+                frozen = true
             }
-            return (JetIfExpression) createExpression(project, sb.toString());
+            return createExpression(sb.toString()) as JetIfExpression
         }
     }
 
-    public static class WhenBuilder {
-        private final StringBuilder sb = new StringBuilder("when ");
-        private boolean frozen = false;
-        private boolean inCondition = false;
+    public inner class WhenBuilder(subjectText: String?) {
+        private val sb = StringBuilder("when ")
+        private var frozen = false
+        private var inCondition = false
 
-        public WhenBuilder() {
-            this((String)null);
-        }
-
-        public WhenBuilder(@Nullable String subjectText) {
-            if (subjectText != null) {
-                sb.append("(").append(subjectText).append(") ");
-            }
-            sb.append("{\n");
-        }
-
-        public WhenBuilder(@Nullable JetExpression subject) {
-            this(subject != null ? subject.getText() : null);
-        }
-
-        @NotNull
-        public WhenBuilder condition(@NotNull String text) {
-            assert !frozen;
+        public fun condition(text: String): WhenBuilder {
+            assert(!frozen)
 
             if (!inCondition) {
-                inCondition = true;
-            } else {
-                sb.append(", ");
+                inCondition = true
             }
-            sb.append(text);
+            else {
+                sb.append(", ")
+            }
+            sb.append(text)
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public WhenBuilder condition(@Nullable JetExpression expression) {
-            return condition(JetPsiUtil.getText(expression));
+        public fun condition(expression: JetExpression?): WhenBuilder {
+            return condition(JetPsiUtil.getText(expression))
         }
 
-        @NotNull
-        public WhenBuilder pattern(@NotNull String typeReferenceText, boolean negated) {
-            return condition((negated ? "!is" : "is") + " " + typeReferenceText);
+        public fun pattern(typeReferenceText: String, negated: Boolean): WhenBuilder {
+            return condition((if (negated) "!is" else "is") + " " + typeReferenceText)
         }
 
-        @NotNull
-        public WhenBuilder pattern(@Nullable JetTypeReference typeReference, boolean negated) {
-            return pattern(JetPsiUtil.getText(typeReference), negated);
+        public fun pattern(typeReference: JetTypeReference?, negated: Boolean): WhenBuilder {
+            return pattern(JetPsiUtil.getText(typeReference), negated)
         }
 
-        @NotNull
-        public WhenBuilder range(@NotNull String argumentText, boolean negated) {
-            return condition((negated ? "!in" : "in") + " " + argumentText);
+        public fun range(argumentText: String, negated: Boolean): WhenBuilder {
+            return condition((if (negated) "!in" else "in") + " " + argumentText)
         }
 
-        @NotNull
-        public WhenBuilder range(@Nullable JetExpression argument, boolean negated) {
-            return range(JetPsiUtil.getText(argument), negated);
+        public fun range(argument: JetExpression?, negated: Boolean): WhenBuilder {
+            return range(JetPsiUtil.getText(argument), negated)
         }
 
-        @NotNull
-        public WhenBuilder branchExpression(@NotNull String expressionText) {
-            assert !frozen;
-            assert inCondition;
+        public fun branchExpression(expressionText: String): WhenBuilder {
+            assert(!frozen)
+            assert(inCondition)
 
-            inCondition = false;
-            sb.append(" -> ").append(expressionText).append("\n");
+            inCondition = false
+            sb.append(" -> ").append(expressionText).append("\n")
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public WhenBuilder branchExpression(@Nullable JetExpression expression) {
-            return branchExpression(JetPsiUtil.getText(expression));
+        public fun branchExpression(expression: JetExpression?): WhenBuilder {
+            return branchExpression(JetPsiUtil.getText(expression))
         }
 
-        @NotNull
-        public WhenBuilder entry(@NotNull String entryText) {
-            assert !frozen;
-            assert !inCondition;
+        public fun entry(entryText: String): WhenBuilder {
+            assert(!frozen)
+            assert(!inCondition)
 
-            sb.append(entryText).append("\n");
+            sb.append(entryText).append("\n")
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public WhenBuilder entry(@Nullable JetWhenEntry whenEntry) {
-            return entry(JetPsiUtil.getText(whenEntry));
+        public fun entry(whenEntry: JetWhenEntry?): WhenBuilder {
+            return entry(JetPsiUtil.getText(whenEntry))
         }
 
-        @NotNull
-        public WhenBuilder elseEntry(@NotNull String text) {
-            return entry("else -> " + text);
+        public fun elseEntry(text: String): WhenBuilder {
+            return entry("else -> $text")
         }
 
-        @NotNull
-        public WhenBuilder elseEntry(@Nullable JetExpression expression) {
-            return elseEntry(JetPsiUtil.getText(expression));
+        public fun elseEntry(expression: JetExpression?): WhenBuilder {
+            return elseEntry(JetPsiUtil.getText(expression))
         }
 
-        @NotNull
-        public JetWhenExpression toExpression(Project project) {
+        public fun toExpression(): JetWhenExpression {
             if (!frozen) {
-                sb.append("}");
-                frozen = true;
+                sb.append("}")
+                frozen = true
             }
-            return (JetWhenExpression) createExpression(project, sb.toString());
+            return createExpression(sb.toString()) as JetWhenExpression
+        }
+
+        {
+            if (subjectText != null) {
+                sb.append("(").append(subjectText).append(") ")
+            }
+            sb.append("{\n")
         }
     }
 
-    public static class FunctionBuilder {
-        static enum State {
-            MODIFIERS,
-            NAME,
-            RECEIVER,
-            FIRST_PARAM,
-            REST_PARAMS,
-            TYPE_CONSTRAINTS,
-            BODY,
+    public fun WhenBuilder(): WhenBuilder {
+        return WhenBuilder(null: String?)
+    }
+
+    public fun WhenBuilder(subject: JetExpression?): WhenBuilder {
+        return WhenBuilder(subject?.getText())
+    }
+
+    public class FunctionBuilder() {
+        enum class State {
+            MODIFIERS
+            NAME
+            RECEIVER
+            FIRST_PARAM
+            REST_PARAMS
+            TYPE_CONSTRAINTS
+            BODY
             DONE
         }
 
-        private final StringBuilder sb = new StringBuilder();
-        private State state = State.MODIFIERS;
+        private val sb = StringBuilder()
+        private var state = State.MODIFIERS
 
-        public FunctionBuilder() {
+        private fun closeParams() {
+            assert(state == State.FIRST_PARAM || state == State.REST_PARAMS)
+
+            sb.append(")")
+
+            state = State.TYPE_CONSTRAINTS
         }
 
-        private void closeParams() {
-            assert state == State.FIRST_PARAM || state == State.REST_PARAMS;
-
-            sb.append(")");
-
-            state = State.TYPE_CONSTRAINTS;
-        }
-
-        private void placeFun() {
-            assert state == State.MODIFIERS;
+        private fun placeFun() {
+            assert(state == State.MODIFIERS)
 
             if (sb.length() != 0) {
-                sb.append(" ");
+                sb.append(" ")
             }
-            sb.append("fun ");
+            sb.append("fun ")
 
-            state = State.RECEIVER;
+            state = State.RECEIVER
         }
 
-        @NotNull
-        public FunctionBuilder modifier(@NotNull String modifier) {
-            assert state == State.MODIFIERS;
+        public fun modifier(modifier: String): FunctionBuilder {
+            assert(state == State.MODIFIERS)
 
-            sb.append(modifier);
+            sb.append(modifier)
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public FunctionBuilder typeParams(@NotNull Collection<String> values) {
-            placeFun();
+        public fun typeParams(values: Collection<String>): FunctionBuilder {
+            placeFun()
             if (!values.isEmpty()) {
-                sb.append(KotlinPackage.makeString(values, ", ", "<", "> ", -1, ""));
+                sb.append(values.joinToString(", ", "<", "> ", -1, ""))
             }
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public FunctionBuilder receiver(@NotNull String receiverType) {
-            assert state == State.RECEIVER;
+        public fun receiver(receiverType: String): FunctionBuilder {
+            assert(state == State.RECEIVER)
 
-            sb.append(receiverType).append(".");
-            state = State.NAME;
+            sb.append(receiverType).append(".")
+            state = State.NAME
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public FunctionBuilder name(@NotNull String name) {
-            assert state == State.NAME || state == State.RECEIVER;
+        public fun name(name: String): FunctionBuilder {
+            assert(state == State.NAME || state == State.RECEIVER)
 
-            sb.append(name).append("(");
-            state = State.FIRST_PARAM;
+            sb.append(name).append("(")
+            state = State.FIRST_PARAM
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public FunctionBuilder param(@NotNull String name, @NotNull String type) {
-            assert state == State.FIRST_PARAM || state == State.REST_PARAMS;
+        public fun param(name: String, `type`: String): FunctionBuilder {
+            assert(state == State.FIRST_PARAM || state == State.REST_PARAMS)
 
             if (state == State.REST_PARAMS) {
-                sb.append(", ");
+                sb.append(", ")
             }
-            sb.append(name).append(": ").append(type);
+            sb.append(name).append(": ").append(`type`)
             if (state == State.FIRST_PARAM) {
-                state = State.REST_PARAMS;
+                state = State.REST_PARAMS
             }
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public FunctionBuilder returnType(@NotNull String type) {
-            closeParams();
-            sb.append(": ").append(type);
+        public fun returnType(`type`: String): FunctionBuilder {
+            closeParams()
+            sb.append(": ").append(`type`)
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public FunctionBuilder noReturnType() {
-            closeParams();
+        public fun noReturnType(): FunctionBuilder {
+            closeParams()
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public FunctionBuilder typeConstraints(@NotNull Collection<String> values) {
-            assert state == State.TYPE_CONSTRAINTS;
+        public fun typeConstraints(values: Collection<String>): FunctionBuilder {
+            assert(state == State.TYPE_CONSTRAINTS)
 
             if (!values.isEmpty()) {
-                sb.append(KotlinPackage.makeString(values, ", ", " where ", "", -1, ""));
+                sb.append(values.joinToString(", ", " where ", "", -1, ""))
             }
-            state = State.BODY;
+            state = State.BODY
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public FunctionBuilder simpleBody(@NotNull String body) {
-            assert state == State.BODY || state == State.TYPE_CONSTRAINTS;
+        public fun simpleBody(body: String): FunctionBuilder {
+            assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
 
-            sb.append(" = ").append(body);
-            state = State.DONE;
+            sb.append(" = ").append(body)
+            state = State.DONE
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public FunctionBuilder blockBody(@NotNull String body) {
-            assert state == State.BODY || state == State.TYPE_CONSTRAINTS;
+        public fun blockBody(body: String): FunctionBuilder {
+            assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
 
-            sb.append(" {\n").append(body).append("\n}");
-            state = State.DONE;
+            sb.append(" {\n").append(body).append("\n}")
+            state = State.DONE
 
-            return this;
+            return this
         }
 
-        @NotNull
-        public String toFunctionText() {
+        public fun toFunctionText(): String {
             if (state != State.DONE) {
-                state = State.DONE;
+                state = State.DONE
             }
 
-            return sb.toString();
+            return sb.toString()
         }
     }
 
-    @NotNull
-    public static JetExpression createFunctionBody(Project project, @NotNull String bodyText) {
-        JetFunction func = createFunction(project, "fun foo() {\n" + bodyText + "\n}");
-        return func.getBodyExpression();
+    public fun createFunctionBody(bodyText: String): JetExpression {
+        return createFunction("fun foo() {\n$bodyText\n}").getBodyExpression()!!
     }
 
-    @NotNull
-    public static JetClassObject createEmptyClassObject(Project project) {
-        JetClass klass = createClass(project, "class foo { class object { } }");
-        return klass.getClassObject();
+    public fun createEmptyClassObject(): JetClassObject {
+        return createClass("class foo { class object { } }").getClassObject()!!
     }
 
-    @NotNull
-    public static JetBlockExpression wrapInABlock(@NotNull JetExpression expression) {
-        if (expression instanceof JetBlockExpression) {
-            return (JetBlockExpression) expression;
+    public fun wrapInABlock(expression: JetExpression): JetBlockExpression {
+        if (expression is JetBlockExpression) {
+            return expression as JetBlockExpression
         }
-        return BlockWrapper.create(expression);
+        return BlockWrapper(expression)
     }
 
-    private static class BlockWrapper extends JetBlockExpression implements JetPsiUtil.JetExpressionWrapper {
-        private final JetExpression expression;
+    public fun BlockWrapper(expressionToWrap: JetExpression): BlockWrapper {
+        val function = createFunction("fun f() { ${expressionToWrap.getText()} }")
+        val block = function.getBodyExpression() as JetBlockExpression
+        return BlockWrapper(block, expressionToWrap)
+    }
 
-        public static BlockWrapper create(@NotNull JetExpression expressionToWrap) {
-            JetNamedFunction function = createFunction(expressionToWrap.getProject(), "fun f() { " + expressionToWrap.getText() + "}");
-            JetBlockExpression block = (JetBlockExpression) function.getBodyExpression();
-            assert block != null;
-            return new BlockWrapper(block, expressionToWrap);
+    private inner class BlockWrapper(fakeBlockExpression: JetBlockExpression, private val expression: JetExpression) : JetBlockExpression(fakeBlockExpression.getNode()), JetPsiUtil.JetExpressionWrapper {
+
+        override fun getStatements(): List<JetElement> {
+            return listOf(expression)
         }
 
-        private BlockWrapper(@NotNull JetBlockExpression fakeBlockExpression, @NotNull JetExpression expressionToWrap) {
-            super(fakeBlockExpression.getNode());
-            this.expression = expressionToWrap;
-        }
-
-        @NotNull
-        @Override
-        public List<JetElement> getStatements() {
-            return Collections.<JetElement>singletonList(expression);
-        }
-
-        @Override
-        public JetExpression getBaseExpression() {
-            return expression;
+        override fun getBaseExpression(): JetExpression {
+            return expression
         }
     }
 }

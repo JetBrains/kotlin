@@ -49,7 +49,7 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingIntention<JetPostfixE
         val base = checkNotNull(JetPsiUtil.deparenthesize(element.getBaseExpression()), "Base expression cannot be null")
         val expressionText = formatForUseInExceptionArgument(base.getText()!!)
 
-        val defaultException = JetPsiFactory.createExpression(project, "throw $NULL_PTR_EXCEPTION()")
+        val defaultException = JetPsiFactory(project).createExpression("throw $NULL_PTR_EXCEPTION()")
 
         val isStatement = element.isStatement()
         val isStable = base.isStableVariable()

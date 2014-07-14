@@ -69,6 +69,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class KotlinInlineValHandler extends InlineActionHandler {
     @Override
     public boolean isEnabledForLanguage(Language l) {
@@ -269,11 +271,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             }
         }
 
+        JetPsiFactory psiFactory = JetPsiFactory(containingFile.getProject());
         for (JetFunctionLiteralExpression functionLiteralExpression : functionsToAddParameters) {
             JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
 
             JetParameterList currentParameterList = functionLiteral.getValueParameterList();
-            JetParameterList newParameterList = JetPsiFactory.createParameterList(containingFile.getProject(), "(" + parameters + ")");
+            JetParameterList newParameterList = psiFactory.createParameterList("(" + parameters + ")");
             if (currentParameterList != null) {
                 currentParameterList.replace(newParameterList);
             }
@@ -284,7 +287,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
                 PsiElement whitespaceToAdd = nextSibling instanceof PsiWhiteSpace && nextSibling.getText().contains("\n")
                         ? nextSibling.copy() : null;
 
-                Pair<PsiElement, PsiElement> whitespaceAndArrow = JetPsiFactory.createWhitespaceAndArrow(containingFile.getProject());
+                Pair<PsiElement, PsiElement> whitespaceAndArrow = psiFactory.createWhitespaceAndArrow();
                 functionLiteral.addRangeAfter(whitespaceAndArrow.getFirst(), whitespaceAndArrow.getSecond(), openBraceElement);
 
                 functionLiteral.addAfter(newParameterList, openBraceElement);
@@ -331,9 +334,9 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             }
         }
 
+        JetPsiFactory psiFactory = JetPsiFactory(containingFile.getProject());
         for (JetCallExpression call : callsToAddArguments) {
-            call.addAfter(JetPsiFactory.createTypeArguments(containingFile.getProject(), "<" + typeArguments + ">"),
-                          call.getCalleeExpression());
+            call.addAfter(psiFactory.createTypeArguments("<" + typeArguments + ">"), call.getCalleeExpression());
             ShortenReferences.instance$.process(call.getTypeArgumentList());
         }
     }
@@ -380,7 +383,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             !(newExpression instanceof JetSimpleNameExpression)) {
             JetBlockStringTemplateEntry templateEntry =
                     (JetBlockStringTemplateEntry) referenceElement.getParent().replace(
-                            JetPsiFactory.createBlockStringTemplateEntry(referenceElement.getProject(), newExpression));
+                            JetPsiFactory(referenceElement.getProject()).createBlockStringTemplateEntry(newExpression));
             JetExpression expression = templateEntry.getExpression();
             assert expression != null;
             return expression;

@@ -54,6 +54,7 @@ import org.jetbrains.jet.plugin.stubindex.*;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper.getTopLevelFunctionFqNames;
 
 /**
@@ -243,7 +244,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                     }
                 });
         for (FqName fqName : topLevelFunctionFqNames) {
-            JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, new ImportPath(fqName, false));
+            JetImportDirective importDirective = JetPsiFactory(project).createImportDirective(new ImportPath(fqName, false));
             Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver().analyseImportReference(
                     importDirective, jetScope, new BindingTraceContext(), resolveSession.getModuleDescriptor());
             for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {

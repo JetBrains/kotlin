@@ -71,7 +71,8 @@ public class ConvertIfWithThrowToAssertIntention :
                 ""
             }
 
-        val negatedCondition = JetPsiFactory.createExpression(element.getProject(), "!true") as JetPrefixExpression
+        val psiFactory = JetPsiFactory(element.getProject())
+        val negatedCondition = psiFactory.createExpression("!true") as JetPrefixExpression
         negatedCondition.getBaseExpression()!!.replace(condition)
         condition.replace(negatedCondition)
 
@@ -82,7 +83,7 @@ public class ConvertIfWithThrowToAssertIntention :
         }
 
         val assertText = "kotlin.assert(${element.getCondition()?.getText()} $paramText)"
-        val assertExpr = JetPsiFactory.createExpression(element.getProject(), assertText)
+        val assertExpr = psiFactory.createExpression(assertText)
 
         val newExpr = element.replace(assertExpr) as JetExpression
         ShortenReferences.process(newExpr)

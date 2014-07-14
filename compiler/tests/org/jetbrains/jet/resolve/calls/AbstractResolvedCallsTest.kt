@@ -45,7 +45,7 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     public fun doTest(filePath: String) {
         val text = JetTestUtils.doLoadFile(File(filePath))!!
 
-        val jetFile = JetPsiFactory.createFile(getProject(), text.replace("<caret>", ""))
+        val jetFile = JetPsiFactory(getProject()).createFile(text.replace("<caret>", ""))
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile).getBindingContext()
 
         val element = jetFile.findElementAt(text.indexOf("<caret>"))

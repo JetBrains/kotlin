@@ -43,7 +43,6 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.utils.DFS
 import org.jetbrains.jet.utils.DFS.*
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.psi.psiUtil.prependElement
 import org.jetbrains.jet.lang.psi.psiUtil.appendElement
@@ -68,7 +67,6 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import com.intellij.openapi.util.text.StringUtil
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -801,13 +799,14 @@ fun ExtractionDescriptor.generateFunction(
 ): JetNamedFunction {
     val project = extractionData.project
 
+    val psiFactory = JetPsiFactory(project)
     fun createFunction(): JetNamedFunction {
         return with(extractionData) {
             if (inTempFile) {
                 createTemporaryFunction("${getFunctionText()}\n")
             }
             else {
-                JetPsiFactory.createFunction(project, getFunctionText())
+                psiFactory.createFunction(getFunctionText())
             }
         }
     }
@@ -841,7 +840,7 @@ fun ExtractionDescriptor.generateFunction(
         val replacingReturn: JetExpression?
         val expressionsToReplaceWithReturn: List<JetElement>
         if (controlFlow is JumpBasedControlFlow) {
-            replacingReturn = JetPsiFactory.createExpression(project, if (controlFlow is ConditionalJump) "return true" else "return")
+            replacingReturn = psiFactory.createExpression(if (controlFlow is ConditionalJump) "return true" else "return")
             expressionsToReplaceWithReturn = controlFlow.elementsToReplace.map { jumpElement ->
                 val offsetInBody = jumpElement.getTextRange()!!.getStartOffset() - extractionData.originalStartOffset!!
                 val expr = file.findElementAt(bodyOffset + offsetInBody)?.getParentByType(jumpElement.javaClass)
@@ -869,23 +868,23 @@ fun ExtractionDescriptor.generateFunction(
 
         for (param in parameters) {
             param.mirrorVarName?.let { varName ->
-                body.prependElement(JetPsiFactory.createProperty(project, varName, null, true, param.name))
+                body.prependElement(psiFactory.createProperty(varName, null, true, param.name))
             }
         }
 
         when (controlFlow) {
             is ParameterUpdate ->
-                body.appendElement(JetPsiFactory.createReturn(project, controlFlow.parameter.nameForRef))
+                body.appendElement(psiFactory.createReturn(controlFlow.parameter.nameForRef))
 
             is Initializer ->
-                body.appendElement(JetPsiFactory.createReturn(project, controlFlow.initializedDeclaration.getName()!!))
+                body.appendElement(psiFactory.createReturn(controlFlow.initializedDeclaration.getName()!!))
 
             is ConditionalJump ->
-                body.appendElement(JetPsiFactory.createReturn(project, "false"))
+                body.appendElement(psiFactory.createReturn("false"))
 
             is ExpressionEvaluation ->
                 body.getStatements().last?.let {
-                    val newExpr = it.replaced(JetPsiFactory.createReturn(project, it.getText() ?: throw AssertionError("Return expression shouldn't be empty: code fragment = ${body.getText()}"))).getReturnedExpression()!!
+                    val newExpr = it.replaced(psiFactory.createReturn(it.getText() ?: throw AssertionError("Return expression shouldn't be empty: code fragment = ${body.getText()}"))).getReturnedExpression()!!
                     val counterpartMap = createNameCounterpartMap(it, newExpr)
                     nameByOffset.entrySet().forEach { e -> counterpartMap[e.getValue()]?.let { e.setValue(it) } }
                 }
@@ -895,7 +894,7 @@ fun ExtractionDescriptor.generateFunction(
     fun insertFunction(function: JetNamedFunction): JetNamedFunction {
         return with(extractionData) {
             val targetContainer = targetSibling.getParent()!!
-            val emptyLines = JetPsiFactory.createWhiteSpace(project, "\n\n")
+            val emptyLines = psiFactory.createWhiteSpace("\n\n")
             if (insertBefore) {
                 val functionInFile = targetContainer.addBefore(function, targetSibling) as JetNamedFunction
                 targetContainer.addBefore(emptyLines, targetSibling)
@@ -924,7 +923,7 @@ fun ExtractionDescriptor.generateFunction(
             return
         }
 
-        val argumentListExt = JetPsiFactory.createCallArguments(project, "(${wrappedCall.getText()})")
+        val argumentListExt = psiFactory.createCallArguments("(${wrappedCall.getText()})")
         val argumentList = enclosingCall.getValueArgumentList()
         if (argumentList == null) {
             (anchor.getPrevSibling() as? PsiWhiteSpace)?.let { it.delete() }
@@ -933,7 +932,7 @@ fun ExtractionDescriptor.generateFunction(
         }
 
         val newArgText = (argumentList.getArguments() + argumentListExt.getArguments()).map { it.getText() }.joinToString(", ", "(", ")")
-        argumentList.replace(JetPsiFactory.createCallArguments(project, newArgText))
+        argumentList.replace(psiFactory.createCallArguments(newArgText))
         anchor.delete()
     }
 
@@ -956,39 +955,39 @@ fun ExtractionDescriptor.generateFunction(
 
         val copiedDeclarations = HashMap<JetDeclaration, JetDeclaration>()
         for (decl in controlFlow.declarationsToCopy) {
-            val declCopy = JetPsiFactory.createDeclaration(project, decl.getText(), javaClass<JetDeclaration>())
+            val declCopy = psiFactory.createDeclaration<JetDeclaration>(decl.getText()!!)
             copiedDeclarations[decl] = anchorParent.addBefore(declCopy, anchor) as JetDeclaration
-            anchorParent.addBefore(JetPsiFactory.createNewLine(project), anchor)
+            anchorParent.addBefore(psiFactory.createNewLine(), anchor)
         }
 
         val wrappedCall = when (controlFlow) {
             is ExpressionEvaluationWithCallSiteReturn ->
-                JetPsiFactory.createReturn(project, callText)
+                psiFactory.createReturn(callText)
 
             is ParameterUpdate ->
-                JetPsiFactory.createExpression(project, "${controlFlow.parameter.argumentText} = $callText")
+                psiFactory.createExpression("${controlFlow.parameter.argumentText} = $callText")
 
             is Initializer -> {
                 val newDecl = copiedDeclarations[controlFlow.initializedDeclaration] as JetProperty
-                newDecl.replace(DeclarationUtils.changePropertyInitializer(newDecl, JetPsiFactory.createExpression(project, callText)))
+                newDecl.replace(DeclarationUtils.changePropertyInitializer(newDecl, psiFactory.createExpression(callText)))
                 null
             }
 
             is ConditionalJump ->
-                JetPsiFactory.createExpression(project, "if ($callText) ${controlFlow.elementToInsertAfterCall.getText()}")
+                psiFactory.createExpression("if ($callText) ${controlFlow.elementToInsertAfterCall.getText()}")
 
             is UnconditionalJump -> {
                 anchorParent.addAfter(
-                        JetPsiFactory.createExpression(project, controlFlow.elementToInsertAfterCall.getText()),
+                        psiFactory.createExpression(controlFlow.elementToInsertAfterCall.getText()!!),
                         anchor
                 )
-                anchorParent.addAfter(JetPsiFactory.createNewLine(project), anchor)
+                anchorParent.addAfter(psiFactory.createNewLine(), anchor)
 
-                JetPsiFactory.createExpression(project, callText)
+                psiFactory.createExpression(callText)
             }
 
             else ->
-                JetPsiFactory.createExpression(project, callText)
+                psiFactory.createExpression(callText)
         }
         insertCall(anchor, wrappedCall)
 

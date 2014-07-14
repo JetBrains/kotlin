@@ -44,7 +44,7 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpress
             JetExpression left = ((JetBinaryExpressionWithTypeRHS) element).getLeft();
             JetTypeReference right = ((JetBinaryExpressionWithTypeRHS) element).getRight();
             if (right != null) {
-                JetExpression expression = JetPsiFactory.createExpression(project, left.getText() + operation + right.getText());
+                JetExpression expression = PsiPackage.JetPsiFactory(project).createExpression(left.getText() + operation + right.getText());
                 element.replace(expression);
             }
         }

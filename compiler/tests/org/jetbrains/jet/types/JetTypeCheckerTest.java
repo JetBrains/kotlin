@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
@@ -55,6 +54,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetTypeCheckerTest extends JetLiteFixture {
 
@@ -533,14 +534,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
-        JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
+        JetExpression jetExpression = JetPsiFactory(project).createExpression(expression);
         JetType type = expressionTypingServices.getType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
-        JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
+        JetExpression jetExpression = JetPsiFactory(project).createExpression(expression);
         JetType type = expressionTypingServices.safeGetType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
         assertTrue("Error type expected but " + type + " returned", type.isError());
     }
@@ -560,7 +561,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 return Lists.<ReceiverParameterDescriptor>newArrayList(new ReceiverParameterDescriptorImpl(
                         getContainingDeclaration(),
                         thisType,
-                        new ExpressionReceiver(JetPsiFactory.createExpression(getProject(), expression), thisType)
+                        new ExpressionReceiver(JetPsiFactory(getProject()).createExpression(expression), thisType)
                 ));
             }
         };
@@ -573,7 +574,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
-        JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
+        JetExpression jetExpression = JetPsiFactory(project).createExpression(expression);
         JetType type = expressionTypingServices.getType(
                 addImports(scope), jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, new BindingTraceContext());
         JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
@@ -613,6 +614,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     private JetType makeType(JetScope scope, String typeStr) {
-        return typeResolver.resolveType(scope, JetPsiFactory.createType(getProject(), typeStr), JetTestUtils.DUMMY_TRACE, true);
+        return typeResolver.resolveType(scope, JetPsiFactory(getProject()).createType(typeStr), JetTestUtils.DUMMY_TRACE, true);
     }
 }

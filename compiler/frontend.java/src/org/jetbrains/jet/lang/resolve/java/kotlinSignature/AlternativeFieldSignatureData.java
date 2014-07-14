@@ -22,12 +22,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.HashMap;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class AlternativeFieldSignatureData extends ElementAlternativeSignatureData {
     private JetType altReturnType;
@@ -47,7 +48,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
         }
 
         setAnnotated(true);
-        JetProperty altPropertyDeclaration = JetPsiFactory.createProperty(project, signature);
+        JetProperty altPropertyDeclaration = JetPsiFactory(project).createProperty(signature);
 
         try {
             checkForSyntaxErrors(altPropertyDeclaration);

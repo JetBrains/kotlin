@@ -57,6 +57,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
@@ -220,7 +221,7 @@ public class ExpressionTypingUtils {
             @NotNull JetScope scope,
             @NotNull ModuleDescriptor module
     ) {
-        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN.asString());
+        JetImportDirective importDirective = JetPsiFactory(project).createImportDirective(callableFQN.asString());
 
         Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver()
                 .analyseImportReference(importDirective, scope, new BindingTraceContext(), module);
@@ -332,7 +333,7 @@ public class ExpressionTypingUtils {
             @NotNull String argumentName,
             @NotNull JetType argumentType
     ) {
-        JetExpression fakeExpression = JetPsiFactory.createExpression(project, argumentName);
+        JetExpression fakeExpression = JetPsiFactory(project).createExpression(argumentName);
         trace.record(EXPRESSION_TYPE, fakeExpression, argumentType);
         trace.record(PROCESSED, fakeExpression);
         return fakeExpression;
@@ -364,7 +365,7 @@ public class ExpressionTypingUtils {
             @NotNull List<JetExpression> valueArguments,
             @NotNull Name name
     ) {
-        final JetReferenceExpression fake = JetPsiFactory.createSimpleName(expressionTypingServices.getProject(), "fake");
+        final JetReferenceExpression fake = JetPsiFactory(expressionTypingServices.getProject()).createSimpleName("fake");
         TemporaryBindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve fake call for", name);
         Call call = CallMaker.makeCallWithExpressions(fake, receiver, null, fake, valueArguments);
         OverloadResolutionResults<FunctionDescriptor> results =

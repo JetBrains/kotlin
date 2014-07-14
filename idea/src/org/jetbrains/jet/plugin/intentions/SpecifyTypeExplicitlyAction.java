@@ -264,8 +264,9 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     private static void addTypeAnnotationSilently(Project project, JetNamedDeclaration namedDeclaration, PsiElement anchor) {
-        namedDeclaration.addAfter(JetPsiFactory.createType(project, "Any"), anchor);
-        namedDeclaration.addAfter(JetPsiFactory.createColon(project), anchor);
+        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
+        namedDeclaration.addAfter(psiFactory.createType("Any"), anchor);
+        namedDeclaration.addAfter(psiFactory.createColon(), anchor);
     }
 
     @Nullable

@@ -36,6 +36,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public abstract class AbstractJetParsingTest extends ParsingTestCase {
     static {
         System.setProperty("idea.platform.prefix", "Idea");
@@ -108,11 +110,12 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
     }
 
     private PsiFile createFile(@NotNull String filePath, @NotNull IElementType fileType) throws Exception {
+        JetPsiFactory psiFactory = JetPsiFactory(myProject);
         if (fileType == JetNodeTypes.EXPRESSION_CODE_FRAGMENT) {
-            return JetPsiFactory.createExpressionCodeFragment(myProject, loadFile(filePath), null);
+            return psiFactory.createExpressionCodeFragment(loadFile(filePath), null);
         }
         else if (fileType == JetNodeTypes.BLOCK_CODE_FRAGMENT) {
-            return JetPsiFactory.createBlockCodeFragment(myProject, loadFile(filePath), null);
+            return psiFactory.createBlockCodeFragment(loadFile(filePath), null);
         }
         else {
             return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(filePath));

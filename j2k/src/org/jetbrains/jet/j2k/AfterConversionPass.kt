@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.psi.JetProperty
 
 class AfterConversionPass(val project: Project) {
     public fun run(kotlinCode: String): String {
-        val kotlinFile = JetPsiFactory.createFile(project, kotlinCode)
+        val kotlinFile = JetPsiFactory(project).createFile(kotlinCode)
         val analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project,
                 listOf(kotlinFile),
@@ -70,7 +70,7 @@ class AfterConversionPass(val project: Project) {
             Errors.VAL_REASSIGNMENT -> { () ->
                 val property = (psiElement as? JetSimpleNameExpression)?.getReference()?.resolve() as? JetProperty
                 if (property != null && !property.isVar()) {
-                    property.getValOrVarNode().getPsi()!!.replace(JetPsiFactory.createVarNode(project).getPsi()!!)
+                    property.getValOrVarNode().getPsi()!!.replace(JetPsiFactory(project).createVarNode().getPsi()!!)
                 }
             }
 

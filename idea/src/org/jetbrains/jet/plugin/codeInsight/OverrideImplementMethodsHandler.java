@@ -45,6 +45,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public abstract class OverrideImplementMethodsHandler implements LanguageCodeInsightActionHandler {
 
     private static final DescriptorRenderer OVERRIDE_RENDERER = new DescriptorRendererBuilder()
@@ -81,8 +83,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         JetClassBody body = classOrObject.getBody();
         if (body == null) {
             Project project = classOrObject.getProject();
-            classOrObject.add(JetPsiFactory.createWhiteSpace(project));
-            body = (JetClassBody) classOrObject.add(JetPsiFactory.createEmptyClassBody(project));
+            JetPsiFactory psiFactory = JetPsiFactory(project);
+            classOrObject.add(psiFactory.createWhiteSpace());
+            body = (JetClassBody) classOrObject.add(psiFactory.createEmptyClassBody());
         }
 
         PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
@@ -162,7 +165,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else {
             body.append(initializer);
         }
-        return JetPsiFactory.createProperty(project, OVERRIDE_RENDERER.render(newDescriptor) + body);
+        return JetPsiFactory(project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body);
     }
 
     @NotNull
@@ -201,7 +204,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         boolean returnsNotUnit = returnType != null && !builtIns.getUnitType().equals(returnType);
         String body = "{" + (returnsNotUnit && !isAbstractFun ? "return " : "") + delegationBuilder.toString() + "}";
 
-        return JetPsiFactory.createFunction(project, OVERRIDE_RENDERER.render(newDescriptor) + body);
+        return JetPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body);
     }
 
     @NotNull

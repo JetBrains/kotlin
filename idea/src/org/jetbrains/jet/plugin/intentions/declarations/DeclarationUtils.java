@@ -33,6 +33,8 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.JetPsiMatcher;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class DeclarationUtils {
     private DeclarationUtils() {
     }
@@ -103,13 +105,14 @@ public class DeclarationUtils {
         JetExpression initializer = property.getInitializer();
         assertNotNull(initializer);
 
+        JetPsiFactory psiFactory = JetPsiFactory(project);
         //noinspection ConstantConditions, unchecked
-        JetBinaryExpression newInitializer = JetPsiFactory.createBinaryExpression(
-                project, JetPsiFactory.createSimpleName(project, property.getName()), "=", initializer
+        JetBinaryExpression newInitializer = psiFactory.createBinaryExpression(
+                psiFactory.createSimpleName(property.getName()), "=", initializer
         );
 
         newInitializer = (JetBinaryExpression) parent.addAfter(newInitializer, property);
-        parent.addAfter(JetPsiFactory.createNewLine(project), property);
+        parent.addAfter(psiFactory.createNewLine(), property);
 
         //noinspection ConstantConditions
         JetType inferredType = getPropertyTypeIfNeeded(property);
@@ -120,7 +123,7 @@ public class DeclarationUtils {
 
         //noinspection ConstantConditions
         property = (JetProperty) property.replace(
-                JetPsiFactory.createProperty(project, property.getNameIdentifier().getText(), typeStr, property.isVar())
+                psiFactory.createProperty(property.getNameIdentifier().getText(), typeStr, property.isVar())
         );
 
         if (inferredType != null) {
@@ -133,8 +136,7 @@ public class DeclarationUtils {
     @NotNull
     public static JetProperty changePropertyInitializer(@NotNull JetProperty property, @Nullable JetExpression initializer) {
         //noinspection ConstantConditions
-        return JetPsiFactory.createProperty(
-                property.getProject(),
+        return JetPsiFactory(property).createProperty(
                 property.getNameIdentifier().getText(),
                 JetPsiUtil.getNullableText(property.getTypeRef()),
                 property.isVar(),

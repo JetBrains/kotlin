@@ -70,7 +70,7 @@ public class MyDeclarations(
             return JetTypeImpl(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong()), false, listOf(), JetScope.EMPTY)
         }
         return typeResolver.resolveType(
-            scopeToResolveTypeParameters, JetPsiFactory.createType(project, name),
+            scopeToResolveTypeParameters, JetPsiFactory(project).createType(name),
             JetTestUtils.DUMMY_TRACE, true)
     }
 }

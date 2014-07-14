@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiModifiableCodeBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Arrays;
@@ -42,6 +43,7 @@ public class JetBlockExpression extends JetExpressionImpl implements JetStatemen
         return visitor.visitBlockExpression(this, data);
     }
 
+    @ReadOnly
     @NotNull
     public List<JetElement> getStatements() {
         return Arrays.asList(findChildrenByClass(JetElement.class));

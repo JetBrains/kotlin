@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -108,8 +109,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
                     elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression, isStatement);
         }
-        JetBlockExpression thenBlock = JetPsiFactory.wrapInABlock(thenBranch);
-        JetBlockExpression elseBlock = JetPsiFactory.wrapInABlock(elseBranch);
+        JetBlockExpression thenBlock = JetPsiFactory(ifExpression.getProject()).wrapInABlock(thenBranch);
+        JetBlockExpression elseBlock = JetPsiFactory(ifExpression.getProject()).wrapInABlock(elseBranch);
         Call callForIf = createCallForSpecialConstruction(ifExpression, ifExpression, Lists.newArrayList(thenBlock, elseBlock));
         MutableDataFlowInfoForArguments dataFlowInfoForArguments =
                     createDataFlowInfoForArgumentsForIfCall(callForIf, thenInfo, elseInfo);

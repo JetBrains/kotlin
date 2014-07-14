@@ -92,7 +92,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
         }
 
         val transformation = "$base.$call"
-        val transformed = JetPsiFactory.createExpression(element.getProject(), transformation)
+        val transformed = JetPsiFactory(element.getProject()).createExpression(transformation)
         element.replace(transformed)
     }
 
@@ -107,7 +107,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
         }
 
         val transformation = "$base.$call"
-        val transformed = JetPsiFactory.createExpression(element.getProject(), transformation)
+        val transformed = JetPsiFactory(element.getProject()).createExpression(transformation)
         element.replace(transformed)
     }
 
@@ -153,7 +153,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             else -> return
         }
 
-        val transformed = JetPsiFactory.createExpression(element.getProject(), transformation)
+        val transformed = JetPsiFactory(element.getProject()).createExpression(transformation)
 
         element.replace(transformed)
     }
@@ -177,7 +177,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             replaced = element
         }
 
-        val transformed = JetPsiFactory.createExpression(element.getProject(), transformation)
+        val transformed = JetPsiFactory(element.getProject()).createExpression(transformation)
         replaced.replace(transformed)
     }
 
@@ -188,7 +188,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
         val funcLitArgs = element.getFunctionLiteralArguments()
         val calleeText = callee.getText()
         val transformation = if (argumentString == null) "$calleeText.invoke" else "$calleeText.invoke($argumentString)"
-        val transformed = JetPsiFactory.createExpression(element.getProject(), transformation)
+        val transformed = JetPsiFactory(element.getProject()).createExpression(transformation)
         funcLitArgs.forEach { transformed.add(it) }
         callee.getParent()!!.replace(transformed)
     }

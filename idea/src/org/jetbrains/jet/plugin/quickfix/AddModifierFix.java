@@ -25,7 +25,10 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetModifierList;
+import org.jetbrains.jet.lang.psi.JetModifierListOwner;
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -34,6 +37,7 @@ import org.jetbrains.jet.plugin.JetBundle;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
@@ -88,7 +92,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     /*package*/ static JetModifierListOwner addModifier(@NotNull PsiElement element, @NotNull JetKeywordToken modifier, @Nullable JetModifierKeywordToken[] modifiersThatCanBeReplaced, @NotNull Project project, boolean toBeginning) {
         JetModifierListOwner newElement = (JetModifierListOwner) (element.copy());
         changeModifier(newElement, newElement.getModifierList(), newElement.getFirstChild(),
-                       modifiersThatCanBeReplaced, project, toBeginning, JetPsiFactory.createModifierList(project, modifier));
+                       modifiersThatCanBeReplaced, project, toBeginning, JetPsiFactory(project).createModifierList(modifier));
         return newElement;
     }
 
@@ -96,7 +100,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
             PsiElement element, @Nullable JetModifierList modifierList, @Nullable PsiElement insertAnchor,
             JetModifierKeywordToken[] modifiersThatCanBeReplaced, Project project, boolean toBeginning, JetModifierList listWithModifier
     ) {
-        PsiElement whiteSpace = JetPsiFactory.createWhiteSpace(project);
+        PsiElement whiteSpace = JetPsiFactory(project).createWhiteSpace();
         if (modifierList == null) {
             if (listWithModifier != null) {
                 if (insertAnchor != null) {

@@ -21,7 +21,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,6 +28,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 /**
  * A helper class to discover a META-INF/services file on the classpath and load the files referenced inside it
@@ -75,7 +76,7 @@ public final class MetaInfServices {
                                 InputStream stream = loadClasspathResource(line);
                                 if (stream != null) {
                                     String text = StringUtil.convertLineSeparators(FileUtil.loadTextAndClose(stream));
-                                    libFiles.add(JetPsiFactory.createFile(project, line, text));
+                                    libFiles.add(JetPsiFactory(project).createFile(line, text));
                                 }
                             }
                         }

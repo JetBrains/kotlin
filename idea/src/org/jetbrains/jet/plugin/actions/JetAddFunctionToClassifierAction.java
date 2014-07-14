@@ -33,10 +33,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetClassBody;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -85,11 +82,12 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
+                        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
                         JetClassBody body = classifierDeclaration.getBody();
                         if (body == null) {
-                            PsiElement whitespaceBefore = classifierDeclaration.add(JetPsiFactory.createWhiteSpace(project));
-                            body = (JetClassBody) classifierDeclaration.addAfter(JetPsiFactory.createEmptyClassBody(project), whitespaceBefore);
-                            classifierDeclaration.addAfter(JetPsiFactory.createNewLine(project), body);
+                            PsiElement whitespaceBefore = classifierDeclaration.add(psiFactory.createWhiteSpace());
+                            body = (JetClassBody) classifierDeclaration.addAfter(psiFactory.createEmptyClassBody(), whitespaceBefore);
+                            classifierDeclaration.addAfter(psiFactory.createNewLine(), body);
                         }
 
                         String functionBody = "";
@@ -100,7 +98,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                                 functionBody = "{ throw UnsupportedOperationException() }";
                             }
                         }
-                        JetNamedFunction functionElement = JetPsiFactory.createFunction(project, signatureString + functionBody);
+                        JetNamedFunction functionElement = psiFactory.createFunction(signatureString + functionBody);
                         PsiElement anchor = body.getRBrace();
                         JetNamedFunction insertedFunctionElement = (JetNamedFunction) body.addBefore(functionElement, anchor);
 

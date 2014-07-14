@@ -28,6 +28,8 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class JetImportsFactory {
     @NotNull
     private Project project;
@@ -47,7 +49,7 @@ public class JetImportsFactory {
             return directive;
         }
 
-        JetImportDirective createdDirective = JetPsiFactory.createImportDirective(project, importPath);
+        JetImportDirective createdDirective = JetPsiFactory(project).createImportDirective(importPath);
         importsCache.put(importPath, createdDirective);
 
         return createdDirective;

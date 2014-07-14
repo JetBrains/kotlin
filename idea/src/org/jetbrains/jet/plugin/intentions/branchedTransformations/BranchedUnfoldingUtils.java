@@ -24,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class BranchedUnfoldingUtils {
     private BranchedUnfoldingUtils() {
     }
@@ -94,8 +96,9 @@ public class BranchedUnfoldingUtils {
         assertNotNull(elseExpr);
 
         //noinspection ConstantConditions
-        thenExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, thenExpr));
-        elseExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, elseExpr));
+        JetPsiFactory psiFactory = JetPsiFactory(project);
+        thenExpr.replace(psiFactory.createBinaryExpression(lhs, op, thenExpr));
+        elseExpr.replace(psiFactory.createBinaryExpression(lhs, op, elseExpr));
 
         PsiElement resultElement = assignment.replace(newIfExpression);
 
@@ -119,7 +122,7 @@ public class BranchedUnfoldingUtils {
             assertNotNull(currExpr);
 
             //noinspection ConstantConditions
-            currExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, currExpr));
+            currExpr.replace(JetPsiFactory(project).createBinaryExpression(lhs, op, currExpr));
         }
 
         PsiElement resultElement = assignment.replace(newWhenExpression);
@@ -152,8 +155,9 @@ public class BranchedUnfoldingUtils {
         assertNotNull(thenExpr);
         assertNotNull(elseExpr);
 
-        thenExpr.replace(JetPsiFactory.createReturn(project, thenExpr));
-        elseExpr.replace(JetPsiFactory.createReturn(project, elseExpr));
+        JetPsiFactory psiFactory = JetPsiFactory(project);
+        thenExpr.replace(psiFactory.createReturn(thenExpr));
+        elseExpr.replace(psiFactory.createReturn(elseExpr));
 
         returnExpression.replace(newIfExpression);
     }
@@ -172,7 +176,7 @@ public class BranchedUnfoldingUtils {
 
             assertNotNull(currExpr);
 
-            currExpr.replace(JetPsiFactory.createReturn(project, currExpr));
+            currExpr.replace(JetPsiFactory(project).createReturn(currExpr));
         }
 
         returnExpression.replace(newWhenExpression);

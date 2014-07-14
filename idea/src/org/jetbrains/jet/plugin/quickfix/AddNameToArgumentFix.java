@@ -33,7 +33,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetCallElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -47,6 +50,8 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
 
@@ -140,7 +145,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
     private static JetValueArgument getParsedArgumentWithName(@NotNull String name, @NotNull JetValueArgument argument) {
         JetExpression argumentExpression = argument.getArgumentExpression();
         assert argumentExpression != null : "Argument should be already parsed.";
-        return JetPsiFactory.createArgumentWithName(argument.getProject(), name, argumentExpression);
+        return JetPsiFactory(argument.getProject()).createArgumentWithName(name, argumentExpression);
     }
 
     @NotNull

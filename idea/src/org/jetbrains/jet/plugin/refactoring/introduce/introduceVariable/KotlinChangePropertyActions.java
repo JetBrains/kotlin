@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.PsiPackage;
 
 public class KotlinChangePropertyActions {
     private KotlinChangePropertyActions() {
@@ -27,11 +28,12 @@ public class KotlinChangePropertyActions {
 
     public static void declareValueOrVariable(Project project, boolean isVariable, JetProperty property) {
         ASTNode node;
+        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
         if (isVariable) {
-            node = JetPsiFactory.createVarNode(project);
+            node = psiFactory.createVarNode();
         }
         else {
-            node = JetPsiFactory.createValNode(project);
+            node = psiFactory.createValNode();
         }
         property.getValOrVarNode().getPsi().replace(node.getPsi());
     }

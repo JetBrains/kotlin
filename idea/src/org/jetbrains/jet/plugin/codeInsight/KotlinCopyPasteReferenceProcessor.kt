@@ -57,10 +57,8 @@ import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.psi.JetTypeReference
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.plugin.imports.*
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.utils.*
 
@@ -314,7 +312,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     private object LengthenReferences {
 
         private fun createQualifiedExpression(project: Project, text: String): JetDotQualifiedExpression {
-            val newExpression = JetPsiFactory.createExpression(project, text)
+            val newExpression = JetPsiFactory(project).createExpression(text)
             LOG.assertTrue(newExpression is JetDotQualifiedExpression,
                            "\"${newExpression.getText()}\" is ${newExpression.javaClass}," +
                            "not ${javaClass<JetDotQualifiedExpression>().getSimpleName()}."
@@ -335,7 +333,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
                 val typeReference = PsiTreeUtil.getParentOfType(expression, javaClass<JetTypeReference>())
                 LOG.assertTrue(typeReference != null, "JetUserType is expected to have parent of type JetTypeReference:\n" +
                     "At: ${DiagnosticUtils.atLocation(expression)}\nFILE:\n${expression.getContainingFile()!!.getText()}")
-                typeReference!!.replace(JetPsiFactory.createType(project, "$prefixToInsert.${typeReference.getText()}"))
+                typeReference!!.replace(JetPsiFactory(project).createType("$prefixToInsert.${typeReference.getText()}"))
             }
             else {
                 expression.replace(createQualifiedExpression(project, fqName.asString()))

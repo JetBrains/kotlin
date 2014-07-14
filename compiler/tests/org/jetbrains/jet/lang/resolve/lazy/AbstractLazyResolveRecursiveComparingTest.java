@@ -24,7 +24,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
@@ -35,6 +34,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
 
@@ -63,7 +63,7 @@ public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTe
                                  new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
                                      @Override
                                      public JetFile create(String fileName, String text, Map<String, String> directives) {
-                                         return JetPsiFactory.createFile(getProject(), fileName, text);
+                                         return JetPsiFactory(getProject()).createFile(fileName, text);
                                      }
                                  });
 

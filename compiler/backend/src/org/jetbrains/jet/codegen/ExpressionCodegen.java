@@ -76,6 +76,7 @@ import java.util.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
@@ -2561,7 +2562,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
             }
             fakeFunctionCall.append(")");
-            return (JetCallExpression) JetPsiFactory.createExpression(state.getProject(), fakeFunctionCall.toString());
+            return (JetCallExpression) JetPsiFactory(state.getProject()).createExpression(fakeFunctionCall.toString());
         }
 
         private void computeAndSaveArguments(@NotNull List<? extends ValueArgument> fakeArguments, @NotNull ExpressionCodegen codegen) {
@@ -2581,7 +2582,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ) {
             if (receiver == null) return NO_RECEIVER;
 
-            JetExpression receiverExpression = JetPsiFactory.createExpression(state.getProject(), "callableReferenceFakeReceiver");
+            JetExpression receiverExpression = JetPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
             codegen.tempVariables.put(receiverExpression, receiverParameterStackValue(signature));
             return new ExpressionReceiver(receiverExpression, receiver.getType());
         }
@@ -3938,7 +3939,7 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     private Call makeFakeCall(ReceiverValue initializerAsReceiver) {
-        JetSimpleNameExpression fake = JetPsiFactory.createSimpleName(state.getProject(), "fake");
+        JetSimpleNameExpression fake = JetPsiFactory(state.getProject()).createSimpleName("fake");
         return CallMaker.makeCall(fake, initializerAsReceiver);
     }
 

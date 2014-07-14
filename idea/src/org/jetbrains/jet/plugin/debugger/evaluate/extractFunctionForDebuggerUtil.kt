@@ -110,14 +110,15 @@ private fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
     if (newImportList != null) {
         val tmpFileImportList = tmpFile.getImportList()
         val packageDirective = tmpFile.getPackageDirective()
+        val psiFactory = JetPsiFactory(tmpFile.getProject())
         if (tmpFileImportList == null) {
-            tmpFile.addAfter(JetPsiFactory.createNewLine(tmpFile.getProject()), packageDirective)
+            tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
             tmpFile.addAfter(newImportList, tmpFile.getPackageDirective())
         }
         else {
             tmpFileImportList.replace(newImportList)
         }
-        tmpFile.addAfter(JetPsiFactory.createNewLine(tmpFile.getProject()), packageDirective)
+        tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
     }
 }
 
@@ -125,7 +126,8 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
     val parent = contextElement.getParent()
     if (parent == null) return null
 
-    parent.addBefore(JetPsiFactory.createNewLine(contextElement.getProject()), contextElement)
+    val psiFactory = JetPsiFactory(contextElement.getProject())
+    parent.addBefore(psiFactory.createNewLine(), contextElement)
 
     val debugExpression = codeFragment.getContentElement()
     if (debugExpression == null) return null
@@ -133,7 +135,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
     val newDebugExpression = parent.addBefore(debugExpression, contextElement)
     if (newDebugExpression == null) return null
 
-    parent.addBefore(JetPsiFactory.createNewLine(contextElement.getProject()), contextElement)
+    parent.addBefore(psiFactory.createNewLine(), contextElement)
 
     return newDebugExpression as JetExpression
 }

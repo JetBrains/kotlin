@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.psi.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class BranchedFoldingUtils {
     private BranchedFoldingUtils() {
     }
@@ -173,7 +175,7 @@ public class BranchedFoldingUtils {
         String op = thenAssignment.getOperationReference().getText();
         JetSimpleNameExpression lhs = (JetSimpleNameExpression) thenAssignment.getLeft();
 
-        JetBinaryExpression assignment = JetPsiFactory.createBinaryExpression(project, lhs, op, ifExpression);
+        JetBinaryExpression assignment = JetPsiFactory(project).createBinaryExpression(lhs, op, ifExpression);
         JetIfExpression newIfExpression = (JetIfExpression)assignment.getRight();
 
         assertNotNull(newIfExpression);
@@ -202,7 +204,7 @@ public class BranchedFoldingUtils {
     public static void foldIfExpressionWithReturns(JetIfExpression ifExpression) {
         Project project = ifExpression.getProject();
 
-        JetReturnExpression newReturnExpression = JetPsiFactory.createReturn(project, ifExpression);
+        JetReturnExpression newReturnExpression = JetPsiFactory(project).createReturn(ifExpression);
         JetIfExpression newIfExpression = (JetIfExpression)newReturnExpression.getReturnedExpression();
 
         assertNotNull(newIfExpression);
@@ -240,8 +242,9 @@ public class BranchedFoldingUtils {
         assertNotNull(elseRoot);
 
         //noinspection ConstantConditions
-        JetIfExpression newIfExpression = JetPsiFactory.createIf(project, condition, thenRoot, elseRoot);
-        JetReturnExpression newReturnExpression = JetPsiFactory.createReturn(project, newIfExpression);
+        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetIfExpression newIfExpression = psiFactory.createIf(condition, thenRoot, elseRoot);
+        JetReturnExpression newReturnExpression = psiFactory.createReturn(newIfExpression);
 
         newIfExpression = (JetIfExpression)newReturnExpression.getReturnedExpression();
 
@@ -282,7 +285,7 @@ public class BranchedFoldingUtils {
         String op = firstAssignment.getOperationReference().getText();
         JetSimpleNameExpression lhs = (JetSimpleNameExpression) firstAssignment.getLeft();
 
-        JetBinaryExpression assignment = JetPsiFactory.createBinaryExpression(project, lhs, op, whenExpression);
+        JetBinaryExpression assignment = JetPsiFactory(project).createBinaryExpression(lhs, op, whenExpression);
         JetWhenExpression newWhenExpression = (JetWhenExpression)assignment.getRight();
 
         assertNotNull(newWhenExpression);
@@ -307,7 +310,7 @@ public class BranchedFoldingUtils {
 
         assert !whenExpression.getEntries().isEmpty() : FOLD_WITHOUT_CHECK;
 
-        JetReturnExpression newReturnExpression = JetPsiFactory.createReturn(project, whenExpression);
+        JetReturnExpression newReturnExpression = JetPsiFactory(project).createReturn(whenExpression);
         JetWhenExpression newWhenExpression = (JetWhenExpression)newReturnExpression.getReturnedExpression();
 
         assertNotNull(newWhenExpression);

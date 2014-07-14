@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
@@ -42,6 +41,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.getChangeSignatureDialog;
 
 public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
@@ -102,7 +102,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.setNewVisibility(Visibilities.PROTECTED);
         JetParameterInfo newParameter = new JetParameterInfo(-1, "x", KotlinBuiltIns.getInstance().getAnyType(),
-                                                             null, JetPsiFactory.createValOrVarNode(getProject(), "val"));
+                                                             null, JetPsiFactory(getProject()).createValOrVarNode("val"));
         newParameter.setDefaultValueText("12");
         changeInfo.addParameter(newParameter);
         doTest(changeInfo);

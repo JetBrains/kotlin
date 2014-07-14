@@ -121,12 +121,12 @@ fun JetExpression.evaluatesTo(other: JetExpression): Boolean {
 }
 
 fun JetExpression.convertToIfNotNullExpression(conditionLhs: JetExpression, thenClause: JetExpression, elseClause: JetExpression?): JetIfExpression {
-    val condition = JetPsiFactory.createExpression(this.getProject(), "${conditionLhs.getText()} != null")
+    val condition = JetPsiFactory(this.getProject()).createExpression("${conditionLhs.getText()} != null")
     return this.convertToIfStatement(condition, thenClause, elseClause)
 }
 
 fun JetExpression.convertToIfNullExpression(conditionLhs: JetExpression, thenClause: JetExpression): JetIfExpression {
-    val condition = JetPsiFactory.createExpression(this.getProject(), "${conditionLhs.getText()} == null")
+    val condition = JetPsiFactory(this.getProject()).createExpression("${conditionLhs.getText()} == null")
     return this.convertToIfStatement(condition, thenClause, null)
 }
 
@@ -145,7 +145,7 @@ fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpres
 }
 
 fun PsiElement.replace(expressionAsString: String): PsiElement =
-        this.replace(JetPsiFactory.createExpression(this.getProject(), expressionAsString))
+        this.replace(JetPsiFactory(this.getProject()).createExpression(expressionAsString))
 
 fun JetSimpleNameExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
     val declaration = this.getReference()?.resolve() as JetDeclaration

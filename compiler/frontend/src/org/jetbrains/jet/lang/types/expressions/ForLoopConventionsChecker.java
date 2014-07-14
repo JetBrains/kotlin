@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -42,6 +41,7 @@ import javax.inject.Inject;
 import java.util.Collections;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.isBoolean;
 
@@ -67,7 +67,7 @@ public class ForLoopConventionsChecker {
     }
 
     public boolean isVariableIterable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
-        JetExpression expression = JetPsiFactory.createExpression(project, "fake");
+        JetExpression expression = JetPsiFactory(project).createExpression("fake");
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getType());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices,

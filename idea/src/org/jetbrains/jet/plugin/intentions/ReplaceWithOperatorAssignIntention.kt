@@ -111,6 +111,6 @@ public class ReplaceWithOperatorAssignIntention : JetSelfTargetingIntention<JetB
             }
         }
 
-        element.replace(JetPsiFactory.createExpression(element.getProject(), buildReplacement(element.getLeft() as JetSimpleNameExpression, element.getRight() as JetBinaryExpression, StringBuilder())))
+        element.replace(JetPsiFactory(element.getProject()).createExpression(buildReplacement(element.getLeft() as JetSimpleNameExpression, element.getRight() as JetBinaryExpression, StringBuilder())))
     }
 }
