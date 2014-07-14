@@ -739,34 +739,31 @@ public class JetTypeMapper {
         sw.writeParameterTypeEnd();
     }
 
-    private void writeAdditionalConstructorParameters(
-            @NotNull ConstructorDescriptor descriptor,
-            @NotNull BothSignatureWriter signatureWriter
-    ) {
+    private void writeAdditionalConstructorParameters(@NotNull ConstructorDescriptor descriptor, @NotNull BothSignatureWriter sw) {
         CalculatedClosure closure = bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration());
 
         ClassDescriptor captureThis = getExpectedThisObjectForConstructorCall(descriptor, closure);
         if (captureThis != null) {
-            signatureWriter.writeParameterType(JvmMethodParameterKind.OUTER);
-            mapType(captureThis.getDefaultType(), signatureWriter, JetTypeMapperMode.VALUE);
-            signatureWriter.writeParameterTypeEnd();
+            sw.writeParameterType(JvmMethodParameterKind.OUTER);
+            mapType(captureThis.getDefaultType(), sw, JetTypeMapperMode.VALUE);
+            sw.writeParameterTypeEnd();
         }
 
         JetType captureReceiverType = closure != null ? closure.getCaptureReceiverType() : null;
         if (captureReceiverType != null) {
-            signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(captureReceiverType, signatureWriter, JetTypeMapperMode.VALUE);
-            signatureWriter.writeParameterTypeEnd();
+            sw.writeParameterType(JvmMethodParameterKind.RECEIVER);
+            mapType(captureReceiverType, sw, JetTypeMapperMode.VALUE);
+            sw.writeParameterTypeEnd();
         }
 
         ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY) {
-            signatureWriter.writeParameterType(JvmMethodParameterKind.ENUM_NAME);
-            mapType(KotlinBuiltIns.getInstance().getStringType(), signatureWriter, JetTypeMapperMode.VALUE);
-            signatureWriter.writeParameterTypeEnd();
-            signatureWriter.writeParameterType(JvmMethodParameterKind.ENUM_ORDINAL);
-            mapType(KotlinBuiltIns.getInstance().getIntType(), signatureWriter, JetTypeMapperMode.VALUE);
-            signatureWriter.writeParameterTypeEnd();
+            sw.writeParameterType(JvmMethodParameterKind.ENUM_NAME);
+            mapType(KotlinBuiltIns.getInstance().getStringType(), sw, JetTypeMapperMode.VALUE);
+            sw.writeParameterTypeEnd();
+            sw.writeParameterType(JvmMethodParameterKind.ENUM_ORDINAL);
+            mapType(KotlinBuiltIns.getInstance().getIntType(), sw, JetTypeMapperMode.VALUE);
+            sw.writeParameterTypeEnd();
         }
 
         if (closure == null) return;
@@ -788,18 +785,18 @@ public class JetTypeMapper {
             }
 
             if (type != null) {
-                signatureWriter.writeParameterType(JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE);
-                signatureWriter.writeAsmType(type);
-                signatureWriter.writeParameterTypeEnd();
+                sw.writeParameterType(JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE);
+                sw.writeAsmType(type);
+                sw.writeParameterTypeEnd();
             }
         }
 
         ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
         if (superCall != null && isAnonymousObject(descriptor.getContainingDeclaration())) {
             for (JvmMethodParameterSignature parameter : mapSignature(superCall.getResultingDescriptor()).getValueParameters()) {
-                signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM);
-                signatureWriter.writeAsmType(parameter.getAsmType());
-                signatureWriter.writeParameterTypeEnd();
+                sw.writeParameterType(JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM);
+                sw.writeAsmType(parameter.getAsmType());
+                sw.writeParameterTypeEnd();
             }
         }
     }
