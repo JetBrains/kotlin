@@ -20,8 +20,9 @@ import java.util.Scanner;
 public class AndroidXmlTest extends TestCaseWithTmpdir {
 
     private final File singleFile = new File(getTestDataPath() + "/converter/singleFile/layout.xml");
-    private final File fakeActivity = new File(getTestDataPath() + "/fakeHelpers/Activity.kt");
-    private final File fakeView = new File(getTestDataPath() + "/fakeHelpers/View.kt");
+    private final File fakeActivitySrc = new File(getTestDataPath() + "/fakeHelpers/Activity.kt");
+    private final File fakeViewSrc = new File(getTestDataPath() + "/fakeHelpers/View.kt");
+    private final File fakeWidgetsSrc = new File(getTestDataPath() + "/fakeHelpers/Widgets.kt");
 
     @Override
     public void setUp() throws Exception {
@@ -54,15 +55,17 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
                                                                                                             ConfigurationKind.ALL);
         JetFile psiFile = JetTestUtils.createFile(singleFile.getName(), text, jetCoreEnvironment.getProject());
-        JetFile fakeActivityClass = JetTestUtils.loadJetFile(jetCoreEnvironment.getProject(), fakeActivity);
-        JetFile fakeViewClass = JetTestUtils.loadJetFile(jetCoreEnvironment.getProject(), fakeView);
+        JetFile fakeActivity = JetTestUtils.loadJetFile(jetCoreEnvironment.getProject(), fakeActivitySrc);
+        JetFile fakeView = JetTestUtils.loadJetFile(jetCoreEnvironment.getProject(), fakeViewSrc);
+        JetFile fakeWidgets = JetTestUtils.loadJetFile(jetCoreEnvironment.getProject(), fakeWidgetsSrc);
         JetFile fakeRClass = JetTestUtils.loadJetFile(jetCoreEnvironment.getProject(),
                                                       new File(getTestDataPath() + "/converter/singleFile/R.kt"));
         List<JetFile> files = new ArrayList<JetFile>();
         files.add(psiFile);
-        files.add(fakeActivityClass);
-        files.add(fakeViewClass);
+        files.add(fakeActivity);
+        files.add(fakeView);
         files.add(fakeRClass);
+        files.add(fakeWidgets);
         GenerationUtils.compileManyFilesGetGenerationStateForTest(jetCoreEnvironment.getProject(), files);
         Disposer.dispose(getTestRootDisposable());
     }
