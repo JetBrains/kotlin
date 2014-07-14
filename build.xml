@@ -644,7 +644,6 @@
             <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" includes="*.bat" filemode="644"/>
             <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" excludes="*.bat" filemode="755"/>
         </zip>
-        <echo message="##teamcity[publishArtifacts '${output.relative}/${output.name}.zip']"/>
     </target>
 
     <target name="kotlin-for-upsource" depends="dist">
@@ -671,8 +670,7 @@
             </zipfileset>
         </jar>
         <delete file="${output}/kotlin-for-upsource0.jar"/>
-
-        <echo message="##teamcity[publishArtifacts '${output.relative}/kotlin-for-upsource.jar']"/>
     </target>
 
+    <target name="build-artifacts" depends="zip,kotlin-for-upsource"/>
 </project>
