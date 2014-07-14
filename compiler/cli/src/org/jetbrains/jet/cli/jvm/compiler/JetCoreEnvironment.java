@@ -238,6 +238,7 @@ public class JetCoreEnvironment {
         project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
     }
 
+    @NotNull
     public CompilerConfiguration getConfiguration() {
         return configuration;
     }
