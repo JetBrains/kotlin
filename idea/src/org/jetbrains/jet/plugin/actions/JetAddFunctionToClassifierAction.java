@@ -33,7 +33,10 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetClassBody;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -44,6 +47,8 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 /**
  * Changes method signature to one of provided signatures.
@@ -82,7 +87,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
-                        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(classifierDeclaration);
+                        JetPsiFactory psiFactory = JetPsiFactory(classifierDeclaration);
                         JetClassBody body = classifierDeclaration.getBody();
                         if (body == null) {
                             PsiElement whitespaceBefore = classifierDeclaration.add(psiFactory.createWhiteSpace());

@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.PsiPackage;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
@@ -40,6 +39,8 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 /**
  * Changes method signature to one of provided signatures.
@@ -126,7 +127,7 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-        final JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(element);
+        final JetPsiFactory psiFactory = JetPsiFactory(element);
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
             @Override
             public void run() {

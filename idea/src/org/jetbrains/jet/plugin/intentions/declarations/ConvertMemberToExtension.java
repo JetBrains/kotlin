@@ -42,6 +42,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 
 public class ConvertMemberToExtension extends BaseIntentionAction {
@@ -114,7 +115,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
                                (returnTypeRef != null ? ": " + returnTypeRef.getText() : "") +
                                body(member);
 
-        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(member);
+        JetPsiFactory psiFactory = JetPsiFactory(member);
         JetDeclaration extension = psiFactory.<JetDeclaration>createDeclaration(extensionText);
 
         PsiElement added = file.addAfter(extension, outermostParent);

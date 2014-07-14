@@ -45,6 +45,8 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclaration> {
     private final static Logger LOG = Logger.getInstance(ChangeVariableTypeFix.class);
 
@@ -83,7 +85,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
         SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
         PsiElement nameIdentifier = element.getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
-        JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(file);
+        JetPsiFactory psiFactory = JetPsiFactory(file);
         element.addAfter(psiFactory.createType(renderedType), nameIdentifier);
         element.addAfter(psiFactory.createColon(), nameIdentifier);
 
