@@ -283,7 +283,7 @@ public class KotlinToJVMBytecodeCompiler {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
         analyzerWithCompilerReport.analyzeAndReport(
-                new Function0<AnalyzeExhaust>() {
+                environment.getSourceFiles(), new Function0<AnalyzeExhaust>() {
                     @NotNull
                     @Override
                     public AnalyzeExhaust invoke() {
@@ -300,7 +300,7 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR)
                         );
                     }
-                }, environment.getSourceFiles()
+                }
         );
 
         AnalyzeExhaust exhaust = analyzerWithCompilerReport.getAnalyzeExhaust();

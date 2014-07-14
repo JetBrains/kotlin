@@ -219,7 +219,7 @@ public final class AnalyzerWithCompilerReport {
         return hasErrors;
     }
 
-    public void analyzeAndReport(@NotNull Function0<AnalyzeExhaust> analyzer, @NotNull Collection<JetFile> files) {
+    public void analyzeAndReport(@NotNull Collection<JetFile> files, @NotNull Function0<AnalyzeExhaust> analyzer) {
         analyzeExhaust = analyzer.invoke();
         reportAbiVersionErrors();
         reportSyntaxErrors(files);

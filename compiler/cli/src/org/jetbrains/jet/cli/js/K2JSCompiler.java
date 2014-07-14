@@ -174,12 +174,12 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static boolean analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
             @NotNull final List<JetFile> sources, @NotNull final Config config) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
-        analyzerWithCompilerReport.analyzeAndReport(new Function0<AnalyzeExhaust>() {
+        analyzerWithCompilerReport.analyzeAndReport(sources, new Function0<AnalyzeExhaust>() {
             @Override
             public AnalyzeExhaust invoke() {
                 return AnalyzerFacadeForJS.analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), config);
             }
-        }, sources);
+        });
         return analyzerWithCompilerReport.hasErrors();
     }
 
