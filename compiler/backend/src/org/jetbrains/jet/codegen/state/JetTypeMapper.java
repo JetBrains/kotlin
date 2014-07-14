@@ -585,7 +585,11 @@ public class JetTypeMapper {
 
             sw.writeParametersStart();
             writeThisIfNeeded(f, kind, sw);
-            writeReceiverIfNeeded(f.getReceiverParameter(), sw);
+
+            ReceiverParameterDescriptor receiverParameter = f.getReceiverParameter();
+            if (receiverParameter != null) {
+                writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.getType());
+            }
 
             for (ValueParameterDescriptor parameter : f.getValueParameters()) {
                 writeParameter(sw, parameter.getType());
@@ -655,21 +659,17 @@ public class JetTypeMapper {
             @NotNull OwnerKind kind,
             @NotNull BothSignatureWriter sw
     ) {
+        Type thisType;
         if (kind == OwnerKind.TRAIT_IMPL) {
-            ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
-            Type type = getTraitImplThisParameterType(containingDeclaration, this);
-
-            sw.writeParameterType(JvmMethodParameterKind.THIS);
-            sw.writeAsmType(type);
-            sw.writeParameterTypeEnd();
+            thisType = getTraitImplThisParameterType((ClassDescriptor) descriptor.getContainingDeclaration(), this);
         }
         else if (isAccessor(descriptor) && descriptor.getExpectedThisObject() != null) {
-            sw.writeParameterType(JvmMethodParameterKind.THIS);
-            mapType(((ClassifierDescriptor) descriptor.getContainingDeclaration()).getDefaultType(), sw, JetTypeMapperMode.VALUE);
-            sw.writeParameterTypeEnd();
+            thisType = mapClass((ClassifierDescriptor) descriptor.getContainingDeclaration());
         }
-    }
+        else return;
 
+        writeParameter(sw, JvmMethodParameterKind.THIS, thisType);
+    }
 
     public void writeFormalTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull BothSignatureWriter sw) {
         for (TypeParameterDescriptor typeParameter : typeParameters) {
@@ -725,17 +725,19 @@ public class JetTypeMapper {
         }
     }
 
-    private void writeReceiverIfNeeded(@Nullable ReceiverParameterDescriptor receiver, @NotNull BothSignatureWriter sw) {
-        if (receiver != null) {
-            sw.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(receiver.getType(), sw, JetTypeMapperMode.VALUE);
-            sw.writeParameterTypeEnd();
-        }
+    private void writeParameter(@NotNull BothSignatureWriter sw, @NotNull JetType type) {
+        writeParameter(sw, JvmMethodParameterKind.VALUE, type);
     }
 
-    private void writeParameter(@NotNull BothSignatureWriter sw, @NotNull JetType type) {
-        sw.writeParameterType(JvmMethodParameterKind.VALUE);
+    private void writeParameter(@NotNull BothSignatureWriter sw, @NotNull JvmMethodParameterKind kind, @NotNull JetType type) {
+        sw.writeParameterType(kind);
         mapType(type, sw, JetTypeMapperMode.VALUE);
+        sw.writeParameterTypeEnd();
+    }
+
+    private static void writeParameter(@NotNull BothSignatureWriter sw, @NotNull JvmMethodParameterKind kind, @NotNull Type type) {
+        sw.writeParameterType(kind);
+        sw.writeAsmType(type);
         sw.writeParameterTypeEnd();
     }
 
@@ -744,26 +746,18 @@ public class JetTypeMapper {
 
         ClassDescriptor captureThis = getExpectedThisObjectForConstructorCall(descriptor, closure);
         if (captureThis != null) {
-            sw.writeParameterType(JvmMethodParameterKind.OUTER);
-            mapType(captureThis.getDefaultType(), sw, JetTypeMapperMode.VALUE);
-            sw.writeParameterTypeEnd();
+            writeParameter(sw, JvmMethodParameterKind.OUTER, captureThis.getDefaultType());
         }
 
         JetType captureReceiverType = closure != null ? closure.getCaptureReceiverType() : null;
         if (captureReceiverType != null) {
-            sw.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(captureReceiverType, sw, JetTypeMapperMode.VALUE);
-            sw.writeParameterTypeEnd();
+            writeParameter(sw, JvmMethodParameterKind.RECEIVER, captureReceiverType);
         }
 
         ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY) {
-            sw.writeParameterType(JvmMethodParameterKind.ENUM_NAME);
-            mapType(KotlinBuiltIns.getInstance().getStringType(), sw, JetTypeMapperMode.VALUE);
-            sw.writeParameterTypeEnd();
-            sw.writeParameterType(JvmMethodParameterKind.ENUM_ORDINAL);
-            mapType(KotlinBuiltIns.getInstance().getIntType(), sw, JetTypeMapperMode.VALUE);
-            sw.writeParameterTypeEnd();
+            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME, KotlinBuiltIns.getInstance().getStringType());
+            writeParameter(sw, JvmMethodParameterKind.ENUM_ORDINAL, KotlinBuiltIns.getInstance().getIntType());
         }
 
         if (closure == null) return;
@@ -785,18 +779,14 @@ public class JetTypeMapper {
             }
 
             if (type != null) {
-                sw.writeParameterType(JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE);
-                sw.writeAsmType(type);
-                sw.writeParameterTypeEnd();
+                writeParameter(sw, JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE, type);
             }
         }
 
         ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
         if (superCall != null && isAnonymousObject(descriptor.getContainingDeclaration())) {
             for (JvmMethodParameterSignature parameter : mapSignature(superCall.getResultingDescriptor()).getValueParameters()) {
-                sw.writeParameterType(JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM);
-                sw.writeAsmType(parameter.getAsmType());
-                sw.writeParameterTypeEnd();
+                writeParameter(sw, JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM, parameter.getAsmType());
             }
         }
     }
@@ -808,11 +798,9 @@ public class JetTypeMapper {
         sw.writeParametersStart();
 
         for (ScriptDescriptor importedScript : importedScripts) {
-            sw.writeParameterType(JvmMethodParameterKind.VALUE);
             ClassDescriptor descriptor = bindingContext.get(CLASS_FOR_SCRIPT, importedScript);
-            assert descriptor != null;
-            mapType(descriptor.getDefaultType(), sw, JetTypeMapperMode.VALUE);
-            sw.writeParameterTypeEnd();
+            assert descriptor != null : "Script not found: " + importedScript;
+            writeParameter(sw, descriptor.getDefaultType());
         }
 
         for (ValueParameterDescriptor valueParameter : script.getScriptCodeDescriptor().getValueParameters()) {
