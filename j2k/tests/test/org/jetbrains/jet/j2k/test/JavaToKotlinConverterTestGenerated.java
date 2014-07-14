@@ -737,6 +737,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/classExpression/objectClass.java");
         }
         
+        @TestMetadata("primitivesAndArrays.java")
+        public void testPrimitivesAndArrays() throws Exception {
+            doTest("j2k/tests/testData/ast/classExpression/primitivesAndArrays.java");
+        }
+        
         @TestMetadata("stringClass.java")
         public void testStringClass() throws Exception {
             doTest("j2k/tests/testData/ast/classExpression/stringClass.java");

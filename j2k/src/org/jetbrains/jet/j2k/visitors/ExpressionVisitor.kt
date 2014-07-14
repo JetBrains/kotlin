@@ -17,6 +17,7 @@
 package org.jetbrains.jet.j2k.visitors
 
 import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
@@ -35,6 +36,8 @@ import com.intellij.psi.impl.light.LightField
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
+import org.jetbrains.jet.lang.resolve.name.FqName
 
 open class ExpressionVisitor(private val converter: Converter) : JavaElementVisitor() {
     private val typeConverter = converter.typeConverter
@@ -105,8 +108,29 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
     }
 
     override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
-        val typeElement = converter.convertTypeElement(expression.getOperand())
-        result = MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(typeElement.`type`.toNotNullType()))
+        val operand = expression.getOperand()
+        val typeName = operand.getType().getCanonicalText()
+        val primitiveType = JvmPrimitiveType.values().firstOrNull { it.getName() == typeName }
+        val wrapperTypeName = if (primitiveType != null) {
+            primitiveType.getWrapperFqName()
+        }
+        else if (typeName == "void") { // by unknown reason it's not in JvmPrimitiveType enum
+            FqName("java.lang.Void")
+        }
+        else {
+            val typeElement = converter.convertTypeElement(operand)
+            result = MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(typeElement.`type`.toNotNullType()))
+            return
+        }
+
+        //TODO: need more correct way to detect if short name is ok
+        val qualifiedName = wrapperTypeName.asString()
+        val classNameToUse = if (qualifiedName in needQualifierNameSet)
+            qualifiedName
+        else
+            wrapperTypeName.shortName().asString()
+        result = QualifiedExpression(Identifier(classNameToUse, false).assignPrototype(operand),
+                                     Identifier("TYPE", false).assignNoPrototype())
     }
 
     override fun visitConditionalExpression(expression: PsiConditionalExpression) {
@@ -428,5 +452,9 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
             context = _context.getContext()
         }
         return ""
+    }
+
+    class object {
+        private val needQualifierNameSet = setOf("java.lang.Byte", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short")
     }
 }
