@@ -756,8 +756,8 @@ public class JetTypeMapper {
 
         ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY) {
-            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME, KotlinBuiltIns.getInstance().getStringType());
-            writeParameter(sw, JvmMethodParameterKind.ENUM_ORDINAL, KotlinBuiltIns.getInstance().getIntType());
+            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, KotlinBuiltIns.getInstance().getStringType());
+            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, KotlinBuiltIns.getInstance().getIntType());
         }
 
         if (closure == null) return;
