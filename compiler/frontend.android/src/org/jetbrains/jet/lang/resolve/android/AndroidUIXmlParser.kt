@@ -11,10 +11,11 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 
 class AndroidUIXmlParser(val project: Project?, val searchPaths: Collection<File>) {
 
-    val ids: MutableCollection<AndroidID> = ArrayList()
+    val ids: MutableCollection<AndroidWidget> = ArrayList()
     val kw = KotlinStringWriter()
     val androidImports = arrayListOf("android.app.Activity",
-                                     "android.view.View")
+                                     "android.view.View",
+                                     "android.widget.*")
 
     public fun parse(): String {
         doParse()
@@ -53,19 +54,23 @@ class AndroidUIXmlParser(val project: Project?, val searchPaths: Collection<File
         val factory = SAXParserFactory.newInstance()
         factory?.setNamespaceAware(true)
         val parser = factory!!.newSAXParser() // TODO: annotate this
-        val handler = AndroidXmlHandler({ id -> ids.add(AndroidID(id)) })
+        val handler = AndroidXmlHandler({ id, wClass -> widgetCallback(id, wClass) })
         writeImports()
         for (xmlStream in xmlStreams) {
             parser.parse(xmlStream, handler)
         }
     }
 
+    private fun widgetCallback(id: String, className: String) {
+        ids.add(AndroidWidget(id, className))
+    }
+
     private fun produceKotlinSignatures(): StringBuffer {
         for (id in ids) {
-            val body = arrayListOf("return findViewById(R.id.${id.toString()})!!")
+            val body = arrayListOf("return findViewById(R.id.${id.id}) as ${id.className}")
             kw.writeImmutableExtensionProperty(receiver = "Activity",
-                                      name = id.toString(),
-                                      retType = "View",
+                                      name = id.id,
+                                      retType = id.className,
                                       getterBody = body )
         }
         return kw.output()

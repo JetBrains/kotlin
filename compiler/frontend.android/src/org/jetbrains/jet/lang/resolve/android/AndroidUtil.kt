@@ -15,3 +15,4 @@ class AndroidID(val rawID: String): AndroidResource {
     }
 }
 
+class AndroidWidget(val id: String, val className: String): AndroidResource

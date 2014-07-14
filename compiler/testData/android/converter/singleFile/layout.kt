@@ -1,21 +1,16 @@
 import android.app.Activity
 import android.view.View
+import android.widget.*
 
-val Activity.item_detail_container: View
-    get() = findViewById(R.id.item_detail_container)!!
+val Activity.item_detail_container: FrameLayout
+    get() = findViewById(R.id.item_detail_container) as FrameLayout
 
-val Activity.textView1: View
-    get() = findViewById(R.id.textView1)!!
+val Activity.textView1: TextView
+    get() = findViewById(R.id.textView1) as TextView
 
-val Activity.password: View
-    get() = findViewById(R.id.password)!!
+val Activity.password: EditText
+    get() = findViewById(R.id.password) as EditText
 
-val Activity.textView2: View
-    get() = findViewById(R.id.textView2)!!
-
-val Activity.passwordConfirmation: View
-    get() = findViewById(R.id.passwordConfirmation)!!
-
-val Activity.login: View
-    get() = findViewById(R.id.login)!!
+val Activity.login: Button
+    get() = findViewById(R.id.login) as Button
 

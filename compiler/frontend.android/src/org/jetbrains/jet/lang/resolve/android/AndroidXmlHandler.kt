@@ -4,7 +4,7 @@ import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
 import java.util.HashMap
 
-class AndroidXmlHandler(val idCallback: (String)-> Unit): DefaultHandler() {
+class AndroidXmlHandler(val elementCallback: (String, String)-> Unit): DefaultHandler() {
 
     override fun startDocument() {
         super<DefaultHandler>.startDocument()
@@ -18,7 +18,8 @@ class AndroidXmlHandler(val idCallback: (String)-> Unit): DefaultHandler() {
         val hashMap = attributes.toMap()
         val s = hashMap["id"]
         val idPrefix = "@+id/"
-        if (s != null && s.startsWith(idPrefix)) idCallback(s.replace(idPrefix, ""))
+        val className = hashMap["class"] ?: localName
+        if (s != null && s.startsWith(idPrefix)) elementCallback(s.replace(idPrefix, ""), className)
     }
 
     override fun endElement(uri: String?, localName: String, qName: String) {

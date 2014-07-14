@@ -5,19 +5,21 @@ trait KotlinWriter
 class KotlinStringWriter : KotlinWriter {
 
     val ctx = Context()
+    val imports = ctx.fork()
+    val body = ctx.fork()
 
     fun writeFunction(name: String,
                       args: Collection<String>?,
                       retType: String,
-                      body: Collection<String>) {
+                      stmts: Collection<String>) {
         val returnTerm = if (retType == "" || retType == "Unit") "" else ": $retType"
         val argStr = if (args != null) args.join(", ") else ""
-        ctx.writeln("fun $name($argStr)$returnTerm {")
-        ctx.incIndent()
-        for (stmt in body)
-            ctx.writeln(stmt)
-        ctx.decIndent()
-        ctx.writeln("}")
+        body.writeln("fun $name($argStr)$returnTerm {")
+        body.incIndent()
+        for (stmt in stmts)
+            body.writeln(stmt)
+        body.decIndent()
+        body.writeln("}")
     }
 
     fun writeExtensionFunction(receiver: String,
@@ -31,24 +33,24 @@ class KotlinStringWriter : KotlinWriter {
     fun writeImmutableProperty(name: String,
                                retType: String,
                                getterBody: Collection<String>) {
-        ctx.writeln("val $name: $retType")
-        ctx.incIndent()
-        ctx.write("get() ")
+        body.writeln("val $name: $retType")
+        body.incIndent()
+        body.write("get() ")
         if (getterBody.size > 1) {
-            ctx.writeNoIndent("{\n")
-            ctx.incIndent()
+            body.writeNoIndent("{\n")
+            body.incIndent()
             for (stmt in getterBody) {
-                ctx.writeln(stmt)
+                body.writeln(stmt)
             }
-            ctx.decIndent()
-            ctx.writeln("}")
+            body.decIndent()
+            body.writeln("}")
         } else {
-            ctx.writeNoIndent("=")
-            ctx.writeNoIndent(getterBody.join("").replace("return", ""))
-            ctx.newLine()
+            body.writeNoIndent("=")
+            body.writeNoIndent(getterBody.join("").replace("return", ""))
+            body.newLine()
         }
-        ctx.decIndent()
-        ctx.newLine()
+        body.decIndent()
+        body.newLine()
     }
 
     fun writeImmutableExtensionProperty(receiver: String,
@@ -59,13 +61,16 @@ class KotlinStringWriter : KotlinWriter {
     }
 
     fun writeImport(what: String) {
-        ctx.writeln("import $what")
+        imports.writeln("import $what")
     }
 
     fun writeEmptyLine() {
-        ctx.newLine()
+        body.newLine()
     }
 
-    fun output() = ctx.buffer
+    fun output(): StringBuffer {
+        ctx.absorbChildren()
+        return ctx.buffer
+    }
 }
 
