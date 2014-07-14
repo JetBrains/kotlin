@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.backend.common.DataClassMethodGenerator;
-import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.codegen.context.ClassContext;
@@ -85,7 +84,7 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private static final String VALUES = "$VALUES";
-    private JetDelegationSpecifier superCall;
+    private JetDelegatorToSuperCall superCall;
     private Type superClassAsmType;
     @Nullable // null means java/lang/Object
     private JetType superClassType;
@@ -399,7 +398,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
-            if (specifier instanceof JetDelegatorToSuperClass || specifier instanceof JetDelegatorToSuperCall) {
+            if (specifier instanceof JetDelegatorToSuperCall) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
                 assert superType != null :
                         String.format("No type recorded for \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(specifier));
@@ -411,7 +410,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (!isInterface(superClassDescriptor)) {
                     superClassType = superType;
                     superClassAsmType = typeMapper.mapClass(superClassDescriptor);
-                    superCall = specifier;
+                    superCall = (JetDelegatorToSuperCall) specifier;
                 }
             }
         }
@@ -1194,9 +1193,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (superCall == null) {
             genSimpleSuperCall(iv);
         }
-        else if (superCall instanceof JetDelegatorToSuperClass) {
-            genSuperCallToDelegatorToSuperClass(iv);
-        }
         else {
             generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor);
         }
@@ -1247,23 +1243,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         iv.visitInsn(RETURN);
-    }
-
-    private void genSuperCallToDelegatorToSuperClass(InstructionAdapter iv) {
-        iv.load(0, superClassAsmType);
-        JetType superType = bindingContext.get(BindingContext.TYPE, superCall.getTypeReference());
-        List<Type> parameterTypes = new ArrayList<Type>();
-        assert superType != null;
-        ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-        if (CodegenBinding.hasThis0(bindingContext, superClassDescriptor)) {
-            iv.load(1, OBJECT_TYPE);
-            parameterTypes.add(typeMapper.mapType(
-                    enclosingClassDescriptor(bindingContext, descriptor)));
-        }
-        Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-        //noinspection ConstantConditions
-        iv.invokespecial(typeMapper.mapType(superClassDescriptor).getInternalName(), "<init>",
-                         superCallMethod.getDescriptor());
     }
 
     private void genSimpleSuperCall(InstructionAdapter iv) {
@@ -1452,8 +1431,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        if (superCall instanceof JetDelegatorToSuperCall && !isAnonymousObject(descriptor)) {
-            JetValueArgumentList argumentList = ((JetDelegatorToSuperCall) superCall).getValueArgumentList();
+        if (superCall != null && !isAnonymousObject(descriptor)) {
+            JetValueArgumentList argumentList = superCall.getValueArgumentList();
             if (argumentList != null) {
                 argumentList.accept(visitor);
             }
@@ -1588,7 +1567,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         ArgumentGenerator argumentGenerator;
-        if (isAnonymousObject(descriptor) && superCall instanceof JetDelegatorToSuperCall) {
+        if (isAnonymousObject(descriptor)) {
             List<JvmMethodParameterSignature> superValues = superParameters.subList(superIndex, superParameters.size());
             argumentGenerator = new ObjectSuperCallArgumentGenerator(superValues, iv, offset);
         }

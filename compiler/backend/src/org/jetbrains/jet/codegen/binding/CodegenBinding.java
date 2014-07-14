@@ -320,12 +320,6 @@ public class CodegenBinding {
         }
     }
 
-    public static boolean hasThis0(BindingContext bindingContext, ClassDescriptor classDescriptor) {
-        //noinspection SuspiciousMethodCalls
-        CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
-        return closure != null && closure.getCaptureThis() != null;
-    }
-
     @Nullable
     private static ResolvedCall<ConstructorDescriptor> findSuperCall(
             @NotNull BindingContext bindingContext,
