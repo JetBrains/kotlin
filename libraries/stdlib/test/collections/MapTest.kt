@@ -131,6 +131,21 @@ class MapTest {
         assertEquals(2, map.get("b"))
     }
 
+    test fun createWithSelector() {
+        val map = listOf("a", "bb", "ccc").toMap { it.length }
+        assertEquals(3, map.size)
+        assertEquals("a", map.get(1))
+        assertEquals("bb", map.get(2))
+        assertEquals("ccc", map.get(3))
+    }
+
+    test fun createWithSelectorAndOverwrite() {
+        val map = listOf("aa", "bb", "ccc").toMap { it.length }
+        assertEquals(2, map.size)
+        assertEquals("bb", map.get(2))
+        assertEquals("ccc", map.get(3))
+    }
+
     test fun createUsingTo() {
         val map = mapOf("a" to 1, "b" to 2)
         assertEquals(2, map.size)
@@ -146,5 +161,47 @@ class MapTest {
         assertEquals(arrayListOf("c", "b", "a"), map.keySet().toList())
     }
 
+    test fun filter() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        val filteredByKey = map.filter { it.key == "b" }
+        assertEquals(1, filteredByKey.size)
+        assertEquals(3, filteredByKey["b"])
 
+        val filteredByKey2 = map.filterKeys { it == "b" }
+        assertEquals(1, filteredByKey2.size)
+        assertEquals(3, filteredByKey2["b"])
+
+        val filteredByValue = map.filter { it.value == 2 }
+        assertEquals(2, filteredByValue.size)
+        assertEquals(null, filteredByValue["b"])
+        assertEquals(2, filteredByValue["c"])
+        assertEquals(2, filteredByValue["a"])
+
+        val filteredByValue2 = map.filterValues { it == 2 }
+        assertEquals(2, filteredByValue2.size)
+        assertEquals(null, filteredByValue2["b"])
+        assertEquals(2, filteredByValue2["c"])
+        assertEquals(2, filteredByValue2["a"])
+    }
+
+    test fun filterNot() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        val filteredByKey = map.filterNot { it.key == "b" }
+        assertEquals(2, filteredByKey.size)
+        assertEquals(null, filteredByKey["b"])
+        assertEquals(2, filteredByKey["c"])
+        assertEquals(2, filteredByKey["a"])
+
+        val filteredByValue = map.filterNot { it.value == 2 }
+        assertEquals(1, filteredByValue.size)
+        assertEquals(3, filteredByValue["b"])
+    }
+
+    test fun plusAssign() {
+        val extended = hashMapOf(Pair("b", 3))
+        extended += ("c" to 2)
+        assertEquals(2, extended.size)
+        assertEquals(2, extended["c"])
+        assertEquals(3, extended["b"])
+    }
 }
