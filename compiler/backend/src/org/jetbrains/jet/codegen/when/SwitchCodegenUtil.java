@@ -20,6 +20,7 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -35,6 +36,12 @@ public class SwitchCodegenUtil {
             @NotNull Type subjectType,
             @NotNull BindingContext bindingContext
     ) {
+        // *switch opcode can be used if each item is enum entry or integral constant
+        // in case of enum CodegenAnnotationVisitor should put mappings into bindingContext
+        if (bindingContext.get(CodegenBinding.MAPPING_FOR_WHEN_BY_ENUM, expression) != null) {
+            return true;
+        }
+
         int typeSort = subjectType.getSort();
 
         if (typeSort != Type.INT && typeSort != Type.CHAR && typeSort != Type.SHORT && typeSort != Type.BYTE) {
@@ -120,6 +127,12 @@ public class SwitchCodegenUtil {
             boolean isStatement,
             @NotNull ExpressionCodegen codegen
     ) {
+        WhenByEnumsMapping mapping = codegen.getBindingContext().get(CodegenBinding.MAPPING_FOR_WHEN_BY_ENUM, expression);
+
+        if (mapping != null) {
+            return new EnumSwitchCodegen(expression, isStatement, codegen, mapping);
+        }
+
         return new IntegralConstantsSwitchCodegen(expression, isStatement, codegen);
     }
 }

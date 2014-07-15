@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.SamType;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
@@ -59,6 +60,12 @@ public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, Collection<ClassDescriptor>> INNER_CLASSES = Slices.createSimpleSlice();
 
     public static final WritableSlice<JetExpression, SamType> SAM_VALUE = Slices.createSimpleSlice();
+
+    public static final WritableSlice<JetWhenExpression, WhenByEnumsMapping> MAPPING_FOR_WHEN_BY_ENUM = Slices.
+            <JetWhenExpression, WhenByEnumsMapping>sliceBuilder().build();
+
+    public static final WritableSlice<String, List<WhenByEnumsMapping>> MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE =
+            Slices.<String, List<WhenByEnumsMapping>>sliceBuilder().build();
 
     static {
         BasicWritableSlice.initSliceDebugNames(CodegenBinding.class);

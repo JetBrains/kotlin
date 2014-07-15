@@ -25,6 +25,7 @@ import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.optimization.OptimizationClassBuilderFactory;
 import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
+import org.jetbrains.jet.codegen.when.MappingsClassesForWhenByEnum;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
@@ -78,6 +79,9 @@ public class GenerationState {
 
     @NotNull
     private final SamWrapperClasses samWrapperClasses = new SamWrapperClasses(this);
+
+    @NotNull
+    private final MappingsClassesForWhenByEnum mappingsClassesForWhenByEnum = new MappingsClassesForWhenByEnum(this);
 
     @NotNull
     private final BindingTrace bindingTrace;
@@ -220,6 +224,11 @@ public class GenerationState {
     @NotNull
     public SamWrapperClasses getSamWrapperClasses() {
         return samWrapperClasses;
+    }
+
+    @NotNull
+    public MappingsClassesForWhenByEnum getMappingsClassesForWhenByEnum() {
+        return mappingsClassesForWhenByEnum;
     }
 
     public boolean isGenerateNotNullAssertions() {

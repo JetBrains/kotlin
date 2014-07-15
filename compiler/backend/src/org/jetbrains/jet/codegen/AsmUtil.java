@@ -788,4 +788,9 @@ public class AsmUtil {
             v.aconst(type);
         }
     }
+
+    @NotNull
+    public static Type getArrayOf(@NotNull String internalClassName) {
+        return Type.getType("[L" + internalClassName + ";");
+    }
 }

@@ -20,13 +20,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.AsmUtil;
-import org.jetbrains.jet.codegen.JvmRuntimeTypes;
-import org.jetbrains.jet.codegen.SamCodegenUtil;
-import org.jetbrains.jet.codegen.SamType;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.when.SwitchCodegenUtil;
+import org.jetbrains.jet.codegen.when.WhenByEnumsMapping;
+import org.jetbrains.jet.lang.cfg.WhenChecker;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
@@ -37,8 +38,11 @@ import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPacka
 import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -488,5 +492,75 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                 bindingTrace.record(CodegenBinding.SAM_VALUE, indexExpression, samType);
             }
         }
+    }
+
+    @Override
+    public void visitWhenExpression(@NotNull JetWhenExpression expression) {
+        super.visitWhenExpression(expression);
+        if (isWhenWithEnums(expression)) {
+            String currentClassName = getCurrentTopLevelClassOrPackagePartInternalName(expression.getContainingJetFile());
+
+            if (bindingContext.get(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName) == null) {
+                bindingTrace.record(
+                        MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE,
+                        currentClassName,
+                        new ArrayList<WhenByEnumsMapping>()
+                );
+            }
+
+            List<WhenByEnumsMapping> mappings = bindingContext.get(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName);
+            assert mappings != null : "guaranteed by contract";
+
+            int fieldNumber = mappings.size();
+
+            JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getSubjectExpression());
+            assert type != null : "should not be null in a valid when by enums";
+            ClassDescriptor classDescriptor = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
+            assert classDescriptor != null : "because it's enum";
+
+            WhenByEnumsMapping mapping = new WhenByEnumsMapping(
+                    CodegenBinding.getAsmType(bindingContext, classDescriptor).getInternalName(),
+                    currentClassName,
+                    fieldNumber
+            );
+
+            for (CompileTimeConstant constant : SwitchCodegenUtil.getAllConstants(expression, bindingContext)) {
+                assert constant instanceof EnumValue : "expression in when should be EnumValue";
+                mapping.putFirstTime((EnumValue) constant, mapping.size() + 1);
+            }
+
+            mappings.add(mapping);
+
+            bindingTrace.record(MAPPING_FOR_WHEN_BY_ENUM, expression, mapping);
+        }
+    }
+
+    private boolean isWhenWithEnums(@NotNull JetWhenExpression expression) {
+        return WhenChecker.isWhenByEnum(expression, bindingContext) &&
+                SwitchCodegenUtil.checkAllItemsAreConstantsSatisfying(
+                    expression,
+                    bindingContext,
+                    new Function1<CompileTimeConstant, Boolean>() {
+                        @Override
+                        public Boolean invoke(
+                             @NotNull CompileTimeConstant constant
+                        ) {
+                         return constant instanceof EnumValue;
+                        }
+                }
+        );
+    }
+
+    @NotNull
+    private String getCurrentTopLevelClassOrPackagePartInternalName(@NotNull JetFile file) {
+        ListIterator<ClassDescriptorWithState> iterator = classStack.listIterator(classStack.size());
+        while(iterator.hasPrevious()) {
+            ClassDescriptor previous = iterator.previous().getDescriptor();
+            if (DescriptorUtils.isTopLevelOrInnerClass(previous)) {
+                return CodegenBinding.getAsmType(bindingContext, previous).getInternalName();
+            }
+        }
+
+        return PackagePartClassUtils.getPackagePartInternalName(file);
     }
 }
