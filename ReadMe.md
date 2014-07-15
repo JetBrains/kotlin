@@ -1,6 +1,6 @@
 # Kotlin Programming Language
 
-Welcome to [Kotlin](http://www.jetbrains.com/kotlin)! Some handy links:
+Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
 
  * [Getting Started Guide](http://confluence.jetbrains.net/display/Kotlin/Getting+Started)
  * [Web Demo](http://kotlin-demo.jetbrains.com/)
