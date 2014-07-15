@@ -37,6 +37,7 @@ import org.jetbrains.jet.codegen.inline.NameGenerator;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
@@ -48,7 +49,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -97,7 +97,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private final BindingContext bindingContext;
 
     public final InstructionAdapter v;
-    final FrameMap myFrameMap;
+    public final FrameMap myFrameMap;
     private final MethodContext context;
     private final Type returnType;
 
@@ -1520,7 +1520,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         });
     }
 
-    private void markLineNumber(@NotNull JetElement statement) {
+    public void markLineNumber(@NotNull JetElement statement) {
         Document document = statement.getContainingFile().getViewProvider().getDocument();
         if (document != null) {
             int lineNumber = document.getLineNumber(statement.getTextRange().getStartOffset());  // 0-based
@@ -3725,8 +3725,8 @@ The "returned" value of try expression with no finally is either the last expres
 
         Type resultType = isStatement ? Type.VOID_TYPE : expressionType(expression);
 
-        if (canSwitchBeUsedIn(expression, subjectType)) {
-            return generateSwitch(expression, subjectType, resultType, isStatement);
+        if (SwitchCodegenUtil.canSwitchBeUsedIn(expression, subjectType, bindingContext)) {
+            return generateSwitch(expression, resultType, isStatement);
         }
 
         int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType) : -1;
@@ -3782,8 +3782,10 @@ The "returned" value of try expression with no finally is either the last expres
         return StackValue.onStack(resultType);
     }
 
-    private void putUnitInstanceOntoStackForNonExhaustiveWhen(@NotNull JetWhenExpression expression) {
-        if (Boolean.TRUE.equals(bindingContext.get(EXHAUSTIVE_WHEN, expression))) {
+    public void putUnitInstanceOntoStackForNonExhaustiveWhen(
+            @NotNull JetWhenExpression expression
+    ) {
+        if (Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, expression))) {
             // when() is supposed to be exhaustive
             throwNewException("kotlin/NoWhenBranchMatchedException");
         }
@@ -3816,154 +3818,15 @@ The "returned" value of try expression with no finally is either the last expres
 
     private StackValue generateSwitch(
             @NotNull JetWhenExpression expression,
-            @NotNull Type subjectType,
             @NotNull Type resultType,
             boolean isStatement
     ) {
-        Map<Integer, Label> transitions = Maps.newTreeMap();
+        SwitchCodegenUtil.buildAppropriateSwitchCodegen(
+                expression, isStatement, this
 
-        Label[] entryLabels = new Label[expression.getEntries().size()];
-        int entryLabelsCounter = 0;
-
-        Label elseLabel = new Label();
-        Label endLabel = new Label();
-        boolean hasElse = expression.getElseExpression() != null;
-
-        for (JetWhenEntry entry : expression.getEntries()) {
-            Label entryLabel = new Label();
-
-            for (JetWhenCondition condition : entry.getConditions()) {
-                assert condition instanceof JetWhenConditionWithExpression : "Condition should be instance of JetWhenConditionWithExpression";
-
-                JetExpression conditionExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-                assert conditionExpression != null : "Condition expression in when should not be bull";
-
-                CompileTimeConstant constant = getCompileTimeConstant(conditionExpression, bindingContext);
-                assert doesConstantFitForSwitch(constant) : "Condition should be a constant in when for generating switch-instruction";
-
-                int value = (constant.getValue() instanceof Number)
-                            ? ((Number) constant.getValue()).intValue()
-                            : ((Character) constant.getValue()).charValue();
-
-                if (!transitions.containsKey(value)) {
-                    transitions.put(value, entryLabel);
-                }
-            }
-
-            if (entry.isElse()) {
-                elseLabel = entryLabel;
-            }
-
-            entryLabels[entryLabelsCounter++] = entryLabel;
-        }
-
-        gen(expression.getSubjectExpression(), subjectType);
-        generateSwitchInstructionByTransitionsTable(
-                transitions,
-                //if there is no else-entry and it's statement then default --- endLabel
-                (hasElse || !isStatement) ? elseLabel : endLabel
-        );
-
-        //resolving entries' labels
-        int i = 0;
-        for (JetWhenEntry entry : expression.getEntries()) {
-            v.visitLabel(entryLabels[i++]);
-
-            FrameMap.Mark mark = myFrameMap.mark();
-            gen(entry.getExpression(), resultType);
-            mark.dropTo();
-
-            if (!entry.isElse()) {
-                v.goTo(endLabel);
-            }
-        }
-
-        //there is no else-entry but this is not statement, so we should return Unit
-        if (!hasElse && !isStatement) {
-            v.visitLabel(elseLabel);
-            putUnitInstanceOntoStackForNonExhaustiveWhen(expression);
-        }
-
-        markLineNumber(expression);
-        v.mark(endLabel);
+        ).generate();
 
         return StackValue.onStack(resultType);
-    }
-
-    private void generateSwitchInstructionByTransitionsTable(@NotNull Map<Integer, Label> transitions, @NotNull Label defaultLabel) {
-        int[] keys = new int[transitions.size()];
-        Label[] labels = new Label[transitions.size()];
-        int i = 0;
-
-        for (Map.Entry<Integer, Label> transition : transitions.entrySet()) {
-            keys[i] = transition.getKey();
-            labels[i] = transition.getValue();
-
-            i++;
-        }
-
-        int nlabels = keys.length;
-        int hi = keys[nlabels - 1];
-        int lo = keys[0];
-
-        /*
-         * Heuristic estimation if it's better to use tableswitch or lookupswitch.
-         * From OpenJDK sources
-         */
-        long table_space_cost = 4 + ((long) hi - lo + 1); // words
-        long table_time_cost = 3; // comparisons
-        long lookup_space_cost = 3 + 2 * (long) nlabels;
-        long lookup_time_cost = nlabels;
-
-        boolean useTableSwitch = nlabels > 0 &&
-                                 table_space_cost + 3 * table_time_cost <=
-                                 lookup_space_cost + 3 * lookup_time_cost;
-
-        if (!useTableSwitch) {
-            v.lookupswitch(defaultLabel, keys, labels);
-            return;
-        }
-
-        Label[] sparseLabels = new Label[hi - lo + 1];
-        Arrays.fill(sparseLabels, defaultLabel);
-
-        for (i = 0; i < keys.length; i++) {
-            sparseLabels[keys[i] - lo] = labels[i];
-        }
-
-        v.tableswitch(lo, hi, defaultLabel, sparseLabels);
-    }
-
-    private static boolean doesConstantFitForSwitch(@Nullable CompileTimeConstant constant) {
-        return (constant instanceof IntegerValueConstant);
-    }
-
-    private boolean canSwitchBeUsedIn(@NotNull JetWhenExpression expression, @NotNull Type subjectType) {
-        int typeSort = subjectType.getSort();
-
-        if (typeSort != Type.INT && typeSort != Type.CHAR && typeSort != Type.SHORT && typeSort != Type.BYTE) {
-            return false;
-        }
-
-        for (JetWhenEntry entry : expression.getEntries()) {
-            for (JetWhenCondition condition : entry.getConditions()) {
-                if (!(condition instanceof JetWhenConditionWithExpression)) {
-                    return false;
-                }
-
-                //ensure that expression is constant
-                JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-
-                assert patternExpression != null : "expression in when should not be null";
-
-                CompileTimeConstant constant = getCompileTimeConstant(patternExpression, bindingContext);
-                if (!doesConstantFitForSwitch(constant)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     private boolean isIntRangeExpr(JetExpression rangeExpression) {
