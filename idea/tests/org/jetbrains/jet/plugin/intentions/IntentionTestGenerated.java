@@ -3510,6 +3510,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest("idea/testData/intentions/makeTypeExplicitInLambda/shortenReferencesForReceiver.kt");
         }
         
+        @TestMetadata("shortenReferencesForReturnType.kt")
+        public void testShortenReferencesForReturnType() throws Exception {
+            doTest("idea/testData/intentions/makeTypeExplicitInLambda/shortenReferencesForReturnType.kt");
+        }
+        
         @TestMetadata("singleParam.kt")
         public void testSingleParam() throws Exception {
             doTest("idea/testData/intentions/makeTypeExplicitInLambda/singleParam.kt");
