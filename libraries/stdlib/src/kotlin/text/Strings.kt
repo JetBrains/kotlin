@@ -96,66 +96,74 @@ public fun Stream<String>.join(separator: String = ", ", prefix: String = "", po
     return joinToString(separator, prefix, postfix, limit, truncated)
 }
 /**
- * Returns a substring before first occurrence of delimiter. In case of no delimiter, returns the whole string.
+ * Returns a substring before first occurrence of delimiter.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.substringBefore(delimiter: Char): String {
+public fun String.substringBefore(delimiter: Char, missingSeparatorValue : String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) this else substring(0, index)
+    return if (index == -1) missingSeparatorValue else substring(0, index)
 }
 
 /**
- * Returns a substring before first occurrence of delimiter. In case of no delimiter, returns the whole string.
+ * Returns a substring before first occurrence of delimiter.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.substringBefore(delimiter: String): String {
+public fun String.substringBefore(delimiter: String, missingSeparatorValue : String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) this else substring(0, index)
+    return if (index == -1) missingSeparatorValue else substring(0, index)
 }
 /**
- * Returns a substring after first occurrence of delimiter. In case of no delimiter, returns an empty string.
+ * Returns a substring after first occurrence of delimiter.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.substringAfter(delimiter: Char): String {
+public fun String.substringAfter(delimiter: Char, missingSeparatorValue : String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) "" else substring(index + 1, length)
+    return if (index == -1) missingSeparatorValue else substring(index + 1, length)
 }
 
 /**
- * Returns a substring after first occurrence of delimiter. In case of no delimiter, returns an empty string.
+ * Returns a substring after first occurrence of delimiter.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.substringAfter(delimiter: String): String {
+public fun String.substringAfter(delimiter: String, missingSeparatorValue : String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) "" else substring(index + delimiter.length, length)
+    return if (index == -1) missingSeparatorValue else substring(index + delimiter.length, length)
 }
 
 /**
- * Returns a substring before last occurrence of delimiter. In case of no delimiter, returns the whole string.
+ * Returns a substring before last occurrence of delimiter.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.substringBeforeLast(delimiter: Char): String {
+public fun String.substringBeforeLast(delimiter: Char, missingSeparatorValue : String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) this else substring(0, index)
+    return if (index == -1) missingSeparatorValue else substring(0, index)
 }
 
 /**
- * Returns a substring before last occurrence of delimiter. In case of no delimiter, returns the whole string.
+ * Returns a substring before last occurrence of delimiter.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.substringBeforeLast(delimiter: String): String {
+public fun String.substringBeforeLast(delimiter: String, missingSeparatorValue : String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) this else substring(0, index)
+    return if (index == -1) missingSeparatorValue else substring(0, index)
 }
 
 /**
- * Returns a substring after last occurrence of delimiter. In case of no delimiter, returns an empty string.
+ * Returns a substring after last occurrence of delimiter.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.substringAfterLast(delimiter: Char): String {
+public fun String.substringAfterLast(delimiter: Char, missingSeparatorValue : String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) "" else substring(index + 1, length)
+    return if (index == -1) missingSeparatorValue else substring(index + 1, length)
 }
 
 /**
- * Returns a substring after last occurrence of delimiter. In case of no delimiter, returns an empty string.
+ * Returns a substring after last occurrence of delimiter.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.substringAfterLast(delimiter: String): String {
+public fun String.substringAfterLast(delimiter: String, missingSeparatorValue : String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) "" else substring(index + delimiter.length, length)
+    return if (index == -1) missingSeparatorValue else substring(index + delimiter.length, length)
 }
 
 /**
@@ -185,65 +193,73 @@ public fun String.replaceRange(range: IntRange, replacement: String): String {
 }
 
 /**
- * Replace part of string before first occurrence of given delimiter with replacement string
+ * Replace part of string before first occurrence of given delimiter with replacement string.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.replaceBefore(delimiter: Char, replacement: String): String {
+public fun String.replaceBefore(delimiter: Char, replacement: String, missingSeparatorValue : String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) replacement else replaceRange(0, index, replacement)
+    return if (index == -1) missingSeparatorValue else replaceRange(0, index, replacement)
 }
 
 /**
- * Replace part of string before first occurrence of given delimiter with replacement string
+ * Replace part of string before first occurrence of given delimiter with replacement string.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.replaceBefore(delimiter: String, replacement: String): String {
+public fun String.replaceBefore(delimiter: String, replacement: String, missingSeparatorValue : String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) replacement else replaceRange(0, index, replacement)
+    return if (index == -1) missingSeparatorValue else replaceRange(0, index, replacement)
 }
 
 /**
- * Replace part of string after first occurrence of given delimiter with replacement string
+ * Replace part of string after first occurrence of given delimiter with replacement string.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.replaceAfter(delimiter: Char, replacement: String): String {
+public fun String.replaceAfter(delimiter: Char, replacement: String, missingSeparatorValue : String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) this else replaceRange(index + 1, length, replacement)
+    return if (index == -1) missingSeparatorValue else replaceRange(index + 1, length, replacement)
 }
 
 /**
- * Replace part of string after first occurrence of given delimiter with replacement string
+ * Replace part of string after first occurrence of given delimiter with replacement string.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.replaceAfter(delimiter: String, replacement: String): String {
+public fun String.replaceAfter(delimiter: String, replacement: String, missingSeparatorValue : String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) this else replaceRange(index + delimiter.length, length, replacement)
+    return if (index == -1) missingSeparatorValue else replaceRange(index + delimiter.length, length, replacement)
 }
 
 /**
- * Replace part of string after last occurrence of given delimiter with replacement string
+ * Replace part of string after last occurrence of given delimiter with replacement string.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.replaceAfterLast(delimiter: String, replacement: String): String {
+public fun String.replaceAfterLast(delimiter: String, replacement: String, missingSeparatorValue : String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) this else replaceRange(index + delimiter.length, length, replacement)
+    return if (index == -1) missingSeparatorValue else replaceRange(index + delimiter.length, length, replacement)
 }
 
 /**
- * Replace part of string after last occurrence of given delimiter with replacement string
+ * Replace part of string after last occurrence of given delimiter with replacement string.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.replaceAfterLast(delimiter: Char, replacement: String): String {
+public fun String.replaceAfterLast(delimiter: Char, replacement: String, missingSeparatorValue : String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) this else replaceRange(index + 1, length, replacement)
+    return if (index == -1) missingSeparatorValue else replaceRange(index + 1, length, replacement)
 }
 
 /**
- * Replace part of string before last occurrence of given delimiter with replacement string
+ * Replace part of string before last occurrence of given delimiter with replacement string.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.replaceBeforeLast(delimiter: Char, replacement: String): String {
+public fun String.replaceBeforeLast(delimiter: Char, replacement: String, missingSeparatorValue : String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) replacement else replaceRange(0, index, replacement)
+    return if (index == -1) missingSeparatorValue else replaceRange(0, index, replacement)
 }
 
 /**
- * Replace part of string before last occurrence of given delimiter with replacement string
+ * Replace part of string before last occurrence of given delimiter with replacement string.
+ * In case of no delimiter, returns the value of missingSeparatorValue which defaults to original string.
  */
-public fun String.replaceBeforeLast(delimiter: String, replacement: String): String {
+public fun String.replaceBeforeLast(delimiter: String, replacement: String, missingSeparatorValue : String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) replacement else replaceRange(0, index, replacement)
+    return if (index == -1) missingSeparatorValue else replaceRange(0, index, replacement)
 }
