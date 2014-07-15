@@ -71,6 +71,10 @@ public class JetPsiFactory(private val project: Project) {
         return createType("T<X, Y>").findElementAt(3)!!
     }
 
+    public fun createDot(): PsiElement {
+        return createType("T.(X)").findElementAt(1)!!
+    }
+
     public fun createColon(): PsiElement {
         return createProperty("val x: Int").findElementAt(5)!!
     }

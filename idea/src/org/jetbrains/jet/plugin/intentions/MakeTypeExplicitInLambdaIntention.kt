@@ -97,10 +97,9 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         val expectedReceiverType = func.getReceiverParameter()?.getType()
         if (hasImplicitReceiverType(element) && expectedReceiverType != null) {
             val receiverTypeString = DescriptorRenderer.SOURCE_CODE.renderType(expectedReceiverType)
-            val paramListString = functionLiteral.getValueParameterList()?.getText()
-            val paramListWithReceiver = psiFactory.createExpression(receiverTypeString + "." + paramListString)
-            ShortenReferences.process(paramListWithReceiver)
-            functionLiteral.getValueParameterList()?.replace(paramListWithReceiver)
+            val dot = functionLiteral.addBefore(psiFactory.createDot(), functionLiteral.getValueParameterList())
+            functionLiteral.addBefore(psiFactory.createType(receiverTypeString), dot)
+            ShortenReferences.process(functionLiteral.getReceiverTypeRef()!!)
         }
     }
 
