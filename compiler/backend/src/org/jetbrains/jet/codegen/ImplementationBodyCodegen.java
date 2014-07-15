@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.backend.common.DataClassMethodGenerator;
-import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
@@ -47,7 +46,10 @@ import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
@@ -73,6 +75,7 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCallWithAssert;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.DelegationToTraitImpl;
@@ -1446,20 +1449,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
-            if (specifier != superCall) {
-                if (specifier instanceof JetDelegatorByExpressionSpecifier) {
-                    JetExpression delegateExpression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
-                    assert delegateExpression != null;
-                    delegateExpression.accept(visitor);
-                }
+            if (specifier instanceof JetDelegatorByExpressionSpecifier) {
+                JetExpression delegateExpression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
+                assert delegateExpression != null;
+                delegateExpression.accept(visitor);
             }
-            else {
-                if (superCall instanceof JetDelegatorToSuperCall) {
-                    JetValueArgumentList argumentList = ((JetDelegatorToSuperCall) superCall).getValueArgumentList();
-                    if (argumentList != null) {
-                        argumentList.accept(visitor);
-                    }
-                }
+        }
+
+        if (superCall instanceof JetDelegatorToSuperCall && !isAnonymousObject(descriptor)) {
+            JetValueArgumentList argumentList = ((JetDelegatorToSuperCall) superCall).getValueArgumentList();
+            if (argumentList != null) {
+                argumentList.accept(visitor);
             }
         }
     }
@@ -1550,51 +1550,96 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateDelegatorToConstructorCall(
-            InstructionAdapter iv, ExpressionCodegen codegen,
-            ConstructorDescriptor constructorDescriptor
+            @NotNull InstructionAdapter iv,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull ConstructorDescriptor constructorDescriptor
     ) {
-        ClassDescriptor classDecl = constructorDescriptor.getContainingDeclaration();
-
         iv.load(0, OBJECT_TYPE);
 
-        if (classDecl.getKind() == ClassKind.ENUM_CLASS || classDecl.getKind() == ClassKind.ENUM_ENTRY) {
-            iv.load(1, OBJECT_TYPE);
-            iv.load(2, Type.INT_TYPE);
-        }
-
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCallWithAssert(superCall, bindingContext);
+        ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(superCall, bindingContext);
         ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
 
-        //noinspection SuspiciousMethodCalls
-        CalculatedClosure closureForSuper = bindingContext.get(CLOSURE, superConstructor.getContainingDeclaration());
-        if (closureForSuper != null && closureForSuper.getCaptureThis() != null) {
-            iv.load(((ConstructorFrameMap) codegen.myFrameMap).getOuterThisIndex(), OBJECT_TYPE);
+        CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
+        CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor);
+
+        List<JvmMethodParameterSignature> superParameters = superCallable.getValueParameters();
+        List<JvmMethodParameterSignature> parameters = callable.getValueParameters();
+
+        int offset = 1;
+        int superIndex = 0;
+
+        // Here we match all the super constructor parameters except those with kind VALUE to the derived constructor parameters, push
+        // them all onto the stack and update "offset" variable so that in the end it points to the slot of the first VALUE argument
+        for (JvmMethodParameterSignature parameter : parameters) {
+            if (superIndex >= superParameters.size()) break;
+
+            JvmMethodParameterKind kind = parameter.getKind();
+            Type type = parameter.getAsmType();
+
+            // Stop when we reach the actual value parameters present in the code; they will be generated via ResolvedCall below
+            if (superParameters.get(superIndex).getKind() == JvmMethodParameterKind.VALUE &&
+                kind == JvmMethodParameterKind.SUPER_CALL_PARAM) {
+                break;
+            }
+
+            if (kind == JvmMethodParameterKind.SUPER_CALL_PARAM || kind == JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL ||
+                (kind == JvmMethodParameterKind.OUTER && superConstructor.getContainingDeclaration().isInner())) {
+                iv.load(offset, type);
+                superIndex++;
+            }
+
+            offset += type.getSize();
         }
 
-        CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
-
+        ArgumentGenerator argumentGenerator;
         if (isAnonymousObject(descriptor) && superCall instanceof JetDelegatorToSuperCall) {
-            int nextVar = findFirstSuperArgument(typeMapper.mapToCallableMethod(constructorDescriptor));
-            for (Type t : superCallable.getAsmMethod().getArgumentTypes()) {
-                iv.load(nextVar, t);
-                nextVar += t.getSize();
-            }
-            superCallable.invokeWithNotNullAssertion(codegen.v, state, resolvedCall);
+            List<JvmMethodParameterSignature> superValues = superParameters.subList(superIndex, superParameters.size());
+            argumentGenerator = new ObjectSuperCallArgumentGenerator(superValues, iv, offset);
         }
         else {
-            codegen.invokeMethodWithArguments(superCallable, resolvedCall, StackValue.none());
+            argumentGenerator =
+                    new CallBasedArgumentGenerator(codegen, codegen.defaultCallGenerator, superConstructor.getValueParameters(),
+                                                   superCallable.getValueParameterTypes());
         }
+
+        codegen.invokeMethodWithArguments(superCallable, resolvedCall, StackValue.none(), codegen.defaultCallGenerator, argumentGenerator);
     }
 
-    private static int findFirstSuperArgument(@NotNull CallableMethod method) {
-        int i = 0;
-        for (JvmMethodParameterSignature type : method.getValueParameters()) {
-            if (type.getKind() == JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM) {
-                return i + 1; // because of this
-            }
-            i += type.getAsmType().getSize();
+    private static class ObjectSuperCallArgumentGenerator extends ArgumentGenerator {
+        private final List<JvmMethodParameterSignature> parameters;
+        private final InstructionAdapter iv;
+        private int offset;
+
+        public ObjectSuperCallArgumentGenerator(
+                @NotNull List<JvmMethodParameterSignature> superParameters,
+                @NotNull InstructionAdapter iv,
+                int firstValueParamOffset
+        ) {
+            this.parameters = superParameters;
+            this.iv = iv;
+            this.offset = firstValueParamOffset;
         }
-        return -1;
+
+        @Override
+        public void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
+            generateSuperCallArgument(i);
+        }
+
+        @Override
+        public void generateDefault(int i, @NotNull DefaultValueArgument argument) {
+            pushDefaultValueOnStack(parameters.get(i).getAsmType(), iv);
+        }
+
+        @Override
+        public void generateVararg(int i, @NotNull VarargValueArgument argument) {
+            generateSuperCallArgument(i);
+        }
+
+        private void generateSuperCallArgument(int i) {
+            Type type = parameters.get(i).getAsmType();
+            iv.load(offset, type);
+            offset += type.getSize();
+        }
     }
 
     @Override
@@ -1602,7 +1647,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (declaration instanceof JetEnumEntry) {
             String name = declaration.getName();
             assert name != null : "Enum entry has no name: " + declaration.getText();
-            String desc = "L" + classAsmType.getInternalName() + ";";
+            String desc = classAsmType.getDescriptor();
             ClassDescriptor entryDescriptor = bindingContext.get(BindingContext.CLASS, declaration);
             v.newField(OtherOrigin(declaration, entryDescriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);
             myEnumConstants.add((JetEnumEntry) declaration);
@@ -1663,7 +1708,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
             }
 
-            ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCallWithAssert(specifier, bindingContext);
+            ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(specifier, bindingContext);
 
             CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor());
 

@@ -34,7 +34,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
@@ -784,9 +786,50 @@ public class JetTypeMapper {
         }
 
         ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
-        if (superCall != null && isAnonymousObject(descriptor.getContainingDeclaration())) {
-            for (JvmMethodParameterSignature parameter : mapSignature(superCall.getResultingDescriptor()).getValueParameters()) {
-                writeParameter(sw, JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM, parameter.getAsmType());
+        // We may generate a slightly wrong signature for a local class / anonymous object in light classes mode but we don't care,
+        // because such classes are not accessible from the outside world
+        if (superCall != null && classBuilderMode == ClassBuilderMode.FULL) {
+            writeSuperConstructorCallParameters(sw, descriptor, superCall, captureThis != null);
+        }
+    }
+
+    private void writeSuperConstructorCallParameters(
+            @NotNull BothSignatureWriter sw,
+            @NotNull ConstructorDescriptor descriptor,
+            @NotNull ResolvedCall<ConstructorDescriptor> superCall,
+            boolean hasOuter
+    ) {
+        ConstructorDescriptor superDescriptor = superCall.getResultingDescriptor();
+        List<ResolvedValueArgument> valueArguments = superCall.getValueArgumentsByIndex();
+        assert valueArguments != null : "Failed to arrange value arguments by index: " + superDescriptor;
+
+        List<JvmMethodParameterSignature> parameters = mapSignature(superDescriptor).getValueParameters();
+
+        int params = parameters.size();
+        int args = valueArguments.size();
+
+        // Mapped parameters should consist of captured values plus all of valueArguments
+        assert params >= args :
+                String.format("Incorrect number of mapped parameters vs arguments: %d < %d for %s", params, args, descriptor);
+
+        // Include all captured values, i.e. those parameters for which there are no resolved value arguments
+        for (int i = 0; i < params - args; i++) {
+            JvmMethodParameterSignature parameter = parameters.get(i);
+            JvmMethodParameterKind kind = parameter.getKind();
+            if (kind == JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL) continue;
+            if (hasOuter && kind == JvmMethodParameterKind.OUTER) continue;
+
+            writeParameter(sw, JvmMethodParameterKind.SUPER_CALL_PARAM, parameter.getAsmType());
+        }
+
+        if (isAnonymousObject(descriptor.getContainingDeclaration())) {
+            // For anonymous objects, also add all real non-default value arguments passed to the super constructor
+            for (int i = 0; i < args; i++) {
+                ResolvedValueArgument valueArgument = valueArguments.get(i);
+                JvmMethodParameterSignature parameter = parameters.get(params - args + i);
+                if (!(valueArgument instanceof DefaultValueArgument)) {
+                    writeParameter(sw, JvmMethodParameterKind.SUPER_CALL_PARAM, parameter.getAsmType());
+                }
             }
         }
     }

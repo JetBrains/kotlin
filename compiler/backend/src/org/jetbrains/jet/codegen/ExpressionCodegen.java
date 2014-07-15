@@ -1328,7 +1328,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(CONSTRUCTOR, expression.getObjectDeclaration());
         assert constructorDescriptor != null : "Unresolved constructor: " + expression.getText();
-        CallableMethod constructor = typeMapper.mapToCallableMethod(constructorDescriptor);
+        JvmMethodSignature constructor = typeMapper.mapSignature(constructorDescriptor);
 
         Type type = typeMapper.mapType(constructorDescriptor.getContainingDeclaration());
 
@@ -1339,12 +1339,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
         if (superCall != null) {
+            // For an anonymous object, we should also generate all non-default arguments that it captures for its super call
             ConstructorDescriptor superConstructor = superCall.getResultingDescriptor();
-            List<ResolvedValueArgument> valueArguments = superCall.getValueArgumentsByIndex();
-            assert valueArguments != null : "Failed to arrange value arguments by index: " + superConstructor;
-            ArgumentGenerator argumentGenerator =
-                    new CallBasedArgumentGenerator(this, defaultCallGenerator, superConstructor.getValueParameters(),
-                                                   typeMapper.mapToCallableMethod(superConstructor).getValueParameterTypes());
+            List<ValueParameterDescriptor> superValueParameters = superConstructor.getValueParameters();
+            int params = superValueParameters.size();
+            List<Type> superMappedTypes = typeMapper.mapToCallableMethod(superConstructor).getValueParameterTypes();
+            assert superMappedTypes.size() >= params : String.format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
+                                                                     superMappedTypes.size(), params, constructorDescriptor);
+
+            List<ResolvedValueArgument> valueArguments = new ArrayList<ResolvedValueArgument>(params);
+            List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(params);
+            List<Type> mappedTypes = new ArrayList<Type>(params);
+            for (ValueParameterDescriptor parameter : superValueParameters) {
+                ResolvedValueArgument argument = superCall.getValueArguments().get(parameter);
+                if (!(argument instanceof DefaultValueArgument)) {
+                    valueArguments.add(argument);
+                    valueParameters.add(parameter);
+                    mappedTypes.add(superMappedTypes.get(parameter.getIndex()));
+                }
+            }
+            ArgumentGenerator argumentGenerator = new CallBasedArgumentGenerator(this, defaultCallGenerator, valueParameters, mappedTypes);
+
             argumentGenerator.generate(valueArguments);
         }
 
@@ -1352,7 +1367,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.onStack(type);
     }
 
-    public void pushClosureOnStack(@Nullable CalculatedClosure closure, boolean ignoreThisAndReceiver, @NotNull CallGenerator callGenerator) {
+    public void pushClosureOnStack(
+            @Nullable CalculatedClosure closure,
+            boolean ignoreThisAndReceiver,
+            @NotNull CallGenerator callGenerator
+    ) {
         if (closure == null) return;
 
         int paramIndex = 0;
@@ -1380,6 +1399,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
             StackValue capturedVar = entry.getValue().getOuterValue(this);
             callGenerator.putCapturedValueOnStack(capturedVar, sharedVarType, paramIndex++);
+        }
+
+        ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
+        if (superCall != null) {
+            MutableClosure superClosure = bindingContext.get(CLOSURE, superCall.getResultingDescriptor().getContainingDeclaration());
+            pushClosureOnStack(superClosure, ignoreThisAndReceiver, callGenerator);
         }
     }
 
@@ -2133,7 +2158,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         invokeMethodWithArguments(callableMethod, resolvedCall, receiver, callGenerator, argumentGenerator);
     }
 
-    private void invokeMethodWithArguments(
+    public void invokeMethodWithArguments(
             @NotNull CallableMethod callableMethod,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull StackValue receiver,
