@@ -35,6 +35,7 @@ import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
+import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -116,6 +117,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);
         configuration.put(JVMConfigurationKeys.ENABLE_INLINE,
                           CompilerArgumentsUtil.optionToBooleanFlag(arguments.inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG));
+        configuration.put(JVMConfigurationKeys.ENABLE_OPTIMIZATION,
+                          CompilerArgumentsUtil.optionToBooleanFlag(arguments.optimize, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG));
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
@@ -209,7 +212,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         super.checkArguments(argument);
 
         if (!CompilerArgumentsUtil.checkOption(argument.inline)) {
-            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongInlineOptionErrorMessage(argument.inline));
+            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", argument.inline));
+        }
+
+        if (!CompilerArgumentsUtil.checkOption(argument.optimize)) {
+            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", argument.optimize));
         }
     }
 

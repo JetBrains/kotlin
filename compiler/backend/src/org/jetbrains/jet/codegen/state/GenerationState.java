@@ -23,6 +23,8 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.jet.codegen.optimization.OptimizationClassBuilderFactory;
+import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
@@ -90,6 +92,7 @@ public class GenerationState {
     private final GenerateClassFilter generateClassFilter;
 
     private final boolean inlineEnabled;
+    private final boolean optimizationEnabled;
 
     @Nullable
     private List<ScriptDescriptor> earlierScriptsForReplInterpreter;
@@ -116,7 +119,9 @@ public class GenerationState {
             @NotNull List<JetFile> files
     ) {
         this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, false, GenerateClassFilter.GENERATE_ALL,
-             InlineCodegenUtil.DEFAULT_INLINE_FLAG, null, null, DiagnosticHolder.DO_NOTHING, null);
+             InlineCodegenUtil.DEFAULT_INLINE_FLAG, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG,
+             null, null, DiagnosticHolder.DO_NOTHING, null
+        );
     }
 
     public GenerationState(
@@ -130,6 +135,7 @@ public class GenerationState {
             boolean generateNotNullParamAssertions,
             GenerateClassFilter generateClassFilter,
             boolean inlineEnabled,
+            boolean optimizationEnabled,
             @Nullable Collection<FqName> packagesWithRemovedFiles,
             @Nullable String moduleId,
             @NotNull DiagnosticHolder diagnostics,
@@ -143,6 +149,7 @@ public class GenerationState {
         this.packagesWithRemovedFiles = packagesWithRemovedFiles == null ? Collections.<FqName>emptySet() : packagesWithRemovedFiles;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
         this.inlineEnabled = inlineEnabled;
+        this.optimizationEnabled = optimizationEnabled;
 
         this.bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
         this.bindingContext = bindingTrace.getBindingContext();
@@ -151,6 +158,11 @@ public class GenerationState {
         this.typeMapper = new JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, outDirectory);
 
         this.intrinsics = new IntrinsicMethods();
+
+        if (optimizationEnabled) {
+            builderFactory = new OptimizationClassBuilderFactory(builderFactory);
+        }
+
         this.classFileFactory = new ClassFileFactory(this, new BuilderFactoryForDuplicateSignatureDiagnostics(
                 builderFactory, this.bindingContext, diagnostics));
 
@@ -232,6 +244,10 @@ public class GenerationState {
 
     public boolean isInlineEnabled() {
         return inlineEnabled;
+    }
+
+    public boolean isoptimizationEnabled() {
+        return optimizationEnabled;
     }
 
     public void beforeCompile() {

@@ -33,7 +33,7 @@ public class CompilerArgumentsUtil {
                "false".equalsIgnoreCase(option);
     }
 
-    public static String getWrongInlineOptionErrorMessage(@Nullable String inline) {
-        return "Wrong value for inline option: '" + inline + "'. Should be 'on'/'off' or 'true'/'false'";
+    public static String getWrongCheckOptionErrorMessage(@Nullable String option, @Nullable String value) {
+        return "Wrong value for " + option + " option: '" + value + "'. Should be 'on'/'off' or 'true'/'false'";
     }
 }

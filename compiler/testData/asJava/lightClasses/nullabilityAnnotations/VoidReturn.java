@@ -1,3 +1,3 @@
 public final class _DefaultPackage {
-    public static final void foo(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "s") java.lang.String s) { /* compiled code */ }
+    public static final void foo(@jet.runtime.typeinfo.JetValueParameter(name = "s") @org.jetbrains.annotations.NotNull java.lang.String s) { /* compiled code */ }
 }

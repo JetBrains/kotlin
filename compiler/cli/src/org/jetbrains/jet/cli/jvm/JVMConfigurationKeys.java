@@ -39,6 +39,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> ENABLE_INLINE =
             CompilerConfigurationKey.create("enable inline");
 
+    public static final CompilerConfigurationKey<Boolean> ENABLE_OPTIMIZATION =
+            CompilerConfigurationKey.create("enable optimization");
+
     public static final CompilerConfigurationKey<File> INCREMENTAL_CACHE_BASE_DIR =
             CompilerConfigurationKey.create("incremental cache base dir");
 
