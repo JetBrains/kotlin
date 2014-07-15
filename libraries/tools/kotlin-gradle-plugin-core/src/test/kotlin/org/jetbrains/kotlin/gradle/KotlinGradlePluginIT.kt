@@ -43,8 +43,8 @@ class BasicKotlinGradleIT : BaseGradleIT() {
         }
     }
 
-    Test fun testOptimizationsDisabled() {
-        Project("optimizationsDisabled", "1.6").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+    Test fun testOptimizationDisabled() {
+        Project("optimizationDisabled", "1.6").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
         }
     }

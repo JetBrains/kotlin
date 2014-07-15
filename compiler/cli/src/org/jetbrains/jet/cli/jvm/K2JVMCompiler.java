@@ -117,8 +117,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);
         configuration.put(JVMConfigurationKeys.ENABLE_INLINE,
                           CompilerArgumentsUtil.optionToBooleanFlag(arguments.inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG));
-        configuration.put(JVMConfigurationKeys.ENABLE_OPTIMIZATIONS,
-                          CompilerArgumentsUtil.optionToBooleanFlag(arguments.optimizations, OptimizationUtils.DEFAULT_OPTIMIZATIONS_FLAG));
+        configuration.put(JVMConfigurationKeys.ENABLE_OPTIMIZATION,
+                          CompilerArgumentsUtil.optionToBooleanFlag(arguments.optimize, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG));
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
@@ -215,8 +215,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", argument.inline));
         }
 
-        if (!CompilerArgumentsUtil.checkOption(argument.optimizations)) {
-            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimizations", argument.optimizations));
+        if (!CompilerArgumentsUtil.checkOption(argument.optimize)) {
+            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", argument.optimize));
         }
     }
 

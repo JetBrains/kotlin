@@ -160,11 +160,11 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
     public String inline;
 
     /**
-     * Switch method optimizations on/off: possible values are "on" and "off".
+     * Switch method optimization on/off: possible values are "on" and "off".
      *
      * @parameter
      */
-    public String optimizations;
+    public String optimize;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -322,21 +322,21 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         arguments.annotations = getFullAnnotationsPath(log, annotationPaths);
         log.info("Using kotlin annotations from " + arguments.annotations);
         arguments.inline = inline;
-        arguments.optimizations = optimizations;
+        arguments.optimize = optimize;
 
         if (!CompilerArgumentsUtil.checkOption(arguments.inline)) {
             throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", arguments.inline));
         }
 
-        if (!CompilerArgumentsUtil.checkOption(arguments.optimizations)) {
-            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimizations", arguments.optimizations));
+        if (!CompilerArgumentsUtil.checkOption(arguments.optimize)) {
+            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", arguments.optimize));
         }
 
         log.info("Method inlining is " + CompilerArgumentsUtil.optionToBooleanFlag(arguments.inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG));
         log.info(
-                "Optimizations mode is " + CompilerArgumentsUtil.optionToBooleanFlag(
-                        arguments.optimizations,
-                        OptimizationUtils.DEFAULT_OPTIMIZATIONS_FLAG
+                "Optimization mode is " + CompilerArgumentsUtil.optionToBooleanFlag(
+                        arguments.optimize,
+                        OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG
                 )
         );
     }

@@ -51,7 +51,7 @@ public class BytecodeCompilerTask extends Task {
     private Path compileClasspath;
     private boolean includeRuntime = true;
     private String inline;
-    private String optimizations;
+    private String optimize;
 
     public void setOutput(File output) {
         this.output = output;
@@ -99,8 +99,8 @@ public class BytecodeCompilerTask extends Task {
         this.inline = inline;
     }
 
-    public void setOptimizations(String optimizations) {
-        this.optimizations = optimizations;
+    public void setOptimize(String optimize) {
+        this.optimize = optimize;
     }
 
     /**
@@ -153,12 +153,12 @@ public class BytecodeCompilerTask extends Task {
             throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", inline));
         }
 
-        if (!CompilerArgumentsUtil.checkOption(optimizations)) {
-            throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimizations", optimizations));
+        if (!CompilerArgumentsUtil.checkOption(optimize)) {
+            throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", optimize));
         }
 
         boolean enableInline = CompilerArgumentsUtil.optionToBooleanFlag(inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG);
-        boolean enableOptimizations = CompilerArgumentsUtil.optionToBooleanFlag(optimizations, OptimizationUtils.DEFAULT_OPTIMIZATIONS_FLAG);
+        boolean enableOptimization = CompilerArgumentsUtil.optionToBooleanFlag(optimize, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG);
 
         if (this.src != null) {
 
@@ -174,13 +174,13 @@ public class BytecodeCompilerTask extends Task {
             if (this.output != null) {
                 compiler.sourcesToDir(
                         source, destination, stdlibPath, classpath, externalAnnotationsPath,
-                        enableInline, enableOptimizations
+                        enableInline, enableOptimization
                 );
             }
             else {
                 compiler.sourcesToJar(
                         source, destination, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath,
-                        enableInline, enableOptimizations
+                        enableInline, enableOptimization
                 );
             }
         }
@@ -198,7 +198,7 @@ public class BytecodeCompilerTask extends Task {
 
             compiler.moduleToJar(
                     modulePath, jarPath, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath,
-                    enableInline, enableOptimizations
+                    enableInline, enableOptimization
             );
         }
         else {

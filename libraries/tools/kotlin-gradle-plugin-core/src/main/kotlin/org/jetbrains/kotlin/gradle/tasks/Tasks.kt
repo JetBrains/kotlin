@@ -121,14 +121,14 @@ public open class KotlinCompile(): AbstractCompile() {
         args.noStdlib = true
         args.noJdkAnnotations = true
         args.inline = kotlinOptions.inline
-        args.optimizations = kotlinOptions.optimizations
+        args.optimize = kotlinOptions.optimize
 
         if (!CompilerArgumentsUtil.checkOption(args.inline)) {
             throw GradleException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", args.inline))
         }
 
-        if (!CompilerArgumentsUtil.checkOption(args.optimizations)) {
-            throw GradleException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimizations", args.optimizations))
+        if (!CompilerArgumentsUtil.checkOption(args.optimize)) {
+            throw GradleException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", args.optimize))
         }
 
         val messageCollector = GradleMessageCollector(getLogger())

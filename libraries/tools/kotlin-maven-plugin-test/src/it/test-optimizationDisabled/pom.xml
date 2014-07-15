@@ -11,7 +11,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>test-optimizationsDisabled</artifactId>
+    <artifactId>test-optimizationDisabled</artifactId>
 
     <dependencies>
         <dependency>
@@ -69,7 +69,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <optimizations>false</optimizations>
+                    <optimize>false</optimize>
                 </configuration>
             </plugin>
         </plugins>

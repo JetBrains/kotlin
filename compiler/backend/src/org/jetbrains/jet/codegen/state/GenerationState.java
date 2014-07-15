@@ -92,7 +92,7 @@ public class GenerationState {
     private final GenerateClassFilter generateClassFilter;
 
     private final boolean inlineEnabled;
-    private final boolean optimizationsEnabled;
+    private final boolean optimizationEnabled;
 
     @Nullable
     private List<ScriptDescriptor> earlierScriptsForReplInterpreter;
@@ -119,7 +119,7 @@ public class GenerationState {
             @NotNull List<JetFile> files
     ) {
         this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, false, GenerateClassFilter.GENERATE_ALL,
-             InlineCodegenUtil.DEFAULT_INLINE_FLAG, OptimizationUtils.DEFAULT_OPTIMIZATIONS_FLAG,
+             InlineCodegenUtil.DEFAULT_INLINE_FLAG, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG,
              null, null, DiagnosticHolder.DO_NOTHING, null
         );
     }
@@ -135,7 +135,7 @@ public class GenerationState {
             boolean generateNotNullParamAssertions,
             GenerateClassFilter generateClassFilter,
             boolean inlineEnabled,
-            boolean optimizationsEnabled,
+            boolean optimizationEnabled,
             @Nullable Collection<FqName> packagesWithRemovedFiles,
             @Nullable String moduleId,
             @NotNull DiagnosticHolder diagnostics,
@@ -149,7 +149,7 @@ public class GenerationState {
         this.packagesWithRemovedFiles = packagesWithRemovedFiles == null ? Collections.<FqName>emptySet() : packagesWithRemovedFiles;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
         this.inlineEnabled = inlineEnabled;
-        this.optimizationsEnabled = optimizationsEnabled;
+        this.optimizationEnabled = optimizationEnabled;
 
         this.bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
         this.bindingContext = bindingTrace.getBindingContext();
@@ -159,7 +159,7 @@ public class GenerationState {
 
         this.intrinsics = new IntrinsicMethods();
 
-        if (optimizationsEnabled) {
+        if (optimizationEnabled) {
             builderFactory = new OptimizationClassBuilderFactory(builderFactory);
         }
 
@@ -246,8 +246,8 @@ public class GenerationState {
         return inlineEnabled;
     }
 
-    public boolean isOptimizationsEnabled() {
-        return optimizationsEnabled;
+    public boolean isoptimizationEnabled() {
+        return optimizationEnabled;
     }
 
     public void beforeCompile() {

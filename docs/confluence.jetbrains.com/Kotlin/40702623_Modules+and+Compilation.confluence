@@ -2,7 +2,7 @@
 
 A *module* is a _unit of compilation_ in [Kotlin]. Physically, modules are described by _build scripts_. Such scripts programmatically assemble _module descriptors_ that carry information about source files that constitute the module, dependencies, and compiler options used to build the module.
 
-Being a unit of compilation means that all the analyses and optimizations may be performed module-wise, and that binary compatibility issues arise only on module boundaries.
+Being a unit of compilation means that all the analyses and optimize may be performed module-wise, and that binary compatibility issues arise only on module boundaries.
 
 h3. Module identifiers and root namespaces
 

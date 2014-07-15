@@ -345,7 +345,7 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
-                configuration.get(JVMConfigurationKeys.ENABLE_OPTIMIZATIONS, OptimizationUtils.DEFAULT_OPTIMIZATIONS_FLAG),
+                configuration.get(JVMConfigurationKeys.ENABLE_OPTIMIZATION, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG),
                 packagesWithRemovedFiles,
                 moduleId,
                 diagnosticHolder,

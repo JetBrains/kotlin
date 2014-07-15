@@ -41,7 +41,7 @@ test {
 
 compileKotlin {
     kotlinOptions.annotations = "externalAnnotations"
-    kotlinOptions.optimizations = false
+    kotlinOptions.optimize = false
 }
 
 
