@@ -4,6 +4,9 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/java-i18n/lib/java-i18n.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-i18n/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-i18n/testSrc" />
+    </SOURCES>
   </library>
 </component>
