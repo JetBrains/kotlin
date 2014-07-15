@@ -1,3 +1,5 @@
 fun main() {
-    val randomFunction: (x: kotlin.Int, y: kotlin.String) -> kotlin.Int = {(<caret>x, str) -> x}
+    val randomFunction: (x: kotlin.support.AbstractIterator<Int>, y: kotlin.String) -> kotlin.String = {(<caret>x, str) -> str}
 }
+
+// WITH_RUNTIME
