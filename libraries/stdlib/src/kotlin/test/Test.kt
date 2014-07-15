@@ -81,14 +81,15 @@ public inline fun <T> expect(expected: T, message: String, block: ()-> T) {
 
 /** Asserts that given function block fails by throwing an exception */
 public fun fails(block: ()-> Unit): Throwable? {
+    var thrown : Throwable? = null
     try {
         block()
-        asserter.fail("Expected an exception to be thrown")
-        return null
     } catch (e: Throwable) {
-        //println("Caught expected exception: $e")
-        return e
+        thrown = e
     }
+    if (thrown == null)
+        asserter.fail("Expected an exception to be thrown")
+    return thrown
 }
 
 /**
