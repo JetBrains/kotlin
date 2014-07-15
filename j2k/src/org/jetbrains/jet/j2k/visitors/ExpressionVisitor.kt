@@ -17,7 +17,6 @@
 package org.jetbrains.jet.j2k.visitors
 
 import com.intellij.psi.*
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
@@ -187,7 +186,7 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
         val arguments = expression.getArgumentList().getExpressions()
         val target = methodExpr.resolve()
         val isNullable = if (target is PsiMethod) typeConverter.methodNullability(target).isNullable(converter.settings) else false
-        val typeArguments = typeConverter.convertTypes(expression.getTypeArguments())
+        val typeArguments = convertTypeArguments(expression)
 
         if (target is KotlinLightMethod) {
             val origin = target.origin
@@ -250,7 +249,7 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
         if (target is PsiMethod) {
             val specialMethod = SpecialMethod.values().firstOrNull { it.matches(target) }
             if (specialMethod != null && arguments.size == specialMethod.parameterCount) {
-                val converted = specialMethod.convertCall(methodExpr.getQualifierExpression(), arguments, converter)
+                val converted = specialMethod.convertCall(methodExpr.getQualifierExpression(), arguments, typeArguments, converter)
                 if (converted != null) {
                     result = converted
                     return
@@ -262,6 +261,27 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
                                       convertArguments(expression),
                                       typeArguments,
                                       isNullable)
+    }
+
+    private fun convertTypeArguments(call: PsiCallExpression): List<Type> {
+        var typeArgs = call.getTypeArguments().toList()
+
+        // always add explicit type arguments and remove them if they are redundant later
+        if (typeArgs.size == 0) {
+            val resolve = call.resolveMethodGenerics()
+            if (resolve.isValidResult()) {
+                val method = resolve.getElement() as? PsiMethod
+                if (method != null) {
+                    val typeParameters = method.getTypeParameters()
+                    if (typeParameters.isNotEmpty()) {
+                        val map = resolve.getSubstitutor().getSubstitutionMap()
+                        typeArgs = typeParameters.map { map[it] ?: return listOf() }
+                    }
+                }
+            }
+        }
+
+        return typeArgs.map { typeConverter.convertType(it).assignNoPrototype() }
     }
 
     override fun visitNewExpression(expression: PsiNewExpression) {

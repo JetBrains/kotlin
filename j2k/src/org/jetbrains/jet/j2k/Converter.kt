@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.resolve.BindingContext
 
 public trait ConversionScope {
     public fun contains(element: PsiElement): Boolean
@@ -34,7 +36,16 @@ public class FilesConversionScope(val files: Collection<PsiJavaFile>) : Conversi
     override fun contains(element: PsiElement) = files.any { element.getContainingFile() == it }
 }
 
-public class Converter private(val project: Project, val settings: ConverterSettings, val conversionScope: ConversionScope, val state: Converter.State) {
+public trait PostProcessor {
+    public fun analyzeFile(file: JetFile): BindingContext
+    public fun doAdditionalProcessing(file: JetFile)
+}
+
+public class Converter private(val project: Project,
+                               val settings: ConverterSettings,
+                               val conversionScope: ConversionScope,
+                               private val postProcessor: PostProcessor?,
+                               private val state: Converter.State) {
     private class State(val methodReturnType: PsiType?,
                         val expressionVisitorFactory: (Converter) -> ExpressionVisitor,
                         val statementVisitorFactory: (Converter) -> StatementVisitor,
@@ -55,41 +66,46 @@ public class Converter private(val project: Project, val settings: ConverterSett
     val annotationConverter = AnnotationConverter(this)
 
     class object {
-        public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope): Converter {
+        public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope, postProcessor: PostProcessor?): Converter {
             val state = State(null, { ExpressionVisitor(it) }, { StatementVisitor(it) }, null, null, null)
-            return Converter(project, settings, conversionScope, state)
+            return Converter(project, settings, conversionScope, postProcessor, state)
         }
     }
 
     fun withMethodReturnType(methodReturnType: PsiType?): Converter
-            = Converter(project, settings, conversionScope,
+            = Converter(project, settings, conversionScope, postProcessor,
                         State(methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withExpressionVisitor(factory: (Converter) -> ExpressionVisitor): Converter
-            = Converter(project, settings, conversionScope,
+            = Converter(project, settings, conversionScope, postProcessor,
                         State(state.methodReturnType, factory, state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withStatementVisitor(factory: (Converter) -> StatementVisitor): Converter
-            = Converter(project, settings, conversionScope,
+            = Converter(project, settings, conversionScope, postProcessor,
                         State(state.methodReturnType, state.expressionVisitorFactory, factory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withSpecialContext(context: PsiElement): Converter
-            = Converter(project, settings, conversionScope,
+            = Converter(project, settings, conversionScope, postProcessor,
                         State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, context, state.importList, state.importsToAdd))
 
     private fun withImportList(importList: ImportList): Converter
-            = Converter(project, settings, conversionScope,
+            = Converter(project, settings, conversionScope, postProcessor,
                         State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, importList, state.importsToAdd))
 
     private fun withImportsToAdd(importsToAdd: MutableCollection<String>): Converter
-            = Converter(project, settings, conversionScope,
+            = Converter(project, settings, conversionScope, postProcessor,
                         State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, state.importList, importsToAdd))
 
     public fun elementToKotlin(element: PsiElement): String {
         val converted = convertTopElement(element) ?: return ""
         val builder = CodeBuilder(element)
         builder.append(converted)
-        return AfterConversionPass(project).run(builder.result)
+        if (postProcessor != null) {
+            return AfterConversionPass(project, postProcessor).run(builder.result)
+        }
+        else {
+            return builder.result
+        }
     }
 
     private fun convertTopElement(element: PsiElement?): Element? = when (element) {

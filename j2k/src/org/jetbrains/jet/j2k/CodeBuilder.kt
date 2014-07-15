@@ -23,6 +23,7 @@ import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.Element
 import kotlin.platform.platformName
 import org.jetbrains.jet.j2k.ast.CommentsAndSpacesInheritance
+import com.intellij.psi.impl.light.LightElement
 
 fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
@@ -95,6 +96,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
         val prefixElements = ArrayList<PsiElement>(1)
         val postfixElements = ArrayList<PsiElement>(1)
         for ((prototype, inheritance) in element.prototypes!!) {
+            if (prototype is LightElement) continue
             assert(prototype !is PsiComment)
             assert(prototype !is PsiWhiteSpace)
             assert(topElement.isAncestor(prototype))

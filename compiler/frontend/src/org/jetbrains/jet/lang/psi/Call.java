@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -41,12 +42,15 @@ public interface Call {
     @Nullable
     JetValueArgumentList getValueArgumentList();
 
+    @KotlinSignature("fun getValueArguments(): List<out ValueArgument?>")
     @NotNull
     List<? extends ValueArgument> getValueArguments();
 
+    @KotlinSignature("fun getFunctionLiteralArguments(): List<JetExpression>")
     @NotNull
     List<JetExpression> getFunctionLiteralArguments();
 
+    @KotlinSignature("fun getTypeArguments(): List<JetTypeProjection>")
     @NotNull
     List<JetTypeProjection> getTypeArguments();
 

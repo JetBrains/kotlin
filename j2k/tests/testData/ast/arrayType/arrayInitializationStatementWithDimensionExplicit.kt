@@ -1,1 +1,1 @@
-val d2 = Array<IntArray>(5, { IntArray(5) })
+val d2 = Array(5, { IntArray(5) })

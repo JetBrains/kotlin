@@ -27,55 +27,53 @@ import com.intellij.psi.PsiSuperExpression
 import org.jetbrains.jet.j2k.ast.QualifiedExpression
 import org.jetbrains.jet.j2k.ast.Identifier
 import org.jetbrains.jet.j2k.ast.assignNoPrototype
+import org.jetbrains.jet.j2k.ast.Type
 
 enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String, val parameterCount: Int) {
     OBJECT_EQUALS: SpecialMethod(null, "equals", 1) {
         override fun matches(method: PsiMethod)
                 = super.matches(method) && method.getParameterList().getParameters().single().getType().getCanonicalText() == JAVA_LANG_OBJECT
 
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter): Expression? {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter): Expression? {
             if (qualifier == null || qualifier is PsiSuperExpression) return null
             return BinaryExpression(converter.convertExpression(qualifier), converter.convertExpression(arguments.single()), "==")
         }
     }
 
     OBJECT_GET_CLASS: SpecialMethod("java.lang.Object", "getClass", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter): Expression {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter): Expression {
             val identifier = Identifier("javaClass", false).assignNoPrototype()
             return if (qualifier != null) QualifiedExpression(converter.convertExpression(qualifier), identifier) else identifier
         }
     }
 
     OBJECTS_EQUALS: SpecialMethod("java.util.Objects", "equals", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter)
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter)
                 = BinaryExpression(converter.convertExpression(arguments[0]), converter.convertExpression(arguments[1]), "==")
     }
 
-    //TODO: type arguments maybe required if we are in initializer of variable with no explicit type
     COLLECTIONS_EMPTY_LIST: SpecialMethod("java.util.Collections", "emptyList", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter)
-                = MethodCallExpression.build(null, "listOf", listOf(), listOf(), false)
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter)
+                = MethodCallExpression.build(null, "listOf", listOf(), typeArgumentsConverted, false)
     }
 
-    //TODO: type arguments maybe required if we are in initializer of variable with no explicit type
     COLLECTIONS_EMPTY_SET: SpecialMethod("java.util.Collections", "emptySet", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter)
-                = MethodCallExpression.build(null, "setOf", listOf(), listOf(), false)
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter)
+                = MethodCallExpression.build(null, "setOf", listOf(), typeArgumentsConverted, false)
     }
 
-    //TODO: type arguments maybe required if we are in initializer of variable with no explicit type
     COLLECTIONS_EMPTY_MAP: SpecialMethod("java.util.Collections", "emptyMap", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter)
-                = MethodCallExpression.build(null, "mapOf", listOf(), listOf(), false)
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter)
+                = MethodCallExpression.build(null, "mapOf", listOf(), typeArgumentsConverted, false)
     }
 
     COLLECTIONS_SINGLETON_LIST: SpecialMethod("java.util.Collections", "singletonList", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter)
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter)
                 = MethodCallExpression.build(null, "listOf", listOf(converter.convertExpression(arguments.single())), listOf(), false)
     }
 
     COLLECTIONS_SINGLETON: SpecialMethod("java.util.Collections", "singleton", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter)
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter)
                 = MethodCallExpression.build(null, "setOf", listOf(converter.convertExpression(arguments.single())), listOf(), false)
     }
 
@@ -85,5 +83,5 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         return method.getParameterList().getParametersCount() == parameterCount
     }
 
-    abstract fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, converter: Converter): Expression?
+    abstract fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter): Expression?
 }

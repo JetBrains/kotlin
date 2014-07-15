@@ -10,6 +10,6 @@ public class Java {
     fun test2() {
         val m = HashMap()
         val g = G("")
-        val g2 = G<String>("")
+        val g2 = G("")
     }
 }

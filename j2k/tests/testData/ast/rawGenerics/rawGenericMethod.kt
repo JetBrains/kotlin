@@ -10,6 +10,6 @@ class U {
         val t = TestT()
         t.getT<String>()
         t.getT<Int>()
-        t.getT()
+        t.getT<Any>()
     }
 }

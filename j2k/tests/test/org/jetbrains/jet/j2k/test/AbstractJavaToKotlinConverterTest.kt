@@ -23,9 +23,6 @@ import org.jetbrains.jet.j2k.JavaToKotlinTranslator
 import org.jetbrains.jet.j2k.ConverterSettings
 import java.util.regex.Pattern
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.LightIdeaTestCase
-import com.intellij.openapi.projectRoots.Sdk
-import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.openapi.project.Project
@@ -33,8 +30,12 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.test.util.trimIndent
 import org.jetbrains.jet.j2k.FilesConversionScope
+import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 
-abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
+abstract class AbstractJavaToKotlinConverterTest() : LightCodeInsightFixtureTestCase() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
 
     override fun setUp() {
@@ -122,14 +123,14 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
 
     private fun elementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val fileWithText = JavaToKotlinTranslator.createFile(project, text)
-        val converter = Converter.create(project, settings, FilesConversionScope(listOf(fileWithText)))
+        val converter = Converter.create(project, settings, FilesConversionScope(listOf(fileWithText)), J2kPostProcessor)
         val element = fileWithText.getFirstChild()!!
         return converter.elementToKotlin(element)
     }
 
     private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = JavaToKotlinTranslator.createFile(project, text)
-        val converter = Converter.create(project, settings, FilesConversionScope(listOf(file)))
+        val converter = Converter.create(project, settings, FilesConversionScope(listOf(file)), J2kPostProcessor)
         return converter.elementToKotlin(file)
     }
 
@@ -148,9 +149,8 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
         return result.replaceFirst("val o:Any\\? = ", "").replaceFirst("val o:Any = ", "").replaceFirst("val o = ", "").trim()
     }
 
-    override fun getProjectJDK(): Sdk? {
-        return PluginTestCaseBase.jdkFromIdeaHome()
-    }
+    override fun getProjectDescriptor()
+            = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     private fun String.removeFirstLine(): String {
         val lastNewLine = indexOf('\n')

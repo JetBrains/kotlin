@@ -84,14 +84,9 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgu
         return args == newArgs
     }
 
-    class CallWithoutTypeArgs(call: Call) : DelegatingCall(call) {
-
-        override fun getTypeArguments(): MutableList<JetTypeProjection> {
-            return ArrayList<JetTypeProjection>()
-        }
-
+    private class CallWithoutTypeArgs(call: Call) : DelegatingCall(call) {
+        override fun getTypeArguments(): List<JetTypeProjection> = listOf()
         override fun getTypeArgumentList() = null
-
     }
 
     override fun applyTo(element: JetTypeArgumentList, editor: Editor) {
