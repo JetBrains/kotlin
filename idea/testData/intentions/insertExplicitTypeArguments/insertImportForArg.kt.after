@@ -1,0 +1,10 @@
+import kotlin.concurrent.FunctionalList
+import kotlin.support.AbstractIterator
+
+fun foo(c: kotlin.support.AbstractIterator<kotlin.concurrent.FunctionalList<Int>>) {
+    bar<AbstractIterator<FunctionalList<Int>>>(c)
+}
+
+fun <T> bar(t: T): T = t
+
+// WITH_RUNTIME

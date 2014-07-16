@@ -58,17 +58,13 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
         val psiFactory = JetPsiFactory(element)
         val typeArgs = types.map {
             assert(args[it] != null, "there is a null in the type arguments to transform")
-            val typeToCompute = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(args[it]!!);
-            val computedTypeRef = psiFactory.createType(typeToCompute)
-            ShortenReferences.process(computedTypeRef)
-            computedTypeRef.getText()
-        }.makeString(", ", "<", ">")
+            DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(args[it]!!)
+        }.joinToString(", ", "<", ">")
 
-        val name = element.getCalleeExpression()?.getText()
-        if (name == null) return
+        val callee = element.getCalleeExpression()
+        if (callee == null) return
 
-        val valueAndFunctionArguments = element.getText()?.substring(name.size) ?: throw AssertionError("InsertExplicitTypeArguments intention shouldn't be applicable for empty call expression")
-        val expr = psiFactory.createExpression("$name$typeArgs${valueAndFunctionArguments}")
-        element.replace(expr)
+        element.addAfter(psiFactory.createTypeArguments(typeArgs), callee)
+        ShortenReferences.process(element.getTypeArgumentList()!!)
     }
 }

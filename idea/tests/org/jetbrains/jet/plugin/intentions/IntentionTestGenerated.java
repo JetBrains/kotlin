@@ -3304,6 +3304,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest("idea/testData/intentions/insertExplicitTypeArguments/inapplicableTypeNotInferred.kt");
         }
         
+        @TestMetadata("insertImportForArg.kt")
+        public void testInsertImportForArg() throws Exception {
+            doTest("idea/testData/intentions/insertExplicitTypeArguments/insertImportForArg.kt");
+        }
+        
         @TestMetadata("insertManyTypes.kt")
         public void testInsertManyTypes() throws Exception {
             doTest("idea/testData/intentions/insertExplicitTypeArguments/insertManyTypes.kt");
