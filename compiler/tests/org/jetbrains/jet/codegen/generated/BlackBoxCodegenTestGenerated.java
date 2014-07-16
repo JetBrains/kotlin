@@ -4501,6 +4501,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/properties/primitiveOverrideDelegateAccessor.kt");
         }
         
+        @TestMetadata("privatePropertyInConstructor.kt")
+        public void testPrivatePropertyInConstructor() throws Exception {
+            doTest("compiler/testData/codegen/box/properties/privatePropertyInConstructor.kt");
+        }
+        
         @TestMetadata("privatePropertyWithoutBackingField.kt")
         public void testPrivatePropertyWithoutBackingField() throws Exception {
             doTest("compiler/testData/codegen/box/properties/privatePropertyWithoutBackingField.kt");

@@ -1,8 +1,7 @@
 public final class PrivateInClass implements kotlin.jvm.internal.KObject {
-    private final java.lang.String nn = "";
-    private final java.lang.String n = "";
-
     private final java.lang.String getNn() { /* compiled code */ }
+
+    private final void setNn(@jet.runtime.typeinfo.JetValueParameter(name = "value") java.lang.String value) { /* compiled code */ }
 
     private final java.lang.String getN() { /* compiled code */ }
 

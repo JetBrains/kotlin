@@ -22,8 +22,13 @@ import kotlin.reflect.jvm.internal.*
 public var <R> KProperty<R>.accessible: Boolean
         get() {
             return when (this) {
-                is KMutableMemberPropertyImpl<*, R> -> getter.isAccessible() && setter.isAccessible()
-                is KMemberPropertyImpl<*, R> -> getter.isAccessible()
+                is KMutableMemberPropertyImpl<*, R> ->
+                        field?.isAccessible() ?: true &&
+                        getter?.isAccessible() ?: true &&
+                        setter?.isAccessible() ?: true
+                is KMemberPropertyImpl<*, R> ->
+                        field?.isAccessible() ?: true &&
+                        getter?.isAccessible() ?: true
                 is KForeignMemberProperty<*, R> -> field.isAccessible()
                 else -> {
                     // Non-member properties always have public visibility on JVM, thus accessible has no effect on them
@@ -34,11 +39,13 @@ public var <R> KProperty<R>.accessible: Boolean
         set(value) {
             when (this) {
                 is KMutableMemberPropertyImpl<*, R> -> {
-                    getter.setAccessible(value)
-                    setter.setAccessible(value)
+                    field?.setAccessible(value)
+                    getter?.setAccessible(value)
+                    setter?.setAccessible(value)
                 }
                 is KMemberPropertyImpl<*, R> -> {
-                    getter.setAccessible(value)
+                    field?.setAccessible(value)
+                    getter?.setAccessible(value)
                 }
                 is KForeignMemberProperty<*, R> -> {
                     field.setAccessible(value)

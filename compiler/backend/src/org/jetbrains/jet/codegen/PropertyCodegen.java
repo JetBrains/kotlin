@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.*;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
@@ -33,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -44,13 +44,14 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.getParentBodyCodegen;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.PROPERTY_METADATA_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PropertyCodegen {
@@ -112,17 +113,55 @@ public class PropertyCodegen {
             }
         }
 
-        generateGetter(declaration, descriptor, getter);
-        generateSetter(declaration, descriptor, setter);
+        if (isAccessorNeeded(declaration, descriptor, getter)) {
+            generateGetter(declaration, descriptor, getter);
+        }
+        if (isAccessorNeeded(declaration, descriptor, setter)) {
+            generateSetter(declaration, descriptor, setter);
+        }
 
         context.recordSyntheticAccessorIfNeeded(descriptor, bindingContext);
     }
 
+    /**
+     * Determines if it's necessary to generate an accessor to the property, i.e. if this property can be referenced via getter/setter
+     * for any reason
+     *
+     * @see JvmCodegenUtil#couldUseDirectAccessToProperty
+     */
+    private boolean isAccessorNeeded(
+            @Nullable JetProperty declaration,
+            @NotNull PropertyDescriptor descriptor,
+            @Nullable JetPropertyAccessor accessor
+    ) {
+        boolean isDefaultAccessor = accessor == null || !accessor.hasBody();
+
+        // Don't generate accessors for trait properties with default accessors in TRAIT_IMPL
+        if (kind == OwnerKind.TRAIT_IMPL && isDefaultAccessor) return false;
+
+        if (declaration == null) return true;
+
+        // Delegated or extension properties can only be referenced via accessors
+        if (declaration.hasDelegate() || declaration.getReceiverTypeRef() != null) return true;
+
+        // Class object properties always should have accessors, because their backing fields are moved/copied to the outer class
+        if (isClassObject(descriptor.getContainingDeclaration())) return true;
+
+        // Private class properties have accessors only in cases when those accessors are non-trivial
+        if (kind == OwnerKind.IMPLEMENTATION && descriptor.getVisibility() == Visibilities.PRIVATE) {
+            return !isDefaultAccessor;
+        }
+
+        return true;
+    }
+
     public void generatePrimaryConstructorProperty(JetParameter p, PropertyDescriptor descriptor) {
         generateBackingField(p, descriptor);
-        generateGetter(p, descriptor, null);
-        if (descriptor.isVar()) {
-            generateSetter(p, descriptor, null);
+        if (descriptor.getVisibility() != Visibilities.PRIVATE) {
+            generateGetter(p, descriptor, null);
+            if (descriptor.isVar()) {
+                generateSetter(p, descriptor, null);
+            }
         }
     }
 
@@ -285,12 +324,8 @@ public class PropertyCodegen {
             @Nullable JetPropertyAccessor accessor,
             @NotNull PropertyAccessorDescriptor accessorDescriptor
     ) {
-        boolean isDefaultAccessor = accessor == null || accessor.getBodyExpression() == null;
-
-        if (kind == OwnerKind.TRAIT_IMPL && isDefaultAccessor) return;
-
         FunctionGenerationStrategy strategy;
-        if (isDefaultAccessor) {
+        if (accessor == null || !accessor.hasBody()) {
             if (p instanceof JetProperty && ((JetProperty) p).hasDelegate()) {
                 strategy = new DelegatedPropertyAccessorStrategy(state, accessorDescriptor, indexOfDelegatedProperty((JetProperty) p));
             }

@@ -2936,6 +2936,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/objectExpressionInConstructor.kt");
                 }
                 
+                @TestMetadata("privateClassPropertyNoClash.kt")
+                public void testPrivateClassPropertyNoClash() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/privateClassPropertyNoClash.kt");
+                }
+                
                 @TestMetadata("topLevel.kt")
                 public void testTopLevel() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/topLevel.kt");

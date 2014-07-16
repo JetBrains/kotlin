@@ -2,6 +2,8 @@ public interface PrivateInTrait extends kotlin.jvm.internal.KObject {
     @org.jetbrains.annotations.NotNull
     java.lang.String getNn();
 
+    void setNn(@jet.runtime.typeinfo.JetValueParameter(name = "value") @org.jetbrains.annotations.NotNull java.lang.String value);
+
     @org.jetbrains.annotations.Nullable
     java.lang.String getN();
 
