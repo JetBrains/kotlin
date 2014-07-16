@@ -101,6 +101,10 @@ public class SwitchCodegenUtil {
             boolean isStatement,
             @NotNull ExpressionCodegen codegen
     ) {
+        if (!isThereEntriesButElse(expression)) {
+            return null;
+        }
+
         Type subjectType = codegen.expressionType(expression.getSubjectExpression());
         BindingContext bindingContext = codegen.getBindingContext();
 
@@ -119,6 +123,11 @@ public class SwitchCodegenUtil {
         }
 
         return null;
+    }
+
+    private static boolean isThereEntriesButElse(@NotNull JetWhenExpression expression) {
+        List<JetWhenEntry> entries = expression.getEntries();
+        return !entries.isEmpty() && (entries.size() > 1 || !entries.get(0).isElse());
     }
 
     private static boolean isIntegralConstantsSwitch(
