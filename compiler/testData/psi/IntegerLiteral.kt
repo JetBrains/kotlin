@@ -14,4 +14,7 @@ val array = array<Any>(
         0X1l,
         0b1l,
         0B1l,
+        0
 )
+
+val a = 01

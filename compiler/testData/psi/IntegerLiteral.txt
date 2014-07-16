@@ -96,7 +96,21 @@ JetFile: IntegerLiteral.kt
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('0B1l')
         PsiElement(COMMA)(',')
-        PsiErrorElement:Expecting an argument
-          <empty list>
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(INTEGER_LITERAL)('1')
