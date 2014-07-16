@@ -61,7 +61,7 @@ public class PseudocodeVariableDataCollector(
 
         // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
         // Thus they can be filtered out upon leaving the inner scope.
-        return data.filterKeys { variable ->
+        return data.filterKeys_tmp { variable ->
             val lexicalScope = lexicalScopeVariableInfo.declaredIn[variable]
             // '-1' for variables declared outside this pseudocode
             val depth = lexicalScope?.depth ?: -1

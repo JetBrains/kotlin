@@ -245,91 +245,84 @@ public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.flatMapTo(destin
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <T, K> Array<out T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
-    return groupByTo(HashMap<K, MutableList<T>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <K> BooleanArray.groupBy(toKey: (Boolean) -> K): Map<K, List<Boolean>> {
-    return groupByTo(HashMap<K, MutableList<Boolean>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <K> ByteArray.groupBy(toKey: (Byte) -> K): Map<K, List<Byte>> {
-    return groupByTo(HashMap<K, MutableList<Byte>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <K> CharArray.groupBy(toKey: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(HashMap<K, MutableList<Char>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <K> DoubleArray.groupBy(toKey: (Double) -> K): Map<K, List<Double>> {
-    return groupByTo(HashMap<K, MutableList<Double>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<Double>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <K> FloatArray.groupBy(toKey: (Float) -> K): Map<K, List<Float>> {
-    return groupByTo(HashMap<K, MutableList<Float>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<Float>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <K> IntArray.groupBy(toKey: (Int) -> K): Map<K, List<Int>> {
-    return groupByTo(HashMap<K, MutableList<Int>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<Int>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <K> LongArray.groupBy(toKey: (Long) -> K): Map<K, List<Long>> {
-    return groupByTo(HashMap<K, MutableList<Long>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<Long>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <K> ShortArray.groupBy(toKey: (Short) -> K): Map<K, List<Short>> {
-    return groupByTo(HashMap<K, MutableList<Short>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<Short>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
-    return groupByTo(HashMap<K, MutableList<T>>(), toKey)
-}
-
-/**
- * Returns a map of the elements in original collection grouped by the result of given *toKey* function
- */
-public inline fun <V, K> Map<K, V>.groupBy(toKey: (Map.Entry<K, V>) -> K): Map<K, List<Map.Entry<K, V>>> {
-    return groupByTo(HashMap<K, MutableList<Map.Entry<K, V>>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <T, K> Stream<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
-    return groupByTo(HashMap<K, MutableList<T>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
 }
 
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
 public inline fun <K> String.groupBy(toKey: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(HashMap<K, MutableList<Char>>(), toKey)
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), toKey)
 }
 
 /**
@@ -447,18 +440,6 @@ public inline fun <T, K> Iterable<T>.groupByTo(map: MutableMap<K, MutableList<T>
     for (element in this) {
         val key = toKey(element)
         val list = map.getOrPut(key) { ArrayList<T>() }
-        list.add(element)
-    }
-    return map
-}
-
-/**
- * Appends elements from original collection grouped by the result of given *toKey* function to the given *map*
- */
-public inline fun <V, K> Map<K, V>.groupByTo(map: MutableMap<K, MutableList<Map.Entry<K, V>>>, toKey: (Map.Entry<K, V>) -> K): Map<K, MutableList<Map.Entry<K, V>>> {
-    for (element in this) {
-        val key = toKey(element)
-        val list = map.getOrPut(key) { ArrayList<Map.Entry<K, V>>() }
         list.add(element)
     }
     return map

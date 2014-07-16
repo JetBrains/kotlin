@@ -165,9 +165,16 @@ class CollectionTest {
     }
 
     test fun groupBy() {
-        val words = arrayListOf("a", "ab", "abc", "def", "abcd")
+        val words = arrayListOf("a", "abc", "ab", "def", "abcd")
         val byLength = words.groupBy { it.length }
         assertEquals(4, byLength.size())
+
+        // verify that order of keys is preserved
+        val listOfPairs = byLength.toList()
+        assertEquals(1, listOfPairs[0].first)
+        assertEquals(3, listOfPairs[1].first)
+        assertEquals(2, listOfPairs[2].first)
+        assertEquals(4, listOfPairs[3].first)
 
         val l3 = byLength.getOrElse(3, { ArrayList<String>() })
         assertEquals(2, l3.size)

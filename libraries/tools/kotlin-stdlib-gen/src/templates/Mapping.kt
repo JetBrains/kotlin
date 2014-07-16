@@ -184,8 +184,7 @@ fun mapping(): List<GenericFunction> {
         doc { "Returns a map of the elements in original collection grouped by the result of given *toKey* function" }
         typeParam("K")
         returns("Map<K, List<T>>")
-        body { "return groupByTo(HashMap<K, MutableList<T>>(), toKey)" }
-        include(Maps)
+        body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)" }
     }
 
     templates add f("groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K)") {
@@ -204,7 +203,6 @@ fun mapping(): List<GenericFunction> {
                 return map
             """
         }
-        include(Maps)
     }
     return templates
 }

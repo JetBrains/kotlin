@@ -1,68 +1,61 @@
 package test.collections
 
 import kotlin.test.*
-
-import java.util.*
 import org.junit.Test as test
 
 class MapTest {
 
     test fun getOrElse() {
-        val data = hashMapOf<String, Int>()
-        val a = data.getOrElse("foo"){2}
+        val data = mapOf<String, Int>()
+        val a = data.getOrElse("foo") { 2 }
         assertEquals(2, a)
 
-        val b = data.getOrElse("foo"){3}
+        val b = data.getOrElse("foo") { 3 }
         assertEquals(3, b)
         assertEquals(0, data.size())
 
-        val empty = hashMapOf<String, Int?>()
-        val c = empty.getOrElse("") {null}
+        val empty = mapOf<String, Int?>()
+        val c = empty.getOrElse("") { null }
         assertEquals(null, c)
     }
 
     test fun getOrPut() {
         val data = hashMapOf<String, Int>()
-        val a = data.getOrPut("foo"){2}
+        val a = data.getOrPut("foo") { 2 }
         assertEquals(2, a)
 
-        val b = data.getOrPut("foo"){3}
+        val b = data.getOrPut("foo") { 3 }
         assertEquals(2, b)
 
         assertEquals(1, data.size())
 
         val empty = hashMapOf<String, Int?>()
-        val c = empty.getOrPut("") {null}
+        val c = empty.getOrPut("") { null }
         assertEquals(null, c)
     }
 
     test fun sizeAndEmpty() {
         val data = hashMapOf<String, Int>()
-        assertTrue{ data.empty }
+        assertTrue { data.empty }
         assertEquals(data.size, 0)
     }
 
     test fun setViaIndexOperators() {
         val map = hashMapOf<String, String>()
-        assertTrue{ map.empty }
+        assertTrue { map.empty }
         assertEquals(map.size, 0)
 
         map["name"] = "James"
 
-        assertTrue{ !map.empty }
+        assertTrue { !map.empty }
         assertEquals(map.size(), 1)
         assertEquals("James", map["name"])
     }
-
+   
     test fun iterate() {
-        val map = TreeMap<String, String>()
-        map["beverage"] = "beer"
-        map["location"] = "Mells"
-        map["name"] = "James"
-
+        val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val list = arrayListOf<String>()
         for (e in map) {
-            println("key = ${e.getKey()}, value = ${e.getValue()}")
             list.add(e.getKey())
             list.add(e.getValue())
         }
@@ -72,14 +65,9 @@ class MapTest {
     }
 
     test fun iterateWithProperties() {
-        val map = TreeMap<String, String>()
-        map["beverage"] = "beer"
-        map["location"] = "Mells"
-        map["name"] = "James"
-
+        val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val list = arrayListOf<String>()
         for (e in map) {
-            println("key = ${e.key}, value = ${e.value}")
             list.add(e.key)
             list.add(e.value)
         }
@@ -89,14 +77,9 @@ class MapTest {
     }
 
     test fun iterateWithExtraction() {
-        val map = TreeMap<String, String>()
-        map["beverage"] = "beer"
-        map["location"] = "Mells"
-        map["name"] = "James"
-
+        val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val list = arrayListOf<String>()
         for ((key, value) in map) {
-            println("key = ${key}, value = ${value}")
             list.add(key)
             list.add(value)
         }
@@ -106,38 +89,39 @@ class MapTest {
     }
 
     test fun contains() {
-        val map = hashMapOf("a" to 1, "b" to 2)
-        assert("a" in map)
-        assert("c" !in map)
+        val map = mapOf("a" to 1, "b" to 2)
+        assertTrue("a" in map)
+        assertTrue("c" !in map)
     }
 
     test fun map() {
-        val m1 = TreeMap<String, String>()
-        m1["beverage"] = "beer"
-        m1["location"] = "Mells"
+        val m1 = mapOf("beverage" to "beer", "location" to "Mells")
+        val list = m1.map { it.value + " rocks" }
 
-        val list = m1.map{ it.value + " rocks" }
-
-        println("Got new list $list")
         assertEquals(arrayListOf("beer rocks", "Mells rocks"), list)
     }
 
     test fun mapValues() {
-        val m1 = TreeMap<String, String>()
-        m1["beverage"] = "beer"
-        m1["location"] = "Mells"
-
-        val m2 = m1.mapValues{ it.value + "2" }
+        val m1 = mapOf("beverage" to "beer", "location" to "Mells")
+        val m2 = m1.mapValues { it.value + "2" }
 
         assertEquals("beer2", m2["beverage"])
         assertEquals("Mells2", m2["location"])
     }
 
+    test fun mapKeys() {
+        val m1 = mapOf("beverage" to "beer", "location" to "Mells")
+        val m2 = m1.mapKeys { it.key + "2" }
+
+        assertEquals("beer", m2["beverage2"])
+        assertEquals("Mells", m2["location2"])
+    }
+
     test fun createUsingPairs() {
-        val map = hashMapOf(Pair("a", 1), Pair("b", 2))
+        val map = mapOf(Pair("a", 1), Pair("b", 2))
         assertEquals(2, map.size)
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
+        assertEquals(1, map["a"])
+        assertEquals(2, map["b"])
     }
 
     test fun createFromIterable() {
@@ -147,80 +131,77 @@ class MapTest {
         assertEquals(2, map.get("b"))
     }
 
-    test fun createUsingTo() {
-        val map = hashMapOf("a" to 1, "b" to 2)
+    test fun createWithSelector() {
+        val map = listOf("a", "bb", "ccc").toMap { it.length }
+        assertEquals(3, map.size)
+        assertEquals("a", map.get(1))
+        assertEquals("bb", map.get(2))
+        assertEquals("ccc", map.get(3))
+    }
+
+    test fun createWithSelectorAndOverwrite() {
+        val map = listOf("aa", "bb", "ccc").toMap { it.length }
         assertEquals(2, map.size)
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
+        assertEquals("bb", map.get(2))
+        assertEquals("ccc", map.get(3))
+    }
+
+    test fun createUsingTo() {
+        val map = mapOf("a" to 1, "b" to 2)
+        assertEquals(2, map.size)
+        assertEquals(1, map["a"])
+        assertEquals(2, map["b"])
     }
 
     test fun createLinkedMap() {
         val map = linkedMapOf(Pair("c", 3), Pair("b", 2), Pair("a", 1))
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
-        assertEquals(3, map.get("c"))
+        assertEquals(1, map["a"])
+        assertEquals(2, map["b"])
+        assertEquals(3, map["c"])
         assertEquals(arrayListOf("c", "b", "a"), map.keySet().toList())
     }
 
-    test fun createSortedMap() {
-        val map = sortedMapOf(Pair("c", 3), Pair("b", 2), Pair("a", 1))
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
-        assertEquals(3, map.get("c"))
-        assertEquals(arrayListOf("a", "b", "c"), map.keySet().toList())
+    test fun filter() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        val filteredByKey = map.filter { it.key == "b" }
+        assertEquals(1, filteredByKey.size)
+        assertEquals(3, filteredByKey["b"])
+
+        val filteredByKey2 = map.filterKeys { it == "b" }
+        assertEquals(1, filteredByKey2.size)
+        assertEquals(3, filteredByKey2["b"])
+
+        val filteredByValue = map.filter { it.value == 2 }
+        assertEquals(2, filteredByValue.size)
+        assertEquals(null, filteredByValue["b"])
+        assertEquals(2, filteredByValue["c"])
+        assertEquals(2, filteredByValue["a"])
+
+        val filteredByValue2 = map.filterValues { it == 2 }
+        assertEquals(2, filteredByValue2.size)
+        assertEquals(null, filteredByValue2["b"])
+        assertEquals(2, filteredByValue2["c"])
+        assertEquals(2, filteredByValue2["a"])
     }
 
-    test fun toSortedMap() {
-        val map = hashMapOf<String,Int>(Pair("c", 3), Pair("b", 2), Pair("a", 1))
-        val sorted = map.toSortedMap<String,Int>()
-        assertEquals(1, sorted.get("a"))
-        assertEquals(2, sorted.get("b"))
-        assertEquals(3, sorted.get("c"))
-        assertEquals(arrayListOf("a", "b", "c"), sorted.keySet().toList())
+    test fun filterNot() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        val filteredByKey = map.filterNot { it.key == "b" }
+        assertEquals(2, filteredByKey.size)
+        assertEquals(null, filteredByKey["b"])
+        assertEquals(2, filteredByKey["c"])
+        assertEquals(2, filteredByKey["a"])
+
+        val filteredByValue = map.filterNot { it.value == 2 }
+        assertEquals(1, filteredByValue.size)
+        assertEquals(3, filteredByValue["b"])
     }
 
-    test fun toSortedMapWithComparator() {
-        val map = hashMapOf(Pair("c", 3), Pair("bc", 2), Pair("bd", 4), Pair("abc", 1))
-        val c = comparator<String>{ a, b ->
-            val answer = a.length() - b.length()
-            if (answer == 0) a.compareTo(b) else answer
-        }
-        val sorted = map.toSortedMap(c)
-        assertEquals(arrayListOf("c", "bc", "bd", "abc"), sorted.keySet().toList())
-        assertEquals(1, sorted.get("abc"))
-        assertEquals(2, sorted.get("bc"))
-        assertEquals(3, sorted.get("c"))
+    test fun plusAssign() {
+        val extended = hashMapOf(Pair("b", 3))
+        extended += ("c" to 2)
+        assertEquals(2, extended.size)
+        assertEquals(2, extended["c"])
+        assertEquals(3, extended["b"])
     }
-
-    /**
-    TODO
-    test case for http://youtrack.jetbrains.com/issue/KT-1773
-
-    test fun compilerBug() {
-        val map = TreeMap<String, String>()
-        map["beverage"] = "beer"
-        map["location"] = "Mells"
-        map["name"] = "James"
-
-        var list = arrayListOf<String>()
-        for (e in map) {
-            println("key = ${e.getKey()}, value = ${e.getValue()}")
-            list += e.getKey()
-            list += e.getValue()
-        }
-
-        assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
-        println("==== worked! $list")
-    }
-    */
-
-    test fun toProperties() {
-        val map = hashMapOf("a" to "A", "b" to "B")
-        val prop = map.toProperties()
-        assertEquals(2, prop.size)
-        assertEquals("A", prop.getProperty("a", "fail"))
-        assertEquals("B", prop.getProperty("b", "fail"))
-    }
-
 }
