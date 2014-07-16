@@ -150,14 +150,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
 
     override fun visitTryStatement(tryStatement: PsiTryStatement) {
         val tryBlock = tryStatement.getTryBlock()
-        val catchesConverted = run {
-            val catchBlocks = tryStatement.getCatchBlocks()
-            val catchBlockParameters = tryStatement.getCatchBlockParameters()
-            catchBlocks.indices.map {
-                CatchStatement(converter.convertParameter(catchBlockParameters[it], Nullability.NotNull),
-                               converter.convertBlock(catchBlocks[it])).assignNoPrototype()
-            }
-        }
+        val catchesConverted = convertCatches(tryStatement)
         val finallyConverted = converter.convertBlock(tryStatement.getFinallyBlock())
 
         val resourceList = tryStatement.getResourceList()
@@ -170,6 +163,29 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         }
 
         result = TryStatement(converter.convertBlock(tryBlock), catchesConverted, finallyConverted)
+    }
+
+    private fun convertCatches(tryStatement: PsiTryStatement): List<CatchStatement> {
+        val catches = ArrayList<CatchStatement>()
+        for ((block, parameter) in tryStatement.getCatchBlocks().zip(tryStatement.getCatchBlockParameters())) {
+            val blockConverted = converter.convertBlock(block)
+            val annotations = converter.convertAnnotations(parameter)
+            val parameterType = parameter.getType()
+            val types = if (parameterType is PsiDisjunctionType)
+                parameterType.getDisjunctions()
+            else
+                listOf(parameterType)
+            for (t in types) {
+                var convertedType = converter.typeConverter.convertType(t, Nullability.NotNull)
+                val convertedParameter = Parameter(parameter.declarationIdentifier(),
+                                                   convertedType,
+                                                   Parameter.VarValModifier.None,
+                                                   annotations,
+                                                   Modifiers.Empty).assignPrototype(parameter)
+                catches.add(CatchStatement(convertedParameter, blockConverted).assignNoPrototype())
+            }
+        }
+        return catches
     }
 
     private fun convertTryWithResources(tryBlock: PsiCodeBlock?, resourceVariables: List<PsiResourceVariable>, catchesConverted: List<CatchStatement>, finallyConverted: Block): Statement {
