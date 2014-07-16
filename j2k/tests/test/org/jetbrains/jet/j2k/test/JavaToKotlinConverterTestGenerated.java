@@ -3138,6 +3138,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/typeParameters/needTypeArgs.java");
         }
         
+        @TestMetadata("rawTypeCast.java")
+        public void testRawTypeCast() throws Exception {
+            doTest("j2k/tests/testData/ast/typeParameters/rawTypeCast.java");
+        }
+        
         @TestMetadata("traitDoubleParametrizationWithTwoBoundsWithExtending.java")
         public void testTraitDoubleParametrizationWithTwoBoundsWithExtending() throws Exception {
             doTest("j2k/tests/testData/ast/typeParameters/traitDoubleParametrizationWithTwoBoundsWithExtending.java");
