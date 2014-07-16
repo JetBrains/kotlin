@@ -1,13 +1,12 @@
 package org.jetbrains.jet.lang.resolve.android
 
-import java.nio.file.Path
-import org.jetbrains.jet.lang.psi.JetFile
 import java.util.ArrayList
 import javax.xml.parsers.SAXParserFactory
 import java.io.File
 import java.io.FileInputStream
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetFile
 
 class AndroidUIXmlParser(val project: Project?, val searchPaths: Collection<File>) {
 
@@ -23,7 +22,7 @@ class AndroidUIXmlParser(val project: Project?, val searchPaths: Collection<File
     }
 
     public fun parseToPsi(): JetFile {
-        return JetPsiFactory.createFile(project, parse())
+        return JetPsiFactory(project).createFile(parse())
     }
 
     private fun isAndroidUIXml(file: File): Boolean {

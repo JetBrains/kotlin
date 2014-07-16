@@ -39,6 +39,7 @@
     <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
     <orderEntry type="module" module-name="eval4j" />
+    <orderEntry type="module" module-name="frontend.android" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
     <orderEntry type="module" module-name="kotlin-android-plugin" />
     <orderEntry type="module" module-name="js.frontend" />

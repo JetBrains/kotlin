@@ -38,6 +38,7 @@
           <element id="module-output" name="idea-analysis" />
           <element id="module-output" name="ide-common" />
           <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
+          <element id="module-output" name="frontend.android" />
           <element id="module-output" name="kotlin-android-plugin" />
         </element>
         <element id="library" level="project" name="javax.inject" />
