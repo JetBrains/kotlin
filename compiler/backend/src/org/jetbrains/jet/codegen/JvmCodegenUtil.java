@@ -55,6 +55,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
+import static org.jetbrains.jet.lang.descriptors.Modality.FINAL;
 
 public class JvmCodegenUtil {
 
@@ -246,32 +247,36 @@ public class JvmCodegenUtil {
     }
 
     public static boolean couldUseDirectAccessToProperty(
-            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull PropertyDescriptor property,
             boolean forGetter,
             boolean isInsideClass,
             boolean isDelegated,
-            MethodContext context
+            @NotNull MethodContext context
     ) {
-        if (context.isInlineFunction()) {
-            return false;
-        }
-        PropertyAccessorDescriptor accessorDescriptor = forGetter ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
-        boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
-        boolean specialTypeProperty = isDelegated ||
-                                      isExtensionProperty ||
-                                      DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration()) ||
-                                      JetTypeMapper.isAccessor(propertyDescriptor);
-        return isInsideClass &&
-               !specialTypeProperty &&
-               (accessorDescriptor == null ||
-                accessorDescriptor.isDefault() &&
-                (!isExternallyAccessible(propertyDescriptor) || accessorDescriptor.getModality() == Modality.FINAL));
-    }
+        if (JetTypeMapper.isAccessor(property)) return false;
 
-    private static boolean isExternallyAccessible(@NotNull PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getVisibility() != Visibilities.PRIVATE ||
-               DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration()) ||
-               DescriptorUtils.isTopLevelDeclaration(propertyDescriptor);
+        // Inline functions can't use direct access because a field may not be visible at the call site
+        if (context.isInlineFunction()) return false;
+
+        // Only properties of the same class can be directly accessed
+        if (!isInsideClass) return false;
+
+        // Delegated and extension properties have no backing fields
+        if (isDelegated || property.getReceiverParameter() != null) return false;
+
+        // Class object properties cannot be accessed directly because their backing fields are stored in the containing class
+        if (DescriptorUtils.isClassObject(property.getContainingDeclaration())) return false;
+
+        PropertyAccessorDescriptor accessor = forGetter ? property.getGetter() : property.getSetter();
+
+        // If there's no accessor declared we can use direct access
+        if (accessor == null) return true;
+
+        // If the accessor is non-default (i.e. it has some code) we should call that accessor and not use direct access
+        if (!accessor.isDefault()) return false;
+
+        // If the accessor is private or final, it can't be overridden in the subclass and thus we can use direct access
+        return property.getVisibility() == Visibilities.PRIVATE || accessor.getModality() == FINAL;
     }
 
     @NotNull
