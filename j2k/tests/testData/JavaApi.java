@@ -1,9 +1,7 @@
 package javaApi;
 
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.Override;
-import java.lang.String;
+import java.util.Set;
 
 public @interface Anon1 {
     String[] value();
@@ -59,4 +57,8 @@ public class Derived extends Base {
 
 public class WithVarargConstructor {
     public WithVarargConstructor(int p, Object... objects) { }
+}
+
+class T {
+    public Set<String> set;
 }

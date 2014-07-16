@@ -96,10 +96,9 @@ class CodeBuilder(private val topElement: PsiElement?) {
         val prefixElements = ArrayList<PsiElement>(1)
         val postfixElements = ArrayList<PsiElement>(1)
         for ((prototype, inheritance) in element.prototypes!!) {
-            if (prototype is LightElement) continue
             assert(prototype !is PsiComment)
             assert(prototype !is PsiWhiteSpace)
-            assert(topElement.isAncestor(prototype))
+            if (!topElement.isAncestor(prototype)) continue
             prefixElements.collectPrefixElements(prototype, inheritance, notInsideElements)
             postfixElements.collectPostfixElements(prototype, inheritance, notInsideElements)
         }
