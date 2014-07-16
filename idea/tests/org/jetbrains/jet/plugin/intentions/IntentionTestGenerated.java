@@ -2149,6 +2149,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest("idea/testData/intentions/convertAssertToIf/booleanConditionWithVariables.kt");
         }
         
+        @TestMetadata("doNotShortenReferenceInsideMessage.kt")
+        public void testDoNotShortenReferenceInsideMessage() throws Exception {
+            doTest("idea/testData/intentions/convertAssertToIf/doNotShortenReferenceInsideMessage.kt");
+        }
+        
         @TestMetadata("dotQualifiedCall.kt")
         public void testDotQualifiedCall() throws Exception {
             doTest("idea/testData/intentions/convertAssertToIf/dotQualifiedCall.kt");
