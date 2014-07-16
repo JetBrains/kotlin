@@ -51,7 +51,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
     public void testCompileResult() throws Exception {
         ArrayList<File> paths = new ArrayList<File>();
         paths.add(singleFile);
-        String text = new AndroidUIXmlParser(null, paths).parse();
+        String text = new AndroidUIXmlParser(null, paths).parseToString();
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
                                                                                                             ConfigurationKind.ALL);
         JetFile psiFile = JetTestUtils.createFile(singleFile.getName(), text, jetCoreEnvironment.getProject());
@@ -75,7 +75,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
         paths.add(singleFile);
         AndroidUIXmlParser parser = new AndroidUIXmlParser(null, paths);
 
-        String actual = parser.parse();
+        String actual = parser.parseToString();
         String expected = loadOrCreate(new File(getTestDataPath() + "/converter/singleFile/layout.kt"), actual);
 
         assertEquals(expected, actual);
