@@ -192,6 +192,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"
                     serviceImplementation="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlPathProvider"
+                    serviceImplementation="org.jetbrains.jet.plugin.android.IDEAndroidUIXmlPathProvider"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker"/>
 
