@@ -10,7 +10,7 @@ class A {
 
 class B {
     var foo = 1
-        private set
+        private set(value) { $foo = value }
 
     fun foo() {
        foo = 2
