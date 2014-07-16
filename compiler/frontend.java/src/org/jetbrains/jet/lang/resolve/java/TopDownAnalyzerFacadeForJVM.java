@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -32,12 +33,15 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlParser;
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlPathProvider;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -75,6 +79,9 @@ public enum TopDownAnalyzerFacadeForJVM {
                 false
         );
 
+        List<JetFile> filesToAnalyze = new ArrayList<JetFile>(files);
+        filesToAnalyze.add(searchForAndroidDeclarations(project));
+
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         try {
             List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();
@@ -85,7 +92,7 @@ public enum TopDownAnalyzerFacadeForJVM {
 
                     additionalProviders.add(
                             new IncrementalPackageFragmentProvider(
-                                    files, module, globalContext.getStorageManager(), injector.getDeserializationGlobalContextForJava(),
+                                    filesToAnalyze, module, globalContext.getStorageManager(), injector.getDeserializationGlobalContextForJava(),
                                     incrementalCache, moduleId, injector.getJavaDescriptorResolver()
                             )
                     );
@@ -93,7 +100,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             }
             additionalProviders.add(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-            injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files, additionalProviders);
+            injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, filesToAnalyze, additionalProviders);
             return AnalyzeExhaust.success(trace.getBindingContext(), module);
         }
         finally {
@@ -104,5 +111,11 @@ public enum TopDownAnalyzerFacadeForJVM {
     @NotNull
     public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
         return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, JavaToKotlinClassMap.getInstance());
+    }
+
+    private static JetFile searchForAndroidDeclarations(Project project) {
+        AndroidUIXmlPathProvider provider = ServiceManager.getService(project, AndroidUIXmlPathProvider.class);
+        Collection<File> paths = provider.getPaths();
+        return new AndroidUIXmlParser(project, paths).parseToPsi();
     }
 }

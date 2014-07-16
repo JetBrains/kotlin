@@ -30,6 +30,7 @@
           </element>
           <element id="module-output" name="eval4j" />
           <element id="module-output" name="idea-analysis" />
+          <element id="module-output" name="frontend.android" />
           <element id="module-output" name="ide-lazy-resolve" />
         </element>
         <element id="library" level="project" name="javax.inject" />

@@ -164,6 +164,9 @@
     <projectService serviceInterface="org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache"
                     serviceImplementation="org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlPathProvider"
+                    serviceImplementation="org.jetbrains.jet.plugin.android.IDEAndroidUIXmlPathProvider"/>
+
     <projectService serviceInterface="org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService"
                     serviceImplementation="org.jetbrains.jet.plugin.stubindex.resolve.PluginDeclarationProviderFactoryService"/>
 
