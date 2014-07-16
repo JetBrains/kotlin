@@ -35,6 +35,7 @@ class AndroidUIXmlParser(val project: Project?, val searchPaths: Collection<File
         if (paths == null) return ArrayList(0)
         val res = ArrayList<File>()
         for (path in paths) {
+            if (!path.exists()) continue;
             if (path.isFile() && isAndroidUIXml(path)) {
                 res.add(path)
             } else if (path.isDirectory()) {
