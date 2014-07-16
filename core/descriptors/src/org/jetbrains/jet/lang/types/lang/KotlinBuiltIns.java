@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types.lang;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -880,5 +881,16 @@ public class KotlinBuiltIns {
     @NotNull
     public JetType getDefaultBound() {
         return getNullableAnyType();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // GET FUNCTION
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @NotNull
+    public FunctionDescriptor getIdentityEquals() {
+        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals")));
     }
 }

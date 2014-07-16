@@ -1,0 +1,3 @@
+Function call (13: 10) A(0) identityEquals A(1)
+Function call (14: 10) A(0) === A(1)
+Function call (15: 10) A(0) !== A(1)

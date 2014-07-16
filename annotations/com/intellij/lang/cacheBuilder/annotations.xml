@@ -1,0 +1,10 @@
+<root>
+  <item
+      name='com.intellij.lang.cacheBuilder.WordsScanner void processWords(java.lang.CharSequence, com.intellij.util.Processor&lt;com.intellij.lang.cacheBuilder.WordOccurrence&gt;) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.lang.cacheBuilder.WordsScanner void processWords(java.lang.CharSequence, com.intellij.util.Processor&lt;com.intellij.lang.cacheBuilder.WordOccurrence&gt;) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

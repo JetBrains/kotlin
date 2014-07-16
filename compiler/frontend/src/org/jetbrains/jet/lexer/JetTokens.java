@@ -105,7 +105,7 @@ public interface JetTokens {
     JetSingleValueToken EQEQEQ      = new JetSingleValueToken("EQEQEQ", "===");
     JetSingleValueToken ARROW       = new JetSingleValueToken("ARROW", "->");
     JetSingleValueToken DOUBLE_ARROW       = new JetSingleValueToken("DOUBLE_ARROW", "=>");
-    JetSingleValueToken EXCLEQEQEQ  = new JetSingleValueToken("EXCLEQEQEQ", "!===");
+    JetSingleValueToken EXCLEQEQEQ  = new JetSingleValueToken("EXCLEQEQEQ", "!==");
     JetSingleValueToken EQEQ        = new JetSingleValueToken("EQEQ", "==");
     JetSingleValueToken EXCLEQ      = new JetSingleValueToken("EXCLEQ", "!=");
     JetSingleValueToken EXCLEXCL    = new JetSingleValueToken("EXCLEXCL", "!!");

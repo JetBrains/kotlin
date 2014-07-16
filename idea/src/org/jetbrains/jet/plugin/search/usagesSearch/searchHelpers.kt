@@ -18,8 +18,6 @@ package org.jetbrains.jet.plugin.search.usagesSearch
 
 import com.intellij.psi.PsiReference
 import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
-import org.jetbrains.jet.lang.psi.JetImportDirective
 import org.jetbrains.jet.plugin.search.usagesSearch.*
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchFilter.*
 import org.jetbrains.jet.lang.psi.JetProperty
@@ -28,34 +26,35 @@ import java.util.Collections
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.psi.PsiNamedElement
-import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.asJava.LightClassUtil
-import com.intellij.psi.PsiMethod
-import com.intellij.util.Query
-import com.intellij.psi.search.SearchRequestCollector
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.jet.lang.psi.psiUtil.*
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lexer.JetSingleValueToken
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.plugin.references.*
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import com.intellij.util.containers.ContainerUtil
 
-val isTargetUsage = (PsiReference::isTargetUsage).searchFilter
+val isTargetUsage = (PsiReference::matchesTarget).searchFilter
 
-fun JetNamedDeclaration.namesWithAccessors(readable: Boolean = true, writable: Boolean = true): List<String> {
-    val name = getName()!!
-
+fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean = true): List<String> {
     fun PropertyAccessorsPsiMethods.toNameList(): List<String> {
         val getter = getGetter()
         val setter = getSetter()
 
-        val result = arrayListOf(name)
+        val result = ArrayList<String>()
         if (readable && getter != null) result.add(getter.getName())
         if (writable && setter != null) result.add(setter.getName())
         return result
     }
 
-    if (JetPsiUtil.isLocal(this)) return Collections.singletonList(name)
+    if (this !is JetDeclaration || JetPsiUtil.isLocal(this)) return Collections.emptyList()
 
     when (this) {
         is JetProperty ->
@@ -66,21 +65,32 @@ fun JetNamedDeclaration.namesWithAccessors(readable: Boolean = true, writable: B
             }
     }
 
-    return Collections.singletonList(name)
+    return Collections.emptyList()
+}
+
+public fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
+    val name = getName()
+    return when {
+        name == null || !Name.isValidIdentifier(name) -> Collections.emptyList<String>()
+        this is JetParameter -> {
+            if (!hasValOrVarNode()) return Collections.emptyList<String>()
+
+            val context = AnalyzerFacadeWithCache.getContextForElement(this)
+            val paramDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? ValueParameterDescriptor
+            context[BindingContext.DATA_CLASS_COMPONENT_FUNCTION, paramDescriptor]?.let {
+                listOf(it.getName().asString(), JetTokens.LPAR.getValue())
+            } ?: Collections.emptyList<String>()
+        }
+        else -> Name.identifier(name).getOperationSymbolsToSearch().map { (it as JetSingleValueToken).getValue() }
+    }
 }
 
 public abstract class UsagesSearchHelper<T : PsiNamedElement> {
     protected open fun makeFilter(target: UsagesSearchTarget<T>): UsagesSearchFilter = isTargetUsage
 
     protected open fun makeWordList(target: UsagesSearchTarget<T>): List<String> {
-        return with(target) {
-            val name = element.getName()
-
-            when {
-                name == null -> Collections.emptyList<String>()
-                element is JetProperty, element is JetParameter -> (element as JetNamedDeclaration).namesWithAccessors()
-                else -> Collections.singletonList(name)
-            }
+        return with(target.element) {
+            ContainerUtil.createMaybeSingletonList(getName()) + getAccessorNames() + getSpecialNamesToSearch()
         }
     }
 
@@ -185,7 +195,11 @@ class PropertyUsagesSearchHelper(
         skipImports: Boolean = false
 ) : DefaultSearchHelper<JetNamedDeclaration>(skipImports), OverrideSearchHelper {
     override fun makeWordList(target: UsagesSearchTarget<JetNamedDeclaration>): List<String> {
-        return target.element.namesWithAccessors(readable = readUsages, writable = writeUsages)
+        return with(target.element) {
+            ContainerUtil.createMaybeSingletonList(getName()) +
+                    getAccessorNames(readable = readUsages, writable = writeUsages) +
+                    getSpecialNamesToSearch()
+        }
     }
 
     override fun makeFilter(target: UsagesSearchTarget<JetNamedDeclaration>): UsagesSearchFilter {

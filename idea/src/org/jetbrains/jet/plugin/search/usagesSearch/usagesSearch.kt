@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.search.usagesSearch
 import com.intellij.psi.PsiReference
 import com.intellij.util.QueryFactory
 import com.intellij.psi.search.SearchScope
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchSession
 import com.intellij.psi.search.PsiSearchHelper
@@ -29,7 +28,6 @@ import com.intellij.psi.search.SearchRequestQuery
 import com.intellij.util.UniqueResultsQuery
 import com.intellij.psi.search.searches.ReferenceDescriptor
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.RequestResultProcessor
@@ -38,15 +36,22 @@ import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.psi.PsiReferenceService
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.ReferenceRange
-import java.util.Collections
-import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
-import java.util.ArrayList
-import com.intellij.util.EmptyQuery
 import com.intellij.openapi.project.Project
-import java.util.ArrayDeque
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchFilter.*
 import org.jetbrains.jet.plugin.search.and
+import com.intellij.psi.impl.search.PsiSearchHelperImpl
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.impl.cache.impl.id.IdIndexEntry
+import java.util.Collections
+import com.intellij.openapi.roots.FileIndexFacade
+import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.psi.impl.cache.impl.id.IdIndex
+import org.jetbrains.jet.plugin.refactoring.runReadAction
+import com.intellij.psi.search.TextOccurenceProcessor
+import org.jetbrains.jet.plugin.references.JetMultiDeclarationReference
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiManagerEx
 
 public data class UsagesSearchLocation(
         val inCode: Boolean = true,
@@ -103,39 +108,61 @@ public data class UsagesSearchRequest(val project: Project, val items: List<Usag
     val collector: SearchRequestCollector = SearchRequestCollector(SearchSession())
 }
 
-public object UsagesSearch: QueryFactory<PsiReference, UsagesSearchRequest>() {
-    {
-        class ResultProcessorImpl(private val node: UsagesSearchRequestItem) : RequestResultProcessor() {
-            private val referenceService = PsiReferenceService.getService()!!
+public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelperImpl(PsiManager.getInstance(project) as PsiManagerEx) {
+    class ResultTextProcessorImpl(
+            private val node: UsagesSearchRequestItem,
+            private val consumer: Processor<PsiReference>
+    ): TextOccurenceProcessor {
+        private val referenceService = PsiReferenceService.getService()!!
 
-            override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
-                return referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
-                    ProgressManager.checkCanceled()
+        override fun execute(element: PsiElement, offsetInElement: Int): Boolean {
+            return referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
+                ProgressManager.checkCanceled()
 
-                    when {
-                        !ReferenceRange.containsOffsetInElement(ref, offsetInElement) -> true
-                        !node.filter.accepts(ref, node) -> true
-                        else -> consumer.process(ref)
-                    }
+                when {
+                    !ReferenceRange.containsOffsetInElement(ref, offsetInElement) -> true
+                    !node.filter.accepts(ref, node) -> true
+                    else -> consumer.process(ref)
                 }
             }
         }
+    }
 
+    override fun processFilesWithText(
+            scope: GlobalSearchScope,
+            searchContext: Short,
+            caseSensitively: Boolean,
+            text: String,
+            processor: Processor<VirtualFile>
+    ): Boolean {
+        if (text !in ALL_SEARCHABLE_OPERATION_PATTERNS) {
+            return super.processFilesWithText(scope, searchContext, caseSensitively, text, processor)
+        }
+
+        val entries = Collections.singletonList(IdIndexEntry(text, caseSensitively))
+        val index = FileIndexFacade.getInstance(project)
+        val checker: (Int?) -> Boolean = { (it!! and searchContext.toInt()) != 0 }
+        return runReadAction{
+            FileBasedIndex.getInstance().processFilesContainingAllKeys(IdIndex.NAME, entries, scope, checker) { file ->
+                !index.shouldBeFound(scope, file) || processor.process(file)
+            }
+        }!!
+    }
+
+    public fun processFilesWithText(item: UsagesSearchRequestItem, consumer: Processor<PsiReference>): Boolean {
+        return item.words.all { word ->
+            val textProcessor = ResultTextProcessorImpl(item, consumer)
+            processElementsWithWord(textProcessor, item.target.scope, word, UsageSearchContext.IN_CODE, true)
+        }
+    }
+}
+
+public object UsagesSearch: QueryFactory<PsiReference, UsagesSearchRequest>() {
+    {
         object ExecutorImpl: QueryExecutorBase<PsiReference, UsagesSearchRequest>() {
             override fun processQuery(request: UsagesSearchRequest, consumer: Processor<PsiReference>) {
-                for (item in request.items) {
-                    with (item) {
-                        if (filter != False) {
-                            ApplicationManager.getApplication()?.runReadAction {
-                                for (word in words) {
-                                    request.collector.searchWord(
-                                            word, target.scope, target.location.searchContext, true, ResultProcessorImpl(item)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+                val searchHelper = KotlinPsiSearchHelper(request.project)
+                request.items.filter { it.filter != False }.all { searchHelper.processFilesWithText(it, consumer) }
             }
         }
 

@@ -898,7 +898,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else if (OperatorConventions.EQUALS_OPERATIONS.contains(operationType)) {
             result = visitEquality(expression, context, operationSign, left, right);
         }
-        else if (operationType == JetTokens.EQEQEQ || operationType == JetTokens.EXCLEQEQEQ) {
+        else if (OperatorConventions.IDENTITY_EQUALS_OPERATIONS.contains(operationType)) {
+            context.trace.record(REFERENCE_TARGET, operationSign, KotlinBuiltIns.getInstance().getIdentityEquals());
             ensureNonemptyIntersectionOfOperandTypes(expression, context);
             // TODO : Check comparison pointlessness
             result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), context.dataFlowInfo);

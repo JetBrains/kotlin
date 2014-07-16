@@ -1,0 +1,5 @@
+Function call (12: 20) A(0).plus(A(1).plus(2))
+Function call (10: 17) A(0) + A(1) + 2
+Function call (11: 20) A(0) plus A(1) plus 2
+Function call (15: 7) a += 1
+Function call (6: 30) fun plus(a: A): A = this + a.n

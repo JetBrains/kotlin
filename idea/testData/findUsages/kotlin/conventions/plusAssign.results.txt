@@ -1,0 +1,3 @@
+Function call (16: 7) a.plusAssign(1)
+Function call (10: 14) this += a.n
+Function call (17: 7) a += 1

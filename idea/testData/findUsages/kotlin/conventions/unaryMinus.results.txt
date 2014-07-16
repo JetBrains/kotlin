@@ -1,0 +1,2 @@
+Function call (9: 10) A(1).minus()
+Function call (10: 5) -A(1)

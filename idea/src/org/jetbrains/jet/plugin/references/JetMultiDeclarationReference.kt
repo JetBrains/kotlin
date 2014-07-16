@@ -20,6 +20,10 @@ import org.jetbrains.jet.lang.psi.JetMultiDeclaration
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.openapi.util.TextRange
+import java.util.Collections
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.resolve.source.PsiSourceElement
+import org.jetbrains.jet.lang.resolve.source.getPsi
 
 class JetMultiDeclarationReference(element: JetMultiDeclaration) : JetMultiReference<JetMultiDeclaration>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
@@ -28,14 +32,10 @@ class JetMultiDeclarationReference(element: JetMultiDeclaration) : JetMultiRefer
         }.filterNotNull()
     }
 
-
     override fun getRangeInElement(): TextRange? {
-        val entries = expression.getEntries()
-        if (entries.isEmpty()) {
-            return TextRange.EMPTY_RANGE
-        }
-        val start = entries.first!!.getStartOffsetInParent()
-        val end = entries.last!!.getStartOffsetInParent() + entries.last!!.getTextLength()
-        return TextRange(start, end)
+        val start = expression.getLPar()
+        val end = expression.getRPar()
+        if (start == null || end == null) return TextRange.EMPTY_RANGE
+        return TextRange(start.getStartOffsetInParent(), end.getStartOffsetInParent())
     }
 }

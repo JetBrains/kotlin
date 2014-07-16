@@ -28,17 +28,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import java.util.Collections
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.jet.asJava.*
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.utils.keysToMap
-import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
@@ -65,19 +61,15 @@ abstract class AbstractJetReference<T : JetElement>(element: T)
         return null
     }
 
+    override fun isReferenceTo(element: PsiElement?): Boolean {
+        return element != null && matchesTarget(element)
+    }
+
     override fun getCanonicalText(): String = "<TBD>"
 
     override fun handleElementRename(newElementName: String?): PsiElement? = throw IncorrectOperationException()
 
     override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()
-
-    protected fun checkElementMatch(referenceTarget: PsiElement, elementToMatch: PsiElement): Boolean {
-        val unwrappedTarget = referenceTarget.namedUnwrappedElement
-        val unwrappedElementToMatch = elementToMatch.namedUnwrappedElement
-
-        return (unwrappedTarget == unwrappedElementToMatch) ||
-        (referenceTarget is PsiMethod && referenceTarget.isConstructor() && referenceTarget.getContainingClass() == elementToMatch)
-    }
 
     [suppress("CAST_NEVER_SUCCEEDS")]
     override fun getVariants(): Array<Any> = PsiReference.EMPTY_ARRAY as Array<Any>
@@ -152,21 +144,6 @@ public abstract class JetSimpleReference<T : JetReferenceExpression>(expression:
         }
         return context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression].orEmpty()
     }
-
-    override fun isReferenceTo(element: PsiElement?): Boolean {
-        val resolvedElement = resolve()
-        if (resolvedElement == null || element == null) {
-            return false
-        }
-        return checkElementMatch(resolvedElement, element)
-    }
 }
 
-public abstract class JetMultiReference<T : JetElement>(expression: T) : AbstractJetReference<T>(expression) {
-    override fun isReferenceTo(element: PsiElement?): Boolean {
-        if (element == null) {
-            return false
-        }
-        return multiResolve(false).map { it.getElement() }.filterNotNull().any { checkElementMatch(it, element) }
-    }
-}
+public abstract class JetMultiReference<T : JetElement>(expression: T) : AbstractJetReference<T>(expression)

@@ -1,0 +1,3 @@
+Function call (10: 7) a.component1()
+Value read (11: 9) val (x, y, z) = a
+Value read (9: 7) a.n
