@@ -7,6 +7,6 @@ import java.io.File
 class IDEAndroidUIXmlPathProvider(val project: Project): AndroidUIXmlPathProvider {
 
     override fun getPaths(): MutableCollection<File> {
-        return arrayListOf(File("/tmp/android/"))
+        return arrayListOf(File(project.getBasePath() + "/res/layout/"))
     }
 }
