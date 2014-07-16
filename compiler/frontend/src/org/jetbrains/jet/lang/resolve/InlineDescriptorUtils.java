@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping;
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 
 public class InlineDescriptorUtils {
@@ -54,7 +53,8 @@ public class InlineDescriptorUtils {
                 CallableDescriptor resultingDescriptor = resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
                 if (resultingDescriptor instanceof SimpleFunctionDescriptor &&
                     ((SimpleFunctionDescriptor) resultingDescriptor).getInlineStrategy().isInline()) {
-                    ValueArgument argument = getContainingArgument(containingFunction, call);
+                    ValueArgument argument = CallUtilPackage.getValueArgumentForExpression(
+                            resolvedCall.getCall(), (JetFunctionLiteralExpression) containingFunction);
                     if (argument != null) {
                         ArgumentMapping mapping = resolvedCall.getArgumentMapping(argument);
                         if (mapping instanceof ArgumentMatch) {
@@ -75,22 +75,6 @@ public class InlineDescriptorUtils {
         }
 
         return fromFunction == containingFunctionDescriptor;
-    }
-
-    @Nullable
-    public static ValueArgument getContainingArgument(PsiElement expression, @NotNull JetExpression stopAtCall) {
-        if (expression instanceof JetValueArgument) {
-            return (JetValueArgument) expression;
-        }
-
-        while (expression != null && expression.getParent() != stopAtCall) {
-            PsiElement parent = expression.getParent();
-            if (parent instanceof JetValueArgument) {
-                return (JetValueArgument) parent;
-            }
-            expression = parent;
-        }
-        return expression != null ? CallMaker.makeValueArgument((JetExpression) expression) : null;
     }
 
     @Nullable

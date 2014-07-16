@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.lang.psi.ValueArgument
-import org.jetbrains.jet.lang.resolve.calls.util.CallMaker
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.jet.lang.psi.JetElement
@@ -48,6 +47,8 @@ import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 
 // resolved call
 
@@ -74,6 +75,10 @@ public fun <D : CallableDescriptor> ResolvedCall<D>.hasTypeMismatchErrorOnParame
     }
 }
 
+public fun <D : CallableDescriptor> ResolvedCall<D>.getParameterForArgument(valueArgument: ValueArgument?): ValueParameterDescriptor? {
+    return (valueArgument?.let { getArgumentMapping(it) } as? ArgumentMatch)?.valueParameter
+}
+
 // call
 
 public fun Call.hasUnresolvedArguments(context: BindingContext): Boolean {
@@ -92,6 +97,20 @@ public fun JetCallExpression.getValueArgumentsInParentheses(): List<ValueArgumen
 
 [suppress("UNCHECKED_CAST")]
 private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is JetFunctionLiteralArgument } as List<ValueArgument>
+
+public fun Call.getValueArgumentForExpression(expression: JetExpression): ValueArgument? {
+    fun JetElement.deparenthesizeStructurally(): JetElement? {
+        val deparenthesized = if (this is JetExpression) JetPsiUtil.deparenthesizeOnce(this, false) else this
+        return when {
+            deparenthesized != this -> deparenthesized
+            this is JetFunctionLiteralExpression -> this.getFunctionLiteral()
+            this is JetFunctionLiteral -> this.getBodyExpression()
+            else -> null
+        }
+    }
+    fun JetElement.isParenthesizedExpression() = stream(this) { it.deparenthesizeStructurally() }.any { it == expression }
+    return getValueArguments().firstOrNull { it?.getArgumentExpression()?.isParenthesizedExpression() ?: false }
+}
 
 // Get call / resolved call from binding context
 

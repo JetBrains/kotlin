@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -103,24 +104,15 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
             }
         }
 
-        // Change type of a function parameter in case TYPE_MISMATCH is reported on expression passed as value argument of call.
-        // 1) When an argument is a dangling function literal:
-        JetFunctionLiteralArgument functionLiteralArgument =
-                QuickFixUtil.getParentElementOfType(diagnostic, JetFunctionLiteralArgument.class);
-        JetFunctionLiteralExpression functionLiteralExpression = functionLiteralArgument != null ? functionLiteralArgument.getFunctionLiteral() : null;
-        if (functionLiteralExpression != null && functionLiteralExpression.getBodyExpression() == expression) {
-            JetParameter correspondingParameter =
-                    QuickFixUtil.getParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(functionLiteralExpression);
-            JetType functionLiteralExpressionType = context.get(BindingContext.EXPRESSION_TYPE, functionLiteralExpression);
-            if (correspondingParameter != null && functionLiteralExpressionType != null) {
-                actions.add(new ChangeParameterTypeFix(correspondingParameter, functionLiteralExpressionType));
-            }
-        }
-        // 2) When an argument is passed inside value argument list:
-        else {
-            JetValueArgument valueArgument = QuickFixUtil.getParentElementOfType(diagnostic, JetValueArgument.class);
-            if (valueArgument != null && QuickFixUtil.canEvaluateTo(valueArgument.getArgumentExpression(), expression)) {
-                JetParameter correspondingParameter = QuickFixUtil.getParameterCorrespondingToValueArgumentPassedInCall(valueArgument);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getParentResolvedCall(expression, context, true);
+        if (resolvedCall != null) {
+            // to fix 'type mismatch' on 'if' branches
+            // todo: the same with 'when'
+            JetExpression parentIf = QuickFixUtil.getParentIfForBranch(expression);
+            JetExpression argumentExpression = (parentIf != null) ? parentIf : expression;
+            ValueArgument valueArgument = CallUtilPackage.getValueArgumentForExpression(resolvedCall.getCall(), argumentExpression);
+            if (valueArgument != null) {
+                JetParameter correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument);
                 JetType valueArgumentType = context.get(BindingContext.EXPRESSION_TYPE, valueArgument.getArgumentExpression());
                 if (correspondingParameter != null && valueArgumentType != null) {
                     actions.add(new ChangeParameterTypeFix(correspondingParameter, valueArgumentType));
@@ -132,7 +124,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
 
     @Nullable
     private static JetFunction getFunctionDeclaration(@NotNull ResolvedCall<?> resolvedCall) {
-        PsiElement result = QuickFixUtil.safeGetDeclaration(resolvedCall);
+        PsiElement result = QuickFixUtil.safeGetDeclaration(resolvedCall.getResultingDescriptor());
         if (result instanceof JetFunction) {
             return (JetFunction) result;
         }
