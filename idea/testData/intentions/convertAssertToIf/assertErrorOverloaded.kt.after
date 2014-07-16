@@ -1,4 +1,7 @@
-// WITH_RUNTIME
+package a
+
+import java.lang
+
 fun foo() {
     if (!true) {
         throw lang.AssertionError("text")
@@ -6,3 +9,5 @@ fun foo() {
 }
 
 class AssertionError
+
+// WITH_RUNTIME

@@ -29,6 +29,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.lang.psi.JetThrowExpression
 
 public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(
         "convert.assert.to.if.with.throw", javaClass()) {
@@ -57,6 +59,13 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
+        val replacementIfExpression = createReplacementExpression(element) ?: return
+        val replaced = replaceExpression(element, replacementIfExpression)
+        ShortenReferences.process(replaced.getThen()!!)
+        simplifyConditionIfPossible(editor, replaced)
+    }
+
+    private fun createReplacementExpression(element: JetCallExpression): JetIfExpression? {
         val args = element.getValueArguments()
         val condition = args[0]?.getArgumentExpression()
         val lambdas = element.getFunctionLiteralArguments()
@@ -73,7 +82,7 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
                     psiFactory.createExpression("\"Assertion failed\"")
                 }
 
-        if (condition == null || messageExpr == null) return
+        if (condition == null || messageExpr == null) return null
 
         val message =
                 if (messageIsAFunction && messageExpr is JetCallableReferenceExpression) {
@@ -86,25 +95,30 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
                     "${messageExpr.getText()}"
                 }
 
-        val assertTypeRef = psiFactory.createType("java.lang.AssertionError")
-        ShortenReferences.process(assertTypeRef)
-
-        val text = "if (!true) { throw ${assertTypeRef.getText()}(${message}) }"
+        val text = "if (!true) { throw java.lang.AssertionError(${message}) }"
         val ifExpression = psiFactory.createExpression(text) as JetIfExpression
 
         val ifCondition = ifExpression.getCondition() as JetPrefixExpression
         ifCondition.getBaseExpression()?.replace(condition)
+        return ifExpression
+    }
 
+    private fun simplifyConditionIfPossible(editor: Editor, replaced: JetIfExpression) {
+        val condition = replaced.getCondition() as JetPrefixExpression
         val simplifier = SimplifyNegatedBinaryExpressionIntention()
-        if (simplifier.isApplicableTo(ifCondition)) {
-            simplifier.applyTo(ifCondition, editor)
+        if (simplifier.isApplicableTo(condition)) {
+            simplifier.applyTo(condition, editor)
         }
+    }
 
-        val parent = element.getParent()
-        if (parent is JetDotQualifiedExpression) {
-            parent.replace(ifExpression)
-        } else {
-            element.replace(ifExpression)
+    private fun replaceExpression(original: JetCallExpression, replacement: JetIfExpression): JetIfExpression {
+        val parent = original.getParent()
+        val result = if (parent is JetDotQualifiedExpression) {
+            parent.replace(replacement)
         }
+        else {
+            original.replace(replacement)
+        }
+        return result as JetIfExpression
     }
 }
