@@ -19,7 +19,8 @@ package org.jetbrains.jet.codegen.when;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.FrameMap;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetWhenEntry;
+import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -41,6 +42,7 @@ abstract public class SwitchCodegen {
     protected final Collection<Label> entryLabels = new ArrayList<Label>();
     protected Label elseLabel = new Label();
     protected Label endLabel = new Label();
+    protected Label defaultLabel;
 
     public SwitchCodegen(
             @NotNull JetWhenExpression expression, boolean isStatement,
@@ -52,7 +54,7 @@ abstract public class SwitchCodegen {
         this.bindingContext = codegen.getBindingContext();
 
         subjectType = codegen.expressionType(expression.getSubjectExpression());
-        resultType = codegen.expressionType(expression);
+        resultType = isStatement ? Type.VOID_TYPE : codegen.expressionType(expression);
         v = codegen.v;
     }
 
@@ -66,25 +68,11 @@ abstract public class SwitchCodegen {
 
         generateSubject();
 
-        generateSwitchInstructionByTransitionsTable(
-                transitionsTable,
-                // if there is no else-entry and it's statement then default --- endLabel
-                (hasElse || !isStatement) ? elseLabel : endLabel
-        );
+        // if there is no else-entry and it's statement then default --- endLabel
+        defaultLabel = (hasElse || !isStatement) ? elseLabel : endLabel;
+        generateSwitchInstructionByTransitionsTable();
 
-        // resolving entries' entryLabels and generating entries' code
-        Iterator<Label> entryLabelsIterator = entryLabels.iterator();
-        for (JetWhenEntry entry : expression.getEntries()) {
-            v.visitLabel(entryLabelsIterator.next());
-
-            FrameMap.Mark mark = codegen.myFrameMap.mark();
-            codegen.gen(entry.getExpression(), resultType);
-            mark.dropTo();
-
-            if (!entry.isElse()) {
-                v.goTo(endLabel);
-            }
-        }
+        generateEntries();
 
         // there is no else-entry but this is not statement, so we should return Unit
         if (!hasElse && !isStatement) {
@@ -120,7 +108,7 @@ abstract public class SwitchCodegen {
             @NotNull CompileTimeConstant constant,
             @NotNull Label entryLabel
     );
-    
+
     protected void putTransitionOnce(int value, @NotNull Label entryLabel) {
         if (!transitionsTable.containsKey(value)) {
             transitionsTable.put(value, entryLabel);
@@ -136,14 +124,12 @@ abstract public class SwitchCodegen {
         codegen.gen(expression.getSubjectExpression(), subjectType);
     }
 
-    private void generateSwitchInstructionByTransitionsTable(
-            @NotNull Map<Integer, Label> transitions, @NotNull Label defaultLabel
-    ) {
-        int[] keys = new int[transitions.size()];
-        Label[] labels = new Label[transitions.size()];
+    private void generateSwitchInstructionByTransitionsTable() {
+        int[] keys = new int[transitionsTable.size()];
+        Label[] labels = new Label[transitionsTable.size()];
         int i = 0;
 
-        for (Map.Entry<Integer, Label> transition : transitions.entrySet()) {
+        for (Map.Entry<Integer, Label> transition : transitionsTable.entrySet()) {
             keys[i] = transition.getKey();
             labels[i] = transition.getValue();
 
@@ -180,5 +166,21 @@ abstract public class SwitchCodegen {
         }
 
         v.tableswitch(lo, hi, defaultLabel, sparseLabels);
+    }
+
+    protected void generateEntries() {
+        // resolving entries' entryLabels and generating entries' code
+        Iterator<Label> entryLabelsIterator = entryLabels.iterator();
+        for (JetWhenEntry entry : expression.getEntries()) {
+            v.visitLabel(entryLabelsIterator.next());
+
+            FrameMap.Mark mark = codegen.myFrameMap.mark();
+            codegen.gen(entry.getExpression(), resultType);
+            mark.dropTo();
+
+            if (!entry.isElse()) {
+                v.goTo(endLabel);
+            }
+        }
     }
 }

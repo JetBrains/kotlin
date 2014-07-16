@@ -25,39 +25,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
+import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SwitchCodegenUtil {
-    public static boolean canSwitchBeUsedIn(
-            @NotNull JetWhenExpression expression,
-            @NotNull Type subjectType,
-            @NotNull BindingContext bindingContext
-    ) {
-        // *switch opcode can be used if each item is enum entry or integral constant
-        // in case of enum CodegenAnnotationVisitor should put mappings into bindingContext
-        if (bindingContext.get(CodegenBinding.MAPPING_FOR_WHEN_BY_ENUM, expression) != null) {
-            return true;
-        }
-
-        int typeSort = subjectType.getSort();
-
-        if (typeSort != Type.INT && typeSort != Type.CHAR && typeSort != Type.SHORT && typeSort != Type.BYTE) {
-            return false;
-        }
-
-        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, new Function1<CompileTimeConstant, Boolean>() {
-            @Override
-            public Boolean invoke(
-                    @NotNull CompileTimeConstant constant
-            ) {
-                return constant instanceof IntegerValueConstant;
-            }
-        });
-    }
-
     public static boolean checkAllItemsAreConstantsSatisfying(
             @NotNull JetWhenExpression expression,
             @NotNull BindingContext bindingContext,
@@ -121,18 +95,70 @@ public class SwitchCodegenUtil {
         return result;
     }
 
-    @NotNull
-    public static SwitchCodegen buildAppropriateSwitchCodegen(
+    @Nullable
+    public static SwitchCodegen buildAppropriateSwitchCodegenIfPossible(
             @NotNull JetWhenExpression expression,
             boolean isStatement,
             @NotNull ExpressionCodegen codegen
     ) {
+        Type subjectType = codegen.expressionType(expression.getSubjectExpression());
+        BindingContext bindingContext = codegen.getBindingContext();
+
         WhenByEnumsMapping mapping = codegen.getBindingContext().get(CodegenBinding.MAPPING_FOR_WHEN_BY_ENUM, expression);
 
         if (mapping != null) {
             return new EnumSwitchCodegen(expression, isStatement, codegen, mapping);
         }
 
-        return new IntegralConstantsSwitchCodegen(expression, isStatement, codegen);
+        if (isIntegralConstantsSwitch(expression, subjectType, bindingContext)) {
+            return new IntegralConstantsSwitchCodegen(expression, isStatement, codegen);
+        }
+
+        if (isStringConstantsSwitch(expression, subjectType, bindingContext)) {
+            return new StringSwitchCodegen(expression, isStatement, codegen);
+        }
+
+        return null;
+    }
+
+    private static boolean isIntegralConstantsSwitch(
+            @NotNull JetWhenExpression expression,
+            @NotNull Type subjectType,
+            @NotNull BindingContext bindingContext
+    ) {
+        int typeSort = subjectType.getSort();
+
+        if (typeSort != Type.INT && typeSort != Type.CHAR && typeSort != Type.SHORT && typeSort != Type.BYTE) {
+            return false;
+        }
+
+        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, new Function1<CompileTimeConstant, Boolean>() {
+            @Override
+            public Boolean invoke(
+                    @NotNull CompileTimeConstant constant
+            ) {
+                return constant instanceof IntegerValueConstant;
+            }
+        });
+    }
+
+    private static boolean isStringConstantsSwitch(
+            @NotNull JetWhenExpression expression,
+            @NotNull Type subjectType,
+            @NotNull BindingContext bindingContext
+    ) {
+
+        if (!subjectType.getClassName().equals(String.class.getName())) {
+            return false;
+        }
+
+        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, new Function1<CompileTimeConstant, Boolean>() {
+            @Override
+            public Boolean invoke(
+                    @NotNull CompileTimeConstant constant
+            ) {
+                return constant instanceof StringValue;
+            }
+        });
     }
 }

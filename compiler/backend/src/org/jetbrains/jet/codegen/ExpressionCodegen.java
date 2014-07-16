@@ -37,6 +37,7 @@ import org.jetbrains.jet.codegen.inline.NameGenerator;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.codegen.when.SwitchCodegen;
 import org.jetbrains.jet.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -112,7 +113,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
      * When we create a temporary variable to hold some value not to compute it many times
      * we put it into this map to emit access to that variable instead of evaluating the whole expression
      */
-    final Map<JetElement, StackValue> tempVariables = Maps.newHashMap();
+    public final Map<JetElement, StackValue> tempVariables = Maps.newHashMap();
 
     private int myLastLineNumber = -1;
 
@@ -3725,8 +3726,10 @@ The "returned" value of try expression with no finally is either the last expres
 
         Type resultType = isStatement ? Type.VOID_TYPE : expressionType(expression);
 
-        if (SwitchCodegenUtil.canSwitchBeUsedIn(expression, subjectType, bindingContext)) {
-            return generateSwitch(expression, resultType, isStatement);
+        SwitchCodegen switchCodegen = SwitchCodegenUtil.buildAppropriateSwitchCodegenIfPossible(expression, isStatement, this);
+        if (switchCodegen != null) {
+            switchCodegen.generate();
+            return StackValue.onStack(resultType);
         }
 
         int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType) : -1;
@@ -3814,19 +3817,6 @@ The "returned" value of try expression with no finally is either the last expres
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");
         }
-    }
-
-    private StackValue generateSwitch(
-            @NotNull JetWhenExpression expression,
-            @NotNull Type resultType,
-            boolean isStatement
-    ) {
-        SwitchCodegenUtil.buildAppropriateSwitchCodegen(
-                expression, isStatement, this
-
-        ).generate();
-
-        return StackValue.onStack(resultType);
     }
 
     private boolean isIntRangeExpr(JetExpression rangeExpression) {
