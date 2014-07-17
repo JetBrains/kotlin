@@ -56,8 +56,8 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlPathProvider;
-import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlPathProvider;
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlParser;
+import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlParser;
 import org.jetbrains.kotlin.asJava.JavaElementFinder;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
@@ -296,8 +296,7 @@ public class JetCoreEnvironment {
         );
 
         String s = configuration.get(JVMConfigurationKeys.ANDROID_RES_PATH);
-        project.registerService(AndroidUIXmlPathProvider.class, new CliAndroidUIXmlPathProvider(s));
-        
+        project.registerService(AndroidUIXmlParser.class, new CliAndroidUIXmlParser(s));
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
     }
 
