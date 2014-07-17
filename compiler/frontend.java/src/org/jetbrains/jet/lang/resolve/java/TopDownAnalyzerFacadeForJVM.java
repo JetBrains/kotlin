@@ -114,9 +114,8 @@ public enum TopDownAnalyzerFacadeForJVM {
     }
 
     private static Collection<JetFile> searchAndAddAndroidDeclarations(Project project, Collection<JetFile> files) {
-        AndroidUIXmlPathProvider provider = ServiceManager.getService(project, AndroidUIXmlPathProvider.class);
-        Collection<File> paths = provider.getPaths();
-        JetFile file = new AndroidUIXmlParser(project, paths).parseToPsi();
+        AndroidUIXmlParser parser = ServiceManager.getService(project, AndroidUIXmlParser.class);
+        JetFile file = parser.parseToPsi(project);
         if (file != null) files.add(file);
         return files;
     }

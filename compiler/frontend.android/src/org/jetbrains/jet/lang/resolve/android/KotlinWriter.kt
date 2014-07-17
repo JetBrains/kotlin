@@ -1,6 +1,8 @@
 package org.jetbrains.jet.lang.resolve.android
 
-trait KotlinWriter
+trait KotlinWriter {
+    fun output(): StringBuffer
+}
 
 class KotlinStringWriter : KotlinWriter {
 
@@ -68,7 +70,7 @@ class KotlinStringWriter : KotlinWriter {
         body.newLine()
     }
 
-    fun output(): StringBuffer {
+    override fun output(): StringBuffer {
         ctx.absorbChildren()
         return ctx.buffer
     }

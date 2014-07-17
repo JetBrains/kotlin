@@ -8,6 +8,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlParser;
+import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlParser;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 
 import java.io.File;
@@ -49,9 +50,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
     }
 
     public void testCompileResult() throws Exception {
-        ArrayList<File> paths = new ArrayList<File>();
-        paths.add(singleFile);
-        String text = new AndroidUIXmlParser(null, paths).parseToString();
+        String text = new CliAndroidUIXmlParser(singleFile.getAbsolutePath()).parseToString();
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
                                                                                                             ConfigurationKind.ALL);
         JetFile psiFile = JetTestUtils.createFile(singleFile.getName(), text, jetCoreEnvironment.getProject());
@@ -71,9 +70,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
     }
 
     public void testConverterOneFile() throws Exception {
-        ArrayList<File> paths = new ArrayList<File>();
-        paths.add(singleFile);
-        AndroidUIXmlParser parser = new AndroidUIXmlParser(null, paths);
+        AndroidUIXmlParser parser = new CliAndroidUIXmlParser(singleFile.getAbsolutePath());
 
         String actual = parser.parseToString();
         String expected = loadOrCreate(new File(getTestDataPath() + "/converter/singleFile/layout.kt"), actual);
