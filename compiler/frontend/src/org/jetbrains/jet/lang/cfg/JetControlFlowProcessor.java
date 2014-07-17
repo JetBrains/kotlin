@@ -905,8 +905,10 @@ public class JetControlFlowProcessor {
             PseudoValue value = builder.magic(
                     loopRange != null ? loopRange : expression,
                     null,
-                    Collections.singletonList(loopRangeValue),
-                    Collections.singletonMap(loopRangeValue, loopRangeTypePredicate),
+                    ContainerUtil.createMaybeSingletonList(loopRangeValue),
+                    loopRangeValue != null
+                        ? Collections.singletonMap(loopRangeValue, loopRangeTypePredicate)
+                        : Collections.<PseudoValue, TypePredicate>emptyMap(),
                     MagicKind.LOOP_RANGE_ITERATION
             ).getOutputValue();
 
