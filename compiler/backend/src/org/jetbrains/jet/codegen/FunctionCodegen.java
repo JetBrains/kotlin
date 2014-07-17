@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.PackageFacadeContext;
+import org.jetbrains.jet.codegen.optimization.OptimizationMethodVisitor;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -396,6 +397,7 @@ public class FunctionCodegen extends ParentCodegenAware {
     public static void endVisit(MethodVisitor mv, @Nullable String description, @Nullable PsiElement method) {
         try {
             mv.visitMaxs(-1, -1);
+            mv.visitEnd();
         }
         catch (ProcessCanceledException e) {
             throw e;
@@ -411,11 +413,15 @@ public class FunctionCodegen extends ParentCodegenAware {
                     (bytecode != null ? "\nbytecode:\n" + bytecode : ""),
                     t, method);
         }
-        mv.visitEnd();
     }
 
     private static String renderByteCodeIfAvailable(MethodVisitor mv) {
         String bytecode = null;
+
+        if (mv instanceof OptimizationMethodVisitor) {
+            mv = ((OptimizationMethodVisitor) mv).getTraceMethodVisitorIfPossible();
+        }
+
         if (mv instanceof TraceMethodVisitor) {
             TraceMethodVisitor traceMethodVisitor = (TraceMethodVisitor) mv;
             StringWriter sw = new StringWriter();
