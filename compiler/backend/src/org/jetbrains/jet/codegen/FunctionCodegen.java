@@ -297,18 +297,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
         }
         else {
-            FrameMap frameMap = new FrameMap();
-            if (context.getContextKind() == OwnerKind.IMPLEMENTATION) {
-                frameMap.enterTemp(OBJECT_TYPE); // 0 slot for this
-            }
-            for (JvmMethodParameterSignature parameter : signature.getValueParameters()) {
-                if (parameter.getKind() != JvmMethodParameterKind.VALUE) {
-                    frameMap.enterTemp(parameter.getAsmType());
-                }
-            }
-            for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
-                frameMap.enter(parameter, typeMapper.mapType(parameter));
-            }
+            FrameMap frameMap = createFrameMap(parentCodegen.state, functionDescriptor, signature, isStatic(context.getContextKind()));
 
             Label methodEntry = new Label();
             mv.visitLabel(methodEntry);
@@ -617,29 +606,9 @@ public class FunctionCodegen extends ParentCodegenAware {
             @NotNull MemberCodegen<?> parentCodegen,
             @NotNull GenerationState state
     ) {
-        FrameMap frameMap = new FrameMap();
-
-        if (!isStatic) {
-            frameMap.enterTemp(OBJECT_TYPE);
-        }
+        FrameMap frameMap = createFrameMap(state, functionDescriptor, signature, isStatic);
 
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, signature.getReturnType(), methodContext, state, parentCodegen);
-
-        Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
-        List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
-        Iterator<ValueParameterDescriptor> iterator = paramDescrs.iterator();
-
-        int countOfExtraVarsInMethodArgs = 0;
-
-        for (JvmMethodParameterSignature parameterSignature : signature.getValueParameters()) {
-            if (parameterSignature.getKind() != JvmMethodParameterKind.VALUE) {
-                countOfExtraVarsInMethodArgs++;
-                frameMap.enterTemp(parameterSignature.getAsmType());
-            }
-            else {
-                frameMap.enter(iterator.next(), parameterSignature.getAsmType());
-            }
-        }
 
         int maskIndex = frameMap.enterTemp(Type.INT_TYPE);
 
@@ -649,10 +618,17 @@ public class FunctionCodegen extends ParentCodegenAware {
         loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, isStatic, signature);
         generator.putHiddenParams();
 
-        for (int index = 0; index < paramDescrs.size(); index++) {
-            ValueParameterDescriptor parameterDescriptor = paramDescrs.get(index);
+        List<JvmMethodParameterSignature> mappedParameters = signature.getValueParameters();
+        int capturedArgumentsCount = 0;
+        while (capturedArgumentsCount < mappedParameters.size() &&
+               mappedParameters.get(capturedArgumentsCount).getKind() != JvmMethodParameterKind.VALUE) {
+            capturedArgumentsCount++;
+        }
 
-            Type t = argTypes[countOfExtraVarsInMethodArgs + index];
+        List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
+        for (int index = 0; index < valueParameters.size(); index++) {
+            ValueParameterDescriptor parameterDescriptor = valueParameters.get(index);
+            Type type = mappedParameters.get(capturedArgumentsCount + index).getAsmType();
 
             int parameterIndex = frameMap.getIndex(parameterDescriptor);
             if (parameterDescriptor.declaresDefaultValue()) {
@@ -664,12 +640,12 @@ public class FunctionCodegen extends ParentCodegenAware {
 
                 loadStrategy.putValueOnStack(parameterDescriptor, codegen);
 
-                iv.store(parameterIndex, t);
+                iv.store(parameterIndex, type);
 
                 iv.mark(loadArg);
             }
 
-            generator.putValueIfNeeded(parameterDescriptor, t, StackValue.local(parameterIndex, t));
+            generator.putValueIfNeeded(parameterDescriptor, type, StackValue.local(parameterIndex, type));
         }
 
         CallableMethod method;
@@ -685,6 +661,30 @@ public class FunctionCodegen extends ParentCodegenAware {
         iv.areturn(signature.getReturnType());
     }
 
+    @NotNull
+    private static FrameMap createFrameMap(
+            @NotNull GenerationState state,
+            @NotNull FunctionDescriptor function,
+            @NotNull JvmMethodSignature signature,
+            boolean isStatic
+    ) {
+        FrameMap frameMap = new FrameMap();
+        if (!isStatic) {
+            frameMap.enterTemp(OBJECT_TYPE);
+        }
+
+        for (JvmMethodParameterSignature parameter : signature.getValueParameters()) {
+            if (parameter.getKind() != JvmMethodParameterKind.VALUE) {
+                frameMap.enterTemp(parameter.getAsmType());
+            }
+        }
+
+        for (ValueParameterDescriptor parameter : function.getValueParameters()) {
+            frameMap.enter(parameter, state.getTypeMapper().mapType(parameter));
+        }
+
+        return frameMap;
+    }
 
     private static void loadExplicitArgumentsOnStack(
             @NotNull InstructionAdapter iv,
