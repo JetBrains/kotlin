@@ -25,6 +25,8 @@ import org.jetbrains.jet.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.util.Textifier;
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,5 +96,17 @@ public class OptimizationMethodVisitor extends MethodVisitor {
         public void visitEnd() {
 
         }
+    }
+
+    @Nullable
+    public TraceMethodVisitor getTraceMethodVisitorIfPossible() {
+        TraceMethodVisitor traceMethodVisitor = new TraceMethodVisitor(new Textifier());
+        try {
+            methodNode.accept(traceMethodVisitor);
+        } catch (Throwable e) {
+            return null;
+        }
+
+        return traceMethodVisitor;
     }
 }
