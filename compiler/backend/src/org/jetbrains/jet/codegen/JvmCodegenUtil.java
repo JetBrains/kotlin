@@ -81,16 +81,6 @@ public class JvmCodegenUtil {
         return stack.empty() ? null : stack.peek();
     }
 
-    public static JetType getSuperClass(ClassDescriptor classDescriptor) {
-        List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(classDescriptor);
-        for (ClassDescriptor descriptor : superclassDescriptors) {
-            if (descriptor.getKind() != ClassKind.TRAIT) {
-                return descriptor.getDefaultType();
-            }
-        }
-        return KotlinBuiltIns.getInstance().getAnyType();
-    }
-
     @Nullable
     public static FunctionDescriptor getDeclaredFunctionByRawSignature(
             @NotNull ClassDescriptor owner,

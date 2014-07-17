@@ -1497,27 +1497,25 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     @Override
                     public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                         DeclarationDescriptor containingDeclaration = traitFun.getContainingDeclaration();
-                        if (!(containingDeclaration instanceof ClassDescriptor)) return;
-                        ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
-                        if (containingTrait.getKind() != ClassKind.TRAIT) return;
+                        if (!DescriptorUtils.isTrait(containingDeclaration)) return;
+                        Type traitImplType = typeMapper.mapTraitImpl((ClassDescriptor) containingDeclaration);
 
-                        Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal()).getAsmMethod();
+                        Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal(), OwnerKind.TRAIT_IMPL).getAsmMethod();
 
                         Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                         Type[] originalArgTypes = traitMethod.getArgumentTypes();
+                        assert originalArgTypes.length == argTypes.length + 1 :
+                                "Invalid trait implementation signature: " + signature + " vs " + traitMethod + " for " + traitFun;
 
                         InstructionAdapter iv = codegen.v;
                         iv.load(0, OBJECT_TYPE);
                         for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
+                            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i + 1], iv);
                             //noinspection AssignmentToForLoopParameter
                             reg += argTypes[i].getSize();
                         }
 
-                        Type type = getTraitImplThisParameterType(containingTrait, typeMapper);
-                        String desc = traitMethod.getDescriptor().replace("(", "(" + type.getDescriptor());
-
-                        iv.invokestatic(typeMapper.mapTraitImpl(containingTrait).getInternalName(), traitMethod.getName(), desc);
+                        iv.invokestatic(traitImplType.getInternalName(), traitMethod.getName(), traitMethod.getDescriptor());
 
                         Type returnType = signature.getReturnType();
                         StackValue.onStack(traitMethod.getReturnType()).put(returnType, iv);

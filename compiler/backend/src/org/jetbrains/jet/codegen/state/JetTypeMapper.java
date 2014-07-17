@@ -60,7 +60,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isStatic;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
@@ -661,16 +662,26 @@ public class JetTypeMapper {
             @NotNull OwnerKind kind,
             @NotNull BothSignatureWriter sw
     ) {
-        Type thisType;
+        ClassDescriptor thisType;
         if (kind == OwnerKind.TRAIT_IMPL) {
-            thisType = getTraitImplThisParameterType((ClassDescriptor) descriptor.getContainingDeclaration(), this);
+            thisType = getTraitImplThisParameterClass((ClassDescriptor) descriptor.getContainingDeclaration());
         }
         else if (isAccessor(descriptor) && descriptor.getExpectedThisObject() != null) {
-            thisType = mapClass((ClassifierDescriptor) descriptor.getContainingDeclaration());
+            thisType = (ClassDescriptor) descriptor.getContainingDeclaration();
         }
         else return;
 
-        writeParameter(sw, JvmMethodParameterKind.THIS, thisType);
+        writeParameter(sw, JvmMethodParameterKind.THIS, thisType.getDefaultType());
+    }
+
+    @NotNull
+    private static ClassDescriptor getTraitImplThisParameterClass(@NotNull ClassDescriptor traitDescriptor) {
+        for (ClassDescriptor descriptor : DescriptorUtils.getSuperclassDescriptors(traitDescriptor)) {
+            if (descriptor.getKind() != ClassKind.TRAIT) {
+                return descriptor;
+            }
+        }
+        return traitDescriptor;
     }
 
     public void writeFormalTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull BothSignatureWriter sw) {

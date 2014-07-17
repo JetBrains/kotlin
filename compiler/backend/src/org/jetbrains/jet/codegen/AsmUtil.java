@@ -50,7 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.codegen.JvmCodegenUtil.getSuperClass;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
@@ -318,16 +317,6 @@ public class AsmUtil {
             return ACC_PUBLIC;
         }
         return null;
-    }
-
-    @NotNull
-    public static Type getTraitImplThisParameterType(@NotNull ClassDescriptor traitDescriptor, @NotNull JetTypeMapper typeMapper) {
-        JetType jetType = getSuperClass(traitDescriptor);
-        Type type = typeMapper.mapType(jetType);
-        if (type.getInternalName().equals("java/lang/Object")) {
-            return typeMapper.mapType(traitDescriptor.getDefaultType());
-        }
-        return type;
     }
 
     private static Type stringValueOfType(Type type) {
