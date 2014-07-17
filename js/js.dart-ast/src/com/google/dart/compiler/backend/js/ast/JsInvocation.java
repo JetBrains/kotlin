@@ -7,12 +7,14 @@ package com.google.dart.compiler.backend.js.ast;
 import com.google.dart.compiler.util.AstUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 
 import java.util.Arrays;
 import java.util.List;
 
 public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArguments {
     private JsExpression qualifier;
+    private InlineStrategy inlineStrategy = InlineStrategy.NOT_INLINE;
 
     public JsInvocation() {
         super(new SmartList<JsExpression>());
@@ -50,6 +52,14 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
         this.qualifier = qualifier;
     }
 
+    public InlineStrategy getInlineStrategy() {
+        return inlineStrategy;
+    }
+
+    public void setInlineStrategy(InlineStrategy inlineStrategy) {
+        this.inlineStrategy = inlineStrategy;
+    }
+
     @Override
     public void accept(JsVisitor v) {
         v.visitInvocation(this);
@@ -76,7 +86,7 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
         JsExpression qualifierCopy = AstUtil.deepCopy(qualifier);
         List<JsExpression> argumentsCopy = AstUtil.deepCopy(arguments);
         JsInvocation copy = new JsInvocation(qualifierCopy, argumentsCopy);
-        copy.setInlineStatus(getInlineStatus());
+        copy.setInlineStrategy(inlineStrategy);
         return copy;
     }
 }
