@@ -119,6 +119,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/boxingOptimization/fold.kt");
         }
         
+        @TestMetadata("kt5493.kt")
+        public void testKt5493() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/boxingOptimization/kt5493.kt");
+        }
+        
         @TestMetadata("nullCheck.kt")
         public void testNullCheck() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/boxingOptimization/nullCheck.kt");

@@ -56,7 +56,7 @@ public class RedundantNullCheckMethodTransformer extends MethodTransformer {
             AbstractInsnNode insn = insnList.get(i);
 
             if ((insn.getOpcode() == Opcodes.IFNULL || insn.getOpcode() == Opcodes.IFNONNULL) &&
-                frame.getStack(frame.getStackSize() - 1) instanceof BoxedBasicValue) {
+                frame != null && frame.getStack(frame.getStackSize() - 1) instanceof BoxedBasicValue) {
 
                 insnsToOptimize.add(insn);
             }
