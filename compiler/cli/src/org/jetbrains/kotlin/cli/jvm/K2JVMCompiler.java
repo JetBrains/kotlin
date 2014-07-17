@@ -90,6 +90,10 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             return INTERNAL_ERROR;
         }
 
+        if (arguments.androidRes != null) {
+            configuration.put(JVMConfigurationKeys.ANDROID_RES_PATH, arguments.androidRes);
+        }
+
         if (arguments.script) {
             if (arguments.freeArgs.isEmpty()) {
                 messageCollector.report(CompilerMessageSeverity.ERROR, "Specify script source path to evaluate",

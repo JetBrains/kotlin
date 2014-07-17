@@ -1,11 +1,12 @@
 package org.jetbrains.jet.lang.resolve.android
 
 import java.io.File
+import java.util.ArrayList
 
-class CliAndroidUIXmlPathProvider: AndroidUIXmlPathProvider {
+class CliAndroidUIXmlPathProvider(val searchPath: String?): AndroidUIXmlPathProvider {
 
     override fun getPaths(): MutableCollection<File> {
-        throw UnsupportedOperationException()
+        return if (searchPath != null) arrayListOf(File(searchPath + "/layout/")) else ArrayList()
     }
 }
 
