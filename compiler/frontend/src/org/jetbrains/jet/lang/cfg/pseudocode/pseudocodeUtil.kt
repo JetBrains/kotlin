@@ -136,15 +136,3 @@ public fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: Bind
         else -> PseudocodeUtil.extractVariableDescriptorIfAny(this, false, bindingContext)
     }
 }
-
-private fun Pseudocode.collectValueUsages(): Map<PseudoValue, List<Instruction>> {
-    val map = HashMap<PseudoValue, MutableList<Instruction>>()
-    traverseFollowingInstructions(getEnterInstruction(), HashSet(), TraversalOrder.FORWARD) {
-        for (value in it.inputValues) {
-            map.getOrPut(value){ ArrayList() }.add(it)
-        }
-        true
-    }
-
-    return map
-}
