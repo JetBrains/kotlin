@@ -1836,7 +1836,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
         boolean isStatic = containingDeclaration instanceof PackageFragmentDescriptor;
         boolean isSuper = superExpression != null;
-        boolean isInsideClass = isCallInsideSameClassAsDeclared(propertyDescriptor, context);
         boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
 
         JetType delegateType = getPropertyDelegateType(propertyDescriptor, bindingContext);
@@ -1861,7 +1860,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (!skipPropertyAccessors) {
-            if (couldUseDirectAccessToProperty(propertyDescriptor, true, isInsideClass, isDelegatedProperty, context)) {
+            if (couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context)) {
                 callableGetter = null;
             }
             else {
@@ -1885,7 +1884,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (propertyDescriptor.isVar()) {
                 PropertySetterDescriptor setter = propertyDescriptor.getSetter();
                 if (setter != null) {
-                    if (couldUseDirectAccessToProperty(propertyDescriptor, false, isInsideClass, isDelegatedProperty, context)) {
+                    if (couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context)) {
                         callableSetter = null;
                     }
                     else {

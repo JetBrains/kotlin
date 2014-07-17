@@ -34,6 +34,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
@@ -151,12 +154,11 @@ public class JvmCodegenUtil {
         return type.getConstructor().getDeclarationDescriptor().getOriginal() == classifier.getOriginal();
     }
 
-    public static boolean isCallInsideSameClassAsDeclared(CallableMemberDescriptor declarationDescriptor, CodegenContext context) {
-        boolean isFakeOverride = declarationDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
-        boolean isDelegate = declarationDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
+    private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {
+        boolean isFakeOverride = descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+        boolean isDelegate = descriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
 
-        DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
-        containingDeclaration = containingDeclaration.getOriginal();
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration().getOriginal();
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
@@ -249,7 +251,6 @@ public class JvmCodegenUtil {
     public static boolean couldUseDirectAccessToProperty(
             @NotNull PropertyDescriptor property,
             boolean forGetter,
-            boolean isInsideClass,
             boolean isDelegated,
             @NotNull MethodContext context
     ) {
@@ -258,8 +259,8 @@ public class JvmCodegenUtil {
         // Inline functions can't use direct access because a field may not be visible at the call site
         if (context.isInlineFunction()) return false;
 
-        // Only properties of the same class can be directly accessed
-        if (!isInsideClass) return false;
+        // Only properties of the same class can be directly accessed, except when we are evaluating expressions in the debugger
+        if (!isCallInsideSameClassAsDeclared(property, context) && !isDebuggerContext(context)) return false;
 
         // Delegated and extension properties have no backing fields
         if (isDelegated || property.getReceiverParameter() != null) return false;
@@ -277,6 +278,11 @@ public class JvmCodegenUtil {
 
         // If the accessor is private or final, it can't be overridden in the subclass and thus we can use direct access
         return property.getVisibility() == Visibilities.PRIVATE || accessor.getModality() == FINAL;
+    }
+
+    private static boolean isDebuggerContext(@NotNull MethodContext context) {
+        JetFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
+        return file != null && CodeFragmentUtilPackage.getSkipVisibilityCheck(file);
     }
 
     @NotNull
