@@ -23,11 +23,15 @@ import org.jetbrains.jet.lang.psi.JetWhenEntry;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.NullValue;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 
 abstract public class SwitchCodegen {
     protected final JetWhenExpression expression;
@@ -39,7 +43,7 @@ abstract public class SwitchCodegen {
     protected final InstructionAdapter v;
 
     protected final NavigableMap<Integer, Label> transitionsTable = new TreeMap<Integer, Label>();
-    protected final Collection<Label> entryLabels = new ArrayList<Label>();
+    protected final List<Label> entryLabels = new ArrayList<Label>();
     protected Label elseLabel = new Label();
     protected Label endLabel = new Label();
     protected Label defaultLabel;
@@ -66,10 +70,11 @@ abstract public class SwitchCodegen {
 
         boolean hasElse = expression.getElseExpression() != null;
 
-        generateSubject();
-
         // if there is no else-entry and it's statement then default --- endLabel
         defaultLabel = (hasElse || !isStatement) ? elseLabel : endLabel;
+
+        generateSubject();
+
         generateSwitchInstructionByTransitionsTable();
 
         generateEntries();
@@ -93,6 +98,7 @@ abstract public class SwitchCodegen {
             Label entryLabel = new Label();
 
             for (CompileTimeConstant constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
+                if (constant instanceof NullValue) continue;
                 processConstant(constant, entryLabel);
             }
 
@@ -122,6 +128,42 @@ abstract public class SwitchCodegen {
      */
     protected void generateSubject() {
         codegen.gen(expression.getSubjectExpression(), subjectType);
+    }
+
+    protected void generateNullCheckIfNeeded() {
+        JetType subjectJetType = bindingContext.get(EXPRESSION_TYPE, expression.getSubjectExpression());
+
+        assert subjectJetType != null : "subject type can't be null (i.e. void)";
+
+        if (subjectJetType.isNullable()) {
+            int nullEntryIndex = findNullEntryIndex(expression);
+            Label nullLabel = nullEntryIndex == -1 ? defaultLabel : entryLabels.get(nullEntryIndex);
+            Label notNullLabel = new Label();
+
+            v.dup();
+            v.ifnonnull(notNullLabel);
+
+            v.pop();
+
+            v.goTo(nullLabel);
+
+            v.visitLabel(notNullLabel);
+        }
+    }
+
+    private int findNullEntryIndex(@NotNull JetWhenExpression expression) {
+        int entryIndex = 0;
+        for (JetWhenEntry entry : expression.getEntries()) {
+            for (CompileTimeConstant constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
+                if (constant instanceof NullValue) {
+                    return entryIndex;
+                }
+            }
+
+            entryIndex++;
+        }
+
+        return -1;
     }
 
     private void generateSwitchInstructionByTransitionsTable() {

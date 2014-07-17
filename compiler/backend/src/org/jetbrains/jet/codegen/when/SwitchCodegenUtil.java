@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
+import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -78,6 +79,8 @@ public class SwitchCodegenUtil {
             @NotNull BindingContext bindingContext
     ) {
         for (JetWhenCondition condition : entry.getConditions()) {
+            if (!(condition instanceof JetWhenConditionWithExpression)) continue;
+
             JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
 
             assert patternExpression != null : "expression in when should not be null";
@@ -101,12 +104,12 @@ public class SwitchCodegenUtil {
             boolean isStatement,
             @NotNull ExpressionCodegen codegen
     ) {
-        if (!isThereEntriesButElse(expression)) {
+        BindingContext bindingContext = codegen.getBindingContext();
+        if (!isThereConstantEntriesButNulls(expression, bindingContext)) {
             return null;
         }
 
         Type subjectType = codegen.expressionType(expression.getSubjectExpression());
-        BindingContext bindingContext = codegen.getBindingContext();
 
         WhenByEnumsMapping mapping = codegen.getBindingContext().get(CodegenBinding.MAPPING_FOR_WHEN_BY_ENUM, expression);
 
@@ -125,9 +128,15 @@ public class SwitchCodegenUtil {
         return null;
     }
 
-    private static boolean isThereEntriesButElse(@NotNull JetWhenExpression expression) {
-        List<JetWhenEntry> entries = expression.getEntries();
-        return !entries.isEmpty() && (entries.size() > 1 || !entries.get(0).isElse());
+    private static boolean isThereConstantEntriesButNulls(
+            @NotNull JetWhenExpression expression,
+            @NotNull BindingContext bindingContext
+    ) {
+        for (CompileTimeConstant constant : getAllConstants(expression, bindingContext)) {
+            if (constant != null && !(constant instanceof NullValue)) return true;
+        }
+
+        return false;
     }
 
     private static boolean isIntegralConstantsSwitch(
@@ -166,7 +175,7 @@ public class SwitchCodegenUtil {
             public Boolean invoke(
                     @NotNull CompileTimeConstant constant
             ) {
-                return constant instanceof StringValue;
+                return constant instanceof StringValue || constant instanceof NullValue;
             }
         });
     }

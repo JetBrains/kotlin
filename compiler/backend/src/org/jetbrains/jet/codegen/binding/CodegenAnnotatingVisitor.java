@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
+import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
@@ -525,6 +526,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             );
 
             for (CompileTimeConstant constant : SwitchCodegenUtil.getAllConstants(expression, bindingContext)) {
+                if (constant instanceof NullValue) continue;
+
                 assert constant instanceof EnumValue : "expression in when should be EnumValue";
                 mapping.putFirstTime((EnumValue) constant, mapping.size() + 1);
             }
@@ -543,11 +546,11 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                     new Function1<CompileTimeConstant, Boolean>() {
                         @Override
                         public Boolean invoke(
-                             @NotNull CompileTimeConstant constant
+                                @NotNull CompileTimeConstant constant
                         ) {
-                         return constant instanceof EnumValue;
+                            return constant instanceof EnumValue || constant instanceof NullValue;
                         }
-                }
+                    }
         );
     }
 

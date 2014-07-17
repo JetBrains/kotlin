@@ -25,13 +25,16 @@ public class EnumSwitchCodegen extends SwitchCodegen {
     protected void generateSubject() {
         codegen.getState().getMappingsClassesForWhenByEnum().generateMappingsClassForExpression(expression);
 
+        super.generateSubject();
+        generateNullCheckIfNeeded();
+
         v.getstatic(
                 mapping.getMappingsClassInternalName(),
                 mapping.getFieldName(),
                 MappingClassesForWhenByEnumCodegen.MAPPINGS_FIELD_DESCRIPTOR
         );
 
-        super.generateSubject();
+        v.swap();
 
         v.invokevirtual(
                 mapping.getEnumClassInternalName(),

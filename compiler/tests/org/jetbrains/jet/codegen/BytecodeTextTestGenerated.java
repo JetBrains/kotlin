@@ -340,6 +340,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/nonConstantEnum.kt");
         }
         
+        @TestMetadata("nullability.kt")
+        public void testNullability() throws Exception {
+            doTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/nullability.kt");
+        }
+        
         @TestMetadata("subjectAny.kt")
         public void testSubjectAny() throws Exception {
             doTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/subjectAny.kt");
@@ -381,6 +386,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("nonInlinedConst.kt")
         public void testNonInlinedConst() throws Exception {
             doTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/nonInlinedConst.kt");
+        }
+        
+        @TestMetadata("nullability.kt")
+        public void testNullability() throws Exception {
+            doTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/nullability.kt");
         }
         
         @TestMetadata("sameHashCode.kt")

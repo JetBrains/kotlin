@@ -1993,6 +1993,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/whenEnumOptimization/nonConstantEnum.kt");
         }
         
+        @TestMetadata("nullability.kt")
+        public void testNullability() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/whenEnumOptimization/nullability.kt");
+        }
+        
         @TestMetadata("subjectAny.kt")
         public void testSubjectAny() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/whenEnumOptimization/subjectAny.kt");
@@ -2024,6 +2029,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("expression.kt")
         public void testExpression() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/whenStringOptimization/expression.kt");
+        }
+        
+        @TestMetadata("nullability.kt")
+        public void testNullability() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/whenStringOptimization/nullability.kt");
         }
         
         @TestMetadata("sameHashCode.kt")

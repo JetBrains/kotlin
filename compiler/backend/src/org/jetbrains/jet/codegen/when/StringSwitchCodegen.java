@@ -75,6 +75,9 @@ public class StringSwitchCodegen extends SwitchCodegen {
         v.store(tempVarIndex, subjectType);
 
         v.load(tempVarIndex, subjectType);
+
+        generateNullCheckIfNeeded();
+
         v.invokevirtual(
                 subjectType.getInternalName(),
                 "hashCode", HASH_CODE_METHOD_DESC, false
