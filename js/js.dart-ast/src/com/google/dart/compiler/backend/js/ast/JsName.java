@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class JsName implements Symbol {
   private final JsScope enclosing;
   private final String ident;
+  private JsNode staticRef = null;
 
   /**
    * @param ident the unmangled ident to use for this name
@@ -24,6 +25,14 @@ public class JsName implements Symbol {
 
   public String getIdent() {
     return ident;
+  }
+
+  public JsNode getStaticRef() {
+    return staticRef;
+  }
+
+  public void setStaticRef(JsNode staticRef) {
+    this.staticRef = staticRef;
   }
 
   @NotNull
