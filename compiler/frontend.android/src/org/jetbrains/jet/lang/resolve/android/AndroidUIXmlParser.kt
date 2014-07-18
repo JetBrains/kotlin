@@ -1,15 +1,18 @@
 package org.jetbrains.jet.lang.resolve.android
 
 import org.jetbrains.jet.lang.psi.JetFile
-import java.util.ArrayList
-import javax.xml.parsers.SAXParserFactory
-import java.io.File
-import java.io.FileInputStream
-import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import javax.xml.parsers.SAXParser
+import java.util.ArrayList
 import java.util.HashMap
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.io.File
+import javax.xml.parsers.SAXParserFactory
+import javax.xml.parsers.SAXParser
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.VirtualFileAdapter
+import com.intellij.openapi.vfs.VirtualFileEvent
 
 abstract class AndroidUIXmlParser {
 
@@ -24,9 +27,13 @@ abstract class AndroidUIXmlParser {
 
     val saxParser = initSAX()
 
-    val fileCache = HashMap<File, String>()
+    val fileCache = HashMap<VirtualFile, String>()
     var lastCachedPsi: JetFile? = null
-    val fileModificationTime = HashMap<File, Long>()
+    val fileModificationTime = HashMap<VirtualFile, Long>()
+
+    val filesToProcess = ConcurrentLinkedQueue<VirtualFile>()
+    var listenerSetUp = false
+    volatile var invalidateCaches = false
 
     public fun parseToString(): String? {
         val cacheState = doParse()
@@ -37,7 +44,7 @@ abstract class AndroidUIXmlParser {
     public fun parseToPsi(project: Project): JetFile? {
         val cacheState = doParse()
         if (cacheState == null) return null
-        return if (cacheState === CacheAction.MISS) {
+        return if (cacheState == CacheAction.MISS || lastCachedPsi == null) {
             try {
                 val psiFile = JetPsiFactory(project).createFile(renderString())
                 lastCachedPsi = psiFile
@@ -84,20 +91,20 @@ abstract class AndroidUIXmlParser {
         return kw
     }
 
-    private fun parseSingleFileWithCache(file: File): Pair<String, CacheAction> {
+    private fun parseSingleFileWithCache(file: VirtualFile): Pair<String, CacheAction> {
         val lastRecorded = fileModificationTime[file] ?: -1
-        if (file.lastModified() > lastRecorded)
+        if (file.getModificationStamp() > lastRecorded)
             return Pair(parseSingleFile(file), CacheAction.MISS)
         else
             return Pair(fileCache[file]!!, CacheAction.HIT)
     }
 
-    private fun parseSingleFile(file: File): String {
+    private fun parseSingleFile(file: VirtualFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
         val handler = AndroidXmlHandler({ id, wClass -> ids.add(AndroidWidget(id, wClass)) })
-        fileModificationTime[file] = file.lastModified()
+        fileModificationTime[file] = file.getModificationStamp()
         try {
-            saxParser.parse(FileInputStream(file), handler)
+            saxParser.parse(file.getInputStream()!!, handler)
             val res = produceKotlinProperties(KotlinStringWriter(), ids).toString()
             fileCache[file] = res
             return res
@@ -109,11 +116,14 @@ abstract class AndroidUIXmlParser {
 
     private fun doParse(): CacheAction? {
         if (searchPath == null || searchPath == "") return null
-        val files = searchForUIXml(searchPath!!)
+        lazySetupFileListener()
+        if (invalidateCaches) invalidateCaches()
         var overallCacheMiss = false
-        for (file in files) {
-            val res = parseSingleFileWithCache(file)
+        var file = filesToProcess.poll()
+        while (file != null) {
+            val res = parseSingleFileWithCache(file!!)
             overallCacheMiss = overallCacheMiss or (res.second == CacheAction.MISS)
+            file = filesToProcess.poll()
         }
         return if (overallCacheMiss) CacheAction.MISS else CacheAction.HIT
     }
@@ -129,6 +139,33 @@ abstract class AndroidUIXmlParser {
         fileCache.clear()
         fileModificationTime.clear()
         lastCachedPsi = null
+        invalidateCaches = false
+    }
+
+    private fun lazySetupFileListener() {
+        if (listenerSetUp) return
+        val fileManager = VirtualFileManager.getInstance()
+        val watchDir = fileManager.findFileByUrl("file://" + searchPath)
+        filesToProcess.addAll(watchDir?.getChildren()?.toArrayList() ?: ArrayList(0))
+        fileManager.addVirtualFileListener(object : VirtualFileAdapter() {
+            override fun contentsChanged(event: VirtualFileEvent) {
+                if (event.getParent() == watchDir)
+                    filesToProcess.add(event.getFile())
+            }
+            override fun fileCreated(event: VirtualFileEvent) {
+                if (event.getParent() == watchDir)
+                    super<VirtualFileAdapter>.fileCreated(event)
+            }
+            override fun fileDeleted(event: VirtualFileEvent) {
+                if (event.getParent() == watchDir) {
+                    // ignore potential synchronisation issues - it doesn't really matter if invalidation and
+                    // file processing will be handled in different passes
+                    invalidateCaches = true
+                    filesToProcess.addAll(watchDir?.getChildren()?.toArrayList() ?: ArrayList(0))
+                }
+            }
+        })
+        listenerSetUp = true
     }
 
     private fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
