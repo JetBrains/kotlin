@@ -61,7 +61,11 @@ public class QualifierReceiver(
     fun getNestedClassesAndPackageMembersScope(): JetScope {
         val scopes = ArrayList<JetScope>(3)
 
-        scopes.addIfNotNull(classifier?.getClassObjectType()?.getMemberScope())
+        val classObjectDescriptor = (classifier as? ClassDescriptor)?.getClassObjectDescriptor()
+        if (classObjectDescriptor != null) {
+            // non-static members are resolved through class object receiver
+            scopes.add(DescriptorUtils.getStaticNestedClassesScope(classObjectDescriptor))
+        }
 
         scopes.addIfNotNull(packageView?.getMemberScope())
 

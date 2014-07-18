@@ -1,0 +1,13 @@
+//KT-5308 Wrong ExplicitReceiverKind when access to IntRange.EMPTY
+fun test() {
+    IntRange.<caret>EMPTY
+}
+
+
+Resolved call:
+
+Resulting descriptor: val EMPTY: IntRange
+
+Explicit receiver kind = THIS_OBJECT
+This object = IntRange {<class-object-for-IntRange>}
+Receiver argument = NO_RECEIVER

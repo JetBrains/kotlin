@@ -1,0 +1,18 @@
+class Foo {
+    class object {
+        val baz = Foo()
+    }
+}
+
+fun test() {
+    Foo.<caret>baz
+}
+
+
+Resolved call:
+
+Resulting descriptor: val baz: Foo
+
+Explicit receiver kind = THIS_OBJECT
+This object = Foo {<class-object-for-Foo>}
+Receiver argument = NO_RECEIVER
