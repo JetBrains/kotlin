@@ -4,6 +4,7 @@ import java.io.*
 import java.nio.charset.*
 import java.util.NoSuchElementException
 import java.net.URL
+import kotlin.InlineOption.ONLY_LOCAL_RETURN
 
 /**
  * Returns the default buffer size when working with buffered streams
@@ -198,7 +199,7 @@ public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
  */
 public fun Reader.forEachLine(block: (String) -> Unit): Unit = useLines { lines -> lines.forEach(block) }
 
-public inline fun <T> Reader.useLines(block: (Stream<String>) -> T): T =
+public inline fun <T> Reader.useLines([inlineOptions(ONLY_LOCAL_RETURN)] block: (Stream<String>) -> T): T =
         this.buffered().use { block(it.lines()) }
 
 /**
