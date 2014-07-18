@@ -128,6 +128,7 @@ fun main(args: Array<String>) {
             model("diagnostics/tests")
             model("diagnostics/tests/script", extension = "kts")
             model("codegen/box/functions/tailRecursion")
+            model("codegen/box/functions/invoke/onObjects")
         }
 
         testClass(javaClass<AbstractJetDiagnosticsTestWithStdLib>()) {

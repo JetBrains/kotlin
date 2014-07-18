@@ -1,0 +1,17 @@
+enum class A {
+    ONE
+    TWO
+
+    fun invoke(i: Int) = i
+}
+
+fun test() = A.<caret>ONE(1)
+
+
+Resolved call:
+
+Resulting descriptor: enum entry ONE : A
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER

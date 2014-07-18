@@ -1,0 +1,21 @@
+enum class A {
+    ONE
+    TWO
+
+    fun invoke(i: Int) = i
+}
+
+fun test() = A.ONE<caret>(1)
+
+
+Resolved call:
+
+Resulting descriptor: fun invoke(i: Int): Int
+
+Explicit receiver kind = THIS_OBJECT
+This object = ONE {A}
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  i : Int = 1

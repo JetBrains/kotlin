@@ -314,6 +314,36 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
             doTest("compiler/testData/resolvedCalls/invoke/implicitReceiverForInvoke.kt");
         }
         
+        @TestMetadata("invokeOnClassObject1.kt")
+        public void testInvokeOnClassObject1() throws Exception {
+            doTest("compiler/testData/resolvedCalls/invoke/invokeOnClassObject1.kt");
+        }
+        
+        @TestMetadata("invokeOnClassObject2.kt")
+        public void testInvokeOnClassObject2() throws Exception {
+            doTest("compiler/testData/resolvedCalls/invoke/invokeOnClassObject2.kt");
+        }
+        
+        @TestMetadata("invokeOnEnumEntry1.kt")
+        public void testInvokeOnEnumEntry1() throws Exception {
+            doTest("compiler/testData/resolvedCalls/invoke/invokeOnEnumEntry1.kt");
+        }
+        
+        @TestMetadata("invokeOnEnumEntry2.kt")
+        public void testInvokeOnEnumEntry2() throws Exception {
+            doTest("compiler/testData/resolvedCalls/invoke/invokeOnEnumEntry2.kt");
+        }
+        
+        @TestMetadata("invokeOnObject1.kt")
+        public void testInvokeOnObject1() throws Exception {
+            doTest("compiler/testData/resolvedCalls/invoke/invokeOnObject1.kt");
+        }
+        
+        @TestMetadata("invokeOnObject2.kt")
+        public void testInvokeOnObject2() throws Exception {
+            doTest("compiler/testData/resolvedCalls/invoke/invokeOnObject2.kt");
+        }
+        
         @TestMetadata("receiverArgumentAsReceiverForInvoke.kt")
         public void testReceiverArgumentAsReceiverForInvoke() throws Exception {
             doTest("compiler/testData/resolvedCalls/invoke/receiverArgumentAsReceiverForInvoke.kt");

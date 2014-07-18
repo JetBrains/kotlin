@@ -1,0 +1,16 @@
+class A {
+    class object {
+        fun invoke(i: Int) = i
+    }
+}
+
+fun test() = <caret>A(1)
+
+
+Resolved call:
+
+Resulting descriptor: class A
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER

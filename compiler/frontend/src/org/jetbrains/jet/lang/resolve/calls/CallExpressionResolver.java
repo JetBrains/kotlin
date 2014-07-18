@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
+import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -81,7 +82,7 @@ public class CallExpressionResolver {
             JetType classObjectType = classifier.getClassObjectType();
             if (classObjectType != null) {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
-                JetType result = getExtendedClassObjectType(expression, classObjectType, classifier, context);
+                JetType result = getExtendedClassObjectType(expression, classObjectType, classifier, context.scope);
                 checkClassObjectVisibility(classifier, expression, context);
                 return result;
             }
@@ -153,7 +154,7 @@ public class CallExpressionResolver {
             @NotNull JetSimpleNameExpression expression,
             @NotNull JetType classObjectType,
             @NotNull ClassifierDescriptor classifier,
-            @NotNull ResolutionContext context
+            @NotNull JetScope receiverScope
     ) {
         if (!isLHSOfDot(expression) || !(classifier instanceof ClassDescriptor)) {
             return classObjectType;
@@ -170,7 +171,7 @@ public class CallExpressionResolver {
         scopes.add(getStaticNestedClassesScope(classDescriptor));
 
         Name referencedName = expression.getReferencedNameAsName();
-        PackageViewDescriptor packageView = context.scope.getPackage(referencedName);
+        PackageViewDescriptor packageView = receiverScope.getPackage(referencedName);
         if (packageView != null) {
             //for enums loaded from java binaries
             scopes.add(packageView.getMemberScope());
@@ -253,16 +254,23 @@ public class CallExpressionResolver {
                 context.replaceTraceAndCache(temporaryForVariable),
                 call, CheckValueArgumentsMode.ENABLED);
         OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(contextForVariable);
+        JetScope receiverScope = receiver.exists() ? receiver.getType().getMemberScope() : context.scope;
         if (resolutionResult.isSuccess()) {
+            result[0] = true;
+            if (resolutionResult.getResultingDescriptor() instanceof FakeCallableDescriptorForObject) {
+                FakeCallableDescriptorForObject fakeCallableDescriptorForObject =
+                        (FakeCallableDescriptorForObject) resolutionResult.getResultingDescriptor();
+                ClassDescriptor classDescriptor = fakeCallableDescriptorForObject.getClassDescriptor();
+                context.trace.record(REFERENCE_TARGET, nameExpression, classDescriptor);
+                checkClassObjectVisibility(classDescriptor, nameExpression, context);
+                return getExtendedClassObjectType(nameExpression, fakeCallableDescriptorForObject.getType(), classDescriptor, receiverScope);
+            }
             temporaryForVariable.commit();
             checkSuper(receiver, resolutionResult, context.trace, nameExpression);
-            result[0] = true;
-            return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
+            return resolutionResult.getResultingDescriptor().getReturnType();
         }
 
-        ExpressionTypingContext newContext = receiver.exists()
-                                             ? context.replaceScope(receiver.getType().getMemberScope())
-                                             : context;
+        ExpressionTypingContext newContext = context.replaceScope(receiverScope);
         TemporaryTraceAndCache temporaryForPackageOrClassObject = TemporaryTraceAndCache.create(
                 context, "trace to resolve as package or class object", nameExpression);
         JetType jetType = lookupPackageOrClassObject(nameExpression, newContext.replaceTraceAndCache(temporaryForPackageOrClassObject));
