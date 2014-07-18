@@ -31,7 +31,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private final JsProgram program;
 
     public static JsProgram process(JsProgram program) {
-        IdentityHashMap<JsName, JsFunction> functions = new IdentityHashMap<JsName, JsFunction>();
+        IdentityHashMap<JsName, JsFunction> functions = FunctionCollector.collectFunctions(program);
         JsInliner inliner = new JsInliner(program, functions);
         return inliner.process();
     }
