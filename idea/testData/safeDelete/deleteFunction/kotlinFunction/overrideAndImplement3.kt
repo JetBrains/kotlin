@@ -8,7 +8,7 @@ trait Z {
     fun <caret>foo()
 }
 
-class B: A, Z {
+class B: A(), Z {
     override fun foo() {
 
     }
