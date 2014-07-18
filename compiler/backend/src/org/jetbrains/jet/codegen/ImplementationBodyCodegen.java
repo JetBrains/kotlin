@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.context.ConstructorContext;
+import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -643,6 +644,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     KotlinBuiltIns.getInstance().getBoolean(),
                     KotlinBuiltIns.getInstance().getAny()
             );
+            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(equalsFunction);
             MethodVisitor mv = v.newMethod(OtherOrigin(equalsFunction), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -665,8 +667,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             for (PropertyDescriptor propertyDescriptor : properties) {
                 Type asmType = typeMapper.mapType(propertyDescriptor);
 
-                genPropertyOnStack(iv, propertyDescriptor, 0);
-                genPropertyOnStack(iv, propertyDescriptor, 2);
+                genPropertyOnStack(iv, context, propertyDescriptor, 0);
+                genPropertyOnStack(iv, context, propertyDescriptor, 2);
 
                 if (asmType.getSort() == Type.ARRAY) {
                     Type elementType = correctElementType(asmType);
@@ -702,6 +704,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     descriptor, Name.identifier(CodegenUtil.HASH_CODE_METHOD_NAME),
                     KotlinBuiltIns.getInstance().getInt()
             );
+            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(hashCodeFunction);
             MethodVisitor mv = v.newMethod(OtherOrigin(hashCodeFunction), ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -713,7 +716,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.mul(Type.INT_TYPE);
                 }
 
-                genPropertyOnStack(iv, propertyDescriptor, 0);
+                genPropertyOnStack(iv, context, propertyDescriptor, 0);
 
                 Label ifNull = null;
                 Type asmType = typeMapper.mapType(propertyDescriptor);
@@ -753,6 +756,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     descriptor, Name.identifier(CodegenUtil.TO_STRING_METHOD_NAME),
                     KotlinBuiltIns.getInstance().getString()
             );
+            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(toString);
             MethodVisitor mv = v.newMethod(OtherOrigin(toString), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -770,7 +774,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
                 genInvokeAppendMethod(iv, JAVA_STRING_TYPE);
 
-                Type type = genPropertyOnStack(iv, propertyDescriptor, 0);
+                Type type = genPropertyOnStack(iv, context, propertyDescriptor, 0);
 
                 if (type.getSort() == Type.ARRAY) {
                     Type elementType = correctElementType(type);
@@ -797,13 +801,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             FunctionCodegen.endVisit(mv, "toString", myClass);
         }
 
-        private Type genPropertyOnStack(InstructionAdapter iv, PropertyDescriptor propertyDescriptor, int index) {
+        private Type genPropertyOnStack(InstructionAdapter iv, MethodContext context, PropertyDescriptor propertyDescriptor, int index) {
             iv.load(index, classAsmType);
-            //noinspection ConstantConditions
-            Method method = typeMapper.mapSignature(propertyDescriptor.getGetter()).getAsmMethod();
-
-            iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
-            return method.getReturnType();
+            if (couldUseDirectAccessToProperty(propertyDescriptor, /* forGetter = */ true, /* isDelegated = */ false, context)) {
+                Type type = typeMapper.mapType(propertyDescriptor.getType());
+                String fieldName = ((FieldOwnerContext) context.getParentContext()).getFieldName(propertyDescriptor, false);
+                iv.getfield(classAsmType.getInternalName(), fieldName, type.getDescriptor());
+                return type.getReturnType();
+            }
+            else {
+                //noinspection ConstantConditions
+                Method method = typeMapper.mapSignature(propertyDescriptor.getGetter()).getAsmMethod();
+                iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
+                return method.getReturnType();
+            }
         }
 
         @Override

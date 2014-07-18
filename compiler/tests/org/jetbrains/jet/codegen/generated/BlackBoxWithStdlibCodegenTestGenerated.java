@@ -633,6 +633,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/dataClasses/overriddenProperty.kt");
         }
         
+        @TestMetadata("privateValParams.kt")
+        public void testPrivateValParams() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/dataClasses/privateValParams.kt");
+        }
+        
         @TestMetadata("twoValParams.kt")
         public void testTwoValParams() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/dataClasses/twoValParams.kt");
