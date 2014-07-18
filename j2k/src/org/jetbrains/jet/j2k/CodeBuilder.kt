@@ -89,6 +89,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
         if (topElement == null || element.prototypes!!.isEmpty()) {
             element.generateCode(this)
+            element.postGenerateCode(this)
             return this
         }
 
@@ -134,6 +135,8 @@ class CodeBuilder(private val topElement: PsiElement?) {
         }
 
         postfixElements.forEach { appendCommentOrWhiteSpace(it) }
+
+        element.postGenerateCode(this)
 
         return this
     }

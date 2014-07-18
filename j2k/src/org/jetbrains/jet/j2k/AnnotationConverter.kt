@@ -47,15 +47,15 @@ class AnnotationConverter(private val converter: Converter) {
             }
         }
 
-        val list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable) }.filterNotNull() //TODO: brackets are also needed for local classes
-        return Annotations(list, newLines).assignNoPrototype()
+        val list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable, newLines) }.filterNotNull() //TODO: brackets are also needed for local classes
+        return Annotations(list).assignNoPrototype()
     }
 
     private fun convertModifiersToAnnotations(owner: PsiModifierListOwner): Annotations {
         val list = MODIFIER_TO_ANNOTATION
                 .filter { owner.hasModifierProperty(it.first) }
-                .map { org.jetbrains.jet.j2k.ast.Annotation(Identifier(it.second).assignNoPrototype(), listOf(), false).assignNoPrototype() }
-        return Annotations(list, false).assignNoPrototype()
+                .map { Annotation(Identifier(it.second).assignNoPrototype(), listOf(), false, false).assignNoPrototype() }
+        return Annotations(list).assignNoPrototype()
     }
 
     private val MODIFIER_TO_ANNOTATION = listOf(
@@ -65,10 +65,10 @@ class AnnotationConverter(private val converter: Converter) {
             PsiModifier.TRANSIENT to "transient"
     )
 
-    public fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean): org.jetbrains.jet.j2k.ast.Annotation? {
+    public fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean, newLineAfter: Boolean): Annotation? {
         val qualifiedName = annotation.getQualifiedName()
         if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.getParameterList().getAttributes().isEmpty()) {
-            return org.jetbrains.jet.j2k.ast.Annotation(Identifier("deprecated").assignNoPrototype(), listOf(null to LiteralExpression("\"\"").assignNoPrototype()), brackets).assignPrototype(annotation) //TODO: insert comment
+            return Annotation(Identifier("deprecated").assignNoPrototype(), listOf(null to LiteralExpression("\"\"").assignNoPrototype()), brackets, newLineAfter).assignPrototype(annotation) //TODO: insert comment
         }
 
         val nameRef = annotation.getNameReferenceElement()
@@ -87,7 +87,12 @@ class AnnotationConverter(private val converter: Converter) {
 
             attrValues.map { attrName to it }
         }
-        return org.jetbrains.jet.j2k.ast.Annotation(name, arguments, brackets).assignPrototype(annotation)
+        return Annotation(name, arguments, brackets, newLineAfter).assignPrototype(annotation)
+    }
+
+    public fun convertAnnotationMethodDefault(method: PsiAnnotationMethod): Expression? {
+        val value = method.getDefaultValue() ?: return null
+        return convertAttributeValue(value, method.getReturnType(), false, false).single()
     }
 
     private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<Expression> {

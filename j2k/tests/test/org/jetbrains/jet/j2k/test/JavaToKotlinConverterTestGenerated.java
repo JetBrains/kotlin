@@ -43,6 +43,21 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/annotations"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("annotationInterface1.java")
+        public void testAnnotationInterface1() throws Exception {
+            doTest("j2k/tests/testData/ast/annotations/annotationInterface1.java");
+        }
+        
+        @TestMetadata("annotationInterface2.java")
+        public void testAnnotationInterface2() throws Exception {
+            doTest("j2k/tests/testData/ast/annotations/annotationInterface2.java");
+        }
+        
+        @TestMetadata("annotationInterface3.java")
+        public void testAnnotationInterface3() throws Exception {
+            doTest("j2k/tests/testData/ast/annotations/annotationInterface3.java");
+        }
+        
         @TestMetadata("annotationUsages.java")
         public void testAnnotationUsages() throws Exception {
             doTest("j2k/tests/testData/ast/annotations/annotationUsages.java");

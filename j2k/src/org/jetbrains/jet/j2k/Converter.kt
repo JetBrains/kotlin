@@ -117,7 +117,7 @@ public class Converter private(val project: Project,
         is PsiExpression -> convertExpression(element)
         is PsiImportList -> convertImportList(element)
         is PsiImportStatementBase -> convertImport(element, false)
-        is PsiAnnotation -> annotationConverter.convertAnnotation(element, false)
+        is PsiAnnotation -> annotationConverter.convertAnnotation(element, false, false)
         is PsiPackageStatement -> PackageStatement(quoteKeywords(element.getPackageName() ?: "")).assignPrototype(element)
         else -> null
     }
@@ -164,6 +164,8 @@ public class Converter private(val project: Project,
         val convertedMembers = LinkedHashMap<PsiMember, Member>()
         for (element in psiClass.getChildren()) {
             if (element is PsiMember) {
+                if (element is PsiAnnotationMethod) continue // converted in convertAnnotationType()
+
                 val converted = convertMember(element, membersToRemove, constructorConverter)
                 if (converted != null && !converted.isEmpty) {
                     convertedMembers.put(element, converted)
@@ -240,6 +242,10 @@ public class Converter private(val project: Project,
             = annotationConverter.convertAnnotations(owner)
 
     fun convertClass(psiClass: PsiClass): Class {
+        if (psiClass.isAnnotationType()) {
+            return convertAnnotationType(psiClass)
+        }
+
         val annotations = annotationConverter.convertAnnotations(psiClass)
         var modifiers = convertModifiers(psiClass)
         val typeParameters = convertTypeParameterList(psiClass.getTypeParameterList())
@@ -268,6 +274,44 @@ public class Converter private(val project: Project,
                 Class(name, annotations, modifiers, typeParameters, extendsTypes, constructorConverter.baseClassParams, implementsTypes, classBody)
             }
         }.assignPrototype(psiClass)
+    }
+
+    private fun convertAnnotationType(psiClass: PsiClass): Class {
+        val paramModifiers = Modifiers(listOf(Modifier.PUBLIC)).assignNoPrototype()
+        val noBlankLinesInheritance = CommentsAndSpacesInheritance(blankLinesBefore = false)
+        val annotationMethods = psiClass.getMethods().filterIsInstance(javaClass<PsiAnnotationMethod>())
+        val parameters = annotationMethods
+                .map { method ->
+                    val returnType = method.getReturnType()
+                    val typeConverted = if (method == annotationMethods.last && returnType is PsiArrayType)
+                        VarArgType(typeConverter.convertType(returnType.getComponentType(), Nullability.NotNull).assignNoPrototype())
+                    else
+                        typeConverter.convertType(returnType, Nullability.NotNull)
+                    typeConverted.assignPrototype(method.getReturnTypeElement(), noBlankLinesInheritance)
+
+                    Parameter(method.declarationIdentifier(),
+                              typeConverted,
+                              Parameter.VarValModifier.Val,
+                              convertAnnotations(method),
+                              paramModifiers,
+                              annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, noBlankLinesInheritance)
+                }
+        val parameterList = ParameterList(parameters).assignNoPrototype()
+        val constructorSignature = PrimaryConstructorSignature(Annotations.Empty, Modifiers.Empty, parameterList).assignNoPrototype()
+
+        // to convert fields and nested types - they are not allowed in Kotlin but we convert them and let user refactor code
+        var classBody = convertBody(psiClass, null)
+        classBody = ClassBody(constructorSignature, classBody.members, classBody.classObjectMembers, listOf(), classBody.lBrace, classBody.rBrace)
+
+        val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), false, false).assignNoPrototype()
+        return Class(psiClass.declarationIdentifier(),
+                     (convertAnnotations(psiClass) + Annotations(listOf(annotationAnnotation))).assignNoPrototype(),
+                     convertModifiers(psiClass).without(Modifier.ABSTRACT),
+                     TypeParameterList.Empty,
+                     listOf(),
+                     listOf(),
+                     listOf(),
+                     classBody).assignPrototype(psiClass)
     }
 
     private fun convertInitializer(initializer: PsiClassInitializer): Initializer {
@@ -606,8 +650,8 @@ public class Converter private(val project: Project,
             val convertedType = typeConverter.convertType(types[it], Nullability.NotNull)
             null to MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(convertedType)).assignPrototype(refElements[it])
         }
-        val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, false)
-        return Annotations(listOf(annotation.assignPrototype(throwsList)), true).assignPrototype(throwsList)
+        val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, false, true)
+        return Annotations(listOf(annotation.assignPrototype(throwsList))).assignPrototype(throwsList)
     }
 }
 

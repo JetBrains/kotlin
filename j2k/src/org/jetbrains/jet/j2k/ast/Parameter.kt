@@ -34,7 +34,6 @@ class Parameter(val identifier: Identifier,
         builder.append(annotations).appendWithSpaceAfter(modifiers)
 
         if (`type` is VarArgType) {
-            assert(varVal == VarValModifier.None)
             builder.append("vararg ")
         }
 
