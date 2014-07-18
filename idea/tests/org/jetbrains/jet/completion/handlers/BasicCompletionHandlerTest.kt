@@ -142,4 +142,6 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testLocalClassCompletion() = doTest(1, "LocalClass", null, '\n')
     fun testNestedLocalClassCompletion() = doTest(1, "Nested", null, '\n')
+
+    fun testTypeArgOfSuper() = doTest(1, "X", null, '\n')
 }
