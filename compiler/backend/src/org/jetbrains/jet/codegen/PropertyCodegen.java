@@ -173,9 +173,10 @@ public class PropertyCodegen {
         JetExpression defaultValue = p.getDefaultValue();
         if (defaultValue != null) {
             CompileTimeConstant<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext);
-            assert constant != null : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
-            AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(visitor, typeMapper);
-            annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.getType());
+            if (constant != null) {
+                AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(visitor, typeMapper);
+                annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.getType());
+            }
         }
 
         visitor.visitEnd();
