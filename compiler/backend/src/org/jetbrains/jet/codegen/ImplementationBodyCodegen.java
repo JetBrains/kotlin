@@ -1201,10 +1201,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
-            if (specifier == superCall) {
-                continue;
-            }
-
             if (specifier instanceof JetDelegatorByExpressionSpecifier) {
                 genCallToDelegatorByExpressionSpecifier(iv, codegen, (JetDelegatorByExpressionSpecifier) specifier, fieldsInfo);
             }
