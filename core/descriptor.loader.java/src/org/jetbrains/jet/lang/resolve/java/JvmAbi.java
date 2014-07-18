@@ -41,8 +41,8 @@ public final class JvmAbi {
     public static final String PROPERTY_METADATA_ARRAY_NAME = "$propertyMetadata";
     public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = "$annotations";
 
-    public static final String INSTANCE_FIELD = "instance$";
-    public static final String CLASS_OBJECT_FIELD = "object$";
+    public static final String INSTANCE_FIELD = "INSTANCE$";
+    public static final String CLASS_OBJECT_FIELD = "OBJECT$";
 
     public static final FqName K_OBJECT = new FqName("kotlin.jvm.internal.KObject");
     public static final String KOTLIN_CLASS_FIELD_NAME = "$kotlinClass";
