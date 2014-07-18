@@ -20,29 +20,29 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.plugin.completion.JetLookupObject
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 
 public object JetClassInsertHandler : InsertHandler<LookupElement> {
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val file = context.getFile()
         if (file is JetFile) {
-            val descriptor = (item.getObject() as? JetLookupObject)?.getDescriptor()
+            val descriptor = (item.getObject() as? JetLookupObject)?.getDescriptor() as? ClassDescriptor
             if (descriptor != null) {
                 val startOffset = context.getStartOffset()
                 val document = context.getDocument()
                 if (!isAfterDot(document, startOffset)) {
-                    val fqName = DescriptorUtils.getFqName(descriptor).asString()
+                    val qualifiedName = getQualifiedName(descriptor)!!
                     // insert dot after because otherwise parser can sometimes produce no suitable reference here
                     val tempSuffix = ".xxx" // we add "xxx" after dot because of some bugs in resolve (see KT-5145)
-                    document.replaceString(startOffset, context.getTailOffset(), fqName + tempSuffix)
-                    val classNameEnd = startOffset + fqName.length()
+                    document.replaceString(startOffset, context.getTailOffset(), qualifiedName + tempSuffix)
+                    val classNameEnd = startOffset + qualifiedName.length()
 
                     val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
                     psiDocumentManager.commitAllDocuments()
@@ -71,5 +71,19 @@ public object JetClassInsertHandler : InsertHandler<LookupElement> {
             }
         }
         return false
+    }
+
+    private fun getQualifiedName(descriptor: ClassDescriptor): String? {
+        val name = descriptor.getName()
+        if (name.isSpecial()) return null
+        val nameString = name.asString()
+        val parent = descriptor.getContainingDeclaration()
+        val qualifier = when (parent) {
+            is ClassDescriptor -> getQualifiedName(parent)
+            is PackageViewDescriptor -> parent.getFqName().asString()
+            is PackageFragmentDescriptor -> parent.fqName.asString()
+            else -> null
+        }
+        return if (qualifier != null && qualifier != "") qualifier + "." + nameString else nameString
     }
 }
