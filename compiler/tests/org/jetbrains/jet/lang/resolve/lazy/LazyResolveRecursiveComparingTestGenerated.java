@@ -183,6 +183,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/EnumArgument.kt");
                 }
                 
+                @TestMetadata("EnumArrayArgument.kt")
+                public void testEnumArrayArgument() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/EnumArrayArgument.kt");
+                }
+                
                 @TestMetadata("Function.kt")
                 public void testFunction() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Function.kt");
@@ -201,6 +206,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("Setter.kt")
                 public void testSetter() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Setter.kt");
+                }
+                
+                @TestMetadata("StringArrayArgument.kt")
+                public void testStringArrayArgument() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/StringArrayArgument.kt");
                 }
                 
             }

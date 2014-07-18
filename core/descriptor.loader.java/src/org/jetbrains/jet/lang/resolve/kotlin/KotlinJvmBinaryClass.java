@@ -62,7 +62,15 @@ public interface KotlinJvmBinaryClass {
         void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName);
 
         @Nullable
-        AnnotationArgumentVisitor visitArray(@NotNull Name name);
+        AnnotationArrayArgumentVisitor visitArray(@NotNull Name name);
+
+        void visitEnd();
+    }
+
+    interface AnnotationArrayArgumentVisitor {
+        void visit(@Nullable Object value);
+
+        void visitEnum(@NotNull JvmClassName enumClassName, @NotNull Name enumEntryName);
 
         void visitEnd();
     }

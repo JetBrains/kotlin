@@ -1715,6 +1715,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/EnumArgument.kt");
                 }
                 
+                @TestMetadata("EnumArrayArgument.kt")
+                public void testEnumArrayArgument() throws Exception {
+                    doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/EnumArrayArgument.kt");
+                }
+                
                 @TestMetadata("Function.kt")
                 public void testFunction() throws Exception {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Function.kt");
@@ -1733,6 +1738,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("Setter.kt")
                 public void testSetter() throws Exception {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Setter.kt");
+                }
+                
+                @TestMetadata("StringArrayArgument.kt")
+                public void testStringArrayArgument() throws Exception {
+                    doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/StringArrayArgument.kt");
                 }
                 
             }

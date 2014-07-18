@@ -27,6 +27,7 @@ public fun createCompileTimeConstant(
         usesVariableAsConstant: Boolean = false,
         expectedType: JetType? = null
 ): CompileTimeConstant<*>? {
+    // TODO: primitive arrays
     if (expectedType == null) {
         when(value) {
             is Byte -> return ByteValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)

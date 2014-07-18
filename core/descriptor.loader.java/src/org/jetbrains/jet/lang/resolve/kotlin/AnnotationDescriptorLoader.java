@@ -26,14 +26,12 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
-import org.jetbrains.jet.lang.resolve.constants.EnumValue;
-import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -130,8 +128,7 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
             @Override
             public void visit(@Nullable Name name, @Nullable Object value) {
                 if (name != null) {
-                    CompileTimeConstant<?> argument = ConstantsPackage.createCompileTimeConstant(value, true, false, false, null);
-                    setArgumentValueByName(name, argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name));
+                    setArgumentValueByName(name, createConstant(name, value));
                 }
             }
 
@@ -142,9 +139,29 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
 
             @Nullable
             @Override
-            public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitArray(@NotNull Name name) {
-                // TODO: support arrays
-                return null;
+            public AnnotationArrayArgumentVisitor visitArray(@NotNull final Name name) {
+                return new KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor() {
+                    private final ArrayList<CompileTimeConstant<?>> elements = new ArrayList<CompileTimeConstant<?>>();
+
+                    @Override
+                    public void visit(@Nullable Object value) {
+                        elements.add(createConstant(name, value));
+                    }
+
+                    @Override
+                    public void visitEnum(@NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
+                        elements.add(enumEntryValue(enumClassName, enumEntryName));
+                    }
+
+                    @Override
+                    public void visitEnd() {
+                        ValueParameterDescriptor parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass);
+                        if (parameter != null) {
+                            elements.trimToSize();
+                            arguments.put(parameter, new ArrayValue(elements, parameter.getType(), true, false));
+                        }
+                    }
+                };
             }
 
             @NotNull
@@ -165,6 +182,12 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
                         annotationClass.getDefaultType(),
                         arguments
                 ));
+            }
+
+            @NotNull
+            private CompileTimeConstant<?> createConstant(@Nullable Name name, @Nullable Object value) {
+                CompileTimeConstant<?> argument = ConstantsPackage.createCompileTimeConstant(value, true, false, false, null);
+                return argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name);
             }
 
             private void setArgumentValueByName(@NotNull Name name, @NotNull CompileTimeConstant<?> argumentValue) {
