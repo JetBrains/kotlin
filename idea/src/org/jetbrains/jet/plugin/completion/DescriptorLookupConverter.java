@@ -114,7 +114,7 @@ public final class DescriptorLookupConverter {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            return JetClassInsertHandler.INSTANCE;
+            return JetClassInsertHandler.INSTANCE$;
         }
 
         return null;
