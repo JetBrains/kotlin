@@ -8,7 +8,7 @@
     <option name="MAIN_CLASS_NAME" value="org.jetbrains.jet.compiler.android.AndroidRunner" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
-    <option name="VM_PARAMETERS" value="-ea" />
+    <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -Xmx512m -XX:MaxPermSize=320m -XX:+UseCodeCacheFlushing" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />
