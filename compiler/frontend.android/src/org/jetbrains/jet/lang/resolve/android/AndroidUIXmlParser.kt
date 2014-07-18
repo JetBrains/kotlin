@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import javax.xml.parsers.SAXParser
 import java.util.HashMap
+import com.intellij.openapi.vfs.VirtualFile
 
 abstract class AndroidUIXmlParser {
 
@@ -94,11 +95,16 @@ abstract class AndroidUIXmlParser {
     private fun parseSingleFile(file: File): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
         val handler = AndroidXmlHandler({ id, wClass -> ids.add(AndroidWidget(id, wClass)) })
-        saxParser.parse(FileInputStream(file), handler)
-        val res = produceKotlinProperties(KotlinStringWriter(), ids).toString()
-        fileCache[file] = res
         fileModificationTime[file] = file.lastModified()
-        return res
+        try {
+            saxParser.parse(FileInputStream(file), handler)
+            val res = produceKotlinProperties(KotlinStringWriter(), ids).toString()
+            fileCache[file] = res
+            return res
+        } catch (e: Exception) {
+            fileCache[file] = ""
+            return ""
+        }
     }
 
     private fun doParse(): CacheAction? {
