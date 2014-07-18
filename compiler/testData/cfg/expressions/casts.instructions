@@ -1,0 +1,29 @@
+== foo ==
+fun foo(a: Any) {
+    a : String
+    a as String
+    a as? String
+}
+---------------------
+L0:
+  1 <START>
+    v(a: Any)
+    magic[FAKE_INITIALIZER](a: Any) -> <v0>
+    w(a|<v0>)
+  2 mark({ a : String a as String a as? String })
+    mark(a : String)
+    r(a) -> <v1>
+    magic[CAST](a : String|<v1>) -> <v2>
+    mark(a as String)
+    r(a) -> <v3>
+    magic[CAST](a as String|<v3>) -> <v4>
+    mark(a as? String)
+    r(a) -> <v5>
+    magic[CAST](a as? String|<v5>) -> <v6>
+L1:
+  1 <END>                                            NEXT:[<SINK>]
+error:
+    <ERROR>                                          PREV:[]
+sink:
+    <SINK>                                           PREV:[<ERROR>, <END>]
+=====================
