@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.plugin.configuration;
 
+import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -37,6 +37,21 @@ public class ConfigureKotlinTest extends PlatformTestCase {
     private static final String BASE_PATH = "idea/testData/configuration/";
     private static final KotlinJavaModuleConfigurator JAVA_CONFIGURATOR = new KotlinJavaModuleConfigurator();
     private static final KotlinJsModuleConfigurator JS_CONFIGURATOR = new KotlinJsModuleConfigurator();
+
+    @Override
+    protected void tearDown() throws Exception {
+        PathMacros.getInstance().removeMacro("TEMP_TEST_DIR");
+
+        super.tearDown();
+    }
+
+    @Override
+    protected void initApplication() throws Exception {
+        super.initApplication();
+
+        File tempLibDir = FileUtil.createTempDirectory("temp", null);
+        PathMacros.getInstance().setMacro("TEMP_TEST_DIR", tempLibDir.getAbsolutePath());
+    }
 
     public void testNewLibrary_copyJar() {
         doTestOneJavaModule(FileState.COPY, LibraryState.NEW_LIBRARY);
@@ -86,6 +101,16 @@ public class ConfigureKotlinTest extends PlatformTestCase {
                 assertTrue("Module " + module.getName() + " should be configured", JAVA_CONFIGURATOR.isConfigured(module));
             }
         }
+    }
+
+    public void testLibraryNonDefault_libExistInDefault() throws IOException {
+        Module module = getModule();
+
+        assertFalse("Module " + module.getName() + " should not be configured", JAVA_CONFIGURATOR.isConfigured(module));
+        JAVA_CONFIGURATOR.configure(myProject);
+        assertTrue("Module " + module.getName() + " should be configured", JAVA_CONFIGURATOR.isConfigured(getModule()));
+        assertFalse("Module " + getModule().getName() + "  should not be configured as JavaScript Module",
+                    JS_CONFIGURATOR.isConfigured(getModule()));
     }
 
     public void testNewLibrary_jarExists_js() {

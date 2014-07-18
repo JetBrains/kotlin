@@ -73,16 +73,17 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     ) {
         Project project = module.getProject();
 
-        FileState runtimeState = getJarState(project, getJarName(), OrderRootType.CLASSES, defaultPath, pathFromDialog);
         LibraryState libraryState = getLibraryState(project);
         String dirToCopyJar = getPathToCopyFileTo(project, OrderRootType.CLASSES, defaultPath, pathFromDialog);
+        FileState runtimeState = getJarState(project, getJarName(), OrderRootType.CLASSES, dirToCopyJar, pathFromDialog == null);
 
         configureModuleWithLibraryClasses(module, libraryState, runtimeState, dirToCopyJar);
 
         Library library = getKotlinLibrary(project);
         assert library != null : "Kotlin library should exists when adding sources root";
-        FileState sourcesState = getJarState(project, getSourcesJarName(), OrderRootType.SOURCES, defaultPath, pathFromDialog);
         String dirToCopySourcesJar = getPathToCopyFileTo(project, OrderRootType.SOURCES, defaultPath, pathFromDialog);
+        FileState sourcesState = getJarState(project, getSourcesJarName(), OrderRootType.SOURCES, dirToCopySourcesJar,
+                                             pathFromDialog == null);
 
         configureModuleWithLibrarySources(library, sourcesState, dirToCopySourcesJar);
     }
@@ -411,19 +412,17 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             @NotNull Project project,
             @NotNull String jarName,
             @NotNull OrderRootType jarType,
-            @NotNull String defaultPath,
-            @Nullable String pathFromDialog
+            @NotNull String copyPath,
+            boolean useBundled
     ) {
         String pathFromLibrary = getPathFromLibrary(project, jarType);
-        if (getFileInDir(jarName, defaultPath).exists() ||
-            (pathFromDialog != null && getFileInDir(jarName, pathFromDialog).exists()) ||
-            (pathFromLibrary != null && getFileInDir(jarName, pathFromLibrary).exists())) {
+        if (getFileInDir(jarName, copyPath).exists()) {
            return FileState.EXISTS;
         }
         else if (pathFromLibrary != null) {
             return FileState.COPY;
         }
-        else if (pathFromDialog == null) {
+        else if (useBundled) {
             return FileState.DO_NOT_COPY;
         }
         else {
