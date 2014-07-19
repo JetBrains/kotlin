@@ -7,5 +7,3 @@ fun bar(f: Foo, i: Int) {
         f<caret>()
     }
 }
-
-fun <T, R> with(receiver: T, f: T.() -> R) : R = throw Exception()
