@@ -194,16 +194,9 @@ public class BodyResolver {
                 }
                 JetExpression delegateExpression = specifier.getDelegateExpression();
                 if (delegateExpression != null) {
-                    JetScope scope = scopeForConstructor == null
-                                     ? scopeForMemberResolution
-                                     : scopeForConstructor;
-                    JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE, c.getOuterDataFlowInfo(), trace);
-                    if (type != null && supertype != null) {
-                        SimpleResolutionContext simpleResolutionContext = new SimpleResolutionContext(
-                                trace, scope, supertype, c.getOuterDataFlowInfo(), ContextDependency.INDEPENDENT,
-                                expressionTypingServices.createExtension(scope, false));
-                        DataFlowUtils.checkType(type, delegateExpression, simpleResolutionContext);
-                    }
+                    JetScope scope = scopeForConstructor == null ? scopeForMemberResolution : scopeForConstructor;
+                    JetType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
+                    typeInferrer.getType(scope, delegateExpression, expectedType, c.getOuterDataFlowInfo(), trace);
                 }
             }
 

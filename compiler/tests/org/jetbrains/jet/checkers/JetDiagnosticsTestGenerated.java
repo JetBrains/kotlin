@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class, JetDiagnosticsTestGenerated.TailRecursion.class, JetDiagnosticsTestGenerated.OnObjects.class})
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Delegation.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -154,41 +154,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("DeferredTypes.kt")
         public void testDeferredTypes() throws Exception {
             doTest("compiler/testData/diagnostics/tests/DeferredTypes.kt");
-        }
-        
-        @TestMetadata("DelegationAndOverriding.kt")
-        public void testDelegationAndOverriding() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/DelegationAndOverriding.kt");
-        }
-        
-        @TestMetadata("DelegationNotTotrait.kt")
-        public void testDelegationNotTotrait() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/DelegationNotTotrait.kt");
-        }
-        
-        @TestMetadata("DelegationToJavaIface.kt")
-        public void testDelegationToJavaIface() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/DelegationToJavaIface.kt");
-        }
-        
-        @TestMetadata("Delegation_ClashingFunctions.kt")
-        public void testDelegation_ClashingFunctions() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/Delegation_ClashingFunctions.kt");
-        }
-        
-        @TestMetadata("Delegation_Hierarchy.kt")
-        public void testDelegation_Hierarchy() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/Delegation_Hierarchy.kt");
-        }
-        
-        @TestMetadata("Delegation_MultipleDelegates.kt")
-        public void testDelegation_MultipleDelegates() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/Delegation_MultipleDelegates.kt");
-        }
-        
-        @TestMetadata("Delegation_ScopeInitializationOrder.kt")
-        public void testDelegation_ScopeInitializationOrder() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/Delegation_ScopeInitializationOrder.kt");
         }
         
         @TestMetadata("DiamondFunction.kt")
@@ -2641,6 +2606,54 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 suite.addTestSuite(Inference.class);
                 return suite;
             }
+        }
+        
+        @TestMetadata("compiler/testData/diagnostics/tests/delegation")
+        public static class Delegation extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInDelegation() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("DelegationAndOverriding.kt")
+            public void testDelegationAndOverriding() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegation/DelegationAndOverriding.kt");
+            }
+            
+            @TestMetadata("DelegationExpectedType.kt")
+            public void testDelegationExpectedType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegation/DelegationExpectedType.kt");
+            }
+            
+            @TestMetadata("DelegationNotTotrait.kt")
+            public void testDelegationNotTotrait() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegation/DelegationNotTotrait.kt");
+            }
+            
+            @TestMetadata("DelegationToJavaIface.kt")
+            public void testDelegationToJavaIface() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegation/DelegationToJavaIface.kt");
+            }
+            
+            @TestMetadata("Delegation_ClashingFunctions.kt")
+            public void testDelegation_ClashingFunctions() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegation/Delegation_ClashingFunctions.kt");
+            }
+            
+            @TestMetadata("Delegation_Hierarchy.kt")
+            public void testDelegation_Hierarchy() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegation/Delegation_Hierarchy.kt");
+            }
+            
+            @TestMetadata("Delegation_MultipleDelegates.kt")
+            public void testDelegation_MultipleDelegates() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegation/Delegation_MultipleDelegates.kt");
+            }
+            
+            @TestMetadata("Delegation_ScopeInitializationOrder.kt")
+            public void testDelegation_ScopeInitializationOrder() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegation/Delegation_ScopeInitializationOrder.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/deparenthesize")
@@ -8152,6 +8165,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             suite.addTestSuite(DataFlowInfoTraversal.class);
             suite.addTest(DeclarationChecks.innerSuite());
             suite.addTest(DelegatedProperty.innerSuite());
+            suite.addTestSuite(Delegation.class);
             suite.addTestSuite(Deparenthesize.class);
             suite.addTest(DuplicateJvmSignature.innerSuite());
             suite.addTest(Enum.innerSuite());
