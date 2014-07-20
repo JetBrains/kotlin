@@ -4514,6 +4514,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/simplifyBooleanWithConstants"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("deeplyParenthesized.kt")
+        public void testDeeplyParenthesized() throws Exception {
+            doTest("idea/testData/intentions/simplifyBooleanWithConstants/deeplyParenthesized.kt");
+        }
+        
         @TestMetadata("inapplicableNoConstants.kt")
         public void testInapplicableNoConstants() throws Exception {
             doTest("idea/testData/intentions/simplifyBooleanWithConstants/inapplicableNoConstants.kt");

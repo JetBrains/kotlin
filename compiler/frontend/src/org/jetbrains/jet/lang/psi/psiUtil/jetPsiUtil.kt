@@ -96,6 +96,9 @@ public fun JetClass.isAbstract(): Boolean = isTrait() || hasModifier(JetTokens.A
 [suppress("UNCHECKED_CAST")]
 public fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newElement) as T
 
+[suppress("UNCHECKED_CAST")]
+public fun <T: PsiElement> T.copied(): T = copy() as T
+
 public fun JetElement.blockExpressionsOrSingle(): Stream<JetElement> =
         if (this is JetBlockExpression) getStatements().stream() else listOf(this).stream()
 
