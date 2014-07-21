@@ -26,7 +26,7 @@ class PairTest {
         assertTrue(p == Pair(1, "a"))
         assertTrue(p != Pair(2, "a"))
         assertTrue(p != Pair(1, "b"))
-        assertTrue(!(p : Object).equals(null))
+        assertTrue(!p.equals(null))
         assertTrue((p : Any) != "")
     }
 
@@ -70,7 +70,7 @@ class TripleTest {
         assertTrue(t != Triple(2, "a", 0.0))
         assertTrue(t != Triple(1, "b", 0.0))
         assertTrue(t != Triple(1, "a", 0.1))
-        assertTrue(!(t : Object).equals(null))
+        assertTrue(!t.equals(null))
         assertTrue((t : Any) != "")
     }
 

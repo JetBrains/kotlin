@@ -613,6 +613,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/dataClasses/genericParam.kt");
         }
         
+        @TestMetadata("kt5002.kt")
+        public void testKt5002() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/dataClasses/kt5002.kt");
+        }
+        
         @TestMetadata("mixedParams.kt")
         public void testMixedParams() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/dataClasses/mixedParams.kt");

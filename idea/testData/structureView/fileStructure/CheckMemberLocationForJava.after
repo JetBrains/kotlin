@@ -1,8 +1,6 @@
 -CheckMemberLocationForJava.kt
  -Some
-  clone(): Any location=→Object
-  equals(Any?): Boolean location=→Object
-  finalize(): Unit location=→Object
+  equals(Any?): Boolean location=→Any
   foo123(): Unit location=→A3
   foo12_(): Unit location=→A2
   foo1_3(): Unit location=→A3
@@ -11,11 +9,5 @@
   foo_2_(): Unit location=→A2
   foo__3(): Unit location=→A3
   foo___(): Unit location=→First
-  getClass(): Class<out Any?> location=→Object
-  hashCode(): Int location=→Object
-  notify(): Unit location=→Object
-  notifyAll(): Unit location=→Object
-  toString(): String location=→Object
-  wait(): Unit location=→Object
-  wait(Long): Unit location=→Object
-  wait(Long, Int): Unit location=→Object
+  hashCode(): Int location=→Any
+  toString(): String location=→Any

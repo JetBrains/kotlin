@@ -1,6 +1,6 @@
 package test
 
-public open class Base : java.lang.Object {
+public open class Base {
     public constructor Base()
     public/*package*/ open fun foo(): kotlin.Unit
 }

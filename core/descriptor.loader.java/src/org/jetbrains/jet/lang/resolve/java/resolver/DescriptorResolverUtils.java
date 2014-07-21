@@ -37,8 +37,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 public final class DescriptorResolverUtils {
-    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
-
     private DescriptorResolverUtils() {
     }
 

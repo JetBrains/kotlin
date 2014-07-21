@@ -1,15 +1,9 @@
 package test
 
-public trait InterfaceWithObjectMethods : java.lang.Object {
-    public abstract override /*1*/ fun clone(): kotlin.Any
+public trait InterfaceWithObjectMethods {
+    public abstract fun clone(): kotlin.Any?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*1*/ fun finalize(): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun getClass(): java.lang.Class<out kotlin.Any?>
+    public abstract fun finalize(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun notify(): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun notifyAll(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun wait(): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0: kotlin.Long): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): kotlin.Unit
 }

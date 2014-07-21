@@ -2,5 +2,5 @@
 null
 >>> val s = ByteArrayOutputStream()
 null
->>> s.getClass()!!.getName()
+>>> s.javaClass!!.getName()
 java.io.ByteArrayOutputStream

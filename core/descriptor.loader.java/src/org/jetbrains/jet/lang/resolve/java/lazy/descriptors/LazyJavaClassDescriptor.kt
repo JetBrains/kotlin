@@ -44,12 +44,9 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import java.util.ArrayList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
-import org.jetbrains.jet.lang.resolve.java.lazy.resolveTopLevelClassInModule
 import org.jetbrains.jet.lang.descriptors.impl.EnumClassObjectDescriptor
-import org.jetbrains.jet.lang.descriptors.SourceElement
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -174,29 +171,16 @@ class LazyJavaClassDescriptor(
         override fun getParameters(): List<TypeParameterDescriptor> = _parameters()
 
         private val _supertypes = c.storageManager.createLazyValue<Collection<JetType>> {
-            val supertypes = jClass.getSupertypes()
-            if (supertypes.isEmpty()) {
-                val objectFqName = DescriptorResolverUtils.OBJECT_FQ_NAME
-                if (jClass.getFqName() == objectFqName) {
-                    listOf(KotlinBuiltIns.getInstance().getAnyType())
-                }
-                else {
-                    val objectType = c.resolveTopLevelClassInModule(objectFqName)?.getDefaultType()
-                    // If java.lang.Object is not found, we simply use Any to recover
-                    listOf(objectType ?: KotlinBuiltIns.getInstance().getAnyType())
-                }
-            }
-            else
-                supertypes.stream()
-                        .map {
-                            supertype ->
-                            c.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
-                        }
-                        .filter { supertype -> !supertype.isError() }
-                        .toList()
-                        .ifEmpty {
-                            listOf(KotlinBuiltIns.getInstance().getAnyType())
-                        }
+            jClass.getSupertypes().stream()
+                    .map {
+                        supertype ->
+                        c.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
+                    }
+                    .filter { supertype -> !supertype.isError() }
+                    .toList()
+                    .ifEmpty {
+                        listOf(KotlinBuiltIns.getInstance().getAnyType())
+                    }
         }
 
         override fun getSupertypes(): Collection<JetType> = _supertypes()
