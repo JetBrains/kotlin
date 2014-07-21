@@ -20,7 +20,7 @@ import java.util.Scanner;
 
 public class AndroidXmlTest extends TestCaseWithTmpdir {
 
-    private final File singleFile = new File(getTestDataPath() + "/converter/singleFile/layout.xml");
+    private final File singleFileDir = new File(getTestDataPath() + "/converter/singleFile/res/");
     private final File fakeActivitySrc = new File(getTestDataPath() + "/fakeHelpers/Activity.kt");
     private final File fakeViewSrc = new File(getTestDataPath() + "/fakeHelpers/View.kt");
     private final File fakeWidgetsSrc = new File(getTestDataPath() + "/fakeHelpers/Widgets.kt");
@@ -50,10 +50,11 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
     }
 
     public void testCompileResult() throws Exception {
-        String text = new CliAndroidUIXmlParser(singleFile.getAbsolutePath()).parseToString();
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
                                                                                                             ConfigurationKind.ALL);
-        JetFile psiFile = JetTestUtils.createFile(singleFile.getName(), text, jetCoreEnvironment.getProject());
+        String text = new CliAndroidUIXmlParser(jetCoreEnvironment.getProject(), singleFileDir.getAbsolutePath()).parseToString();
+
+        JetFile psiFile = JetTestUtils.createFile("dummy.kt", text, jetCoreEnvironment.getProject());
         JetFile fakeActivity = JetTestUtils.loadJetFile(jetCoreEnvironment.getProject(), fakeActivitySrc);
         JetFile fakeView = JetTestUtils.loadJetFile(jetCoreEnvironment.getProject(), fakeViewSrc);
         JetFile fakeWidgets = JetTestUtils.loadJetFile(jetCoreEnvironment.getProject(), fakeWidgetsSrc);
@@ -70,7 +71,9 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
     }
 
     public void testConverterOneFile() throws Exception {
-        AndroidUIXmlParser parser = new CliAndroidUIXmlParser(singleFile.getAbsolutePath());
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
+                                                                                                            ConfigurationKind.ALL);
+        AndroidUIXmlParser parser = new CliAndroidUIXmlParser(jetCoreEnvironment.getProject(), singleFileDir.getAbsolutePath());
 
         String actual = parser.parseToString();
         String expected = loadOrCreate(new File(getTestDataPath() + "/converter/singleFile/layout.kt"), actual);
