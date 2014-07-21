@@ -26,6 +26,8 @@ public trait IncrementalCache {
     public fun getRemovedPackageParts(moduleId: String, compiledSourceFilesToFqName: Map<File, String>): Collection<String>
 
     public fun getPackageData(moduleId: String, fqName: String): ByteArray?
+
+    public fun close()
 }
 
 public fun IncrementalCache.getPackagesWithRemovedFiles(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<FqName> {

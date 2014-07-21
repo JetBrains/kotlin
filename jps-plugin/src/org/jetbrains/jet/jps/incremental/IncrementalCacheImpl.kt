@@ -110,7 +110,7 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         return protoMap[moduleId, JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(FqName(fqName)))]
     }
 
-    public fun close() {
+    public override fun close() {
         protoMap.close()
         constantsMap.close()
         inlineFunctionsMap.close()

@@ -55,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -291,6 +292,24 @@ public class KotlinToJVMBytecodeCompiler {
                         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
                         BindingTrace sharedTrace = support.getTrace();
                         ModuleDescriptorImpl sharedModule = support.getModule();
+
+                        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
+                        File incrementalCacheBaseDir = environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
+                        final IncrementalCache incrementalCache;
+                        if (incrementalCacheProvider != null && incrementalCacheBaseDir != null) {
+                            incrementalCache = incrementalCacheProvider.getIncrementalCache(incrementalCacheBaseDir);
+                            Disposer.register(environment.getApplication(), new Disposable() {
+                                @Override
+                                public void dispose() {
+                                    incrementalCache.close();
+                                }
+                            });
+                        }
+                        else {
+                            incrementalCache = null;
+                        }
+
+
                         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                                 environment.getProject(),
                                 environment.getSourceFiles(),
@@ -298,7 +317,7 @@ public class KotlinToJVMBytecodeCompiler {
                                 Predicates.<PsiFile>alwaysTrue(),
                                 sharedModule,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
-                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR)
+                                incrementalCache
                         );
                     }
                 }
@@ -328,11 +347,20 @@ public class KotlinToJVMBytecodeCompiler {
         File incrementalCacheDir = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
         IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
 
-        Collection<FqName> packagesWithRemovedFiles =
-                incrementalCacheDir == null || moduleId == null || incrementalCacheProvider == null
-                ? null
-                : IncrementalPackage.getPackagesWithRemovedFiles(
-                        incrementalCacheProvider.getIncrementalCache(incrementalCacheDir), moduleId, environment.getSourceFiles());
+        Collection<FqName> packagesWithRemovedFiles;
+        if (incrementalCacheDir == null || moduleId == null || incrementalCacheProvider == null) {
+            packagesWithRemovedFiles = null;
+        }
+        else {
+            IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(incrementalCacheDir);
+            try {
+                packagesWithRemovedFiles = IncrementalPackage.getPackagesWithRemovedFiles(
+                        incrementalCache, moduleId, environment.getSourceFiles());
+            }
+            finally {
+                incrementalCache.close();
+            }
+        }
         BindingTraceContext diagnosticHolder = new BindingTraceContext();
         GenerationState generationState = new GenerationState(
                 environment.getProject(),
