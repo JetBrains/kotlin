@@ -92,7 +92,7 @@ fun t6() : Boolean {
     val y = x + 22
     val foo = {
         x = (x + 20.toByte() + y).toByte()
-        x += 2
+        x = (x + 2).toByte()
         x--
         Unit
     }
