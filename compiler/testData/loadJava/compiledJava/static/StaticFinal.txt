@@ -1,6 +1,6 @@
 package test
 
-public open class StaticFinal : java.lang.Object {
+public open class StaticFinal {
     public constructor StaticFinal()
 }
 

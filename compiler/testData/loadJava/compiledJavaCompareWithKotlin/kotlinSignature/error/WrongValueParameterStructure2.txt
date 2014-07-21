@@ -1,6 +1,6 @@
 package test
 
-public open class WrongValueParameterStructure2 : java.lang.Object {
+public open class WrongValueParameterStructure2 {
     public constructor WrongValueParameterStructure2()
     public open fun foo(/*0*/ p0: kotlin.String?, /*1*/ p1: kotlin.List<kotlin.Map.Entry<kotlin.String, kotlin.String>>?): kotlin.String?
 }

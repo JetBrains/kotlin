@@ -1,6 +1,6 @@
 package test
 
-public open class ConflictingProjectionKind : java.lang.Object {
+public open class ConflictingProjectionKind {
     public constructor ConflictingProjectionKind()
     public open fun foo(/*0*/ p0: kotlin.List<kotlin.Number>?): kotlin.Unit
 }

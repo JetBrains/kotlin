@@ -2,7 +2,7 @@ package test
 
 import org.jetbrains.annotations.*
 
-public trait LoadIterableWithNullability<T> : java.lang.Object {
+public trait LoadIterableWithNullability<T> {
     Mutable
     public fun getIterable(): MutableIterable<T>
     public fun setIterable([Mutable] p0: MutableIterable<T>)

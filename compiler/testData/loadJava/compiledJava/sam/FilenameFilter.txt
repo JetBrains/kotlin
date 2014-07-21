@@ -2,6 +2,6 @@ package test
 
 public /*synthesized*/ fun FilenameFilter(/*0*/ function: (java.io.File?, kotlin.String?) -> kotlin.Boolean): test.FilenameFilter
 
-public trait FilenameFilter : java.lang.Object {
+public trait FilenameFilter {
     public abstract fun accept(/*0*/ p0: java.io.File?, /*1*/ p1: kotlin.String?): kotlin.Boolean
 }

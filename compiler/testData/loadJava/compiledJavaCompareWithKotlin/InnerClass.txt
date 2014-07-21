@@ -1,9 +1,9 @@
 package test
 
-public open class InnerClass : java.lang.Object {
+public open class InnerClass {
     public constructor InnerClass()
-    
-    public open inner class Inner : java.lang.Object {
+
+    public open inner class Inner {
         public constructor Inner()
     }
 }

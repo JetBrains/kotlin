@@ -1,6 +1,6 @@
 package test
 
-public open class CustomProjectionKind : java.lang.Object {
+public open class CustomProjectionKind {
     public constructor CustomProjectionKind()
     public open fun foo(): kotlin.MutableList<out kotlin.Number>
 }

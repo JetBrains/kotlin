@@ -1,8 +1,8 @@
 package test
 
-public trait TypeParamOfFun: Object {
+public trait TypeParamOfFun {
 
-    public trait Super: Object {
+    public trait Super {
         public fun <T> foo(): T
 
         public fun dummy() // to avoid loading as SAM interface

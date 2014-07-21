@@ -1,9 +1,9 @@
 package test
 
-public open class TypeParameterOfOuterClass</*0*/ T> : java.lang.Object {
+public open class TypeParameterOfOuterClass</*0*/ T> {
     public constructor TypeParameterOfOuterClass</*0*/ T>()
-    
-    public open inner class Inner : java.lang.Object {
+
+    public open inner class Inner {
         public constructor Inner()
         public final /*synthesized*/ fun foo(/*0*/ p0: ((T, T) -> kotlin.Int)?): kotlin.Unit
         public open fun foo(/*0*/ p0: java.util.Comparator<T>?): kotlin.Unit

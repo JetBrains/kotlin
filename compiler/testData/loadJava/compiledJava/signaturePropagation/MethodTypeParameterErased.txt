@@ -1,11 +1,11 @@
 package test
 
-public trait MethodTypeParameterErased : java.lang.Object {
-    
-    public trait Bug</*0*/ T> : java.lang.Object {
+public trait MethodTypeParameterErased {
+
+    public trait Bug</*0*/ T> {
         public abstract fun </*0*/ RET : test.MethodTypeParameterErased.Bug<T>?> save(): RET?
     }
-    
+
     public open class SubBug : test.MethodTypeParameterErased.Bug<kotlin.Any> {
         public constructor SubBug()
         public open fun save(): test.MethodTypeParameterErased.SubBug?

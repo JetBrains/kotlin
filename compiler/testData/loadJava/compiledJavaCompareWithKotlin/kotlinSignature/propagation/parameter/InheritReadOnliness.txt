@@ -1,13 +1,13 @@
 package test
 
-public trait InheritReadOnliness : java.lang.Object {
-    
+public trait InheritReadOnliness {
+
     public trait Sub : test.InheritReadOnliness.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(/*0*/ p: kotlin.List<kotlin.String>): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(/*0*/ p: kotlin.List<kotlin.String>): kotlin.Unit
     }

@@ -1,6 +1,6 @@
 package test
 
-public open class PropertyComplexTypes</*0*/ T> : java.lang.Object {
+public open class PropertyComplexTypes</*0*/ T> {
     public constructor PropertyComplexTypes</*0*/ T>()
     public final var genericType: T
     public final var listDefinedGeneric: java.util.ArrayList<kotlin.String>

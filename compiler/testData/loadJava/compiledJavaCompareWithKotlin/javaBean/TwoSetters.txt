@@ -1,6 +1,6 @@
 package test
 
-public open class TwoSetters : java.lang.Object {
+public open class TwoSetters {
     public constructor TwoSetters()
     public open fun setSize(/*0*/ p0: kotlin.Int): kotlin.Unit
     public open fun setSize(/*0*/ p0: kotlin.String?): kotlin.Unit

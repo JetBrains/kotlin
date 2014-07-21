@@ -3,7 +3,7 @@ package test
 public /*synthesized*/ fun SamInterface(/*0*/ function: () -> kotlin.Unit): test.SamInterface
 public fun topLevelFunction(): kotlin.Unit
 
-public open class JavaClass : java.lang.Object {
+public open class JavaClass {
     public constructor JavaClass()
     public open fun instanceMethod(): kotlin.Unit
 }
@@ -12,7 +12,7 @@ public final class KotlinClass {
     public constructor KotlinClass()
 }
 
-public trait SamInterface : java.lang.Object {
+public trait SamInterface {
     public abstract fun instanceMethod(): kotlin.Unit
 }
 
@@ -21,12 +21,12 @@ package test.JavaClass {
 }
 
 package test.sub {
-    
-    public open class JavaClassInSubpackage : java.lang.Object {
+
+    public open class JavaClassInSubpackage {
         public constructor JavaClassInSubpackage()
         public open fun instanceMethod(): kotlin.Unit
     }
-    
+
     package test.sub.JavaClassInSubpackage {
         public open fun staticMethod(): kotlin.Unit
     }

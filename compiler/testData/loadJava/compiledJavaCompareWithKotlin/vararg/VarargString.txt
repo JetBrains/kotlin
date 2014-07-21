@@ -1,6 +1,6 @@
 package test
 
-public open class VarargString : java.lang.Object {
+public open class VarargString {
     public constructor VarargString()
     public open fun vararg(/*0*/ vararg p0: kotlin.String? /*kotlin.Array<kotlin.String?>*/): kotlin.Unit
 }

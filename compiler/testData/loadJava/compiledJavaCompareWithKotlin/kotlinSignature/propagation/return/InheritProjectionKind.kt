@@ -1,8 +1,8 @@
 package test
 
-public trait InheritProjectionKind: Object {
+public trait InheritProjectionKind {
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(): MutableCollection<out Number>
 
         public fun dummy() // to avoid loading as SAM interface

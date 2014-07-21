@@ -1,6 +1,6 @@
 package test
 
-public trait LoadIterable</*0*/ T> : java.lang.Object {
+public trait LoadIterable</*0*/ T> {
     org.jetbrains.annotations.Mutable() public abstract fun getIterable(): kotlin.MutableIterable<T>?
     org.jetbrains.annotations.ReadOnly() public abstract fun getReadOnlyIterable(): kotlin.Iterable<T>?
     public abstract fun setIterable(/*0*/ org.jetbrains.annotations.Mutable() p0: kotlin.MutableIterable<T>?): kotlin.Unit

@@ -1,6 +1,6 @@
 package test
 
-public open class Basic : java.lang.Object {
+public open class Basic {
     public constructor Basic()
     public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
     public open fun foo(/*0*/ p0: java.lang.Runnable?): kotlin.Unit

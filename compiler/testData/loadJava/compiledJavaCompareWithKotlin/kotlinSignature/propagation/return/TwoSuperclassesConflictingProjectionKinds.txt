@@ -1,18 +1,18 @@
 package test
 
-public trait TwoSuperclassesConflictingProjectionKinds : java.lang.Object {
-    
+public trait TwoSuperclassesConflictingProjectionKinds {
+
     public trait Sub : test.TwoSuperclassesConflictingProjectionKinds.Super1, test.TwoSuperclassesConflictingProjectionKinds.Super2 {
         public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*2*/ fun foo(): kotlin.MutableCollection<kotlin.CharSequence>
     }
-    
-    public trait Super1 : java.lang.Object {
+
+    public trait Super1 {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.MutableCollection<kotlin.CharSequence>
     }
-    
-    public trait Super2 : java.lang.Object {
+
+    public trait Super2 {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.MutableCollection<out kotlin.CharSequence>
     }

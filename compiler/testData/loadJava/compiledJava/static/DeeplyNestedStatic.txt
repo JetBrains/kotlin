@@ -1,21 +1,21 @@
 package test
 
-public open class DeeplyNestedStatic : java.lang.Object {
+public open class DeeplyNestedStatic {
     public constructor DeeplyNestedStatic()
-    
-    public open class Foo : java.lang.Object {
+
+    public open class Foo {
         public constructor Foo()
-        
-        public open class Bar : java.lang.Object {
+
+        public open class Bar {
             public constructor Bar()
         }
     }
 }
 
 package test.DeeplyNestedStatic {
-    
+
     package test.DeeplyNestedStatic.Foo {
-        
+
         package test.DeeplyNestedStatic.Foo.Bar {
             public open fun method(): kotlin.Unit
         }

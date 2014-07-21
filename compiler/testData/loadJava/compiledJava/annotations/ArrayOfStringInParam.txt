@@ -1,11 +1,11 @@
 package test
 
-public trait ArrayOfStringInParam : java.lang.Object {
-    
-    test.ArrayOfStringInParam.MyAnnotation(value = {"a", "b", "c"}: kotlin.Array<kotlin.String>) public open class A : java.lang.Object {
+public trait ArrayOfStringInParam {
+
+    test.ArrayOfStringInParam.MyAnnotation(value = {"a", "b", "c"}: kotlin.Array<kotlin.String>) public open class A {
         public constructor A()
     }
-    
+
     public final annotation class MyAnnotation : kotlin.Annotation {
         public constructor MyAnnotation(/*0*/ vararg value: kotlin.String /*kotlin.Array<kotlin.String>*/)
         public abstract fun value(): kotlin.Array<kotlin.String>

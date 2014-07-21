@@ -1,13 +1,13 @@
 package test
 
-public trait SameProjectionKind : java.lang.Object {
-    
+public trait SameProjectionKind {
+
     public trait Sub : test.SameProjectionKind.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(): kotlin.MutableCollection<out kotlin.Number?>?
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.MutableCollection<out kotlin.Number?>?
     }

@@ -1,6 +1,6 @@
 package test
 
-public trait RemoveRedundantProjectionKind : java.lang.Object {
+public trait RemoveRedundantProjectionKind {
     public abstract fun f(/*0*/ p0: kotlin.Collection<kotlin.CharSequence?>?): kotlin.Unit
     public abstract fun f(/*0*/ p0: kotlin.Comparable<kotlin.CharSequence?>?): kotlin.Unit
 }

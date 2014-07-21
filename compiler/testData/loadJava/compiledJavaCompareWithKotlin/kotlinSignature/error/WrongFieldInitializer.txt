@@ -1,6 +1,6 @@
 package test
 
-public open class WrongFieldInitializer : java.lang.Object {
+public open class WrongFieldInitializer {
     public constructor WrongFieldInitializer()
     public final var foo: kotlin.String?
 }

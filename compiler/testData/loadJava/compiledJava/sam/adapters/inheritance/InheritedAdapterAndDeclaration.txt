@@ -1,14 +1,14 @@
 package test
 
-public trait InheritedAdapterAndDeclaration : java.lang.Object {
-    
+public trait InheritedAdapterAndDeclaration {
+
     public trait Sub : test.InheritedAdapterAndDeclaration.Super {
         public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public final override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable?): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public abstract fun foo(/*0*/ p0: java.lang.Runnable?): kotlin.Unit

@@ -1,15 +1,15 @@
 package test
 
-public open class OverrideMethod : java.lang.Object {
+public open class OverrideMethod {
     public constructor OverrideMethod()
-    
+
     public/*package*/ open inner class Base : test.OverrideMethod.SuperBase {
         public/*package*/ constructor Base()
         public/*package*/ open fun bar(): kotlin.Unit
         public/*package*/ open fun foo(/*0*/ p0: kotlin.String?): kotlin.String?
         public/*package*/ open override /*1*/ /*fake_override*/ fun quux(/*0*/ p0: kotlin.Int): kotlin.Unit
     }
-    
+
     public/*package*/ open inner class Derived : test.OverrideMethod.Base {
         public/*package*/ constructor Derived()
         public/*package*/ open override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
@@ -17,8 +17,8 @@ public open class OverrideMethod : java.lang.Object {
         public/*package*/ open override /*1*/ fun foo(/*0*/ p0: kotlin.String?): kotlin.String?
         public/*package*/ open override /*1*/ /*fake_override*/ fun quux(/*0*/ p0: kotlin.Int): kotlin.Unit
     }
-    
-    public/*package*/ open inner class SuperBase : java.lang.Object {
+
+    public/*package*/ open inner class SuperBase {
         public/*package*/ constructor SuperBase()
         public/*package*/ open fun quux(/*0*/ p0: kotlin.Int): kotlin.Unit
     }

@@ -1,12 +1,12 @@
 package test
 
-public trait InheritMutability : java.lang.Object {
-    
+public trait InheritMutability {
+
     public trait Sub : test.InheritMutability.Super {
         public abstract override /*1*/ fun </*0*/ B : kotlin.MutableList<kotlin.String>> foo(/*0*/ a: B): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun </*0*/ A : kotlin.MutableList<kotlin.String>> foo(/*0*/ a: A): kotlin.Unit
     }
 }

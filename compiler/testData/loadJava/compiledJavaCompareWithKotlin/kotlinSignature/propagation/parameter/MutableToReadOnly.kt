@@ -1,8 +1,8 @@
 package test
 
-public trait MutableToReadOnly: Object {
+public trait MutableToReadOnly {
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(p: MutableList<String>)
 
         public fun dummy() // to avoid loading as SAM interface

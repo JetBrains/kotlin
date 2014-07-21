@@ -1,6 +1,6 @@
 package test
 
-public open class ProtectedPackageFun : java.lang.Object {
+public open class ProtectedPackageFun {
     public constructor ProtectedPackageFun()
     protected/*protected and package*/ open fun foo(): kotlin.Unit
 }

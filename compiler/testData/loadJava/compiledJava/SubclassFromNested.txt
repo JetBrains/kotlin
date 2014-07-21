@@ -1,9 +1,9 @@
 package test
 
-public/*package*/ open class B : java.lang.Object {
+public/*package*/ open class B {
     public/*package*/ constructor B(/*0*/ p0: test.B.C?)
-    
-    public/*package*/ trait C : java.lang.Object {
+
+    public/*package*/ trait C {
     }
 }
 

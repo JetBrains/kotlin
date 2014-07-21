@@ -1,18 +1,18 @@
 package test
 
-public trait TwoSuperclassesReturnJavaSubtype : java.lang.Object {
-    
+public trait TwoSuperclassesReturnJavaSubtype {
+
     public trait Sub : test.TwoSuperclassesReturnJavaSubtype.Super1, test.TwoSuperclassesReturnJavaSubtype.Super2 {
         public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*2*/ fun foo(): kotlin.String
     }
-    
-    public trait Super1 : java.lang.Object {
+
+    public trait Super1 {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.CharSequence?
     }
-    
-    public trait Super2 : java.lang.Object {
+
+    public trait Super2 {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.CharSequence
     }

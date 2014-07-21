@@ -1,17 +1,17 @@
 package test
 
-public trait HalfSubstitutedTypeParameters : java.lang.Object {
-    
+public trait HalfSubstitutedTypeParameters {
+
     public trait Sub : test.HalfSubstitutedTypeParameters.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(): test.HalfSubstitutedTypeParameters.TrickyList<kotlin.Int, kotlin.String?>
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.MutableList<kotlin.String?>
     }
-    
+
     public trait TrickyList</*0*/ X, /*1*/ E> : kotlin.MutableList<E> {
         public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e: E): kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: E): kotlin.Unit

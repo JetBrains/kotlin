@@ -1,6 +1,6 @@
 package test
 
-public open class PrivateMembersInHierarchy : java.lang.Object {
+public open class PrivateMembersInHierarchy {
     public constructor PrivateMembersInHierarchy()
 
     public open class Sub : test.PrivateMembersInHierarchy.Super {
@@ -10,7 +10,7 @@ public open class PrivateMembersInHierarchy : java.lang.Object {
         private open fun method(): kotlin.Unit
     }
 
-    public open class Super : java.lang.Object {
+    public open class Super {
         public constructor Super()
         private final var field: kotlin.Int
         private final var field2: kotlin.Int

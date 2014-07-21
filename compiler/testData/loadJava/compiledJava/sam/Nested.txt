@@ -1,30 +1,30 @@
 package test
 
-public trait Nested : java.lang.Object {
-    
-    public trait Deeper1 : java.lang.Object {
-        
-        public trait Runnable : java.lang.Object {
+public trait Nested {
+
+    public trait Deeper1 {
+
+        public trait Runnable {
             public abstract fun run(): kotlin.Unit
             public abstract fun run2(): kotlin.Unit
         }
     }
-    
-    public trait Deeper2 : java.lang.Object {
-        
-        public trait Runnable : java.lang.Object {
+
+    public trait Deeper2 {
+
+        public trait Runnable {
             public abstract fun run(): kotlin.Unit
         }
     }
-    
-    public trait Runnable : java.lang.Object {
+
+    public trait Runnable {
         public abstract fun run(): kotlin.Unit
     }
 }
 
 package test.Nested {
     public /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): test.Nested.Runnable
-    
+
     package test.Nested.Deeper2 {
         public /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): test.Nested.Deeper2.Runnable
     }

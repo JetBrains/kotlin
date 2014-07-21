@@ -1,9 +1,9 @@
 package test
 
-public open class ProtectedPackageConstructor : java.lang.Object {
+public open class ProtectedPackageConstructor {
     public constructor ProtectedPackageConstructor()
-    
-    protected/*protected static*/ open class Foo : java.lang.Object {
+
+    protected/*protected static*/ open class Foo {
         protected/*protected and package*/ constructor Foo()
     }
 }

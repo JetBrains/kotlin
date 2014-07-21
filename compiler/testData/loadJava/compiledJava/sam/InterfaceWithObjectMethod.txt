@@ -1,4 +1,4 @@
 package test
 
-public trait InterfaceWithObjectMethod : java.lang.Object {
+public trait InterfaceWithObjectMethod {
 }

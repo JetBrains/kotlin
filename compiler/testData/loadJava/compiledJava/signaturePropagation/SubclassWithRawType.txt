@@ -1,7 +1,7 @@
 package test
 
-public trait SubclassWithRawType : java.lang.Object {
-    
+public trait SubclassWithRawType {
+
     public trait Sub : test.SubclassWithRawType.Super {
         public abstract override /*1*/ fun array1(): kotlin.Array<kotlin.List<kotlin.String?>>?
         public abstract override /*1*/ fun array2(): kotlin.Array<kotlin.List<kotlin.Any>>?
@@ -12,8 +12,8 @@ public trait SubclassWithRawType : java.lang.Object {
         public abstract override /*1*/ fun simple3(): kotlin.MutableList<out kotlin.Any>?
         public abstract override /*1*/ fun wildcard(): kotlin.MutableList<out kotlin.Any?>?
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun array1(): kotlin.Array<kotlin.List<kotlin.Any?>>?
         public abstract fun array2(): kotlin.Array<kotlin.List<kotlin.String>>?
         public abstract fun boundWildcard1(): kotlin.MutableList<out kotlin.List<kotlin.Any?>?>?

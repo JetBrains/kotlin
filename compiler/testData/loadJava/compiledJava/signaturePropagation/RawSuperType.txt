@@ -1,14 +1,14 @@
 package test
 
-public open class RawSuperType : java.lang.Object {
+public open class RawSuperType {
     public constructor RawSuperType()
-    
+
     public open inner class Derived : test.RawSuperType.Super<kotlin.Any?> {
         public constructor Derived()
         public open override /*1*/ fun foo(/*0*/ p0: kotlin.Any?): kotlin.Unit
     }
-    
-    public trait Super</*0*/ T> : java.lang.Object {
+
+    public trait Super</*0*/ T> {
         public abstract fun foo(/*0*/ p0: T?): kotlin.Unit
     }
 }

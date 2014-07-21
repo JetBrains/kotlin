@@ -4,30 +4,30 @@ public final enum class JavaEnum : kotlin.Enum<test.JavaEnum> {
     private constructor JavaEnum()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     public class object <class-object-for-JavaEnum> {
         private constructor <class-object-for-JavaEnum>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.JavaEnum
         public final /*synthesized*/ fun values(): kotlin.Array<test.JavaEnum>
     }
-    
+
     public enum entry ANOTHER : test.JavaEnum {
         private constructor ANOTHER()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-ANOTHER> : test.JavaEnum.ANOTHER {
             private constructor <class-object-for-ANOTHER>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
+
     public enum entry ENTRY : test.JavaEnum {
         private constructor ENTRY()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-ENTRY> : test.JavaEnum.ENTRY {
             private constructor <class-object-for-ENTRY>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String

@@ -1,8 +1,8 @@
 package test
 
-public trait InheritMutability: Object {
+public trait InheritMutability {
 
-    public trait Super: Object {
+    public trait Super {
         public fun <A: MutableList<String>> foo(a: A)
     }
 

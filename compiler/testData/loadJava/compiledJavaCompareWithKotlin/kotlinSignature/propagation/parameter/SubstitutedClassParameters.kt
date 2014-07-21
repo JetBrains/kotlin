@@ -1,14 +1,14 @@
 package test
 
-public trait SubstitutedClassParameters: Object {
+public trait SubstitutedClassParameters {
 
-    public trait Super1<T>: Object {
+    public trait Super1<T> {
         public fun foo(t: T)
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
-    public trait Super2<E>: Object {
+    public trait Super2<E> {
         public fun foo(t: E)
 
         public fun dummy() // to avoid loading as SAM interface

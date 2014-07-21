@@ -1,13 +1,13 @@
 package test
 
-public trait TypeParamOfClass : java.lang.Object {
-    
+public trait TypeParamOfClass {
+
     public trait Sub</*0*/ T> : test.TypeParamOfClass.Super<T> {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(): T
     }
-    
-    public trait Super</*0*/ T> : java.lang.Object {
+
+    public trait Super</*0*/ T> {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): T
     }

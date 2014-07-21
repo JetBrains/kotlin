@@ -2,6 +2,6 @@ package test
 
 public /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): test.Runnable
 
-public trait Runnable : java.lang.Object {
+public trait Runnable {
     public abstract fun run(): kotlin.Unit
 }

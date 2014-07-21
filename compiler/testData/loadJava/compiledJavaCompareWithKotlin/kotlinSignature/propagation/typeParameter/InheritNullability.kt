@@ -1,8 +1,8 @@
 package test
 
-public trait InheritNullability: Object {
+public trait InheritNullability {
 
-    public trait Super: Object {
+    public trait Super {
         public fun <A: CharSequence> foo(a: A)
     }
 

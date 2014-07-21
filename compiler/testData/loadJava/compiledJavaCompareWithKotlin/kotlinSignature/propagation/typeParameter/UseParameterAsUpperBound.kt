@@ -1,8 +1,8 @@
 package test
 
-public trait UseParameterAsUpperBound: Object {
+public trait UseParameterAsUpperBound {
 
-    public trait Super: Object {
+    public trait Super {
         public fun <A, B: A> foo(a: A, b: B)
     }
 

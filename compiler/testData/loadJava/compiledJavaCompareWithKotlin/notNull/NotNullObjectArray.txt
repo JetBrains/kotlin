@@ -1,6 +1,6 @@
 package test
 
-public open class NotNullObjectArray : java.lang.Object {
+public open class NotNullObjectArray {
     public constructor NotNullObjectArray()
     public open fun hi(): kotlin.Array<kotlin.Any>
 }

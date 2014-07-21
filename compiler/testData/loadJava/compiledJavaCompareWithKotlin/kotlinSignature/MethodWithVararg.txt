@@ -1,6 +1,6 @@
 package test
 
-public open class MethodWithVararg : java.lang.Object {
+public open class MethodWithVararg {
     public constructor MethodWithVararg()
     public open fun foo(/*0*/ vararg s: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.Unit
 }

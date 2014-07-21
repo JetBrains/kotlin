@@ -1,8 +1,8 @@
 package test
 
-public trait TwoTypeParameters: Object {
+public trait TwoTypeParameters {
 
-    public trait Super: Object {
+    public trait Super {
         public fun <A: CharSequence, B: Cloneable> foo(a: A, b: B)
     }
 

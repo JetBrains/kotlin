@@ -1,18 +1,18 @@
 package test
 
-public trait InheritedSameAdapters : java.lang.Object {
-    
+public trait InheritedSameAdapters {
+
     public trait Sub : test.InheritedSameAdapters.Super1, test.InheritedSameAdapters.Super2 {
         public final override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable?): kotlin.Unit
     }
-    
-    public trait Super1 : java.lang.Object {
+
+    public trait Super1 {
         public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public abstract fun foo(/*0*/ p0: java.lang.Runnable?): kotlin.Unit
     }
-    
-    public trait Super2 : java.lang.Object {
+
+    public trait Super2 {
         public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public abstract fun foo(/*0*/ p0: java.lang.Runnable?): kotlin.Unit
     }

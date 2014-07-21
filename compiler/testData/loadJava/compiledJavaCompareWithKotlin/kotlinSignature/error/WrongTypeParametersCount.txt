@@ -1,6 +1,6 @@
 package test
 
-public open class WrongTypeParametersCount : java.lang.Object {
+public open class WrongTypeParametersCount {
     public constructor WrongTypeParametersCount()
     public open fun </*0*/ A, /*1*/ B> foo(/*0*/ p0: A?, /*1*/ p1: kotlin.List<B>?): kotlin.Unit
 }

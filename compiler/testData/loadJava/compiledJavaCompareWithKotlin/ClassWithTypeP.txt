@@ -1,5 +1,5 @@
 package test
 
-public final class ClassWithTypeP</*0*/ P> : java.lang.Object {
+public final class ClassWithTypeP</*0*/ P> {
     public constructor ClassWithTypeP</*0*/ P>()
 }

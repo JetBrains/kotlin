@@ -1,12 +1,12 @@
 package test
 
-public trait TwoSuperclasses: Object {
+public trait TwoSuperclasses {
 
-    public trait Super1: Object {
+    public trait Super1 {
         public fun <A: CharSequence> foo(a: A)
     }
 
-    public trait Super2: Object {
+    public trait Super2 {
         public fun <B: CharSequence> foo(a: B)
     }
 

@@ -1,13 +1,13 @@
 package test
 
-public trait InheritVarargNotNull : java.lang.Object {
-    
+public trait InheritVarargNotNull {
+
     public trait Sub : test.InheritVarargNotNull.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(/*0*/ vararg p: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(/*0*/ vararg p: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.Unit
     }

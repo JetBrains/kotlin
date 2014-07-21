@@ -1,6 +1,6 @@
 package test
 
-public open class RedundantProjectionKind : java.lang.Object {
+public open class RedundantProjectionKind {
     public constructor RedundantProjectionKind()
     public open fun foo(/*0*/ list: kotlin.List<kotlin.Number>): kotlin.Unit
 }

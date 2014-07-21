@@ -1,8 +1,8 @@
 package test
 
-public trait InheritReadOnlinessOfArgument: Object {
+public trait InheritReadOnlinessOfArgument {
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(): List<List<String>>
 
         public fun dummy() // to avoid loading as SAM interface

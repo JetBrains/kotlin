@@ -1,7 +1,7 @@
 package test
 
-public trait EnumInParam : java.lang.Object {
-    
+public trait EnumInParam {
+
     java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) public final annotation class RetentionAnnotation : kotlin.Annotation {
         public constructor RetentionAnnotation(/*0*/ value: kotlin.String)
         public abstract fun value(): kotlin.String

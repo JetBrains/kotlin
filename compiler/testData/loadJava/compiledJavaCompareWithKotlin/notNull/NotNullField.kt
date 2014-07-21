@@ -1,5 +1,5 @@
 package test;
 
-public open class NotNullField() : java.lang.Object() {
+public open class NotNullField() {
     public var hi: String = "";
 }

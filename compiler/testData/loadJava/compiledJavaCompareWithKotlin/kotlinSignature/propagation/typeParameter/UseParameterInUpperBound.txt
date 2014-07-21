@@ -1,12 +1,12 @@
 package test
 
-public trait UseParameterInUpperBound : java.lang.Object {
-    
+public trait UseParameterInUpperBound {
+
     public trait Sub : test.UseParameterInUpperBound.Super {
         public abstract override /*1*/ fun </*0*/ B, /*1*/ A : kotlin.List<B>> foo(/*0*/ a: B, /*1*/ b: A): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun </*0*/ A, /*1*/ B : kotlin.List<A>> foo(/*0*/ a: A, /*1*/ b: B): kotlin.Unit
     }
 }

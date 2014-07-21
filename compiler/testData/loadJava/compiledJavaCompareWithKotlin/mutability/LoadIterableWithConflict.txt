@@ -1,6 +1,6 @@
 package test
 
-public trait LoadIterableWithConflict</*0*/ T> : java.lang.Object {
+public trait LoadIterableWithConflict</*0*/ T> {
     org.jetbrains.annotations.ReadOnly() org.jetbrains.annotations.Mutable() public abstract fun getIterable(): kotlin.MutableIterable<T>?
     public abstract fun setIterable(/*0*/ org.jetbrains.annotations.ReadOnly() org.jetbrains.annotations.Mutable() p0: kotlin.MutableIterable<T>?): kotlin.Unit
 }

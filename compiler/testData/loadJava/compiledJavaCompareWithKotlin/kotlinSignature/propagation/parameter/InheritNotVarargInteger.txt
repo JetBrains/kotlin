@@ -1,13 +1,13 @@
 package test
 
-public trait InheritNotVarargInteger : java.lang.Object {
-    
+public trait InheritNotVarargInteger {
+
     public trait Sub : test.InheritNotVarargInteger.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(/*0*/ p0: kotlin.Array<out kotlin.Int>?): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(/*0*/ p0: kotlin.Array<out kotlin.Int>?): kotlin.Unit
     }

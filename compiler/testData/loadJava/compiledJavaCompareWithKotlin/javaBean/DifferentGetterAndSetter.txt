@@ -1,6 +1,6 @@
 package test
 
-public open class DifferentGetterAndSetter : java.lang.Object {
+public open class DifferentGetterAndSetter {
     public constructor DifferentGetterAndSetter()
     public open fun getSomething(): kotlin.Int
     public open fun setSomething(/*0*/ p0: kotlin.String?): kotlin.Unit

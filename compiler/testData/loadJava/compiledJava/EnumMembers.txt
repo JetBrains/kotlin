@@ -6,20 +6,20 @@ public final enum class EnumMembers : kotlin.Enum<test.EnumMembers> {
     public open fun first(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     public class object <class-object-for-EnumMembers> {
         private constructor <class-object-for-EnumMembers>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumMembers
         public final /*synthesized*/ fun values(): kotlin.Array<test.EnumMembers>
     }
-    
+
     public enum entry FIRST : test.EnumMembers {
         private constructor FIRST()
         public final override /*1*/ /*fake_override*/ val isFirst: kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun first(): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-FIRST> : test.EnumMembers.FIRST {
             private constructor <class-object-for-FIRST>()
             public final override /*1*/ /*fake_override*/ val isFirst: kotlin.Boolean
@@ -28,14 +28,14 @@ public final enum class EnumMembers : kotlin.Enum<test.EnumMembers> {
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
+
     public enum entry SECOND : test.EnumMembers {
         private constructor SECOND()
         public final override /*1*/ /*fake_override*/ val isFirst: kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun first(): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-SECOND> : test.EnumMembers.SECOND {
             private constructor <class-object-for-SECOND>()
             public final override /*1*/ /*fake_override*/ val isFirst: kotlin.Boolean

@@ -1,17 +1,17 @@
 package test
 
-public trait TwoSuperclassesVarargAndNot : java.lang.Object {
-    
+public trait TwoSuperclassesVarargAndNot {
+
     public trait Sub : test.TwoSuperclassesVarargAndNot.Super1, test.TwoSuperclassesVarargAndNot.Super2 {
         public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ vararg p0: kotlin.String? /*kotlin.Array<kotlin.String?>*/): kotlin.Unit
         public abstract override /*1*/ fun foo(/*0*/ s: kotlin.Array<out kotlin.String?>?): kotlin.Unit
     }
-    
-    public trait Super1 : java.lang.Object {
+
+    public trait Super1 {
         public abstract fun foo(/*0*/ vararg p0: kotlin.String? /*kotlin.Array<kotlin.String?>*/): kotlin.Unit
     }
-    
-    public trait Super2 : java.lang.Object {
+
+    public trait Super2 {
         public abstract fun foo(/*0*/ s: kotlin.Array<out kotlin.String?>?): kotlin.Unit
     }
 }

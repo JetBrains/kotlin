@@ -1,6 +1,6 @@
 package test
 
-public open class SyntaxErrorInFieldAnnotation : java.lang.Object {
+public open class SyntaxErrorInFieldAnnotation {
     public constructor SyntaxErrorInFieldAnnotation()
     public final var foo: kotlin.String?
 }

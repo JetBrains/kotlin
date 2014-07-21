@@ -1,6 +1,6 @@
 package test
 
-public open class PropertySimpleType : java.lang.Object {
+public open class PropertySimpleType {
     public constructor PropertySimpleType()
     public final var fieldOne: kotlin.String
     public final var fieldTwo: kotlin.String?

@@ -3,8 +3,8 @@ package test
 import java.util.ArrayList
 import org.jetbrains.annotations.*
 
-public trait LoadIterableWithPropagation: java.lang.Object {
-    public trait LoadIterable<T> : java.lang.Object {
+public trait LoadIterableWithPropagation {
+    public trait LoadIterable<T> {
         Mutable
         public fun getIterable(): MutableIterable<T>?
         public fun setIterable([Mutable] p0: MutableIterable<T>?)

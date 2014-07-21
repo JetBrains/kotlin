@@ -1,13 +1,13 @@
 package test
 
-public trait DeepSamLoop : java.lang.Object {
-    
-    public trait Bar : java.lang.Object {
+public trait DeepSamLoop {
+
+    public trait Bar {
         public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Bar?) -> kotlin.Unit)?): kotlin.Unit
         public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Foo?): kotlin.Unit
     }
-    
-    public trait Foo : java.lang.Object {
+
+    public trait Foo {
         public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Foo?) -> kotlin.Unit)?): kotlin.Unit
         public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Bar?): kotlin.Unit
     }

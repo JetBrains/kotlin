@@ -1,11 +1,11 @@
 package test
 
-public trait PrimitiveValueInParam : java.lang.Object {
-    
-    test.PrimitiveValueInParam.Ann(bool = true: kotlin.Boolean, d = 1.0.toDouble(): kotlin.Double, f = 1.0.toFloat(): kotlin.Float, i = 1: kotlin.Int, l = 1.toLong(): kotlin.Long, str = "str": kotlin.String) public open class A : java.lang.Object {
+public trait PrimitiveValueInParam {
+
+    test.PrimitiveValueInParam.Ann(bool = true: kotlin.Boolean, d = 1.0.toDouble(): kotlin.Double, f = 1.0.toFloat(): kotlin.Float, i = 1: kotlin.Int, l = 1.toLong(): kotlin.Long, str = "str": kotlin.String) public open class A {
         public constructor A()
     }
-    
+
     public final annotation class Ann : kotlin.Annotation {
         public constructor Ann(/*0*/ i: kotlin.Int, /*1*/ l: kotlin.Long, /*2*/ d: kotlin.Double, /*3*/ f: kotlin.Float, /*4*/ bool: kotlin.Boolean, /*5*/ str: kotlin.String)
         public abstract fun bool(): kotlin.Boolean

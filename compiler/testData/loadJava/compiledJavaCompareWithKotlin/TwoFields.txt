@@ -1,6 +1,6 @@
 package test
 
-public final class TwoFields : java.lang.Object {
+public final class TwoFields {
     public constructor TwoFields()
     public final var a: kotlin.Int
     public final var b: kotlin.Short

@@ -1,5 +1,5 @@
 package test
 
-public open class MyException : java.lang.Object {
+public open class MyException {
     public constructor MyException(/*0*/ p0: kotlin.String?, /*1*/ p1: kotlin.Throwable?)
 }

@@ -1,14 +1,14 @@
 package test
 
-public trait CustomAnnotationWithDefaultParameter : java.lang.Object {
-    
+public trait CustomAnnotationWithDefaultParameter {
+
     public final annotation class MyAnnotation : kotlin.Annotation {
         public constructor MyAnnotation(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String = ...)
         public abstract fun first(): kotlin.String
         public abstract fun second(): kotlin.String
     }
-    
-    test.CustomAnnotationWithDefaultParameter.MyAnnotation(first = "f": kotlin.String, second = "s": kotlin.String) public open class MyTest : java.lang.Object {
+
+    test.CustomAnnotationWithDefaultParameter.MyAnnotation(first = "f": kotlin.String, second = "s": kotlin.String) public open class MyTest {
         public constructor MyTest()
     }
 }

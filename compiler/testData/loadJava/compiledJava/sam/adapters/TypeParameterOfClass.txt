@@ -1,6 +1,6 @@
 package test
 
-public open class TypeParameterOfClass</*0*/ T> : java.lang.Object {
+public open class TypeParameterOfClass</*0*/ T> {
     public constructor TypeParameterOfClass</*0*/ T>()
     public final /*synthesized*/ fun foo(/*0*/ p0: ((T, T) -> kotlin.Int)?): kotlin.Unit
     public open fun foo(/*0*/ p0: java.util.Comparator<T>?): kotlin.Unit

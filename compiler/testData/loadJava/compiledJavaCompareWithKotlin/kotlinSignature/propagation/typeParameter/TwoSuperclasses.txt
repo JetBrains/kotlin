@@ -1,16 +1,16 @@
 package test
 
-public trait TwoSuperclasses : java.lang.Object {
-    
+public trait TwoSuperclasses {
+
     public trait Sub : test.TwoSuperclasses.Super1, test.TwoSuperclasses.Super2 {
         public abstract override /*2*/ fun </*0*/ C : kotlin.CharSequence> foo(/*0*/ a: C): kotlin.Unit
     }
-    
-    public trait Super1 : java.lang.Object {
+
+    public trait Super1 {
         public abstract fun </*0*/ A : kotlin.CharSequence> foo(/*0*/ a: A): kotlin.Unit
     }
-    
-    public trait Super2 : java.lang.Object {
+
+    public trait Super2 {
         public abstract fun </*0*/ B : kotlin.CharSequence> foo(/*0*/ a: B): kotlin.Unit
     }
 }

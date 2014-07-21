@@ -1,6 +1,6 @@
 package test
 
-public open class Simple : java.lang.Object {
+public open class Simple {
     public constructor Simple()
     public open fun foo(): kotlin.Unit
 }

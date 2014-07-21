@@ -1,6 +1,6 @@
 package test
 
-public open class ArrayType : java.lang.Object {
+public open class ArrayType {
     public constructor ArrayType()
     public open fun foo(): kotlin.Array<kotlin.String>
 }

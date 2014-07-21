@@ -1,8 +1,8 @@
 package test
 
-public trait OverrideWithErasedParameter: Object {
+public trait OverrideWithErasedParameter {
 
-    public trait Super<T>: Object {
+    public trait Super<T> {
         public fun foo(p0: T?)
 
         public fun dummy() // to avoid loading as SAM interface

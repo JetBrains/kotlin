@@ -2,6 +2,6 @@ package test
 
 public /*synthesized*/ fun </*0*/ T> Comparator(/*0*/ function: (T?, T?) -> kotlin.Int): test.Comparator<T>
 
-public trait Comparator</*0*/ T> : java.lang.Object {
+public trait Comparator</*0*/ T> {
     public abstract fun compare(/*0*/ p0: T?, /*1*/ p1: T?): kotlin.Int
 }

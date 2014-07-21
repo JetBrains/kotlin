@@ -1,14 +1,14 @@
 package test
 
-public trait ArraysInSubtypes : java.lang.Object {
-    
+public trait ArraysInSubtypes {
+
     public trait Sub</*0*/ T> : test.ArraysInSubtypes.Super {
         public abstract override /*1*/ fun array(): kotlin.Array<kotlin.String>?
         public abstract override /*1*/ fun listOfArray(): kotlin.MutableList<out kotlin.Array<kotlin.String>?>?
         public abstract override /*1*/ fun objArray(): kotlin.Array<T>?
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun array(): kotlin.Array<kotlin.CharSequence>?
         public abstract fun listOfArray(): kotlin.MutableList<out kotlin.Array<kotlin.CharSequence>?>?
         public abstract fun objArray(): kotlin.Array<kotlin.Any>?

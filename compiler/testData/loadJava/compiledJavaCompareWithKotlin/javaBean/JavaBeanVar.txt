@@ -1,6 +1,6 @@
 package test
 
-public open class JavaBeanVar : java.lang.Object {
+public open class JavaBeanVar {
     public constructor JavaBeanVar()
     public open fun getColor(): kotlin.String?
     public open fun setColor(/*0*/ p0: kotlin.String?): kotlin.Unit

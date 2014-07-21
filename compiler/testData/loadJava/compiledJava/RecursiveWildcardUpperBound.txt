@@ -1,4 +1,4 @@
 package test
 
-public trait RecursiveWildcardUpperBound</*0*/ T : test.RecursiveWildcardUpperBound<out kotlin.Any?>?> : java.lang.Object {
+public trait RecursiveWildcardUpperBound</*0*/ T : test.RecursiveWildcardUpperBound<out kotlin.Any?>?> {
 }

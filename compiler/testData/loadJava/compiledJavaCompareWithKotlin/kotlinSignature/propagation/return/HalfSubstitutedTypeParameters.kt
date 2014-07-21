@@ -1,10 +1,10 @@
 package test
 
-public trait HalfSubstitutedTypeParameters: Object {
+public trait HalfSubstitutedTypeParameters {
 
     public trait TrickyList<X, E>: MutableList<E> {}
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(): MutableList<String?>
 
         public fun dummy() // to avoid loading as SAM interface

@@ -1,5 +1,5 @@
 package test
 
-public open class NotNullMethod() : java.lang.Object() {
+public open class NotNullMethod() {
     public open fun hi(): String = ""
 }

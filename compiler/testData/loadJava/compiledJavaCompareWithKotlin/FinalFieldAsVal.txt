@@ -1,6 +1,6 @@
 package test
 
-public final class FinalFieldAsVal : java.lang.Object {
+public final class FinalFieldAsVal {
     public constructor FinalFieldAsVal()
     public final val f: kotlin.Int = 1
 }

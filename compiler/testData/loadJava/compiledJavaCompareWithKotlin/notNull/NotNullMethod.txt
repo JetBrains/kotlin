@@ -1,6 +1,6 @@
 package test
 
-public open class NotNullMethod : java.lang.Object {
+public open class NotNullMethod {
     public constructor NotNullMethod()
     public open fun hi(): kotlin.String
 }
