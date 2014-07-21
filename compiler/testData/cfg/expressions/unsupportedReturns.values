@@ -1,0 +1,14 @@
+== a ==
+val a: Int = return 1
+---------------------
+1          <v0>: *     NEW: r(1) -> <v0>
+return 1   <v1>: Int   NEW: magic[UNSUPPORTED_ELEMENT](return 1|<v0>) -> <v1>
+=====================
+== A ==
+class A {
+    val a: Int = return 1
+}
+---------------------
+1          <v0>: *     NEW: r(1) -> <v0>
+return 1   <v1>: Int   NEW: magic[UNSUPPORTED_ELEMENT](return 1|<v0>) -> <v1>
+=====================

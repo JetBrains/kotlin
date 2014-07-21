@@ -439,6 +439,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest("compiler/testData/cfg/expressions/unresolvedWriteLHS.kt");
         }
         
+        @TestMetadata("unsupportedReturns.kt")
+        public void testUnsupportedReturns() throws Exception {
+            doTest("compiler/testData/cfg/expressions/unsupportedReturns.kt");
+        }
+        
         @TestMetadata("unusedExpressionSimpleName.kt")
         public void testUnusedExpressionSimpleName() throws Exception {
             doTest("compiler/testData/cfg/expressions/unusedExpressionSimpleName.kt");

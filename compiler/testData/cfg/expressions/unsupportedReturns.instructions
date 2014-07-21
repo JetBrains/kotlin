@@ -1,0 +1,34 @@
+== a ==
+val a: Int = return 1
+---------------------
+L0:
+  1 <START>
+    v(val a: Int = return 1)
+    r(1) -> <v0>
+    magic[UNSUPPORTED_ELEMENT](return 1|<v0>) -> <v1>
+    w(a|<v1>)
+L1:
+    <END>                                                NEXT:[<SINK>]
+error:
+    <ERROR>                                              PREV:[]
+sink:
+    <SINK>                                               PREV:[<ERROR>, <END>]
+=====================
+== A ==
+class A {
+    val a: Int = return 1
+}
+---------------------
+L0:
+  1 <START>
+    v(val a: Int = return 1)
+    r(1) -> <v0>
+    magic[UNSUPPORTED_ELEMENT](return 1|<v0>) -> <v1>
+    w(a|<v1>)
+L1:
+    <END>                                                NEXT:[<SINK>]
+error:
+    <ERROR>                                              PREV:[]
+sink:
+    <SINK>                                               PREV:[<ERROR>, <END>]
+=====================

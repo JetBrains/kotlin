@@ -1019,6 +1019,9 @@ public class JetControlFlowProcessor {
                     builder.returnValue(expression, returnValue, subroutine);
                 }
             }
+            else {
+                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, returnedExpression);
+            }
         }
 
         @Override
