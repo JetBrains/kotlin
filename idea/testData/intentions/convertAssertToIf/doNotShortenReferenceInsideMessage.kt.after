@@ -1,8 +1,6 @@
-//TODO: should not shorten references here
-
 fun main(args: Array<String>) {
     if (!false) {
-        throw AssertionError("mess": String)
+        throw AssertionError("mess": kotlin.String)
     }
 }
 
