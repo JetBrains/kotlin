@@ -34,12 +34,13 @@ import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.psi.Call.CallType
+import com.intellij.util.SmartList
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>): List<JsExpression> {
     if (arguments.isEmpty())
-        return Collections.singletonList(receiver)
+        return SmartList(receiver)
 
     val argumentList = ArrayList<JsExpression>(1 + arguments.size())
     argumentList.add(receiver)

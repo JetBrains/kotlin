@@ -23,7 +23,7 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
     }
 
     public JsInvocation(JsExpression qualifier, JsExpression arg) {
-        this(qualifier, Collections.singletonList(arg));
+        this(qualifier, new SmartList<JsExpression>(arg));
     }
 
     public JsInvocation(JsExpression qualifier, JsExpression... arguments) {
