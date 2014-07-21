@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,87 +14,53 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls.inference;
+package org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition
 
-import kotlin.Function1;
-import kotlin.KotlinPackage;
-import org.jetbrains.annotations.NotNull;
+import java.util.HashMap
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+public enum class ConstraintPositionKind {
+    RECEIVER_POSITION
+    EXPECTED_TYPE_POSITION
+    VALUE_PARAMETER_POSITION
+    TYPE_BOUND_POSITION
+    COMPOUND_CONSTRAINT_POSITION
+    FROM_COMPLETER
+    SPECIAL
 
-public class ConstraintPosition {
-    public static final ConstraintPosition RECEIVER_POSITION = new ConstraintPosition("RECEIVER_POSITION", true);
-    public static final ConstraintPosition EXPECTED_TYPE_POSITION = new ConstraintPosition("EXPECTED_TYPE_POSITION", true);
-    public static final ConstraintPosition FROM_COMPLETER = new ConstraintPosition("FROM_COMPLETER", true);
-    public static final ConstraintPosition SPECIAL = new ConstraintPosition("SPECIAL", true);
-
-    private static final Map<Integer, ConstraintPosition> valueParameterPositions = new HashMap<Integer, ConstraintPosition>();
-    private static final Map<Integer, ConstraintPosition> typeBoundPositions = new HashMap<Integer, ConstraintPosition>();
-
-    @NotNull
-    public static ConstraintPosition getValueParameterPosition(int index) {
-        ConstraintPosition position = valueParameterPositions.get(index);
-        if (position == null) {
-            position = new ConstraintPosition("VALUE_PARAMETER_POSITION(" + index + ")", true);
-            valueParameterPositions.put(index, position);
-        }
-        return position;
+    public fun position(): ConstraintPosition {
+        assert(this in setOf(RECEIVER_POSITION, EXPECTED_TYPE_POSITION, FROM_COMPLETER, SPECIAL))
+        return ConstraintPositionImpl(this)
     }
 
-    @NotNull
-    public static ConstraintPosition getTypeBoundPosition(int index) {
-        ConstraintPosition position = typeBoundPositions.get(index);
-        if (position == null) {
-            position = new ConstraintPosition("TYPE_BOUND_POSITION(" + index + ")", false);
-            typeBoundPositions.put(index, position);
-        }
-        return position;
+    public fun position(index: Int): ConstraintPosition {
+        assert(this in setOf(VALUE_PARAMETER_POSITION, TYPE_BOUND_POSITION))
+        return ConstraintPositionWithIndex(this, index)
     }
+}
 
-    public static class CompoundConstraintPosition extends ConstraintPosition {
-        private final Collection<ConstraintPosition> positions;
+public trait ConstraintPosition {
+    val kind: ConstraintPositionKind
 
-        public CompoundConstraintPosition(Collection<ConstraintPosition> positions) {
-            super("COMPOUND_CONSTRAINT_POSITION", hasConstraint(positions, /*strong=*/true));
-            this.positions = positions;
-        }
+    fun isStrong(): Boolean = kind != TYPE_BOUND_POSITION
+}
 
-        public boolean consistsOfOnlyStrongConstraints() {
-            return !hasConstraint(positions, /*strong=*/false);
-        }
+private open data class ConstraintPositionImpl(override val kind: ConstraintPositionKind) : ConstraintPosition {
+    override fun toString() = "$kind"
+}
+private data class ConstraintPositionWithIndex(override val kind: ConstraintPositionKind, val index: Int) : ConstraintPosition {
+    override fun toString() = "$kind($index)"
+}
 
-        private static boolean hasConstraint(@NotNull Collection<ConstraintPosition> positions, final boolean strong) {
-            return KotlinPackage.any(positions, new Function1<ConstraintPosition, Boolean>() {
-                @Override
-                public Boolean invoke(ConstraintPosition constraintPosition) {
-                    return constraintPosition.isStrong() == strong;
-                }
-            });
-        }
-    }
+class CompoundConstraintPosition(
+        val positions: Collection<ConstraintPosition>
+) : ConstraintPositionImpl(ConstraintPositionKind.COMPOUND_CONSTRAINT_POSITION) {
 
-    @NotNull
-    public static ConstraintPosition getCompoundConstraintPosition(ConstraintPosition... positions) {
-        return new CompoundConstraintPosition(Arrays.asList(positions));
-    }
+    override fun isStrong() = positions.any { it.isStrong() }
 
-    private final String debugName;
-    private final boolean isStrong;
+    override fun toString() = "$kind(${positions.joinToString()}"
+}
 
-    private ConstraintPosition(String name, boolean isStrong) {
-        debugName = name;
-        this.isStrong = isStrong;
-    }
-
-    public boolean isStrong() {
-        return isStrong;
-    }
-
-    @Override
-    public String toString() {
-        return debugName;
-    }
+public fun getCompoundConstraintPosition(vararg positions: ConstraintPosition): ConstraintPosition {
+    return CompoundConstraintPosition(positions.toList())
 }

@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference
 
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
+
 public trait ConstraintSystemStatus {
     /**
      * Returns <tt>true</tt> if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).

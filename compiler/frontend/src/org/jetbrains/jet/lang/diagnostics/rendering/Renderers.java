@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -49,6 +50,8 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.*;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND;
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
 
 public class Renderers {
     private static final Logger LOG = Logger.getInstance(Renderers.class);
@@ -250,13 +253,13 @@ public class Renderers {
                 if (valueParameterDescriptor.getIndex() >= inferenceErrorData.valueArgumentsTypes.size()) continue;
                 JetType actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.getIndex());
                 if (!JetTypeChecker.DEFAULT.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
-                    errorPositions.add(ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
+                    errorPositions.add(VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()));
                 }
             }
 
             if (receiverType != null && inferenceErrorData.receiverArgumentType != null &&
                     !JetTypeChecker.DEFAULT.isSubtypeOf(inferenceErrorData.receiverArgumentType, receiverType)) {
-                errorPositions.add(ConstraintPosition.RECEIVER_POSITION);
+                errorPositions.add(RECEIVER_POSITION.position());
             }
 
             Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {

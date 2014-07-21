@@ -37,6 +37,11 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.Const
 import java.util.HashMap
 import java.util.ArrayList
 import org.jetbrains.kotlin.util.sure
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.getCompoundConstraintPosition
 
 public class ConstraintSystemImpl : ConstraintSystem {
 
@@ -138,7 +143,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 if (KotlinBuiltIns.getInstance().getNullableAnyType() == declaredUpperBound) continue //todo remove this line (?)
                 val substitutedBound = constantSubstitutor?.substitute(declaredUpperBound, Variance.INVARIANT)
                 if (substitutedBound != null) {
-                    typeBounds.addBound(UPPER_BOUND, substitutedBound, ConstraintPosition.getTypeBoundPosition(typeVariable.getIndex()))
+                    typeBounds.addBound(UPPER_BOUND, substitutedBound, TYPE_BOUND_POSITION.position(typeVariable.getIndex()))
                 }
             }
         }
@@ -165,9 +170,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
             constraintPosition ->
             // 'isStrong' for compound means 'has some strong constraints'
             // but for testing absence of weak constraints we need 'has only strong constraints' here
-            if (constraintPosition is ConstraintPosition.CompoundConstraintPosition) {
-                val position = constraintPosition as ConstraintPosition.CompoundConstraintPosition
-                position.consistsOfOnlyStrongConstraints()
+            if (constraintPosition is CompoundConstraintPosition) {
+                constraintPosition.positions.all { it.isStrong() }
             }
             else {
                 constraintPosition.isStrong()
@@ -334,7 +338,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 val bounds = ArrayList(typeBounds.bounds)
                 for (bound in bounds) {
                     if (bound.kind == LOWER_BOUND || bound.kind == EXACT_BOUND) {
-                        val position = ConstraintPosition.getCompoundConstraintPosition(ConstraintPosition.getTypeBoundPosition(typeParameterDescriptor.getIndex()), bound.position)
+                        val position = getCompoundConstraintPosition(
+                                TYPE_BOUND_POSITION.position(typeParameterDescriptor.getIndex()), bound.position)
                         addSubtypeConstraint(bound.constrainingType, declaredUpperBound, position)
                     }
                 }
@@ -343,7 +348,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
                     val typeBoundsForUpperBound = typeParameterBounds.get(declarationDescriptor)
                     for (bound in typeBoundsForUpperBound!!.bounds) {
                         if (bound.kind == UPPER_BOUND || bound.kind == EXACT_BOUND) {
-                            val position = ConstraintPosition.getCompoundConstraintPosition(ConstraintPosition.getTypeBoundPosition(typeParameterDescriptor.getIndex()), bound.position)
+                            val position = getCompoundConstraintPosition(
+                                    TYPE_BOUND_POSITION.position(typeParameterDescriptor.getIndex()), bound.position)
                             typeBounds.addBound(UPPER_BOUND, bound.constrainingType, position)
                         }
                     }

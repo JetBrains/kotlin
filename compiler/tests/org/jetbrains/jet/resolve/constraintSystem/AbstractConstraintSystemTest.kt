@@ -24,7 +24,6 @@ import org.jetbrains.jet.di.InjectorForTests
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers
 import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.jet.lang.types.Variance
 import java.io.File
@@ -34,6 +33,7 @@ import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.M
 import java.util.ArrayList
 import java.util.LinkedHashMap
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val typePattern = """([\w|<|>|\(|\)]+)"""
@@ -95,7 +95,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         for (constraint in constraints) {
             val firstType = myDeclarations.getType(constraint.firstType)
             val secondType = myDeclarations.getType(constraint.secondType)
-            val position = if (constraint.isWeak) ConstraintPosition.getTypeBoundPosition(0)!! else ConstraintPosition.SPECIAL
+            val position = if (constraint.isWeak) TYPE_BOUND_POSITION.position(0) else SPECIAL.position()
             when (constraint.kind) {
                 MyConstraintKind.SUBTYPE -> constraintSystem.addSubtypeConstraint(firstType, secondType, position)
                 MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, position)

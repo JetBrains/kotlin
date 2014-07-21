@@ -4,7 +4,7 @@ SUBTYPE T Int
 
 type parameter bounds:
 T <: kotlin.Int(SPECIAL)
-P <: ???(TYPE_BOUND_POSITION(1)), <: kotlin.Int(COMPOUND_CONSTRAINT_POSITION)
+P <: ???(TYPE_BOUND_POSITION(1)), <: kotlin.Int(COMPOUND_CONSTRAINT_POSITION(TYPE_BOUND_POSITION(1), SPECIAL)
 status:
 -hasConflictingConstraints: false
 -hasContradiction: false

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls.inference
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
 
 public trait TypeBounds {
     public val varianceOfPosition: Variance

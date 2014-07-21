@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.*
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.jet.utils.addIfNotNull
 
 public class TypeBoundsImpl(
