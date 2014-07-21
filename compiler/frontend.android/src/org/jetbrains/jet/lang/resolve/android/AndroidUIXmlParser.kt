@@ -116,7 +116,7 @@ abstract class AndroidUIXmlParser {
 
     private fun doParse(): CacheAction? {
         if (searchPath == null || searchPath == "") return null
-        lazySetupFileListener()
+        lazySetup()
         if (invalidateCaches) invalidateCaches()
         var overallCacheMiss = false
         var file = filesToProcess.poll()
@@ -142,31 +142,7 @@ abstract class AndroidUIXmlParser {
         invalidateCaches = false
     }
 
-    private fun lazySetupFileListener() {
-        if (listenerSetUp) return
-        val fileManager = VirtualFileManager.getInstance()
-        val watchDir = fileManager.findFileByUrl("file://" + searchPath)
-        filesToProcess.addAll(watchDir?.getChildren()?.toArrayList() ?: ArrayList(0))
-        fileManager.addVirtualFileListener(object : VirtualFileAdapter() {
-            override fun contentsChanged(event: VirtualFileEvent) {
-                if (event.getParent() == watchDir)
-                    filesToProcess.add(event.getFile())
-            }
-            override fun fileCreated(event: VirtualFileEvent) {
-                if (event.getParent() == watchDir)
-                    super<VirtualFileAdapter>.fileCreated(event)
-            }
-            override fun fileDeleted(event: VirtualFileEvent) {
-                if (event.getParent() == watchDir) {
-                    // ignore potential synchronisation issues - it doesn't really matter if invalidation and
-                    // file processing will be handled in different passes
-                    invalidateCaches = true
-                    filesToProcess.addAll(watchDir?.getChildren()?.toArrayList() ?: ArrayList(0))
-                }
-            }
-        })
-        listenerSetUp = true
-    }
+    protected abstract fun lazySetup()
 
     private fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
         for (id in ids) {
