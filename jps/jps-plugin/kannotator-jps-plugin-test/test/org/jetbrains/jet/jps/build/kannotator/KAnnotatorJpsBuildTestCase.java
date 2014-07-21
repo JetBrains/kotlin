@@ -23,7 +23,6 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 
 import java.io.File;
-import java.io.IOException;
 
 public class KAnnotatorJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
     private static final String JDK_NAME = "1.6";
@@ -58,7 +57,7 @@ public class KAnnotatorJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
             File[] files = root.listFiles();
             if (files == null) return;
             for (File file : files) {
-                  processFile(file, rebuildBeforeMake);
+                processFile(file, rebuildBeforeMake);
             }
         }
         else if (root.getName().endsWith(".kt")) {
