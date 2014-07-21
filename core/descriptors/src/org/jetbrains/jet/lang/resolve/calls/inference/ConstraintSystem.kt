@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls.inference;
+package org.jetbrains.jet.lang.resolve.calls.inference
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.types.TypeSubstitutor
 
-import java.util.Map;
-import java.util.Set;
-
-public interface ConstraintSystem {
+public trait ConstraintSystem {
 
     /**
      * Registers variables in a constraint system.
      */
-    void registerTypeVariables(@NotNull Map<TypeParameterDescriptor, Variance> typeVariables);
+    public fun registerTypeVariables(typeVariables: Map<TypeParameterDescriptor, Variance>)
 
     /**
      * Returns a set of all registered type variables.
      */
-    @NotNull
-    Set<TypeParameterDescriptor> getTypeVariables();
+    public fun getTypeVariables(): Set<TypeParameterDescriptor>
 
     /**
      * Adds a constraint that the constraining type is a subtype of the subject type.<p/>
@@ -46,7 +40,7 @@ public interface ConstraintSystem {
      * For example, for {@code "fun <T> id(t: T) {}"} to infer <tt>T</tt> in invocation <tt>"id(1)"</tt>
      * should be generated a constraint <tt>"Int is a subtype of T"</tt> where T is a subject type, and Int is a constraining type.
      */
-    void addSubtypeConstraint(@Nullable JetType constrainingType, @NotNull JetType subjectType, @NotNull ConstraintPosition constraintPosition);
+    public fun addSubtypeConstraint(constrainingType: JetType?, subjectType: JetType, constraintPosition: ConstraintPosition)
 
     /**
      * Adds a constraint that the constraining type is a supertype of the subject type. <p/>
@@ -55,17 +49,15 @@ public interface ConstraintSystem {
      * For example, for {@code "fun <T> create() : T"} to infer <tt>T</tt> in invocation <tt>"val i: Int = create()"</tt>
      * should be generated a constraint <tt>"Int is a supertype of T"</tt> where T is a subject type, and Int is a constraining type.
      */
-    void addSupertypeConstraint(@Nullable JetType constrainingType, @NotNull JetType subjectType, @NotNull ConstraintPosition constraintPosition);
+    public fun addSupertypeConstraint(constrainingType: JetType?, subjectType: JetType, constraintPosition: ConstraintPosition)
 
-    @NotNull
-    ConstraintSystemStatus getStatus();
+    public fun getStatus(): ConstraintSystemStatus
 
     /**
      * Returns the resulting type constraints of solving the constraint system for specific type variable. <p/>
      * Returns null if the type variable was not registered.
      */
-    @NotNull
-    TypeBounds getTypeBounds(@NotNull TypeParameterDescriptor typeVariable);
+    public fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBounds
 
     /**
      * Returns a result of solving the constraint system (mapping from the type variable to the resulting type projection). <p/>
@@ -76,16 +68,11 @@ public interface ConstraintSystem {
      * If the addition of the 'expected type' constraint made the system fail,
      * this constraint is not included in the resulting substitution.
      */
-    @NotNull
-    TypeSubstitutor getResultingSubstitutor();
+    public fun getResultingSubstitutor(): TypeSubstitutor
 
     /**
      * Returns a current result of solving the constraint system (mapping from the type variable to the resulting type projection).
      * If there is no information for type parameter, returns type projection for DONT_CARE type.
      */
-    @NotNull
-    TypeSubstitutor getCurrentSubstitutor();
-
-    @NotNull
-    ConstraintSystem copy();
+    public fun getCurrentSubstitutor(): TypeSubstitutor
 }

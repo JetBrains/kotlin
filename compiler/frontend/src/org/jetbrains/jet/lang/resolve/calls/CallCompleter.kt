@@ -134,7 +134,7 @@ public class CallCompleter(
             trace: BindingTrace
     ) {
         fun updateSystemIfSuccessful(update: (ConstraintSystem) -> Boolean) {
-            val copy = getConstraintSystem()!!.copy()
+            val copy = (getConstraintSystem() as ConstraintSystemImpl).copy()
             if (update(copy)) {
                 setConstraintSystem(copy)
             }

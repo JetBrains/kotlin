@@ -428,8 +428,8 @@ public class Renderers {
             Function<TypeBoundsImpl.Bound, String> renderBound = new Function<TypeBoundsImpl.Bound, String>() {
                 @Override
                 public String fun(TypeBoundsImpl.Bound bound) {
-                    String arrow = bound.kind == LOWER_BOUND ? ">: " : bound.kind == UPPER_BOUND ? "<: " : ":= ";
-                    return arrow + RENDER_TYPE.render(bound.type) + '(' + bound.position + ')';
+                    String arrow = bound.getKind() == LOWER_BOUND ? ">: " : bound.getKind() == UPPER_BOUND ? "<: " : ":= ";
+                    return arrow + RENDER_TYPE.render(bound.getConstrainingType()) + '(' + bound.getPosition() + ')';
                 }
             };
             Name typeVariableName = typeBounds.getTypeVariable().getName();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls.inference;
+package org.jetbrains.jet.lang.resolve.calls.inference
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-
-public interface ConstraintSystemStatus {
+public trait ConstraintSystemStatus {
     /**
      * Returns <tt>true</tt> if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).
      */
-    boolean isSuccessful();
+    public fun isSuccessful(): Boolean
 
     /**
      * Return <tt>true</tt> if constraint system has no contradiction (it can be not successful because of the lack of information for a type variable).
      */
-    boolean hasContradiction();
+    public fun hasContradiction(): Boolean
 
     /**
      * Returns <tt>true</tt> if type constraints for some type variable are contradicting. <p/>
@@ -41,7 +35,7 @@ public interface ConstraintSystemStatus {
      * - <tt>"R is a supertype of Int"</tt> <p/>
      * - <tt>"List&lt;R&gt; is a supertype of List&lt;String&gt;"</tt> which leads to <tt>"R is equal to String"</tt>
      */
-    boolean hasConflictingConstraints();
+    public fun hasConflictingConstraints(): Boolean
 
     /**
      * Returns <tt>true</tt> if contradiction of type constraints comes from declared bounds for type parameters.
@@ -51,7 +45,7 @@ public interface ConstraintSystemStatus {
      *
      * It's the special case of 'hasConflictingConstraints' case.
      */
-    boolean hasViolatedUpperBound();
+    public fun hasViolatedUpperBound(): Boolean
 
     /**
      * Returns <tt>true</tt> if there is no information for some registered type variable.
@@ -59,7 +53,7 @@ public interface ConstraintSystemStatus {
      * For example, for <pre>fun &lt;E&gt; newList()</pre> in invocation <tt>"val nl = newList()"</tt>
      * there is no information to infer type variable <tt>E</tt>.
      */
-    boolean hasUnknownParameters();
+    public fun hasUnknownParameters(): Boolean
 
     /**
      * Returns <tt>true</tt> if some constraint cannot be processed because of type constructor mismatch.
@@ -67,7 +61,7 @@ public interface ConstraintSystemStatus {
      * For example, for <pre>fun &lt;R&gt; foo(t: List&lt;R&gt;) {}</pre> in invocation <tt>foo(hashSet("s"))</tt>
      * there is type constructor mismatch: <tt>"HashSet&lt;String&gt; cannot be a subtype of List&lt;R&gt;"</tt>.
      */
-    boolean hasTypeConstructorMismatch();
+    public fun hasTypeConstructorMismatch(): Boolean
 
     /**
      * Returns <tt>true</tt> if there is type constructor mismatch error at a specific {@code constraintPosition}.
@@ -76,17 +70,17 @@ public interface ConstraintSystemStatus {
      * there is type constructor mismatch: <tt>"HashSet&lt;String&gt; cannot be a subtype of List&lt;R&gt;"</tt>
      * at a constraint position {@code ConstraintPosition.getValueParameterPosition(0)}.
      */
-    boolean hasTypeConstructorMismatchAt(@NotNull ConstraintPosition constraintPosition);
+    public fun hasTypeConstructorMismatchAt(constraintPosition: ConstraintPosition): Boolean
 
     /**
      * Returns <tt>true</tt> if there is type constructor mismatch only in constraintPosition or
      * constraint system is successful without constraints from this position.
      */
-    boolean hasOnlyErrorsFromPosition(ConstraintPosition constraintPosition);
+    public fun hasOnlyErrorsFromPosition(constraintPosition: ConstraintPosition): Boolean
 
     /**
      * Returns <tt>true</tt> if there is an error in constraining types. <p/>
      * Is used not to generate type inference error if there was one in argument types.
      */
-    boolean hasErrorInConstrainingTypes();
+    public fun hasErrorInConstrainingTypes(): Boolean
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,47 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls.inference;
+package org.jetbrains.jet.lang.resolve.calls.inference
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.jet.lang.types.JetType
 
-import java.util.Collection;
+public trait TypeBounds {
+    public val varianceOfPosition: Variance
 
-public interface TypeBounds {
-    @NotNull
-    Variance getVarianceOfPosition();
+    public val typeVariable: TypeParameterDescriptor
 
-    @NotNull
-    TypeParameterDescriptor getTypeVariable();
+    public val bounds: Collection<Bound>
 
-    @NotNull
-    Collection<Bound> getBounds();
+    public fun isEmpty(): Boolean
 
-    boolean isEmpty();
+    public fun getValue(): JetType?
 
-    @Nullable
-    JetType getValue();
+    public fun getValues(): Collection<JetType>
 
-    @NotNull
-    Collection<JetType> getValues();
-
-    enum BoundKind {
-        LOWER_BOUND, UPPER_BOUND, EXACT_BOUND
+    public enum class BoundKind {
+        LOWER_BOUND
+        UPPER_BOUND
+        EXACT_BOUND
     }
 
-    class Bound {
-        public final JetType type;
-        public final BoundKind kind;
-        public final ConstraintPosition position;
-
-        public Bound(@NotNull JetType type, @NotNull BoundKind kind, @NotNull ConstraintPosition position) {
-            this.type = type;
-            this.kind = kind;
-            this.position = position;
-        }
-    }
+    public class Bound(public val constrainingType: JetType, public val kind: BoundKind, public val position: ConstraintPosition)
 }
