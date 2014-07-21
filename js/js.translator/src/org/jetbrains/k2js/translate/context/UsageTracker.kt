@@ -93,7 +93,7 @@ private fun ReceiverParameterDescriptor.getNameForCapturedReceiver(): String {
     val containingDeclaration = this.getContainingDeclaration()
 
     assert(containingDeclaration is MemberDescriptor) {
-        "Unsupported descriptor type: ${containingDeclaration.getClass()}, " +
+        "Unsupported descriptor type: ${containingDeclaration.javaClass}, " +
         "receiverDescriptor = $this, " +"containingDeclaration = $containingDeclaration"
     }
 

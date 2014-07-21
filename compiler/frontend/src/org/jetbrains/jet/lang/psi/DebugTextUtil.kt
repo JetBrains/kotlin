@@ -85,7 +85,7 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
 
     override fun visitJetElement(element: JetElement, data: Unit?): String? {
         if (element is JetElementImplStub<*>) {
-            LOG.error("getDebugText() is not defined for ${element.getClass()}")
+            LOG.error("getDebugText() is not defined for ${element.javaClass}")
         }
         return element.getText()
     }

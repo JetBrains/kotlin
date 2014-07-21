@@ -223,7 +223,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
     override fun performRefactoring(usages: Array<out UsageInfo>?) {
         fun moveDeclaration(declaration: JetNamedDeclaration, moveTarget: KotlinMoveTarget): JetNamedDeclaration? {
             val file = declaration.getContainingFile() as? JetFile
-            assert (file != null, "${declaration.getClass()}: ${declaration.getText()}")
+            assert (file != null, "${declaration.javaClass}: ${declaration.getText()}")
 
             val targetPsi = moveTarget.getOrCreateTargetPsi(declaration)
             val targetFile =
@@ -238,7 +238,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
                     }
                     else targetPsi
 
-            assert(targetFile is JetFile, "Couldn't create Koltin file for: ${declaration.getClass()}: ${declaration.getText()}")
+            assert(targetFile is JetFile, "Couldn't create Koltin file for: ${declaration.javaClass}: ${declaration.getText()}")
 
             val newPackageFqName = (targetFile as JetFile).getPackageFqName()
 

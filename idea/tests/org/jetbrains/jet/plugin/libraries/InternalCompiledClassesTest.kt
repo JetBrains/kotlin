@@ -62,11 +62,11 @@ public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() 
             val psiFile = PsiManager.getInstance(project).findFile(this)
             Assert.assertTrue("Should not be kotlin file",
                               psiFile !is JetClsFile)
-            Assert.assertTrue("Should be java file, was ${psiFile!!.getClass().getSimpleName()}",
+            Assert.assertTrue("Should be java file, was ${psiFile.javaClass.getSimpleName()}",
                               psiFile is ClsFileImpl)
 
             val decompiledPsiFile = (psiFile as PsiCompiledFile).getDecompiledPsiFile()!!
-            Assert.assertTrue("Should be java decompiled file, was ${decompiledPsiFile.getClass().getSimpleName()}",
+            Assert.assertTrue("Should be java decompiled file, was ${decompiledPsiFile.javaClass.getSimpleName()}",
                               decompiledPsiFile is PsiJavaFile)
             val classes = (decompiledPsiFile as PsiJavaFile).getClasses()
             Assert.assertTrue("Should have some decompiled text",

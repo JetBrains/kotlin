@@ -88,7 +88,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
 
     fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String) {
         if (descriptor is MissingDependencyErrorClass) {
-            throw IllegalStateException("${descriptor.getClass().getSimpleName()} cannot be rendered. FqName: ${descriptor.fullFqName}")
+            throw IllegalStateException("${descriptor.javaClass.getSimpleName()} cannot be rendered. FqName: ${descriptor.fullFqName}")
         }
         val startOffset = builder.length()
         val header = if (isEnumEntry(descriptor))

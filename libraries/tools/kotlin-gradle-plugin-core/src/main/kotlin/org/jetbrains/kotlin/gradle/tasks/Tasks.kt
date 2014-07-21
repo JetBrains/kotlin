@@ -35,8 +35,8 @@ public open class KotlinCompile(): AbstractCompile() {
     val srcDirsRoots = HashSet<File>()
     val compiler = K2JVMCompiler()
 
-    private val _logger = Logging.getLogger(getClass())
-    override fun getLogger() = _logger
+    private val logger = Logging.getLogger(this.javaClass)
+    override fun getLogger() = logger
 
     public var kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments();
 
@@ -148,8 +148,8 @@ public open class KotlinCompile(): AbstractCompile() {
 
 public open class KDoc(): SourceTask() {
 
-    private val _logger = Logging.getLogger(getClass())
-    override fun getLogger() = _logger
+    private val logger = Logging.getLogger(this.javaClass)
+    override fun getLogger() = logger
 
     public var kdocArgs: KDocArguments = KDocArguments()
 

@@ -203,7 +203,7 @@ public fun PsiElement.deleteElementAndCleanParent() {
 
     JetPsiUtil.deleteElementWithDelimiters(this)
     [suppress("UNCHECKED_CAST")]
-    JetPsiUtil.deleteChildlessElement(parent, this.getClass() as Class<PsiElement>)
+    JetPsiUtil.deleteChildlessElement(parent, this.javaClass as Class<PsiElement>)
 }
 
 public fun PsiElement.parameterIndex(): Int {
