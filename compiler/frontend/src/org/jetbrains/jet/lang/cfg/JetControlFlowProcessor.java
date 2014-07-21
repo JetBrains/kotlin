@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartFMap;
 import com.intellij.util.containers.ContainerUtil;
+import jet.runtime.typeinfo.JetValueParameter;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -548,7 +549,7 @@ public class JetControlFlowProcessor {
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
                 @NotNull JetExpression parentExpression
         ) {
-            if (target == AccessTarget.BlackBox.instance$) {
+            if (target == AccessTarget.BlackBox.INSTANCE$) {
                 List<PseudoValue> values = ContainerUtil.createMaybeSingletonList(rightValue);
                 builder.magic(parentExpression, parentExpression, values, defaultTypeMap(values), MagicKind.UNSUPPORTED_ELEMENT);
             }
@@ -893,14 +894,8 @@ public class JetControlFlowProcessor {
             JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
             JetExpression loopRange = expression.getLoopRange();
 
-            TypePredicate loopRangeTypePredicate = AllTypes.INSTANCE$;
-            ResolvedCall<?> iteratorResolvedCall = trace.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange);
-            if (iteratorResolvedCall != null) {
-                ReceiverValue iteratorReceiver = getExplicitReceiverValue(iteratorResolvedCall);
-                if (iteratorReceiver.exists()) {
-                    loopRangeTypePredicate = PseudocodePackage.getReceiverTypePredicate(iteratorResolvedCall, iteratorReceiver);
-                }
-            }
+            TypePredicate loopRangeTypePredicate =
+                    getTypePredicateByReceiverValue(trace.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange));
 
             PseudoValue loopRangeValue = builder.getBoundValue(loopRange);
             PseudoValue value = builder.magic(
@@ -1154,12 +1149,44 @@ public class JetControlFlowProcessor {
             JetExpression delegate = property.getDelegateExpression();
             if (delegate != null) {
                 generateInstructions(delegate);
+                generateDelegateConsumer(property, delegate);
             }
+
             if (JetPsiUtil.isLocal(property)) {
                 for (JetPropertyAccessor accessor : property.getAccessors()) {
                     generateInstructions(accessor);
                 }
             }
+        }
+
+        private void generateDelegateConsumer(@NotNull JetProperty property, @NotNull JetExpression delegate) {
+            DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
+            if (!(descriptor instanceof PropertyDescriptor)) return;
+
+            List<PseudoValue> values = Collections.singletonList(builder.getBoundValue(delegate));
+            List<TypePredicate> typePredicates = KotlinPackage.map(
+                    ((PropertyDescriptor) descriptor).getAccessors(),
+                    new Function1<PropertyAccessorDescriptor, TypePredicate>() {
+                        @Override
+                        public TypePredicate invoke(PropertyAccessorDescriptor descriptor) {
+                            return getTypePredicateByReceiverValue(trace.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, descriptor));
+                        }
+                    }
+            );
+            Map<PseudoValue, TypePredicate> valuesToTypePredicates =
+                    PseudocodePackage.expectedTypeFor(PseudocodePackage.and(typePredicates), values);
+            builder.magic(property, null, values, valuesToTypePredicates, MagicKind.VALUE_CONSUMER);
+        }
+
+        private TypePredicate getTypePredicateByReceiverValue(@Nullable ResolvedCall<?> resolvedCall) {
+            if (resolvedCall == null) return AllTypes.INSTANCE$;
+
+            ReceiverValue receiverValue = getExplicitReceiverValue(resolvedCall);
+            if (receiverValue.exists()) {
+                return PseudocodePackage.getReceiverTypePredicate(resolvedCall, receiverValue);
+            }
+
+            return AllTypes.INSTANCE$;
         }
 
         @Override
@@ -1399,12 +1426,9 @@ public class JetControlFlowProcessor {
             generateInstructions(specifier.getDelegateExpression());
 
             List<PseudoValue> arguments = ContainerUtil.createMaybeSingletonList(builder.getBoundValue(specifier.getDelegateExpression()));
-            TypePredicate expectedTypePredicate =
-                    PseudocodePackage.getSubtypesPredicate(trace.get(BindingContext.TYPE, specifier.getTypeReference()));
-            if (expectedTypePredicate == null) {
-                expectedTypePredicate = AllTypes.INSTANCE$;
-            }
-            builder.magic(specifier, specifier, arguments, PseudocodePackage.expectedTypeFor(expectedTypePredicate, arguments), MagicKind.VALUE_CONSUMER);
+            JetType jetType = trace.get(BindingContext.TYPE, specifier.getTypeReference());
+            TypePredicate expectedTypePredicate = jetType != null ? PseudocodePackage.getSubtypesPredicate(jetType) : AllTypes.INSTANCE$;
+            builder.magic(specifier, null, arguments, PseudocodePackage.expectedTypeFor(expectedTypePredicate, arguments), MagicKind.VALUE_CONSUMER);
         }
 
         @Override

@@ -1,6 +1,6 @@
 == Delegate ==
 class Delegate {
-    fun get(_this: Any, p: PropertyMetadata): Int = 0
+    fun get(_this: Nothing?, p: PropertyMetadata): Int = 0
 }
 ---------------------
 L0:
@@ -13,12 +13,12 @@ sink:
     <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == get ==
-fun get(_this: Any, p: PropertyMetadata): Int = 0
+fun get(_this: Nothing?, p: PropertyMetadata): Int = 0
 ---------------------
 L0:
   1 <START>
-    v(_this: Any)
-    magic[FAKE_INITIALIZER](_this: Any) -> <v0>
+    v(_this: Nothing?)
+    magic[FAKE_INITIALIZER](_this: Nothing?) -> <v0>
     w(_this|<v0>)
     v(p: PropertyMetadata)
     magic[FAKE_INITIALIZER](p: PropertyMetadata) -> <v1>
@@ -55,10 +55,11 @@ L0:
   1 <START>
     v(val b by a)
     r(a) -> <v0>
+    magic[VALUE_CONSUMER](val b by a|<v0>) -> <v1>
 L1:
-    <END>            NEXT:[<SINK>]
+    <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>          PREV:[]
+    <ERROR>                                           PREV:[]
 sink:
-    <SINK>           PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<ERROR>, <END>]
 =====================
