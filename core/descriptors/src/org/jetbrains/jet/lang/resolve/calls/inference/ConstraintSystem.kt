@@ -56,7 +56,7 @@ public trait ConstraintSystem {
 
     /**
      * Returns the resulting type constraints of solving the constraint system for specific type variable. <p/>
-     * Returns null if the type variable was not registered.
+     * Throws IllegalArgumentException if the type variable was not registered.
      */
     public fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBounds
 
