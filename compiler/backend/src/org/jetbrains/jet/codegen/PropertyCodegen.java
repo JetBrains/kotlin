@@ -169,17 +169,19 @@ public class PropertyCodegen {
         Type type = typeMapper.mapType(descriptor);
         String name = p.getName();
         assert name != null : "Annotation parameter has no name: " + p.getText();
-        MethodVisitor visitor = v.newMethod(OtherOrigin(p, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name, "()" + type.getDescriptor(), null, null);
-        JetExpression defaultValue = p.getDefaultValue();
-        if (defaultValue != null) {
-            CompileTimeConstant<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext);
-            if (constant != null) {
-                AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(visitor, typeMapper);
+        MethodVisitor mv = v.newMethod(OtherOrigin(p, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name, "()" + type.getDescriptor(), null, null);
+
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            JetExpression defaultValue = p.getDefaultValue();
+            if (defaultValue != null) {
+                CompileTimeConstant<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext);
+                assert constant != null : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
+                AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(mv, typeMapper);
                 annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.getType());
             }
         }
 
-        visitor.visitEnd();
+        mv.visitEnd();
     }
 
     private boolean generateBackingField(@NotNull JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor) {
