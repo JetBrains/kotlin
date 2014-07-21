@@ -5909,6 +5909,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignmentOperations.kt");
             }
             
+            @TestMetadata("assignmentOperationsCheckReturnType.kt")
+            public void testAssignmentOperationsCheckReturnType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/operatorsOverloading/assignmentOperationsCheckReturnType.kt");
+            }
+            
             @TestMetadata("IteratorAmbiguity.kt")
             public void testIteratorAmbiguity() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/operatorsOverloading/IteratorAmbiguity.kt");
