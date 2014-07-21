@@ -271,18 +271,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetType binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context.contextDependency);
 
         JetType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;
-        if (assignmentOperationDescriptors.isSuccess() && binaryOperationDescriptors.isSuccess()) {
-            // Both 'plus()' and 'plusAssign()' available => ambiguity
-            OverloadResolutionResults<FunctionDescriptor> ambiguityResolutionResults = OverloadResolutionResultsUtil.ambiguity(assignmentOperationDescriptors, binaryOperationDescriptors);
-            context.trace.report(ASSIGN_OPERATOR_AMBIGUITY.on(operationSign, ambiguityResolutionResults.getResultingCalls()));
-            Collection<DeclarationDescriptor> descriptors = Sets.newHashSet();
-            for (ResolvedCall<?> resolvedCall : ambiguityResolutionResults.getResultingCalls()) {
-                descriptors.add(resolvedCall.getResultingDescriptor());
-            }
-            dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
-            context.trace.record(AMBIGUOUS_REFERENCE_TARGET, operationSign, descriptors);
-        }
-        else if (assignmentOperationType != null && (assignmentOperationDescriptors.isSuccess() || !binaryOperationDescriptors.isSuccess())) {
+        if (assignmentOperationType != null && assignmentOperationDescriptors.isSuccess()) {
             // There's 'plusAssign()', so we do a.plusAssign(b)
             temporaryForAssignmentOperation.commit();
             if (!KotlinBuiltIns.getInstance().isUnit(assignmentOperationType)) {
