@@ -13,12 +13,13 @@ public open class Any {
     /*primary*/ public constructor Any()
 }
 
-public final class Array</*0*/ reified T> {
+public final class Array</*0*/ reified T> : kotlin.Cloneable {
     /*primary*/ public constructor Array</*0*/ reified T>(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, T>)
     public final val indices: kotlin.IntRange
         public final fun <get-indices>(): kotlin.IntRange
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
+    public open override /*1*/ fun clone(): kotlin.Array<T>
     public final fun get(/*0*/ index: kotlin.Int): T
     public final fun iterator(): kotlin.Iterator<T>
     public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: T): kotlin.Unit
@@ -33,12 +34,13 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
     public final fun xor(/*0*/ other: kotlin.Boolean): kotlin.Boolean
 }
 
-public final class BooleanArray {
+public final class BooleanArray : kotlin.Cloneable {
     /*primary*/ public constructor BooleanArray(/*0*/ size: kotlin.Int)
     public final val indices: kotlin.IntRange
         public final fun <get-indices>(): kotlin.IntRange
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
+    public open override /*1*/ fun clone(): kotlin.BooleanArray
     public final fun get(/*0*/ index: kotlin.Int): kotlin.Boolean
     public final fun iterator(): kotlin.BooleanIterator
     public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Boolean): kotlin.Unit
@@ -115,12 +117,13 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public open override /*1*/ fun toShort(): kotlin.Short
 }
 
-public final class ByteArray {
+public final class ByteArray : kotlin.Cloneable {
     /*primary*/ public constructor ByteArray(/*0*/ size: kotlin.Int)
     public final val indices: kotlin.IntRange
         public final fun <get-indices>(): kotlin.IntRange
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
+    public open override /*1*/ fun clone(): kotlin.ByteArray
     public final fun get(/*0*/ index: kotlin.Int): kotlin.Byte
     public final fun iterator(): kotlin.ByteIterator
     public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Byte): kotlin.Unit
@@ -235,12 +238,13 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
     public final fun toShort(): kotlin.Short
 }
 
-public final class CharArray {
+public final class CharArray : kotlin.Cloneable {
     /*primary*/ public constructor CharArray(/*0*/ size: kotlin.Int)
     public final val indices: kotlin.IntRange
         public final fun <get-indices>(): kotlin.IntRange
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
+    public open override /*1*/ fun clone(): kotlin.CharArray
     public final fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public final fun iterator(): kotlin.CharIterator
     public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Char): kotlin.Unit
@@ -305,6 +309,10 @@ public trait CharSequence {
     public abstract val length: kotlin.Int
         public abstract fun <get-length>(): kotlin.Int
     public abstract fun get(/*0*/ index: kotlin.Int): kotlin.Char
+}
+
+public trait Cloneable {
+    protected open fun clone(): kotlin.Any
 }
 
 public trait Collection</*0*/ out E> : kotlin.Iterable<E> {
@@ -382,12 +390,13 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public open override /*1*/ fun toShort(): kotlin.Short
 }
 
-public final class DoubleArray {
+public final class DoubleArray : kotlin.Cloneable {
     /*primary*/ public constructor DoubleArray(/*0*/ size: kotlin.Int)
     public final val indices: kotlin.IntRange
         public final fun <get-indices>(): kotlin.IntRange
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
+    public open override /*1*/ fun clone(): kotlin.DoubleArray
     public final fun get(/*0*/ index: kotlin.Int): kotlin.Double
     public final fun iterator(): kotlin.DoubleIterator
     public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Double): kotlin.Unit
@@ -607,12 +616,13 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public open override /*1*/ fun toShort(): kotlin.Short
 }
 
-public final class FloatArray {
+public final class FloatArray : kotlin.Cloneable {
     /*primary*/ public constructor FloatArray(/*0*/ size: kotlin.Int)
     public final val indices: kotlin.IntRange
         public final fun <get-indices>(): kotlin.IntRange
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
+    public open override /*1*/ fun clone(): kotlin.FloatArray
     public final fun get(/*0*/ index: kotlin.Int): kotlin.Float
     public final fun iterator(): kotlin.FloatIterator
     public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Float): kotlin.Unit
@@ -905,12 +915,13 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final fun xor(/*0*/ other: kotlin.Int): kotlin.Int
 }
 
-public final class IntArray {
+public final class IntArray : kotlin.Cloneable {
     /*primary*/ public constructor IntArray(/*0*/ size: kotlin.Int)
     public final val indices: kotlin.IntRange
         public final fun <get-indices>(): kotlin.IntRange
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
+    public open override /*1*/ fun clone(): kotlin.IntArray
     public final fun get(/*0*/ index: kotlin.Int): kotlin.Int
     public final fun iterator(): kotlin.IntIterator
     public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
@@ -1074,12 +1085,13 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final fun xor(/*0*/ other: kotlin.Long): kotlin.Long
 }
 
-public final class LongArray {
+public final class LongArray : kotlin.Cloneable {
     /*primary*/ public constructor LongArray(/*0*/ size: kotlin.Int)
     public final val indices: kotlin.IntRange
         public final fun <get-indices>(): kotlin.IntRange
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
+    public open override /*1*/ fun clone(): kotlin.LongArray
     public final fun get(/*0*/ index: kotlin.Int): kotlin.Long
     public final fun iterator(): kotlin.LongIterator
     public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
@@ -1378,12 +1390,13 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public open override /*1*/ fun toShort(): kotlin.Short
 }
 
-public final class ShortArray {
+public final class ShortArray : kotlin.Cloneable {
     /*primary*/ public constructor ShortArray(/*0*/ size: kotlin.Int)
     public final val indices: kotlin.IntRange
         public final fun <get-indices>(): kotlin.IntRange
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
+    public open override /*1*/ fun clone(): kotlin.ShortArray
     public final fun get(/*0*/ index: kotlin.Int): kotlin.Short
     public final fun iterator(): kotlin.ShortIterator
     public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit

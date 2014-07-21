@@ -138,6 +138,7 @@ public class KotlinBuiltIns {
     private static class FqNames {
         public final FqNameUnsafe any = fqName("Any");
         public final FqNameUnsafe nothing = fqName("Nothing");
+        public final FqNameUnsafe cloneable = fqName("Cloneable");
         public final FqNameUnsafe suppress = fqName("suppress");
 
         public final ImmutableSet<FqNameUnsafe> functionClasses = computeIndexedFqNames("Function", FUNCTION_TRAIT_COUNT);
@@ -298,6 +299,11 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getThrowable() {
         return getBuiltInClassByName("Throwable");
+    }
+
+    @NotNull
+    public ClassDescriptor getCloneable() {
+        return getBuiltInClassByName("Cloneable");
     }
 
     @NotNull
@@ -839,6 +845,10 @@ public class KotlinBuiltIns {
 
     public boolean isString(@Nullable JetType type) {
         return !(type instanceof PackageType) && getStringType().equals(type);
+    }
+
+    public boolean isCloneable(@NotNull ClassDescriptor descriptor) {
+        return fqNames.cloneable.equals(DescriptorUtils.getFqName(descriptor));
     }
 
     public boolean isData(@NotNull ClassDescriptor classDescriptor) {

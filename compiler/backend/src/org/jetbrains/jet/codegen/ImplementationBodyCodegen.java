@@ -1505,7 +1505,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                         DeclarationDescriptor containingDeclaration = traitFun.getContainingDeclaration();
                         if (!DescriptorUtils.isTrait(containingDeclaration)) return;
-                        Type traitImplType = typeMapper.mapTraitImpl((ClassDescriptor) containingDeclaration);
+                        ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
+                        Type traitImplType = typeMapper.mapTraitImpl(containingTrait);
 
                         Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal(), OwnerKind.TRAIT_IMPL).getAsmMethod();
 
@@ -1522,7 +1523,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             reg += argTypes[i].getSize();
                         }
 
-                        iv.invokestatic(traitImplType.getInternalName(), traitMethod.getName(), traitMethod.getDescriptor());
+                        if (KotlinBuiltIns.getInstance().isCloneable(containingTrait) && traitMethod.getName().equals("clone")) {
+                            // A special hack for Cloneable: there's no kotlin/Cloneable$$TImpl class at runtime,
+                            // and its 'clone' method is actually located in java/lang/Object
+                            iv.invokespecial("java/lang/Object", "clone", "()Ljava/lang/Object;", false);
+                        }
+                        else {
+                            iv.invokestatic(traitImplType.getInternalName(), traitMethod.getName(), traitMethod.getDescriptor());
+                        }
 
                         Type returnType = signature.getReturnType();
                         StackValue.onStack(traitMethod.getReturnType()).put(returnType, iv);
