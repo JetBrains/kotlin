@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MagicInstruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MagicKind;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.*;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -155,7 +157,7 @@ public class CFGraphToDotFilePrinter {
             else if (node instanceof NondeterministicJumpInstruction) {
                 shape = "Mdiamond";
             }
-            else if (node instanceof UnsupportedElementInstruction) {
+            else if (node instanceof MagicInstruction && ((MagicInstruction) node).getKind() == MagicKind.UNSUPPORTED_ELEMENT) {
                 shape = "box, fillcolor=red, style=filled";
             }
             else if (node instanceof LocalFunctionDeclarationInstruction) {

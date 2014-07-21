@@ -160,7 +160,4 @@ public interface JetControlFlowBuilder {
             @NotNull PseudoValue rValue,
             @NotNull AccessTarget target,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues);
-    
-    // Other
-    void unsupported(JetElement element);
 }

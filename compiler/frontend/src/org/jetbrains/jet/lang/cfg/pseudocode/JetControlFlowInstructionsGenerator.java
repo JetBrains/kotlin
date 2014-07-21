@@ -387,11 +387,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void unsupported(JetElement element) {
-            add(new UnsupportedElementInstruction(element, getCurrentScope()));
-        }
-
-        @Override
         public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
             pseudocode.repeatPart(startLabel, finishLabel);
         }

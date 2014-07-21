@@ -147,7 +147,7 @@ public enum class MagicKind {
     VALUE_CONSUMER
     // unrecognized operations
     UNRESOLVED_CALL
-    UNSUPPORTED_OPERATION
+    UNSUPPORTED_ELEMENT
     UNRECOGNIZED_WRITE_RHS
     FAKE_INITIALIZER
 }

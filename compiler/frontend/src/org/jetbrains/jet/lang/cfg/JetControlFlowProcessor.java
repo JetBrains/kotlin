@@ -458,7 +458,6 @@ public class JetControlFlowProcessor {
 
             Map<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
             AccessTarget accessTarget = AccessTarget.BlackBox.INSTANCE$;
-            boolean unsupported = false;
             if (left instanceof JetSimpleNameExpression || left instanceof JetQualifiedExpression) {
                 accessTarget = getResolvedCallAccessTarget(PsiUtilPackage.getQualifiedElementSelector(left));
                 if (accessTarget instanceof AccessTarget.Call) {
@@ -468,17 +467,8 @@ public class JetControlFlowProcessor {
             else if (left instanceof JetProperty) {
                 accessTarget = getDeclarationAccessTarget(left);
             }
-            else {
-                unsupported = true;
-            }
 
-            PseudoValue rhsValue = rhsDeferredValue.invoke();
-            if (unsupported) {
-                builder.unsupported(parentExpression); // TODO
-            }
-            else {
-                recordWrite(left, accessTarget, rhsValue, receiverValues, parentExpression);
-            }
+            recordWrite(left, accessTarget, rhsDeferredValue.invoke(), receiverValues, parentExpression);
         }
 
         private void generateArrayAssignment(
@@ -558,9 +548,13 @@ public class JetControlFlowProcessor {
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
                 @NotNull JetExpression parentExpression
         ) {
-            VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), left, false);
-            if (descriptor != null) {
-                PseudoValue rValue = rightValue != null ? rightValue : createSyntheticValue(parentExpression, MagicKind.UNRECOGNIZED_WRITE_RHS);
+            if (target == AccessTarget.BlackBox.instance$) {
+                List<PseudoValue> values = ContainerUtil.createMaybeSingletonList(rightValue);
+                builder.magic(parentExpression, parentExpression, values, defaultTypeMap(values), MagicKind.UNSUPPORTED_ELEMENT);
+            }
+            else {
+                PseudoValue rValue =
+                        rightValue != null ? rightValue : createSyntheticValue(parentExpression, MagicKind.UNRECOGNIZED_WRITE_RHS);
                 builder.write(parentExpression, left, rValue, target, receiverValues);
             }
         }
@@ -1097,7 +1091,7 @@ public class JetControlFlowProcessor {
             }
             else {
                 generateInstructions(receiverExpression);
-                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_OPERATION, receiverExpression);
+                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, receiverExpression);
             }
         }
 
@@ -1209,7 +1203,7 @@ public class JetControlFlowProcessor {
             }
             else {
                 visitJetElement(expression);
-                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_OPERATION, left);
+                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, left);
             }
         }
 
@@ -1404,6 +1398,11 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitDelegationToSuperClassSpecifier(@NotNull JetDelegatorToSuperClass specifier) {
+            // Do not generate UNSUPPORTED_ELEMENT here
+        }
+
+        @Override
         public void visitDelegationSpecifierList(@NotNull JetDelegationSpecifierList list) {
             list.acceptChildren(this);
         }
@@ -1425,13 +1424,14 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitJetElement(@NotNull JetElement element) {
-            builder.unsupported(element);
+            createNonSyntheticValue(element, MagicKind.UNSUPPORTED_ELEMENT);
         }
 
         private boolean generateCall(@Nullable JetElement callElement) {
             if (callElement == null) return false;
             return checkAndGenerateCall(callElement, getResolvedCall(callElement, trace.getBindingContext()));
         }
+
         private boolean checkAndGenerateCall(@NotNull JetElement callElement, @Nullable ResolvedCall<?> resolvedCall) {
             if (resolvedCall == null) {
                 builder.compilationError(callElement, "No resolved call");

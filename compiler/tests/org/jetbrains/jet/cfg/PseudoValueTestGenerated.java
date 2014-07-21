@@ -438,6 +438,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest("compiler/testData/cfg/expressions/unresolvedProperty.kt");
             }
             
+            @TestMetadata("unresolvedWriteLHS.kt")
+            public void testUnresolvedWriteLHS() throws Exception {
+                doTest("compiler/testData/cfg/expressions/unresolvedWriteLHS.kt");
+            }
+            
             @TestMetadata("unusedExpressionSimpleName.kt")
             public void testUnusedExpressionSimpleName() throws Exception {
                 doTest("compiler/testData/cfg/expressions/unusedExpressionSimpleName.kt");

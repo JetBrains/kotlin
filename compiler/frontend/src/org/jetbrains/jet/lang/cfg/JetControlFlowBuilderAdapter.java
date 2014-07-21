@@ -243,11 +243,6 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     }
 
     @Override
-    public void unsupported(JetElement element) {
-        getDelegateBuilder().unsupported(element);
-    }
-
-    @Override
     public void write(
             @NotNull JetElement assignment,
             @NotNull JetElement lValue,

@@ -1,0 +1,18 @@
+== foo ==
+fun foo() {
+    x = ""
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ x = "" })
+    mark("")
+    r("") -> <v0>
+    magic[UNSUPPORTED_ELEMENT](x = ""|<v0>) -> <v1>
+L1:
+  1 <END>                                              NEXT:[<SINK>]
+error:
+    <ERROR>                                            PREV:[]
+sink:
+    <SINK>                                             PREV:[<ERROR>, <END>]
+=====================
