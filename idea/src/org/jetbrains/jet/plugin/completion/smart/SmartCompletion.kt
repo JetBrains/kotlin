@@ -29,10 +29,13 @@ import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.makeNullable
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
-                      val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+                      val visibilityFilter: (DeclarationDescriptor) -> Boolean,
+                      val originalFile: JetFile) {
 
     private val bindingContext = resolveSession.resolveToElement(expression)
     private val moduleDescriptor = resolveSession.getModuleDescriptor()
@@ -73,7 +76,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             receiver = null
         }
 
-        val allExpectedInfos = ExpectedInfos(bindingContext, moduleDescriptor).calculate(expressionWithType) ?: return null
+        val allExpectedInfos = calcExpectedInfos(expressionWithType) ?: return null
         val filteredExpectedInfos = allExpectedInfos.filter { !it.`type`.isError() }
         if (filteredExpectedInfos.isEmpty()) return null
 
@@ -123,6 +126,23 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         }
 
         return result
+    }
+
+    private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo>? {
+        // if our expression is initializer of implicitly typed variable - take type of variable from original file
+        val varDeclaration = expression.getParent() as? JetVariableDeclaration
+        if (varDeclaration != null && expression == varDeclaration.getInitializer() && varDeclaration.getTypeRef() == null) {
+            val offset = varDeclaration.getTextRange()!!.getStartOffset()
+            val originalDeclaration = PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, javaClass<JetVariableDeclaration>(), true)
+            if (originalDeclaration != null) {
+                val variableDescriptor = originalDeclaration.getLazyResolveSession().resolveToDescriptor(originalDeclaration) as? VariableDescriptor
+                if (variableDescriptor != null) {
+                    return listOf(ExpectedInfo(variableDescriptor.getType(), null))
+                }
+            }
+        }
+
+        return ExpectedInfos(bindingContext, moduleDescriptor).calculate(expression)
     }
 
     private fun calcItemsToSkip(expression: JetExpression): Set<DeclarationDescriptor> {

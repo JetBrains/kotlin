@@ -144,7 +144,7 @@ class CompletionSession {
                 return isVisibleDescriptor(descriptor);
             }
         };
-        SmartCompletion completion = new SmartCompletion(jetReference.getExpression(), getResolveSession(), visibilityFilter);
+        SmartCompletion completion = new SmartCompletion(jetReference.getExpression(), getResolveSession(), visibilityFilter, (JetFile)parameters.getOriginalFile());
         Collection<LookupElement> elements = completion.buildLookupElements(descriptors);
         if (elements != null) {
             for (LookupElement element : elements) {
