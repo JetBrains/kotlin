@@ -147,13 +147,8 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 if (!Visibilities.isVisible(descriptor, resolutionScope.getContainingDeclaration())) continue
 
                 val parameters = descriptor.getValueParameters()
-                if (isFunctionLiteralArgument) {
-                    if (argumentIndex != parameters.lastIndex) continue
-                }
-                else {
-                    if (parameters.size <= argumentIndex) continue
-                }
-                val parameterDescriptor = parameters[argumentIndex]
+                if (isFunctionLiteralArgument && argumentIndex != parameters.lastIndex) continue
+
                 val tail = if (isFunctionLiteralArgument)
                     null
                 else if (argumentIndex == parameters.lastIndex)
@@ -163,7 +158,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 else
                     Tail.COMMA
 
-                expectedInfos.add(ExpectedInfo(parameterDescriptor.getType(), tail))
+                expectedInfos.add(ExpectedInfo(parameters[argumentIndex].getType(), tail))
             }
         }
         return expectedInfos
