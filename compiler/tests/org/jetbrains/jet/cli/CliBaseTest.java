@@ -48,9 +48,9 @@ public class CliBaseTest {
     @NotNull
     private static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull List<String> args) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        PrintStream origOut = System.out;
+        PrintStream origErr = System.err;
         try {
-            System.setOut(new PrintStream(bytes));
+            System.setErr(new PrintStream(bytes));
             ExitCode exitCode = CLICompiler.doMainNoExit(compiler, ArrayUtil.toStringArray(args));
             return Pair.create(bytes.toString("utf-8"), exitCode);
         }
@@ -58,7 +58,7 @@ public class CliBaseTest {
             throw UtilsPackage.rethrow(e);
         }
         finally {
-            System.setOut(origOut);
+            System.setErr(origErr);
         }
     }
 

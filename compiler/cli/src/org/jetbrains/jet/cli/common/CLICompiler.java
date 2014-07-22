@@ -210,7 +210,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     @NotNull
     public static ExitCode doMainNoExit(@NotNull CLICompiler compiler, @NotNull String[] args) {
         try {
-            ExitCode rc = compiler.exec(System.out, args);
+            ExitCode rc = compiler.exec(System.err, args);
             if (rc != OK) {
                 System.err.println("exec() finished with " + rc + " return code");
             }

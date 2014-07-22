@@ -69,4 +69,8 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
         runCompiler("test.compile", "-src", "test.kt", "-jar", jar);
     }
 
+    @Test
+    public void simpleScript() throws Exception {
+        runCompiler("script", "-script", "script.kts", "hi", "there");
+    }
 }

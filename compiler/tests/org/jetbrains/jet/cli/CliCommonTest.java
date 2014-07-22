@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.cli;
 
-import junit.framework.Assert;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -32,16 +32,6 @@ public class CliCommonTest extends CliBaseTest {
     @Test
     public void wrongArgument() throws Exception {
         executeCompilerCompareOutputJVM();
-    }
-
-    @Test
-    public void printArguments() throws Exception {
-        executeCompilerCompareOutputJVM();
-    }
-
-    @Test
-    public void printArgumentsWithManyValue() throws Exception {
-        executeCompilerCompareOutputJS();
     }
 
     @Test
