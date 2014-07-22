@@ -166,6 +166,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         inputParametersPanel.add(parameterTablePanel);
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     protected void doOKAction() {
         MultiMap<PsiElement, String> conflicts = ExtractFunctionPackage.validate(currentDescriptor).getConflicts();
@@ -194,6 +195,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         return contentPane;
     }
 
+    @NotNull
     @Override
     protected JComponent createContentPane() {
         return contentPane;
