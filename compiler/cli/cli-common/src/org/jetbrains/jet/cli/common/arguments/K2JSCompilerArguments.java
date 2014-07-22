@@ -35,10 +35,6 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path[,]>")
     public String[] libraryFiles;
 
-    @Argument(value = "sourceFiles", description = "Source files or directories separated by commas")
-    @ValueDescription("<path[,]>")
-    public String[] sourceFiles;
-
     @Argument(value = "sourcemap", description = "Generate SourceMap")
     public boolean sourcemap;
 

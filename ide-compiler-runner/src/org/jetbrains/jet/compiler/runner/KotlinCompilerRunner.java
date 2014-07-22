@@ -157,13 +157,12 @@ public class KotlinCompilerRunner {
     ) {
         setupCommonSettings(settings);
 
-        List<String> sourceFilePaths = ContainerUtil.map(sourceFiles, new Function<File, String>() {
+        settings.freeArgs = ContainerUtil.map(sourceFiles, new Function<File, String>() {
             @Override
             public String fun(File file) {
                 return file.getPath();
             }
         });
-        settings.sourceFiles = ArrayUtil.toStringArray(sourceFilePaths);
         settings.outputFile = outputFile.getPath();
         settings.libraryFiles = ArrayUtil.toStringArray(libraryFiles);
     }

@@ -20,8 +20,8 @@ package org.jetbrains.k2js.test.semantics;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
@@ -93,7 +93,7 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
             K2JSCompiler compiler = new K2JSCompiler();
             K2JSCompilerArguments arguments = new K2JSCompilerArguments();
             arguments.outputFile = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
-            arguments.sourceFiles = files.toArray(new String[files.size()]);
+            arguments.freeArgs = files;
             arguments.verbose = true;
             arguments.libraryFiles = new String[] {generatedJsDefinitionsDir};
             System.out.println("Compiling with version: " + version + " to: " + arguments.outputFile);
@@ -102,7 +102,7 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
         }
     }
 
-    private void addAllSourceFiles(List<String> files, File dir) {
+    private static void addAllSourceFiles(List<String> files, File dir) {
         File[] children = dir.listFiles();
         if (children != null && children.length > 0) {
             for (File child : children) {

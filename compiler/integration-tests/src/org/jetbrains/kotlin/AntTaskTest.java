@@ -50,9 +50,8 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
         doAntTest(SUCCESSFUL, extraJavaArgs);
 
         String jar = getOutputFileByName(JVM_OUT_FILE).getAbsolutePath();
-        String runtime = getKotlinRuntimePath();
 
-        runJava("hello.run", "-cp", jar + File.pathSeparator + runtime, "hello.HelloPackage");
+        runJava("hello.run", "-cp", jar + File.pathSeparator + getKotlinRuntimePath(), "hello.HelloPackage");
     }
 
     private void doJsAntTest() throws Exception {
@@ -107,20 +106,20 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
 
     @Test
     public void javacCompiler() throws Exception {
-        doJvmAntTest("-cp", getKotlinAntPath(),
+        doJvmAntTest("-cp", getClassPathForAnt(),
                      "-Dkotlin.home", getCompilerLib().getAbsolutePath());
     }
 
     @Test
     public void externalAnnotations() throws Exception {
-        doJvmAntTest("-cp", getKotlinAntPath(),
+        doJvmAntTest("-cp", getClassPathForAnt(),
                      "-Didea.sdk", getIdeaSdkHome(),
                      "-Dkotlin.home", getCompilerLib().getAbsolutePath());
     }
 
     @Test
     public void kotlinCompiler() throws Exception {
-        doJvmAntTest("-cp", getKotlinAntPath(),
+        doJvmAntTest("-cp", getClassPathForAnt(),
                      "-Didea.sdk", getIdeaSdkHome(),
                      "-Dkotlin.home", getCompilerLib().getAbsolutePath());
     }
@@ -203,8 +202,8 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
         return runJava(logName, ArrayUtil.toStringArray(strings));
     }
 
-    private static String getKotlinAntPath() {
-        return getCompilerLib() + File.separator + "kotlin-ant.jar";
+    private static String getClassPathForAnt() {
+        return getCompilerLib() + File.separator + "kotlin-ant.jar" + File.pathSeparator + getKotlinRuntimePath();
     }
 
     private static String getIdeaSdkHome() {

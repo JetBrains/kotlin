@@ -71,7 +71,7 @@ abstract class StdLibTestBase extends SingleFileTranslationTest {
         K2JSCompiler compiler = new K2JSCompiler();
         K2JSCompilerArguments arguments = new K2JSCompilerArguments();
         arguments.outputFile = outputFilePath;
-        arguments.sourceFiles = ArrayUtil.toStringArray(files);
+        arguments.freeArgs = files;
         arguments.verbose = true;
         arguments.libraryFiles = ArrayUtil.toStringArray(libFiles);
         System.out.println("Compiling with version: " + version + " to: " + arguments.outputFile);

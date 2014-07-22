@@ -76,13 +76,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
-        if (arguments.sourceFiles == null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -sourceFiles", NO_LOCATION);
+        if (arguments.freeArgs.isEmpty()) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify at least one source file or directory", NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
         }
 
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(arguments.sourceFiles));
+        configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs);
         JetCoreEnvironment environmentForJS = JetCoreEnvironment.createForProduction(rootDisposable, configuration);
 
         Project project = environmentForJS.getProject();
