@@ -28,6 +28,7 @@ import java.util.*
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.plugin.util.makeNullable
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -73,8 +74,14 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         }
 
         val allExpectedInfos = ExpectedInfos(bindingContext, moduleDescriptor).calculate(expressionWithType) ?: return null
-        val expectedInfos = allExpectedInfos.filter { !it.`type`.isError() }
-        if (expectedInfos.isEmpty()) return null
+        val filteredExpectedInfos = allExpectedInfos.filter { !it.`type`.isError() }
+        if (filteredExpectedInfos.isEmpty()) return null
+
+        // if we complete argument of == or !=, make types in expected info's nullable to allow nullable items too
+        val expectedInfos = if ((expressionWithType.getParent() as? JetBinaryExpression)?.getOperationToken() in setOf(JetTokens.EQEQ, JetTokens.EXCLEQ))
+            filteredExpectedInfos.map { ExpectedInfo(it.`type`.makeNullable(), it.tail) }
+        else
+            filteredExpectedInfos
 
         val result = ArrayList<LookupElement>()
 
@@ -112,7 +119,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
             LambdaItems.addToCollection(result, functionExpectedInfos)
 
-            KeywordValues.addToCollection(result, expectedInfos, expressionWithType)
+            KeywordValues.addToCollection(result, filteredExpectedInfos/* use filteredExpectedInfos to not include null after == */, expressionWithType)
         }
 
         return result

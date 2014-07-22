@@ -170,7 +170,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
                 if (otherOperand != null) {
                     val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand] ?: return null
-                    return listOf(ExpectedInfo(expressionType.makeNullable(), null))
+                    return listOf(ExpectedInfo(expressionType, null))
                 }
             }
         }
