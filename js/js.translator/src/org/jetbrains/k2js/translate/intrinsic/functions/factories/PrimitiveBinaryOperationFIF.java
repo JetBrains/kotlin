@@ -24,7 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
@@ -101,7 +103,10 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
 
         if (pattern(INTEGER_NUMBER_TYPES + ".div").apply(descriptor)) {
-            return INTEGER_DIVISION_INTRINSIC;
+            JetType resultType = descriptor.getReturnType();
+            if (!KotlinBuiltIns.getInstance().getFloatType().equals(resultType) &&
+                !KotlinBuiltIns.getInstance().getDoubleType().equals(resultType))
+                return INTEGER_DIVISION_INTRINSIC;
         }
         if (descriptor.getName().equals(Name.identifier("rangeTo"))) {
             return RANGE_TO_INTRINSIC;
