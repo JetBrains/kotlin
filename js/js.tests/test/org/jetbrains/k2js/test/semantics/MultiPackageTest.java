@@ -38,6 +38,10 @@ public class MultiPackageTest extends MultipleFilesTranslationTest {
         checkFooBoxIsTrue("packageVariableVisibleFromOtherPackage");
     }
 
+    public void testReflectionFromOtherPackage() throws Exception {
+        checkFooBoxIsTrue("reflectionFromOtherPackage");
+    }
+
     public void testNestedPackageFunctionCalledFromOtherPackage() throws Exception {
         runMultiFileTest("nestedPackageFunctionCalledFromOtherPackage", "a.foo", TEST_FUNCTION, true);
     }

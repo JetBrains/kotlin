@@ -89,11 +89,31 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testNativeExtensionLikeMember() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testPassExtLambdaToNative() throws Exception {
         checkFooBoxIsOk();
     }
 
+    public void testPassMemberOrExtToNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testPassExtLambdaFromNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testPassMemberOrExtFromNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testPassTopLevelOrLocalFunctionToNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testPassTopLevelFunctionFromNative() throws Exception {
         checkFooBoxIsOk();
     }
 }
