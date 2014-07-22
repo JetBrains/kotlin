@@ -55,15 +55,6 @@ public final class AnalyzerFacadeForJS {
     private AnalyzerFacadeForJS() {
     }
 
-    @NotNull
-    public static BindingContext analyzeFilesAndCheckErrors(@NotNull List<JetFile> files,
-            @NotNull Config config) {
-        BindingContext bindingContext = analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config).getBindingContext();
-        checkForErrors(Config.withJsLibAdded(files, config), bindingContext);
-        return bindingContext;
-    }
-
-
     //NOTE: web demo related method
     @SuppressWarnings("UnusedDeclaration")
     @NotNull

@@ -107,6 +107,7 @@ public abstract class Config {
     );
 
     public static final String LIBRARIES_LOCATION = "js/js.libraries/src";
+    public static final String REFLECTION_LIB_LOCATION = "core/reflection/src/kotlin/reflect";
 
     /**
      * The file names in the standard library to compile

@@ -127,7 +127,9 @@ public final class TranslationUtils {
 
     @NotNull
     private static List<JetFile> initLibFiles(@NotNull Project project) {
-        return createJetFileList(project, Config.LIB_FILE_NAMES, Config.LIBRARIES_LOCATION);
+        List<JetFile> files = createJetFileList(project, Config.LIB_FILE_NAMES, Config.LIBRARIES_LOCATION);
+        files.addAll(createJetFileList(project, LibraryFilePathsUtil.getReflectionLibraryFiles(), null));
+        return files;
     }
 
     @NotNull

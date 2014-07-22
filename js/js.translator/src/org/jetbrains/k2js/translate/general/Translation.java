@@ -20,10 +20,12 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.k2js.config.Config;
@@ -108,10 +110,11 @@ public final class Translation {
     @NotNull
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
             @NotNull Collection<JetFile> files, @NotNull MainCallParameters mainCallParameters,
+            @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config)
             throws TranslationException {
         try {
-            return doGenerateAst(bindingContext, files, mainCallParameters, config);
+            return doGenerateAst(bindingContext, files, mainCallParameters, moduleDescriptor, config);
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -124,8 +127,9 @@ public final class Translation {
     @NotNull
     private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files,
             @NotNull MainCallParameters mainCallParameters,
+            @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config) throws MainFunctionNotFoundException {
-        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config.getTarget());
+        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config.getTarget(), moduleDescriptor);
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
 
