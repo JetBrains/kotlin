@@ -24,6 +24,10 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
+    @Argument(value = "d", description = "Destination for generated class files")
+    @ValueDescription("<directory|jar>")
+    public String destination;
+
     @Argument(value = "jar", description = "Resulting .jar file path")
     @ValueDescription("<path>")
     public String jar;

@@ -117,8 +117,19 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         try {
             configureEnvironment(configuration, arguments);
 
-            File jar = arguments.jar != null ? new File(arguments.jar) : null;
-            File outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
+            String destination = arguments.destination;
+
+            File jar;
+            File outputDir;
+            if (destination != null) {
+                boolean isJar = destination.endsWith(".jar");
+                jar = isJar ? new File(destination) : null;
+                outputDir = isJar ? null : new File(destination);
+            }
+            else {
+                jar = arguments.jar != null ? new File(arguments.jar) : null;
+                outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
+            }
 
             if (arguments.module != null) {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
@@ -129,14 +140,15 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 }
 
                 if (outputDir != null) {
-                    messageCollector.report(CompilerMessageSeverity.WARNING, "The '-output' option is ignored because '-module' is specified",
+                    messageCollector.report(CompilerMessageSeverity.WARNING,
+                                            "The '-d' option with a directory destination is ignored because '-module' is specified",
                                             CompilerMessageLocation.NO_LOCATION);
                 }
 
                 File directory = new File(arguments.module).getAbsoluteFile().getParentFile();
-                KotlinToJVMBytecodeCompiler.compileModules(configuration, moduleScript.getModules(),
-                                                                      directory, jar,
-                                                                      arguments.includeRuntime);
+                KotlinToJVMBytecodeCompiler.compileModules(
+                        configuration, moduleScript.getModules(), directory, jar, arguments.includeRuntime
+                );
             }
             else if (arguments.script) {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());

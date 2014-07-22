@@ -88,7 +88,7 @@ public class ForTestCompileRuntime {
             @NotNull String... src
     ) {
         List<String> args = KotlinPackage.arrayListOf(
-                "-output", destDir.getPath(),
+                "-d", destDir.getPath(),
                 "-noStdlib",
                 "-noJdkAnnotations",
                 "-suppress", "warnings",
