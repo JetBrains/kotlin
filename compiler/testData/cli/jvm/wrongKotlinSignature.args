@@ -1,4 +1,3 @@
--src
 $TESTDATA_DIR$/wrongKotlinSignature.kt
 -classpath
 $TESTDATA_DIR$/wrongKotlinSignatureLib

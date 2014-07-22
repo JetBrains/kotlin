@@ -19,7 +19,6 @@ package org.jetbrains.jet.cli.jvm;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
@@ -44,7 +43,6 @@ import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -86,7 +84,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
         if (!arguments.script &&
             arguments.module == null &&
-            arguments.src == null &&
             arguments.freeArgs.isEmpty() &&
             !arguments.version
         ) {
@@ -99,19 +96,12 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
         }
         else {
-            if (arguments.src != null) {
-                List<String> sourcePathsSplitByPathSeparator
-                        = Arrays.asList(arguments.src.split(StringUtil.escapeToRegexp(File.pathSeparator)));
-                configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourcePathsSplitByPathSeparator);
-            }
-            for (String freeArg : arguments.freeArgs) {
-                configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, freeArg);
-            }
+            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs);
         }
 
         configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, arguments.script
-                                                                          ? CommandLineScriptUtils.scriptParameters()
-                                                                          : Collections.<AnalyzerScriptParameter>emptyList());
+                                                                  ? CommandLineScriptUtils.scriptParameters()
+                                                                  : Collections.<AnalyzerScriptParameter>emptyList());
 
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, arguments.notNullAssertions);
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);

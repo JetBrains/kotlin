@@ -79,13 +79,16 @@ public class CompileEnvironmentTest extends TestCase {
             File out = new File(tempDir, "out");
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
             File jdkAnnotations = JetTestUtils.getJdkAnnotationsJar();
-            ExitCode exitCode = new K2JVMCompiler()
-                    .exec(System.out, "-src", JetTestCaseBuilder.getTestDataPathBase() + "/compiler/smoke/Smoke.kt",
-                          "-output", out.getAbsolutePath(),
-                          "-noStdlib",
-                          "-classpath", stdlib.getAbsolutePath(),
-                          "-noJdkAnnotations",
-                          "-annotations", jdkAnnotations.getAbsolutePath());
+            ExitCode exitCode = new K2JVMCompiler().exec(
+                    System.out,
+                    JetTestCaseBuilder.getTestDataPathBase() +
+                    "/compiler/smoke/Smoke.kt",
+                    "-output", out.getAbsolutePath(),
+                    "-noStdlib",
+                    "-classpath", stdlib.getAbsolutePath(),
+                    "-noJdkAnnotations",
+                    "-annotations", jdkAnnotations.getAbsolutePath()
+            );
             Assert.assertEquals(ExitCode.OK, exitCode);
             assertEquals(1, out.listFiles().length);
             assertEquals(2, out.listFiles()[0].listFiles().length);

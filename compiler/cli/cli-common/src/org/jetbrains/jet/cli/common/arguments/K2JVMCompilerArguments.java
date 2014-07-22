@@ -24,10 +24,6 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
-    @Argument(value = "src", description = "Source file or directory (allows many paths separated by the system path separator)")
-    @ValueDescription("<path>")
-    public String src;
-
     @Argument(value = "jar", description = "Resulting .jar file path")
     @ValueDescription("<path>")
     public String jar;

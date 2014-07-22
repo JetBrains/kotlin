@@ -566,8 +566,7 @@
               <assertions>
                 <enable/>
               </assertions>
-              <arg value="-src"/>
-              <arg value="@{src}"/>
+              <arg line="@{src}"/>
               <arg value="-output"/>
               <arg value="@{output}"/>
               <arg value="-noStdlib"/>
@@ -577,7 +576,7 @@
           </sequential>
         </macrodef>
 
-        <new_kotlinc src="${basedir}/core/builtins/src${path.separator}${basedir}/core/runtime.jvm/src${path.separator}${basedir}/core/reflection/src"
+        <new_kotlinc src="${basedir}/core/builtins/src ${basedir}/core/runtime.jvm/src ${basedir}/core/reflection/src"
                      output="${output}/classes/runtime"
                      classpath="${basedir}/core/runtime.jvm/src"/>
 

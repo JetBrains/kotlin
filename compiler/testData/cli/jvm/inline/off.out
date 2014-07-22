@@ -1,6 +1,5 @@
 Usage: kotlinc-jvm <options> <source files>
 where possible options include:
-  -src <path>                Source file or directory (allows many paths separated by the system path separator)
   -jar <path>                Resulting .jar file path
   -output <path>             Output directory path for .class files
   -classpath <path>          Paths where to find user class files

@@ -96,9 +96,10 @@ public class MockLibraryUtil {
             Method execMethod = compilerClass.getMethod("exec", PrintStream.class, String[].class);
 
             //noinspection IOResourceOpenedButNotSafelyClosed
-            Enum<?> invocationResult = (Enum<?>) execMethod
-                    .invoke(compilerObject, new PrintStream(outStream),
-                            new String[] {"-src", sourcesPath, "-output", outDir.getAbsolutePath(), "-classpath", sourcesPath});
+            Enum<?> invocationResult = (Enum<?>) execMethod.invoke(
+                    compilerObject, new PrintStream(outStream),
+                    new String[] {sourcesPath, "-output", outDir.getAbsolutePath(), "-classpath", sourcesPath}
+            );
 
             assertEquals(new String(outStream.toByteArray()), ExitCode.OK.name(), invocationResult.name());
         }
