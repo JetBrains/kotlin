@@ -9,3 +9,4 @@ fun foo(e: ElementType) {
 
 // ABSENT: ElementType.FIELD
 // EXIST: ElementType.TYPE
+// ABSENT: e

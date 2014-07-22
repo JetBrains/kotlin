@@ -151,10 +151,19 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 val entry = parent.getParent() as JetWhenEntry
                 val whenExpression = entry.getParent() as JetWhenExpression
                 val subject = whenExpression.getSubjectExpression() ?: return setOf()
+
+                val itemsToSkip = HashSet<DeclarationDescriptor>()
+
+                if (subject is JetSimpleNameExpression) {
+                    val variable = bindingContext[BindingContext.REFERENCE_TARGET, subject] as? VariableDescriptor
+                    if (variable != null) {
+                        itemsToSkip.add(variable)
+                    }
+                }
+
                 val subjectType = bindingContext[BindingContext.EXPRESSION_TYPE, subject] ?: return setOf()
                 val classDescriptor = TypeUtils.getClassDescriptor(subjectType)
                 if (classDescriptor != null && DescriptorUtils.isEnumClass(classDescriptor)) {
-                    val usedEnumEntries = HashSet<ClassDescriptor>()
                     val conditions = whenExpression.getEntries()
                             .flatMap { it.getConditions().toList() }
                             .filterIsInstance(javaClass<JetWhenConditionWithExpression>())
@@ -163,11 +172,12 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                                 ?.getSelectorExpression() as? JetReferenceExpression ?: continue
                         val target = bindingContext[BindingContext.REFERENCE_TARGET, selectorExpr] as? ClassDescriptor ?: continue
                         if (DescriptorUtils.isEnumEntry(target)) {
-                            usedEnumEntries.add(target)
+                            itemsToSkip.add(target)
                         }
                     }
-                    return usedEnumEntries
                 }
+
+                return itemsToSkip
             }
         }
         return setOf()

@@ -516,6 +516,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/WhenEntryValue8.kt");
     }
     
+    @TestMetadata("WhenEntryValue9.kt")
+    public void testWhenEntryValue9() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue9.kt");
+    }
+    
     @TestMetadata("WhenWithNoSubjectEntryValue1.kt")
     public void testWhenWithNoSubjectEntryValue1() throws Exception {
         doTest("idea/testData/completion/smart/WhenWithNoSubjectEntryValue1.kt");
