@@ -19,9 +19,7 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -39,12 +37,8 @@ import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
-import org.jetbrains.k2js.translate.reference.AccessTranslationUtils;
-import org.jetbrains.k2js.translate.reference.CallExpressionTranslator;
-import org.jetbrains.k2js.translate.reference.QualifiedExpressionTranslator;
-import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
+import org.jetbrains.k2js.translate.reference.*;
+import org.jetbrains.k2js.translate.utils.*;
 import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.List;
@@ -166,6 +160,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
 
         return newVar(name, initializer).source(expression);
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, @NotNull TranslationContext context) {
+        return CallableReferenceTranslator.INSTANCE$.translate(expression, context);
     }
 
     @Override
