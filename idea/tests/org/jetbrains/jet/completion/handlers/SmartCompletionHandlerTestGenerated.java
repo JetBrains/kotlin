@@ -91,6 +91,16 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/Comma1.kt");
     }
     
+    @TestMetadata("Comma10.kt")
+    public void testComma10() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma10.kt");
+    }
+    
+    @TestMetadata("Comma11.kt")
+    public void testComma11() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma11.kt");
+    }
+    
     @TestMetadata("Comma2.kt")
     public void testComma2() throws Exception {
         doTest("idea/testData/completion/handlers/smart/Comma2.kt");
