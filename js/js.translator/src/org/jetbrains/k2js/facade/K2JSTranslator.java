@@ -16,12 +16,14 @@
 
 package org.jetbrains.k2js.facade;
 
+import com.google.common.base.Predicates;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.util.TextOutputImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -30,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.SimpleOutputFile;
 import org.jetbrains.jet.SimpleOutputFileCollection;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
@@ -141,8 +145,11 @@ public final class K2JSTranslator {
     public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate,
             @NotNull MainCallParameters mainCallParameters)
             throws TranslationException {
-        BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
-        return Translation.generateAst(bindingContext, filesToTranslate, mainCallParameters, config);
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJS.analyzeFiles(filesToTranslate, Predicates.<PsiFile>alwaysTrue(), config);
+        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        AnalyzerFacadeForJS.checkForErrors(Config.withJsLibAdded(filesToTranslate, config), bindingContext);
+        ModuleDescriptor moduleDescriptor = analyzeExhaust.getModuleDescriptor();
+        return Translation.generateAst(bindingContext, filesToTranslate, mainCallParameters, moduleDescriptor, config);
     }
 
     @NotNull
