@@ -89,7 +89,7 @@ public class ScriptTest {
                 return KotlinToJVMBytecodeCompiler.compileScript(paths, environment);
             }
             catch (CompilationException e) {
-                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
+                messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
                                         MessageUtil.psiElementToMessageLocation(e.getElement()));
                 return null;
             }

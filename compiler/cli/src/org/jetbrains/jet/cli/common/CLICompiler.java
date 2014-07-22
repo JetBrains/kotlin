@@ -69,7 +69,11 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
         catch (Throwable t) {
             // Always use tags
-            errStream.println(MessageRenderer.TAGS.renderException(t));
+            errStream.println(MessageRenderer.TAGS.render(
+                    CompilerMessageSeverity.EXCEPTION,
+                    OutputMessageUtil.renderException(t),
+                    CompilerMessageLocation.NO_LOCATION)
+            );
         }
         return false;
     }
@@ -136,7 +140,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             }
         }
         catch (Throwable t) {
-            groupingCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
+            groupingCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(t),
                                      CompilerMessageLocation.NO_LOCATION);
             return INTERNAL_ERROR;
         }

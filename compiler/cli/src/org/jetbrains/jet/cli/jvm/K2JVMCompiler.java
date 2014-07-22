@@ -154,7 +154,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             return OK;
         }
         catch (CompilationException e) {
-            messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
+            messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
                                     MessageUtil.psiElementToMessageLocation(e.getElement()));
             return INTERNAL_ERROR;
         }

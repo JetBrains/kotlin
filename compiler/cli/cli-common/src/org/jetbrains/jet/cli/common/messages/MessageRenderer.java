@@ -52,11 +52,6 @@ public interface MessageRenderer {
         }
 
         @Override
-        public String renderException(@NotNull Throwable e) {
-            return render(CompilerMessageSeverity.EXCEPTION, PLAIN.renderException(e), CompilerMessageLocation.NO_LOCATION);
-        }
-
-        @Override
         public String renderConclusion() {
             return "</MESSAGES>";
         }
@@ -76,14 +71,6 @@ public interface MessageRenderer {
         }
 
         @Override
-        public String renderException(@NotNull Throwable e) {
-            StringWriter out = new StringWriter();
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            e.printStackTrace(new PrintWriter(out));
-            return out.toString();
-        }
-
-        @Override
         public String renderConclusion() {
             return "";
         }
@@ -91,6 +78,5 @@ public interface MessageRenderer {
 
     String renderPreamble();
     String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location);
-    String renderException(@NotNull Throwable e);
     String renderConclusion();
 }
