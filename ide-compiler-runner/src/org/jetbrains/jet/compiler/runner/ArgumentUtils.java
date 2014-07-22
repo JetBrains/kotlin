@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.sampullara.cli;
+package org.jetbrains.jet.compiler.runner;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ComparatorUtil;
+import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -26,18 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArgumentUtils {
-
     private ArgumentUtils() {}
 
     @NotNull
     public static <T> List<String> convertArgumentsToStringList(@NotNull T arguments, @NotNull T defaultArguments) {
         List<String> result = new ArrayList<String>();
-        convertArgumentsToStringList(arguments, defaultArguments, result);
-        return result;
-    }
-
-    public static <T> void convertArgumentsToStringList(@NotNull T arguments, @NotNull T defaultArguments, @NotNull List<String> result) {
         convertArgumentsToStringList(arguments, defaultArguments, arguments.getClass(), result);
+        return result;
     }
 
     private static <T> void convertArgumentsToStringList(T arguments, T defaultArguments, Class clazz, List<String> result) {
@@ -63,9 +59,9 @@ public class ArgumentUtils {
 
             if (ComparatorUtil.equalsNullable(value, defaultValue)) continue;
 
-            String name = Args.getAlias(argument);
+            String name = getAlias(argument);
             if (name == null) {
-                name = Args.getName(argument, field);
+                name = getName(argument, field);
             }
 
             Class<?> fieldType = field.getType();
@@ -73,6 +69,7 @@ public class ArgumentUtils {
             if (fieldType.isArray()) {
                 Object[] values = (Object[]) value;
                 if (values.length == 0) continue;
+                //noinspection unchecked
                 value = StringUtil.join(values, Function.TO_STRING, argument.delimiter());
             }
 
@@ -84,4 +81,13 @@ public class ArgumentUtils {
         }
     }
 
+    private static String getAlias(Argument argument) {
+        String alias = argument.alias();
+        return alias.isEmpty() ? null : alias;
+    }
+
+    private static String getName(Argument argument, Field field) {
+        String name = argument.value();
+        return name.isEmpty() ? field.getName() : name;
+    }
 }

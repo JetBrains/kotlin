@@ -1,5 +1,0 @@
--printArgs
--sourceFiles
-$TESTDATA_DIR$/simple2js.kt,$TESTDATA_DIR$/../warnings.kt
--suppress
-warnings
