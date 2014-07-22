@@ -231,6 +231,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/IfValueInBlock2.kt");
     }
     
+    @TestMetadata("ImplicitlyTypedFunBody.kt")
+    public void testImplicitlyTypedFunBody() throws Exception {
+        doTest("idea/testData/completion/smart/ImplicitlyTypedFunBody.kt");
+    }
+    
     @TestMetadata("ImplicitlyTypedValInitializer1.kt")
     public void testImplicitlyTypedValInitializer1() throws Exception {
         doTest("idea/testData/completion/smart/ImplicitlyTypedValInitializer1.kt");

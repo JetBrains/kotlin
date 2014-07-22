@@ -129,20 +129,28 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
     }
 
     private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo>? {
-        // if our expression is initializer of implicitly typed variable - take type of variable from original file
-        val varDeclaration = expression.getParent() as? JetVariableDeclaration
-        if (varDeclaration != null && expression == varDeclaration.getInitializer() && varDeclaration.getTypeRef() == null) {
-            val offset = varDeclaration.getTextRange()!!.getStartOffset()
-            val originalDeclaration = PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, javaClass<JetVariableDeclaration>(), true)
+        // if our expression is initializer of implicitly typed variable - take type of variable from original file (+ the same for function)
+        val declaration = implicitlyTypedDeclarationFromInitializer(expression)
+        if (declaration != null) {
+            val offset = declaration.getTextRange()!!.getStartOffset()
+            val originalDeclaration = PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, javaClass<JetDeclaration>(), true)
             if (originalDeclaration != null) {
-                val variableDescriptor = originalDeclaration.getLazyResolveSession().resolveToDescriptor(originalDeclaration) as? VariableDescriptor
-                if (variableDescriptor != null) {
-                    return listOf(ExpectedInfo(variableDescriptor.getType(), null))
-                }
+                val originalDescriptor = originalDeclaration.getLazyResolveSession().resolveToDescriptor(originalDeclaration) as? CallableDescriptor
+                val returnType = originalDescriptor?.getReturnType()
+                return if (returnType != null) listOf(ExpectedInfo(returnType, null)) else null
             }
         }
 
         return ExpectedInfos(bindingContext, moduleDescriptor).calculate(expression)
+    }
+
+    private fun implicitlyTypedDeclarationFromInitializer(expression: JetExpression): JetDeclaration? {
+        val parent = expression.getParent()
+        when (parent) {
+            is JetVariableDeclaration -> if (expression == parent.getInitializer() && parent.getTypeRef() == null) return parent
+            is JetNamedFunction -> if (expression == parent.getInitializer() && parent.getReturnTypeRef() == null) return parent
+        }
+        return null
     }
 
     private fun calcItemsToSkip(expression: JetExpression): Set<DeclarationDescriptor> {
