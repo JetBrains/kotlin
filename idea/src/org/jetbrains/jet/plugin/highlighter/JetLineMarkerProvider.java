@@ -25,16 +25,12 @@ import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper;
 import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator;
 import com.intellij.codeInsight.daemon.impl.MarkerType;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
-import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.ide.util.PsiClassListCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -44,8 +40,6 @@ import com.intellij.psi.search.PsiElementProcessorAdapter;
 import com.intellij.psi.search.searches.AllOverridingMethodsSearch;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.*;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
@@ -57,12 +51,12 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher;
@@ -281,47 +275,30 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     }
 
     private static void iconNavigatorHandler(MouseEvent event, PsiElement elt) {
-        JetFile file = (JetFile)elt.getContainingFile();
-        assert file != null;
-
         BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) elt);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, elt);
-        if (!(descriptor instanceof CallableMemberDescriptor)) {
-            return;
-        }
+        if (!(descriptor instanceof CallableMemberDescriptor)) return;
 
-        Set<CallableMemberDescriptor> overriddenMembers = OverrideResolver
-                .getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-        if (overriddenMembers.size() == 0) {
-            return;
-        }
-
+        Set<CallableMemberDescriptor> overriddenMembers =
+                OverrideResolver.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
         if (overriddenMembers.isEmpty()) return;
-        List<PsiElement> list = Lists.newArrayList();
+
+        List<NavigatablePsiElement> list = Lists.newArrayList();
         for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
-            PsiElement declarationPsiElement = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMember);
-            list.add(declarationPsiElement);
-        }
-        if (list.isEmpty()) {
-            String myEmptyText = "empty text";
-            JComponent renderer = HintUtil.createErrorLabel(myEmptyText);
-            JBPopup popup = JBPopupFactory.getInstance().createComponentPopupBuilder(renderer, renderer).createPopup();
-            if (event != null) {
-                popup.show(new RelativePoint(event));
-            }
-            return;
-        }
-        if (list.size() == 1) {
-            PsiNavigateUtil.navigate(list.iterator().next());
-        }
-        else {
-            JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilCore.toPsiElementArray(list),
-                                                              new JetFunctionPsiElementCellRenderer(bindingContext),
-                                                              DescriptorRenderer.FQ_NAMES_IN_TYPES.render(descriptor));
-            if (event != null) {
-                popup.show(new RelativePoint(event));
+            Collection<PsiElement> declarations = DescriptorToDeclarationUtil.INSTANCE$.resolveToPsiElements(elt.getProject(), overriddenMember);
+            for (PsiElement declaration : declarations) {
+                if (declaration instanceof NavigatablePsiElement) {
+                    list.add((NavigatablePsiElement) declaration);
+                }
             }
         }
+
+        PsiElementListNavigator.openTargets(
+                event,
+                ArrayUtil.toObjectArray(list, NavigatablePsiElement.class),
+                JetBundle.message("navigation.title.super.declaration", descriptor.getName()),
+                JetBundle.message("navigation.findUsages.title.super.declaration", descriptor.getName()),
+                new JetFunctionPsiElementCellRenderer(bindingContext));
     }
 
     private static String calculateTooltipString(PsiElement element) {
