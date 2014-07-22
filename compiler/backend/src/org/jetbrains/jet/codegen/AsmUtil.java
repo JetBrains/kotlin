@@ -40,10 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -705,12 +702,12 @@ public class AsmUtil {
         return expectedType;
     }
 
-    public static void pop(@NotNull InstructionAdapter v, @NotNull Type type) {
+    public static void pop(@NotNull MethodVisitor v, @NotNull Type type) {
         if (type.getSize() == 2) {
-            v.pop2();
+            v.visitInsn(Opcodes.POP2);
         }
         else {
-            v.pop();
+            v.visitInsn(Opcodes.POP);
         }
     }
 

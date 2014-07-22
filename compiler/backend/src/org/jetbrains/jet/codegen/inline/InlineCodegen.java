@@ -47,12 +47,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
-import org.jetbrains.org.objectweb.asm.util.Textifier;
-import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -130,7 +126,7 @@ public class InlineCodegen implements CallGenerator {
             throw new CompilationException("Couldn't inline method call '" +
                                        functionDescriptor.getName() +
                                        "' into \n" + (element != null ? element.getText() : "null psi element " + this.codegen.getContext().getContextDescriptor()) +
-                                       (generateNodeText ? ("\ncause: " + getNodeText(node)) : ""),
+                                       (generateNodeText ? ("\ncause: " + InlineCodegenUtil.getNodeText(node)) : ""),
                                        e, callElement);
         }
 
@@ -242,7 +238,7 @@ public class InlineCodegen implements CallGenerator {
                 }
             }
         };
-        List<MethodInliner.FinallyBlockInfo> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
+        List<MethodInliner.ExternalFinallyBlockInfo> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
         generateAndInsertFinallyBlocks(adapter, infos);
 
         adapter.accept(new InliningInstructionAdapter(codegen.v));
@@ -443,19 +439,6 @@ public class InlineCodegen implements CallGenerator {
         return (getMethodAsmFlags(functionDescriptor, context.getContextKind()) & Opcodes.ACC_STATIC) != 0;
     }
 
-    @NotNull
-    public static String getNodeText(@Nullable MethodNode node) {
-        if (node == null) {
-            return "Not generated";
-        }
-        Textifier p = new Textifier();
-        node.accept(new TraceMethodVisitor(p));
-        StringWriter sw = new StringWriter();
-        p.print(new PrintWriter(sw));
-        sw.flush();
-        return node.name + " " + node.desc + ": \n " + sw.getBuffer().toString();
-    }
-
     private static String descriptorName(DeclarationDescriptor descriptor) {
         return DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor);
     }
@@ -494,10 +477,10 @@ public class InlineCodegen implements CallGenerator {
     }
 
 
-    public void generateAndInsertFinallyBlocks(MethodNode intoNode, List<MethodInliner.FinallyBlockInfo> insertPoints) {
+    public void generateAndInsertFinallyBlocks(MethodNode intoNode, List<MethodInliner.ExternalFinallyBlockInfo> insertPoints) {
         if (!codegen.hasFinallyBlocks()) return;
 
-        for (MethodInliner.FinallyBlockInfo insertPoint : insertPoints) {
+        for (MethodInliner.ExternalFinallyBlockInfo insertPoint : insertPoints) {
             MethodNode finallyNode = InlineCodegenUtil.createEmptyMethodNode();
             ExpressionCodegen finallyCodegen =
                     new ExpressionCodegen(finallyNode, codegen.getFrameMap(), codegen.getReturnType(),

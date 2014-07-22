@@ -34,9 +34,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.*;
 
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.getReturnType;
-import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.isAnonymousConstructorCall;
-import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.isInvokeOnLambda;
+import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.*;
 
 public class MethodInliner {
 
@@ -62,6 +60,8 @@ public class MethodInliner {
     private final Map<String, String> currentTypeMapping = new HashMap<String, String>();
 
     private final InlineResult result;
+
+    private int lambdasFinallyBlocks;
 
     /*
      *
@@ -115,8 +115,12 @@ public class MethodInliner {
         }
 
         resultNode.visitLabel(end);
-        processReturns(resultNode, labelOwner, remapReturn, end);
 
+        if (inliningContext.isRoot()) {
+            InternalFinallyBlockInliner.processInlineFunFinallyBlocks(resultNode, lambdasFinallyBlocks);
+        }
+
+        processReturns(resultNode, labelOwner, remapReturn, end);
         //flush transformed node to output
         resultNode.accept(new InliningInstructionAdapter(adapter));
 
@@ -127,7 +131,7 @@ public class MethodInliner {
 
         final Deque<InvokeCall> currentInvokes = new LinkedList<InvokeCall>(invokeCalls);
 
-        MethodNode resultNode = new MethodNode(node.access, node.name, node.desc, node.signature, null);
+        final MethodNode resultNode = new MethodNode(node.access, node.name, node.desc, node.signature, null);
 
         final Iterator<ConstructorInvocation> iterator = constructorInvocations.iterator();
 
@@ -225,6 +229,12 @@ public class MethodInliner {
                 else {
                     super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
                 }
+            }
+
+            @Override
+            public void visitMaxs(int stack, int locals) {
+                lambdasFinallyBlocks = resultNode.tryCatchBlocks.size();
+                super.visitMaxs(stack, locals);
             }
 
         };
@@ -544,16 +554,17 @@ public class MethodInliner {
             return new InlineException(errorPrefix + ": " + errorSuffix, originalException);
         } else {
             return new InlineException(errorPrefix + ": " + errorSuffix + "\ncause: " +
-                                       InlineCodegen.getNodeText(node), originalException);
+                                       getNodeText(node), originalException);
         }
     }
 
     @NotNull
-    public static List<FinallyBlockInfo> processReturns(@NotNull MethodNode node, @NotNull LabelOwner labelOwner, boolean remapReturn, Label endLabel) {
+    //process local and global returns (local substituted with goto end-label global kept unchanged)
+    public static List<ExternalFinallyBlockInfo> processReturns(@NotNull MethodNode node, @NotNull LabelOwner labelOwner, boolean remapReturn, Label endLabel) {
         if (!remapReturn) {
             return Collections.emptyList();
         }
-        List<FinallyBlockInfo> result = new ArrayList<FinallyBlockInfo>();
+        List<ExternalFinallyBlockInfo> result = new ArrayList<ExternalFinallyBlockInfo>();
         InsnList instructions = node.instructions;
         AbstractInsnNode insnNode = instructions.getFirst();
         while (insnNode != null) {
@@ -584,23 +595,25 @@ public class MethodInliner {
                 }
 
                 //genetate finally block before nonLocalReturn flag/return/goto
-                result.add(new FinallyBlockInfo(isLocalReturn ? insnNode : insnNode.getPrevious(), getReturnType(insnNode.getOpcode())));
+                result.add(new ExternalFinallyBlockInfo(isLocalReturn ? insnNode : insnNode.getPrevious(), getReturnType(insnNode.getOpcode())
+                ));
             }
             insnNode = insnNode.getNext();
         }
         return result;
     }
 
-    public static class FinallyBlockInfo {
+    public static class ExternalFinallyBlockInfo {
 
         final AbstractInsnNode beforeIns;
 
         final Type returnType;
 
-        public FinallyBlockInfo(AbstractInsnNode beforeIns, Type returnType) {
+        public ExternalFinallyBlockInfo(AbstractInsnNode beforeIns, Type returnType) {
             this.beforeIns = beforeIns;
             this.returnType = returnType;
         }
 
     }
+
 }
