@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     ) {
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
-            PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(file, memberDescriptor);
+            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(file, memberDescriptor);
             if (declaration == null) {
                 LOG.error("Can not find declaration for descriptor " + memberDescriptor);
             }
