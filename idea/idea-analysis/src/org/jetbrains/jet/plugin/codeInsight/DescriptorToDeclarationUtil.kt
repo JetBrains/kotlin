@@ -16,15 +16,20 @@
 
 package org.jetbrains.jet.plugin.codeInsight
 
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver
 import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils
+import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver
+import java.util.HashSet
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.plugin.search.allScope
 
-object DescriptorToDeclarationUtil {
+public object DescriptorToDeclarationUtil {
     public fun getDeclaration(file: JetFile, descriptor: DeclarationDescriptor): PsiElement? {
         return getDeclaration(file.getProject(), descriptor)
     }
@@ -38,7 +43,24 @@ object DescriptorToDeclarationUtil {
         return elements.firstOrNull()
     }
 
-    public fun findDecompiledAndBuiltInDeclarations(project: Project, descriptor: DeclarationDescriptor): Collection<PsiElement> {
+    public fun resolveToPsiElements(project: Project, targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
+        val result = HashSet<PsiElement>()
+
+        // todo: remove getOriginal()
+        val originalDescriptor = targetDescriptor.getOriginal()
+        result.addAll(DescriptorToSourceUtils.descriptorToDeclarations(originalDescriptor))
+        result.addAll(DescriptorToDeclarationUtil.findDecompiledAndBuiltInDeclarations(project, originalDescriptor))
+
+        if (originalDescriptor is PackageViewDescriptor) {
+            val psiFacade = JavaPsiFacade.getInstance(project)
+            val fqName = (originalDescriptor as PackageViewDescriptor).getFqName().asString()
+            ContainerUtil.addIfNotNull(result, psiFacade.findPackage(fqName))
+            ContainerUtil.addIfNotNull(result, psiFacade.findClass(fqName, project.allScope()))
+        }
+        return result
+    }
+
+    private fun findDecompiledAndBuiltInDeclarations(project: Project, descriptor: DeclarationDescriptor): Collection<PsiElement> {
         val libraryReferenceResolver = project.getComponent(javaClass<BuiltInsReferenceResolver>())
         val elements = libraryReferenceResolver!!.resolveBuiltInSymbol(descriptor)
         if (!elements.isEmpty()) {
