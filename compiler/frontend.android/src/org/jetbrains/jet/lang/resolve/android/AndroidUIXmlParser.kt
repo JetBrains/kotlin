@@ -146,7 +146,7 @@ abstract class AndroidUIXmlParser {
 
     private fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
         for (id in ids) {
-            val body = arrayListOf("return findViewById(R.id.${id.id}) as ${id.className}")
+            val body = arrayListOf("return findViewById(0) as ${id.className}")
             kw.writeImmutableExtensionProperty(receiver = "Activity",
                                       name = id.id,
                                       retType = id.className,
