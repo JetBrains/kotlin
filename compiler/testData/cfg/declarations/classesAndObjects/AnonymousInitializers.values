@@ -15,9 +15,13 @@ class AnonymousInitializers() {
     }
 }
 ---------------------
-     <v1>: AnonymousInitializers   NEW: magic[IMPLICIT_RECEIVER]($i) -> <v1>
-     <v3>: AnonymousInitializers   NEW: magic[IMPLICIT_RECEIVER]($i) -> <v3>
-34   <v0>: Int                     NEW: r(34) -> <v0>                       
-12   <v2>: Int                     NEW: r(12) -> <v2>                       
-13   <v4>: Int                     NEW: r(13) -> <v4>                       
+              <v1>: AnonymousInitializers   NEW: magic[IMPLICIT_RECEIVER]($i) -> <v1>
+              <v4>: AnonymousInitializers   NEW: magic[IMPLICIT_RECEIVER]($i) -> <v4>
+34            <v0>: Int                     NEW: r(34) -> <v0>
+12            <v2>: Int                     NEW: r(12) -> <v2>
+$i = 12       !<v3>: *
+{ $i = 12 }   !<v3>: *                      COPY
+13            <v5>: Int                     NEW: r(13) -> <v5>
+$i = 13       !<v6>: *
+{ $i = 13 }   !<v6>: *                      COPY
 =====================

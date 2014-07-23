@@ -106,7 +106,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         private final PseudoValueFactory valueFactory = new PseudoValueFactoryImpl() {
             @NotNull
             @Override
-            public PseudoValue newValue(@Nullable JetElement element, @NotNull InstructionWithValue instruction) {
+            public PseudoValue newValue(@Nullable JetElement element, @Nullable InstructionWithValue instruction) {
                 PseudoValue value = super.newValue(element, instruction);
                 if (element != null) {
                     bindValue(value, element);
@@ -281,6 +281,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public void bindValue(@NotNull PseudoValue value, @NotNull JetElement element) {
             pseudocode.bindElementToValue(element, value);
+        }
+
+        @NotNull
+        @Override
+        public PseudoValue newValue(@Nullable JetElement element) {
+            return valueFactory.newValue(element, null);
         }
 
         @Override

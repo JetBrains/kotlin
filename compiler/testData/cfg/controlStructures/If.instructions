@@ -30,31 +30,32 @@ L0:
     mark("s")
     r("s") -> <v2>
     w(u|<v2>)
-  2 jmp(L3)                                                                                                             NEXT:[r(u) -> <v3>]
+  2 jmp(L3)                                                                                                             NEXT:[r(u) -> <v4>]
 L2:
     read (Unit)                                                                                                         PREV:[jf(L2|<v1>)]
 L3:
-    r(u) -> <v3>                                                                                                        PREV:[jmp(L3), read (Unit)]
+    r(u) -> <v4>                                                                                                        PREV:[jmp(L3), read (Unit)]
     mark(doSmth(u))
-    call(doSmth(u), doSmth|<v3>) -> <v4>
+    call(doSmth(u), doSmth|<v4>) -> <v5>
     v(var r: String)
     mark(if (b) { r = "s" } else { r = "t" })
-    r(b) -> <v5>
-    jf(L4|<v5>)                                                                                                         NEXT:[mark({ r = "t" }), mark({ r = "s" })]
+    r(b) -> <v6>
+    jf(L4|<v6>)                                                                                                         NEXT:[mark({ r = "t" }), mark({ r = "s" })]
   3 mark({ r = "s" })
     mark("s")
-    r("s") -> <v6>
-    w(r|<v6>)
-  2 jmp(L5)                                                                                                             NEXT:[r(r) -> <v8>]
-L4:
-  3 mark({ r = "t" })                                                                                                   PREV:[jf(L4|<v5>)]
-    mark("t")
-    r("t") -> <v7>
+    r("s") -> <v7>
     w(r|<v7>)
+  2 jmp(L5)                                                                                                             NEXT:[merge(if (b) { r = "s" } else { r = "t" }|!<v8>, !<v10>) -> <v11>]
+L4:
+  3 mark({ r = "t" })                                                                                                   PREV:[jf(L4|<v6>)]
+    mark("t")
+    r("t") -> <v9>
+    w(r|<v9>)
 L5:
-  2 r(r) -> <v8>                                                                                                        PREV:[jmp(L5), w(r|<v7>)]
+  2 merge(if (b) { r = "s" } else { r = "t" }|!<v8>, !<v10>) -> <v11>                                                   PREV:[jmp(L5), w(r|<v9>)]
+    r(r) -> <v12>
     mark(doSmth(r))
-    call(doSmth(r), doSmth|<v8>) -> <v9>
+    call(doSmth(r), doSmth|<v12>) -> <v13>
 L1:
   1 <END>                                                                                                               NEXT:[<SINK>]
 error:
@@ -88,23 +89,23 @@ L0:
     jf(L2|<v2>)                                                                   NEXT:[read (Unit), mark({ return; })]
   3 mark({ return; })
     ret L1                                                                        NEXT:[<END>]
-- 2 jmp(L3)                                                                       NEXT:[r(i) -> <v3>]                                                                  PREV:[]
+- 2 jmp(L3)                                                                       NEXT:[r(i) -> <v4>]                                                                  PREV:[]
 L2:
     read (Unit)                                                                   PREV:[jf(L2|<v2>)]
 L3:
-    r(i) -> <v3>
+    r(i) -> <v4>
     mark(doSmth(i))
-    call(doSmth(i), doSmth|<v3>) -> <v4>
+    call(doSmth(i), doSmth|<v4>) -> <v5>
     mark(if (i is Int) { return; })
     mark(i is Int)
-    r(i) -> <v5>
-    magic[IS](i is Int|<v5>) -> <v6>
-    jf(L4|<v6>)                                                                   NEXT:[read (Unit), mark({ return; })]
+    r(i) -> <v6>
+    magic[IS](i is Int|<v6>) -> <v7>
+    jf(L4|<v7>)                                                                   NEXT:[read (Unit), mark({ return; })]
   3 mark({ return; })
     ret L1                                                                        NEXT:[<END>]
 - 2 jmp(L5)                                                                       NEXT:[<END>]                                                                         PREV:[]
 L4:
-    read (Unit)                                                                   PREV:[jf(L4|<v6>)]
+    read (Unit)                                                                   PREV:[jf(L4|<v7>)]
 L1:
 L5:
   1 <END>                                                                         NEXT:[<SINK>]                                                                        PREV:[ret L1, ret L1, read (Unit)]

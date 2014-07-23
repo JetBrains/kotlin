@@ -48,7 +48,7 @@ L0:
 -   call(bar(), bar)                                    PREV:[]
 -   jmp(error)                                          NEXT:[<ERROR>]                                             PREV:[]
 -   mark(doSomething)                                   PREV:[]
--   call(doSomething, doSomething) -> <v3>              PREV:[]
+-   call(doSomething, doSomething|!<v3>) -> <v4>        PREV:[]
 L1:
   1 <END>                                               NEXT:[<SINK>]                                              PREV:[]
 error:

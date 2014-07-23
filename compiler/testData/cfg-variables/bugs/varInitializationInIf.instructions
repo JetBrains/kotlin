@@ -26,14 +26,15 @@ L0:
   2 jmp(L3)                                                                       INIT: in: {b=ID} out: {b=ID}    USE: in: {b=READ} out: {b=READ}
 L2:
   3 mark({ b = true })                                                            INIT: in: {b=D} out: {b=D}
-    r(true) -> <v4>                                                                                               USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
-    w(b|<v4>)                                                                     INIT: in: {b=D} out: {b=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
+    r(true) -> <v5>                                                                                               USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
+    w(b|<v5>)                                                                     INIT: in: {b=D} out: {b=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
 L3:
-  2 error(use(b), No resolved call)                                               INIT: in: {b=ID} out: {b=ID}    USE: in: {b=READ} out: {b=READ}
-    r(b) -> <v5>                                                                                                  USE: in: {} out: {b=READ}
+  2 merge(if (1 < 2) { b = false } else { b = true }|!<v4>, !<v6>) -> <v7>        INIT: in: {b=ID} out: {b=ID}
+    error(use(b), No resolved call)                                                                               USE: in: {b=READ} out: {b=READ}
+    r(b) -> <v8>                                                                                                  USE: in: {} out: {b=READ}
     error(use, No resolved call)
     mark(use(b))
-    magic[UNRESOLVED_CALL](use(b)|<v5>) -> <v6>
+    magic[UNRESOLVED_CALL](use(b)|<v8>, !<v9>) -> <v10>
 L1:
   1 <END>                                                                         INIT: in: {} out: {}
 error:

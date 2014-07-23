@@ -22,9 +22,9 @@ L4 [body entry point]:
     v(val a: Int)                                             INIT: in: {} out: {a=D}
   2 jmp(L2 [loop entry point])                                INIT: in: {} out: {}       USE: in: {} out: {}
 L3 [loop exit point]:
--   read (Unit) -> <v3>
+-   read (Unit)
 -   mark("after")
--   r("after") -> <v4>
+-   r("after") -> <v3>
 L1:
   1 <END>                                                     INIT: in: {} out: {}
 error:

@@ -66,8 +66,8 @@ L0:
     magic[IMPLICIT_RECEIVER]($x) -> <v0>
     r(1) -> <v1>
     w($x|<v0>, <v1>)
-  2 r(object { val x : Int { $x = 1 } }) -> <v2>
-    w(a|<v2>)
+  2 r(object { val x : Int { $x = 1 } }) -> <v3>
+    w(a|<v3>)
 L1:
   1 <END>                                                  NEXT:[<SINK>]
 error:
@@ -196,11 +196,11 @@ L0:
     magic[IMPLICIT_RECEIVER]($x) -> <v0>
     r(1) -> <v1>
     w($x|<v0>, <v1>)
-  2 jmp?(L2)                                                                                NEXT:[r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }) -> <v2>, d(fun ggg() { y = 10 })]
+  2 jmp?(L2)                                                                                NEXT:[r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }) -> <v3>, d(fun ggg() { y = 10 })]
     d(fun ggg() { y = 10 })                                                                 NEXT:[<SINK>]
 L2:
-    r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }) -> <v2>           PREV:[jmp?(L2)]
-    w(a|<v2>)
+    r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }) -> <v3>           PREV:[jmp?(L2)]
+    w(a|<v3>)
 L1:
   1 <END>                                                                                   NEXT:[<SINK>]
 error:
@@ -257,11 +257,11 @@ L0:
   2 jmp?(L2)                                                                                     NEXT:[jmp?(L5), d(fun foo() { x = 3 })]
     d(fun foo() { x = 3 })                                                                       NEXT:[<SINK>]
 L2:
-    jmp?(L5)                                                                                     NEXT:[r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v3>, d(fun bar() { x = 4 })]    PREV:[jmp?(L2)]
+    jmp?(L5)                                                                                     NEXT:[r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v4>, d(fun bar() { x = 4 })]    PREV:[jmp?(L2)]
     d(fun bar() { x = 4 })                                                                       NEXT:[<SINK>]
 L5:
-    r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v3>           PREV:[jmp?(L5)]
-    w(a|<v3>)
+    r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v4>           PREV:[jmp?(L5)]
+    w(a|<v4>)
 L1:
   1 <END>                                                                                        NEXT:[<SINK>]
 error:

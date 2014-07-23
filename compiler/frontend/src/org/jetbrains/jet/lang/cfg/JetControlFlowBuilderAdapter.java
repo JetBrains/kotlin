@@ -288,6 +288,12 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
         getDelegateBuilder().bindValue(value, element);
     }
 
+    @NotNull
+    @Override
+    public PseudoValue newValue(@Nullable JetElement element) {
+        return getDelegateBuilder().newValue(element);
+    }
+
     @Override
     public void enterLexicalScope(@NotNull JetElement element) {
         getDelegateBuilder().enterLexicalScope(element);

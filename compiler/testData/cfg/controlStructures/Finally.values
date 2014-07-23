@@ -26,12 +26,18 @@ fun t2() {
   }
 }
 ---------------------
-1       <v0>: *                      NEW: r(1) -> <v0>                             
-2       <v1>: {<: Comparable<Int>}   NEW: r(2) -> <v1>                             
-3       <v2>: Int                    NEW: r(3) -> <v2>                             
-2 > 3   <v3>: Boolean                NEW: call(2 > 3, compareTo|<v1>, <v2>) -> <v3>
-2       <v4>: *                      NEW: r(2) -> <v4>                             
-{ 2 }   <v4>: *                      COPY                                          
+1                                                   <v0>: *                      NEW: r(1) -> <v0>                             
+2                                                   <v1>: {<: Comparable<Int>}   NEW: r(2) -> <v1>                             
+3                                                   <v2>: Int                    NEW: r(3) -> <v2>                             
+2 > 3                                               <v3>: Boolean                NEW: call(2 > 3, compareTo|<v1>, <v2>) -> <v3>
+return                                              !<v5>: *                                                                   
+{ return }                                          !<v5>: *                     COPY                                          
+if (2 > 3) { return }                               !<v5>: *                     COPY                                          
+{ 1 if (2 > 3) { return } }                         !<v5>: *                     COPY                                          
+2                                                   <v4>: *                      NEW: r(2) -> <v4>                             
+{ 2 }                                               <v4>: *                      COPY                                          
+try { 1 if (2 > 3) { return } } finally { 2 }       !<v5>: *                     COPY                                          
+{ try { 1 if (2 > 3) { return } } finally { 2 } }   !<v5>: *                     COPY                                          
 =====================
 == t3 ==
 fun t3() {
@@ -63,9 +69,13 @@ try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }       <v1>: *   COPY
         }
     }
 ---------------------
-2       <v0>: {<: Comparable<Int>}   NEW: r(2) -> <v0>                             
-3       <v1>: Int                    NEW: r(3) -> <v1>                             
-2 > 3   <v2>: Boolean                NEW: call(2 > 3, compareTo|<v0>, <v1>) -> <v2>
+2                         <v0>: {<: Comparable<Int>}   NEW: r(2) -> <v0>                             
+3                         <v1>: Int                    NEW: r(3) -> <v1>                             
+2 > 3                     <v2>: Boolean                NEW: call(2 > 3, compareTo|<v0>, <v1>) -> <v2>
+return@l                  !<v3>: *                                                                   
+{ return@l }              !<v3>: *                     COPY                                          
+if (2 > 3) { return@l }   !<v3>: *                     COPY                                          
+if (2 > 3) { return@l }   !<v3>: *                     COPY                                          
 =====================
 == t4 ==
 fun t4() {
@@ -97,12 +107,18 @@ fun t4() {
     }
   }
 ---------------------
-1       <v0>: *                      NEW: r(1) -> <v0>                             
-2       <v1>: {<: Comparable<Int>}   NEW: r(2) -> <v1>                             
-3       <v2>: Int                    NEW: r(3) -> <v2>                             
-2 > 3   <v3>: Boolean                NEW: call(2 > 3, compareTo|<v1>, <v2>) -> <v3>
-2       <v4>: *                      NEW: r(2) -> <v4>                             
-{ 2 }   <v4>: *                      COPY                                          
+1                                                 <v0>: *                      NEW: r(1) -> <v0>                             
+2                                                 <v1>: {<: Comparable<Int>}   NEW: r(2) -> <v1>                             
+3                                                 <v2>: Int                    NEW: r(3) -> <v2>                             
+2 > 3                                             <v3>: Boolean                NEW: call(2 > 3, compareTo|<v1>, <v2>) -> <v3>
+return@l                                          !<v5>: *                                                                   
+{ return@l }                                      !<v5>: *                     COPY                                          
+if (2 > 3) { return@l }                           !<v5>: *                     COPY                                          
+{ 1 if (2 > 3) { return@l } }                     !<v5>: *                     COPY                                          
+2                                                 <v4>: *                      NEW: r(2) -> <v4>                             
+{ 2 }                                             <v4>: *                      COPY                                          
+try { 1 if (2 > 3) { return@l } } finally { 2 }   !<v5>: *                     COPY                                          
+try { 1 if (2 > 3) { return@l } } finally { 2 }   !<v5>: *                     COPY                                          
 =====================
 == t5 ==
 fun t5() {
@@ -118,14 +134,23 @@ fun t5() {
   }
 }
 ---------------------
-        <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1> 
-true    <v0>: Boolean                NEW: r(true) -> <v0>                          
-1       <v2>: *                      NEW: r(1) -> <v2>                             
-2       <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>                             
-3       <v4>: Int                    NEW: r(3) -> <v4>                             
-2 > 3   <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
-2       <v6>: *                      NEW: r(2) -> <v6>                             
-{ 2 }   <v6>: *                      COPY                                          
+                                                                         <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1> 
+true                                                                     <v0>: Boolean                NEW: r(true) -> <v0>                          
+1                                                                        <v2>: *                      NEW: r(1) -> <v2>                             
+2                                                                        <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>                             
+3                                                                        <v4>: Int                    NEW: r(3) -> <v4>                             
+2 > 3                                                                    <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
+break @l                                                                 !<v7>: *                                                                   
+{ break @l }                                                             !<v7>: *                     COPY                                          
+if (2 > 3) { break @l }                                                  !<v7>: *                     COPY                                          
+{ 1 if (2 > 3) { break @l } }                                            !<v7>: *                     COPY                                          
+2                                                                        <v6>: *                      NEW: r(2) -> <v6>                             
+{ 2 }                                                                    <v6>: *                      COPY                                          
+try { 1 if (2 > 3) { break @l } } finally { 2 }                          !<v7>: *                     COPY                                          
+{ try { 1 if (2 > 3) { break @l } } finally { 2 } }                      !<v7>: *                     COPY                                          
+while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } }          !<v8>: *                                                                   
+@l while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } }       !<v8>: *                     COPY                                          
+{ @l while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } } }   !<v8>: *                     COPY                                          
 =====================
 == t6 ==
 fun t6() {
@@ -148,12 +173,18 @@ true                                                                       <v0>:
 2                                                                          <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>                             
 3                                                                          <v4>: Int                    NEW: r(3) -> <v4>                             
 2 > 3                                                                      <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
-5                                                                          <v6>: *                      NEW: r(5) -> <v6>                             
-{ @l while(true) { 1 if (2 > 3) { break @l } } 5 }                         <v6>: *                      COPY                                          
-2                                                                          <v7>: *                      NEW: r(2) -> <v7>                             
-{ 2 }                                                                      <v7>: *                      COPY                                          
-try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 }       <v6>: *                      COPY                                          
-{ try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 } }   <v6>: *                      COPY                                          
+break @l                                                                   !<v6>: *                                                                   
+{ break @l }                                                               !<v6>: *                     COPY                                          
+if (2 > 3) { break @l }                                                    !<v6>: *                     COPY                                          
+{ 1 if (2 > 3) { break @l } }                                              !<v6>: *                     COPY                                          
+while(true) { 1 if (2 > 3) { break @l } }                                  !<v7>: *                                                                   
+@l while(true) { 1 if (2 > 3) { break @l } }                               !<v7>: *                     COPY                                          
+5                                                                          <v8>: *                      NEW: r(5) -> <v8>                             
+{ @l while(true) { 1 if (2 > 3) { break @l } } 5 }                         <v8>: *                      COPY                                          
+2                                                                          <v9>: *                      NEW: r(2) -> <v9>                             
+{ 2 }                                                                      <v9>: *                      COPY                                          
+try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 }       <v8>: *                      COPY                                          
+{ try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 } }   <v8>: *                      COPY                                          
 =====================
 == t7 ==
 fun t7() {
@@ -169,14 +200,23 @@ fun t7() {
   }
 }
 ---------------------
-        <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1> 
-true    <v0>: Boolean                NEW: r(true) -> <v0>                          
-1       <v2>: *                      NEW: r(1) -> <v2>                             
-2       <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>                             
-3       <v4>: Int                    NEW: r(3) -> <v4>                             
-2 > 3   <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
-2       <v6>: *                      NEW: r(2) -> <v6>                             
-{ 2 }   <v6>: *                      COPY                                          
+                                                                         <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1> 
+true                                                                     <v0>: Boolean                NEW: r(true) -> <v0>                          
+1                                                                        <v2>: *                      NEW: r(1) -> <v2>                             
+2                                                                        <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>                             
+3                                                                        <v4>: Int                    NEW: r(3) -> <v4>                             
+2 > 3                                                                    <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
+break @l                                                                 !<v6>: *                                                                   
+{ break @l }                                                             !<v6>: *                     COPY                                          
+if (2 > 3) { break @l }                                                  !<v6>: *                     COPY                                          
+{ 1 if (2 > 3) { break @l } }                                            !<v6>: *                     COPY                                          
+while(true) { 1 if (2 > 3) { break @l } }                                !<v7>: *                                                                   
+@l while(true) { 1 if (2 > 3) { break @l } }                             !<v7>: *                     COPY                                          
+{ @l while(true) { 1 if (2 > 3) { break @l } } }                         !<v7>: *                     COPY                                          
+2                                                                        <v8>: *                      NEW: r(2) -> <v8>                             
+{ 2 }                                                                    <v8>: *                      COPY                                          
+try { @l while(true) { 1 if (2 > 3) { break @l } } } finally { 2 }       !<v7>: *                     COPY                                          
+{ try { @l while(true) { 1 if (2 > 3) { break @l } } } finally { 2 } }   !<v7>: *                     COPY                                          
 =====================
 == t8 ==
 fun t8(a : Int) {
@@ -192,17 +232,26 @@ fun t8(a : Int) {
   }
 }
 ---------------------
-        <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>      
-        <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
-1       <v1>: Int                    NEW: r(1) -> <v1>                                  
-a       <v2>: Int                    NEW: r(a) -> <v2>                                  
-1..a    <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>        
-1       <v5>: *                      NEW: r(1) -> <v5>                                  
-2       <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>                                  
-3       <v7>: Int                    NEW: r(3) -> <v7>                                  
-2 > 3   <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>     
-2       <v9>: *                      NEW: r(2) -> <v9>                                  
-{ 2 }   <v9>: *                      COPY                                               
+                                                                                <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>      
+                                                                                <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
+1                                                                               <v1>: Int                    NEW: r(1) -> <v1>                                  
+a                                                                               <v2>: Int                    NEW: r(a) -> <v2>                                  
+1..a                                                                            <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>        
+1                                                                               <v5>: *                      NEW: r(1) -> <v5>                                  
+2                                                                               <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>                                  
+3                                                                               <v7>: Int                    NEW: r(3) -> <v7>                                  
+2 > 3                                                                           <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>     
+continue @l                                                                     !<v10>: *                                                                       
+{ continue @l }                                                                 !<v10>: *                    COPY                                               
+if (2 > 3) { continue @l }                                                      !<v10>: *                    COPY                                               
+{ 1 if (2 > 3) { continue @l } }                                                !<v10>: *                    COPY                                               
+2                                                                               <v9>: *                      NEW: r(2) -> <v9>                                  
+{ 2 }                                                                           <v9>: *                      COPY                                               
+try { 1 if (2 > 3) { continue @l } } finally { 2 }                              !<v10>: *                    COPY                                               
+{ try { 1 if (2 > 3) { continue @l } } finally { 2 } }                          !<v10>: *                    COPY                                               
+for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } }          !<v11>: *                                                                       
+@l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } }       !<v11>: *                    COPY                                               
+{ @l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } } }   !<v11>: *                    COPY                                               
 =====================
 == t9 ==
 fun t9(a : Int) {
@@ -228,12 +277,18 @@ a                                                                               
 2                                                                                 <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>                                  
 3                                                                                 <v7>: Int                    NEW: r(3) -> <v7>                                  
 2 > 3                                                                             <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>     
-5                                                                                 <v9>: *                      NEW: r(5) -> <v9>                                  
-{ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 }                         <v9>: *                      COPY                                               
-2                                                                                 <v10>: *                     NEW: r(2) -> <v10>                                 
-{ 2 }                                                                             <v10>: *                     COPY                                               
-try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 }       <v9>: *                      COPY                                               
-{ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 } }   <v9>: *                      COPY                                               
+continue @l                                                                       !<v9>: *                                                                        
+{ continue @l }                                                                   !<v9>: *                     COPY                                               
+if (2 > 3) { continue @l }                                                        !<v9>: *                     COPY                                               
+{ 1 if (2 > 3) { continue @l } }                                                  !<v9>: *                     COPY                                               
+for (i in 1..a) { 1 if (2 > 3) { continue @l } }                                  !<v10>: *                                                                       
+@l for (i in 1..a) { 1 if (2 > 3) { continue @l } }                               !<v10>: *                    COPY                                               
+5                                                                                 <v11>: *                     NEW: r(5) -> <v11>                                 
+{ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 }                         <v11>: *                     COPY                                               
+2                                                                                 <v12>: *                     NEW: r(2) -> <v12>                                 
+{ 2 }                                                                             <v12>: *                     COPY                                               
+try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 }       <v11>: *                     COPY                                               
+{ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 } }   <v11>: *                     COPY                                               
 =====================
 == t10 ==
 fun t10(a : Int) {
@@ -249,17 +304,26 @@ fun t10(a : Int) {
   }
 }
 ---------------------
-        <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>      
-        <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
-1       <v1>: Int                    NEW: r(1) -> <v1>                                  
-a       <v2>: Int                    NEW: r(a) -> <v2>                                  
-1..a    <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>        
-1       <v5>: *                      NEW: r(1) -> <v5>                                  
-2       <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>                                  
-3       <v7>: Int                    NEW: r(3) -> <v7>                                  
-2 > 3   <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>     
-2       <v9>: *                      NEW: r(2) -> <v9>                                  
-{ 2 }   <v9>: *                      COPY                                               
+                                                                                <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>      
+                                                                                <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
+1                                                                               <v1>: Int                    NEW: r(1) -> <v1>                                  
+a                                                                               <v2>: Int                    NEW: r(a) -> <v2>                                  
+1..a                                                                            <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>        
+1                                                                               <v5>: *                      NEW: r(1) -> <v5>                                  
+2                                                                               <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>                                  
+3                                                                               <v7>: Int                    NEW: r(3) -> <v7>                                  
+2 > 3                                                                           <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>     
+continue @l                                                                     !<v9>: *                                                                        
+{ continue @l }                                                                 !<v9>: *                     COPY                                               
+if (2 > 3) { continue @l }                                                      !<v9>: *                     COPY                                               
+{ 1 if (2 > 3) { continue @l } }                                                !<v9>: *                     COPY                                               
+for (i in 1..a) { 1 if (2 > 3) { continue @l } }                                !<v10>: *                                                                       
+@l for (i in 1..a) { 1 if (2 > 3) { continue @l } }                             !<v10>: *                    COPY                                               
+{ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } }                         !<v10>: *                    COPY                                               
+2                                                                               <v11>: *                     NEW: r(2) -> <v11>                                 
+{ 2 }                                                                           <v11>: *                     COPY                                               
+try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 }       !<v10>: *                    COPY                                               
+{ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 } }   !<v10>: *                    COPY                                               
 =====================
 == t11 ==
 fun t11() {
@@ -271,8 +335,14 @@ fun t11() {
   }
 }
 ---------------------
-1   <v0>: {<: Unit}   NEW: r(1) -> <v0>
-2   <v1>: {<: Unit}   NEW: r(2) -> <v1>
+1                                           <v0>: Unit   NEW: r(1) -> <v0>
+return 1                                    !<v3>: *                      
+{ return 1 }                                !<v3>: *     COPY             
+2                                           <v1>: Unit   NEW: r(2) -> <v1>
+return 2                                    !<v2>: *                      
+{ return 2 }                                !<v2>: *     COPY             
+try { return 1 } finally { return 2 }       !<v3>: *     COPY             
+{ try { return 1 } finally { return 2 } }   !<v3>: *     COPY             
 =====================
 == t12 ==
 fun t12() : Int {
@@ -284,10 +354,14 @@ fun t12() : Int {
     }
 }
 ---------------------
-1               <v0>: Int   NEW: r(1) -> <v0>                        
-3               <v1>: Int   NEW: r(3) -> <v1>                        
-doSmth(3)       <v2>: *     NEW: call(doSmth(3), doSmth|<v1>) -> <v2>
-{ doSmth(3) }   <v2>: *     COPY                                     
+1                                            <v0>: Int   NEW: r(1) -> <v0>                        
+return 1                                     !<v3>: *                                             
+{ return 1 }                                 !<v3>: *    COPY                                     
+3                                            <v1>: Int   NEW: r(3) -> <v1>                        
+doSmth(3)                                    <v2>: *     NEW: call(doSmth(3), doSmth|<v1>) -> <v2>
+{ doSmth(3) }                                <v2>: *     COPY                                     
+try { return 1 } finally { doSmth(3) }       !<v3>: *    COPY                                     
+{ try { return 1 } finally { doSmth(3) } }   !<v3>: *    COPY                                     
 =====================
 == t13 ==
 fun t13() : Int {
@@ -302,16 +376,18 @@ fun t13() : Int {
     }
 }
 ---------------------
-                                                                                                    <v3>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v3>
-1                                                                                                   <v0>: Int                                  NEW: r(1) -> <v0>                                                     
-2                                                                                                   <v4>: Int                                  NEW: r(2) -> <v4>                                                     
-doSmth(2)                                                                                           <v5>: *                                    NEW: call(doSmth(2), doSmth|<v4>) -> <v5>                             
-{ doSmth(2) }                                                                                       <v5>: *                                    COPY                                                                  
-3                                                                                                   <v1>: Int                                  NEW: r(3) -> <v1>                                                     
-doSmth(3)                                                                                           <v2>: *                                    NEW: call(doSmth(3), doSmth|<v1>) -> <v2>                             
-{ doSmth(3) }                                                                                       <v2>: *                                    COPY                                                                  
-try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }       <v5>: *                                    COPY                                                                  
-{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) } }   <v5>: *                                    COPY                                                                  
+                                                                                                    <v4>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v4>                                                       
+1                                                                                                   <v0>: Int                                  NEW: r(1) -> <v0>                                                                                                            
+return 1                                                                                            !<v3>: *                                                                                                                                                                
+{ return 1 }                                                                                        !<v3>: *                                   COPY                                                                                                                         
+2                                                                                                   <v5>: Int                                  NEW: r(2) -> <v5>                                                                                                            
+doSmth(2)                                                                                           <v6>: *                                    NEW: call(doSmth(2), doSmth|<v5>) -> <v6>                                                                                    
+{ doSmth(2) }                                                                                       <v6>: *                                    COPY                                                                                                                         
+3                                                                                                   <v1>: Int                                  NEW: r(3) -> <v1>                                                                                                            
+doSmth(3)                                                                                           <v2>: *                                    NEW: call(doSmth(3), doSmth|<v1>) -> <v2>                                                                                    
+{ doSmth(3) }                                                                                       <v2>: *                                    COPY                                                                                                                         
+try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }       <v7>: *                                    NEW: merge(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }|!<v3>, <v6>) -> <v7>
+{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) } }   <v7>: *                                    COPY                                                                                                                         
 =====================
 == t14 ==
 fun t14() : Int {
@@ -323,13 +399,15 @@ fun t14() : Int {
     }
 }
 ---------------------
-                                                                              <v1>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v1>
-1                                                                             <v0>: Int                                  NEW: r(1) -> <v0>                                                     
-2                                                                             <v2>: Int                                  NEW: r(2) -> <v2>                                                     
-doSmth(2)                                                                     <v3>: *                                    NEW: call(doSmth(2), doSmth|<v2>) -> <v3>                             
-{ doSmth(2) }                                                                 <v3>: *                                    COPY                                                                  
-try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }       <v3>: *                                    COPY                                                                  
-{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } }   <v3>: *                                    COPY                                                                  
+                                                                              <v2>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>                                 
+1                                                                             <v0>: Int                                  NEW: r(1) -> <v0>                                                                                      
+return 1                                                                      !<v1>: *                                                                                                                                          
+{ return 1 }                                                                  !<v1>: *                                   COPY                                                                                                   
+2                                                                             <v3>: Int                                  NEW: r(2) -> <v3>                                                                                      
+doSmth(2)                                                                     <v4>: *                                    NEW: call(doSmth(2), doSmth|<v3>) -> <v4>                                                              
+{ doSmth(2) }                                                                 <v4>: *                                    COPY                                                                                                   
+try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }       <v5>: *                                    NEW: merge(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }|!<v1>, <v4>) -> <v5>
+{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } }   <v5>: *                                    COPY                                                                                                   
 =====================
 == t15 ==
 fun t15() : Int {
@@ -344,12 +422,18 @@ fun t15() : Int {
     }
 }
 ---------------------
-                <v3>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v3>
-1               <v0>: Int                                  NEW: r(1) -> <v0>                                                     
-2               <v4>: Int                                  NEW: r(2) -> <v4>                                                     
-3               <v1>: Int                                  NEW: r(3) -> <v1>                                                     
-doSmth(3)       <v2>: *                                    NEW: call(doSmth(3), doSmth|<v1>) -> <v2>                             
-{ doSmth(3) }   <v2>: *                                    COPY                                                                  
+                                                                                                   <v4>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v4>                                                       
+1                                                                                                  <v0>: Int                                  NEW: r(1) -> <v0>                                                                                                            
+return 1                                                                                           !<v3>: *                                                                                                                                                                
+{ return 1 }                                                                                       !<v3>: *                                   COPY                                                                                                                         
+2                                                                                                  <v5>: Int                                  NEW: r(2) -> <v5>                                                                                                            
+return 2                                                                                           !<v6>: *                                                                                                                                                                
+{ return 2 }                                                                                       !<v6>: *                                   COPY                                                                                                                         
+3                                                                                                  <v1>: Int                                  NEW: r(3) -> <v1>                                                                                                            
+doSmth(3)                                                                                          <v2>: *                                    NEW: call(doSmth(3), doSmth|<v1>) -> <v2>                                                                                    
+{ doSmth(3) }                                                                                      <v2>: *                                    COPY                                                                                                                         
+try { return 1 } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v7>: *                                    NEW: merge(try { return 1 } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }|!<v3>, !<v6>) -> <v7>
+{ try { return 1 } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v7>: *                                    COPY                                                                                                                         
 =====================
 == t16 ==
 fun t16() : Int {
@@ -364,16 +448,18 @@ fun t16() : Int {
     }
 }
 ---------------------
-                                                                                                    <v2>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>
-1                                                                                                   <v0>: Int                                  NEW: r(1) -> <v0>                                                     
-doSmth(1)                                                                                           <v1>: *                                    NEW: call(doSmth(1), doSmth|<v0>) -> <v1>                             
-{ doSmth(1) }                                                                                       <v1>: *                                    COPY                                                                  
-2                                                                                                   <v3>: Int                                  NEW: r(2) -> <v3>                                                     
-3                                                                                                   <v4>: Int                                  NEW: r(3) -> <v4>                                                     
-doSmth(3)                                                                                           <v5>: *                                    NEW: call(doSmth(3), doSmth|<v4>) -> <v5>                             
-{ doSmth(3) }                                                                                       <v5>: *                                    COPY                                                                  
-try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v1>: *                                    COPY                                                                  
-{ try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v1>: *                                    COPY                                                                  
+                                                                                                    <v2>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>                                                       
+1                                                                                                   <v0>: Int                                  NEW: r(1) -> <v0>                                                                                                            
+doSmth(1)                                                                                           <v1>: *                                    NEW: call(doSmth(1), doSmth|<v0>) -> <v1>                                                                                    
+{ doSmth(1) }                                                                                       <v1>: *                                    COPY                                                                                                                         
+2                                                                                                   <v3>: Int                                  NEW: r(2) -> <v3>                                                                                                            
+return 2                                                                                            !<v6>: *                                                                                                                                                                
+{ return 2 }                                                                                        !<v6>: *                                   COPY                                                                                                                         
+3                                                                                                   <v4>: Int                                  NEW: r(3) -> <v4>                                                                                                            
+doSmth(3)                                                                                           <v5>: *                                    NEW: call(doSmth(3), doSmth|<v4>) -> <v5>                                                                                    
+{ doSmth(3) }                                                                                       <v5>: *                                    COPY                                                                                                                         
+try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v7>: *                                    NEW: merge(try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }|<v1>, !<v6>) -> <v7>
+{ try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v7>: *                                    COPY                                                                                                                         
 =====================
 == doSmth ==
 fun doSmth(i: Int) {

@@ -22,7 +22,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartFMap;
 import com.intellij.util.containers.ContainerUtil;
-import jet.runtime.typeinfo.JetValueParameter;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -235,10 +234,18 @@ public class JetControlFlowProcessor {
         }
 
         private void copyValue(@Nullable JetElement from, @NotNull JetElement to) {
-            PseudoValue value = builder.getBoundValue(from);
+            PseudoValue value = getBoundOrUnreachableValue(from);
             if (value != null) {
                 builder.bindValue(value, to);
             }
+        }
+
+        @Nullable
+        private PseudoValue getBoundOrUnreachableValue(@Nullable JetElement element) {
+            if (element == null) return null;
+
+            PseudoValue value = builder.getBoundValue(element);
+            return value != null || element instanceof JetDeclaration ? value : builder.newValue(element);
         }
 
         private List<PseudoValue> elementsToValues(List<? extends JetElement> from) {
@@ -249,7 +256,7 @@ public class JetControlFlowProcessor {
                             new Function1<JetElement, PseudoValue>() {
                                 @Override
                                 public PseudoValue invoke(JetElement element) {
-                                    return builder.getBoundValue(element);
+                                    return getBoundOrUnreachableValue(element);
                                 }
                             }
                     )
@@ -427,7 +434,7 @@ public class JetControlFlowProcessor {
                 @Override
                 public PseudoValue invoke() {
                     generateInstructions(expression);
-                    return builder.getBoundValue(expression);
+                    return getBoundOrUnreachableValue(expression);
                 }
             };
         }
@@ -1234,7 +1241,7 @@ public class JetControlFlowProcessor {
             JetExpression left = expression.getLeft();
             if (operationType == JetTokens.COLON || operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {
                 generateInstructions(left);
-                if (builder.getBoundValue(left) != null) {
+                if (getBoundOrUnreachableValue(left) != null) {
                     createNonSyntheticValue(expression, MagicKind.CAST, left);
                 }
             }
@@ -1428,7 +1435,8 @@ public class JetControlFlowProcessor {
             List<PseudoValue> arguments = ContainerUtil.createMaybeSingletonList(builder.getBoundValue(specifier.getDelegateExpression()));
             JetType jetType = trace.get(BindingContext.TYPE, specifier.getTypeReference());
             TypePredicate expectedTypePredicate = jetType != null ? PseudocodePackage.getSubtypesPredicate(jetType) : AllTypes.INSTANCE$;
-            builder.magic(specifier, null, arguments, PseudocodePackage.expectedTypeFor(expectedTypePredicate, arguments), MagicKind.VALUE_CONSUMER);
+            builder.magic(specifier, null, arguments, PseudocodePackage.expectedTypeFor(expectedTypePredicate, arguments),
+                          MagicKind.VALUE_CONSUMER);
         }
 
         @Override
@@ -1539,7 +1547,7 @@ public class JetControlFlowProcessor {
                     generateInstructions(expression);
                 }
 
-                PseudoValue receiverPseudoValue = builder.getBoundValue(expression);
+                PseudoValue receiverPseudoValue = getBoundOrUnreachableValue(expression);
                 if (receiverPseudoValue != null) {
                     receiverValues = receiverValues.plus(receiverPseudoValue, receiver);
                 }
@@ -1578,7 +1586,7 @@ public class JetControlFlowProcessor {
                     generateInstructions(expression);
                 }
 
-                PseudoValue argValue = builder.getBoundValue(expression);
+                PseudoValue argValue = getBoundOrUnreachableValue(expression);
                 if (argValue != null) {
                     parameterValues = parameterValues.plus(argValue, parameterDescriptor);
                 }

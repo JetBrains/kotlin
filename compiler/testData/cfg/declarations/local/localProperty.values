@@ -16,5 +16,7 @@ get() {
                 return b
             }
 ---------------------
-b   <v0>: Int   NEW: r(b) -> <v0>
+b                         <v0>: Int   NEW: r(b) -> <v0>
+return b                  !<v1>: *                     
+{ val b: Int return b }   !<v1>: *    COPY             
 =====================

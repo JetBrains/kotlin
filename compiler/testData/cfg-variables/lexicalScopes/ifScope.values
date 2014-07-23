@@ -10,10 +10,13 @@ fun foo() {
     "after"
 }
 ---------------------
-"before"                                                          <v0>: *         NEW: r("before") -> <v0>
-true                                                              <v1>: Boolean   NEW: r(true) -> <v1>
-1                                                                 <v2>: Int       NEW: r(1) -> <v2>
-2                                                                 <v3>: Int       NEW: r(2) -> <v3>
-"after"                                                           <v4>: *         NEW: r("after") -> <v4>
-{ "before" if (true) { val a = 1 } else { val b = 2 } "after" }   <v4>: *         COPY
+"before"                                                          <v0>: *         NEW: r("before") -> <v0>                                                   
+true                                                              <v1>: Boolean   NEW: r(true) -> <v1>                                                       
+1                                                                 <v2>: Int       NEW: r(1) -> <v2>                                                          
+{ val a = 1 }                                                     !<v4>: *                                                                                   
+2                                                                 <v3>: Int       NEW: r(2) -> <v3>                                                          
+{ val b = 2 }                                                     !<v5>: *                                                                                   
+if (true) { val a = 1 } else { val b = 2 }                        <v6>: *         NEW: merge(if (true) { val a = 1 } else { val b = 2 }|!<v4>, !<v5>) -> <v6>
+"after"                                                           <v7>: *         NEW: r("after") -> <v7>                                                    
+{ "before" if (true) { val a = 1 } else { val b = 2 } "after" }   <v7>: *         COPY                                                                       
 =====================

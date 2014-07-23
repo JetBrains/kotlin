@@ -54,7 +54,9 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
 }
 
 fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
-    val pseudocode = value.createdAt.owner
+    val pseudocode = value.createdAt?.owner
+    if (pseudocode == null) return AllTypes
+
     val typePredicates = LinkedHashSet<TypePredicate?>()
 
     fun addSubtypesOf(jetType: JetType?) = typePredicates.add(jetType?.getSubtypesPredicate())
@@ -66,7 +68,7 @@ fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext)
                     val returnElement = it.element
                     val functionDescriptor = when(returnElement) {
                         is JetReturnExpression -> returnElement.getTargetFunctionDescriptor(bindingContext)
-                        else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, value.createdAt.owner.getCorrespondingElement()]
+                        else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, pseudocode.getCorrespondingElement()]
                     }
                     addSubtypesOf((functionDescriptor as? CallableDescriptor)?.getReturnType())
                 }

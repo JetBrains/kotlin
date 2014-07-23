@@ -16,17 +16,25 @@ fun t1(b: Boolean) {
     doSmth(r)
 }
 ---------------------
-                                                                                                             <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
-b                                                                                                            <v1>: Boolean   NEW: r(b) -> <v1>                               
-"s"                                                                                                          <v2>: String    NEW: r("s") -> <v2>                             
-u                                                                                                            <v3>: String    NEW: r(u) -> <v3>                               
-doSmth(u)                                                                                                    <v4>: *         NEW: call(doSmth(u), doSmth|<v3>) -> <v4>       
-b                                                                                                            <v5>: Boolean   NEW: r(b) -> <v5>                               
-"s"                                                                                                          <v6>: String    NEW: r("s") -> <v6>                             
-"t"                                                                                                          <v7>: String    NEW: r("t") -> <v7>                             
-r                                                                                                            <v8>: String    NEW: r(r) -> <v8>                               
-doSmth(r)                                                                                                    <v9>: *         NEW: call(doSmth(r), doSmth|<v8>) -> <v9>       
-{ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) }   <v9>: *         COPY                                            
+                                                                                                             <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>                      
+b                                                                                                            <v1>: Boolean   NEW: r(b) -> <v1>                                                     
+"s"                                                                                                          <v2>: String    NEW: r("s") -> <v2>                                                   
+u = "s"                                                                                                      !<v3>: *                                                                              
+{ u = "s" }                                                                                                  !<v3>: *        COPY                                                                  
+if (b) { u = "s" }                                                                                           !<v3>: *        COPY                                                                  
+u                                                                                                            <v4>: String    NEW: r(u) -> <v4>                                                     
+doSmth(u)                                                                                                    <v5>: *         NEW: call(doSmth(u), doSmth|<v4>) -> <v5>                             
+b                                                                                                            <v6>: Boolean   NEW: r(b) -> <v6>                                                     
+"s"                                                                                                          <v7>: String    NEW: r("s") -> <v7>                                                   
+r = "s"                                                                                                      !<v8>: *                                                                              
+{ r = "s" }                                                                                                  !<v8>: *        COPY                                                                  
+"t"                                                                                                          <v9>: String    NEW: r("t") -> <v9>                                                   
+r = "t"                                                                                                      !<v10>: *                                                                             
+{ r = "t" }                                                                                                  !<v10>: *       COPY                                                                  
+if (b) { r = "s" } else { r = "t" }                                                                          <v11>: *        NEW: merge(if (b) { r = "s" } else { r = "t" }|!<v8>, !<v10>) -> <v11>
+r                                                                                                            <v12>: String   NEW: r(r) -> <v12>                                                    
+doSmth(r)                                                                                                    <v13>: *        NEW: call(doSmth(r), doSmth|<v12>) -> <v13>                           
+{ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) }   <v13>: *        COPY                                                                  
 =====================
 == t2 ==
 fun t2(b: Boolean) {
@@ -40,13 +48,20 @@ fun t2(b: Boolean) {
     }
 }
 ---------------------
-            <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
-3           <v1>: Int       NEW: r(3) -> <v1>                               
-b           <v2>: Boolean   NEW: r(b) -> <v2>                               
-i           <v3>: String    NEW: r(i) -> <v3>                               
-doSmth(i)   <v4>: *         NEW: call(doSmth(i), doSmth|<v3>) -> <v4>       
-i           <v5>: *         NEW: r(i) -> <v5>                               
-i is Int    <v6>: Boolean   NEW: magic[IS](i is Int|<v5>) -> <v6>           
+                                                                       <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+3                                                                      <v1>: Int       NEW: r(3) -> <v1>                               
+b                                                                      <v2>: Boolean   NEW: r(b) -> <v2>                               
+return                                                                 !<v3>: *                                                        
+{ return; }                                                            !<v3>: *        COPY                                            
+if (b) { return; }                                                     !<v3>: *        COPY                                            
+i                                                                      <v4>: String    NEW: r(i) -> <v4>                               
+doSmth(i)                                                              <v5>: *         NEW: call(doSmth(i), doSmth|<v4>) -> <v5>       
+i                                                                      <v6>: *         NEW: r(i) -> <v6>                               
+i is Int                                                               <v7>: Boolean   NEW: magic[IS](i is Int|<v6>) -> <v7>           
+return                                                                 !<v8>: *                                                        
+{ return; }                                                            !<v8>: *        COPY                                            
+if (i is Int) { return; }                                              !<v8>: *        COPY                                            
+{ val i = 3 if (b) { return; } doSmth(i) if (i is Int) { return; } }   !<v8>: *        COPY                                            
 =====================
 == doSmth ==
 fun doSmth(s: String) {}

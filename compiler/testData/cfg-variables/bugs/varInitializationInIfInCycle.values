@@ -13,16 +13,25 @@ fun foo(numbers: Collection<Int>) {
     }
 }
 ---------------------
-          <v0>: {<: Collection<Int>}   NEW: magic[FAKE_INITIALIZER](numbers: Collection<Int>) -> <v0>
-          <v2>: Int                    NEW: magic[LOOP_RANGE_ITERATION](numbers|<v1>) -> <v2>        
-numbers   <v1>: {<: Iterable<Int>}     NEW: r(numbers) -> <v1>                                       
-1         <v3>: {<: Comparable<Int>}   NEW: r(1) -> <v3>                                             
-2         <v4>: Int                    NEW: r(2) -> <v4>                                             
-1 < 2     <v5>: Boolean                NEW: call(1 < 2, compareTo|<v3>, <v4>) -> <v5>                
-false     <v6>: Boolean                NEW: r(false) -> <v6>                                         
-true      <v7>: Boolean                NEW: r(true) -> <v7>                                          
-b         <v8>: *                      NEW: r(b) -> <v8>
-use(b)    <v9>: *                      NEW: call(use(b), use|<v8>) -> <v9>                           
+                                                                                                       <v0>: {<: Collection<Int>}   NEW: magic[FAKE_INITIALIZER](numbers: Collection<Int>) -> <v0>              
+                                                                                                       <v2>: Int                    NEW: magic[LOOP_RANGE_ITERATION](numbers|<v1>) -> <v2>                      
+numbers                                                                                                <v1>: {<: Iterable<Int>}     NEW: r(numbers) -> <v1>                                                     
+1                                                                                                      <v3>: {<: Comparable<Int>}   NEW: r(1) -> <v3>                                                           
+2                                                                                                      <v4>: Int                    NEW: r(2) -> <v4>                                                           
+1 < 2                                                                                                  <v5>: Boolean                NEW: call(1 < 2, compareTo|<v3>, <v4>) -> <v5>                              
+false                                                                                                  <v6>: Boolean                NEW: r(false) -> <v6>                                                       
+b = false                                                                                              !<v7>: *                                                                                                 
+{ b = false }                                                                                          !<v7>: *                     COPY                                                                        
+true                                                                                                   <v8>: Boolean                NEW: r(true) -> <v8>                                                        
+b = true                                                                                               !<v9>: *                                                                                                 
+{ b = true }                                                                                           !<v9>: *                     COPY                                                                        
+if (1 < 2) { b = false } else { b = true }                                                             <v10>: *                     NEW: merge(if (1 < 2) { b = false } else { b = true }|!<v7>, !<v9>) -> <v10>
+b                                                                                                      <v11>: *                     NEW: r(b) -> <v11>                                                          
+use(b)                                                                                                 <v12>: *                     NEW: call(use(b), use|<v11>) -> <v12>                                       
+continue                                                                                               !<v13>: *                                                                                                
+{ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue }                          !<v13>: *                    COPY                                                                        
+for (i in numbers) { val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue }       !<v14>: *                                                                                                
+{ for (i in numbers) { val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue } }   !<v14>: *                    COPY                                                                        
 =====================
 == use ==
 fun use(vararg a: Any?) = a

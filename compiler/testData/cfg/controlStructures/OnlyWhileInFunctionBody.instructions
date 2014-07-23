@@ -44,11 +44,11 @@ L4 [body entry point]:
     mark({return})
     ret L1                                       NEXT:[<END>]
 L5 [condition entry point]:
--   r(0) -> <v0>                                 PREV:[]
--   r(1) -> <v1>                                 PREV:[]
+-   r(0) -> <v1>                                 PREV:[]
+-   r(1) -> <v2>                                 PREV:[]
 -   mark(0 > 1)                                  PREV:[]
--   call(0 > 1, compareTo|<v0>, <v1>) -> <v2>    PREV:[]
--   jt(L2 [loop entry point]|<v2>)               NEXT:[read (Unit), mark({return})]                  PREV:[]
+-   call(0 > 1, compareTo|<v1>, <v2>) -> <v3>    PREV:[]
+-   jt(L2 [loop entry point]|<v3>)               NEXT:[read (Unit), mark({return})]                  PREV:[]
 L3 [loop exit point]:
 -   read (Unit)                                  PREV:[]
 L1:

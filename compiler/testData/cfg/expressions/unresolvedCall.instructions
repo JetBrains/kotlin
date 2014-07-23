@@ -14,11 +14,11 @@ L0:
     error(foo, No resolved call)
     r(a) -> <v1>
     mark(foo())
-    magic[UNRESOLVED_CALL](foo()|<v1>) -> <v2>
+    magic[UNRESOLVED_CALL](foo()|!<v2>, <v1>) -> <v3>
 L1:
-  1 <END>                                         NEXT:[<SINK>]
+  1 <END>                                                NEXT:[<SINK>]
 error:
-    <ERROR>                                       PREV:[]
+    <ERROR>                                              PREV:[]
 sink:
-    <SINK>                                        PREV:[<ERROR>, <END>]
+    <SINK>                                               PREV:[<ERROR>, <END>]
 =====================

@@ -11,24 +11,25 @@ L0:
   1 <START>
   2 mark({ try { return foo() } catch (e: Throwable) { } })
     mark(try { return foo() } catch (e: Throwable) { })
-    jmp?(L2 [onException])                                     NEXT:[v(e: Throwable), mark({ return foo() })]
+    jmp?(L2 [onException])                                                       NEXT:[v(e: Throwable), mark({ return foo() })]
   3 mark({ return foo() })
     mark(foo())
     call(foo(), foo) -> <v0>
-    ret(*|<v0>) L1                                             NEXT:[<END>]
-- 2 jmp(L3 [afterCatches])                                     NEXT:[<END>]                                                      PREV:[]
+    ret(*|<v0>) L1                                                               NEXT:[<END>]
+- 2 jmp(L3 [afterCatches])                                                       NEXT:[merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v3>) -> <v4>]    PREV:[]
 L2 [onException]:
-  3 v(e: Throwable)                                            PREV:[jmp?(L2 [onException])]
-    magic[FAKE_INITIALIZER](e: Throwable) -> <v1>
-    w(e|<v1>)
+  3 v(e: Throwable)                                                              PREV:[jmp?(L2 [onException])]
+    magic[FAKE_INITIALIZER](e: Throwable) -> <v2>
+    w(e|<v2>)
   4 mark({ })
     read (Unit)
   3 jmp(L3 [afterCatches])
-L1:
 L3 [afterCatches]:
-  1 <END>                                                      NEXT:[<SINK>]                                                     PREV:[ret(*|<v0>) L1, jmp(L3 [afterCatches])]
+  2 merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v3>) -> <v4>
+L1:
+  1 <END>                                                                        NEXT:[<SINK>]                                                                       PREV:[ret(*|<v0>) L1, merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v3>) -> <v4>]
 error:
-    <ERROR>                                                    PREV:[]
+    <ERROR>                                                                      PREV:[]
 sink:
-    <SINK>                                                     PREV:[<ERROR>, <END>]
+    <SINK>                                                                       PREV:[<ERROR>, <END>]
 =====================

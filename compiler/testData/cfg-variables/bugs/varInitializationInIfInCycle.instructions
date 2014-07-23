@@ -42,12 +42,13 @@ L5 [body entry point]:
   4 jmp(L7)                                                                                                       INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}    USE: in: {b=READ} out: {b=READ}
 L6:
   5 mark({ b = true })                                                                                            INIT: in: {b=D, i=ID, numbers=ID} out: {b=D, i=ID, numbers=ID}
-    r(true) -> <v7>                                                                                                                                                                   USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
-    w(b|<v7>)                                                                                                     INIT: in: {b=D, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
+    r(true) -> <v8>                                                                                                                                                                   USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
+    w(b|<v8>)                                                                                                     INIT: in: {b=D, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
 L7:
-  4 r(b) -> <v8>                                                                                                  INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}    USE: in: {} out: {b=READ}
+  4 merge(if (1 < 2) { b = false } else { b = true }|!<v7>, !<v9>) -> <v10>                                       INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}    USE: in: {b=READ} out: {b=READ}
+    r(b) -> <v11>                                                                                                                                                                     USE: in: {} out: {b=READ}
     mark(use(b))
-    call(use(b), use|<v8>) -> <v9>
+    call(use(b), use|<v11>) -> <v12>
     jmp(L4 [loop entry point])                                                                                                                                                        USE: in: {} out: {}
 - 3 jmp?(L4 [loop entry point])
 L2:

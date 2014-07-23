@@ -3,8 +3,10 @@ fun blockAndAndMismatch() : Boolean {
   false || (return false)
 }
 ---------------------
-false                         <v0>: Boolean   NEW: r(false) -> <v0>                               
-false                         <v1>: Boolean   NEW: r(false) -> <v1>                               
-false || (return false)       <v2>: *         NEW: magic[OR](false || (return false)|<v0>) -> <v2>
-{ false || (return false) }   <v2>: *         COPY                                                
+false                         <v0>: Boolean   NEW: r(false) -> <v0>
+false                         <v1>: Boolean   NEW: r(false) -> <v1>
+return false                  !<v2>: *
+(return false)                !<v2>: *        COPY
+false || (return false)       <v3>: *         NEW: magic[OR](false || (return false)|<v0>, !<v2>) -> <v3>
+{ false || (return false) }   <v3>: *         COPY
 =====================
