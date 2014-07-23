@@ -119,6 +119,7 @@
         <include name="descriptor.loader.java/**"/>
         <include name="frontend.java/**"/>
         <include name="serialization.jvm/**"/>
+        <include name="frontend.android/**"/>
         <include name="backend/**"/>
         <include name="backend-common/**"/>
         <include name="cli/**"/>
