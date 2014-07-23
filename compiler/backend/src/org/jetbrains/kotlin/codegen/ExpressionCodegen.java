@@ -1888,6 +1888,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
+            JetFile file = DescriptorToSourceUtils.getContainingFile(propertyDescriptor);
+            if (file != null && file.getName() == "ANDROIDXML.kt") {
+
+                String userData = (String) file.getUserData(AndroidConst.ANDROID_SYNTHETIC);
+                String androidPackage = file.getUserData(AndroidConst.ANDROID_USER_PACKAGE);
+
+                Type retType = typeMapper.mapType(propertyDescriptor.getReturnType());
+                v.load(0, Type.getType("Landroid/app/Activity;"));
+                v.getstatic(androidPackage.replace(".", "/") + "/R$id",
+                            propertyDescriptor.getName().asString(), "I");
+                v.invokevirtual("android/app/Activity", "findViewById", "(I)" + "Landroid/view/View;");
+                v.checkcast(retType);
+
+                return StackValue.onStack(retType);
+            }
+
             boolean directToField =
                     expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL;
             JetExpression r = getReceiverForSelector(expression);
