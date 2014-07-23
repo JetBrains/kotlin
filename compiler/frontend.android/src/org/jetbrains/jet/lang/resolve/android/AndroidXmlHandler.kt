@@ -26,16 +26,16 @@ class AndroidXmlHandler(val elementCallback: (String, String)-> Unit): DefaultHa
 
     }
 
-    public fun Attributes.toMap(): HashMap<String, String> {
-        val res = HashMap<String, String>()
-        for (index in 0..getLength()-1) {
-            val attrName = getLocalName(index)!!
-            val attrVal = getValue(index)!!
-            res[attrName] = attrVal
-        }
-        return res
-    }
 }
 
+public fun Attributes.toMap(): HashMap<String, String> {
+    val res = HashMap<String, String>()
+    for (index in 0..getLength()-1) {
+        val attrName = getLocalName(index)!!
+        val attrVal = getValue(index)!!
+        res[attrName] = attrVal
+    }
+    return res
+}
 
 
