@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -36,17 +34,18 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.framework.JsHeaderLibraryDetectionUtil;
 import org.jetbrains.jet.plugin.framework.JsLibraryStdDetectionUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryCoreUtil;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ProjectStructureUtil {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
@@ -135,52 +134,6 @@ public class ProjectStructureUtil {
         }
 
         return result.getValue();
-    }
-
-    @NotNull
-    public static List<String> getLibLocationForProject(@NotNull Project project) {
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
-            if (isJsKotlinModule(module)) {
-                return getLibLocationForProject(module);
-            }
-        }
-
-        return Collections.emptyList();
-    }
-
-    @NotNull
-    public static List<String> getLibLocationForProject(@NotNull final Module module) {
-        final Set<String> pathsToJSLib = Sets.newHashSet();
-
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-            @Override
-            public void run() {
-                ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
-                    @Override
-                    public boolean process(Library library) {
-                        boolean detected = JsHeaderLibraryDetectionUtil.isJsHeaderLibraryDetected(Arrays.asList(
-                                library.getFiles(OrderRootType.CLASSES)));
-
-                        if (detected) {
-                            for (VirtualFile file : library.getRootProvider().getFiles(OrderRootType.SOURCES)) {
-                                String path = PathUtil.getLocalPath(PathUtil.getLocalFile(file));
-                                if (path != null) {
-                                    pathsToJSLib.add(path);
-                                }
-                                else {
-                                    assert !file.isValid() : "Path is expected to be null only for invalid file: " + file;
-                                }
-                            }
-                        }
-
-                        return true;
-                    }
-                });
-            }
-        });
-
-        return Lists.newArrayList(pathsToJSLib);
     }
 
     @Nullable
