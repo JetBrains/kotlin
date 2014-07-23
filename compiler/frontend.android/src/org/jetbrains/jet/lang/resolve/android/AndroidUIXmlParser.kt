@@ -13,17 +13,30 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.VirtualFileAdapter
 import com.intellij.openapi.vfs.VirtualFileEvent
+import com.intellij.openapi.util.Key
+import com.intellij.testFramework.LightVirtualFile
+import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.psi.PsiManager
+import java.io.FileInputStream
+import org.xml.sax.helpers.DefaultHandler
+import org.xml.sax.Attributes
+import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
+import com.intellij.psi.PsiFileFactory
 
 abstract class AndroidUIXmlParser {
 
     inner class NoUIXMLsFound: Exception("No android UI xmls found in $searchPath")
+    class NoAndroidManifestFound: Exception("No android manifest file found in project root")
+    class ManifestParsingFailed
 
     enum class CacheAction { HIT; MISS }
 
     val androidImports = arrayListOf("android.app.Activity",
                                      "android.view.View",
                                      "android.widget.*")
+
     abstract val searchPath: String?
+    abstract val androidAppPackage: String
 
     val saxParser = initSAX()
 
@@ -46,7 +59,10 @@ abstract class AndroidUIXmlParser {
         if (cacheState == null) return null
         return if (cacheState == CacheAction.MISS || lastCachedPsi == null) {
             try {
-                val psiFile = JetPsiFactory(project).createFile(renderString())
+                val vf = LightVirtualFile("ANDROIDXML.kt", renderString())
+                val psiFile = PsiManager.getInstance(project).findFile(vf) as JetFile
+                psiFile.putUserData(ANDROID_SYNTHETIC, "OK")
+                psiFile.putUserData(ANDROID_USER_PACKAGE, androidAppPackage)
                 lastCachedPsi = psiFile
                 psiFile
             } catch (e: Exception) {
@@ -85,6 +101,7 @@ abstract class AndroidUIXmlParser {
     }
 
     private fun writeImports(kw: KotlinStringWriter): KotlinWriter {
+        kw.writePackage(androidAppPackage)
         for (elem in androidImports)
             kw.writeImport(elem)
         kw.writeEmptyLine()
@@ -143,6 +160,26 @@ abstract class AndroidUIXmlParser {
     }
 
     protected abstract fun lazySetup()
+
+    protected fun readManifest(): AndroidManifest {
+        try {
+            val manifestXml = File(searchPath!!).getParentFile()!!.getParentFile()!!.listFiles { it.name == "AndroidManifest.xml" }!!.first()
+            var _package: String = ""
+            try {
+                saxParser.parse(FileInputStream(manifestXml), object : DefaultHandler() {
+                    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
+                        if (localName == "manifest")
+                            _package = attributes.toMap()["package"] ?: ""
+                    }
+                })
+            } catch (e: Exception) {
+                throw e
+            }
+            return AndroidManifest(_package)
+        } catch (e: Exception) {
+            throw NoAndroidManifestFound()
+        }
+    }
 
     private fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
         for (id in ids) {
