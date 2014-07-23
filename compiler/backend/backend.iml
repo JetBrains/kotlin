@@ -16,6 +16,7 @@
     <orderEntry type="module" module-name="serialization.java" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend-common" exported="" />
+    <orderEntry type="module" module-name="frontend.android" />
   </component>
 </module>
 

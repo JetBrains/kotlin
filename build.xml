@@ -87,6 +87,7 @@
         <include name="serialization/**"/>
         <include name="descriptor.loader.java/**"/>
         <include name="frontend.java/**"/>
+        <include name="frontend.android/**"/>
         <include name="serialization.java/**"/>
         <include name="backend/**"/>
         <include name="backend-common/**"/>
