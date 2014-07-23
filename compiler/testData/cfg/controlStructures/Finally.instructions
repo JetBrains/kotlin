@@ -256,36 +256,37 @@ L2 [loop entry point]:
 L5 [condition entry point]:
     r(true) -> <v0>                                                                 PREV:[mark(@l while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } }), jmp(L2 [loop entry point])]
     mark(while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } })
+    magic[VALUE_CONSUMER](true|<v0>) -> <v1>
 L4 [body entry point]:
   3 mark({ try { 1 if (2 > 3) { break @l } } finally { 2 } })
     mark(try { 1 if (2 > 3) { break @l } } finally { 2 })
     jmp?(L6 [onExceptionToFinallyBlock])                                            NEXT:[mark({ 2 }), mark({ 1 if (2 > 3) { break @l } })]
   4 mark({ 1 if (2 > 3) { break @l } })
-    r(1) -> <v1>
+    r(1) -> <v2>
     mark(if (2 > 3) { break @l })
-    r(2) -> <v2>
-    r(3) -> <v3>
+    r(2) -> <v3>
+    r(3) -> <v4>
     mark(2 > 3)
-    call(2 > 3, compareTo|<v2>, <v3>) -> <v4>
-    jf(L7|<v4>)                                                                     NEXT:[read (Unit), mark({ break @l })]
+    call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
+    jf(L7|<v5>)                                                                     NEXT:[read (Unit), mark({ break @l })]
   5 mark({ break @l })
 L8 [start finally]:
   6 mark({ 2 })
-    r(2) -> <v5>
+    r(2) -> <v6>
 L9 [finish finally]:
   5 jmp(L3 [loop exit point])                                                       NEXT:[read (Unit)]
 - 4 jmp(L10)                                                                        NEXT:[jmp(L11 [skipFinallyToErrorBlock])]                                              PREV:[]
 L7:
-    read (Unit)                                                                     PREV:[jf(L7|<v4>)]
+    read (Unit)                                                                     PREV:[jf(L7|<v5>)]
 L10:
   3 jmp(L11 [skipFinallyToErrorBlock])                                              NEXT:[mark({ 2 })]
 L6 [onExceptionToFinallyBlock]:
   6 mark({ 2 })                                                                     PREV:[jmp?(L6 [onExceptionToFinallyBlock])]
-    r(2) -> <v5>
+    r(2) -> <v6>
   3 jmp(error)                                                                      NEXT:[<ERROR>]
 L11 [skipFinallyToErrorBlock]:
   6 mark({ 2 })                                                                     PREV:[jmp(L11 [skipFinallyToErrorBlock])]
-    r(2) -> <v5>
+    r(2) -> <v6>
   2 jmp(L2 [loop entry point])                                                      NEXT:[r(true) -> <v0>]
 L3 [loop exit point]:
     read (Unit)                                                                     PREV:[jmp(L3 [loop exit point])]
@@ -322,35 +323,36 @@ L3 [loop entry point]:
 L6 [condition entry point]:
     r(true) -> <v0>                                                                   PREV:[mark(@l while(true) { 1 if (2 > 3) { break @l } }), jmp(L3 [loop entry point])]
     mark(while(true) { 1 if (2 > 3) { break @l } })
+    magic[VALUE_CONSUMER](true|<v0>) -> <v1>
 L5 [body entry point]:
   4 mark({ 1 if (2 > 3) { break @l } })
-    r(1) -> <v1>
+    r(1) -> <v2>
     mark(if (2 > 3) { break @l })
-    r(2) -> <v2>
-    r(3) -> <v3>
+    r(2) -> <v3>
+    r(3) -> <v4>
     mark(2 > 3)
-    call(2 > 3, compareTo|<v2>, <v3>) -> <v4>
-    jf(L7|<v4>)                                                                       NEXT:[read (Unit), mark({ break @l })]
+    call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
+    jf(L7|<v5>)                                                                       NEXT:[read (Unit), mark({ break @l })]
   5 mark({ break @l })
     jmp(L4 [loop exit point])                                                         NEXT:[read (Unit)]
 - 4 jmp(L8)                                                                           NEXT:[jmp(L3 [loop entry point])]                                                        PREV:[]
 L7:
-    read (Unit)                                                                       PREV:[jf(L7|<v4>)]
+    read (Unit)                                                                       PREV:[jf(L7|<v5>)]
 L8:
   3 jmp(L3 [loop entry point])                                                        NEXT:[r(true) -> <v0>]
 L4 [loop exit point]:
     read (Unit)                                                                       PREV:[jmp(L4 [loop exit point])]
-    r(5) -> <v5>
+    r(5) -> <v6>
   2 jmp(L9 [skipFinallyToErrorBlock])                                                 NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L10 [start finally]:
   3 mark({ 2 })                                                                       PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
-    r(2) -> <v6>
+    r(2) -> <v7>
 L11 [finish finally]:
   2 jmp(error)                                                                        NEXT:[<ERROR>]
 L9 [skipFinallyToErrorBlock]:
   3 mark({ 2 })                                                                       PREV:[jmp(L9 [skipFinallyToErrorBlock])]
-    r(2) -> <v6>
+    r(2) -> <v7>
 L1:
   1 <END>                                                                             NEXT:[<SINK>]
 error:
@@ -383,20 +385,21 @@ L3 [loop entry point]:
 L6 [condition entry point]:
     r(true) -> <v0>                                                                 PREV:[mark(@l while(true) { 1 if (2 > 3) { break @l } }), jmp(L3 [loop entry point])]
     mark(while(true) { 1 if (2 > 3) { break @l } })
+    magic[VALUE_CONSUMER](true|<v0>) -> <v1>
 L5 [body entry point]:
   4 mark({ 1 if (2 > 3) { break @l } })
-    r(1) -> <v1>
+    r(1) -> <v2>
     mark(if (2 > 3) { break @l })
-    r(2) -> <v2>
-    r(3) -> <v3>
+    r(2) -> <v3>
+    r(3) -> <v4>
     mark(2 > 3)
-    call(2 > 3, compareTo|<v2>, <v3>) -> <v4>
-    jf(L7|<v4>)                                                                     NEXT:[read (Unit), mark({ break @l })]
+    call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
+    jf(L7|<v5>)                                                                     NEXT:[read (Unit), mark({ break @l })]
   5 mark({ break @l })
     jmp(L4 [loop exit point])                                                       NEXT:[read (Unit)]
 - 4 jmp(L8)                                                                         NEXT:[jmp(L3 [loop entry point])]                                                      PREV:[]
 L7:
-    read (Unit)                                                                     PREV:[jf(L7|<v4>)]
+    read (Unit)                                                                     PREV:[jf(L7|<v5>)]
 L8:
   3 jmp(L3 [loop entry point])                                                      NEXT:[r(true) -> <v0>]
 L4 [loop exit point]:
@@ -405,12 +408,12 @@ L4 [loop exit point]:
 L2 [onExceptionToFinallyBlock]:
 L10 [start finally]:
   3 mark({ 2 })                                                                     PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
-    r(2) -> <v5>
+    r(2) -> <v6>
 L11 [finish finally]:
   2 jmp(error)                                                                      NEXT:[<ERROR>]
 L9 [skipFinallyToErrorBlock]:
   3 mark({ 2 })                                                                     PREV:[jmp(L9 [skipFinallyToErrorBlock])]
-    r(2) -> <v5>
+    r(2) -> <v6>
 L1:
   1 <END>                                                                           NEXT:[<SINK>]
 error:

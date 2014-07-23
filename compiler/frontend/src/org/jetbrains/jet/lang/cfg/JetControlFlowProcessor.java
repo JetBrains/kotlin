@@ -802,6 +802,13 @@ public class JetControlFlowProcessor {
             if (!conditionIsTrueConstant) {
                 builder.jumpOnFalse(loopInfo.getExitPoint(), expression, builder.getBoundValue(condition));
             }
+            else {
+                assert condition != null : "Invalid while condition: " + expression.getText();
+                List<PseudoValue> values = ContainerUtil.createMaybeSingletonList(builder.getBoundValue(condition));
+                Map<PseudoValue, TypePredicate> typePredicates =
+                        PseudocodePackage.expectedTypeFor(new SingleType(KotlinBuiltIns.getInstance().getBooleanType()), values);
+                builder.magic(condition, null, values, typePredicates, MagicKind.VALUE_CONSUMER);
+            }
 
             builder.bindLabel(loopInfo.getBodyEntryPoint());
             JetExpression body = expression.getBody();
