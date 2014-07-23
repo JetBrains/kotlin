@@ -9,9 +9,11 @@ import com.intellij.openapi.vfs.VirtualFileEvent
 
 class IDEAndroidUIXmlParser(project: Project): AndroidUIXmlParser() {
     override val searchPath: String? = project.getBasePath() + "/res/layout/"
+    override var androidAppPackage: String = ""
 
     override protected fun lazySetup() {
         if (listenerSetUp) return
+        androidAppPackage = readManifest()._package
         val fileManager = VirtualFileManager.getInstance()
         val watchDir = fileManager.findFileByUrl("file://" + searchPath)
         filesToProcess.addAll(watchDir?.getChildren()?.toArrayList() ?: ArrayList(0))
