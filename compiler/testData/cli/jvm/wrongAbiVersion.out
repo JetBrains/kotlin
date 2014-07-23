@@ -1,5 +1,5 @@
-ERROR: $TESTDATA_DIR$/wrongAbiVersionLib/ClassWithWrongAbiVersion.class: (0, 0) Class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. Its ABI version is -1, expected ABI version is $ABI_VERSION$
-ERROR: $TESTDATA_DIR$/wrongAbiVersionLib/wrong/WrongPackage.class: (0, 0) Class 'wrong/WrongPackage' was compiled with an incompatible version of Kotlin. Its ABI version is -1, expected ABI version is $ABI_VERSION$
-WARNING: $TESTDATA_DIR$/wrongAbiVersion.kt: (3, 9) Parameter 'x' is never used
-ERROR: $TESTDATA_DIR$/wrongAbiVersion.kt: (4, 3) Unresolved reference: bar
+ERROR: compiler/testData/cli/jvm/wrongAbiVersionLib/ClassWithWrongAbiVersion.class: (0, 0) Class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. Its ABI version is -1, expected ABI version is $ABI_VERSION$
+ERROR: compiler/testData/cli/jvm/wrongAbiVersionLib/wrong/WrongPackage.class: (0, 0) Class 'wrong/WrongPackage' was compiled with an incompatible version of Kotlin. Its ABI version is -1, expected ABI version is $ABI_VERSION$
+WARNING: compiler/testData/cli/jvm/wrongAbiVersion.kt: (3, 9) Parameter 'x' is never used
+ERROR: compiler/testData/cli/jvm/wrongAbiVersion.kt: (4, 3) Unresolved reference: bar
 COMPILATION_ERROR

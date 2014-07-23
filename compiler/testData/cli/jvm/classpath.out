@@ -1,6 +1,6 @@
-WARNING: $TESTDATA_DIR$/classpath.kt: (8, 9) Variable 'a' is never used
-WARNING: $TESTDATA_DIR$/classpath.kt: (9, 9) Variable 'c' is never used
-WARNING: $TESTDATA_DIR$/classpath.kt: (10, 9) Variable 'e' is never used
-WARNING: $TESTDATA_DIR$/classpath.kt: (11, 9) Variable 'f' is never used
-WARNING: $TESTDATA_DIR$/classpath.kt: (12, 9) Variable 'j' is never used
+WARNING: compiler/testData/cli/jvm/classpath.kt: (8, 9) Variable 'a' is never used
+WARNING: compiler/testData/cli/jvm/classpath.kt: (9, 9) Variable 'c' is never used
+WARNING: compiler/testData/cli/jvm/classpath.kt: (10, 9) Variable 'e' is never used
+WARNING: compiler/testData/cli/jvm/classpath.kt: (11, 9) Variable 'f' is never used
+WARNING: compiler/testData/cli/jvm/classpath.kt: (12, 9) Variable 'j' is never used
 OK

@@ -34,7 +34,6 @@ import java.util.List;
 import static org.jetbrains.jet.cli.common.ExitCode.*;
 
 public abstract class CLICompiler<A extends CommonCompilerArguments> {
-
     @NotNull
     private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
 
@@ -49,7 +48,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
-        return exec(errStream, MessageRenderer.PLAIN, args);
+        return exec(errStream, MessageRenderer.PLAIN_WITH_RELATIVE_PATH, args);
     }
 
     @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
