@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OptimizationMethodVisitor extends MethodVisitor {
+    private static final int MAX_INSTRUCTIONS_SIZE_TO_OPTIMIZE = 5000;
     private static final MethodTransformer MAIN_METHOD_TRANSFORMER = new RedundantNullCheckMethodTransformer(
             new RedundantBoxingMethodTransformer(null)
     );
@@ -63,7 +64,8 @@ public class OptimizationMethodVisitor extends MethodVisitor {
 
         super.visitEnd();
 
-        if (methodNode.instructions.size() > 0) {
+        if (methodNode.instructions.size() > 0 &&
+            methodNode.instructions.size() <= MAX_INSTRUCTIONS_SIZE_TO_OPTIMIZE) {
             MAIN_METHOD_TRANSFORMER.transform("fake", methodNode);
         }
 
