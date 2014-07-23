@@ -136,13 +136,23 @@ public class JetCompletionContributor extends CompletionContributor {
                         }
 
                         int expressionEnd = expression.getTextRange().getEndOffset();
+                        String text = context.getFile().getText();
+                        while (expressionEnd > 0 && Character.isWhitespace(text.charAt(expressionEnd - 1))) {
+                            expressionEnd--;
+                        }
+
+                        int suggestedReplacementOffset;
                         if (expression instanceof JetCallExpression) {
                             JetExpression calleeExpression = ((JetCallExpression) expression).getCalleeExpression();
-                            context.setReplacementOffset(calleeExpression != null ? calleeExpression.getTextRange().getEndOffset() : expressionEnd);
+                            suggestedReplacementOffset = calleeExpression != null ? calleeExpression.getTextRange().getEndOffset() : expressionEnd;
                         }
-                        else{
-                            context.setReplacementOffset(expressionEnd);
+                        else {
+                            suggestedReplacementOffset = expressionEnd;
                         }
+                        if (suggestedReplacementOffset > context.getReplacementOffset()) {
+                            context.setReplacementOffset(suggestedReplacementOffset);
+                        }
+
                         context.getOffsetMap().addOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET, expressionEnd);
                     }
                 }

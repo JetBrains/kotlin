@@ -31,6 +31,7 @@ import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.makeNullable
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.renderer.DescriptorRenderer
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -64,6 +65,9 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
     }
 
     private fun buildLookupElementsInternal(referenceVariants: Iterable<DeclarationDescriptor>): Collection<LookupElement>? {
+        val elements = buildForAsTypePosition()
+        if (elements != null) return elements
+
         val parent = expression.getParent()
         val expressionWithType: JetExpression
         val receiver: JetExpression?
@@ -252,6 +256,61 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         }
 
         return null
+    }
+
+    private fun buildForAsTypePosition(): Collection<LookupElement>? {
+        val binaryExpression = ((expression.getParent() as? JetUserType)
+                ?.getParent() as? JetTypeReference)
+                    ?.getParent() as? JetBinaryExpressionWithTypeRHS
+        if (binaryExpression != null) {
+            val elementType = binaryExpression.getOperationReference().getReferencedNameElementType()
+            if (elementType == JetTokens.AS_KEYWORD || elementType == JetTokens.AS_SAFE) {
+                val expectedInfos = calcExpectedInfos(binaryExpression) ?: return null
+
+                val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.`type`.makeNotNullable() }
+
+                val result = ArrayList<LookupElement>()
+                for ((jetType, infos) in expectedInfosGrouped) {
+                    val lookupElement = lookupElementForType(jetType) ?: continue
+                    result.add(lookupElement.addTail(infos))
+                }
+                return result
+            }
+        }
+        return null
+    }
+
+    private fun lookupElementForType(jetType: JetType): LookupElement? {
+        if (jetType.isError()) return null
+        val classifier = jetType.getConstructor().getDeclarationDescriptor() ?: return null
+
+        val lookupElement = createLookupElement(classifier, resolveSession)
+        val lookupString = lookupElement.getLookupString()
+
+        val typeArgs = jetType.getArguments()
+        var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
+        val typeText = DescriptorUtils.getFqName(classifier).toString() + DescriptorRenderer.SOURCE_CODE.renderTypeArguments(typeArgs)
+
+        val insertHandler: InsertHandler<LookupElement> = object : InsertHandler<LookupElement> {
+            override fun handleInsert(context: InsertionContext, item: LookupElement) {
+                context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
+                context.setTailOffset(context.getStartOffset() + typeText.length)
+                shortenReferences(context, context.getStartOffset(), context.getTailOffset())
+            }
+        }
+
+        return object: LookupElementDecorator<LookupElement>(lookupElement) {
+            override fun getLookupString() = lookupString
+
+            override fun renderElement(presentation: LookupElementPresentation) {
+                getDelegate().renderElement(presentation)
+                presentation.setItemText(itemText)
+            }
+
+            override fun handleInsert(context: InsertionContext) {
+                insertHandler.handleInsert(context, getDelegate())
+            }
+        }
     }
 
     class object {

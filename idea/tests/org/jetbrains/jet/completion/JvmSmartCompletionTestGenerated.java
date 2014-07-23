@@ -32,6 +32,21 @@ import org.jetbrains.jet.completion.AbstractJvmSmartCompletionTest;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/smart")
 public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionTest {
+    @TestMetadata("AfterAs.kt")
+    public void testAfterAs() throws Exception {
+        doTest("idea/testData/completion/smart/AfterAs.kt");
+    }
+    
+    @TestMetadata("AfterAs2.kt")
+    public void testAfterAs2() throws Exception {
+        doTest("idea/testData/completion/smart/AfterAs2.kt");
+    }
+    
+    @TestMetadata("AfterAs3.kt")
+    public void testAfterAs3() throws Exception {
+        doTest("idea/testData/completion/smart/AfterAs3.kt");
+    }
+    
     @TestMetadata("AfterExclSign.kt")
     public void testAfterExclSign() throws Exception {
         doTest("idea/testData/completion/smart/AfterExclSign.kt");
