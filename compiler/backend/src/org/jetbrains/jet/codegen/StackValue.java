@@ -26,6 +26,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -283,7 +284,7 @@ public abstract class StackValue {
     }
 
     public static void putUnitInstance(InstructionAdapter v) {
-        v.visitFieldInsn(GETSTATIC, UNIT_TYPE.getInternalName(), "VALUE", UNIT_TYPE.getDescriptor());
+        v.visitFieldInsn(GETSTATIC, UNIT_TYPE.getInternalName(), JvmAbi.INSTANCE_FIELD, UNIT_TYPE.getDescriptor());
     }
 
     protected void putAsBoolean(InstructionAdapter v) {
