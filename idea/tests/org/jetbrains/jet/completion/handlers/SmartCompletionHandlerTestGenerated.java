@@ -86,6 +86,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/AutoCompleteAfterAs2.kt");
     }
     
+    @TestMetadata("AutoCompleteAfterAs3.kt")
+    public void testAutoCompleteAfterAs3() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/AutoCompleteAfterAs3.kt");
+    }
+    
     @TestMetadata("ClassObjectMethod1.kt")
     public void testClassObjectMethod1() throws Exception {
         doTest("idea/testData/completion/handlers/smart/ClassObjectMethod1.kt");

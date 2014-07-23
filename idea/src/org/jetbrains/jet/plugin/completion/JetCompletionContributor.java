@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.completion;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
@@ -122,7 +123,9 @@ public class JetCompletionContributor extends CompletionContributor {
             // this code will make replacement offset "modified" and prevents altering it by the code in CompletionProgressIndicator
             context.setReplacementOffset(context.getReplacementOffset());
 
-            if (context.getCompletionType() == CompletionType.SMART) {
+            if (context.getCompletionType() == CompletionType.SMART
+                && !isAtEndOfLine(offset, context.getEditor().getDocument()) /* do not use parent expression if we are at the end of line - it's probably parsed incorrectly */) {
+
                 PsiElement tokenAt = context.getFile().findElementAt(Math.max(0, offset));
                 if (tokenAt != null) {
                     PsiElement parent = tokenAt.getParent();
@@ -136,11 +139,6 @@ public class JetCompletionContributor extends CompletionContributor {
                         }
 
                         int expressionEnd = expression.getTextRange().getEndOffset();
-                        String text = context.getFile().getText();
-                        while (expressionEnd > 0 && Character.isWhitespace(text.charAt(expressionEnd - 1))) {
-                            expressionEnd--;
-                        }
-
                         int suggestedReplacementOffset;
                         if (expression instanceof JetCallExpression) {
                             JetExpression calleeExpression = ((JetCallExpression) expression).getCalleeExpression();
@@ -158,5 +156,17 @@ public class JetCompletionContributor extends CompletionContributor {
                 }
             }
         }
+    }
+
+    private static boolean isAtEndOfLine(int offset, Document document) {
+        int i = offset;
+        CharSequence chars = document.getCharsSequence();
+        while (i < chars.length()) {
+            char c = chars.charAt(i);
+            if (c == '\n' || c == 'r') return true;
+            if (!Character.isWhitespace(c)) return false;
+            i++;
+        }
+        return true;
     }
 }
