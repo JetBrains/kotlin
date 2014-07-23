@@ -66,6 +66,10 @@ class KotlinStringWriter : KotlinWriter {
         imports.writeln("import $what")
     }
 
+    fun writePackage(_package: String) {
+        ctx.writeln("package $_package\n")
+    }
+
     fun writeEmptyLine() {
         body.newLine()
     }
