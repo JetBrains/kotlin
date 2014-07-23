@@ -56,6 +56,7 @@ import org.jetbrains.jet.lang.psi.JetCallElement
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
+import org.jetbrains.jet.lang.psi.JetPrefixExpression
 
 enum class Tail {
     COMMA
@@ -74,6 +75,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             ?: calculateForElvis(expressionWithType)
             ?: calculateForBlockExpression(expressionWithType)
             ?: calculateForWhenEntryValue(expressionWithType)
+            ?: calculateForExclOperand(expressionWithType)
             ?: getFromBindingContext(expressionWithType)
     }
 
@@ -240,6 +242,12 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         else {
             return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null))
         }
+    }
+
+    private fun calculateForExclOperand(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val prefixExpression = expressionWithType.getParent() as? JetPrefixExpression ?: return null
+        if (prefixExpression.getOperationToken() != JetTokens.EXCL) return null
+        return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null))
     }
 
     private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

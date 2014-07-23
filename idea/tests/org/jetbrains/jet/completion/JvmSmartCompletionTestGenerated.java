@@ -32,6 +32,11 @@ import org.jetbrains.jet.completion.AbstractJvmSmartCompletionTest;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/smart")
 public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionTest {
+    @TestMetadata("AfterExclSign.kt")
+    public void testAfterExclSign() throws Exception {
+        doTest("idea/testData/completion/smart/AfterExclSign.kt");
+    }
+    
     public void testAllFilesPresentInSmart() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/completion/smart"), Pattern.compile("^(.+)\\.kt$"), true);
     }
