@@ -97,9 +97,6 @@ public class KotlinBuiltIns {
 
     private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
 
-    private final ImmutableSet<ClassDescriptor> functionClassesSet;
-    private final ImmutableSet<ClassDescriptor> extensionFunctionClassesSet;
-
     private final Map<PrimitiveType, JetType> primitiveTypeToNullableJetType;
     private final Map<PrimitiveType, JetType> primitiveTypeToArrayJetType;
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
@@ -113,9 +110,6 @@ public class KotlinBuiltIns {
                                                   PlatformToKotlinClassMap.EMPTY);
         builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), builtInsModule);
         builtInsModule.addFragmentProvider(DependencyKind.SOURCES, builtinsPackageFragment.getProvider());
-
-        functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
-        extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
 
         primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
@@ -146,9 +140,22 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe nothing = fqName("Nothing");
         public final FqNameUnsafe suppress = fqName("suppress");
 
+        public final ImmutableSet<FqNameUnsafe> functionClasses = computeIndexedFqNames("Function", FUNCTION_TRAIT_COUNT);
+        public final ImmutableSet<FqNameUnsafe> extensionFunctionClasses =
+                computeIndexedFqNames("ExtensionFunction", FUNCTION_TRAIT_COUNT);
+
         @NotNull
         private static FqNameUnsafe fqName(@NotNull String simpleName) {
             return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName)).toUnsafe();
+        }
+
+        @NotNull
+        private static ImmutableSet<FqNameUnsafe> computeIndexedFqNames(@NotNull String prefix, int count) {
+            ImmutableSet.Builder<FqNameUnsafe> builder = ImmutableSet.builder();
+            for (int i = 0; i < count; i++) {
+                builder.add(fqName(prefix + i));
+            }
+            return builder.build();
         }
     }
 
@@ -708,22 +715,13 @@ public class KotlinBuiltIns {
 
     // Functions
 
-    @NotNull
-    private ImmutableSet<ClassDescriptor> computeIndexedClasses(@NotNull String prefix, int count) {
-        ImmutableSet.Builder<ClassDescriptor> builder = ImmutableSet.builder();
-        for (int i = 0; i < count; i++) {
-            builder.add(getBuiltInClassByName(prefix + i));
-        }
-        return builder.build();
-    }
-
     public boolean isFunctionOrExtensionFunctionType(@NotNull JetType type) {
         return isFunctionType(type) || isExtensionFunctionType(type);
     }
 
     public boolean isFunctionType(@NotNull JetType type) {
         if (type instanceof PackageType) return false;
-        if (setContainsClassOf(functionClassesSet, type)) return true;
+        if (isExactFunctionType(type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
             if (isFunctionType(superType)) return true;
@@ -732,20 +730,36 @@ public class KotlinBuiltIns {
         return false;
     }
 
-    public boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
-        return !(type instanceof PackageType)
-               && (setContainsClassOf(extensionFunctionClassesSet, type) || setContainsClassOf(functionClassesSet, type));
-    }
-
     public boolean isExtensionFunctionType(@NotNull JetType type) {
         if (type instanceof PackageType) return false;
-        if (setContainsClassOf(extensionFunctionClassesSet, type)) return true;
+        if (isExactExtensionFunctionType(type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
             if (isExtensionFunctionType(superType)) return true;
         }
 
         return false;
+    }
+
+    public boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
+        return isExactFunctionType(type) || isExactExtensionFunctionType(type);
+    }
+
+    public boolean isExactFunctionType(@NotNull JetType type) {
+        return isTypeConstructorFqNameInSet(type, fqNames.functionClasses);
+    }
+
+    public boolean isExactExtensionFunctionType(@NotNull JetType type) {
+        return isTypeConstructorFqNameInSet(type, fqNames.extensionFunctionClasses);
+    }
+
+    private static boolean isTypeConstructorFqNameInSet(@NotNull JetType type, @NotNull ImmutableSet<FqNameUnsafe> classes) {
+        ClassifierDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+
+        if (declarationDescriptor == null) return false;
+
+        FqNameUnsafe fqName = DescriptorUtils.getFqName(declarationDescriptor);
+        return classes.contains(fqName);
     }
 
     @Nullable
@@ -854,10 +868,5 @@ public class KotlinBuiltIns {
     @NotNull
     public JetType getDefaultBound() {
         return getNullableAnyType();
-    }
-
-    private static boolean setContainsClassOf(ImmutableSet<ClassDescriptor> set, JetType type) {
-        //noinspection SuspiciousMethodCalls
-        return set.contains(type.getConstructor().getDeclarationDescriptor());
     }
 }
