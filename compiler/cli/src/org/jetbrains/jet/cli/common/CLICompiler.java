@@ -52,7 +52,17 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         if (!parseArguments(errStream, arguments, args)) {
             return INTERNAL_ERROR;
         }
-        return exec(errStream, arguments);
+        return exec(errStream, getMessageRenderer(arguments), arguments);
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
+    @NotNull
+    public ExitCode execAndOutputHtml(@NotNull PrintStream errStream, @NotNull String... args) {
+        A arguments = createArguments();
+        if (!parseArguments(errStream, arguments, args)) {
+            return INTERNAL_ERROR;
+        }
+        return exec(errStream, MessageRenderer.TAGS, arguments);
     }
 
     /**
@@ -100,13 +110,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
      * Executes the compiler on the parsed arguments
      */
     @NotNull
-    public ExitCode exec(@NotNull PrintStream errStream, @NotNull A arguments) {
+    public ExitCode exec(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull A arguments) {
         if (arguments.help || arguments.extraHelp) {
             usage(errStream, arguments.extraHelp);
             return OK;
         }
 
-        MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
 
         printVersionIfNeeded(errStream, arguments, messageRenderer);
