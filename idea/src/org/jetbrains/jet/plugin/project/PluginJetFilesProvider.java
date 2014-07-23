@@ -31,7 +31,7 @@ public class PluginJetFilesProvider  {
     @NotNull
     public static Collection<JetFile> allFilesInProject(@NotNull Project project) {
         return JetAllPackagesIndex.getInstance().get(FqName.ROOT.asString(), project,
-                                                     JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project)));
+                                                     JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project), project));
     }
 
     private PluginJetFilesProvider() {

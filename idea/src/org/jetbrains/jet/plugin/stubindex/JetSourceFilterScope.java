@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.stubindex;
 
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,26 +29,28 @@ import org.jetbrains.jet.plugin.JetPluginUtil;
 
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
     @NotNull
-    public static GlobalSearchScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate) {
-        return new JetSourceFilterScope(delegate, true);
+    public static GlobalSearchScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+        return new JetSourceFilterScope(delegate, true, project);
     }
 
     @NotNull
-    public static GlobalSearchScope kotlinSources(@NotNull GlobalSearchScope delegate) {
-        return new JetSourceFilterScope(delegate, false);
+    public static GlobalSearchScope kotlinSources(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+        return new JetSourceFilterScope(delegate, false, project);
     }
 
     private final ProjectFileIndex index;
+    private final Project project;
     private final boolean includeLibraries;
 
-    private JetSourceFilterScope(@NotNull GlobalSearchScope delegate, boolean includeLibraries) {
+    private JetSourceFilterScope(@NotNull GlobalSearchScope delegate, boolean includeLibraries, @NotNull Project project) {
         super(delegate);
         this.includeLibraries = includeLibraries;
-        index = ProjectRootManager.getInstance(getProject()).getFileIndex();
+        this.index = ProjectRootManager.getInstance(project).getFileIndex();
+        this.project = project;
     }
 
     @Override
-    public boolean contains(VirtualFile file) {
+    public boolean contains(@NotNull VirtualFile file) {
         if (!super.contains(file)) {
             return false;
         }
@@ -56,7 +59,7 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
             return index.isInLibraryClasses(file);
         }
 
-        if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file, getProject())) {
+        if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file, project)) {
             return false;
         }
 

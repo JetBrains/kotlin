@@ -44,6 +44,6 @@ public class JetFunctionShortNameIndex extends StringStubIndexExtension<JetNamed
 
     @Override
     public Collection<JetNamedFunction> get(String s, Project project, @NotNull GlobalSearchScope scope) {
-        return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope));
+        return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 }

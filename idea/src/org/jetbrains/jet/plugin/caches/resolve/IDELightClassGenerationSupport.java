@@ -160,13 +160,13 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        return JetFullClassNameIndex.getInstance().get(fqName.asString(), project, kotlinSources(searchScope));
+        return JetFullClassNameIndex.getInstance().get(fqName.asString(), project, kotlinSources(searchScope, project));
     }
 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        return PackageIndexUtil.findFilesWithExactPackage(fqName, kotlinSources(searchScope), project);
+        return PackageIndexUtil.findFilesWithExactPackage(fqName, kotlinSources(searchScope, project), project);
     }
 
     @NotNull
@@ -174,18 +174,18 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     public Collection<JetClassOrObject> findClassOrObjectDeclarationsInPackage(
             @NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope
     ) {
-        return JetClassByPackageIndex.getInstance().get(packageFqName.asString(), project, kotlinSources(searchScope));
+        return JetClassByPackageIndex.getInstance().get(packageFqName.asString(), project, kotlinSources(searchScope, project));
     }
 
     @Override
     public boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope) {
-        return !JetAllPackagesIndex.getInstance().get(fqName.asString(), project, kotlinSources(scope)).isEmpty();
+        return !JetAllPackagesIndex.getInstance().get(fqName.asString(), project, kotlinSources(scope, project)).isEmpty();
     }
 
     @NotNull
     @Override
     public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
-        return PackageIndexUtil.getSubPackageFqNames(fqn, kotlinSources(scope), project);
+        return PackageIndexUtil.getSubPackageFqNames(fqn, kotlinSources(scope, project), project);
     }
 
     @Nullable

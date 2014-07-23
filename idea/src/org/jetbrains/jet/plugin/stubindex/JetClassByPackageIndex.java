@@ -44,6 +44,6 @@ public class JetClassByPackageIndex extends StringStubIndexExtension<JetClassOrO
 
     @Override
     public Collection<JetClassOrObject> get(String fqName, Project project, @NotNull GlobalSearchScope scope) {
-        return super.get(fqName, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope));
+        return super.get(fqName, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 }

@@ -136,7 +136,7 @@ class KotlinCacheService(val project: Project) {
     }
 
     private fun kotlinSourcesInProjectScope(): GlobalSearchScope {
-        return JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project))
+        return JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project), project)
     }
 
     public fun <T> get(extension: CacheExtension<T>): T {
