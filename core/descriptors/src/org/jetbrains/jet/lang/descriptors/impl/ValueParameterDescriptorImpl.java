@@ -48,9 +48,10 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             @NotNull Name name,
             @NotNull JetType outType,
             boolean declaresDefaultValue,
-            @Nullable JetType varargElementType
+            @Nullable JetType varargElementType,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, annotations, name, outType);
+        super(containingDeclaration, annotations, name, outType, source);
         this.original = original == null ? this : original;
         this.index = index;
         this.declaresDefaultValue = declaresDefaultValue;
@@ -125,7 +126,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner, @NotNull Name newName) {
-        return new ValueParameterDescriptorImpl(newOwner, null, index, getAnnotations(), newName, getType(), declaresDefaultValue(), varargElementType);
+        return new ValueParameterDescriptorImpl(newOwner, null, index, getAnnotations(), newName, getType(), declaresDefaultValue(), varargElementType, SourceElement.NO_SOURCE);
     }
 
     @NotNull

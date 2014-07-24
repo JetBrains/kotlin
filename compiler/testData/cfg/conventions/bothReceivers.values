@@ -18,10 +18,10 @@ fun foobar(f: Foo) {
     Bar().f()
 }
 ---------------------
-                <v0>: Foo   NEW: magic(f: Foo) -> <v0>
-Bar()           <v2>: Bar   NEW: call(Bar, <init>) -> <v2>
-f               <v1>: Foo   NEW: r(f) -> <v1>
-f()             <v3>: *     NEW: call(f, invoke|<v1>, <v2>) -> <v3>
-Bar().f()       <v3>: *     COPY
-{ Bar().f() }   <v3>: *     COPY
+                <v0>: Foo   NEW: magic[FAKE_INITIALIZER](f: Foo) -> <v0>
+Bar()           <v2>: Bar   NEW: call(Bar(), <init>) -> <v2>            
+f               <v1>: Foo   NEW: r(f) -> <v1>                           
+f()             <v3>: *     NEW: call(f(), invoke|<v1>, <v2>) -> <v3>   
+Bar().f()       <v3>: *     COPY                                        
+{ Bar().f() }   <v3>: *     COPY                                        
 =====================

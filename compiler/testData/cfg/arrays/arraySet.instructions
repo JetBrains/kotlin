@@ -6,7 +6,7 @@ fun foo(a: Array<Int>) {
 L0:
   1 <START>
     v(a: Array<Int>)
-    magic(a: Array<Int>) -> <v0>
+    magic[FAKE_INITIALIZER](a: Array<Int>) -> <v0>
     w(a|<v0>)
   2 mark({ a[1] = 2 })
     mark(a[1])
@@ -15,9 +15,9 @@ L0:
     r(2) -> <v3>
     call(a[1] = 2, set|<v1>, <v2>, <v3>) -> <v4>
 L1:
-  1 <END>                                           NEXT:[<SINK>]
+  1 <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>                                         PREV:[]
+    <ERROR>                                           PREV:[]
 sink:
-    <SINK>                                          PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<ERROR>, <END>]
 =====================

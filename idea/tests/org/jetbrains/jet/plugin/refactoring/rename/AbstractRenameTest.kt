@@ -47,6 +47,7 @@ import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 private enum class RenameType {
     JAVA_CLASS
@@ -190,7 +191,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             val bindingContext = jetFile.getBindingContext()
             val classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, classFqName)!!
 
-            val psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, findDescriptorToRename(classDescriptor))!!
+            val psiElement = DescriptorToSourceUtils.descriptorToDeclaration(findDescriptorToRename(classDescriptor))!!
 
             val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
 

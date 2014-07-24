@@ -42,6 +42,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 
 public class ConvertMemberToExtension extends BaseIntentionAction {
@@ -114,11 +115,12 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
                                (returnTypeRef != null ? ": " + returnTypeRef.getText() : "") +
                                body(member);
 
-        JetDeclaration extension = JetPsiFactory.createDeclaration(project, extensionText, JetDeclaration.class);
+        JetPsiFactory psiFactory = JetPsiFactory(member);
+        JetDeclaration extension = psiFactory.<JetDeclaration>createDeclaration(extensionText);
 
         PsiElement added = file.addAfter(extension, outermostParent);
-        file.addAfter(JetPsiFactory.createNewLine(project), outermostParent);
-        file.addAfter(JetPsiFactory.createNewLine(project), outermostParent);
+        file.addAfter(psiFactory.createNewLine(), outermostParent);
+        file.addAfter(psiFactory.createNewLine(), outermostParent);
         member.delete();
 
         CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(added);
@@ -128,7 +130,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
             int caretOffset = added.getTextRange().getStartOffset() + caretAnchor;
             JetSimpleNameExpression anchor = PsiTreeUtil.findElementOfClassAtOffset(file, caretOffset, JetSimpleNameExpression.class, false);
             if (anchor != null && CARET_ANCHOR.equals(anchor.getReferencedName())) {
-                JetExpression throwException = JetPsiFactory.createExpression(project, THROW_UNSUPPORTED_OPERATION_EXCEPTION);
+                JetExpression throwException = psiFactory.createExpression(THROW_UNSUPPORTED_OPERATION_EXCEPTION);
                 PsiElement replaced = anchor.replace(throwException);
                 TextRange range = replaced.getTextRange();
                 editor.getCaretModel().moveToOffset(range.getStartOffset());

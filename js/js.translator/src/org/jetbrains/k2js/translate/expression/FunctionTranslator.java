@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.k2js.translate.context.AliasingContext;
 import org.jetbrains.k2js.translate.context.Namer;
@@ -70,7 +69,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         this.functionDeclaration = functionDeclaration;
         this.functionObject = context().getFunctionObject(descriptor);
         assert this.functionObject.getParameters().isEmpty()
-                : message(bindingContext(), descriptor, "Function " + functionDeclaration.getText() + " processed for the second time.");
+                : message(descriptor, "Function " + functionDeclaration.getText() + " processed for the second time.");
         //NOTE: it's important we compute the context before we start the computation
         this.functionBodyContext = getFunctionBodyContext();
     }

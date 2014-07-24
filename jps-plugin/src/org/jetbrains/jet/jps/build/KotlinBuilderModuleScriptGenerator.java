@@ -30,8 +30,6 @@ import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
-import org.jetbrains.jps.incremental.messages.BuildMessage;
-import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.model.java.JpsAnnotationRootType;
 import org.jetbrains.jps.model.java.JpsJavaSdkType;
 import org.jetbrains.jps.model.library.JpsLibrary;
@@ -102,7 +100,7 @@ public class KotlinBuilderModuleScriptGenerator {
 
         File scriptFile = File.createTempFile("kjps", StringUtil.sanitizeJavaIdentifier(chunk.getName()) + ".script.xml");
 
-        writeScriptToFile(context, builder.asText(), scriptFile);
+        FileUtil.writeToFile(scriptFile, builder.asText().toString());
 
         return scriptFile;
     }
@@ -129,15 +127,6 @@ public class KotlinBuilderModuleScriptGenerator {
                 processor.processAnnotationRoots(findAnnotationRoots(target));
             }
         };
-    }
-
-    private static void writeScriptToFile(CompileContext context, CharSequence moduleScriptText, File scriptFile) throws IOException {
-        FileUtil.writeToFile(scriptFile, moduleScriptText.toString());
-        context.processMessage(new CompilerMessage(
-                "Kotlin",
-                BuildMessage.Kind.INFO,
-                "Created script file: " + scriptFile
-        ));
     }
 
     @NotNull

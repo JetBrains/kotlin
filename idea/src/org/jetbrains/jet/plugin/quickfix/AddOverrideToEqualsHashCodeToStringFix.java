@@ -84,7 +84,7 @@ public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<P
 
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(file);
+        Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(file.getProject());
 
         for (JetFile jetFile : files) {
             for (Diagnostic diagnostic : ResolvePackage.getBindingContext(jetFile).getDiagnostics()) {

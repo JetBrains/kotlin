@@ -18,6 +18,7 @@ package org.jetbrains.jet.jps.build;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -53,6 +54,19 @@ public class KotlinSourceFileCollector {
             }
         });
         return sourceFiles;
+    }
+
+    @NotNull
+    public static List<String> getRemovedKotlinFiles(
+            @NotNull DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
+            @NotNull ModuleBuildTarget target
+    ) throws IOException {
+        return ContainerUtil.filter(dirtyFilesHolder.getRemovedFiles(target), new Condition<String>() {
+            @Override
+            public boolean value(String s) {
+                return FileUtilRt.extensionEquals(s, "kt");
+            }
+        });
     }
 
     @NotNull
@@ -105,7 +119,7 @@ public class KotlinSourceFileCollector {
     }
 
     private static boolean isKotlinSourceFile(File file) {
-        return file.getPath().endsWith(".kt");
+        return FileUtilRt.extensionEquals(file.getName(), "kt");
     }
 
     private KotlinSourceFileCollector() {}

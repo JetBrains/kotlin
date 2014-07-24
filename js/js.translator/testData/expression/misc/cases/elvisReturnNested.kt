@@ -6,10 +6,6 @@
 
 package foo
 
-fun assertEquals<T>(expected: T, actual: T) {
-    if (expected != actual) throw Exception("expected: $expected, actual: $actual")
-}
-
 fun firstNotNullLen(s1 : String?, s2 : String?, s3 : String?) : Int {
     val len = (s1?.length() ?: s2?.length()) ?:
                 (s2?.length() ?: s3?.length()) ?:

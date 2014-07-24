@@ -35,13 +35,10 @@ import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -125,7 +122,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
         ClassDescriptor classDescriptor = getTrace().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe());
         if (classDescriptor != null) {
-            PsiElement element = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+            PsiElement element = DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
             if (element != null && PsiSearchScopeUtil.isInScope(searchScope, element)) {
                 return Collections.singletonList((JetClassOrObject) element);
             }

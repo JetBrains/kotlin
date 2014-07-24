@@ -1,4 +1,5 @@
 // PARAM_TYPES: A
+// PARAM_DESCRIPTOR: val foo: A defined in testProp
 class A {
     fun invoke() = 20
 }

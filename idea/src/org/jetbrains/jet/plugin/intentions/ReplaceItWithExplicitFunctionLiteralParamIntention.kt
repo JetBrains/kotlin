@@ -30,9 +30,9 @@ import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBaseIntentionAction() {
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
@@ -41,10 +41,9 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBa
         val simpleNameReference = simpleNameExpression.getReference() as JetReference?
         val target = simpleNameReference?.resolveToDescriptors()?.first()!!
 
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(simpleNameExpression)
-        val funcExpr = BindingContextUtils.descriptorToDeclaration(bindingContext, target.getContainingDeclaration()!!) as JetFunctionLiteral
+        val funcExpr = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral
 
-        val newExpr = JetPsiFactory.createExpression(project, "{ it -> 42 }") as JetFunctionLiteralExpression
+        val newExpr = JetPsiFactory(simpleNameExpression).createExpression("{ it -> 42 }") as JetFunctionLiteralExpression
         funcExpr.addRangeAfter(newExpr.getFunctionLiteral().getValueParameterList(),
                                newExpr.getFunctionLiteral().getArrowNode()!!.getPsi(),
                                funcExpr.getOpenBraceNode().getPsi())

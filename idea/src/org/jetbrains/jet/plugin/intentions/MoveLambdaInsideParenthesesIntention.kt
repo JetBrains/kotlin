@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(
         "move.lambda.inside.parentheses", javaClass()) {
@@ -44,11 +44,11 @@ public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<Je
         }
         if (element.getValueArguments().any { it?.getArgumentName() != null}) {
             val context = element.getBindingContext()
-            val resolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
+            val resolvedCall = element.getResolvedCall(context)
             val literalName = resolvedCall?.getResultingDescriptor()?.getValueParameters()?.last?.getName().toString()
             sb.append("$literalName = ")
         }
         val newExpression = "$funName${sb.toString()}${element.getFunctionLiteralArguments()[0].getText()})"
-        element.replace(JetPsiFactory.createExpression(element.getProject(),newExpression))
+        element.replace(JetPsiFactory(element).createExpression(newExpression))
     }
 }

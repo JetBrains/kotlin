@@ -16,13 +16,12 @@
 
 package org.jetbrains.jet.completion.handlers;
 
-import com.intellij.codeInsight.completion.CompletionTestCase;
+import org.jetbrains.jet.plugin.KotlinCompletionTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 
-public class CompletionMultifileHandlerTest extends CompletionTestCase {
-
+public class CompletionMultifileHandlerTest extends KotlinCompletionTestCase {
     public void testExtensionFunctions() throws Exception {
         doTest();
     }

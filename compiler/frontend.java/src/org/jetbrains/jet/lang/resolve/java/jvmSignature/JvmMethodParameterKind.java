@@ -16,21 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.java.jvmSignature;
 
-import java.util.EnumSet;
-
 public enum JvmMethodParameterKind {
     VALUE,
     THIS,
     OUTER,
     RECEIVER,
     CAPTURED_LOCAL_VARIABLE,
-    ENUM_NAME,
-    ENUM_ORDINAL,
-    SUPER_OF_ANONYMOUS_CALL_PARAM;
-
-    private static final EnumSet<JvmMethodParameterKind> SKIPPED_IN_GENERIC_SIGNATURE = EnumSet.of(OUTER, ENUM_NAME, ENUM_ORDINAL);
+    ENUM_NAME_OR_ORDINAL,
+    SUPER_CALL_PARAM;
 
     public boolean isSkippedInGenericSignature() {
-        return SKIPPED_IN_GENERIC_SIGNATURE.contains(this);
+        return this == OUTER || this == ENUM_NAME_OR_ORDINAL;
     }
 }

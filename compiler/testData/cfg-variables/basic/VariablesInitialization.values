@@ -18,14 +18,14 @@ fun bar(foo: Foo) {
     42
 }
 ---------------------
-                         <v0>: {<: Foo}   NEW: magic(foo: Foo) -> <v0>
-foo                      <v1>: {<: Foo}   NEW: r(foo) -> <v1>         
-c                        <v2>: *          NEW: r(c|<v1>) -> <v2>      
-foo.c                    <v2>: *          COPY                        
-foo                      <v3>: {<: Foo}   NEW: r(foo) -> <v3>         
-2                        <v4>: Int        NEW: r(2) -> <v4>           
-42                       <v5>: *          NEW: r(42) -> <v5>          
-{ foo.c foo.c = 2 42 }   <v5>: *          COPY                        
+                         <v0>: {<: Foo}   NEW: magic[FAKE_INITIALIZER](foo: Foo) -> <v0>
+foo                      <v1>: {<: Foo}   NEW: r(foo) -> <v1>                           
+c                        <v2>: *          NEW: r(c|<v1>) -> <v2>                        
+foo.c                    <v2>: *          COPY                                          
+foo                      <v3>: {<: Foo}   NEW: r(foo) -> <v3>                           
+2                        <v4>: Int        NEW: r(2) -> <v4>                             
+42                       <v5>: *          NEW: r(42) -> <v5>                            
+{ foo.c foo.c = 2 42 }   <v5>: *          COPY                                          
 =====================
 == Foo ==
 trait Foo {

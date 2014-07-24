@@ -184,19 +184,19 @@ public class CallableDescriptorCollectors<D extends CallableDescriptor> implemen
         @NotNull
         @Override
         public Collection<D> getNonExtensionsByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterOutMembersFromLibrarySource(delegate.getNonExtensionsByName(scope, name, bindingTrace), bindingTrace);
+            return filterOutMembersFromLibrarySource(delegate.getNonExtensionsByName(scope, name, bindingTrace));
         }
 
         @NotNull
         @Override
         public Collection<D> getMembersByName(@NotNull JetType receiver, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterOutMembersFromLibrarySource(delegate.getMembersByName(receiver, name, bindingTrace), bindingTrace);
+            return filterOutMembersFromLibrarySource(delegate.getMembersByName(receiver, name, bindingTrace));
         }
 
         @NotNull
         @Override
         public Collection<D> getNonMembersByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterOutMembersFromLibrarySource(delegate.getNonMembersByName(scope, name, bindingTrace), bindingTrace);
+            return filterOutMembersFromLibrarySource(delegate.getNonMembersByName(scope, name, bindingTrace));
         }
 
         @Override

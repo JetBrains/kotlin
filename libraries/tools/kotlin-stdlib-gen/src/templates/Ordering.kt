@@ -92,7 +92,7 @@ fun ordering(): List<GenericFunction> {
         exclude(Strings)
     }
 
-    templates add f("sortBy(order: (T) -> R)") {
+    templates add f("sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R)") {
         inline(true)
 
         doc {
@@ -137,7 +137,7 @@ fun ordering(): List<GenericFunction> {
         only(Streams, ArraysOfObjects, ArraysOfPrimitives, Iterables)
     }
 
-    templates add f("sortDescendingBy(order: (T) -> R)") {
+    templates add f("sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R)") {
         inline(true)
 
         doc {

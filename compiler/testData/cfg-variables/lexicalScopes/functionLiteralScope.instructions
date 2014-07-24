@@ -38,21 +38,21 @@ sink:
     }
 ---------------------
 L3:
-  3 <START>                             INIT: in: {} out: {}
-    v(x: Int)                           INIT: in: {} out: {x=D}
-    magic(x: Int) -> <v0>               INIT: in: {x=D} out: {x=D}
-    w(x|<v0>)                           INIT: in: {x=D} out: {x=ID}
-  4 mark(val a = x + b)                 INIT: in: {x=ID} out: {x=ID}
-    v(val a = x + b)                    INIT: in: {x=ID} out: {a=D, x=ID}          USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
-    r(x) -> <v1>                        INIT: in: {a=D, x=ID} out: {a=D, x=ID}     USE: in: {b=READ} out: {b=READ, x=READ}
-    r(b) -> <v2>                                                                   USE: in: {} out: {b=READ}
+  3 <START>                                    INIT: in: {} out: {}
+    v(x: Int)                                  INIT: in: {} out: {x=D}
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>    INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                  INIT: in: {x=D} out: {x=ID}
+  4 mark(val a = x + b)                        INIT: in: {x=ID} out: {x=ID}
+    v(val a = x + b)                           INIT: in: {x=ID} out: {a=D, x=ID}          USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
+    r(x) -> <v1>                               INIT: in: {a=D, x=ID} out: {a=D, x=ID}     USE: in: {b=READ} out: {b=READ, x=READ}
+    r(b) -> <v2>                                                                          USE: in: {} out: {b=READ}
     mark(x + b)
-    call(+, plus|<v1>, <v2>) -> <v3>
-    w(a|<v3>)                           INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
+    call(x + b, plus|<v1>, <v2>) -> <v3>
+    w(a|<v3>)                                  INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
 L4:
-  3 <END>                               INIT: in: {x=ID} out: {x=ID}
+  3 <END>                                      INIT: in: {x=ID} out: {x=ID}
 error:
-    <ERROR>                             INIT: in: {} out: {}
+    <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                              INIT: in: {x=ID} out: {x=ID}               USE: in: {} out: {}
+    <SINK>                                     INIT: in: {x=ID} out: {x=ID}               USE: in: {} out: {}
 =====================

@@ -1,4 +1,4 @@
-class A() {
+class A {
 
     public fun foo() {
         privateStatic1()

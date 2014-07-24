@@ -1,14 +1,14 @@
-class A() {
+class A {
     fun foo() {
     }
 }
 
-class B() : A() {
+class B : A() {
     override fun foo() {
     }
 }
 
-class C() : B() {
+class C : B() {
     override fun foo() {
     }
 }

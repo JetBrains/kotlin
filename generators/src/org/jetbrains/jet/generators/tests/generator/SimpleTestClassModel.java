@@ -40,6 +40,7 @@ public class SimpleTestClassModel implements TestClassModel {
     };
     private final File rootFile;
     private final boolean recursive;
+    private final boolean excludeParentDirs;
     private final Pattern filenamePattern;
     private final String doTestMethodName;
     private final String testClassName;
@@ -50,12 +51,14 @@ public class SimpleTestClassModel implements TestClassModel {
     public SimpleTestClassModel(
             @NotNull File rootFile,
             boolean recursive,
+            boolean excludeParentDirs,
             @NotNull Pattern filenamePattern,
             @NotNull String doTestMethodName,
             @NotNull String testClassName
     ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
+        this.excludeParentDirs = excludeParentDirs;
         this.filenamePattern = filenamePattern;
         this.doTestMethodName = doTestMethodName;
         this.testClassName = testClassName;
@@ -76,7 +79,7 @@ public class SimpleTestClassModel implements TestClassModel {
                     if (file.isDirectory()) {
                         if (dirHasFilesInside(file)) {
                             String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
-                            children.add(new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName, innerTestClassName));
+                            children.add(new SimpleTestClassModel(file, true, excludeParentDirs, filenamePattern, doTestMethodName, innerTestClassName));
                         }
                     }
                 }
@@ -96,6 +99,19 @@ public class SimpleTestClassModel implements TestClassModel {
         });
     }
 
+    private static boolean dirHasSubDirs(@NotNull File dir) {
+        File[] listFiles = dir.listFiles();
+        if (listFiles == null) {
+            return false;
+        }
+        for (File file : listFiles) {
+            if (file.isDirectory()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @NotNull
     @Override
     public Collection<TestMethodModel> getTestMethods() {
@@ -112,6 +128,11 @@ public class SimpleTestClassModel implements TestClassModel {
                 if (listFiles != null) {
                     for (File file : listFiles) {
                         if (filenamePattern.matcher(file.getName()).matches()) {
+
+                            if (file.isDirectory() && excludeParentDirs && dirHasSubDirs(file)) {
+                                continue;
+                            }
+
                             result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern));
                         }
                     }

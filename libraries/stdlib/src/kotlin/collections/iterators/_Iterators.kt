@@ -100,7 +100,7 @@ public fun <T> Iterator<T>.filter(predicate: (T) -> Boolean) : Iterator<T> {
  * Returns an iterator over elements which don't match the given *predicate*
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
-public inline fun <T> Iterator<T>.filterNot(predicate: (T) -> Boolean) : Iterator<T> {
+public inline fun <T> Iterator<T>.filterNot(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) predicate: (T) -> Boolean) : Iterator<T> {
     return filter {!predicate(it)}
 }
 
@@ -392,7 +392,7 @@ public fun <T> Iterator<T>.reverse() : List<T> {
  * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
-public inline fun <T, R: Comparable<R>> Iterator<T>.sortBy(f: (T) -> R) : List<T> {
+public inline fun <T, R: Comparable<R>> Iterator<T>.sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) f: (T) -> R) : List<T> {
     val sortedList = toCollection(ArrayList<T>())
     val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) ->
         val xr = f(x)

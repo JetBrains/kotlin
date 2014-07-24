@@ -17,22 +17,23 @@
 package org.jetbrains.jet.lang.resolve.java.sam;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 
-/* package */ class SamAdapterFunctionDescriptor extends SimpleFunctionDescriptorImpl
-        implements SamAdapterDescriptor<SimpleFunctionDescriptor> {
-    private final SimpleFunctionDescriptor declaration;
+/* package */ class SamAdapterFunctionDescriptor extends JavaMethodDescriptor implements SamAdapterDescriptor<JavaMethodDescriptor> {
+    private final JavaMethodDescriptor declaration;
 
-    public SamAdapterFunctionDescriptor(@NotNull SimpleFunctionDescriptor declaration) {
-        super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(), declaration.getName(), Kind.SYNTHESIZED);
+    public SamAdapterFunctionDescriptor(@NotNull JavaMethodDescriptor declaration) {
+        super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(),
+              declaration.getName(), Kind.SYNTHESIZED, declaration.getSource());
         this.declaration = declaration;
+        setHasStableParameterNames(declaration.hasStableParameterNames());
+        setHasSynthesizedParameterNames(declaration.hasSynthesizedParameterNames());
     }
 
     @NotNull
     @Override
-    public SimpleFunctionDescriptor getBaseForSynthesized() {
+    public JavaMethodDescriptor getOriginForSam() {
         return declaration;
     }
 }

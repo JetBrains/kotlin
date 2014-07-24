@@ -7,16 +7,16 @@ L0:
   1 <START>
   2 mark({ false || (return false) })
     r(false) -> <v0>
-    jt(L2|<v0>)                                    NEXT:[mark((return false)), magic(false || (return false)|<v0>) -> <v2>]
+    jt(L2|<v0>)                                        NEXT:[mark((return false)), magic[OR](false || (return false)|<v0>) -> <v2>]
     mark((return false))
     r(false) -> <v1>
-    ret(*|<v1>) L1                                 NEXT:[<END>]
+    ret(*|<v1>) L1                                     NEXT:[<END>]
 L2:
-    magic(false || (return false)|<v0>) -> <v2>    PREV:[jt(L2|<v0>)]
+    magic[OR](false || (return false)|<v0>) -> <v2>    PREV:[jt(L2|<v0>)]
 L1:
-  1 <END>                                          NEXT:[<SINK>]                                                               PREV:[ret(*|<v1>) L1, magic(false || (return false)|<v0>) -> <v2>]
+  1 <END>                                              NEXT:[<SINK>]                                                                   PREV:[ret(*|<v1>) L1, magic[OR](false || (return false)|<v0>) -> <v2>]
 error:
-    <ERROR>                                        PREV:[]
+    <ERROR>                                            PREV:[]
 sink:
-    <SINK>                                         PREV:[<ERROR>, <END>]
+    <SINK>                                             PREV:[<ERROR>, <END>]
 =====================

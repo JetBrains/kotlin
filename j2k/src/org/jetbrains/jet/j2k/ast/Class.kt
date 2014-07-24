@@ -30,24 +30,27 @@ open class Class(
 ) : Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) {
+        builder.append(body.factoryFunctions, "\n", "", "\n\n")
+
         builder.append(annotations)
                 .appendWithSpaceAfter(presentationModifiers())
                 .append(keyword)
                 .append(" ")
                 .append(name)
                 .append(typeParameterList)
-        appendPrimaryConstructorSignature(builder)
+
+        if (body.primaryConstructorSignature != null) {
+            builder.append(body.primaryConstructorSignature)
+        }
+
         appendBaseTypes(builder)
         typeParameterList.appendWhere(builder)
-        body.append(builder, this)
+
+        body.append(builder)
     }
 
     protected open val keyword: String
         get() = "class"
-
-    protected open fun appendPrimaryConstructorSignature(builder: CodeBuilder) {
-        body.primaryConstructor?.appendSignature(builder) ?: builder.append("()")
-    }
 
     protected fun appendBaseTypes(builder: CodeBuilder) {
         builder.append(baseClassSignatureWithParams(builder) + implementsTypes.map { { builder.append(it) } }, ", ", ":")

@@ -20,12 +20,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.TypeDeserializer;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractLazyTypeParameterDescriptor;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParamet
             boolean isReified,
             int index
     ) {
-        super(storageManager, containingDeclaration, name, variance, isReified, index);
+        super(storageManager, containingDeclaration, name, variance, isReified, index, SourceElement.NO_SOURCE);
         this.proto = proto;
         this.typeDeserializer = typeDeserializer;
     }

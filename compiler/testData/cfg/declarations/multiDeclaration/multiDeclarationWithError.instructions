@@ -7,21 +7,21 @@ fun foo(x: Int) {
 L0:
   1 <START>
     v(x: Int)
-    magic(x: Int) -> <v0>
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>
     w(x|<v0>)
   2 mark({ val (a, b) = x a })
     r(x) -> <v1>
     v(a)
-    magic(a|<v1>) -> <v2>
+    magic[UNRESOLVED_CALL](a|<v1>) -> <v2>
     w(a|<v2>)
     v(b)
-    magic(b|<v1>) -> <v3>
+    magic[UNRESOLVED_CALL](b|<v1>) -> <v3>
     w(b|<v3>)
     r(a) -> <v4>
 L1:
-  1 <END>                         NEXT:[<SINK>]
+  1 <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                       PREV:[]
+    <ERROR>                                    PREV:[]
 sink:
-    <SINK>                        PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<ERROR>, <END>]
 =====================

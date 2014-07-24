@@ -1,6 +1,6 @@
-abstract class A()
+abstract class A
 
-class C() {
+class C {
     fun foo() {
         val a = object : A() {
             override fun toString(): String {

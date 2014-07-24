@@ -59,9 +59,10 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @NotNull Visibility visibility,
             boolean isVar,
             @NotNull Name name,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, annotations, name, null);
+        super(containingDeclaration, annotations, name, null, source);
         this.isVar = isVar;
         this.modality = modality;
         this.visibility = visibility;
@@ -77,9 +78,10 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @NotNull Visibility visibility,
             boolean isVar,
             @NotNull Name name,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull SourceElement source
     ) {
-        return new PropertyDescriptorImpl(containingDeclaration, null, annotations, modality, visibility, isVar, name, kind);
+        return new PropertyDescriptorImpl(containingDeclaration, null, annotations, modality, visibility, isVar, name, kind, source);
     }
 
     public void setType(
@@ -243,7 +245,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
                 substitutedDescriptor, getter.getAnnotations(), newModality, convertVisibility(getter.getVisibility(), newVisibility),
-                getter.hasBody(), getter.isDefault(), kind, getter.getOriginal()
+                getter.hasBody(), getter.isDefault(), kind, getter.getOriginal(), SourceElement.NO_SOURCE
         );
         if (newGetter != null) {
             JetType returnType = getter.getReturnType();
@@ -251,7 +253,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
                 substitutedDescriptor, setter.getAnnotations(), newModality, convertVisibility(setter.getVisibility(), newVisibility),
-                setter.hasBody(), setter.isDefault(), kind, setter.getOriginal()
+                setter.hasBody(), setter.isDefault(), kind, setter.getOriginal(), SourceElement.NO_SOURCE
         );
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(newSetter, setter, substitutor);
@@ -292,7 +294,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @NotNull Kind kind
     ) {
         return new PropertyDescriptorImpl(newOwner, original,
-                                          getAnnotations(), newModality, newVisibility, isVar(), getName(), kind);
+                                          getAnnotations(), newModality, newVisibility, isVar(), getName(), kind, SourceElement.NO_SOURCE);
     }
 
     @NotNull

@@ -1,0 +1,10 @@
+// SIBLING:
+fun main(args: Array<String>) {
+    val a = i()
+    fun foo() = a
+}
+
+fun i(): Int {
+    val a = 1
+    return a
+}

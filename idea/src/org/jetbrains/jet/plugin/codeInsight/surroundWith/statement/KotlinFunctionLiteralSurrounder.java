@@ -27,6 +27,8 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.MoveDeclarationsOutHelper;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder {
     @Nullable
     @Override
@@ -38,9 +40,10 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
             return null;
         }
 
-        JetCallExpression callExpression = (JetCallExpression) JetPsiFactory.createExpression(project, "run {\n}");
+        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetCallExpression callExpression = (JetCallExpression) psiFactory.createExpression("run {\n}");
         callExpression = (JetCallExpression) container.addAfter(callExpression, statements[statements.length - 1]);
-        container.addBefore(JetPsiFactory.createWhiteSpace(project), callExpression);
+        container.addBefore(psiFactory.createWhiteSpace(), callExpression);
 
         JetFunctionLiteralExpression bodyExpression = (JetFunctionLiteralExpression) callExpression.getFunctionLiteralArguments().get(0);
         assert bodyExpression != null : "Body expression should exists for " + callExpression.getText();

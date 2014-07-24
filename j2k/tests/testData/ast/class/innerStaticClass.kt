@@ -1,3 +1,3 @@
-class S() {
-    class Inner()
+class S {
+    class Inner
 }

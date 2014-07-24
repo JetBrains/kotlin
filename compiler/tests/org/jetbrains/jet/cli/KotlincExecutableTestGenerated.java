@@ -74,16 +74,6 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest("compiler/testData/cli/jvm/nonExistingSourcePath.args");
         }
         
-        @TestMetadata("printArguments.args")
-        public void testPrintArguments() throws Exception {
-            doJvmTest("compiler/testData/cli/jvm/printArguments.args");
-        }
-        
-        @TestMetadata("script.args")
-        public void testScript() throws Exception {
-            doJvmTest("compiler/testData/cli/jvm/script.args");
-        }
-        
         @TestMetadata("signatureClash.args")
         public void testSignatureClash() throws Exception {
             doJvmTest("compiler/testData/cli/jvm/signatureClash.args");
@@ -184,11 +174,6 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         @TestMetadata("outputPrefixFileNotFound.args")
         public void testOutputPrefixFileNotFound() throws Exception {
             doJsTest("compiler/testData/cli/js/outputPrefixFileNotFound.args");
-        }
-        
-        @TestMetadata("printArgumentsWithManyValue.args")
-        public void testPrintArgumentsWithManyValue() throws Exception {
-            doJsTest("compiler/testData/cli/js/printArgumentsWithManyValue.args");
         }
         
         @TestMetadata("simple2js.args")

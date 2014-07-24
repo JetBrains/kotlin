@@ -42,14 +42,14 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
         String stderr = processOutput.getStderr();
         int exitCode = processOutput.getExitCode();
 
-        String normalizedOutput = CliBaseTest.getNormalizedCompilerOutput(stdout, ExitCode.values()[exitCode], testDataDir);
+        String normalizedOutput = CliBaseTest.getNormalizedCompilerOutput(stderr, ExitCode.values()[exitCode], testDataDir);
         File outFile = new File(argsFilePath.replace(".args", ".out"));
 
         try {
             JetTestUtils.assertEqualsToFile(outFile, normalizedOutput);
         }
         catch (Exception e) {
-            System.err.println("exitcode " + exitCode);
+            System.err.println("exit code " + exitCode);
             System.err.println("<stdout>" + stdout + "</stdout>");
             System.err.println("<stderr>" + stderr + "</stderr>");
 

@@ -34,6 +34,8 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class ChangeToConstructorInvocationFix extends JetIntentionAction<JetDelegatorToSuperClass> {
 
     public ChangeToConstructorInvocationFix(@NotNull JetDelegatorToSuperClass element) {
@@ -77,7 +79,7 @@ public class ChangeToConstructorInvocationFix extends JetIntentionAction<JetDele
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetDelegatorToSuperClass delegator = (JetDelegatorToSuperClass) element.copy();
-        JetClass aClass = JetPsiFactory.createClass(project, "class A : " + delegator.getText() + "()");
+        JetClass aClass = JetPsiFactory(file).createClass("class A : " + delegator.getText() + "()");
         List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
         assert delegationSpecifiers.size() == 1;
         JetDelegationSpecifier specifier = delegationSpecifiers.iterator().next();

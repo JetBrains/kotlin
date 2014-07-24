@@ -16,17 +16,17 @@ fun foo() {
         use(a)
     }
 ---------------------
-                       <v0>: Int                NEW: magic(x: Int) -> <v0>           
-x                      <v1>: Int                NEW: r(x) -> <v1>                    
-a                      <v2>: Int                NEW: r(a) -> <v2>                    
-x + a                  <v3>: Int                NEW: call(+, plus|<v1>, <v2>) -> <v3>
-a                      <v4>: {<: Any?}          NEW: r(a) -> <v4>                    
-use(a)                 <v5>: {<: Array<Any?>}   NEW: call(use, use|<v4>) -> <v5>     
-val y = x + a use(a)   <v5>: {<: Array<Any?>}   COPY                                 
+                       <v0>: Int                NEW: magic[FAKE_INITIALIZER](x: Int) -> <v0>
+x                      <v1>: Int                NEW: r(x) -> <v1>                           
+a                      <v2>: Int                NEW: r(a) -> <v2>                           
+x + a                  <v3>: Int                NEW: call(x + a, plus|<v1>, <v2>) -> <v3>   
+a                      <v4>: *                  NEW: r(a) -> <v4>
+use(a)                 <v5>: {<: Array<Any?>}   NEW: call(use(a), use|<v4>) -> <v5>         
+val y = x + a use(a)   <v5>: {<: Array<Any?>}   COPY                                        
 =====================
 == use ==
 fun use(vararg a: Any?) = a
 ---------------------
-    <v0>: {<: Array<Any?>}   NEW: magic(vararg a: Any?) -> <v0>
-a   <v1>: {<: Array<Any?>}   NEW: r(a) -> <v1>                 
+    <v0>: {<: Array<Any?>}   NEW: magic[FAKE_INITIALIZER](vararg a: Any?) -> <v0>
+a   <v1>: {<: Array<Any?>}   NEW: r(a) -> <v1>                                   
 =====================

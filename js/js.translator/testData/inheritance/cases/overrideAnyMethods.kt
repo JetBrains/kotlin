@@ -23,10 +23,6 @@ class Foo(val name: String) {
     override fun toString(): String = "Foo($name)"
 }
 
-fun assertEquals(expected: Any, actual: Any) {
-    if (expected != actual) throw Exception("expected = $expected, actual = $actual")
-}
-
 fun box(): String {
     val james = Foo("James")
     val anotherJames = Foo("James")

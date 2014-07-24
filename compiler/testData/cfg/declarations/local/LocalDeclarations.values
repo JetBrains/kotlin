@@ -22,7 +22,7 @@ class C() {
 == doSmth ==
 fun doSmth(i: Int) {}
 ---------------------
-    <v0>: Int   NEW: magic(i: Int) -> <v0>
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](i: Int) -> <v0>
 =====================
 == test1 ==
 fun test1() {
@@ -34,7 +34,7 @@ fun test1() {
     }
 }
 ---------------------
-                                    <v0>: <no name provided>   NEW: magic($x) -> <v0>                           
+                                    <v0>: <no name provided>   NEW: magic[IMPLICIT_RECEIVER]($x) -> <v0>        
 1                                   <v1>: Int                  NEW: r(1) -> <v1>                                
 object { val x : Int { $x = 1 } }   <v2>: <no name provided>   NEW: r(object { val x : Int { $x = 1 } }) -> <v2>
 =====================
@@ -46,8 +46,8 @@ object O {
     }
 }
 ---------------------
-    <v0>: O     NEW: magic($x) -> <v0>
-1   <v1>: Int   NEW: r(1) -> <v1>     
+    <v0>: O     NEW: magic[IMPLICIT_RECEIVER]($x) -> <v0>
+1   <v1>: Int   NEW: r(1) -> <v1>                        
 =====================
 == test2 ==
 fun test2() {
@@ -78,8 +78,8 @@ fun inner_bar() {
             y = 10
         }
 ---------------------
-     <v0>: <no name provided>   NEW: magic(y) -> <v0>
-10   <v1>: Int                  NEW: r(10) -> <v1>   
+     <v0>: <no name provided>   NEW: magic[IMPLICIT_RECEIVER](y) -> <v0>
+10   <v1>: Int                  NEW: r(10) -> <v1>                      
 =====================
 == test4 ==
 fun test4() {
@@ -95,7 +95,7 @@ fun test4() {
     }
 }
 ---------------------
-                                                                     <v0>: <no name provided>   NEW: magic($x) -> <v0>                                                            
+                                                                     <v0>: <no name provided>   NEW: magic[IMPLICIT_RECEIVER]($x) -> <v0>                                         
 1                                                                    <v1>: Int                  NEW: r(1) -> <v1>                                                                 
 object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }   <v2>: <no name provided>   NEW: r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }) -> <v2>
 =====================
@@ -104,8 +104,8 @@ fun ggg() {
             y = 10
         }
 ---------------------
-     <v0>: <no name provided>   NEW: magic(y) -> <v0>
-10   <v1>: Int                  NEW: r(10) -> <v1>   
+     <v0>: <no name provided>   NEW: magic[IMPLICIT_RECEIVER](y) -> <v0>
+10   <v1>: Int                  NEW: r(10) -> <v1>                      
 =====================
 == test5 ==
 fun test5() {
@@ -123,7 +123,7 @@ fun test5() {
     }
 }
 ---------------------
-                                                                          <v1>: <no name provided>   NEW: magic($x) -> <v1>                                                                 
+                                                                          <v1>: <no name provided>   NEW: magic[IMPLICIT_RECEIVER]($x) -> <v1>                                              
 1                                                                         <v0>: Int                  NEW: r(1) -> <v0>                                                                      
 2                                                                         <v2>: Int                  NEW: r(2) -> <v2>                                                                      
 object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }   <v3>: <no name provided>   NEW: r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v3>
@@ -133,14 +133,14 @@ fun foo() {
             x = 3
         }
 ---------------------
-    <v0>: <no name provided>   NEW: magic(x) -> <v0>
-3   <v1>: Int                  NEW: r(3) -> <v1>    
+    <v0>: <no name provided>   NEW: magic[IMPLICIT_RECEIVER](x) -> <v0>
+3   <v1>: Int                  NEW: r(3) -> <v1>                       
 =====================
 == bar ==
 fun bar() {
             x = 4
         }
 ---------------------
-    <v0>: <no name provided>   NEW: magic(x) -> <v0>
-4   <v1>: Int                  NEW: r(4) -> <v1>    
+    <v0>: <no name provided>   NEW: magic[IMPLICIT_RECEIVER](x) -> <v0>
+4   <v1>: Int                  NEW: r(4) -> <v1>                       
 =====================

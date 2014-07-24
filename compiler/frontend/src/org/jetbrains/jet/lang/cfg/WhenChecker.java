@@ -42,15 +42,28 @@ public final class WhenChecker {
         return !isUnit && !isStatement && !isWhenExhaustive(expression, trace);
     }
 
-    private static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
+    public static boolean isWhenByEnum(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
+        return getSubjectClassDescriptorIfEnum(expression, context) != null;
+    }
+
+    private static ClassDescriptor getSubjectClassDescriptorIfEnum(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
         JetExpression subjectExpression = expression.getSubjectExpression();
-        if (subjectExpression == null) return false;
-        JetType type = trace.get(BindingContext.EXPRESSION_TYPE, subjectExpression);
-        if (type == null) return false;
+        if (subjectExpression == null) return null;
+        JetType type = context.get(BindingContext.EXPRESSION_TYPE, subjectExpression);
+        if (type == null) return null;
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if (!(declarationDescriptor instanceof ClassDescriptor)) return false;
+        if (!(declarationDescriptor instanceof ClassDescriptor)) return null;
         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS || classDescriptor.getModality().isOverridable()) return false;
+        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS || classDescriptor.getModality().isOverridable()) return null;
+
+        return classDescriptor;
+    }
+
+    private static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
+        ClassDescriptor classDescriptor = getSubjectClassDescriptorIfEnum(expression, trace.getBindingContext());
+
+        if (classDescriptor == null) return false;
+
         boolean isExhaust = true;
         boolean notEmpty = false;
         for (DeclarationDescriptor descriptor : classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {

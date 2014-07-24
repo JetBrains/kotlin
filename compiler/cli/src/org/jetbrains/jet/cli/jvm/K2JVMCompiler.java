@@ -19,7 +19,6 @@ package org.jetbrains.jet.cli.jvm;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
@@ -27,6 +26,7 @@ import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
 import org.jetbrains.jet.cli.jvm.compiler.CommandLineScriptUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -34,6 +34,7 @@ import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
+import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -42,7 +43,6 @@ import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -84,7 +84,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
         if (!arguments.script &&
             arguments.module == null &&
-            arguments.src == null &&
             arguments.freeArgs.isEmpty() &&
             !arguments.version
         ) {
@@ -97,24 +96,19 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
         }
         else {
-            if (arguments.src != null) {
-                List<String> sourcePathsSplitByPathSeparator
-                        = Arrays.asList(arguments.src.split(StringUtil.escapeToRegexp(File.pathSeparator)));
-                configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourcePathsSplitByPathSeparator);
-            }
-            for (String freeArg : arguments.freeArgs) {
-                configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, freeArg);
-            }
+            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs);
         }
 
         configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, arguments.script
-                                                                          ? CommandLineScriptUtils.scriptParameters()
-                                                                          : Collections.<AnalyzerScriptParameter>emptyList());
+                                                                  ? CommandLineScriptUtils.scriptParameters()
+                                                                  : Collections.<AnalyzerScriptParameter>emptyList());
 
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, arguments.notNullAssertions);
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);
         configuration.put(JVMConfigurationKeys.ENABLE_INLINE,
                           CompilerArgumentsUtil.optionToBooleanFlag(arguments.inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG));
+        configuration.put(JVMConfigurationKeys.ENABLE_OPTIMIZATION,
+                          CompilerArgumentsUtil.optionToBooleanFlag(arguments.optimize, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG));
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
@@ -123,26 +117,38 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         try {
             configureEnvironment(configuration, arguments);
 
-            File jar = arguments.jar != null ? new File(arguments.jar) : null;
-            File outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
+            String destination = arguments.destination;
+
+            File jar;
+            File outputDir;
+            if (destination != null) {
+                boolean isJar = destination.endsWith(".jar");
+                jar = isJar ? new File(destination) : null;
+                outputDir = isJar ? null : new File(destination);
+            }
+            else {
+                jar = arguments.jar != null ? new File(arguments.jar) : null;
+                outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
+            }
 
             if (arguments.module != null) {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
-                CompileEnvironmentUtil.ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(
+                ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(
                         paths, arguments.module, sanitizedCollector);
                 if (moduleScript.getIncrementalCacheDir() != null) {
                     configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR, new File(moduleScript.getIncrementalCacheDir()));
                 }
 
                 if (outputDir != null) {
-                    messageCollector.report(CompilerMessageSeverity.WARNING, "The '-output' option is ignored because '-module' is specified",
+                    messageCollector.report(CompilerMessageSeverity.WARNING,
+                                            "The '-d' option with a directory destination is ignored because '-module' is specified",
                                             CompilerMessageLocation.NO_LOCATION);
                 }
 
                 File directory = new File(arguments.module).getAbsoluteFile().getParentFile();
-                KotlinToJVMBytecodeCompiler.compileModules(configuration, moduleScript.getModules(),
-                                                                      directory, jar,
-                                                                      arguments.includeRuntime);
+                KotlinToJVMBytecodeCompiler.compileModules(
+                        configuration, moduleScript.getModules(), directory, jar, arguments.includeRuntime
+                );
             }
             else if (arguments.script) {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
@@ -208,7 +214,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         super.checkArguments(argument);
 
         if (!CompilerArgumentsUtil.checkOption(argument.inline)) {
-            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongInlineOptionErrorMessage(argument.inline));
+            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", argument.inline));
+        }
+
+        if (!CompilerArgumentsUtil.checkOption(argument.optimize)) {
+            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", argument.optimize));
         }
     }
 

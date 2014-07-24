@@ -19,14 +19,13 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.*
 
 open class Function(
-        val converter: Converter,
         val name: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
-        val `type`: Type,
+        val returnType: Type,
         val typeParameterList: TypeParameterList,
         val parameterList: ParameterList,
-        var block: Block?,
+        val body: Block?,
         val isInTrait: Boolean
 ) : Member(annotations, modifiers) {
 
@@ -53,14 +52,14 @@ open class Function(
                 .append(parameterList)
                 .append(")")
 
-        if (!`type`.isUnit()) {
-            builder append ":" append `type`
+        if (!returnType.isUnit()) {
+            builder append ":" append returnType
         }
 
         typeParameterList.appendWhere(builder)
 
-        if (block != null) {
-            builder append " " append block!!
+        if (body != null) {
+            builder append " " append body
         }
     }
 }

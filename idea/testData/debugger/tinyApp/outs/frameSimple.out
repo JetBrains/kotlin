@@ -1,0 +1,48 @@
+LineBreakpoint created at frameSimple.kt:9
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameSimple.FrameSimplePackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameSimple.kt:8
+Compile bytecode for val1
+Compile bytecode for val2
+Compile bytecode for topVal1
+Compile bytecode for val1 + topVal1
+package frameSimple
+
+val topVal1 = 1
+
+fun main(args: Array<String>) {
+    val val1 = 1
+    val val2 = "str"
+    //Breakpoint!
+    val1 + topVal1
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: val1
+// RESULT: 1: I
+
+// EXPRESSION: val2
+// RESULT: "str": Ljava/lang/String;
+
+// EXPRESSION: topVal1
+// RESULT: 1: I
+
+// EXPRESSION: val1 + topVal1
+// RESULT: 2: I
+ frame    = main():9, FrameSimplePackage-@packagePartHASH {frameSimple}
+   static   = static = frameSimple.FrameSimplePackage-@packagePartHASH
+     field    = topVal1: int = 1
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
+   local    = val1: int = 1
+   local    = val2: java.lang.String = {@uniqueID}str
+     field    = value: char[] = {char[3]@uniqueID}
+       unknown  = [0] = 's' 115
+       unknown  = [1] = 't' 116
+       unknown  = [2] = 'r' 114
+     field    = offset: int = 0
+     field    = count: int = 3
+     field    = hash: int = 0
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

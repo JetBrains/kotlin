@@ -26,8 +26,13 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.JetWhenEntry;
+import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.plugin.JetBundle;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
     public MoveWhenElseBranchFix(@NotNull JetWhenExpression element) {
@@ -68,7 +73,7 @@ public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression>
         int cursorOffset = editor.getCaretModel().getOffset() - elseEntry.getTextOffset();
 
         PsiElement insertedBranch = element.addAfter(elseEntry, lastEntry);
-        element.addAfter(JetPsiFactory.createNewLine(project), lastEntry);
+        element.addAfter(JetPsiFactory(file).createNewLine(), lastEntry);
         element.deleteChildRange(elseEntry, elseEntry);
         JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
 

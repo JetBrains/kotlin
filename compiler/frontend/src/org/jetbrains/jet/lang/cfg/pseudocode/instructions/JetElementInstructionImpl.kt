@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetElement
 
 public abstract class JetElementInstructionImpl(
-        public override val element: JetElement,
+        override val element: JetElement,
         lexicalScope: LexicalScope
 ) : InstructionImpl(lexicalScope), JetElementInstruction {
     protected fun render(element: PsiElement): String =

@@ -17,18 +17,19 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -39,7 +40,11 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.InlineDescriptorUtils.allowsNonLocalReturns;
+import static org.jetbrains.jet.lang.resolve.InlineDescriptorUtils.checkNonLocalReturnUsage;
 
 public class InlineCallResolverExtension implements CallResolverExtension {
 
@@ -82,69 +87,65 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         checkCallWithReceiver(context, targetDescriptor, resolvedCall.getReceiverArgument(), expression);
 
         if (inlinableParameters.contains(targetDescriptor)) {
-            if (!couldAccessVariable(expression)) {
+            if (!isInsideCall(expression)) {
                 context.trace.report(Errors.USAGE_IS_NOT_INLINABLE.on(expression, expression, descriptor));
             }
         }
 
-        for (ResolvedValueArgument value : resolvedCall.getValueArguments().values()) {
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
+            ResolvedValueArgument value = entry.getValue();
+            ValueParameterDescriptor valueDescriptor = entry.getKey();
             if (!(value instanceof DefaultValueArgument)) {
                 for (ValueArgument argument : value.getArguments()) {
-                    checkValueParameter(context, targetDescriptor, argument, value instanceof VarargValueArgument);
+                    checkValueParameter(context, targetDescriptor, argument, valueDescriptor);
                 }
             }
         }
 
         checkVisibility(targetDescriptor, expression, context);
-        checkRecursion(targetDescriptor, expression, context);
+        checkRecursion(context, targetDescriptor, expression);
     }
 
-    private static boolean couldAccessVariable(JetExpression expression) {
-        PsiElement parent = expression.getParent();
-        while (parent != null) {
-            if (parent instanceof JetValueArgument ||
-                parent instanceof JetBinaryExpression ||
-                parent instanceof JetUnaryExpression ||
-                parent instanceof JetLabeledExpression ||
-                parent instanceof JetDotQualifiedExpression ||
-                parent instanceof JetCallExpression ||
-                parent instanceof JetArrayAccessExpression ||
-                parent instanceof JetMultiDeclaration) {
-
-                if (parent instanceof JetLabeledExpression) {
-                    parent = parent.getParent();
-                    continue;
-                }
-                else if (parent instanceof JetBinaryExpression) {
-                    JetToken token = JetPsiUtil.getOperationToken((JetOperationExpression) parent);
-                    if (token == JetTokens.EQ || token == JetTokens.ANDAND || token == JetTokens.OROR) {
-                        //assignment
-                        return false;
-                    }
-                }
-
-                //check that it's in inlineable call would be in resolve call of parent
-                return true;
-            }
-            else if (parent instanceof JetParenthesizedExpression || parent instanceof JetBinaryExpressionWithTypeRHS) {
-                parent = parent.getParent();
-            }
-            else {
+    private static boolean isInsideCall(JetExpression expression) {
+        JetElement parent = JetPsiUtil.getParentCallIfPresent(expression);
+        if (parent instanceof JetBinaryExpression) {
+            JetToken token = JetPsiUtil.getOperationToken((JetOperationExpression) parent);
+            if (token == JetTokens.EQ || token == JetTokens.ANDAND || token == JetTokens.OROR) {
+                //assignment
                 return false;
             }
         }
-        return false;
+
+        return parent != null;
     }
 
-    private void checkValueParameter(BasicCallResolutionContext context, CallableDescriptor targetDescriptor, ValueArgument argument, boolean isVararg) {
-        JetExpression jetExpression = argument.getArgumentExpression();
-        if (jetExpression == null) {
+
+
+    private void checkValueParameter(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull CallableDescriptor targetDescriptor,
+            @NotNull ValueArgument targetArgument,
+            @NotNull ValueParameterDescriptor targetParameterDescriptor
+    ) {
+        JetExpression argumentExpression = targetArgument.getArgumentExpression();
+        if (argumentExpression == null) {
             return;
         }
-        CallableDescriptor varDescriptor = getDescriptor(context, jetExpression);
+        CallableDescriptor argumentCallee = getCalleeDescriptor(context, argumentExpression, false);
 
-        if (varDescriptor != null && inlinableParameters.contains(varDescriptor)) {
-            checkFunctionCall(context, targetDescriptor, jetExpression, isVararg);
+        if (argumentCallee != null && inlinableParameters.contains(argumentCallee)) {
+            boolean isTargetInlineFunction = targetDescriptor instanceof SimpleFunctionDescriptor &&
+                                             ((SimpleFunctionDescriptor) targetDescriptor).getInlineStrategy().isInline();
+
+            if (!isTargetInlineFunction || !isInlinableParameter(targetParameterDescriptor)) {
+                context.trace.report(Errors.USAGE_IS_NOT_INLINABLE.on(argumentExpression, argumentExpression, descriptor));
+            } else {
+                if (allowsNonLocalReturns(argumentCallee) && !allowsNonLocalReturns(targetParameterDescriptor)) {
+                    context.trace.report(Errors.NON_LOCAL_RETURN_NOT_ALLOWED.on(argumentExpression, argumentExpression, argumentCallee, descriptor));
+                } else {
+                    checkNonLocalReturn(context, argumentCallee, argumentExpression);
+                }
+            }
         }
     }
 
@@ -160,7 +161,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         JetExpression receiverExpression = null;
         if (receiver instanceof ExpressionReceiver) {
             receiverExpression = ((ExpressionReceiver) receiver).getExpression();
-            varDescriptor = getDescriptor(context, receiverExpression);
+            varDescriptor = getCalleeDescriptor(context, receiverExpression, true);
         }
         else if (receiver instanceof ExtensionReceiver) {
             ExtensionReceiver extensionReceiver = (ExtensionReceiver) receiver;
@@ -174,35 +175,43 @@ public class InlineCallResolverExtension implements CallResolverExtension {
 
         if (inlinableParameters.contains(varDescriptor)) {
             //check that it's invoke or inlinable extension
-            checkFunctionCall(context, targetDescriptor, receiverExpression, false);
+            checkLambdaInvokeOrExtensionCall(context, varDescriptor, targetDescriptor, receiverExpression);
         }
     }
 
     @Nullable
-    private static CallableDescriptor getDescriptor(
+    private static CallableDescriptor getCalleeDescriptor(
             @NotNull BasicCallResolutionContext context,
-            @NotNull JetExpression expression
+            @NotNull JetExpression expression,
+            boolean unwrapVariableAsFunction
     ) {
-        ResolvedCall<?> thisCall = context.trace.get(BindingContext.RESOLVED_CALL, expression);
+        if (!(expression instanceof JetSimpleNameExpression || expression instanceof JetThisExpression)) return null;
+
+        ResolvedCall<?> thisCall = BindingContextUtilPackage.getResolvedCall(expression, context.trace.getBindingContext());
+        if (unwrapVariableAsFunction && thisCall instanceof VariableAsFunctionResolvedCall) {
+            return ((VariableAsFunctionResolvedCall) thisCall).getVariableCall().getResultingDescriptor();
+        }
         return thisCall != null ? thisCall.getResultingDescriptor() : null;
     }
 
-    private void checkFunctionCall(
-            BasicCallResolutionContext context,
-            CallableDescriptor targetDescriptor,
-            JetExpression receiverExpresssion,
-            boolean isVararg
+    private void checkLambdaInvokeOrExtensionCall(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull CallableDescriptor lambdaDescriptor,
+            @NotNull CallableDescriptor callDescriptor,
+            @NotNull JetExpression receiverExpresssion
     ) {
-        boolean inlinableCall = isInvokeOrInlineExtension(targetDescriptor);
-        if (!inlinableCall || isVararg) {
+        boolean inlinableCall = isInvokeOrInlineExtension(callDescriptor);
+        if (!inlinableCall) {
             context.trace.report(Errors.USAGE_IS_NOT_INLINABLE.on(receiverExpresssion, receiverExpresssion, descriptor));
+        } else {
+            checkNonLocalReturn(context, lambdaDescriptor, receiverExpresssion);
         }
     }
 
     public void checkRecursion(
+            @NotNull BasicCallResolutionContext context,
             @NotNull CallableDescriptor targetDescriptor,
-            @NotNull JetElement expression,
-            @NotNull BasicCallResolutionContext context
+            @NotNull JetElement expression
     ) {
         if (targetDescriptor.getOriginal() == descriptor) {
             context.trace.report(Errors.RECURSION_IN_INLINE.on(expression, expression, descriptor));
@@ -248,4 +257,25 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         }
         return true;
     }
+
+    private void checkNonLocalReturn(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull CallableDescriptor inlinableParameterDescriptor,
+            @NotNull JetExpression parameterUsage
+    ) {
+        if (!allowsNonLocalReturns(inlinableParameterDescriptor)) return;
+
+        if (!checkNonLocalReturnUsage(descriptor, parameterUsage, context.trace)) {
+            context.trace.report(Errors.NON_LOCAL_RETURN_NOT_ALLOWED.on(parameterUsage, parameterUsage, inlinableParameterDescriptor, descriptor));
+        }
+    }
+
+    @Nullable
+    public static PsiElement getDeclaration(JetExpression expression) {
+        do {
+            expression = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
+        } while (expression instanceof JetMultiDeclaration || expression instanceof JetProperty);
+        return expression;
+    }
+
 }

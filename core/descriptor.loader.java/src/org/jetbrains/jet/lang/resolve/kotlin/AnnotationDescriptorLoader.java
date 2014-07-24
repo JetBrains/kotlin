@@ -18,25 +18,23 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.NameResolver;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
-import org.jetbrains.jet.lang.resolve.constants.EnumValue;
-import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
 import javax.inject.Inject;
@@ -46,20 +44,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
-import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage.MemberSignature;
+import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
+import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaFqNameToKotlinFqName;
 
 public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements AnnotationLoader {
+
+    private ModuleDescriptor module;
+
     @Inject
-    @Override
-    public void setStorage(@NotNull DescriptorDeserializersStorage storage) {
-        this.storage = storage;
+    public void setModule(ModuleDescriptor module) {
+        this.module = module;
     }
 
     @Inject
     @Override
-    public void setClassResolver(@NotNull DependencyClassByQualifiedNameResolver classResolver) {
-        this.classResolver = classResolver;
+    public void setStorage(@NotNull DescriptorLoadersStorage storage) {
+        this.storage = storage;
     }
 
     @Inject
@@ -101,7 +101,7 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
             @Nullable
             @Override
             public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className) {
-                return resolveAnnotation(className, result, classResolver);
+                return resolveAnnotation(className, result, module);
             }
 
             @Override
@@ -116,11 +116,11 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
     public static KotlinJvmBinaryClass.AnnotationArgumentVisitor resolveAnnotation(
             @NotNull JvmClassName className,
             @NotNull final List<AnnotationDescriptor> result,
-            @NotNull final DependencyClassByQualifiedNameResolver classResolver
+            @NotNull final ModuleDescriptor moduleDescriptor
     ) {
         if (JvmAnnotationNames.isSpecialAnnotation(className)) return null;
 
-        final ClassDescriptor annotationClass = resolveClass(className, classResolver);
+        final ClassDescriptor annotationClass = resolveClass(className, moduleDescriptor);
 
         return new KotlinJvmBinaryClass.AnnotationArgumentVisitor() {
             private final Map<ValueParameterDescriptor, CompileTimeConstant<?>> arguments = new HashMap<ValueParameterDescriptor, CompileTimeConstant<?>>();
@@ -128,8 +128,7 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
             @Override
             public void visit(@Nullable Name name, @Nullable Object value) {
                 if (name != null) {
-                    CompileTimeConstant<?> argument = ConstantsPackage.createCompileTimeConstant(value, true, false, false, null);
-                    setArgumentValueByName(name, argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name));
+                    setArgumentValueByName(name, createConstant(name, value));
                 }
             }
 
@@ -140,14 +139,34 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
 
             @Nullable
             @Override
-            public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitArray(@NotNull Name name) {
-                // TODO: support arrays
-                return null;
+            public AnnotationArrayArgumentVisitor visitArray(@NotNull final Name name) {
+                return new KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor() {
+                    private final ArrayList<CompileTimeConstant<?>> elements = new ArrayList<CompileTimeConstant<?>>();
+
+                    @Override
+                    public void visit(@Nullable Object value) {
+                        elements.add(createConstant(name, value));
+                    }
+
+                    @Override
+                    public void visitEnum(@NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
+                        elements.add(enumEntryValue(enumClassName, enumEntryName));
+                    }
+
+                    @Override
+                    public void visitEnd() {
+                        ValueParameterDescriptor parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass);
+                        if (parameter != null) {
+                            elements.trimToSize();
+                            arguments.put(parameter, new ArrayValue(elements, parameter.getType(), true, false));
+                        }
+                    }
+                };
             }
 
             @NotNull
             private CompileTimeConstant<?> enumEntryValue(@NotNull JvmClassName enumClassName, @NotNull Name name) {
-                ClassDescriptor enumClass = resolveClass(enumClassName, classResolver);
+                ClassDescriptor enumClass = resolveClass(enumClassName, moduleDescriptor);
                 if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
                     ClassifierDescriptor classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name);
                     if (classifier instanceof ClassDescriptor) {
@@ -165,6 +184,12 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
                 ));
             }
 
+            @NotNull
+            private CompileTimeConstant<?> createConstant(@Nullable Name name, @Nullable Object value) {
+                CompileTimeConstant<?> argument = ConstantsPackage.createCompileTimeConstant(value, true, false, false, null);
+                return argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name);
+            }
+
             private void setArgumentValueByName(@NotNull Name name, @NotNull CompileTimeConstant<?> argumentValue) {
                 ValueParameterDescriptor parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass);
                 if (parameter != null) {
@@ -175,8 +200,11 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
     }
 
     @NotNull
-    private static ClassDescriptor resolveClass(@NotNull JvmClassName className, DependencyClassByQualifiedNameResolver classResolver) {
-        ClassDescriptor annotationClass = classResolver.resolveClass(className.getFqNameForClassNameWithoutDollars());
+    private static ClassDescriptor resolveClass(@NotNull JvmClassName className, @NotNull ModuleDescriptor moduleDescriptor) {
+        FqName packageFqName = className.getPackageFqName();
+        FqNameUnsafe relativeClassName = javaFqNameToKotlinFqName(className.getHeuristicClassFqName());
+        ClassId classId = new ClassId(packageFqName, relativeClassName);
+        ClassDescriptor annotationClass = SerializationPackage.findClassAcrossModuleDependencies(moduleDescriptor, classId);
         return annotationClass != null ? annotationClass : ErrorUtils.createErrorClass(className.getInternalName());
     }
 

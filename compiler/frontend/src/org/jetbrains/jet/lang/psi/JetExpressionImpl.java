@@ -22,6 +22,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public abstract class JetExpressionImpl extends JetElementImpl implements JetExpression {
     public JetExpressionImpl(@NotNull ASTNode node) {
         super(node);
@@ -46,7 +48,7 @@ public abstract class JetExpressionImpl extends JetElementImpl implements JetExp
         PsiElement parent = getParent();
         if (parent instanceof JetExpression && newElement instanceof JetExpression &&
             JetPsiUtil.areParenthesesNecessary((JetExpression) newElement, this, (JetExpression) parent)) {
-            return super.replace(JetPsiFactory.createExpression(getProject(), "(" + newElement.getText() + ")"));
+            return super.replace(JetPsiFactory(this).createExpression("(" + newElement.getText() + ")"));
         }
         return super.replace(newElement);
     }

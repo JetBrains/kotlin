@@ -26,10 +26,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression;
 import org.jetbrains.jet.lang.psi.JetPrefixExpression;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -46,7 +47,7 @@ public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
     @Nullable
     @Override
     public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetPrefixExpression prefixExpr = (JetPrefixExpression)JetPsiFactory.createExpression(project, "!(a)");
+        JetPrefixExpression prefixExpr = (JetPrefixExpression) JetPsiFactory(expression).createExpression("!(a)");
         JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) prefixExpr.getBaseExpression();
         assert parenthesizedExpression != null : "JetParenthesizedExpression should exists for " + prefixExpr.getText() + " expression";
         JetExpression expressionWithoutParentheses = parenthesizedExpression.getExpression();

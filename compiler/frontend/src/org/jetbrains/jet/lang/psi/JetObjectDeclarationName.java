@@ -26,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class JetObjectDeclarationName extends JetExpressionImpl {
     public JetObjectDeclarationName(@NotNull ASTNode node) {
         super(node);
@@ -49,7 +51,7 @@ public class JetObjectDeclarationName extends JetExpressionImpl {
     }
 
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return getNameIdentifier().replace(JetPsiFactory.createNameIdentifier(getProject(), name));
+        return getNameIdentifier().replace(JetPsiFactory(this).createNameIdentifier(name));
     }
 
     @Override

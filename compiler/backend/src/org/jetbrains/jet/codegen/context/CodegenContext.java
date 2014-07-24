@@ -25,8 +25,6 @@ import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -42,7 +40,6 @@ import java.util.Map;
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -83,7 +80,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public final ClassDescriptor getThisDescriptor() {
         if (thisDescriptor == null) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Context doesn't have a \"this\": " + this);
         }
         return thisDescriptor;
     }
@@ -172,17 +169,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return new MethodContext(descriptor, getContextKind(), this, null, false);
     }
 
+    @NotNull
     public MethodContext intoInlinedLambda(FunctionDescriptor descriptor) {
         return new MethodContext(descriptor, getContextKind(), this, null, true);
     }
 
     @NotNull
-    public ConstructorContext intoConstructor(@Nullable ConstructorDescriptor descriptor, @Nullable MutableClosure closure) {
-        if (descriptor == null) {
-            descriptor = ConstructorDescriptorImpl.create(getThisDescriptor(), Annotations.EMPTY, true)
-                    .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
-                                Visibilities.PUBLIC, false);
-        }
+    public ConstructorContext intoConstructor(@NotNull ConstructorDescriptor descriptor) {
         return new ConstructorContext(descriptor, getContextKind(), this, closure);
     }
 
@@ -204,24 +197,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     ) {
         ClassDescriptor classDescriptor = anonymousClassForFunction(typeMapper.getBindingContext(), funDescriptor);
         return new ClosureContext(typeMapper, funDescriptor, classDescriptor, this, localLookup);
-    }
-
-    @NotNull
-    public FrameMap prepareFrame(@NotNull JetTypeMapper typeMapper) {
-        FrameMap frameMap = new FrameMap();
-
-        if (getContextKind() != OwnerKind.PACKAGE) {
-            frameMap.enterTemp(OBJECT_TYPE);  // 0 slot for this
-        }
-
-        CallableDescriptor receiverDescriptor = getCallableDescriptorWithReceiver();
-        if (receiverDescriptor != null) {
-            //noinspection ConstantConditions
-            Type type = typeMapper.mapType(receiverDescriptor.getReceiverParameter().getType());
-            frameMap.enterTemp(type);  // Next slot for receiver
-        }
-
-        return frameMap;
     }
 
     @Nullable

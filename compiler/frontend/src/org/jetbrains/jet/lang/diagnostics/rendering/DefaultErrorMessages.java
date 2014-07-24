@@ -92,7 +92,7 @@ public class DefaultErrorMessages {
             }
         });
         MAP.put(ILLEGAL_MODIFIER, "Illegal modifier ''{0}''", TO_STRING);
-        MAP.put(INAPPLICABLE_ANNOTATION, "Inapplicable annotation");
+        MAP.put(INAPPLICABLE_ANNOTATION, "This annotation is not applicable to class members");
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in trait");
@@ -515,6 +515,8 @@ public class DefaultErrorMessages {
         MAP.put(USAGE_IS_NOT_INLINABLE, "Illegal usage of inline-parameter ''{0}'' in ''{1}''. Annotate the parameter with [noinline]", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Annotate the parameter with [noinline] or make not nullable", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(RECURSION_IN_INLINE, "Inline-function ''{1}'' can't be recursive", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        //Inline non Locals
+        MAP.put(NON_LOCAL_RETURN_NOT_ALLOWED, "Can''t inline ''{0}'' here: it may contain non-local returns. Annotate parameter declaration ''{0}'' with ''inlineOptions(ONLY_LOCAL_RETURN)''", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
 
         MAP.setImmutable();
 

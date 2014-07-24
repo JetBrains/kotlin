@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface DeclarationDescriptorNonRoot extends DeclarationDescriptor {
+public interface DeclarationDescriptorNonRoot extends DeclarationDescriptorWithSource {
 
     @Override
     @NotNull

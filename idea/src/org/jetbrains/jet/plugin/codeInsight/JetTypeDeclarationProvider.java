@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
@@ -40,7 +40,7 @@ public class JetTypeDeclarationProvider implements TypeDeclarationProvider {
                 if (type != null) {
                     ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
                     if (classifierDescriptor != null) {
-                        PsiElement typeElement = BindingContextUtils.descriptorToDeclaration(bindingContext, classifierDescriptor);
+                        PsiElement typeElement = DescriptorToSourceUtils.descriptorToDeclaration(classifierDescriptor);
                         if (typeElement != null) {
                             return new PsiElement[] {typeElement};
                         }

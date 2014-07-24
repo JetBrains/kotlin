@@ -22,6 +22,7 @@ import com.intellij.util.containers.ComparatorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
@@ -40,6 +41,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.UPPER_BOUND;
 
@@ -75,7 +77,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         }
 
         setAnnotated(true);
-        altFunDeclaration = JetPsiFactory.createFunction(project, signature);
+        altFunDeclaration = JetPsiFactory(project).createFunction(signature);
 
         originalToAltTypeParameters = DescriptorResolverUtils.recreateTypeParametersAndReturnMapping(methodTypeParameters, null);
 
@@ -211,7 +213,9 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                     altName != null ? altName : originalParameterDescriptor.getName(),
                     alternativeType,
                     originalParameterDescriptor.declaresDefaultValue(),
-                    alternativeVarargElementType));
+                    alternativeVarargElementType,
+                    SourceElement.NO_SOURCE
+                    ));
         }
 
         altValueParameters = altParamDescriptors;

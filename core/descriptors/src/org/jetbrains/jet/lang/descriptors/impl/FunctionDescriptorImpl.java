@@ -41,8 +41,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     protected JetType unsubstitutedReturnType;
     private ReceiverParameterDescriptor receiverParameter;
     protected ReceiverParameterDescriptor expectedThisObject;
-
     protected Modality modality;
+
     protected Visibility visibility;
     protected final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet(); // LinkedHashSet is essential here
     private final FunctionDescriptor original;
@@ -53,8 +53,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @Nullable FunctionDescriptor original,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @NotNull Kind kind) {
-        super(containingDeclaration, annotations, name);
+            @NotNull Kind kind,
+            @NotNull SourceElement source
+    ) {
+        super(containingDeclaration, annotations, name, source);
         this.original = original == null ? this : original;
         this.kind = kind;
     }
@@ -276,7 +278,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                     unsubstitutedValueParameter.getName(),
                     substitutedType,
                     unsubstitutedValueParameter.declaresDefaultValue(),
-                    substituteVarargElementType)
+                    substituteVarargElementType,
+                    SourceElement.NO_SOURCE
+                    )
             );
         }
         return result;

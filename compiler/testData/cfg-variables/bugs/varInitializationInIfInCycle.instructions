@@ -16,7 +16,7 @@ fun foo(numbers: Collection<Int>) {
 L0:
   1 <START>                                                                                                       INIT: in: {} out: {}
     v(numbers: Collection<Int>)                                                                                   INIT: in: {} out: {numbers=D}
-    magic(numbers: Collection<Int>) -> <v0>                                                                       INIT: in: {numbers=D} out: {numbers=D}
+    magic[FAKE_INITIALIZER](numbers: Collection<Int>) -> <v0>                                                     INIT: in: {numbers=D} out: {numbers=D}
     w(numbers|<v0>)                                                                                               INIT: in: {numbers=D} out: {numbers=ID}
   2 mark({ for (i in numbers) { val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue } })    INIT: in: {numbers=ID} out: {numbers=ID}                            USE: in: {numbers=READ} out: {numbers=READ}
   3 r(numbers) -> <v1>                                                                                                                                                                USE: in: {} out: {numbers=READ}
@@ -25,7 +25,7 @@ L3:
     jmp?(L2)                                                                                                      INIT: in: {i=D, numbers=ID} out: {i=D, numbers=ID}
 L4 [loop entry point]:
 L5 [body entry point]:
-    magic(numbers|<v1>) -> <v2>
+    magic[LOOP_RANGE_ITERATION](numbers|<v1>) -> <v2>
     w(i|<v2>)                                                                                                     INIT: in: {i=D, numbers=ID} out: {i=ID, numbers=ID}
     mark(for (i in numbers) { val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue })        INIT: in: {i=ID, numbers=ID} out: {i=ID, numbers=ID}                USE: in: {} out: {}
   4 mark({ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue })
@@ -34,7 +34,7 @@ L5 [body entry point]:
     r(1) -> <v3>
     r(2) -> <v4>
     mark(1 < 2)
-    call(<, compareTo|<v3>, <v4>) -> <v5>
+    call(1 < 2, compareTo|<v3>, <v4>) -> <v5>
     jf(L6|<v5>)
   5 mark({ b = false })
     r(false) -> <v6>                                                                                                                                                                  USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
@@ -47,7 +47,7 @@ L6:
 L7:
   4 r(b) -> <v8>                                                                                                  INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}    USE: in: {} out: {b=READ}
     mark(use(b))
-    call(use, use|<v8>) -> <v9>
+    call(use(b), use|<v8>) -> <v9>
     jmp(L4 [loop entry point])                                                                                                                                                        USE: in: {} out: {}
 - 3 jmp?(L4 [loop entry point])
 L2:
@@ -63,15 +63,16 @@ sink:
 fun use(vararg a: Any?) = a
 ---------------------
 L0:
-  1 <START>                          INIT: in: {} out: {}
-    v(vararg a: Any?)                INIT: in: {} out: {a=D}
-    magic(vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
-    w(a|<v0>)                        INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
-    r(a) -> <v1>                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+  1 <START>                                            INIT: in: {} out: {}
+    v(vararg a: Any?)                                  INIT: in: {} out: {a=D}
+    magic[FAKE_INITIALIZER](vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                          INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>                                       INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+    ret(*|<v1>) L1
 L1:
     <END>
 error:
-    <ERROR>                          INIT: in: {} out: {}
+    <ERROR>                                            INIT: in: {} out: {}
 sink:
-    <SINK>                           INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

@@ -5,4 +5,7 @@
   <item name='com.intellij.ide.util.FileStructurePopup com.intellij.ui.treeStructure.filtered.FilteringTreeBuilder getTreeBuilder()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.ide.util.PsiElementListCellRenderer java.lang.String getElementText(T) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>

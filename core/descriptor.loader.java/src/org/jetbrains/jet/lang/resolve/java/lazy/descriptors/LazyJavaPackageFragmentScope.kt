@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.MethodSignatureData
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.name.SpecialNames
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 
 public abstract class LazyJavaPackageFragmentScope(
         c: LazyJavaResolverContext,
@@ -55,8 +56,6 @@ public abstract class LazyJavaPackageFragmentScope(
                    jClass.inn({ jC -> jC.getInnerClasses().map { c -> c.getName() }}, listOf())
         }
     }
-
-    public abstract override fun getAllClassNames(): Collection<Name>
 
     // Package fragments are not nested
     override fun getPackage(name: Name) = null
@@ -93,9 +92,13 @@ public class LazyPackageFragmentScopeForJavaPackage(
         packageFragment: LazyPackageFragmentForJavaPackage
 ) : LazyJavaPackageFragmentScope(c, packageFragment) {
 
+    // TODO: Storing references is a temporary hack until modules infrastructure is implemented.
+    // See JetTypeMapperWithOutDirectories for details
+    public val kotlinBinaryClass: KotlinJvmBinaryClass?
+            = c.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassFqName(fqName))
+
     private val deserializedPackageScope = c.storageManager.createLazyValue {
-        val packageClassFqName = PackageClassUtils.getPackageClassFqName(fqName)
-        val kotlinBinaryClass = c.kotlinClassFinder.findKotlinClass(packageClassFqName)
+        val kotlinBinaryClass = kotlinBinaryClass
         if (kotlinBinaryClass == null)
             JetScope.EMPTY
         else

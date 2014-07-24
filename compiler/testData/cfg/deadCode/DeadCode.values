@@ -4,7 +4,7 @@ fun test() {
     test()
 }
 ---------------------
-Exception()                    <v0>: {<: Throwable}   NEW: call(Exception, <init>) -> <v0>
-test()                         <v1>: *                NEW: call(test, test) -> <v1>       
-{ throw Exception() test() }   <v1>: *                COPY                                
+Exception()                    <v0>: {<: Throwable}   NEW: call(Exception(), <init>) -> <v0>
+test()                         <v1>: *                NEW: call(test(), test) -> <v1>
+{ throw Exception() test() }   <v1>: *                COPY
 =====================

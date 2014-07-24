@@ -1,4 +1,3 @@
--src
 $TESTDATA_DIR$/multipleTextRangesInDiagnosticsOrder.kt
--output
+-d
 $TEMP_DIR$

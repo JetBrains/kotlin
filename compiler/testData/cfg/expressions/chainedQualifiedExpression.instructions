@@ -87,137 +87,137 @@ L0:
     mark(BunchKeywordRegister() .add(ABSTRACT_KEYWORD, inTopLevel, inTopLevel, inTopLevel) .add(FINAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel) .add(OPEN_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
     mark(BunchKeywordRegister() .add(ABSTRACT_KEYWORD, inTopLevel, inTopLevel, inTopLevel) .add(FINAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
     mark(BunchKeywordRegister() .add(ABSTRACT_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    magic(BunchKeywordRegister()) -> <v1>
+    magic[IMPLICIT_RECEIVER](BunchKeywordRegister()) -> <v1>
     mark(BunchKeywordRegister())
-    call(BunchKeywordRegister, <init>|<v1>) -> <v2>
+    call(BunchKeywordRegister(), <init>|<v1>) -> <v2>
     r(ABSTRACT_KEYWORD) -> <v3>
     r(inTopLevel) -> <v4>
     r(inTopLevel) -> <v5>
     r(inTopLevel) -> <v6>
     mark(add(ABSTRACT_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v2>, <v3>, <v4>, <v5>, <v6>) -> <v7>
+    call(add(ABSTRACT_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v2>, <v3>, <v4>, <v5>, <v6>) -> <v7>
     r(FINAL_KEYWORD) -> <v8>
     r(inTopLevel) -> <v9>
     r(inTopLevel) -> <v10>
     r(inTopLevel) -> <v11>
     mark(add(FINAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v7>, <v8>, <v9>, <v10>, <v11>) -> <v12>
+    call(add(FINAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v7>, <v8>, <v9>, <v10>, <v11>) -> <v12>
     r(OPEN_KEYWORD) -> <v13>
     r(inTopLevel) -> <v14>
     r(inTopLevel) -> <v15>
     r(inTopLevel) -> <v16>
     mark(add(OPEN_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v12>, <v13>, <v14>, <v15>, <v16>) -> <v17>
+    call(add(OPEN_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v12>, <v13>, <v14>, <v15>, <v16>) -> <v17>
     r(INTERNAL_KEYWORD) -> <v18>
     r(inTopLevel) -> <v19>
     r(inTopLevel) -> <v20>
     r(inTopLevel) -> <v21>
     r(inTopLevel) -> <v22>
     mark(add(INTERNAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v17>, <v18>, <v19>, <v20>, <v21>, <v22>) -> <v23>
+    call(add(INTERNAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel, inTopLevel), add|<v17>, <v18>, <v19>, <v20>, <v21>, <v22>) -> <v23>
     r(PRIVATE_KEYWORD) -> <v24>
     r(inTopLevel) -> <v25>
     r(inTopLevel) -> <v26>
     r(inTopLevel) -> <v27>
     r(inTopLevel) -> <v28>
     mark(add(PRIVATE_KEYWORD, inTopLevel, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v23>, <v24>, <v25>, <v26>, <v27>, <v28>) -> <v29>
+    call(add(PRIVATE_KEYWORD, inTopLevel, inTopLevel, inTopLevel, inTopLevel), add|<v23>, <v24>, <v25>, <v26>, <v27>, <v28>) -> <v29>
     r(PROTECTED_KEYWORD) -> <v30>
     r(inTopLevel) -> <v31>
     r(inTopLevel) -> <v32>
     r(inTopLevel) -> <v33>
     r(inTopLevel) -> <v34>
     mark(add(PROTECTED_KEYWORD, inTopLevel, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v29>, <v30>, <v31>, <v32>, <v33>, <v34>) -> <v35>
+    call(add(PROTECTED_KEYWORD, inTopLevel, inTopLevel, inTopLevel, inTopLevel), add|<v29>, <v30>, <v31>, <v32>, <v33>, <v34>) -> <v35>
     r(PUBLIC_KEYWORD) -> <v36>
     r(inTopLevel) -> <v37>
     r(inTopLevel) -> <v38>
     r(inTopLevel) -> <v39>
     r(inTopLevel) -> <v40>
     mark(add(PUBLIC_KEYWORD, inTopLevel, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v35>, <v36>, <v37>, <v38>, <v39>, <v40>) -> <v41>
+    call(add(PUBLIC_KEYWORD, inTopLevel, inTopLevel, inTopLevel, inTopLevel), add|<v35>, <v36>, <v37>, <v38>, <v39>, <v40>) -> <v41>
     r(CLASS_KEYWORD) -> <v42>
     r(inTopLevel) -> <v43>
     r(inTopLevel) -> <v44>
     r(inTopLevel) -> <v45>
     mark(add(CLASS_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v41>, <v42>, <v43>, <v44>, <v45>) -> <v46>
+    call(add(CLASS_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v41>, <v42>, <v43>, <v44>, <v45>) -> <v46>
     r(ENUM_KEYWORD) -> <v47>
     r(inTopLevel) -> <v48>
     r(inTopLevel) -> <v49>
     r(inTopLevel) -> <v50>
     mark(add(ENUM_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v46>, <v47>, <v48>, <v49>, <v50>) -> <v51>
+    call(add(ENUM_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v46>, <v47>, <v48>, <v49>, <v50>) -> <v51>
     r(FUN_KEYWORD) -> <v52>
     r(inTopLevel) -> <v53>
     r(inTopLevel) -> <v54>
     r(inTopLevel) -> <v55>
     mark(add(FUN_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v51>, <v52>, <v53>, <v54>, <v55>) -> <v56>
+    call(add(FUN_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v51>, <v52>, <v53>, <v54>, <v55>) -> <v56>
     r(GET_KEYWORD) -> <v57>
     r(inTopLevel) -> <v58>
     r(inTopLevel) -> <v59>
     r(inTopLevel) -> <v60>
     mark(add(GET_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v56>, <v57>, <v58>, <v59>, <v60>) -> <v61>
+    call(add(GET_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v56>, <v57>, <v58>, <v59>, <v60>) -> <v61>
     r(SET_KEYWORD) -> <v62>
     r(inTopLevel) -> <v63>
     r(inTopLevel) -> <v64>
     r(inTopLevel) -> <v65>
     mark(add(SET_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v61>, <v62>, <v63>, <v64>, <v65>) -> <v66>
+    call(add(SET_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v61>, <v62>, <v63>, <v64>, <v65>) -> <v66>
     r(TRAIT_KEYWORD) -> <v67>
     r(inTopLevel) -> <v68>
     r(inTopLevel) -> <v69>
     r(inTopLevel) -> <v70>
     mark(add(TRAIT_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v66>, <v67>, <v68>, <v69>, <v70>) -> <v71>
+    call(add(TRAIT_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v66>, <v67>, <v68>, <v69>, <v70>) -> <v71>
     r(VAL_KEYWORD) -> <v72>
     r(inTopLevel) -> <v73>
     r(inTopLevel) -> <v74>
     r(inTopLevel) -> <v75>
     mark(add(VAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v71>, <v72>, <v73>, <v74>, <v75>) -> <v76>
+    call(add(VAL_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v71>, <v72>, <v73>, <v74>, <v75>) -> <v76>
     r(VAR_KEYWORD) -> <v77>
     r(inTopLevel) -> <v78>
     r(inTopLevel) -> <v79>
     r(inTopLevel) -> <v80>
     mark(add(VAR_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v76>, <v77>, <v78>, <v79>, <v80>) -> <v81>
+    call(add(VAR_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v76>, <v77>, <v78>, <v79>, <v80>) -> <v81>
     r(TYPE_KEYWORD) -> <v82>
     r(inTopLevel) -> <v83>
     r(inTopLevel) -> <v84>
     r(inTopLevel) -> <v85>
     mark(add(TYPE_KEYWORD, inTopLevel, inTopLevel, inTopLevel))
-    call(add, add|<v81>, <v82>, <v83>, <v84>, <v85>) -> <v86>
+    call(add(TYPE_KEYWORD, inTopLevel, inTopLevel, inTopLevel), add|<v81>, <v82>, <v83>, <v84>, <v85>) -> <v86>
     r(IMPORT_KEYWORD) -> <v87>
     r(inTopLevel) -> <v88>
     mark(add(IMPORT_KEYWORD, inTopLevel))
-    call(add, add|<v86>, <v87>, <v88>) -> <v89>
+    call(add(IMPORT_KEYWORD, inTopLevel), add|<v86>, <v87>, <v88>) -> <v89>
     r(PACKAGE_KEYWORD) -> <v90>
     r(inTopLevel) -> <v91>
     mark(add(PACKAGE_KEYWORD, inTopLevel))
-    call(add, add|<v89>, <v90>, <v91>) -> <v92>
+    call(add(PACKAGE_KEYWORD, inTopLevel), add|<v89>, <v90>, <v91>) -> <v92>
     r(OVERRIDE_KEYWORD) -> <v93>
     r(inTopLevel) -> <v94>
     mark(add(OVERRIDE_KEYWORD, inTopLevel))
-    call(add, add|<v92>, <v93>, <v94>) -> <v95>
+    call(add(OVERRIDE_KEYWORD, inTopLevel), add|<v92>, <v93>, <v94>) -> <v95>
     r(IN_KEYWORD) -> <v96>
     r(inTopLevel) -> <v97>
     r(inTopLevel) -> <v98>
     mark(add(IN_KEYWORD, inTopLevel, inTopLevel))
-    call(add, add|<v95>, <v96>, <v97>, <v98>) -> <v99>
+    call(add(IN_KEYWORD, inTopLevel, inTopLevel), add|<v95>, <v96>, <v97>, <v98>) -> <v99>
     r(OUT_KEYWORD) -> <v100>
     r(inTopLevel) -> <v101>
     mark(add(OUT_KEYWORD, inTopLevel))
-    call(add, add|<v99>, <v100>, <v101>) -> <v102>
+    call(add(OUT_KEYWORD, inTopLevel), add|<v99>, <v100>, <v101>) -> <v102>
     r(OBJECT_KEYWORD) -> <v103>
     error(unresolvedCode, No resolved call)
-    magic(unresolvedCode) -> <v104>
+    magic[UNRESOLVED_CALL](unresolvedCode) -> <v104>
     mark(add(OBJECT_KEYWORD, unresolvedCode))
-    call(add, add|<v102>, <v103>, <v104>) -> <v105>
+    call(add(OBJECT_KEYWORD, unresolvedCode), add|<v102>, <v103>, <v104>) -> <v105>
     mark(registerAll())
-    call(registerAll, registerAll|<v105>) -> <v106>
+    call(registerAll(), registerAll|<v105>) -> <v106>
 L1:
   1 <END>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     NEXT:[<SINK>]
 error:
@@ -232,7 +232,7 @@ L0:
   1 <START>
     v(val ABSTRACT_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(ABSTRACT_KEYWORD|<v0>)
 L1:
     <END>                                   NEXT:[<SINK>]
@@ -261,7 +261,7 @@ L0:
   1 <START>
     v(val OPEN_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(OPEN_KEYWORD|<v0>)
 L1:
     <END>                               NEXT:[<SINK>]
@@ -277,7 +277,7 @@ L0:
   1 <START>
     v(val INTERNAL_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(INTERNAL_KEYWORD|<v0>)
 L1:
     <END>                                   NEXT:[<SINK>]
@@ -293,7 +293,7 @@ L0:
   1 <START>
     v(val PRIVATE_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(PRIVATE_KEYWORD|<v0>)
 L1:
     <END>                                  NEXT:[<SINK>]
@@ -309,7 +309,7 @@ L0:
   1 <START>
     v(val PROTECTED_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(PROTECTED_KEYWORD|<v0>)
 L1:
     <END>                                    NEXT:[<SINK>]
@@ -325,7 +325,7 @@ L0:
   1 <START>
     v(val PUBLIC_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(PUBLIC_KEYWORD|<v0>)
 L1:
     <END>                                 NEXT:[<SINK>]
@@ -341,7 +341,7 @@ L0:
   1 <START>
     v(val CLASS_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(CLASS_KEYWORD|<v0>)
 L1:
     <END>                                NEXT:[<SINK>]
@@ -357,7 +357,7 @@ L0:
   1 <START>
     v(val ENUM_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(ENUM_KEYWORD|<v0>)
 L1:
     <END>                               NEXT:[<SINK>]
@@ -373,14 +373,14 @@ L0:
   1 <START>
     v(val FUN_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(FUN_KEYWORD|<v0>)
 L1:
-    <END>                              NEXT:[<SINK>]
+    <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                            PREV:[]
+    <ERROR>                             PREV:[]
 sink:
-    <SINK>                             PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<ERROR>, <END>]
 =====================
 == GET_KEYWORD ==
 val GET_KEYWORD = JetToken()
@@ -389,14 +389,14 @@ L0:
   1 <START>
     v(val GET_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(GET_KEYWORD|<v0>)
 L1:
-    <END>                              NEXT:[<SINK>]
+    <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                            PREV:[]
+    <ERROR>                             PREV:[]
 sink:
-    <SINK>                             PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<ERROR>, <END>]
 =====================
 == SET_KEYWORD ==
 val SET_KEYWORD = JetToken()
@@ -405,14 +405,14 @@ L0:
   1 <START>
     v(val SET_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(SET_KEYWORD|<v0>)
 L1:
-    <END>                              NEXT:[<SINK>]
+    <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                            PREV:[]
+    <ERROR>                             PREV:[]
 sink:
-    <SINK>                             PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<ERROR>, <END>]
 =====================
 == TRAIT_KEYWORD ==
 val TRAIT_KEYWORD = JetToken()
@@ -421,7 +421,7 @@ L0:
   1 <START>
     v(val TRAIT_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(TRAIT_KEYWORD|<v0>)
 L1:
     <END>                                NEXT:[<SINK>]
@@ -437,14 +437,14 @@ L0:
   1 <START>
     v(val VAL_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(VAL_KEYWORD|<v0>)
 L1:
-    <END>                              NEXT:[<SINK>]
+    <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                            PREV:[]
+    <ERROR>                             PREV:[]
 sink:
-    <SINK>                             PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<ERROR>, <END>]
 =====================
 == VAR_KEYWORD ==
 val VAR_KEYWORD = JetToken()
@@ -453,14 +453,14 @@ L0:
   1 <START>
     v(val VAR_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(VAR_KEYWORD|<v0>)
 L1:
-    <END>                              NEXT:[<SINK>]
+    <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                            PREV:[]
+    <ERROR>                             PREV:[]
 sink:
-    <SINK>                             PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<ERROR>, <END>]
 =====================
 == TYPE_KEYWORD ==
 val TYPE_KEYWORD = JetToken()
@@ -469,7 +469,7 @@ L0:
   1 <START>
     v(val TYPE_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(TYPE_KEYWORD|<v0>)
 L1:
     <END>                               NEXT:[<SINK>]
@@ -485,7 +485,7 @@ L0:
   1 <START>
     v(val IMPORT_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(IMPORT_KEYWORD|<v0>)
 L1:
     <END>                                 NEXT:[<SINK>]
@@ -501,7 +501,7 @@ L0:
   1 <START>
     v(val PACKAGE_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(PACKAGE_KEYWORD|<v0>)
 L1:
     <END>                                  NEXT:[<SINK>]
@@ -517,7 +517,7 @@ L0:
   1 <START>
     v(val OVERRIDE_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(OVERRIDE_KEYWORD|<v0>)
 L1:
     <END>                                   NEXT:[<SINK>]
@@ -533,14 +533,14 @@ L0:
   1 <START>
     v(val IN_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(IN_KEYWORD|<v0>)
 L1:
-    <END>                             NEXT:[<SINK>]
+    <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                           PREV:[]
+    <ERROR>                             PREV:[]
 sink:
-    <SINK>                            PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<ERROR>, <END>]
 =====================
 == OUT_KEYWORD ==
 val OUT_KEYWORD = JetToken()
@@ -549,14 +549,14 @@ L0:
   1 <START>
     v(val OUT_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(OUT_KEYWORD|<v0>)
 L1:
-    <END>                              NEXT:[<SINK>]
+    <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                            PREV:[]
+    <ERROR>                             PREV:[]
 sink:
-    <SINK>                             PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<ERROR>, <END>]
 =====================
 == OBJECT_KEYWORD ==
 val OBJECT_KEYWORD = JetToken()
@@ -565,7 +565,7 @@ L0:
   1 <START>
     v(val OBJECT_KEYWORD = JetToken())
     mark(JetToken())
-    call(JetToken, <init>) -> <v0>
+    call(JetToken(), <init>) -> <v0>
     w(OBJECT_KEYWORD|<v0>)
 L1:
     <END>                                 NEXT:[<SINK>]

@@ -38,11 +38,11 @@ public class JetSimpleNameReference(
     public override fun handleElementRename(newElementName: String?): PsiElement? {
         if (newElementName == null) return null;
 
-        val project = expression.getProject()
+        val psiFactory = JetPsiFactory(expression)
         val element = when (expression.getReferencedNameElementType()) {
-            JetTokens.FIELD_IDENTIFIER -> JetPsiFactory.createFieldIdentifier(project, newElementName)
-            JetTokens.LABEL_IDENTIFIER -> JetPsiFactory.createClassLabel(project, newElementName)
-            else -> JetPsiFactory.createNameIdentifier(project, newElementName)
+            JetTokens.FIELD_IDENTIFIER -> psiFactory.createFieldIdentifier(newElementName)
+            JetTokens.LABEL_IDENTIFIER -> psiFactory.createClassLabel(newElementName)
+            else -> psiFactory.createNameIdentifier(newElementName)
         }
 
         return expression.getReferencedNameElement().replace(element)

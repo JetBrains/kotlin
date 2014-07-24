@@ -49,10 +49,14 @@ public enum E {
     A, B, C
 }
 
-class Base {
+public class Base {
     public @Nullable String foo(@Nullable String s) { return s; }
 }
 
-class Derived extends Base {
+public class Derived extends Base {
     public String foo(String s) { return s; }
+}
+
+public class WithVarargConstructor {
+    public WithVarargConstructor(int p, Object... objects) { }
 }

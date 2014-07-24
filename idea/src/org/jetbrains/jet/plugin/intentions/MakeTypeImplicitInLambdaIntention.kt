@@ -42,12 +42,13 @@ public class MakeTypeImplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         val functionLiteral = element.getFunctionLiteral()
         val oldParameterList = functionLiteral.getValueParameterList()
 
+        val psiFactory = JetPsiFactory(element)
         if (hasExplicitReturnType(element)) {
             val childAfterParamList = oldParameterList?.getNextSibling()
             val arrow = functionLiteral.getArrowNode()?.getPsi()
             val childBeforeArrow = arrow?.getPrevSibling()
             functionLiteral.deleteChildRange(childAfterParamList, childBeforeArrow)
-            val whiteSpaceBeforeArrow = JetPsiFactory.createWhiteSpace(element.getProject())
+            val whiteSpaceBeforeArrow = psiFactory.createWhiteSpace()
             functionLiteral.addBefore(whiteSpaceBeforeArrow, arrow)
         }
 
@@ -61,7 +62,7 @@ public class MakeTypeImplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
             val parameterString = oldParameterList!!.getParameters().map({ parameter ->
                                                                              parameter.getNameIdentifier()!!.getText()
                                                                          }).makeString(", ", "(", ")")
-            val newParameterList = JetPsiFactory.createParameterList(element.getProject(), parameterString)
+            val newParameterList = psiFactory.createParameterList(parameterString)
             oldParameterList.replace(newParameterList)
         }
 

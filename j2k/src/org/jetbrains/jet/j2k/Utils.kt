@@ -22,8 +22,9 @@ import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.jet.j2k.ast.*
+import com.intellij.psi.util.PsiMethodUtil
 
-fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier.toKotlin(it) }.makeString(".")
+fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier.toKotlin(it) }.joinToString(".")
 
 fun findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression> {
     return ReferencesSearch.search(variable, LocalSearchScope(scope)).findAll().filterIsInstance(javaClass<PsiReferenceExpression>())
@@ -47,33 +48,49 @@ fun PsiVariable.countWriteAccesses(scope: PsiElement?): Int
 fun PsiVariable.hasWriteAccesses(scope: PsiElement?): Boolean
         = if (scope != null) findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
 
-fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
-    val annotations = getModifierList()?.getAnnotations() ?: return Nullability.Default
-    return if (annotations.any { NOT_NULL_ANNOTATIONS.contains(it.getQualifiedName()) })
-        Nullability.NotNull
-    else if (annotations.any { NULLABLE_ANNOTATIONS.contains(it.getQualifiedName()) })
-        Nullability.Nullable
-    else
-        Nullability.Default
-}
-
-fun getDefaultInitializer(field: Field): Expression {
+fun getDefaultInitializer(field: Field): Expression? {
     val t = field.`type`
-    if (t.isNullable) {
-        return LiteralExpression("null")
+    val result = if (t.isNullable) {
+        LiteralExpression("null")
     }
-
-    if (t is PrimitiveType) {
-        when(t.name.name) {
-            "Boolean" -> return LiteralExpression("false")
-            "Char" -> return LiteralExpression("' '")
-            "Double" -> return MethodCallExpression.buildNotNull(LiteralExpression("0"), OperatorConventions.DOUBLE.toString())
-            "Float" -> return MethodCallExpression.buildNotNull(LiteralExpression("0"), OperatorConventions.FLOAT.toString())
+    else if (t is PrimitiveType) {
+        when (t.name.name) {
+            "Boolean" -> LiteralExpression("false")
+            "Char" -> LiteralExpression("' '")
+            "Double" -> MethodCallExpression.buildNotNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.DOUBLE.toString())
+            "Float" -> MethodCallExpression.buildNotNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.FLOAT.toString())
+            else -> LiteralExpression("0")
         }
     }
-
-    return LiteralExpression("0")
+    else {
+        null
+    }
+    return result?.assignNoPrototype()
 }
+
+fun isVal(field: PsiField): Boolean {
+    if (field.hasModifierProperty(PsiModifier.FINAL)) return true
+    if (!field.hasModifierProperty(PsiModifier.PRIVATE)) return false
+    val containingClass = field.getContainingClass() ?: return false
+    val writes = findVariableUsages(field, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
+    if (writes.size == 0) return true
+    if (writes.size > 1) return false
+    val write = writes.single()
+    val parent = write.getParent()
+    if (parent is PsiAssignmentExpression &&
+            parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
+            isQualifierEmptyOrThis(write)) {
+        val constructor = write.getContainingConstructor()
+        return constructor != null &&
+                constructor.getContainingClass() == containingClass &&
+                parent.getParent() is PsiExpressionStatement &&
+                parent.getParent()?.getParent() == constructor.getBody()
+    }
+    return false
+}
+
+fun shouldGenerateDefaultInitializer(field: PsiField)
+        = field.getInitializer() == null && !(isVal(field) && field.hasWriteAccesses(field.getContainingClass()))
 
 fun isQualifierEmptyOrThis(ref: PsiReferenceExpression): Boolean {
     val qualifier = ref.getQualifierExpression()
@@ -93,3 +110,32 @@ fun PsiElement.isInSingleLine(): Boolean {
     }
     return true
 }
+
+fun PsiElement.getContainingMethod(): PsiMethod? {
+    var context = getContext()
+    while (context != null) {
+        val _context = context!!
+        if (_context is PsiMethod) return _context
+        context = _context.getContext()
+    }
+    return null
+}
+
+fun PsiElement.getContainingConstructor(): PsiMethod? {
+    val method = getContainingMethod()
+    return if (method?.isConstructor() == true) method else null
+}
+
+fun PsiElement.isConstructor(): Boolean = this is PsiMethod && this.isConstructor()
+
+fun PsiModifierListOwner.accessModifier(): String = when {
+    hasModifierProperty(PsiModifier.PUBLIC) -> PsiModifier.PUBLIC
+    hasModifierProperty(PsiModifier.PRIVATE) -> PsiModifier.PRIVATE
+    hasModifierProperty(PsiModifier.PROTECTED) -> PsiModifier.PROTECTED
+    else -> PsiModifier.PACKAGE_LOCAL
+}
+
+fun PsiMethod.isMainMethod(): Boolean = PsiMethodUtil.isMainMethod(this)
+
+fun <T: Any> List<T>.singleOrNull2(): T? = if (size == 1) this[0] else null
+fun <T: Any> Array<T>.singleOrNull2(): T? = if (size == 1) this[0] else null

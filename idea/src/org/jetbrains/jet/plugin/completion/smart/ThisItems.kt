@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 class ThisItems(val bindingContext: BindingContext) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, context: JetExpression, expectedInfos: Collection<ExpectedInfo>) {
@@ -68,7 +69,7 @@ class ThisItems(val bindingContext: BindingContext) {
         val name: Name = descriptor.getName()
         if (!name.isSpecial()) return name.asString()
 
-        val psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor)
+        val psiElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
         val expression: JetExpression? = when (psiElement) {
             is JetFunctionLiteral -> psiElement.getParent() as? JetFunctionLiteralExpression
             is JetObjectDeclaration -> psiElement.getParent() as? JetObjectLiteralExpression

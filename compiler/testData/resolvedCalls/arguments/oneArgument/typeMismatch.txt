@@ -1,0 +1,18 @@
+class A {}
+
+fun foo(a: A) {}
+
+fun bar() {
+    <caret>foo("")
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+TYPE_MISMATCH  a : A = ""

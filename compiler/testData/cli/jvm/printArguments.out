@@ -1,3 +1,0 @@
-INFO: Invoking K2JVMCompiler with arguments -printArgs -script compiler/testData/cli/jvm/hello.kts
-hello
-OK

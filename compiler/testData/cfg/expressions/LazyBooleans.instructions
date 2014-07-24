@@ -20,10 +20,10 @@ fun lazyBooleans(a : Boolean, b : Boolean) : Unit {
 L0:
   1 <START>
     v(a : Boolean)
-    magic(a : Boolean) -> <v0>
+    magic[FAKE_INITIALIZER](a : Boolean) -> <v0>
     w(a|<v0>)
     v(b : Boolean)
-    magic(b : Boolean) -> <v1>
+    magic[FAKE_INITIALIZER](b : Boolean) -> <v1>
     w(b|<v1>)
   2 mark({ if (a) { 1 } else { 2 } 3 if (a && b) 5 else 6 7 if (a || b) 8 else 9 10 if (a) 11 12 if (a) else 13 14 })
     mark(if (a) { 1 } else { 2 })
@@ -40,10 +40,10 @@ L3:
     r(3) -> <v6>
     mark(if (a && b) 5 else 6)
     r(a) -> <v7>
-    jf(L4|<v7>)                                                                                                          NEXT:[magic(a && b|<v7>, <v8>) -> <v9>, r(b) -> <v8>]
+    jf(L4|<v7>)                                                                                                          NEXT:[magic[AND](a && b|<v7>, <v8>) -> <v9>, r(b) -> <v8>]
     r(b) -> <v8>
 L4:
-    magic(a && b|<v7>, <v8>) -> <v9>                                                                                     PREV:[jf(L4|<v7>), r(b) -> <v8>]
+    magic[AND](a && b|<v7>, <v8>) -> <v9>                                                                                PREV:[jf(L4|<v7>), r(b) -> <v8>]
     jf(L5|<v9>)                                                                                                          NEXT:[r(6) -> <v11>, r(5) -> <v10>]
     r(5) -> <v10>
     jmp(L6)                                                                                                              NEXT:[merge(if (a && b) 5 else 6|<v10>, <v11>) -> <v12>]
@@ -54,10 +54,10 @@ L6:
     r(7) -> <v13>
     mark(if (a || b) 8 else 9)
     r(a) -> <v14>
-    jt(L7|<v14>)                                                                                                         NEXT:[r(b) -> <v15>, magic(a || b|<v14>, <v15>) -> <v16>]
+    jt(L7|<v14>)                                                                                                         NEXT:[r(b) -> <v15>, magic[OR](a || b|<v14>, <v15>) -> <v16>]
     r(b) -> <v15>
 L7:
-    magic(a || b|<v14>, <v15>) -> <v16>                                                                                  PREV:[jt(L7|<v14>), r(b) -> <v15>]
+    magic[OR](a || b|<v14>, <v15>) -> <v16>                                                                              PREV:[jt(L7|<v14>), r(b) -> <v15>]
     jf(L8|<v16>)                                                                                                         NEXT:[r(9) -> <v18>, r(8) -> <v17>]
     r(8) -> <v17>
     jmp(L9)                                                                                                              NEXT:[merge(if (a || b) 8 else 9|<v17>, <v18>) -> <v19>]

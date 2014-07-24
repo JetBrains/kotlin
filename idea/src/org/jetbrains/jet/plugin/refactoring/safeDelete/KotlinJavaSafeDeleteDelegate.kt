@@ -34,6 +34,7 @@ import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.psi.psiUtil.parameterIndex
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
     override fun createUsageInfoForParameter(
@@ -57,7 +58,7 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
         val originalDeclaration = method.unwrapped
         if (originalDeclaration !is PsiMethod && originalDeclaration !is JetDeclaration) return
 
-        if (originalDeclaration != BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor)) return
+        if (originalDeclaration != DescriptorToSourceUtils.descriptorToDeclaration(descriptor)) return
 
         val args = callExpression.getValueArguments()
 

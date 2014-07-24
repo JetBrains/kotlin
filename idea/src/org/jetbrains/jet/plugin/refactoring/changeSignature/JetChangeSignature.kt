@@ -135,7 +135,7 @@ public class JetChangeSignature(val project: Project,
 
     fun createChangeSignatureDialog(descriptorsForSignatureChange: Collection<FunctionDescriptor>): JetChangeSignatureDialog? {
         val baseDescriptor = preferContainedInClass(descriptorsForSignatureChange)
-        val functionDeclaration = DescriptorToDeclarationUtil.getDeclaration(project, baseDescriptor, bindingContext)
+        val functionDeclaration = DescriptorToDeclarationUtil.getDeclaration(project, baseDescriptor)
         if (functionDeclaration == null) {
             LOG.error("Could not find declaration for $baseDescriptor")
             return null
@@ -145,7 +145,7 @@ public class JetChangeSignature(val project: Project,
             return null
         }
 
-        val changeSignatureData = JetChangeSignatureData(baseDescriptor, functionDeclaration, bindingContext, descriptorsForSignatureChange)
+        val changeSignatureData = JetChangeSignatureData(baseDescriptor, functionDeclaration, descriptorsForSignatureChange)
         configuration.configure(changeSignatureData, bindingContext)
         return JetChangeSignatureDialog(project, changeSignatureData, defaultValueContext, commandName)
     }

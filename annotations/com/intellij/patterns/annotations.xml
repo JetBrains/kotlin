@@ -1,4 +1,7 @@
 <root>
+  <item name='com.intellij.patterns.ObjectPattern Self and(com.intellij.patterns.ElementPattern)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item
       name='com.intellij.patterns.PlatformPatterns com.intellij.patterns.PsiElementPattern.Capture&lt;T&gt; psiElement(java.lang.Class&lt;T&gt;)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>

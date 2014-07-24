@@ -203,8 +203,7 @@ public class DeclarationsChecker {
                 if (conflictingTypes.size() > 1) {
                     DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                     assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                    JetClassOrObject psiElement = (JetClassOrObject) BindingContextUtils
-                            .classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+                    JetClassOrObject psiElement = (JetClassOrObject) DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
                     JetDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
                     assert delegationSpecifierList != null;
                     //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
@@ -322,7 +321,7 @@ public class DeclarationsChecker {
     private void checkOpenMembers(ClassDescriptorWithResolutionScopes classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
             if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) continue;
-            JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
+            JetNamedDeclaration member = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor);
             if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
                 trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
             }

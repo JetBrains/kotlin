@@ -68,6 +68,8 @@
                         };
 
     function hashObject(obj) {
+        if (obj == null) return "";
+
         var hashCode;
         if (typeof obj == "string") {
             return obj;
@@ -97,22 +99,10 @@
     }
 
     function equals_fixedValueNoEquals(fixedValue, variableValue) {
-        return (typeof variableValue.equals_za3rmp$ == FUNCTION) ?
+        return (variableValue != null && typeof variableValue.equals_za3rmp$ == FUNCTION) ?
+               // TODO: test this case
                variableValue.equals_za3rmp$(fixedValue) : (fixedValue === variableValue);
     }
-
-    function createKeyValCheck(kvStr) {
-        return function (kv) {
-            if (kv === null) {
-                throw new Error("null is not a valid " + kvStr);
-            }
-            else if (typeof kv == "undefined") {
-                throw new Error(kvStr + " must not be undefined");
-            }
-        };
-    }
-
-    var checkKey = createKeyValCheck("key"), checkValue = createKeyValCheck("value");
 
     /**
      * @constructor
@@ -167,7 +157,7 @@
 
     Bucket.prototype = {
         getEqualityFunction: function (searchValue) {
-            return (typeof searchValue.equals_za3rmp$ == FUNCTION) ? equals_fixedValueHasEquals : equals_fixedValueNoEquals;
+            return (searchValue != null && typeof searchValue.equals_za3rmp$ == FUNCTION) ? equals_fixedValueHasEquals : equals_fixedValueNoEquals;
         },
 
         getEntryForKey: createBucketSearcher(ENTRY),
@@ -178,7 +168,7 @@
             var result = this.getEntryAndIndexForKey(key);
             if (result) {
                 arrayRemoveAt(this.entries, result[0]);
-                return result[1];
+                return result;
             }
             return null;
         },
@@ -253,8 +243,6 @@
         var equalityFunction = (typeof equalityFunctionParam == FUNCTION) ? equalityFunctionParam : null;
 
         this.put_wn2jw4$ = function (key, value) {
-            checkKey(key);
-            checkValue(value);
             var hash = hashingFunction(key), bucket, bucketEntry, oldValue = null;
 
             // Check if a bucket exists for the bucket key
@@ -282,8 +270,6 @@
         };
 
         this.get_za3rmp$ = function (key) {
-            checkKey(key);
-
             var hash = hashingFunction(key);
 
             // Check if a bucket exists for the bucket key
@@ -300,7 +286,6 @@
         };
 
         this.containsKey_za3rmp$ = function (key) {
-            checkKey(key);
             var bucketKey = hashingFunction(key);
 
             // Check if a bucket exists for the bucket key
@@ -310,7 +295,6 @@
         };
 
         this.containsValue_za3rmp$ = function (value) {
-            checkValue(value);
             var i = buckets.length;
             while (i--) {
                 if (buckets[i].containsValue_za3rmp$(value)) {
@@ -354,17 +338,17 @@
         };
 
         this.remove_za3rmp$ = function (key) {
-            checkKey(key);
-
-            var hash = hashingFunction(key), bucketIndex, oldValue = null;
+            var hash = hashingFunction(key), bucketIndex, oldValue = null, result = null;
 
             // Check if a bucket exists for the bucket key
             var bucket = getBucketForHash(bucketsByHash, hash);
 
             if (bucket) {
                 // Remove entry from this bucket for this key
-                oldValue = bucket.removeEntryForKey(key);
-                if (oldValue !== null) {
+                result = bucket.removeEntryForKey(key);
+                if (result !== null) {
+                    oldValue = result[1];
+
                     // Entry was removed, so check if bucket is empty
                     if (!bucket.entries.length) {
                         // Bucket is empty, so remove it from the bucket collections

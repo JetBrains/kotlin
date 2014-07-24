@@ -16,56 +16,50 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
 import org.jetbrains.jet.j2k.*
+import com.intellij.util.IncorrectOperationException
 
-abstract class Constructor(
-        converter: Converter,
-        annotations: Annotations,
-        modifiers: Modifiers,
-        parameterList: ParameterList,
-        block: Block
-) : Function(converter, Identifier.Empty, annotations, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
-
-class PrimaryConstructor(converter: Converter,
-                         annotations: Annotations,
+class PrimaryConstructor(annotations: Annotations,
                          modifiers: Modifiers,
-                         parameterList: ParameterList,
-                         block: Block)
-  : Constructor(converter, annotations, modifiers, parameterList, block) {
+                         val parameterList: ParameterList,
+                         val block: Block)
+  :  Member(annotations, modifiers) {
 
-    public fun appendSignature(builder: CodeBuilder): CodeBuilder {
+    override fun generateCode(builder: CodeBuilder) { throw IncorrectOperationException() }
+
+    public fun initializer(): Initializer? {
+        return if (!block.isEmpty)
+            Initializer(block, Modifiers.Empty).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
+        else
+            null
+    }
+
+    public fun signature(): PrimaryConstructorSignature {
+        val noBody = block.isEmpty
+        val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = noBody, commentsInside = noBody)
+        return PrimaryConstructorSignature(modifiers, parameterList).assignPrototypesFrom(this, inheritance)
+    }
+}
+
+class PrimaryConstructorSignature(val modifiers: Modifiers, val parameterList: ParameterList) : Element() {
+    override fun generateCode(builder: CodeBuilder) {
         val accessModifier = modifiers.filter { it in ACCESS_MODIFIERS && it != Modifier.PUBLIC }
+        if (accessModifier.isEmpty && parameterList.parameters.isEmpty()) return
         if (!accessModifier.isEmpty) {
             builder append " " append accessModifier
         }
-        return builder append "(" append parameterList append ")"
-    }
-
-    public fun appendBody(builder: CodeBuilder): CodeBuilder = builder.append(block!!)
-}
-
-class SecondaryConstructor(converter: Converter,
-                         annotations: Annotations,
-                         modifiers: Modifiers,
-                         parameterList: ParameterList,
-                         block: Block)
-  : Constructor(converter, annotations, modifiers, parameterList, block) {
-
-    public fun toFactoryFunction(containingClass: Class?): Function {
-        val statements = ArrayList(block?.statements ?: listOf())
-        statements.add(ReturnStatement(tempValIdentifier))
-        val block = Block(statements, block?.lBrace ?: LBrace(), block?.rBrace ?: RBrace())
-        val typeParameters = ArrayList<TypeParameter>()
-        if (containingClass != null) {
-            typeParameters.addAll(containingClass.typeParameterList.parameters)
-        }
-        return Function(converter, Identifier("create"), annotations, modifiers,
-                        ClassType(containingClass?.name ?: Identifier.Empty, typeParameters, Nullability.NotNull, converter.settings),
-                        TypeParameterList(typeParameters), parameterList, block, false).assignPrototypesFrom(this)
-    }
-
-    class object {
-        public val tempValIdentifier: Identifier = Identifier("__", false)
+        builder append "(" append parameterList append ")"
     }
 }
+
+class FactoryFunction(name: Identifier,
+                      annotations: Annotations,
+                      modifiers: Modifiers,
+                      returnType: Type,
+                      parameterList: ParameterList,
+                      typeParameterList: TypeParameterList,
+                      body: Block)
+: Function(name, annotations, modifiers, returnType, typeParameterList, parameterList, body, false)
+
+fun FactoryFunction.withBody(body: Block)
+        = FactoryFunction(name, annotations, modifiers, returnType, parameterList, typeParameterList, body).assignPrototypesFrom(this)

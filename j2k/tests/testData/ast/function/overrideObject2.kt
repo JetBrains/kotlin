@@ -1,6 +1,6 @@
-class Base()
+class Base
 
-class X() : Base() {
+class X : Base() {
     override fun hashCode(): Int {
         return super.hashCode()
     }

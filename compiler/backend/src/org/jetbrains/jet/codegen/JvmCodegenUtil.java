@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.vfs.StandardFileSystems;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.Stack;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -26,23 +29,32 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.config.IncrementalCompilation;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentScopeForJavaPackage;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
+import static org.jetbrains.jet.lang.descriptors.Modality.FINAL;
 
 public class JvmCodegenUtil {
 
@@ -61,43 +73,12 @@ public class JvmCodegenUtil {
         return isInterface(type.getConstructor().getDeclarationDescriptor());
     }
 
-    public static SimpleFunctionDescriptor createInvoke(FunctionDescriptor fd) {
-        int arity = fd.getValueParameters().size();
-        SimpleFunctionDescriptorImpl invokeDescriptor = SimpleFunctionDescriptorImpl.create(
-                fd.getExpectedThisObject() != null
-                ? KotlinBuiltIns.getInstance().getExtensionFunction(arity) : KotlinBuiltIns.getInstance().getFunction(arity),
-                Annotations.EMPTY,
-                Name.identifier("invoke"),
-                CallableMemberDescriptor.Kind.DECLARATION
-        );
-
-        invokeDescriptor.initialize(DescriptorUtils.getReceiverParameterType(fd.getReceiverParameter()),
-                                    fd.getExpectedThisObject(),
-                                    Collections.<TypeParameterDescriptorImpl>emptyList(),
-                                    fd.getValueParameters(),
-                                    fd.getReturnType(),
-                                    Modality.FINAL,
-                                    Visibilities.PUBLIC
-        );
-        return invokeDescriptor;
-    }
-
     public static boolean isConst(@NotNull CalculatedClosure closure) {
         return closure.getCaptureThis() == null && closure.getCaptureReceiverType() == null && closure.getCaptureVariables().isEmpty();
     }
 
     public static <T> T peekFromStack(Stack<T> stack) {
         return stack.empty() ? null : stack.peek();
-    }
-
-    public static JetType getSuperClass(ClassDescriptor classDescriptor) {
-        List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(classDescriptor);
-        for (ClassDescriptor descriptor : superclassDescriptors) {
-            if (descriptor.getKind() != ClassKind.TRAIT) {
-                return descriptor.getDefaultType();
-            }
-        }
-        return KotlinBuiltIns.getInstance().getAnyType();
     }
 
     @Nullable
@@ -137,12 +118,11 @@ public class JvmCodegenUtil {
         return type.getConstructor().getDeclarationDescriptor().getOriginal() == classifier.getOriginal();
     }
 
-    public static boolean isCallInsideSameClassAsDeclared(CallableMemberDescriptor declarationDescriptor, CodegenContext context) {
-        boolean isFakeOverride = declarationDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
-        boolean isDelegate = declarationDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
+    private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {
+        boolean isFakeOverride = descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+        boolean isDelegate = descriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
 
-        DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
-        containingDeclaration = containingDeclaration.getOriginal();
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration().getOriginal();
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
@@ -152,30 +132,72 @@ public class JvmCodegenUtil {
     }
 
     private static boolean isSamePackageInSameModule(
-            @NotNull DeclarationDescriptor owner1,
-            @NotNull DeclarationDescriptor owner2
+            @NotNull DeclarationDescriptor callerOwner,
+            @NotNull DeclarationDescriptor calleeOwner
     ) {
-        if (owner1 instanceof PackageFragmentDescriptor && owner2 instanceof PackageFragmentDescriptor) {
-            PackageFragmentDescriptor fragment1 = (PackageFragmentDescriptor) owner1;
-            PackageFragmentDescriptor fragment2 = (PackageFragmentDescriptor) owner2;
-
-            if (!IncrementalCompilation.ENABLED) {
-                return fragment1 == fragment2;
-            }
+        if (callerOwner instanceof PackageFragmentDescriptor && calleeOwner instanceof PackageFragmentDescriptor) {
+            PackageFragmentDescriptor callerFragment = (PackageFragmentDescriptor) callerOwner;
+            PackageFragmentDescriptor calleeFragment = (PackageFragmentDescriptor) calleeOwner;
 
             // backing field should be used directly within same module of same package
-            // TODO calls from other modules/libraries should use facade: KT-4590
-            return fragment1.getFqName().equals(fragment2.getFqName()) && DescriptorUtils.areInSameModule(fragment1, fragment2);
+            if (callerFragment == calleeFragment) {
+                return true;
+            }
+            return callerFragment.getFqName().equals(calleeFragment.getFqName())
+                   && calleeFragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment;
         }
         return false;
     }
 
-    public static boolean isCallInsideSameModuleAsDeclared(CallableMemberDescriptor declarationDescriptor, CodegenContext context) {
+    public static boolean isCallInsideSameModuleAsDeclared(
+            @NotNull CallableMemberDescriptor declarationDescriptor,
+            @NotNull CodegenContext context,
+            @Nullable File outDirectory
+    ) {
         if (context == CodegenContext.STATIC) {
             return true;
         }
         DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
-        return DescriptorUtils.areInSameModule(declarationDescriptor, contextDescriptor);
+
+        CallableMemberDescriptor directMember = getDirectMember(declarationDescriptor);
+        if (directMember instanceof DeserializedCallableMemberDescriptor) {
+            return isContainedByCompiledPartOfOurModule(((DeserializedCallableMemberDescriptor) directMember), outDirectory);
+        }
+        else {
+            return DescriptorUtils.areInSameModule(directMember, contextDescriptor);
+        }
+    }
+
+    private static boolean isContainedByCompiledPartOfOurModule(
+            @NotNull DeserializedCallableMemberDescriptor descriptor,
+            @Nullable File outDirectory
+    ) {
+        if (descriptor.getContainingDeclaration() instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
+            return true;
+        }
+
+        if (outDirectory == null) {
+            return false;
+        }
+
+        if (!(descriptor.getContainingDeclaration() instanceof JavaPackageFragmentDescriptor)) {
+            return false;
+        }
+        JavaPackageFragmentDescriptor packageFragment = (JavaPackageFragmentDescriptor) descriptor.getContainingDeclaration();
+        JetScope packageScope = packageFragment.getMemberScope();
+        if (!(packageScope instanceof LazyPackageFragmentScopeForJavaPackage)) {
+            return false;
+        }
+        KotlinJvmBinaryClass binaryClass = ((LazyPackageFragmentScopeForJavaPackage) packageScope).getKotlinBinaryClass();
+
+        if (binaryClass instanceof VirtualFileKotlinClass) {
+            VirtualFile file = ((VirtualFileKotlinClass) binaryClass).getFile();
+            if (file.getFileSystem().getProtocol() == StandardFileSystems.FILE_PROTOCOL) {
+                File ioFile = VfsUtilCore.virtualToIoFile(file);
+                return ioFile.getAbsolutePath().startsWith(outDirectory.getAbsolutePath() + File.separator);
+            }
+        }
+        return false;
     }
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
@@ -191,32 +213,40 @@ public class JvmCodegenUtil {
     }
 
     public static boolean couldUseDirectAccessToProperty(
-            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull PropertyDescriptor property,
             boolean forGetter,
-            boolean isInsideClass,
             boolean isDelegated,
-            MethodContext context
+            @NotNull MethodContext context
     ) {
-        if (context.isInlineFunction()) {
-            return false;
-        }
-        PropertyAccessorDescriptor accessorDescriptor = forGetter ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
-        boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
-        boolean specialTypeProperty = isDelegated ||
-                                      isExtensionProperty ||
-                                      DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration()) ||
-                                      JetTypeMapper.isAccessor(propertyDescriptor);
-        return isInsideClass &&
-               !specialTypeProperty &&
-               (accessorDescriptor == null ||
-                accessorDescriptor.isDefault() &&
-                (!isExternallyAccessible(propertyDescriptor) || accessorDescriptor.getModality() == Modality.FINAL));
+        if (JetTypeMapper.isAccessor(property)) return false;
+
+        // Inline functions can't use direct access because a field may not be visible at the call site
+        if (context.isInlineFunction()) return false;
+
+        // Only properties of the same class can be directly accessed, except when we are evaluating expressions in the debugger
+        if (!isCallInsideSameClassAsDeclared(property, context) && !isDebuggerContext(context)) return false;
+
+        // Delegated and extension properties have no backing fields
+        if (isDelegated || property.getReceiverParameter() != null) return false;
+
+        // Class object properties cannot be accessed directly because their backing fields are stored in the containing class
+        if (DescriptorUtils.isClassObject(property.getContainingDeclaration())) return false;
+
+        PropertyAccessorDescriptor accessor = forGetter ? property.getGetter() : property.getSetter();
+
+        // If there's no accessor declared we can use direct access
+        if (accessor == null) return true;
+
+        // If the accessor is non-default (i.e. it has some code) we should call that accessor and not use direct access
+        if (accessor.hasBody()) return false;
+
+        // If the accessor is private or final, it can't be overridden in the subclass and thus we can use direct access
+        return property.getVisibility() == Visibilities.PRIVATE || accessor.getModality() == FINAL;
     }
 
-    private static boolean isExternallyAccessible(@NotNull PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getVisibility() != Visibilities.PRIVATE ||
-               DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration()) ||
-               DescriptorUtils.isTopLevelDeclaration(propertyDescriptor);
+    private static boolean isDebuggerContext(@NotNull MethodContext context) {
+        JetFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
+        return file != null && CodeFragmentUtilPackage.getSkipVisibilityCheck(file);
     }
 
     @NotNull
@@ -249,5 +279,26 @@ public class JvmCodegenUtil {
         }
 
         return null;
+    }
+
+    public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
+        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
+        JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
+        return "valueOf".equals(functionDescriptor.getName().asString())
+               && methodTypeParameters.size() == 1
+               && JetTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
+    }
+
+    public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor functionDescriptor) {
+        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
+        return "values".equals(functionDescriptor.getName().asString())
+               && methodTypeParameters.isEmpty();
+    }
+
+    @NotNull
+    public static CallableMemberDescriptor getDirectMember(@NotNull CallableMemberDescriptor descriptor) {
+        return descriptor instanceof PropertyAccessorDescriptor
+               ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
+               : descriptor;
     }
 }

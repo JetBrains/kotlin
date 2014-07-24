@@ -762,34 +762,70 @@ public trait Function9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
+public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
+    /*primary*/ private constructor InlineOption()
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+    public class object <class-object-for-InlineOption> {
+        /*primary*/ private constructor <class-object-for-InlineOption>()
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineOption
+        public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineOption>
+    }
+
+    public enum entry LOCAL_CONTINUE_AND_BREAK : kotlin.InlineOption {
+        /*primary*/ private constructor LOCAL_CONTINUE_AND_BREAK()
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-LOCAL_CONTINUE_AND_BREAK> : kotlin.InlineOption.LOCAL_CONTINUE_AND_BREAK {
+            /*primary*/ private constructor <class-object-for-LOCAL_CONTINUE_AND_BREAK>()
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    public enum entry ONLY_LOCAL_RETURN : kotlin.InlineOption {
+        /*primary*/ private constructor ONLY_LOCAL_RETURN()
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-ONLY_LOCAL_RETURN> : kotlin.InlineOption.ONLY_LOCAL_RETURN {
+            /*primary*/ private constructor <class-object-for-ONLY_LOCAL_RETURN>()
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+}
+
 public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
     /*primary*/ private constructor InlineStrategy()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     public class object <class-object-for-InlineStrategy> {
         /*primary*/ private constructor <class-object-for-InlineStrategy>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineStrategy
         public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineStrategy>
     }
-    
+
     public enum entry AS_FUNCTION : kotlin.InlineStrategy {
         /*primary*/ private constructor AS_FUNCTION()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-AS_FUNCTION> : kotlin.InlineStrategy.AS_FUNCTION {
             /*primary*/ private constructor <class-object-for-AS_FUNCTION>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
+
     public enum entry IN_PLACE : kotlin.InlineStrategy {
         /*primary*/ private constructor IN_PLACE()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-IN_PLACE> : kotlin.InlineStrategy.IN_PLACE {
             /*primary*/ private constructor <class-object-for-IN_PLACE>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
@@ -927,7 +963,7 @@ public final class IntRange : kotlin.Range<kotlin.Int>, kotlin.Progression<kotli
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Int): kotlin.Boolean
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.IntIterator
-    
+
     public class object <class-object-for-IntRange> {
         /*primary*/ private constructor <class-object-for-IntRange>()
         public final val EMPTY: kotlin.IntRange
@@ -1096,7 +1132,7 @@ public final class LongRange : kotlin.Range<kotlin.Long>, kotlin.Progression<kot
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Long): kotlin.Boolean
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.LongIterator
-    
+
     public class object <class-object-for-LongRange> {
         /*primary*/ private constructor <class-object-for-LongRange>()
         public final val EMPTY: kotlin.LongRange
@@ -1113,7 +1149,7 @@ public trait Map</*0*/ K, /*1*/ out V> {
     public abstract fun keySet(): kotlin.Set<K>
     public abstract fun size(): kotlin.Int
     public abstract fun values(): kotlin.Collection<V>
-    
+
     public trait Entry</*0*/ out K, /*1*/ out V> {
         public abstract fun getKey(): K
         public abstract fun getValue(): V
@@ -1193,7 +1229,7 @@ public trait MutableMap</*0*/ K, /*1*/ V> : kotlin.Map<K, V> {
     public abstract fun remove(/*0*/ key: kotlin.Any?): V?
     public abstract override /*1*/ /*fake_override*/ fun size(): kotlin.Int
     public abstract override /*1*/ fun values(): kotlin.MutableCollection<V>
-    
+
     public trait MutableEntry</*0*/ K, /*1*/ V> : kotlin.Map.Entry<K, V> {
         public abstract override /*1*/ /*fake_override*/ fun getKey(): K
         public abstract override /*1*/ /*fake_override*/ fun getValue(): V
@@ -1390,7 +1426,7 @@ public final class ShortRange : kotlin.Range<kotlin.Short>, kotlin.Progression<k
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Short): kotlin.Boolean
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ShortIterator
-    
+
     public class object <class-object-for-ShortRange> {
         /*primary*/ private constructor <class-object-for-ShortRange>()
         public final val EMPTY: kotlin.ShortRange
@@ -1414,10 +1450,10 @@ public open class Throwable {
     public final fun printStackTrace(): kotlin.Unit
 }
 
-public final class Unit {
-    /*primary*/ private constructor Unit()
-    
-    public class object <class-object-for-Unit> {
+public open class Unit {
+    /*primary*/ internal constructor Unit()
+
+    public class object <class-object-for-Unit> : kotlin.Unit {
         /*primary*/ private constructor <class-object-for-Unit>()
         public final val VALUE: kotlin.Unit
             public final fun <get-VALUE>(): kotlin.Unit
@@ -1438,6 +1474,12 @@ public final annotation class inline : kotlin.Annotation {
     /*primary*/ public constructor inline(/*0*/ strategy: kotlin.InlineStrategy = ...)
     public final val strategy: kotlin.InlineStrategy
         public final fun <get-strategy>(): kotlin.InlineStrategy
+}
+
+public final annotation class inlineOptions : kotlin.Annotation {
+    /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<kotlin.InlineOption>*/)
+    internal final val value: kotlin.Array<kotlin.InlineOption>
+        internal final fun <get-value>(): kotlin.Array<kotlin.InlineOption>
 }
 
 public final annotation class noinline : kotlin.Annotation {

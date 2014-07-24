@@ -19,9 +19,8 @@ package org.jetbrains.jet.plugin.configuration.ui;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationsConfiguration;
 import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.openapi.startup.StartupManager;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 
 public class NonConfiguredKotlinProjectComponent extends AbstractProjectComponent {
@@ -37,14 +36,10 @@ public class NonConfiguredKotlinProjectComponent extends AbstractProjectComponen
     @Override
     public void projectOpened() {
         super.projectOpened();
-        MessageBusConnection connection = myProject.getMessageBus().connect();
-        connection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
-            @Override
-            public void enteredDumbMode() {
-            }
 
+        StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
             @Override
-            public void exitDumbMode() {
+            public void run() {
                 ConfigureKotlinInProjectUtils.showConfigureKotlinNotificationIfNeeded(myProject);
             }
         });

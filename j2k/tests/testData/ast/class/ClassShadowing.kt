@@ -1,6 +1,6 @@
 package test
 
-public class Short() {
+public class Short {
     class object {
         public fun valueOf(value: String): Short {
             return Short()
@@ -8,7 +8,7 @@ public class Short() {
     }
 }
 
-class Test() {
+class Test {
     class object {
         public fun test() {
             test.Short.valueOf("1")

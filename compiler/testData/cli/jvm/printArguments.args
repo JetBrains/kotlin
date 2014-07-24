@@ -1,3 +1,0 @@
--printArgs
--script
-$TESTDATA_DIR$/hello.kts

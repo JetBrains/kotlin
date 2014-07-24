@@ -5,11 +5,11 @@ trait I {
     public fun doIt(stream: InputStream): Int
 }
 
-public class C() {
+public class C {
     throws(javaClass<IOException>())
     fun foo(): Int {
-        return FileInputStream("foo").use { stream ->
-            bar(object : I {
+        FileInputStream("foo").use { stream ->
+            return bar(object : I {
                 throws(javaClass<IOException>())
                 override fun doIt(stream: InputStream): Int {
                     return stream.available()

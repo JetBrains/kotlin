@@ -187,8 +187,10 @@ public class AnonymousObjectTransformer {
 
         MethodInliner inliner = new MethodInliner(sourceNode, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                                                   remapper, isSameModule, "Transformer for " + invocation.getOwnerInternalName());
-        InlineResult result = inliner.doInline(resultVisitor, new LocalVarRemapper(parameters, 0), false);
+
+        InlineResult result = inliner.doInline(resultVisitor, new LocalVarRemapper(parameters, 0), false, LabelOwner.NOT_APPLICABLE);
         resultVisitor.visitMaxs(-1, -1);
+        resultVisitor.visitEnd();
         return result;
     }
 
@@ -272,8 +274,10 @@ public class AnonymousObjectTransformer {
 
         MethodInliner inliner = new MethodInliner(constructor, constructorParameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                                                   remapper, isSameModule, "Transformer for constructor of " + invocation.getOwnerInternalName());
-        InlineResult result = inliner.doInline(capturedFieldInitializer, new LocalVarRemapper(constructorParameters, 0), false);
+        InlineResult result = inliner.doInline(capturedFieldInitializer, new LocalVarRemapper(constructorParameters, 0), false,
+                                               LabelOwner.NOT_APPLICABLE);
         constructorVisitor.visitMaxs(-1, -1);
+        constructorVisitor.visitEnd();
 
         AsmUtil.genClosureFields(capturedFieldsToGenerate, classBuilder);
         //TODO for inline method make public class
@@ -384,20 +388,19 @@ public class AnonymousObjectTransformer {
         //For all inlined lambdas add their captured parameters
         //TODO: some of such parameters could be skipped - we should perform additional analysis
         Map<String, LambdaInfo> capturedLambdasToInline = new HashMap<String, LambdaInfo>(); //captured var of inlined parameter
-        List<CapturedParamInfo> allRecapturedParameters = new ArrayList<CapturedParamInfo>();
+        List<CapturedParamDesc> allRecapturedParameters = new ArrayList<CapturedParamDesc>();
         for (LambdaInfo info : capturedLambdas) {
-            for (CapturedParamInfo var : info.getCapturedVars()) {
-                CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(var,
-                                                                                              getNewFieldName(var.getOriginalFieldName()));
+            for (CapturedParamDesc desc : info.getCapturedVars()) {
+                CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, getNewFieldName(desc.getFieldName()));
                 StackValue composed = StackValue.composed(StackValue.local(0, oldObjectType),
-                                                          StackValue.field(var.getType(),
+                                                          StackValue.field(desc.getType(),
                                                                            oldObjectType, /*TODO owner type*/
                                                                            recapturedParamInfo.getNewFieldName(), false)
                 );
                 recapturedParamInfo.setRemapValue(composed);
-                allRecapturedParameters.add(var);
+                allRecapturedParameters.add(desc);
 
-                constructorParamBuilder.addCapturedParam(var, recapturedParamInfo.getNewFieldName()).setRemapValue(composed);
+                constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.getNewFieldName()).setRemapValue(composed);
             }
             capturedLambdasToInline.put(info.getLambdaClassType().getInternalName(), info);
         }

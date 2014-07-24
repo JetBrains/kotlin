@@ -9,10 +9,6 @@ class A(private val field6: Int, private val field8: Int, a: A) {
     private var field10: Int = 0
     private var field11: Int = 0
 
-    fun foo() {
-        field3 = field2
-    }
-
     {
         field7 = 10
         this.field9 = 10
@@ -20,5 +16,9 @@ class A(private val field6: Int, private val field8: Int, a: A) {
             this.field10 = 10
         }
         a.field11 = 10
+    }
+
+    fun foo() {
+        field3 = field2
     }
 }

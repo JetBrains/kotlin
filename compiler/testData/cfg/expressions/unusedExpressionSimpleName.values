@@ -3,7 +3,7 @@ fun main(arg : Array<String>) {
     a
 }
 ---------------------
-        <v0>: {<: Array<String>}   NEW: magic(arg : Array<String>) -> <v0>
-a       <v1>: *                    NEW: magic(a) -> <v1>                  
-{ a }   <v1>: *                    COPY                                   
+        <v0>: {<: Array<String>}   NEW: magic[FAKE_INITIALIZER](arg : Array<String>) -> <v0>
+a       <v1>: *                    NEW: magic[UNRESOLVED_CALL](a) -> <v1>
+{ a }   <v1>: *                    COPY
 =====================

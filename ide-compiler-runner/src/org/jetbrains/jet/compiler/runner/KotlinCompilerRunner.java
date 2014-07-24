@@ -22,7 +22,6 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.Accessor;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.sampullara.cli.ArgumentUtils;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
@@ -158,13 +157,12 @@ public class KotlinCompilerRunner {
     ) {
         setupCommonSettings(settings);
 
-        List<String> sourceFilePaths = ContainerUtil.map(sourceFiles, new Function<File, String>() {
+        settings.freeArgs = ContainerUtil.map(sourceFiles, new Function<File, String>() {
             @Override
             public String fun(File file) {
                 return file.getPath();
             }
         });
-        settings.sourceFiles = ArrayUtil.toStringArray(sourceFilePaths);
         settings.outputFile = outputFile.getPath();
         settings.libraryFiles = ArrayUtil.toStringArray(libraryFiles);
     }

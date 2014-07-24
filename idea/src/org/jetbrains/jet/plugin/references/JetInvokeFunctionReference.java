@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -31,9 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
 class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> implements MultiRangeReference {
 
@@ -49,13 +47,12 @@ class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> i
     @Override
     @NotNull
     protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
-        JetExpression calleeExpression = getExpression().getCalleeExpression();
-        ResolvedCall<?> resolvedCall = context.get(RESOLVED_CALL, calleeExpression);
+        Call call = BindingContextUtilPackage.getCall(getElement(), context);
+        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(call, context);
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return Collections.<DeclarationDescriptor>singleton(
                     ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall().getCandidateDescriptor());
         }
-        Call call = context.get(CALL, calleeExpression);
         if (call != null && resolvedCall != null && call.getCallType() == Call.CallType.INVOKE) {
             return Collections.<DeclarationDescriptor>singleton(resolvedCall.getCandidateDescriptor());
         }        

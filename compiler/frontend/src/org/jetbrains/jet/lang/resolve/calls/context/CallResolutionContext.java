@@ -28,7 +28,9 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
 public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
+    @NotNull
     public final Call call;
+    @NotNull
     public final CheckValueArgumentsMode checkArguments;
     @NotNull
     public final MutableDataFlowInfoForArguments dataFlowInfoForArguments;

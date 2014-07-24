@@ -18,6 +18,8 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.FrameMap;
+import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -32,19 +34,21 @@ public class  ParametersBuilder {
     private int nextIndex = 0;
     private int nextCaptured = 0;
 
+    @NotNull
     public static ParametersBuilder newBuilder() {
         return new ParametersBuilder();
     }
 
-    public ParameterInfo addThis(Type type, boolean skipped) {
+    @NotNull
+    public ParameterInfo addThis(@NotNull Type type, boolean skipped) {
         ParameterInfo info = new ParameterInfo(type, skipped, nextIndex, -1);
         addParameter(info);
         return info;
     }
 
     @NotNull
-    public ParameterInfo addNextParameter(@NotNull Type type, boolean skipped, @Nullable ParameterInfo original) {
-        return addParameter(new ParameterInfo(type, skipped, nextIndex, original != null ? original.getIndex() : -1));
+    public ParameterInfo addNextParameter(@NotNull Type type, boolean skipped, @Nullable StackValue remapValue) {
+        return addParameter(new ParameterInfo(type, skipped, nextIndex, remapValue));
     }
 
     @NotNull
@@ -54,6 +58,15 @@ public class  ParametersBuilder {
     ) {
         CapturedParamInfo info = new CapturedParamInfo(original.desc, newFieldName, original.isSkipped, nextCaptured, original.getIndex());
         info.setLambda(original.getLambda());
+        return addCapturedParameter(info);
+    }
+
+    @NotNull
+    public CapturedParamInfo addCapturedParam(
+            @NotNull CapturedParamDesc desc,
+            @NotNull String newFieldName
+    ) {
+        CapturedParamInfo info = new CapturedParamInfo(desc, newFieldName, false, nextCaptured, null);
         return addCapturedParameter(info);
     }
 
@@ -82,12 +95,14 @@ public class  ParametersBuilder {
         return addCapturedParameter(info);
     }
 
+    @NotNull
     private ParameterInfo addParameter(ParameterInfo info) {
         params.add(info);
         nextIndex += info.getType().getSize();
         return info;
     }
 
+    @NotNull
     private CapturedParamInfo addCapturedParameter(CapturedParamInfo info) {
         capturedParams.add(info);
         nextCaptured += info.getType().getSize();
@@ -102,6 +117,13 @@ public class  ParametersBuilder {
     @NotNull
     public List<CapturedParamInfo> listCaptured() {
         return Collections.unmodifiableList(capturedParams);
+    }
+
+    @NotNull
+    public List<ParameterInfo> listAllParams() {
+        List<ParameterInfo> list = new ArrayList<ParameterInfo>(params);
+        list.addAll(capturedParams);
+        return list;
     }
 
     @NotNull

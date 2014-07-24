@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
-import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.SuppressIntentionAction;
 import com.intellij.codeInspection.SuppressableProblemGroup;
@@ -28,21 +27,22 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import junit.framework.Assert;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
+import org.jetbrains.jet.plugin.KotlinLightQuickFixTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
+import org.junit.Assert;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
+public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();

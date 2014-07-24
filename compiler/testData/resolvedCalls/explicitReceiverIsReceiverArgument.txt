@@ -1,0 +1,14 @@
+class A {}
+
+fun A.foo() {}
+
+fun bar(a: A) {
+    a.<caret>foo()
+}
+
+
+Resolved call:
+
+Explicit receiver kind = RECEIVER_ARGUMENT
+This object = NO_RECEIVER
+Receiver argument = a

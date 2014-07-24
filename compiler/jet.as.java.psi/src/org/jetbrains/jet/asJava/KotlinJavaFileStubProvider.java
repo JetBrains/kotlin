@@ -52,7 +52,6 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -60,6 +59,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
 public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostics> implements CachedValueProvider<T> {
 
@@ -166,9 +167,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                         Map<JetClassOrObject, InnerKotlinClassLightClassData> innerClassesMap = ContainerUtil.newHashMap();
                         for (ClassDescriptor innerClassDescriptor : allInnerClasses) {
-                            JetClassOrObject innerClass = (JetClassOrObject) BindingContextUtils.descriptorToDeclaration(
-                                    bindingContext, innerClassDescriptor
-                            );
+                            JetClassOrObject innerClass = (JetClassOrObject) descriptorToDeclaration(innerClassDescriptor);
                             if (innerClass == null) continue;
 
                             InnerKotlinClassLightClassData innerLightClassData = new InnerKotlinClassLightClassData(
@@ -298,10 +297,11 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     /*not-null assertions*/false, false,
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
                     /*to generate inline flag on methods*/true,
+                    /*optimize*/true,
                     null,
                     null,
-                    forExtraDiagnostics
-            );
+                    forExtraDiagnostics,
+                    null);
             KotlinCodegenFacade.prepareForCompilation(state);
 
             bindingContext = state.getBindingContext();

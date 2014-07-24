@@ -1,4 +1,5 @@
 // PARAM_TYPES: kotlin.Int
+// PARAM_DESCRIPTOR: val b: kotlin.Int defined in foo
 // SIBLING:
 fun foo(a: Int): Int {
     val b: Int = 1

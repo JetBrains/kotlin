@@ -31,6 +31,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
+
 public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements LazyEntity {
     private final ResolveSession resolveSession;
 
@@ -47,7 +49,8 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
                 jetTypeParameter.getNameAsSafeName(),
                 jetTypeParameter.getVariance(),
                 jetTypeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
-                index
+                index,
+                toSourceElement(jetTypeParameter)
         );
         this.resolveSession = resolveSession;
         this.jetTypeParameter = jetTypeParameter;

@@ -1,11 +1,9 @@
-/**
+/*
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -26,9 +24,9 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
-    @Argument(value = "src", description = "Source file or directory (allows many paths separated by the system path separator)")
-    @ValueDescription("<path>")
-    public String src;
+    @Argument(value = "d", description = "Destination for generated class files")
+    @ValueDescription("<directory|jar>")
+    public String destination;
 
     @Argument(value = "jar", description = "Resulting .jar file path")
     @ValueDescription("<path>")
@@ -78,6 +76,10 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "inline", description = "Inlining mode (default is on)")
     @ValueDescription("{on,off}")
     public String inline;
+
+    @Argument(value = "optimize", description = "Optimization mode (default is on)")
+    @ValueDescription("{on,off}")
+    public String optimize;
 
     @Override
     @NotNull

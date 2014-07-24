@@ -1,7 +1,5 @@
-OUT:
-ERROR: [TestData]/hello.kt: (4, 5) Unresolved reference: a
 
 ERR:
-exec() finished with COMPILATION_ERROR return code
+ERROR: [TestData]/hello.kt: (4, 5) Unresolved reference: a
 
 Return code: 1

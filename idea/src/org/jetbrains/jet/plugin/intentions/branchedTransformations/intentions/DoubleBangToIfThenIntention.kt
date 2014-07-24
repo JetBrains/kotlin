@@ -45,11 +45,10 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingIntention<JetPostfixE
             element.getOperationToken() == JetTokens.EXCLEXCL
 
     override fun applyTo(element: JetPostfixExpression, editor: Editor) {
-        val project = element.getProject()
         val base = checkNotNull(JetPsiUtil.deparenthesize(element.getBaseExpression()), "Base expression cannot be null")
         val expressionText = formatForUseInExceptionArgument(base.getText()!!)
 
-        val defaultException = JetPsiFactory.createExpression(project, "throw $NULL_PTR_EXCEPTION()")
+        val defaultException = JetPsiFactory(element).createExpression("throw $NULL_PTR_EXCEPTION()")
 
         val isStatement = element.isStatement()
         val isStable = base.isStableVariable()
@@ -73,6 +72,7 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingIntention<JetPostfixE
                     override fun getResult(element: String?) = element
                 }
 
+        val project = element.getProject()
         val manager = TemplateManagerImpl(project)
         val builder = TemplateBuilderImpl(thrownExpression)
         builder.replaceElement(thrownExpression, exceptionLookupExpression);

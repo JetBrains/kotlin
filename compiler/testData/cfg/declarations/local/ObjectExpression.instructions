@@ -45,12 +45,13 @@ override fun foo() = 10
 L0:
   1 <START>
     r(10) -> <v0>
+    ret(*|<v0>) L1
 L1:
-    <END>            NEXT:[<SINK>]
+    <END>             NEXT:[<SINK>]
 error:
-    <ERROR>          PREV:[]
+    <ERROR>           PREV:[]
 sink:
-    <SINK>           PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo(b: B) : Int {
@@ -61,19 +62,20 @@ fun foo(b: B) : Int {
 L0:
   1 <START>
     v(b: B)
-    magic(b: B) -> <v0>
+    magic[FAKE_INITIALIZER](b: B) -> <v0>
     w(b|<v0>)
   2 mark({ val o = object : A by b {} return o.foo() })
     v(val o = object : A by b {})
     mark(object : A by b {})
     r(b) -> <v1>
-    r(object : A by b {}) -> <v2>
-    w(o|<v2>)
+    magic[VALUE_CONSUMER](A by b|<v1>) -> <v2>
+    r(object : A by b {}) -> <v3>
+    w(o|<v3>)
     mark(o.foo())
-    r(o) -> <v3>
+    r(o) -> <v4>
     mark(foo())
-    call(foo, foo|<v3>) -> <v4>
-    ret(*|<v4>) L1
+    call(foo(), foo|<v4>) -> <v5>
+    ret(*|<v5>) L1
 L1:
   1 <END>                                                  NEXT:[<SINK>]
 error:

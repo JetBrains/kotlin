@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -42,16 +42,14 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
 public final class PsiCodegenPredictor {
     private PsiCodegenPredictor() {
     }
 
-    public static boolean checkPredictedNameFromPsi(
-            @NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor, @Nullable Type nameFromDescriptors
-    ) {
-        PsiElement element = descriptorToDeclaration(bindingContext, descriptor);
+    public static boolean checkPredictedNameFromPsi(@NotNull DeclarationDescriptor descriptor, @Nullable Type nameFromDescriptors) {
+        PsiElement element = descriptorToDeclaration(descriptor);
         if (element instanceof JetDeclaration) {
             String classNameFromPsi = getPredefinedJvmInternalName((JetDeclaration) element);
             assert classNameFromPsi == null || Type.getObjectType(classNameFromPsi).equals(nameFromDescriptors) :
@@ -159,7 +157,7 @@ public final class PsiCodegenPredictor {
         for (ClassDescriptor classDescriptor : trace.getKeys(CodegenBinding.ASM_TYPE)) {
             Type type = trace.get(CodegenBinding.ASM_TYPE, classDescriptor);
             if (type != null && classInternalName.equals(type.getInternalName())) {
-                return BindingContextUtils.getContainingFile(trace.getBindingContext(), classDescriptor);
+                return DescriptorToSourceUtils.getContainingFile(classDescriptor);
             }
         }
 

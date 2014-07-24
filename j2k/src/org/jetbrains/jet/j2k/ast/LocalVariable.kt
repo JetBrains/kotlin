@@ -24,23 +24,18 @@ class LocalVariable(
         private val identifier: Identifier,
         private val annotations: Annotations,
         private val modifiers: Modifiers,
-        private val typeCalculator: () -> Type /* we use lazy type calculation for better performance */,
+        private val explicitType: Type?,
         private val initializer: Expression,
-        private val isVal: Boolean,
-        private val settings: ConverterSettings
+        private val isVal: Boolean
 ) : Element() {
 
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(annotations).append(if (isVal) "val " else "var ")
-        if (initializer.isEmpty) {
-            builder append identifier append ":" append typeCalculator()
+        builder append annotations append (if (isVal) "val " else "var ") append identifier
+        if (explicitType != null) {
+            builder append ":" append explicitType
         }
-        else {
-            val shouldSpecifyType = settings.specifyLocalVariableTypeByDefault
-            if (shouldSpecifyType)
-                builder append identifier append ":" append typeCalculator() append " = " append initializer
-            else
-                builder append identifier append " = " append initializer
+        if (!initializer.isEmpty) {
+            builder append " = " append initializer
         }
     }
 }

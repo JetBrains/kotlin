@@ -1,6 +1,6 @@
 package demo
 
-class Test() {
+class Test {
     class object {
         fun subListRangeCheck(fromIndex: Int, toIndex: Int, size: Int) {
             if (fromIndex < 0)

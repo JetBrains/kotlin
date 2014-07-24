@@ -30,7 +30,7 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.Collections;
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionAction {
     @NotNull
@@ -45,7 +45,7 @@ public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionActi
         assert typeRef != null : "Must be checked by isAvailable(): " + element;
 
         JetType type = getReconstructedType(typeRef);
-        JetTypeReference newType = JetPsiFactory.createType(project, DescriptorRenderer.SOURCE_CODE.renderType(type));
+        JetTypeReference newType = JetPsiFactory(typeRef).createType(DescriptorRenderer.SOURCE_CODE.renderType(type));
         JetTypeReference replaced = (JetTypeReference) typeRef.replace(newType);
         ShortenReferences.instance$.process(replaced);
     }

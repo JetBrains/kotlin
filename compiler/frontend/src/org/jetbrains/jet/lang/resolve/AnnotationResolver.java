@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -324,7 +325,7 @@ public class AnnotationResolver {
             @NotNull JetCallExpression expression,
             @NotNull BindingTrace trace
     ) {
-        ResolvedCall<?> resolvedCall = trace.get(BindingContext.RESOLVED_CALL, (expression).getCalleeExpression());
+        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, trace.getBindingContext());
         if (resolvedCall == null || !CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
             return null;
         }

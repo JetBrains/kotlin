@@ -20,101 +20,83 @@ import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.jet.lang.resolve.scopes.receivers.AbstractReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 
 import java.io.File
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
+import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
+import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
+import org.jetbrains.jet.lang.resolve.calls.util.getAllValueArguments
+import org.jetbrains.jet.renderer.DescriptorRenderer
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.jet.lang.psi.ValueArgument
+import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.lang.psi.JetExpression
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getParentResolvedCall
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
 
     public fun doTest(filePath: String) {
-        val file = File(filePath)
-        val text = JetTestUtils.doLoadFile(file)
-        val directives = JetTestUtils.parseDirectives(text)
+        val text = JetTestUtils.doLoadFile(File(filePath))!!
 
-        val (callName, thisObject, receiverArgument) = with (directives) {
-            Triple(get("CALL"), get("THIS_OBJECT"), get("RECEIVER_ARGUMENT"))
-        }
-        val explicitReceiverKind = directives.getExplicitReceiverKind()
+        val jetFile = JetPsiFactory(getProject()).createFile(text.replace("<caret>", ""))
+        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile).getBindingContext()
 
-        fun analyzeFileAndGetResolvedCallEntries(): Map<JetElement, ResolvedCall<*>> {
-            val psiFile = JetTestUtils.loadJetFile(getProject(), file)!!
-            val analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile)
-            val bindingContext = analyzeExhaust.getBindingContext()
-            return bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
-        }
+        val element = jetFile.findElementAt(text.indexOf("<caret>"))
+        val expression = PsiTreeUtil.getParentOfType(element, javaClass<JetExpression>())
 
-        fun checkResolvedCall(resolvedCall: ResolvedCall<*>, element: JetElement) {
-            val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange())
+        val cachedCall = expression?.getParentResolvedCall(bindingContext, strict = false)
 
-            val (actualThisObject, actualReceiverArgument, actualExplicitReceiverKind) = with(resolvedCall) {
-                Triple(getThisObject().getText(), getReceiverArgument().getText(), getExplicitReceiverKind())
-            }
-            val actualDataMessage = "Actual data:\nThis object: $actualThisObject. Receiver argument: $actualReceiverArgument. " +
-                                    "Explicit receiver kind: $actualExplicitReceiverKind.\n"
+        val resolvedCall = if (cachedCall !is VariableAsFunctionResolvedCall) cachedCall
+            else if ("(" == element?.getText()) cachedCall.functionCall
+            else cachedCall.variableCall
 
-            assertEquals(thisObject, actualThisObject, "${actualDataMessage}This object mismatch: ")
-            assertEquals(receiverArgument, actualReceiverArgument, "${actualDataMessage}Receiver argument mismatch: ")
-            assertEquals(explicitReceiverKind, actualExplicitReceiverKind, "$actualDataMessage" +
-                         "Explicit receiver kind for resolved call for '${element.getText()}'$lineAndColumn in not as expected")
-        }
-
-        var callFound = false
-        for ((element, resolvedCall) in analyzeFileAndGetResolvedCallEntries()) {
-
-            fun tryCall(resolvedCall: ResolvedCall<*>, actualName: String? = element.getText()) {
-                if (callName == null || callName != actualName) return
-                callFound = true
-                checkResolvedCall(resolvedCall, element)
-            }
-
-            if (resolvedCall is VariableAsFunctionResolvedCall) {
-                tryCall(resolvedCall.functionCall, "invoke")
-                tryCall(resolvedCall.variableCall)
-            }
-            else {
-                tryCall(resolvedCall)
-            }
-        }
-        assertTrue(callFound, "Resolved call for $callName was not found")
+        val resolvedCallInfoFileName = FileUtil.getNameWithoutExtension(filePath) + ".txt"
+        JetTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), "$text\n\n\n${resolvedCall?.renderToText()}")
     }
 }
 
-private fun ReceiverValue.getText() =
-        if (this is ExpressionReceiver) {
-            this.getExpression().getText()
-        }
-        else if (this is AbstractReceiverValue) {
-            this.getType().toString()
-        }
-        else toString()
+private fun ReceiverValue.getText() = when (this) {
+    is ExpressionReceiver -> getExpression().getText()
+    is AbstractReceiverValue -> getType().toString()
+    else -> toString()
+}
 
-private val EXPLICIT_RECEIVER_KIND_DIRECTIVE: String = "EXPLICIT_RECEIVER_KIND"
-private fun Map<String, String>.getExplicitReceiverKind(): ExplicitReceiverKind {
-    val explicitReceiverKind = get(EXPLICIT_RECEIVER_KIND_DIRECTIVE)
-    assert(explicitReceiverKind != null) { "$EXPLICIT_RECEIVER_KIND_DIRECTIVE should be present." }
-    try
-    {
-        return ExplicitReceiverKind.valueOf(explicitReceiverKind!!)
+private fun ValueArgument.getText() = this.getArgumentExpression()?.getText()?.replace("\n", " ") ?: ""
+
+private fun ArgumentMapping.getText() = when (this) {
+    is ArgumentMatch -> {
+        val parameterType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(valueParameter.getType())
+        "${status.name()}  ${valueParameter.getName()} : ${parameterType} ="
     }
-    catch (e: IllegalArgumentException) {
-        val message = StringBuilder()
-        message.append("$EXPLICIT_RECEIVER_KIND_DIRECTIVE must be one of the following: ")
-        for (kind in ExplicitReceiverKind.values()) {
-            message.append("$kind, ")
-        }
-        message.append("\nnot $explicitReceiverKind.")
-        throw AssertionError(message)
+    else -> "ARGUMENT UNMAPPED: "
+}
+
+private fun ResolvedCall<*>.renderToText(): String {
+    val result = StringBuilder()
+    fun addLine(line: String) = result.append(line).append("\n")
+
+    addLine("Resolved call:\n")
+    addLine("Explicit receiver kind = ${getExplicitReceiverKind()}")
+    addLine("This object = ${getThisObject().getText()}")
+    addLine("Receiver argument = ${getReceiverArgument().getText()}")
+
+    val valueArguments = getCall().getAllValueArguments()
+    if (valueArguments.isEmpty()) return result.toString()
+
+    addLine("\nValue arguments mapping:\n")
+
+    for (valueArgument in valueArguments) {
+        val argumentText = valueArgument.getText()
+        val argumentMappingText = getArgumentMapping(valueArgument).getText()
+
+        addLine("$argumentMappingText $argumentText")
     }
+    return result.toString()
 }

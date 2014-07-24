@@ -1,0 +1,14 @@
+trait A {
+    val foo: Int.()->Unit
+
+    fun test() {
+        1.<caret>foo()
+    }
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = Class{A}
+Receiver argument = NO_RECEIVER

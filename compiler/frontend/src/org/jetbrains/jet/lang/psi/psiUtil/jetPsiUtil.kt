@@ -34,6 +34,7 @@ import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassOrObjectStub
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression()
@@ -95,6 +96,9 @@ public fun JetClass.isAbstract(): Boolean = isTrait() || hasModifier(JetTokens.A
 [suppress("UNCHECKED_CAST")]
 public fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newElement) as T
 
+[suppress("UNCHECKED_CAST")]
+public fun <T: PsiElement> T.copied(): T = copy() as T
+
 public fun JetElement.blockExpressionsOrSingle(): Stream<JetElement> =
         if (this is JetBlockExpression) getStatements().stream() else listOf(this).stream()
 
@@ -109,7 +113,7 @@ public fun JetBlockExpression.prependElement(element: JetElement): JetElement =
         addBefore(element, getLBrace()!!.getNextSibling()!!)!! as JetElement
 
 public fun JetElement.wrapInBlock(): JetBlockExpression {
-    val block = JetPsiFactory.createEmptyBody(getProject()) as JetBlockExpression
+    val block = JetPsiFactory(this).createEmptyBody() as JetBlockExpression
     block.appendElement(this)
     return block
 }
@@ -313,3 +317,16 @@ public fun JetSimpleNameExpression.isImportDirectiveExpression(): Boolean {
         return parent is JetImportDirective || parent.getParent() is JetImportDirective
     }
 }
+
+public fun JetElement.getCalleeExpressionIfAny(): JetExpression? {
+    val element = if (this is JetExpression) JetPsiUtil.safeDeparenthesize(this, false) else this
+    return when (element) {
+        is JetSimpleNameExpression -> element
+        is JetCallElement -> element.getCalleeExpression()
+        is JetQualifiedExpression -> element.getSelectorExpression()?.getCalleeExpressionIfAny()
+        is JetOperationExpression -> element.getOperationReference()
+        else -> null
+    }
+}
+
+public fun JetElement.getTextWithLocation(): String = "'${this.getText()}' at ${DiagnosticUtils.atLocation(this)}"

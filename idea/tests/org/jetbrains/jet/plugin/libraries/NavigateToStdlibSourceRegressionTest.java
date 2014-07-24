@@ -43,7 +43,7 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
     }
 
     public void testJavaClass() throws IOException {
-        doNavigationInSourcesTest("libraries/stdlib/src/kotlin/collections/Maps.kt", "Collections", "java.util.Collections");
+        doNavigationInSourcesTest("libraries/stdlib/src/kotlin/collections/Iterators.kt", "Enumeration", "java.util.Enumeration");
     }
 
     public void testKotlinClass() throws IOException {
@@ -68,7 +68,7 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
         PsiFile psiFile = getPsiFileForFileFromSources(file);
         String text = psiFile.getText();
         int index = text.indexOf(element);
-        assertNotSame(-1, "Cannot find text '" + element + "' in file " + path);
+        assertNotSame("Cannot find text '" + element + "' in file " + path, -1, index);
         while (Character.isLetter(text.charAt(index - 1))) {
             index = text.indexOf(element, index + 1);
         }

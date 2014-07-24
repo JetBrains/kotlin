@@ -31,7 +31,10 @@ import com.intellij.psi.PsiCodeFragment;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.changeSignature.*;
+import com.intellij.refactoring.changeSignature.CallerChooserBase;
+import com.intellij.refactoring.changeSignature.ChangeSignatureDialogBase;
+import com.intellij.refactoring.changeSignature.MethodDescriptor;
+import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.refactoring.ui.ComboBoxVisibilityPanel;
 import com.intellij.refactoring.ui.VisibilityPanelBase;
 import com.intellij.ui.DottedBorder;
@@ -49,7 +52,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.descriptors.Visibility;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeCodeFragment;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -63,6 +65,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         JetParameterInfo,
@@ -96,7 +100,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
 
     @Override
     protected PsiCodeFragment createReturnTypeCodeFragment() {
-        return JetPsiFactory.createTypeCodeFragment(myProject, myMethod.getReturnTypeText(), myMethod.getContext());
+        return JetPsiFactory(myProject).createTypeCodeFragment(myMethod.getReturnTypeText(), myMethod.getContext());
     }
 
     @Nullable

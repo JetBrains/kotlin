@@ -46,6 +46,6 @@ public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingIntention<
         val tripleQuotes = parent.getFirstChild()?.getText()?.startsWith("\"\"\"")
         if (tripleQuotes == null) return
         val newExpression = if (tripleQuotes) "\"\"\"${sb.toString()}\"\"\"" else "\"${sb.toString()}\""
-        parent.replace(JetPsiFactory.createExpression(element.getProject(), newExpression))
+        parent.replace(JetPsiFactory(element).createExpression(newExpression))
     }
 }

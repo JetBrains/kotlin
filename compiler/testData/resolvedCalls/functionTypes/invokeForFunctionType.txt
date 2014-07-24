@@ -1,0 +1,10 @@
+fun bar(f: ()->Unit) {
+    f<caret>()
+}
+
+
+Resolved call:
+
+Explicit receiver kind = THIS_OBJECT
+This object = f
+Receiver argument = NO_RECEIVER

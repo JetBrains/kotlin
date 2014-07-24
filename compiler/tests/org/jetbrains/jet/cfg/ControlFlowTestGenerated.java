@@ -147,6 +147,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest("compiler/testData/cfg/controlStructures/returnsInWhen.kt");
         }
         
+        @TestMetadata("whenConditions.kt")
+        public void testWhenConditions() throws Exception {
+            doTest("compiler/testData/cfg/controlStructures/whenConditions.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/cfg/conventions")
@@ -221,6 +226,16 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             @TestMetadata("AnonymousInitializers.kt")
             public void testAnonymousInitializers() throws Exception {
                 doTest("compiler/testData/cfg/declarations/classesAndObjects/AnonymousInitializers.kt");
+            }
+            
+            @TestMetadata("delegationByExpression.kt")
+            public void testDelegationByExpression() throws Exception {
+                doTest("compiler/testData/cfg/declarations/classesAndObjects/delegationByExpression.kt");
+            }
+            
+            @TestMetadata("delegationBySuperCall.kt")
+            public void testDelegationBySuperCall() throws Exception {
+                doTest("compiler/testData/cfg/declarations/classesAndObjects/delegationBySuperCall.kt");
             }
             
         }

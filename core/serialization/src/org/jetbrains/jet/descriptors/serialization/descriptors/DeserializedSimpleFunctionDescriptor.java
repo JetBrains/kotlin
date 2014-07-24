@@ -22,6 +22,7 @@ import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -40,7 +41,7 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
             @NotNull Kind kind,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver) {
-        super(containingDeclaration, original, annotations, name, kind);
+        super(containingDeclaration, original, annotations, name, kind, SourceElement.NO_SOURCE);
         this.proto = proto;
         this.nameResolver = nameResolver;
     }

@@ -40,6 +40,20 @@ import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.spi.LoggingEvent
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
+import com.intellij.debugger.ui.impl.FrameVariablesTree
+import com.intellij.openapi.util.Disposer
+import com.intellij.debugger.ui.impl.watch.DebuggerTree
+import com.intellij.debugger.ui.impl.watch.DebuggerTreeNodeImpl
+import com.intellij.debugger.ui.impl.watch.DefaultNodeDescriptor
+import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
+import com.intellij.debugger.ui.tree.LocalVariableDescriptor
+import com.intellij.debugger.ui.tree.StackFrameDescriptor
+import com.intellij.debugger.ui.tree.StaticDescriptor
+import com.intellij.debugger.ui.impl.watch.ThisDescriptorImpl
+import com.intellij.debugger.ui.tree.FieldDescriptor
+import com.intellij.debugger.ui.impl.watch.NodeDescriptorImpl
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestCase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -71,7 +85,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
 
     fun doSingleBreakpointTest(path: String) {
         val file = File(path)
-        val expressions = loadTestDirectivesPairs(file, "// EXPRESSION: ", "// RESULT: ")
+        val fileText = FileUtil.loadFile(file, true)
+
+        val shouldPrintFrame = InTextDirectivesUtils.isDirectiveDefined(fileText, "// PRINT_FRAME")
+
+        val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 
         val blocks = findFilesWithBlocks(file).map { FileUtil.loadFile(it, true) }
         val expectedBlockResults = blocks.map { InTextDirectivesUtils.findLinesWithPrefixesRemoved(it, "// RESULT: ").makeString("\n") }
@@ -80,15 +98,26 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
 
         onBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
-            for ((expression, expected) in expressions) {
-                mayThrow(exceptions, expression) {
-                    evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
+            try {
+                for ((expression, expected) in expressions) {
+                    mayThrow(exceptions, expression) {
+                        evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
+                    }
+                }
+
+                for ((i, block) in blocks.withIndices()) {
+                    mayThrow(exceptions, block) {
+                        evaluate(block, CodeFragmentKind.CODE_BLOCK, expectedBlockResults[i])
+                    }
                 }
             }
-
-            for ((i, block) in blocks.withIndices()) {
-                mayThrow(exceptions, block) {
-                    evaluate(block, CodeFragmentKind.CODE_BLOCK, expectedBlockResults[i])
+            finally {
+                if (shouldPrintFrame) {
+                    printFrame()
+                    println(fileText, ProcessOutputTypes.SYSTEM)
+                }
+                else {
+                    resume(this)
                 }
             }
 
@@ -98,7 +127,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
     }
 
     fun doMultipleBreakpointsTest(path: String) {
-        val expressions = loadTestDirectivesPairs(File(path), "// EXPRESSION: ", "// RESULT: ")
+        val expressions = loadTestDirectivesPairs(FileUtil.loadFile(File(path), true), "// EXPRESSION: ", "// RESULT: ")
 
         createDebugProcess(path)
 
@@ -106,7 +135,12 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
         for ((expression, expected) in expressions) {
             mayThrow(exceptions, expression) {
                 onBreakpoint {
-                    evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
+                    try {
+                        evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
+                    }
+                    finally {
+                        resume(this)
+                    }
                 }
             }
         }
@@ -116,7 +150,53 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
         finish()
     }
 
+    private fun SuspendContextImpl.printFrame() {
+        val tree = FrameVariablesTree(getProject()!!)
+        Disposer.register(getTestRootDisposable()!!, tree);
 
+        val debuggerContext = createDebuggerContext(this)
+        invokeRatherLater(this) {
+            tree.rebuild(debuggerContext)
+            expandAll(tree, Runnable {
+                PRINTER.printTree(tree)
+                resume(this@printFrame)
+            })
+        }
+    }
+
+    private val PRINTER = object {
+        fun printTree(tree: DebuggerTree) {
+            val root = tree.getMutableModel()!!.getRoot() as DebuggerTreeNodeImpl
+            printNode(root, 0)
+        }
+
+        private fun printNode(node: DebuggerTreeNodeImpl, indent: Int) {
+            val descriptor: NodeDescriptorImpl = node.getDescriptor()!!
+            if (descriptor is DefaultNodeDescriptor) return
+
+            val label = descriptor.getLabel()!!.replaceAll("-[\\w]*-[\\w|\\d]+", "-@packagePartHASH")
+            if (label.endsWith(XDebuggerUIConstants.COLLECTING_DATA_MESSAGE)) return
+
+            val curIndent = " ".repeat(indent)
+            when (descriptor) {
+                is StackFrameDescriptor ->    logDescriptor(descriptor, "$curIndent frame    = $label\n")
+                is LocalVariableDescriptor -> logDescriptor(descriptor, "$curIndent local    = $label\n")
+                is StaticDescriptor ->        logDescriptor(descriptor, "$curIndent static   = $label\n")
+                is ThisDescriptorImpl ->      logDescriptor(descriptor, "$curIndent this     = $label\n")
+                is FieldDescriptor ->         logDescriptor(descriptor, "$curIndent field    = $label\n")
+                else ->                       logDescriptor(descriptor, "$curIndent unknown  = $label\n")
+            }
+
+            printChildren(node, indent + 2)
+        }
+
+        private fun printChildren(node: DebuggerTreeNodeImpl, indent: Int) {
+            val e = node.rawChildren()!!
+            while (e.hasMoreElements()) {
+                printNode(e.nextElement() as DebuggerTreeNodeImpl, indent)
+            }
+        }
+    }
 
     private fun checkExceptions(exceptions: MutableMap<String, Throwable>) {
         if (!exceptions.empty) {
@@ -136,8 +216,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
         }
     }
 
-    private fun loadTestDirectivesPairs(file: File, directivePrefix: String, expectedPrefix: String): List<Pair<String, String>> {
-        val fileContent = FileUtil.loadFile(file, true)
+    private fun loadTestDirectivesPairs(fileContent: String, directivePrefix: String, expectedPrefix: String): List<Pair<String, String>> {
         val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, directivePrefix)
         val expected = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, expectedPrefix)
         assert(directives.size == expected.size, "Sizes of test directives are different")
@@ -163,32 +242,34 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
     }
 
     private fun SuspendContextImpl.evaluate(text: String, codeFragmentKind: CodeFragmentKind, expectedResult: String) {
-        try {
+        ApplicationManager.getApplication()?.runReadAction {
             val sourcePosition = ContextUtil.getSourcePosition(this)
             val contextElement = ContextUtil.getContextElement(sourcePosition)!!
             Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.getText()}",
                               KotlinCodeFragmentFactory().isContextAccepted(contextElement))
 
-            val evaluator = DebuggerInvocationUtil.commitAndRunReadAction(getProject()) {
-                EvaluatorBuilderImpl.build(TextWithImportsImpl(
-                        codeFragmentKind,
-                        text,
-                        JetCodeFragment.getImportsForElement(contextElement),
-                        JetFileType.INSTANCE),
-                                           contextElement,
-                                           sourcePosition)
-            }
-            if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
+            try {
 
-            val value = evaluator.evaluate(createEvaluationContext(this))
-            val actualResult = value.asValue().asString()
-            Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
-        }
-        catch (e: EvaluateException) {
-            Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage()?.replaceFirst("id=[0-9]*", "id=ID"))
-        }
-        finally {
-            resume(this)
+                val evaluator =
+                        EvaluatorBuilderImpl.build(TextWithImportsImpl(
+                                codeFragmentKind,
+                                text,
+                                JetCodeFragment.getImportsForElement(contextElement),
+                                JetFileType.INSTANCE),
+                                                   contextElement,
+                                                   sourcePosition)
+
+
+                if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
+
+                val value = evaluator.evaluate(createEvaluationContext(this))
+                val actualResult = value.asValue().asString()
+
+                Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
+            }
+            catch (e: EvaluateException) {
+                Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage()?.replaceFirst("id=[0-9]*", "id=ID"))
+            }
         }
     }
 

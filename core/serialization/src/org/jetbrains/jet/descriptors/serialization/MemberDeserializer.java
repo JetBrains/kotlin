@@ -100,7 +100,7 @@ public class MemberDeserializer {
                                                           modality(Flags.MODALITY.get(getterFlags)),
                                                           visibility(Flags.VISIBILITY.get(getterFlags)),
                                                           isNotDefault, !isNotDefault,
-                                                          property.getKind(), null);
+                                                          property.getKind(), null, SourceElement.NO_SOURCE);
             }
             else {
                 getter = DescriptorFactory.createDefaultGetter(property);
@@ -117,7 +117,7 @@ public class MemberDeserializer {
                                                           modality(Flags.MODALITY.get(setterFlags)),
                                                           visibility(Flags.VISIBILITY.get(setterFlags)), isNotDefault,
                                                           !isNotDefault,
-                                                          property.getKind(), null);
+                                                          property.getKind(), null, SourceElement.NO_SOURCE);
                 DeserializationContextWithTypes setterLocal = local.childContext(setter, Collections.<TypeParameter>emptyList(),
                                                                                  Collections.<TypeParameterDescriptor>emptyList());
                 List<ValueParameterDescriptor> valueParameters
@@ -186,7 +186,7 @@ public class MemberDeserializer {
                 classDescriptor,
                 getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
                 // TODO: primary
-                true);
+                true, SourceElement.NO_SOURCE);
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
         DeserializationContextWithTypes local = context.childContext(descriptor, Collections.<TypeParameter>emptyList(), typeParameters);
         descriptor.initialize(
@@ -260,7 +260,8 @@ public class MemberDeserializer {
                     context.getNameResolver().getName(proto.getName()),
                     context.getTypeDeserializer().type(proto.getType()),
                     Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
-                    context.getTypeDeserializer().typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null))
+                    context.getTypeDeserializer().typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null),
+                    SourceElement.NO_SOURCE)
             );
         }
         return result;

@@ -8,10 +8,10 @@ abstract class Bar {
 == foo ==
 fun foo() = "foo" + this.$bar
 ---------------------
-"foo"               <v0>: String      NEW: r("foo") -> <v0>                
-this                <v1>: {<: Bar}    COPY                                 
-this                <v1>: {<: Bar}    NEW: r(this) -> <v1>                 
-$bar                <v2>: {<: Any?}   NEW: r($bar|<v1>) -> <v2>            
-this.$bar           <v2>: {<: Any?}   COPY                                 
-"foo" + this.$bar   <v3>: String      NEW: call(+, plus|<v0>, <v2>) -> <v3>
+"foo"               <v0>: String     NEW: r("foo") -> <v0>
+this                <v1>: {<: Bar}   COPY
+this                <v1>: {<: Bar}   NEW: r(this) -> <v1>
+$bar                <v2>: *          NEW: r($bar|<v1>) -> <v2>
+this.$bar           <v2>: *          COPY
+"foo" + this.$bar   <v3>: String     NEW: call("foo" + this.$bar, plus|<v0>, <v2>) -> <v3>
 =====================

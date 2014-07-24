@@ -21,6 +21,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -31,19 +32,18 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
 import java.util.List;
-
-import static org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService.createDeclarationProviderFactory;
 
 public final class AnalyzerFacadeForJS {
     public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
@@ -130,11 +130,20 @@ public final class AnalyzerFacadeForJS {
     }
 
     @NotNull
-    public static ResolveSession getLazyResolveSession(Collection<JetFile> files, Config config) {
+    public static ResolveSession getLazyResolveSession(
+            @NotNull Collection<JetFile> syntheticFiles,
+            @NotNull GlobalSearchScope filesScope,
+            @NotNull Config config
+    ) {
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        DeclarationProviderFactory declarationProviderFactory =
-                createDeclarationProviderFactory(config.getProject(), globalContext.getStorageManager(),
-                                                 Config.withJsLibAdded(files, config));
+        DeclarationProviderFactory declarationProviderFactory = DeclarationProviderFactoryService.object$
+                .createDeclarationProviderFactory(
+                        config.getProject(),
+                        globalContext.getStorageManager(),
+                        //TODO: lib files are not really synthetic
+                        Config.withJsLibAdded(syntheticFiles, config),
+                        filesScope
+                );
         ModuleDescriptorImpl module = createJsModule("<lazy module>");
         module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 

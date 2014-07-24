@@ -1,3 +1,3 @@
-class C() {
-    public var f: Foo = 0
+class C {
+    public var f: Foo
 }

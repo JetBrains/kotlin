@@ -17,11 +17,11 @@
 package org.jetbrains.jet.checkers;
 
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetStdJSProjectDescriptor;
 
-public abstract class AbstractJetJsCheckerTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractJetJsCheckerTest extends JetLightCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {

@@ -19,9 +19,9 @@
 package kotlin
 
 public class ByteProgression(
-        public override val start: Byte,
-        public override val end: Byte,
-        public override val increment: Int
+        override val start: Byte,
+        override val end: Byte,
+        override val increment: Int
 ) : Progression<Byte> {
     {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
@@ -42,9 +42,9 @@ public class ByteProgression(
 }
 
 public class CharProgression(
-        public override val start: Char,
-        public override val end: Char,
-        public override val increment: Int
+        override val start: Char,
+        override val end: Char,
+        override val increment: Int
 ) : Progression<Char> {
     {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
@@ -65,9 +65,9 @@ public class CharProgression(
 }
 
 public class ShortProgression(
-        public override val start: Short,
-        public override val end: Short,
-        public override val increment: Int
+        override val start: Short,
+        override val end: Short,
+        override val increment: Int
 ) : Progression<Short> {
     {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
@@ -88,9 +88,9 @@ public class ShortProgression(
 }
 
 public class IntProgression(
-        public override val start: Int,
-        public override val end: Int,
-        public override val increment: Int
+        override val start: Int,
+        override val end: Int,
+        override val increment: Int
 ) : Progression<Int> {
     {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
@@ -111,9 +111,9 @@ public class IntProgression(
 }
 
 public class LongProgression(
-        public override val start: Long,
-        public override val end: Long,
-        public override val increment: Long
+        override val start: Long,
+        override val end: Long,
+        override val increment: Long
 ) : Progression<Long> {
     {
         if (increment == 0L) throw IllegalArgumentException("Increment must be non-zero")
@@ -134,9 +134,9 @@ public class LongProgression(
 }
 
 public class FloatProgression(
-        public override val start: Float,
-        public override val end: Float,
-        public override val increment: Float
+        override val start: Float,
+        override val end: Float,
+        override val increment: Float
 ) : Progression<Float> {
     {
         if (java.lang.Float.isNaN(increment)) throw IllegalArgumentException("Increment must be not NaN")
@@ -158,9 +158,9 @@ public class FloatProgression(
 }
 
 public class DoubleProgression(
-        public override val start: Double,
-        public override val end: Double,
-        public override val increment: Double
+        override val start: Double,
+        override val end: Double,
+        override val increment: Double
 ) : Progression<Double> {
     {
         if (java.lang.Double.isNaN(increment)) throw IllegalArgumentException("Increment must be not NaN")

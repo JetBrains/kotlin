@@ -29,6 +29,7 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
+import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -68,10 +69,11 @@ public class CodegenTestUtil {
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
+                configuration.get(JVMConfigurationKeys.ENABLE_OPTIMIZATION, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG),
                 null,
                 null,
-                forExtraDiagnostics
-        );
+                forExtraDiagnostics,
+                null);
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
 
         // For JVM-specific errors
@@ -94,12 +96,20 @@ public class CodegenTestUtil {
 
     @NotNull
     public static Method findDeclaredMethodByName(@NotNull Class<?> aClass, @NotNull String name) {
+        Method result = findDeclaredMethodByNameOrNull(aClass, name);
+        if (result == null) {
+            throw new AssertionError("Method " + name + " is not found in " + aClass);
+        }
+        return result;
+    }
+
+    public static Method findDeclaredMethodByNameOrNull(@NotNull Class<?> aClass, @NotNull String name) {
         for (Method method : aClass.getDeclaredMethods()) {
             if (method.getName().equals(name)) {
                 return method;
             }
         }
-        throw new AssertionError("Method " + name + " is not found in class " + aClass);
+        return null;
     }
 
     public static void assertIsCurrentTime(long returnValue) {

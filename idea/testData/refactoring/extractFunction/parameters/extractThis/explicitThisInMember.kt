@@ -1,5 +1,7 @@
 // PARAM_TYPES: A
 // PARAM_TYPES: A.B
+// PARAM_DESCRIPTOR: public final class A : Z defined in root package
+// PARAM_DESCRIPTOR: public final inner class B : Z defined in A
 public open class Z {
     val z: Int = 0
 }

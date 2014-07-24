@@ -4,10 +4,11 @@ fun short() = 1
 L0:
   1 <START>
     r(1) -> <v0>
+    ret(*|<v0>) L1
 L1:
-    <END>           NEXT:[<SINK>]
+    <END>             NEXT:[<SINK>]
 error:
-    <ERROR>         PREV:[]
+    <ERROR>           PREV:[]
 sink:
-    <SINK>          PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<ERROR>, <END>]
 =====================

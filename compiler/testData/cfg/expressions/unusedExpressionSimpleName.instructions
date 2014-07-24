@@ -6,15 +6,15 @@ fun main(arg : Array<String>) {
 L0:
   1 <START>
     v(arg : Array<String>)
-    magic(arg : Array<String>) -> <v0>
+    magic[FAKE_INITIALIZER](arg : Array<String>) -> <v0>
     w(arg|<v0>)
   2 mark({ a })
     error(a, No resolved call)
-    magic(a) -> <v1>
+    magic[UNRESOLVED_CALL](a) -> <v1>
 L1:
-  1 <END>                                 NEXT:[<SINK>]
+  1 <END>                                                   NEXT:[<SINK>]
 error:
-    <ERROR>                               PREV:[]
+    <ERROR>                                                 PREV:[]
 sink:
-    <SINK>                                PREV:[<ERROR>, <END>]
+    <SINK>                                                  PREV:[<ERROR>, <END>]
 =====================

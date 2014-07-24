@@ -30,6 +30,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends JetDeclarationStub<T> implements JetNamedDeclaration {
     public JetNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
@@ -75,7 +77,7 @@ abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends J
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return getNameIdentifier().replace(JetPsiFactory.createNameIdentifier(getProject(), name));
+        return getNameIdentifier().replace(JetPsiFactory(this).createNameIdentifier(name));
     }
 
     @Override

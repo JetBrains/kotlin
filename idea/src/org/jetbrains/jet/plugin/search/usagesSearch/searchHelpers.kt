@@ -107,7 +107,7 @@ trait ImportAwareSearchHelper {
 }
 
 open class DefaultSearchHelper<T: PsiNamedElement>(
-        public override val skipImports: Boolean = false
+        override val skipImports: Boolean = false
 ): UsagesSearchHelper<T>(), ImportAwareSearchHelper {
     override fun makeFilter(target: UsagesSearchTarget<T>): UsagesSearchFilter = isTargetUsage and isFilteredImport
 }
@@ -163,8 +163,8 @@ val isExtensionUsage = (PsiReference::isExtensionOfDeclarationClassUsage).search
 class FunctionUsagesSearchHelper(
         public val overloadUsages: Boolean = false,
         public val extensionUsages: Boolean = false,
-        public override val selfUsages: Boolean = true,
-        public override val overrideUsages: Boolean = true,
+        override val selfUsages: Boolean = true,
+        override val overrideUsages: Boolean = true,
         skipImports: Boolean = false
 ) : DefaultSearchHelper<JetNamedFunction>(skipImports), OverrideSearchHelper {
     override fun makeFilter(target: UsagesSearchTarget<JetNamedFunction>): UsagesSearchFilter {

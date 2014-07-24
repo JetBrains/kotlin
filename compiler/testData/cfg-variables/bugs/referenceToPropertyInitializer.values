@@ -12,21 +12,21 @@ class TestFunctionLiteral {
         sum(x - 1) + x
     }
 ---------------------
-                 <v0>: Int                   NEW: magic(x: Int) -> <v0>               
-                 <v1>: TestFunctionLiteral   NEW: magic(sum) -> <v1>                  
-sum              <v2>: {<: (Int) -> Int}     NEW: r(sum|<v1>) -> <v2>                 
-x                <v3>: Int                   NEW: r(x) -> <v3>                        
-1                <v4>: Int                   NEW: r(1) -> <v4>                        
-x - 1            <v5>: Int                   NEW: call(-, minus|<v3>, <v4>) -> <v5>   
-sum(x - 1)       <v6>: Int                   NEW: call(sum, invoke|<v2>, <v5>) -> <v6>
-x                <v7>: Int                   NEW: r(x) -> <v7>                        
-sum(x - 1) + x   <v8>: Int                   NEW: call(+, plus|<v6>, <v7>) -> <v8>    
-sum(x - 1) + x   <v8>: Int                   COPY                                     
+                 <v0>: Int                   NEW: magic[FAKE_INITIALIZER](x: Int) -> <v0>      
+                 <v1>: TestFunctionLiteral   NEW: magic[IMPLICIT_RECEIVER](sum) -> <v1>        
+sum              <v2>: {<: (Int) -> Int}     NEW: r(sum|<v1>) -> <v2>                          
+x                <v3>: Int                   NEW: r(x) -> <v3>                                 
+1                <v4>: Int                   NEW: r(1) -> <v4>                                 
+x - 1            <v5>: Int                   NEW: call(x - 1, minus|<v3>, <v4>) -> <v5>        
+sum(x - 1)       <v6>: Int                   NEW: call(sum(x - 1), invoke|<v2>, <v5>) -> <v6>  
+x                <v7>: Int                   NEW: r(x) -> <v7>                                 
+sum(x - 1) + x   <v8>: Int                   NEW: call(sum(x - 1) + x, plus|<v6>, <v7>) -> <v8>
+sum(x - 1) + x   <v8>: Int                   COPY                                              
 =====================
 == A ==
 open class A(val a: A)
 ---------------------
-    <v0>: {<: A}   NEW: magic(val a: A) -> <v0>
+    <v0>: {<: A}   NEW: magic[FAKE_INITIALIZER](val a: A) -> <v0>
 =====================
 == TestObjectLiteral ==
 class TestObjectLiteral {
@@ -40,27 +40,28 @@ class TestObjectLiteral {
     }
 }
 ---------------------
-                                                               <v0>: TestObjectLiteral   NEW: magic(obj) -> <v0>                                                     
-                                                               <v2>: TestObjectLiteral   NEW: magic(obj) -> <v2>                                                     
-obj                                                            <v1>: *                   NEW: r(obj|<v0>) -> <v1>                                                    
-obj                                                            <v3>: {<: A}              NEW: r(obj|<v2>) -> <v3>                                                    
-object: A(obj) { { val x = obj } fun foo() { val y = obj } }   <v4>: {<: A}              NEW: r(object: A(obj) { { val x = obj } fun foo() { val y = obj } }) -> <v4>
+                                                               <v0>: TestObjectLiteral   NEW: magic[IMPLICIT_RECEIVER](obj) -> <v0>                                  
+                                                               <v3>: TestObjectLiteral   NEW: magic[IMPLICIT_RECEIVER](obj) -> <v3>                                  
+obj                                                            <v1>: {<: A}              NEW: r(obj|<v0>) -> <v1>                                                    
+A(obj)                                                         <v2>: *                   NEW: call(A(obj), <init>|<v1>) -> <v2>                                      
+obj                                                            <v4>: {<: A}              NEW: r(obj|<v3>) -> <v4>                                                    
+object: A(obj) { { val x = obj } fun foo() { val y = obj } }   <v5>: {<: A}              NEW: r(object: A(obj) { { val x = obj } fun foo() { val y = obj } }) -> <v5>
 =====================
 == foo ==
 fun foo() {
             val y = obj
         }
 ---------------------
-      <v0>: TestObjectLiteral   NEW: magic(obj) -> <v0> 
-obj   <v1>: {<: A}              NEW: r(obj|<v0>) -> <v1>
+      <v0>: TestObjectLiteral   NEW: magic[IMPLICIT_RECEIVER](obj) -> <v0>
+obj   <v1>: {<: A}              NEW: r(obj|<v0>) -> <v1>                  
 =====================
 == TestOther ==
 class TestOther {
     val x: Int = x + 1
 }
 ---------------------
-        <v0>: TestOther   NEW: magic(x) -> <v0>                
-x       <v1>: Int         NEW: r(x|<v0>) -> <v1>               
-1       <v2>: Int         NEW: r(1) -> <v2>                    
-x + 1   <v3>: Int         NEW: call(+, plus|<v1>, <v2>) -> <v3>
+        <v0>: TestOther   NEW: magic[IMPLICIT_RECEIVER](x) -> <v0> 
+x       <v1>: Int         NEW: r(x|<v0>) -> <v1>                   
+1       <v2>: Int         NEW: r(1) -> <v2>                        
+x + 1   <v3>: Int         NEW: call(x + 1, plus|<v1>, <v2>) -> <v3>
 =====================

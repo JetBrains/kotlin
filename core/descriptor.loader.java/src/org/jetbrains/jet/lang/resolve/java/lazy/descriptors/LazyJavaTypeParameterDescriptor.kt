@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
+import org.jetbrains.jet.lang.descriptors.SourceElement
 
 class LazyJavaTypeParameterDescriptor(
         private val c: LazyJavaResolverContextWithTypes,
@@ -36,7 +37,8 @@ class LazyJavaTypeParameterDescriptor(
         javaTypeParameter.getName(),
         Variance.INVARIANT,
         /* isReified = */ false,
-        javaTypeParameter.getIndex()
+        javaTypeParameter.getIndex(),
+        SourceElement.NO_SOURCE
 ) {
 
     override fun resolveUpperBounds(): Set<JetType> {

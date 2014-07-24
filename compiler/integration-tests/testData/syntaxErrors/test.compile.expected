@@ -1,7 +1,5 @@
-OUT:
-ERROR: [TestData]/test.kt: (4, 20) Expecting an element
 
 ERR:
-exec() finished with COMPILATION_ERROR return code
+ERROR: [TestData]/test.kt: (4, 20) Expecting an element
 
 Return code: 1

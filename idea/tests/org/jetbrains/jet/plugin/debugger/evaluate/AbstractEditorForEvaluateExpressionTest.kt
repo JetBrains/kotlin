@@ -20,7 +20,6 @@ import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
 import org.jetbrains.jet.completion.AbstractJvmBasicCompletionTest
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.jet.lang.psi.JetPsiFactory
@@ -29,7 +28,6 @@ import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.InTextDirectivesUtils
-import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 
 abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
@@ -64,21 +62,20 @@ private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String)
     val elementAt = getFile()?.findElementAt(getCaretOffset())
     val file = createCodeFragment(filePath, elementAt!!)
 
-    configureFromExistingVirtualFile(file.getVirtualFile())
+    configureFromExistingVirtualFile(file.getVirtualFile()!!)
 }
 
 private fun createCodeFragment(filePath: String, contextElement: PsiElement): JetCodeFragment {
     val fileForFragment = File(filePath + ".fragment")
     val codeFragmentText = FileUtil.loadFile(fileForFragment, true).trim()
+    val psiFactory = JetPsiFactory(contextElement.getProject())
     if (fileForFragment.readLines().size == 1) {
-        return JetPsiFactory.createExpressionCodeFragment(
-                contextElement.getProject(),
+        return psiFactory.createExpressionCodeFragment(
                 codeFragmentText,
                 KotlinCodeFragmentFactory.getContextElement(contextElement)
         )
     }
-    return JetPsiFactory.createBlockCodeFragment(
-            contextElement.getProject(),
+    return psiFactory.createBlockCodeFragment(
             codeFragmentText,
             KotlinCodeFragmentFactory.getContextElement(contextElement)
     )

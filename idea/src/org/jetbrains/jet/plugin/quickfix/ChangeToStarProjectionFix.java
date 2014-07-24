@@ -22,9 +22,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetTypeElement;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.types.expressions.TypeReconstructionUtil;
 import org.jetbrains.jet.plugin.JetBundle;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement> {
     public ChangeToStarProjectionFix(@NotNull JetTypeElement element) {
@@ -48,7 +53,7 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         for (JetTypeReference typeReference : element.getTypeArgumentsAsTypes()) {
             if (typeReference != null) {
-                typeReference.replace(JetPsiFactory.createStar(project));
+                typeReference.replace(JetPsiFactory(file).createStar());
             }
         }
     }

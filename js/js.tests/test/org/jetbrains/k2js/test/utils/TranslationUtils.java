@@ -27,7 +27,6 @@ import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -40,6 +39,7 @@ import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.k2js.facade.K2JSTranslator.translateWithMainCallParameters;
 
 //TODO: use method object
@@ -147,7 +147,7 @@ public final class TranslationUtils {
             try {
                 String path = root == null ? libFileName : (root + libFileName);
                 String text = FileUtil.loadFile(new File(path), true);
-                JetFile jetFile = JetPsiFactory.createFile(project, path, text);
+                JetFile jetFile = JetPsiFactory(project).createFile(path, text);
                 libFiles.add(jetFile);
             }
             catch (IOException e) {

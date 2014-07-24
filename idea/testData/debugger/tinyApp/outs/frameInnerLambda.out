@@ -1,0 +1,42 @@
+LineBreakpoint created at frameInnerLambda.kt:9
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameInnerLambda.FrameInnerLambdaPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameInnerLambda.kt:8
+Compile bytecode for val1
+Compile bytecode for val2
+Compile bytecode for val1 + val2
+package frameInnerLambda
+
+fun main(args: Array<String>) {
+    val val1 = 1
+    foo {
+        val val2 = 1
+        foo {
+            //Breakpoint!
+            val1 + val2
+        }
+    }
+}
+
+fun foo(f: () -> Unit) {
+    f()
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: val1
+// RESULT: 1: I
+
+// EXPRESSION: val2
+// RESULT: 1: I
+
+// EXPRESSION: val1 + val2
+// RESULT: 2: I
+ frame    = invoke():9, FrameInnerLambdaPackage$main$1$1 {frameInnerLambda}
+   this     = this = {frameInnerLambda.FrameInnerLambdaPackage$main$1$1@uniqueID}kotlin.Function0<kotlin.Unit>
+     field    = this$0: frameInnerLambda.FrameInnerLambdaPackage$main$1 = {frameInnerLambda.FrameInnerLambdaPackage$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
+       field    = $val1: int = 1
+     field    = $val2: int = 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

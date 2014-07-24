@@ -23,22 +23,14 @@ import com.intellij.util.containers.MultiMap
 import java.util.HashMap
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptorImpl
+import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.jet.descriptors.serialization.DescriptorFinder
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
-import org.jetbrains.jet.descriptors.serialization.ClassId
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
-import java.util.Collections
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.storage.NotNullLazyValue
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
@@ -116,7 +108,7 @@ public class IncrementalPackageFragmentProvider(
         }
 
         private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(
-                this@IncrementalPackageFragment, packageData, deserializationContext
+                this@IncrementalPackageFragment, packageData, deserializationContext, { listOf() }
         ) {
             override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
                 return allMemberProtos

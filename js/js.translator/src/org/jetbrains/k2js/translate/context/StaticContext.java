@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
@@ -37,6 +36,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.getNameForAnnotatedObjectWithOverrides;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
@@ -448,10 +448,9 @@ public final class StaticContext {
                 }
 
                 private String getExternalModuleName(DeclarationDescriptor descriptor) {
-                    PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+                    PsiElement element = descriptorToDeclaration(descriptor);
                     if (element == null && descriptor instanceof PropertyAccessorDescriptor) {
-                        element = BindingContextUtils.descriptorToDeclaration(bindingContext, ((PropertyAccessorDescriptor) descriptor)
-                                .getCorrespondingProperty());
+                        element = descriptorToDeclaration(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
                     }
 
                     if (element == null) {

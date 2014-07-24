@@ -27,7 +27,6 @@ import kotlin.properties.Delegates
 import java.util.HashMap
 import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetThisExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import java.util.Collections
@@ -46,11 +45,12 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.psi.JetClassInitializer
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 data class ExtractionOptions(val inferUnitTypeForUnusedValues: Boolean) {
     class object {
@@ -79,7 +79,9 @@ class ExtractionData(
 ) {
     val project: Project = originalFile.getProject()
 
-    val insertBefore: Boolean = targetSibling.getParentByType(javaClass<JetDeclaration>(), true) is JetDeclarationWithBody
+    val insertBefore: Boolean = targetSibling.getParentByType(javaClass<JetDeclaration>(), true)?.let {
+        it is JetDeclarationWithBody || it is JetClassInitializer
+    } ?: false
 
     fun getExpressions(): List<JetExpression> = originalElements.filterIsInstance(javaClass<JetExpression>())
 
@@ -101,12 +103,12 @@ class ExtractionData(
 
     val originalStartOffset = originalElements.first?.let { e -> e.getTextRange()!!.getStartOffset() }
 
-    private val itFakeDeclaration by Delegates.lazy { JetPsiFactory.createParameter(project, "it", null) }
+    private val itFakeDeclaration by Delegates.lazy { JetPsiFactory(originalFile).createParameter("it", "Any?") }
 
     val refOffsetToDeclaration by Delegates.lazy {
         fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
             if (!(descriptor is ValueParameterDescriptor && (context[BindingContext.AUTO_CREATED_IT, descriptor] ?: false))) return false
-            val function = BindingContextUtils.descriptorToDeclaration(context, descriptor.getContainingDeclaration()) as? JetFunctionLiteral
+            val function = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) as? JetFunctionLiteral
             return function == null || !function.isInsideOf(originalElements)
         }
 
@@ -116,15 +118,14 @@ class ExtractionData(
             for ((ref, context) in JetFileReferencesResolver.resolve(originalFile, getExpressions())) {
                 if (ref !is JetSimpleNameExpression) continue
 
-                val resolvedCallKey = (ref.getParent() as? JetThisExpression) ?: ref
-                val resolvedCall = context[BindingContext.RESOLVED_CALL, resolvedCallKey]?.let {
+                val resolvedCall = ref.getResolvedCall(context)?.let {
                     (it as? VariableAsFunctionResolvedCall)?.functionCall ?: it
                 }
 
                 val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
                 if (descriptor == null) continue
 
-                val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor, context) as? PsiNamedElement
+                val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor) as? PsiNamedElement
                         ?: if (isExtractableIt(descriptor, context)) itFakeDeclaration else continue
 
                 val offset = ref.getTextRange()!!.getStartOffset() - originalStartOffset

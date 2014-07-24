@@ -12,13 +12,19 @@
       <root url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/gradle/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/gradle/testSources" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/gradle/tooling-extension-api/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/gradle/tooling-extension-impl/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/gradle/tooling-extension-impl/testSources" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/rt/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/test" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/hotswap/agentSrc" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/resources" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/groovy-psi/gen" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/groovy-psi/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/jps-plugin/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/rt-constants/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/structuralsearch-groovy/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/structuralsearch-groovy/testSrc" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/Groovy/lib" recursive="false" />

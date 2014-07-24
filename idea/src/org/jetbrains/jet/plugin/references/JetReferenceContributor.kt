@@ -22,10 +22,7 @@ import com.intellij.util.ProcessingContext
 import com.intellij.patterns.PlatformPatterns
 
 public class JetReferenceContributor() : PsiReferenceContributor() {
-    public override fun registerReferenceProviders(registrar: PsiReferenceRegistrar?) {
-        if (registrar == null) {
-            return
-        }
+    public override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         with(registrar) {
             registerProvider(javaClass<JetSimpleNameExpression>()) {
                 JetSimpleNameReference(it)
@@ -55,7 +52,7 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
             elementClass: Class<E>,
             factory: (E) -> R
         ) {
-        registerReferenceProvider(PlatformPatterns.psiElement(elementClass)!!, object: PsiReferenceProvider() {
+        registerReferenceProvider(PlatformPatterns.psiElement(elementClass), object: PsiReferenceProvider() {
             override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
                 [suppress("UNCHECKED_CAST")]
                     return array(factory(element as E))

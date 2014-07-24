@@ -387,4 +387,9 @@ public class KotlinParameterTablePanel extends JPanel {
                 }
         );
     }
+
+    @NotNull
+    public JBTable getTable() {
+        return myTable;
+    }
 }

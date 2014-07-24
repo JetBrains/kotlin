@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,23 @@ public class DeserializedResolverUtils {
             correctedSegments.add(isClassObjectName(segment) ? JvmAbi.CLASS_OBJECT_CLASS_NAME : segment.getIdentifier());
         }
         return FqName.fromSegments(correctedSegments);
+    }
+
+    @NotNull
+    public static FqNameUnsafe javaFqNameToKotlinFqName(@NotNull FqName javaFqName) {
+        if (javaFqName.isRoot()) {
+            return javaFqName.toUnsafe();
+        }
+        List<Name> segments = javaFqName.pathSegments();
+        List<Name> correctedSegments = new ArrayList<Name>(segments.size());
+        correctedSegments.add(segments.get(0));
+        for (int i = 1; i < segments.size(); i++) {
+            Name segment = segments.get(i);
+            boolean isClassObjectName = segment.asString().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME);
+            Name correctedSegment = isClassObjectName ? SpecialNames.getClassObjectName(segments.get(i - 1)) : segment;
+            correctedSegments.add(correctedSegment);
+        }
+        return FqNameUnsafe.fromSegments(correctedSegments);
     }
 
     @NotNull

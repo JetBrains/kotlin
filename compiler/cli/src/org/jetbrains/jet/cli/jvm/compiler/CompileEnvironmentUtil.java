@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.StandardFileSystems;
@@ -29,8 +28,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.Unit;
 import kotlin.io.IoPackage;
@@ -42,7 +39,7 @@ import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageRenderer;
-import org.jetbrains.jet.cli.common.modules.ModuleDescription;
+import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
 import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
@@ -85,30 +82,17 @@ public class CompileEnvironmentUtil {
         File file = new File(moduleDefinitionFile);
         if (!file.exists()) {
             messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, NO_LOCATION);
-            return new ModuleScriptData(Collections.<Module>emptyList(), null);
+            return ModuleScriptData.EMPTY;
         }
         String extension = FileUtilRt.getExtension(moduleDefinitionFile);
         if ("ktm".equalsIgnoreCase(extension)) {
             return loadModuleScript(paths, moduleDefinitionFile, messageCollector);
         }
         if ("xml".equalsIgnoreCase(extension)) {
-            Pair<List<ModuleDescription>, String> moduleDescriptionsAndIncrementalCacheDir =
-                    ModuleXmlParser.parseModuleDescriptionsAndIncrementalCacheDir(moduleDefinitionFile, messageCollector);
-            List<ModuleDescription> moduleDescriptions = moduleDescriptionsAndIncrementalCacheDir.first;
-            String incrementalCacheDir = moduleDescriptionsAndIncrementalCacheDir.second;
-            List<Module> modules = ContainerUtil.map(
-                    moduleDescriptions,
-                    new Function<ModuleDescription, Module>() {
-                        @Override
-                        public Module fun(ModuleDescription description) {
-                            return new DescriptionToModuleAdapter(description);
-                        }
-                    }
-            );
-            return new ModuleScriptData(modules, incrementalCacheDir);
+            return ModuleXmlParser.parseModuleScript(moduleDefinitionFile, messageCollector);
         }
         messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, NO_LOCATION);
-        return new ModuleScriptData(Collections.<Module>emptyList(), null);
+        return ModuleScriptData.EMPTY;
     }
 
     @NotNull
@@ -326,65 +310,5 @@ public class CompileEnvironmentUtil {
         }
 
         return result;
-    }
-
-    public static class ModuleScriptData {
-        @Nullable
-        private final String incrementalCacheDir;
-        @NotNull
-        private final List<Module> modules;
-
-        @NotNull
-        public List<Module> getModules() {
-            return modules;
-        }
-
-        @Nullable
-        public String getIncrementalCacheDir() {
-            return incrementalCacheDir;
-        }
-
-        private ModuleScriptData(@NotNull List<Module> modules, @Nullable String incrementalCacheDir) {
-            this.incrementalCacheDir = incrementalCacheDir;
-            this.modules = modules;
-        }
-    }
-
-    private static class DescriptionToModuleAdapter implements Module {
-        private final ModuleDescription description;
-
-        public DescriptionToModuleAdapter(ModuleDescription description) {
-            this.description = description;
-        }
-
-        @NotNull
-        @Override
-        public String getModuleName() {
-            return description.getModuleName();
-        }
-
-        @NotNull
-        @Override
-        public String getOutputDirectory() {
-            return description.getOutputDir();
-        }
-
-        @NotNull
-        @Override
-        public List<String> getSourceFiles() {
-            return description.getSourceFiles();
-        }
-
-        @NotNull
-        @Override
-        public List<String> getClasspathRoots() {
-            return description.getClasspathRoots();
-        }
-
-        @NotNull
-        @Override
-        public List<String> getAnnotationsRoots() {
-            return description.getAnnotationsRoots();
-        }
     }
 }

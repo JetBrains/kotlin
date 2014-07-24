@@ -1,3 +1,3 @@
-class C() {
-    private val f: Foo = 0
+class C {
+    private val f: Foo? = null
 }

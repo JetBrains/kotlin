@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
@@ -336,6 +337,7 @@ public abstract class StackValue {
         return receiver;
     }
 
+    @Contract("null -> false")
     private static boolean isLocalFunCall(@Nullable CallableMethod callableMethod) {
         return callableMethod != null && callableMethod.getGenerateCalleeType() != null;
     }
@@ -721,7 +723,7 @@ public abstract class StackValue {
 
             if (resolvedSetCall.getThisObject().exists()) {
                 if (resolvedSetCall.getReceiverArgument().exists()) {
-                    codegen.generateFromResolvedCall(resolvedSetCall.getThisObject(), OBJECT_TYPE);
+                    codegen.generateReceiverValue(resolvedSetCall.getThisObject(), OBJECT_TYPE);
                 }
                 v.load(realReceiverIndex, realReceiverType);
             }
@@ -1077,19 +1079,19 @@ public abstract class StackValue {
 
     public static class CallReceiver extends StackValue {
         private final ResolvedCall<?> resolvedCall;
-        final StackValue receiver;
+        private final StackValue receiver;
         private final ExpressionCodegen codegen;
         private final CallableMethod callableMethod;
         private final boolean putReceiverArgumentOnStack;
 
         public CallReceiver(
-                ResolvedCall<?> resolvedCall,
-                StackValue receiver,
-                ExpressionCodegen codegen,
-                CallableMethod callableMethod,
+                @NotNull ResolvedCall<?> resolvedCall,
+                @NotNull StackValue receiver,
+                @NotNull ExpressionCodegen codegen,
+                @Nullable CallableMethod callableMethod,
                 boolean putReceiverArgumentOnStack
         ) {
-            super(calcType(resolvedCall, codegen, callableMethod));
+            super(calcType(resolvedCall, codegen.typeMapper, callableMethod));
             this.resolvedCall = resolvedCall;
             this.receiver = receiver;
             this.codegen = codegen;
@@ -1097,33 +1099,27 @@ public abstract class StackValue {
             this.putReceiverArgumentOnStack = putReceiverArgumentOnStack;
         }
 
-        private static Type calcType(ResolvedCall<?> resolvedCall, ExpressionCodegen codegen, CallableMethod callableMethod) {
-            ReceiverValue thisObject = resolvedCall.getThisObject();
-            ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
-
+        private static Type calcType(
+                @NotNull ResolvedCall<?> resolvedCall,
+                @NotNull JetTypeMapper typeMapper,
+                @Nullable CallableMethod callableMethod
+        ) {
             CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
-            if (receiverArgument.exists()) {
-                if (callableMethod != null) {
-                    return callableMethod.getReceiverClass();
-                }
-                else {
-                    return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
-                }
-            } else if (thisObject.exists()) {
-                if (callableMethod != null) {
-                    return callableMethod.getThisType();
-                }
-                else {
-                    return codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
-                }
+            ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
+            ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+
+            if (receiverParameter != null) {
+                return callableMethod != null ? callableMethod.getReceiverClass() : typeMapper.mapType(receiverParameter.getType());
+            }
+            else if (expectedThisObject != null) {
+                return callableMethod != null ? callableMethod.getThisType() : typeMapper.mapType(expectedThisObject.getType());
             }
             else if (isLocalFunCall(callableMethod)) {
                 return callableMethod.getGenerateCalleeType();
             }
-            else {
-                return Type.VOID_TYPE;
-            }
+
+            return Type.VOID_TYPE;
         }
 
         @Override
@@ -1135,18 +1131,23 @@ public abstract class StackValue {
             int depth;
             if (thisObject.exists()) {
                 if (receiverArgument.exists()) {
-                    Type resultType = callableMethod != null ? callableMethod.getOwner() : codegen.typeMapper
-                            .mapType(descriptor.getExpectedThisObject().getType());
+                    //noinspection ConstantConditions
+                    Type resultType =
+                            callableMethod != null ?
+                            callableMethod.getOwner() :
+                            codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
 
-                    codegen.generateFromResolvedCall(thisObject, resultType);
+                    codegen.generateReceiverValue(thisObject, resultType);
                 }
                 else {
                     genReceiver(v, thisObject, type, null, 0);
                 }
 
                 depth = 1;
-            } else if (isLocalFunCall(callableMethod)) {
-                assert receiver == none() || receiverArgument.exists(): "Receiver should be present only for local extension function: " + callableMethod;
+            }
+            else if (isLocalFunCall(callableMethod)) {
+                assert receiver == none() || receiverArgument.exists() :
+                        "Receiver should be present only for local extension function: " + callableMethod;
                 StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
                 assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
                 value.put(callableMethod.getGenerateCalleeType(), v);
@@ -1163,17 +1164,20 @@ public abstract class StackValue {
         }
 
         private void genReceiver(
-                InstructionAdapter v, ReceiverValue receiverArgument, Type type,
-                @Nullable ReceiverParameterDescriptor receiverParameter, int depth
+                @NotNull InstructionAdapter v,
+                @NotNull ReceiverValue receiverArgument,
+                @NotNull Type type,
+                @Nullable ReceiverParameterDescriptor receiverParameter,
+                int depth
         ) {
             if (receiver == StackValue.none()) {
                 if (receiverParameter != null) {
                     Type receiverType = codegen.typeMapper.mapType(receiverParameter.getType());
-                    codegen.generateFromResolvedCall(receiverArgument, receiverType);
+                    codegen.generateReceiverValue(receiverArgument, receiverType);
                     StackValue.onStack(receiverType).put(type, v);
                 }
                 else {
-                    codegen.generateFromResolvedCall(receiverArgument, type);
+                    codegen.generateReceiverValue(receiverArgument, type);
                 }
             }
             else {

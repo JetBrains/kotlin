@@ -76,8 +76,9 @@ public class JetPsiUtil {
     }
 
     @Nullable
+    @Contract("!null -> !null")
     public static JetExpression deparenthesize(@Nullable JetExpression expression) {
-        return deparenthesize(expression, true);
+        return deparenthesize(expression, /* deparenthesizeBinaryExpressionWithTypeRHS = */ true);
     }
 
     @Nullable
@@ -85,14 +86,33 @@ public class JetPsiUtil {
             @Nullable JetExpression expression,
             boolean deparenthesizeBinaryExpressionWithTypeRHS
     ) {
-        return deparenthesizeWithResolutionStrategy(expression, deparenthesizeBinaryExpressionWithTypeRHS, null);
+        return deparenthesizeWithResolutionStrategy(
+                expression, deparenthesizeBinaryExpressionWithTypeRHS, /* deparenthesizeRecursively = */ true, null);
     }
 
     @Nullable
-    @Deprecated //Use JetPsiUtil.deparenthesize() or ExpressionTypingServices.deparenthesize()
+    public static JetExpression deparenthesizeOnce(
+            @Nullable JetExpression expression,
+            boolean deparenthesizeBinaryExpressionWithTypeRHS
+    ) {
+        return deparenthesizeWithResolutionStrategy(
+                expression, deparenthesizeBinaryExpressionWithTypeRHS, /* deparenthesizeRecursively = */ false, null);
+    }
+
+    @Nullable
     public static JetExpression deparenthesizeWithResolutionStrategy(
             @Nullable JetExpression expression,
             boolean deparenthesizeBinaryExpressionWithTypeRHS,
+            @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
+    ) {
+        return deparenthesizeWithResolutionStrategy(expression, true, true, typeResolutionStrategy);
+    }
+
+    @Nullable
+    private static JetExpression deparenthesizeWithResolutionStrategy(
+            @Nullable JetExpression expression,
+            boolean deparenthesizeBinaryExpressionWithTypeRHS,
+            boolean deparenthesizeRecursively,
             @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
     ) {
         if (deparenthesizeBinaryExpressionWithTypeRHS && expression instanceof JetBinaryExpressionWithTypeRHS) {
@@ -117,8 +137,8 @@ public class JetPsiUtil {
         }
         if (expression instanceof JetParenthesizedExpression) {
             JetExpression innerExpression = ((JetParenthesizedExpression) expression).getExpression();
-            return innerExpression != null ? deparenthesizeWithResolutionStrategy(
-                    innerExpression, deparenthesizeBinaryExpressionWithTypeRHS, typeResolutionStrategy) : null;
+            return innerExpression != null && deparenthesizeRecursively ? deparenthesizeWithResolutionStrategy(
+                    innerExpression, deparenthesizeBinaryExpressionWithTypeRHS, true, typeResolutionStrategy) : innerExpression;
         }
         return expression;
     }
@@ -715,30 +735,6 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static JetExpression getCalleeExpressionIfAny(@NotNull JetExpression expression) {
-        if (expression instanceof JetSimpleNameExpression) {
-            return expression;
-        }
-        if (expression instanceof JetCallElement) {
-            JetCallElement callExpression = (JetCallElement) expression;
-            return callExpression.getCalleeExpression();
-        }
-        if (expression instanceof JetQualifiedExpression) {
-            JetExpression selectorExpression = ((JetQualifiedExpression) expression).getSelectorExpression();
-            if (selectorExpression != null) {
-                return getCalleeExpressionIfAny(selectorExpression);
-            }
-        }
-        if (expression instanceof JetUnaryExpression) {
-            return ((JetUnaryExpression) expression).getOperationReference();
-        }
-        if (expression instanceof JetBinaryExpression) {
-            return ((JetBinaryExpression) expression).getOperationReference();
-        }
-        return null;
-    }
-
-    @Nullable
     public static PsiElement skipSiblingsBackwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
         if (element == null) return null;
         for (PsiElement e = element.getPrevSibling(); e != null; e = e.getPrevSibling()) {
@@ -883,5 +879,38 @@ public class JetPsiUtil {
     public static boolean isLabelIdentifierExpression(PsiElement element) {
         return element instanceof JetSimpleNameExpression &&
                ((JetSimpleNameExpression) element).getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER;
+    }
+
+    @Nullable
+    public static JetExpression getParentCallIfPresent(@NotNull JetExpression expression) {
+        PsiElement parent = expression.getParent();
+        while (parent != null) {
+            if (parent instanceof JetBinaryExpression ||
+                parent instanceof JetUnaryExpression ||
+                parent instanceof JetLabeledExpression ||
+                parent instanceof JetDotQualifiedExpression ||
+                parent instanceof JetCallExpression ||
+                parent instanceof JetArrayAccessExpression ||
+                parent instanceof JetMultiDeclaration) {
+
+                if (parent instanceof JetLabeledExpression) {
+                    parent = parent.getParent();
+                    continue;
+                }
+
+                //check that it's in inlineable call would be in resolve call of parent
+                return (JetExpression) parent;
+            }
+            else if (parent instanceof JetParenthesizedExpression || parent instanceof JetBinaryExpressionWithTypeRHS) {
+                parent = parent.getParent();
+            }
+            else if (parent instanceof JetValueArgument || parent instanceof JetValueArgumentList) {
+                parent = parent.getParent();
+            }
+            else {
+                return null;
+            }
+        }
+        return null;
     }
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList
 // we need ArrayList
 
 // let's declare a class:
-class A /* just a sample name*/() : Runnable /* let's implement Runnable */ {
+class A /* just a sample name*/ : Runnable /* let's implement Runnable */ {
     fun foo/* again a sample name */(p: Int /* parameter p */, c: Char /* parameter c */) {
         // let's print something:
         System.out.println("1") // print 1

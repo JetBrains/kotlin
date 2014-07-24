@@ -41,9 +41,6 @@ public abstract class CommonCompilerArguments {
     @ValueDescription(SUPPRESS_WARNINGS)
     public String suppress;
 
-    @Argument(value = "printArgs", description = "Print command line arguments")
-    public boolean printArgs;
-
     public List<String> freeArgs = new SmartList<String>();
 
     public boolean suppressAllWarnings() {

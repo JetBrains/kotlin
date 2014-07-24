@@ -1,9 +1,10 @@
 package kotlin
 
 import java.io.Closeable
+import kotlin.InlineOption.ONLY_LOCAL_RETURN
 
 /** Uses the given resource then closes it down correctly whether an exception is thrown or not */
-public inline fun <T : Closeable, R> T.use(block: (T) -> R): R {
+public inline fun <T : Closeable, R> T.use([inlineOptions(ONLY_LOCAL_RETURN)] block: (T) -> R): R {
     var closed = false
     try {
         return block(this)

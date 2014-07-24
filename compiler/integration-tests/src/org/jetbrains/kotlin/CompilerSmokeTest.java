@@ -27,7 +27,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     public void compileAndRunHelloApp() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-jar", jar));
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-d", jar));
         runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 
@@ -35,7 +35,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     public void compileAndRunHelloAppFQMain() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-jar", jar));
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-d", jar));
         runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 
@@ -43,7 +43,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     public void compileAndRunHelloAppVarargMain() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-jar", jar));
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-d", jar));
         runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 
@@ -51,7 +51,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     public void compileAndRunModule() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
 
-        assertEquals("compilation failed", 0, runCompiler("Smoke.compile", "-module", "Smoke.ktm", "-jar", jar));
+        assertEquals("compilation failed", 0, runCompiler("Smoke.compile", "-module", "Smoke.ktm", "-d", jar));
         runJava("Smoke.run", "-cp", jar + File.pathSeparator + getKotlinRuntimePath(), "Smoke.SmokePackage", "1", "2", "3");
     }
 
@@ -59,14 +59,18 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     public void compilationFailed() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
 
-        runCompiler("hello.compile", "-src", "hello.kt", "-jar", jar);
+        runCompiler("hello.compile", "hello.kt", "-d", jar);
     }
 
     @Test
     public void syntaxErrors() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
 
-        runCompiler("test.compile", "-src", "test.kt", "-jar", jar);
+        runCompiler("test.compile", "test.kt", "-d", jar);
     }
 
+    @Test
+    public void simpleScript() throws Exception {
+        runCompiler("script", "-script", "script.kts", "hi", "there");
+    }
 }

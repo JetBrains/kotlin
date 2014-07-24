@@ -17,20 +17,15 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -48,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -113,8 +109,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
                     elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression, isStatement);
         }
-        JetBlockExpression thenBlock = JetPsiFactory.wrapInABlock(thenBranch);
-        JetBlockExpression elseBlock = JetPsiFactory.wrapInABlock(elseBranch);
+        JetPsiFactory psiFactory = JetPsiFactory(ifExpression);
+        JetBlockExpression thenBlock = psiFactory.wrapInABlock(thenBranch);
+        JetBlockExpression elseBlock = psiFactory.wrapInABlock(elseBranch);
         Call callForIf = createCallForSpecialConstruction(ifExpression, ifExpression, Lists.newArrayList(thenBlock, elseBlock));
         MutableDataFlowInfoForArguments dataFlowInfoForArguments =
                     createDataFlowInfoForArgumentsForIfCall(callForIf, thenInfo, elseInfo);
@@ -371,7 +368,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
             VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
             if (olderVariable != null && isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
+                PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
             }
         }
@@ -450,26 +447,23 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             // In a default value for parameter
             context.trace.report(RETURN_NOT_ALLOWED.on(expression));
         }
-        assert parentDeclaration != null;
-        DeclarationDescriptor declarationDescriptor = context.trace.get(DECLARATION_TO_DESCRIPTOR, parentDeclaration);
-        FunctionDescriptor containingFunctionDescriptor = DescriptorUtils.getParentOfType(declarationDescriptor, FunctionDescriptor.class, false);
 
         if (expression.getTargetLabel() == null) {
+            assert parentDeclaration != null;
+            DeclarationDescriptor declarationDescriptor = context.trace.get(DECLARATION_TO_DESCRIPTOR, parentDeclaration);
+            Pair<FunctionDescriptor, PsiElement> containingFunInfo =
+                    BindingContextUtils.getContainingFunctionSkipFunctionLiterals(declarationDescriptor, false);
+            FunctionDescriptor containingFunctionDescriptor = containingFunInfo.getFirst();
+
             if (containingFunctionDescriptor != null) {
-                PsiElement containingFunction = BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor);
-                assert containingFunction != null;
-                if (containingFunction instanceof JetFunctionLiteral) {
-                    do {
-                        containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
-                        containingFunction = containingFunctionDescriptor != null ? BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor) : null;
-                    } while (containingFunction instanceof JetFunctionLiteral);
+                if (!InlineDescriptorUtils.checkNonLocalReturnUsage(containingFunctionDescriptor, expression, context.trace) ||
+                    containingFunctionDescriptor instanceof ConstructorDescriptor) {
                     // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
                 }
-                if (containingFunctionDescriptor != null) {
-                    expectedType = getFunctionExpectedReturnType(containingFunctionDescriptor, (JetElement) containingFunction);
-                }
+
+                expectedType = getFunctionExpectedReturnType(containingFunctionDescriptor, (JetElement) containingFunInfo.getSecond());
             }
             else {
                 // Outside a function
@@ -481,7 +475,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
                 expectedType = getFunctionExpectedReturnType(functionDescriptor, labelTargetElement);
-                if (functionDescriptor != containingFunctionDescriptor) {
+                if (!InlineDescriptorUtils.checkNonLocalReturnUsage(functionDescriptor, expression, context.trace)) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);

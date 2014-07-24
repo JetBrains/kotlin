@@ -33,10 +33,6 @@ enum class Modifier(val name: String) {
 
 val ACCESS_MODIFIERS = setOf(Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE)
 
-fun Collection<Modifier>.accessModifier(): Modifier? {
-    return firstOrNull { it in ACCESS_MODIFIERS }
-}
-
 class Modifiers(val modifiers: Collection<Modifier>) : Element() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append(modifiers.sortBy { it.ordinal() }.map { it.toKotlin() }.joinToString(" "))
@@ -45,7 +41,7 @@ class Modifiers(val modifiers: Collection<Modifier>) : Element() {
     override val isEmpty: Boolean
         get() = modifiers.isEmpty()
 
-    fun with(modifier: Modifier): Modifiers = Modifiers(modifiers + listOf(modifier)).assignPrototypesFrom(this)
+    fun with(modifier: Modifier?): Modifiers = if (modifier != null) Modifiers(modifiers + listOf(modifier)).assignPrototypesFrom(this) else this
 
     fun without(modifier: Modifier): Modifiers {
         val set = HashSet(modifiers)
@@ -58,7 +54,9 @@ class Modifiers(val modifiers: Collection<Modifier>) : Element() {
     val isPublic: Boolean get() = contains(Modifier.PUBLIC)
     val isPrivate: Boolean get() = contains(Modifier.PRIVATE)
     val isProtected: Boolean get() = contains(Modifier.PROTECTED)
-    val isInternal: Boolean get() = !isPublic && !isPrivate && !isProtected
+    val isInternal: Boolean get() = accessModifier() == null
+
+    fun accessModifier(): Modifier? = modifiers.firstOrNull { it in ACCESS_MODIFIERS }
 
     class object {
         val Empty = Modifiers(listOf())

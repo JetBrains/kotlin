@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class KotlinUnwrappers {
     private KotlinUnwrappers() {
     }
@@ -72,7 +74,7 @@ public class KotlinUnwrappers {
         @Override
         protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
             JetIfExpression ifExpr = (JetIfExpression) element;
-            context.replace(ifExpr, JetPsiFactory.createIf(ifExpr.getProject(), ifExpr.getCondition(), ifExpr.getThen(), null));
+            context.replace(ifExpr, JetPsiFactory(ifExpr).createIf(ifExpr.getCondition(), ifExpr.getThen(), null));
         }
     }
 

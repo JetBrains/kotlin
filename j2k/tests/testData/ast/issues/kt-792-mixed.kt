@@ -1,6 +1,6 @@
 package demo
 
-class Test(i: Int) {
+class Test(i: Int?) {
 
     fun test() {
         val i = 10

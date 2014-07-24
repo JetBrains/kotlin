@@ -6,16 +6,16 @@ fun bar(n: Int) {
 L0:
   1 <START>
     v(n: Int)
-    magic(n: Int) -> <v0>
+    magic[FAKE_INITIALIZER](n: Int) -> <v0>
     w(n|<v0>)
   2 mark({ })
     read (Unit)
 L1:
-  1 <END>                    NEXT:[<SINK>]
+  1 <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                  PREV:[]
+    <ERROR>                                    PREV:[]
 sink:
-    <SINK>                   PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo() {
@@ -34,28 +34,28 @@ L0:
     w(a|<v0>)
     r(a) -> <v1>
     mark(a++)
-    call(++, inc|<v1>) -> <v2>
+    call(a++, inc|<v1>) -> <v2>
     w(a|<v2>)
     mark(bar(a++))
-    call(bar, bar|<v1>) -> <v3>
+    call(bar(a++), bar|<v1>) -> <v3>
     r(a) -> <v4>
     mark(a--)
-    call(--, dec|<v4>) -> <v5>
+    call(a--, dec|<v4>) -> <v5>
     w(a|<v5>)
     mark(bar(a--))
-    call(bar, bar|<v4>) -> <v6>
+    call(bar(a--), bar|<v4>) -> <v6>
     r(a) -> <v7>
     mark(++a)
-    call(++, inc|<v7>) -> <v8>
+    call(++a, inc|<v7>) -> <v8>
     w(a|<v8>)
     mark(bar(++a))
-    call(bar, bar|<v8>) -> <v9>
+    call(bar(++a), bar|<v8>) -> <v9>
     r(a) -> <v10>
     mark(--a)
-    call(--, dec|<v10>) -> <v11>
+    call(--a, dec|<v10>) -> <v11>
     w(a|<v11>)
     mark(bar(--a))
-    call(bar, bar|<v11>) -> <v12>
+    call(bar(--a), bar|<v11>) -> <v12>
 L1:
   1 <END>                                                      NEXT:[<SINK>]
 error:

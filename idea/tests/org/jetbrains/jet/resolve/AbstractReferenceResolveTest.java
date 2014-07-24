@@ -20,21 +20,24 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiManagerEx;
+import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.jet.test.util.UtilPackage;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
-import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsightFixtureTestCase {
     public static class ExpectedResolveData {
@@ -62,6 +65,24 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+
+        Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
+        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
+
+        super.tearDown();
+
+        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
+        // otherwise built-ins psi elements will become invalid in next test.
+        for (JetFile source : builtInsSources) {
+            FileViewProvider provider = source.getViewProvider();
+            fileManager.setViewProvider(provider.getVirtualFile(), provider);
+        }
     }
 
     protected void doTest(String path) {
@@ -158,6 +179,7 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
         }
     }
 
+    @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;

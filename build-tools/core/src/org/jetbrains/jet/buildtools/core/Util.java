@@ -21,15 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
-
-/**
- * General convenient utilities.
- */
 public final class Util {
-
     private Util() {
     }
-
 
     /**
      * {@code file.getCanonicalPath()} convenience wrapper.
@@ -47,6 +41,7 @@ public final class Util {
         }
     }
 
+    @NotNull
     public static String[] getPaths(String[] paths) {
         String[] result = new String[paths.length];
         for (int i = 0; i < paths.length; i++) {

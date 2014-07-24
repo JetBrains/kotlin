@@ -20,7 +20,7 @@ import java.lang.reflect.*
 import kotlin.reflect.*
 
 open class KForeignMemberProperty<T : Any, out R>(
-        public override val name: String,
+        override val name: String,
         protected val owner: KClassImpl<T>
 ) : KMemberProperty<T, R>, KPropertyImpl<R> {
     override val field: Field = try {

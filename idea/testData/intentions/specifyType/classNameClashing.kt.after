@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+
+import java.sql
+
+fun getEntry() : Map.Entry<kotlin.Array<String>, java.sql.Array> {
+    throw Error()
+}
+
+val x: Map.Entry<Array<String>, sql.Array> = getEntry()

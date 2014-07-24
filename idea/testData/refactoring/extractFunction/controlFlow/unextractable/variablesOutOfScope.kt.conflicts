@@ -1,1 +1,1 @@
-Following declarations won't be available outside of extracted function body: x
+Following declarations won't be available outside of extracted function body:  val x: Int

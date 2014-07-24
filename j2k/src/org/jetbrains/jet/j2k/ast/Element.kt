@@ -19,22 +19,36 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.*
 import com.intellij.psi.PsiElement
 
-fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?, inheritBlankLinesBefore: Boolean = true): TElement {
-    assignPrototypeInfos(if (prototype != null) listOf(PrototypeInfo(prototype, inheritBlankLinesBefore)) else listOf())
+fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?, inheritance: CommentsAndSpacesInheritance = CommentsAndSpacesInheritance()): TElement {
+    prototypes = if (prototype != null) listOf(PrototypeInfo(prototype, inheritance)) else listOf()
     return this
 }
 
-fun <TElement: Element> TElement.assignPrototypes(prototypes: List<PsiElement>, inheritBlankLinesBefore: Boolean): TElement {
-    assignPrototypeInfos(prototypes.map { PrototypeInfo(it, inheritBlankLinesBefore) })
+fun <TElement: Element> TElement.assignPrototypes(prototypes: List<PsiElement>, inheritance: CommentsAndSpacesInheritance): TElement {
+    this.prototypes = prototypes.map { PrototypeInfo(it, inheritance) }
     return this
 }
 
-fun <TElement: Element> TElement.assignPrototypesFrom(element: Element): TElement {
-    assignPrototypeInfos(element.prototypes)
+fun <TElement: Element> TElement.assignNoPrototype(): TElement {
+    prototypes = listOf()
     return this
 }
 
-data class PrototypeInfo(val element: PsiElement, val inheritBlankLinesBefore: Boolean)
+fun <TElement: Element> TElement.assignPrototypesFrom(element: Element, inheritance: CommentsAndSpacesInheritance? = null): TElement {
+    prototypes = element.prototypes
+    if (inheritance != null) {
+        prototypes = prototypes?.map { PrototypeInfo(it.element, inheritance) }
+    }
+    createdAt = element.createdAt
+    return this
+}
+
+data class PrototypeInfo(val element: PsiElement, val commentsAndSpacesInheritance: CommentsAndSpacesInheritance)
+
+data class CommentsAndSpacesInheritance(val blankLinesBefore: Boolean = true,
+                                        val commentsBefore: Boolean = true,
+                                        val commentsAfter: Boolean = true,
+                                        val commentsInside: Boolean = true)
 
 fun Element.canonicalCode(): String {
     val builder = CodeBuilder(null)
@@ -43,12 +57,17 @@ fun Element.canonicalCode(): String {
 }
 
 abstract class Element {
-    public var prototypes: List<PrototypeInfo> = listOf()
-        private set
+    public var prototypes: List<PrototypeInfo>? = null
+      set(value) {
+          // no prototypes assigned to empty elements because they can be singleton instances (and they are not needed anyway)
+          if (isEmpty) {
+              $prototypes = listOf()
+              return
+          }
+          $prototypes = value
+      }
 
-    public fun assignPrototypeInfos(prototypes: List<PrototypeInfo>) {
-        this.prototypes = prototypes
-    }
+    public var createdAt: String = "Element creation stacktraces turned off. Uncomment initializer of Element.createdAt." //Exception().getStackTrace().joinToString("\n")
 
     /** This method should not be used anywhere except for CodeBuilder! Use CodeBuilder.append instead. */
     public abstract fun generateCode(builder: CodeBuilder)

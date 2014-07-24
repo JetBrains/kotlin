@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.TypeResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
+import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -148,7 +149,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
         DataFlowInfos infos = null;
         for (JetWhenCondition condition : whenEntry.getConditions()) {
-            DataFlowInfos conditionInfos = checkWhenCondition(subjectExpression, subjectExpression == null, subjectType, condition,
+            DataFlowInfos conditionInfos = checkWhenCondition(subjectExpression, subjectType, condition,
                                                               context, subjectDataFlowValue);
             if (infos != null) {
                 infos = new DataFlowInfos(infos.thenInfo.or(conditionInfos.thenInfo), infos.elseInfo.and(conditionInfos.elseInfo));
@@ -162,7 +163,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     private DataFlowInfos checkWhenCondition(
             @Nullable final JetExpression subjectExpression,
-            final boolean expectedCondition,
             final JetType subjectType,
             JetWhenCondition condition,
             final ExpressionTypingContext context,
@@ -174,14 +174,15 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             public void visitWhenConditionInRange(@NotNull JetWhenConditionInRange condition) {
                 JetExpression rangeExpression = condition.getRangeExpression();
                 if (rangeExpression == null) return;
-                if (expectedCondition) {
+                if (subjectExpression == null) {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
                     DataFlowInfo dataFlowInfo = facade.getTypeInfo(rangeExpression, context).getDataFlowInfo();
                     newDataFlowInfo.set(new DataFlowInfos(dataFlowInfo, dataFlowInfo));
                     return;
                 }
+                ValueArgument argumentForSubject = CallMaker.makeExternalValueArgument(subjectExpression);
                 JetTypeInfo typeInfo = facade.checkInExpression(condition, condition.getOperationReference(),
-                                                                subjectExpression, rangeExpression, context);
+                                                                argumentForSubject, rangeExpression, context);
                 DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
                 newDataFlowInfo.set(new DataFlowInfos(dataFlowInfo, dataFlowInfo));
                 if (!KotlinBuiltIns.getInstance().getBooleanType().equals(typeInfo.getType())) {
@@ -191,7 +192,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
             @Override
             public void visitWhenConditionIsPattern(@NotNull JetWhenConditionIsPattern condition) {
-                if (expectedCondition) {
+                if (subjectExpression == null) {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
                 }
                 if (condition.getTypeRef() != null) {

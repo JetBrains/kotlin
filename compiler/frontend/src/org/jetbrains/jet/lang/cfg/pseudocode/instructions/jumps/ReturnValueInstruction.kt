@@ -23,6 +23,7 @@ import java.util.Collections
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.jet.lang.psi.JetReturnExpression
 
 public class ReturnValueInstruction(
         returnExpression: JetExpression,
@@ -47,4 +48,8 @@ public class ReturnValueInstruction(
     override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction {
         return ReturnValueInstruction((element as JetExpression), lexicalScope, newLabel, returnedValue)
     }
+
+    public val resultExpression: JetExpression =
+            element.let{ if (it is JetReturnExpression) it.getReturnedExpression()!! else element as JetExpression }
+    public val returnExpressionIfAny: JetReturnExpression? = element as? JetReturnExpression
 }

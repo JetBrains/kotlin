@@ -19,7 +19,9 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.JvmCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -33,9 +35,10 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class IntrinsicMethods {
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
@@ -71,7 +74,8 @@ public class IntrinsicMethods {
         namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
         namedMethods.put("kotlin.arrays.array", new JavaClassArray());
         namedMethods.put("kotlin.collections.copyToArray", new CopyToArray());
-        namedMethods.put("kotlin.synchronized", new StupidSync());
+        namedMethods.put("kotlin.jvm.internal.unsafe.monitorEnter", MonitorInstruction.MONITOR_ENTER);
+        namedMethods.put("kotlin.jvm.internal.unsafe.monitorExit", MonitorInstruction.MONITOR_EXIT);
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
@@ -191,12 +195,14 @@ public class IntrinsicMethods {
         if (descriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) descriptor;
 
-            if (isEnumClassObject(functionDescriptor.getContainingDeclaration())) {
-                if (isEnumValuesMethod(functionDescriptor)) {
+            DeclarationDescriptor container = descriptor.getContainingDeclaration();
+            //noinspection ConstantConditions
+            if (isClassObject(container) && isEnumClass(container.getContainingDeclaration())) {
+                if (JvmCodegenUtil.isEnumValuesMethod(functionDescriptor)) {
                     return ENUM_VALUES;
                 }
 
-                if (isEnumValueOfMethod(functionDescriptor)) {
+                if (JvmCodegenUtil.isEnumValueOfMethod(functionDescriptor)) {
                     return ENUM_VALUE_OF;
                 }
             }

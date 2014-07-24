@@ -58,12 +58,14 @@ class IfStatement(
         val elseStatement: Element,
         singleLine: Boolean
 ) : Expression() {
+
     private val br = if (singleLine) " " else "\n"
+    private val brAfterElse = if (singleLine || elseStatement is IfStatement) " " else "\n"
 
     override fun generateCode(builder: CodeBuilder) {
         builder append "if (" append condition append ")" append br append thenStatement
         if (!elseStatement.isEmpty) {
-            builder append br append "else" append br append elseStatement
+            builder append br append "else" append brAfterElse append elseStatement
         }
     }
 }
@@ -87,8 +89,9 @@ class DoWhileStatement(val condition: Expression, val body: Element, singleLine:
 }
 
 class ForeachStatement(
-        val variable: Parameter,
-        val expression: Expression,
+        val variableName: Identifier,
+        val explicitVariableType: Type?,
+        val collection: Expression,
         val body: Element,
         singleLine: Boolean
 ) : Statement() {
@@ -96,19 +99,11 @@ class ForeachStatement(
     private val br = if (singleLine) " " else "\n"
 
     override fun generateCode(builder: CodeBuilder) {
-        builder append "for (" append variable.identifier append " in " append expression append ")" append br append body
-    }
-}
-
-class ForeachWithRangeStatement(val identifier: Identifier,
-                                val start: Expression,
-                                val end: Expression,
-                                val body: Element,
-                                singleLine: Boolean) : Statement() {
-    private val br = if (singleLine) " " else "\n"
-
-    override fun generateCode(builder: CodeBuilder) {
-        builder append "for (" append identifier append " in " append start append ".." append end append ")" append br append body
+        builder append "for (" append variableName
+        if (explicitVariableType != null) {
+            builder append ":" append explicitVariableType
+        }
+        builder append " in " append collection append ")" append br append body
     }
 }
 
@@ -147,29 +142,29 @@ class CatchStatement(val variable: Parameter, val block: Block) : Statement() {
     }
 }
 
-// Switch --------------------------------------------------------------------------------------------------
+// when --------------------------------------------------------------------------------------------------
 
-class SwitchContainer(val expression: Expression, val caseContainers: List<CaseContainer>) : Statement() {
+class WhenStatement(val subject: Expression, val caseContainers: List<WhenEntry>) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append("when (").append(expression).append(") {\n").append(caseContainers, "\n").append("\n}")
+        builder.append("when (").append(subject).append(") {\n").append(caseContainers, "\n").append("\n}")
     }
 }
 
-class CaseContainer(val caseStatement: List<Element>, statements: List<Statement>) : Statement() {
-    private val block = Block(statements.filterNot { it is BreakStatement || it is ContinueStatement }, LBrace(), RBrace(), true)
-
+class WhenEntry(val selectors: List<WhenEntrySelector>, val body: Statement) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(caseStatement, ", ").append(" -> ").append(block)
+        builder.append(selectors, ", ").append(" -> ").append(body)
     }
 }
 
-class SwitchLabelStatement(val expression: Expression) : Statement() {
+abstract class WhenEntrySelector : Statement()
+
+class ValueWhenEntrySelector(val expression: Expression) : WhenEntrySelector() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append(expression)
     }
 }
 
-class DefaultSwitchLabelStatement() : Statement() {
+class ElseWhenEntrySelector() : WhenEntrySelector() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("else")
     }

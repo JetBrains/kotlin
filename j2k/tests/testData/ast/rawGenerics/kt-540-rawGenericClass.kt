@@ -6,7 +6,7 @@ class Collection<E>(e: E) {
     }
 }
 
-class Test() {
+class Test {
     fun main() {
         val raw1 = Collection(1)
         val raw2 = Collection<Int>(1)

@@ -19,14 +19,14 @@ L0:
   1 <START>
     mark(throw Exception())
     mark(Exception())
-    call(Exception, <init>) -> <v0>
-    throw (throw Exception()|<v0>)     NEXT:[<ERROR>]
+    call(Exception(), <init>) -> <v0>
+    throw (throw Exception()|<v0>)       NEXT:[<ERROR>]
 L1:
-    <END>                              NEXT:[<SINK>]                             PREV:[]
+    <END>                                NEXT:[<SINK>]                               PREV:[]
 error:
-    <ERROR>                            PREV:[throw (throw Exception()|<v0>)]
+    <ERROR>                              PREV:[throw (throw Exception()|<v0>)]
 sink:
-    <SINK>                             PREV:[<ERROR>, <END>]
+    <SINK>                               PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo() {
@@ -39,13 +39,13 @@ L0:
   2 mark({ null!!.doSomething() bar().doSomething })
     mark(null!!.doSomething())
     r(null) -> <v0>
-    magic(null!!|<v0>) -> <v1>
+    magic[NOT_NULL_ASSERTION](null!!|<v0>) -> <v1>
     jmp(error)                                          NEXT:[<ERROR>]
 -   mark(doSomething())                                 PREV:[]
--   call(doSomething, doSomething|<v1>) -> <v2>         PREV:[]
+-   call(doSomething(), doSomething|<v1>) -> <v2>       PREV:[]
 -   mark(bar().doSomething)                             PREV:[]
 -   mark(bar())                                         PREV:[]
--   call(bar, bar)                                      PREV:[]
+-   call(bar(), bar)                                    PREV:[]
 -   jmp(error)                                          NEXT:[<ERROR>]                                             PREV:[]
 -   mark(doSomething)                                   PREV:[]
 -   call(doSomething, doSomething) -> <v3>              PREV:[]

@@ -1,0 +1,14 @@
+// SIBLING:
+fun main(args: Array<String>) {
+    val a = i()
+    lambda {
+        a
+    }
+}
+
+fun i(): Int {
+    val a = 1
+    return a
+}
+
+fun lambda(f: () -> Unit) {}

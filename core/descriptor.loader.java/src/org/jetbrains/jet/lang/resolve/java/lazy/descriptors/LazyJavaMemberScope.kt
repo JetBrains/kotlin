@@ -75,7 +75,7 @@ public abstract class LazyJavaMemberScope(
         (name: Name): Collection<FunctionDescriptor>
         ->
         val methods = memberIndex().findMethodsByName(name)
-        val functions = LinkedHashSet(
+        val functions = LinkedHashSet<SimpleFunctionDescriptor>(
                 methods.stream()
                       // values() and valueOf() are added manually, see LazyJavaClassDescriptor::getClassObjectDescriptor()
                       .filter{ m -> !DescriptorResolverUtils.shouldBeInEnumClassObject(m) }
@@ -110,9 +110,11 @@ public abstract class LazyJavaMemberScope(
     abstract fun resolveMethodSignature(method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>,
                                         returnType: JetType, valueParameters: ResolvedValueParameters): MethodSignatureData
 
-    fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): SimpleFunctionDescriptor {
+    fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): JavaMethodDescriptor {
 
-        val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(_containingDeclaration, c.resolveAnnotations(method), method.getName())
+        val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(
+                _containingDeclaration, c.resolveAnnotations(method), method.getName(), c.sourceElementFactory.source(method)
+        )
 
         val c = c.child(functionDescriptorImpl, method.getTypeParameters().toSet())
 
@@ -210,15 +212,16 @@ public abstract class LazyJavaMemberScope(
                     name,
                     outType,
                     false,
-                    varargElementType
+                    varargElementType,
+                    c.sourceElementFactory.source(javaParameter)
             )
         }.toList()
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    private fun resolveSamAdapter(original: SimpleFunctionDescriptor): SimpleFunctionDescriptor? {
+    private fun resolveSamAdapter(original: JavaMethodDescriptor): JavaMethodDescriptor? {
         return if (SingleAbstractMethodUtils.isSamAdapterNecessary(original))
-                    SingleAbstractMethodUtils.createSamAdapterFunction(original) as SimpleFunctionDescriptor
+                    SingleAbstractMethodUtils.createSamAdapterFunction(original) as JavaMethodDescriptor
                else null
     }
 
@@ -233,9 +236,7 @@ public abstract class LazyJavaMemberScope(
 
         val field = memberIndex().findFieldByName(name)
         if (field != null && !field.isEnumEntry()) {
-            if (!DescriptorUtils.isEnumClassObject(_containingDeclaration)) {
-                properties.add(resolveProperty(field))
-            }
+            properties.add(resolveProperty(field))
         }
 
         computeNonDeclaredProperties(name, properties)
@@ -275,7 +276,8 @@ public abstract class LazyJavaMemberScope(
         val annotations = c.resolveAnnotations(field)
         val propertyName = field.getName()
 
-        return JavaPropertyDescriptor(_containingDeclaration, annotations, visibility, isVar, propertyName)
+        return JavaPropertyDescriptor(_containingDeclaration, annotations, visibility, isVar, propertyName,
+                                      c.sourceElementFactory.source(field))
     }
 
     private fun getPropertyType(field: JavaField): JetType {

@@ -22,6 +22,7 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.context.ContextPackage;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContextWithTypes;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext;
@@ -29,10 +30,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.EnumClassObjectDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.NullableLazyValue;
@@ -141,7 +140,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             return fragments.iterator().next();
         }
         else {
-            ClassDescriptor result = context.getDescriptorFinder().findClass(classId.getOuterClassId());
+            ClassDescriptor result = ContextPackage.deserializeClass(context, classId.getOuterClassId());
             return result != null ? result : ErrorUtils.getErrorModule();
         }
     }
@@ -201,7 +200,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
         ProtoBuf.Class.PrimaryConstructor constructorProto = classProto.getPrimaryConstructor();
         if (!constructorProto.hasData()) {
-            ConstructorDescriptorImpl descriptor = DescriptorFactory.createPrimaryConstructorForObject(this);
+            ConstructorDescriptorImpl descriptor = DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE);
             descriptor.setReturnType(getDefaultType());
             return descriptor;
         }
@@ -233,7 +232,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         }
 
         if (getKind() == ClassKind.ENUM_CLASS) {
-            return createEnumClassObject();
+            return new EnumClassObjectDescriptor(context.getStorageManager(), this);
         }
 
         if (getKind() == ClassKind.OBJECT) {
@@ -245,50 +244,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             return new DeserializedClassDescriptor(context, classObjectProto.getData());
         }
 
-        return context.getDescriptorFinder().findClass(classId.createNestedClassId(getClassObjectName(getName())));
-    }
-
-    @NotNull
-    private ClassDescriptorWithResolutionScopes createEnumClassObject() {
-        final MutableClassDescriptor classObject = new MutableClassDescriptor(this, getScopeForMemberLookup(), ClassKind.CLASS_OBJECT,
-                                                                              false, getClassObjectName(getName()));
-        JetType supertype = KotlinBuiltIns.getInstance().getAnyType();
-        classObject.setSupertypes(Collections.singleton(supertype));
-        classObject.setModality(Modality.FINAL);
-        classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
-        classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
-        classObject.setPrimaryConstructor(DescriptorFactory.createPrimaryConstructorForObject(classObject));
-        classObject.createTypeConstructor();
-
-        JetType enumType = getDefaultType();
-        JetType enumArrayType = KotlinBuiltIns.getInstance().getArrayType(enumType);
-        classObject.getBuilder().addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValuesMethod(classObject, enumArrayType));
-        classObject.getBuilder().addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, enumType));
-
-        OverridingUtil.DescriptorSink sink = new OverridingUtil.DescriptorSink() {
-            @Override
-            public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null);
-                classObject.getBuilder().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
-            }
-
-            @Override
-            public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                throw new IllegalStateException("Conflict on enum class object override: " + fromSuper + " vs " + fromCurrent);
-            }
-        };
-
-        JetScope superScope = supertype.getMemberScope();
-
-        for (DeclarationDescriptor descriptor : superScope.getAllDescriptors()) {
-            if (descriptor instanceof FunctionDescriptor) {
-                Name name = descriptor.getName();
-                OverridingUtil.generateOverridesInFunctionGroup(name, superScope.getFunctions(name),
-                                                                Collections.<FunctionDescriptor>emptySet(), classObject, sink);
-            }
-        }
-
-        return classObject;
+        return ContextPackage.deserializeClass(context, classId.createNestedClassId(getClassObjectName(getName())));
     }
 
     @Nullable
@@ -309,6 +265,12 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     public String toString() {
         // not using descriptor render to preserve laziness
         return "deserialized class " + getName().toString();
+    }
+
+    @NotNull
+    @Override
+    public SourceElement getSource() {
+        return SourceElement.NO_SOURCE;
     }
 
     private class DeserializedClassTypeConstructor extends AbstractClassTypeConstructor {
@@ -485,10 +447,10 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                 public ClassDescriptor invoke(Name name) {
                     if (enumEntryNames.contains(name)) {
                         return EnumEntrySyntheticClassDescriptor
-                                .create(storageManager, DeserializedClassDescriptor.this, name, enumMemberNames);
+                                .create(storageManager, DeserializedClassDescriptor.this, name, enumMemberNames, SourceElement.NO_SOURCE);
                     }
                     if (nestedClassNames.contains(name)) {
-                        return context.getDescriptorFinder().findClass(classId.createNestedClassId(name));
+                        return ContextPackage.deserializeClass(context, classId.createNestedClassId(name));
                     }
                     return null;
                 }

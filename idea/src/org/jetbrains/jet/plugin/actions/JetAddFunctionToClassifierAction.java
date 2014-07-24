@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -49,6 +48,8 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 /**
  * Changes method signature to one of provided signatures.
  * Based on {@link JetAddImportAction}
@@ -57,31 +58,21 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
     private final List<FunctionDescriptor> functionsToAdd;
     private final Project project;
     private final Editor editor;
-    private final BindingContext bindingContext;
 
-    /**
-     * @param project        Project where action takes place.
-     * @param editor         Editor where modification should be done.
-     * @param bindingContext BindingContext to be used for finding type declarations.
-     * @param functionsToAdd List of possible functions to add.
-     */
     public JetAddFunctionToClassifierAction(
             @NotNull Project project,
             @NotNull Editor editor,
-            @NotNull BindingContext bindingContext,
             @NotNull List<FunctionDescriptor> functionsToAdd
     ) {
         this.project = project;
         this.editor = editor;
-        this.bindingContext = bindingContext;
         this.functionsToAdd = new ArrayList<FunctionDescriptor>(functionsToAdd);
     }
 
     private static void addFunction(
-            @NotNull final Project project,
+            @NotNull Project project,
             @NotNull final ClassDescriptor typeDescriptor,
-            @NotNull final FunctionDescriptor functionDescriptor,
-            @NotNull BindingContext bindingContext
+            @NotNull final FunctionDescriptor functionDescriptor
     ) {
         final String signatureString = CodeInsightUtils.createFunctionSignatureStringFromDescriptor(
                 functionDescriptor,
@@ -89,18 +80,19 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-        final JetClass classifierDeclaration = (JetClass) DescriptorToDeclarationUtil.getDeclaration(project, typeDescriptor, bindingContext);
+        final JetClass classifierDeclaration = (JetClass) DescriptorToDeclarationUtil.getDeclaration(project, typeDescriptor);
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
             @Override
             public void run() {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
+                        JetPsiFactory psiFactory = JetPsiFactory(classifierDeclaration);
                         JetClassBody body = classifierDeclaration.getBody();
                         if (body == null) {
-                            PsiElement whitespaceBefore = classifierDeclaration.add(JetPsiFactory.createWhiteSpace(project));
-                            body = (JetClassBody) classifierDeclaration.addAfter(JetPsiFactory.createEmptyClassBody(project), whitespaceBefore);
-                            classifierDeclaration.addAfter(JetPsiFactory.createNewLine(project), body);
+                            PsiElement whitespaceBefore = classifierDeclaration.add(psiFactory.createWhiteSpace());
+                            body = (JetClassBody) classifierDeclaration.addAfter(psiFactory.createEmptyClassBody(), whitespaceBefore);
+                            classifierDeclaration.addAfter(psiFactory.createNewLine(), body);
                         }
 
                         String functionBody = "";
@@ -111,7 +103,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                                 functionBody = "{ throw UnsupportedOperationException() }";
                             }
                         }
-                        JetNamedFunction functionElement = JetPsiFactory.createFunction(project, signatureString + functionBody);
+                        JetNamedFunction functionElement = psiFactory.createFunction(signatureString + functionBody);
                         PsiElement anchor = body.getRBrace();
                         JetNamedFunction insertedFunctionElement = (JetNamedFunction) body.addBefore(functionElement, anchor);
 
@@ -177,7 +169,6 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
     }
 
     private void addFunction(FunctionDescriptor functionToAdd) {
-        addFunction(project, (ClassDescriptor) functionToAdd.getContainingDeclaration(),
-                    functionToAdd, bindingContext);
+        addFunction(project, (ClassDescriptor) functionToAdd.getContainingDeclaration(), functionToAdd);
     }
 }

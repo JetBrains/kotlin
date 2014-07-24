@@ -63,7 +63,7 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
 
             out.println(
-"""public class $range(public override val start: $t, public override val end: $t) : Range<$t>, Progression<$t> {
+"""public class $range(override val start: $t, override val end: $t) : Range<$t>, Progression<$t> {
     override val increment: $incrementType
         get() = $increment
 

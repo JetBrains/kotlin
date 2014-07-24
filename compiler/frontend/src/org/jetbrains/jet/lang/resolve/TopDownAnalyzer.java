@@ -29,10 +29,7 @@ import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
-import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilderDummy;
+import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
@@ -245,7 +242,7 @@ public class TopDownAnalyzer {
                    }
 
                    @Override
-                   public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+                   public ClassObjectStatus setClassObjectDescriptor(@NotNull ClassDescriptor classObjectDescriptor) {
                        return ClassObjectStatus.NOT_ALLOWED;
                    }
                },

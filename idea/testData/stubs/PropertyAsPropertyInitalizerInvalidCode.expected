@@ -1,0 +1,3 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE:
+  PROPERTY:[fqName=c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReceiverTypeRef=false, hasReturnTypeRef=false, isTopLevel=true, isVar=false, name=c]

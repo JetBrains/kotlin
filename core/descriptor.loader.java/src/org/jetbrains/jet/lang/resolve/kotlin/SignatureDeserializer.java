@@ -48,8 +48,8 @@ public class SignatureDeserializer {
     }
 
     @NotNull
-    public DescriptorDeserializersStorage.MemberSignature methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
-        return DescriptorDeserializersStorage.MemberSignature.fromMethodNameAndDesc(methodSignatureString(signature));
+    public DescriptorLoadersStorage.MemberSignature methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
+        return DescriptorLoadersStorage.MemberSignature.fromMethodNameAndDesc(methodSignatureString(signature));
     }
 
     @NotNull

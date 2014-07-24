@@ -31,7 +31,6 @@ import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.SimpleOutputFile;
 import org.jetbrains.jet.SimpleOutputFileCollection;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
 import org.jetbrains.js.compiler.JsSourceGenerationVisitor;
@@ -47,6 +46,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.k2js.facade.FacadeUtils.parseString;
 
 /**
@@ -108,7 +108,7 @@ public final class K2JSTranslator {
     @SuppressWarnings("UnusedDeclaration")
     @NotNull
     public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) throws TranslationException {
-        JetFile file = JetPsiFactory.createFile(getProject(), "test", programText);
+        JetFile file = JetPsiFactory(getProject()).createFile("test", programText);
         String programCode = generateProgramCode(file, MainCallParameters.mainWithArguments(parseString(argumentsString))) + "\n";
         return FLUSH_SYSTEM_OUT + programCode + GET_SYSTEM_OUT;
     }

@@ -19,14 +19,14 @@ L2 [onExceptionToFinallyBlock]:
 L4 [start finally]:
   3 mark({ return test() })                                      PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
     mark(test())
-    call(test, test) -> <v0>
+    call(test(), test) -> <v0>
     ret(*|<v0>) L1                                               NEXT:[<END>]
 L5 [finish finally]:
 - 2 jmp(error)                                                   NEXT:[<ERROR>]                                                      PREV:[]
 L3 [skipFinallyToErrorBlock]:
   3 mark({ return test() })                                      PREV:[jmp(L3 [skipFinallyToErrorBlock])]
     mark(test())
-    call(test, test) -> <v0>
+    call(test(), test) -> <v0>
     ret(*|<v0>) L1
 L1:
   1 <END>                                                        NEXT:[<SINK>]                                                       PREV:[ret(*|<v0>) L1, ret(*|<v0>) L1]

@@ -1,0 +1,31 @@
+LineBreakpoint created at frameExtensionFun.kt:13
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameExtensionFun.FrameExtensionFunPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameExtensionFun.kt:12
+Compile bytecode for prop
+package frameExtensionFun
+
+fun main(args: Array<String>) {
+    A().foo()
+}
+
+class A {
+    val prop = 1
+}
+
+fun A.foo() {
+    //Breakpoint!
+    prop
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: prop
+// RESULT: 1: I
+ frame    = foo():13, FrameExtensionFunPackage-@packagePartHASH {frameExtensionFun}
+   static   = static = frameExtensionFun.FrameExtensionFunPackage-@packagePartHASH
+   local    = $receiver: frameExtensionFun.A = {frameExtensionFun.A@uniqueID}
+     field    = prop: int = 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

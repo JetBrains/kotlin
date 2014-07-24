@@ -1,0 +1,16 @@
+fun <T> foo(f: () -> T) {}
+
+fun test() {
+    <caret>foo { b }
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+MATCH_MODULO_UNINFERRED_TYPES  f : () -> ??? = { b }

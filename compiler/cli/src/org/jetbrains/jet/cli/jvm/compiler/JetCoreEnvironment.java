@@ -55,7 +55,6 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.CliDeclarationProviderFactoryService;
@@ -138,24 +137,31 @@ public class JetCoreEnvironment {
         }
     }
 
-    private static JavaCoreApplicationEnvironment createApplicationEnvironment(Disposable parentDisposable) {
+    @NotNull
+    private static JavaCoreApplicationEnvironment createApplicationEnvironment(@NotNull Disposable parentDisposable) {
         JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
 
+        registerApplicationServicesForCLI(applicationEnvironment);
+        registerApplicationServices(applicationEnvironment);
+
+        return applicationEnvironment;
+    }
+
+    private static void registerApplicationServicesForCLI(@NotNull JavaCoreApplicationEnvironment applicationEnvironment) {
         // ability to get text from annotations xml files
         applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml");
+        applicationEnvironment.registerParserDefinition(new JavaParserDefinition());
+    }
 
+    // made public for Upsource
+    public static void registerApplicationServices(@NotNull JavaCoreApplicationEnvironment applicationEnvironment) {
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kt");
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "ktm");
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, JetParserDefinition.STD_SCRIPT_SUFFIX); // should be renamed to kts
-        applicationEnvironment.registerParserDefinition(new JavaParserDefinition());
         applicationEnvironment.registerParserDefinition(new JetParserDefinition());
 
         applicationEnvironment.getApplication().registerService(OperationModeProvider.class, new CompilerModeProvider());
         applicationEnvironment.getApplication().registerService(KotlinBinaryClassCache.class, new KotlinBinaryClassCache());
-        applicationEnvironment.getApplication().registerService(DeclarationProviderFactoryService.class,
-                                                                new CliDeclarationProviderFactoryService());
-
-        return applicationEnvironment;
     }
 
     private final JavaCoreProjectEnvironment projectEnvironment;
@@ -177,27 +183,18 @@ public class JetCoreEnvironment {
         projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
 
         MockProject project = projectEnvironment.getProject();
-        project.registerService(JetScriptDefinitionProvider.class, new JetScriptDefinitionProvider());
-        project.registerService(JetFilesProvider.class, new CliJetFilesProvider(this));
-        project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
+        annotationsManager = new CoreExternalAnnotationsManager(project.getComponent(PsiManager.class));
+        project.registerService(ExternalAnnotationsManager.class, annotationsManager);
+        project.registerService(DeclarationProviderFactoryService.class, new CliDeclarationProviderFactoryService(sourceFiles));
 
-        CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport();
-        project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
-        project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
-        project.registerService(KotlinLightClassForPackage.FileStubCache.class, new KotlinLightClassForPackage.FileStubCache(project));
-
-        Extensions.getArea(project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME)
-                .registerExtension(new JavaElementFinder(project, cliLightClassGenerationSupport));
+        registerProjectServicesForCLI(projectEnvironment);
+        registerProjectServices(projectEnvironment);
 
         // This extension points should be registered in JavaCoreApplicationEnvironment
         CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME,
                                                           ClsCustomNavigationPolicy.class);
         CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME,
                                                           ClassFileDecompilers.Decompiler.class);
-
-        annotationsManager = new CoreExternalAnnotationsManager(project.getComponent(PsiManager.class));
-        project.registerService(ExternalAnnotationsManager.class, annotationsManager);
 
         for (File path : configuration.getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             addToClasspath(path);
@@ -207,20 +204,41 @@ public class JetCoreEnvironment {
         }
         sourceFiles.addAll(
                 CompileEnvironmentUtil
-                        .getJetFiles(getProject(), configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY), new Function1<String, Unit>() {
-                            @Override
-                            public Unit invoke(String s) {
-                                report(ERROR, s);
-                                return Unit.VALUE;
-                            }
-                        }));
-
+                        .getJetFiles(getProject(), configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY),
+                                     new Function1<String, Unit>() {
+                                         @Override
+                                         public Unit invoke(String s) {
+                                             report(ERROR, s);
+                                             return Unit.VALUE;
+                                         }
+                                     }));
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(
                 configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
         project.registerService(VirtualFileFinder.class, new CliVirtualFileFinder(classPath));
     }
 
+    // made public for Upsource
+    public static void registerProjectServices(@NotNull JavaCoreProjectEnvironment projectEnvironment) {
+        MockProject project = projectEnvironment.getProject();
+        project.registerService(JetScriptDefinitionProvider.class, new JetScriptDefinitionProvider());
+
+        CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport();
+        project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
+        project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
+        project.registerService(KotlinLightClassForPackage.FileStubCache.class, new KotlinLightClassForPackage.FileStubCache(project));
+
+        Extensions.getArea(project)
+                .getExtensionPoint(PsiElementFinder.EP_NAME)
+                .registerExtension(new JavaElementFinder(project, cliLightClassGenerationSupport));
+    }
+
+    private static void registerProjectServicesForCLI(@NotNull JavaCoreProjectEnvironment projectEnvironment) {
+        MockProject project = projectEnvironment.getProject();
+        project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
+    }
+
+    @NotNull
     public CompilerConfiguration getConfiguration() {
         return configuration;
     }

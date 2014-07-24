@@ -2,7 +2,7 @@ trait I {
     public fun getInt(): Int
 }
 
-class C() {
+class C {
     fun getObject(): Any? {
         foo(object : I {
             override fun getInt(): Int {

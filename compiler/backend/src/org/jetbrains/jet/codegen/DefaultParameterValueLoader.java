@@ -20,7 +20,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetParameter;
 
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
 public interface DefaultParameterValueLoader {
 
@@ -32,7 +32,7 @@ public interface DefaultParameterValueLoader {
                 ValueParameterDescriptor descriptor,
                 ExpressionCodegen codegen
         ) {
-            JetParameter jetParameter = (JetParameter) descriptorToDeclaration(codegen.getBindingContext(), descriptor);
+            JetParameter jetParameter = (JetParameter) descriptorToDeclaration(descriptor);
             assert jetParameter != null;
             Type propertyType = codegen.typeMapper.mapType(descriptor.getType());
             codegen.gen(jetParameter.getDefaultValue(), propertyType);

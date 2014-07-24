@@ -10,33 +10,33 @@ fun foo(c: Collection<Int>) {
 L0:
   1 <START>
     v(c: Collection<Int>)
-    magic(c: Collection<Int>) -> <v0>
+    magic[FAKE_INITIALIZER](c: Collection<Int>) -> <v0>
     w(c|<v0>)
   2 mark({ for (e in c) { { break } } })
   3 r(c) -> <v1>
     v(e)
 L3:
-    jmp?(L2)                                NEXT:[read (Unit), magic(c|<v1>) -> <v2>]
+    jmp?(L2)                                               NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](c|<v1>) -> <v2>]
 L4 [loop entry point]:
 L5 [body entry point]:
-    magic(c|<v1>) -> <v2>                   PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    magic[LOOP_RANGE_ITERATION](c|<v1>) -> <v2>            PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
     w(e|<v2>)
     mark(for (e in c) { { break } })
   4 mark({ { break } })
     mark({ break })
-    jmp?(L6)                                NEXT:[r({ break }) -> <v3>, d({ break })]
-    d({ break })                            NEXT:[<SINK>]
+    jmp?(L6)                                               NEXT:[r({ break }) -> <v3>, d({ break })]
+    d({ break })                                           NEXT:[<SINK>]
 L6:
-    r({ break }) -> <v3>                    PREV:[jmp?(L6)]
-  3 jmp?(L4 [loop entry point])             NEXT:[magic(c|<v1>) -> <v2>, read (Unit)]
+    r({ break }) -> <v3>                                   PREV:[jmp?(L6)]
+  3 jmp?(L4 [loop entry point])                            NEXT:[magic[LOOP_RANGE_ITERATION](c|<v1>) -> <v2>, read (Unit)]
 L2:
-    read (Unit)                             PREV:[jmp?(L2), jmp(L2), jmp?(L4 [loop entry point])]
+    read (Unit)                                            PREV:[jmp?(L2), jmp(L2), jmp?(L4 [loop entry point])]
 L1:
-  1 <END>                                   NEXT:[<SINK>]
+  1 <END>                                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                 PREV:[]
+    <ERROR>                                                PREV:[]
 sink:
-    <SINK>                                  PREV:[<ERROR>, <END>, d({ break })]
+    <SINK>                                                 PREV:[<ERROR>, <END>, d({ break })]
 =====================
 == anonymous_0 ==
 {

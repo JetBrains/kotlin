@@ -25,10 +25,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetWhenCondition;
+import org.jetbrains.jet.lang.psi.JetWhenEntry;
+import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -44,7 +49,7 @@ public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     @Nullable
     @Override
     public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetWhenExpression whenExpression = (JetWhenExpression)JetPsiFactory.createExpression(project, getCodeTemplate(expression));
+        JetWhenExpression whenExpression = (JetWhenExpression) JetPsiFactory(expression).createExpression(getCodeTemplate(expression));
         JetExpression subjectExpression = whenExpression.getSubjectExpression();
         assert subjectExpression != null : "JetExpression should exists for " + whenExpression.getText() + " expression";
         subjectExpression.replace(expression);

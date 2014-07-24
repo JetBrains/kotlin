@@ -23,6 +23,8 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public abstract class JetExpressionImplStub<T extends StubElement> extends JetElementImplStub<T> implements JetExpression {
     public JetExpressionImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
@@ -44,7 +46,7 @@ public abstract class JetExpressionImplStub<T extends StubElement> extends JetEl
         PsiElement parent = getParent();
         if (parent instanceof JetExpression && newElement instanceof JetExpression &&
             JetPsiUtil.areParenthesesNecessary((JetExpression) newElement, this, (JetExpression) parent)) {
-            return super.replace(JetPsiFactory.createExpression(getProject(), "(" + newElement.getText() + ")"));
+            return super.replace(JetPsiFactory(this).createExpression("(" + newElement.getText() + ")"));
         }
         return super.replace(newElement);
     }

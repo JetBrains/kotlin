@@ -1,4 +1,4 @@
-class C() {
+class C {
     public fun equals(c: C): Boolean {
         return false
     }

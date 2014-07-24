@@ -1,5 +1,5 @@
-class Test() {
-    var str: String = 0
+class Test {
+    var str: String
 
     class object {
         {

@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import org.jetbrains.jet.lexer.JetSingleValueToken
 import org.jetbrains.jet.lexer.JetKeywordToken
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetForExpression
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 
@@ -67,6 +64,8 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
+        val psiFactory = JetPsiFactory(element)
+
         fun isNegatableOperator(token: IElementType): Boolean {
             return token in array(JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ, JetTokens.IS_KEYWORD, JetTokens.NOT_IS, JetTokens.IN_KEYWORD, JetTokens.NOT_IN, JetTokens.LT, JetTokens.LTEQ, JetTokens.GT, JetTokens.GTEQ)
         }
@@ -99,7 +98,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
 
         fun negateExpressionText(element: JetExpression): String {
             val negatedParenthesizedExpressionText = "!(${element.getText()})"
-            val possibleNewExpression = JetPsiFactory.createExpression(element.getProject(), negatedParenthesizedExpressionText) as JetUnaryExpression
+            val possibleNewExpression = psiFactory.createExpression(negatedParenthesizedExpressionText) as JetUnaryExpression
             val innerExpression = possibleNewExpression.getBaseExpression() as JetParenthesizedExpression
 
             return when {
@@ -109,7 +108,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
         }
 
         fun getNegation(element: JetExpression): JetExpression {
-            return JetPsiFactory.createExpression(element.getProject(), when (element) {
+            return psiFactory.createExpression(when (element) {
                 is JetBinaryExpression -> {
                     val operator = element.getOperationToken()!!
 
@@ -159,10 +158,10 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
         }
 
         val thenBranch = element.getThen()
-        val elseBranch = element.getElse() ?: JetPsiFactory.createEmptyBody(element.getProject())
+        val elseBranch = element.getElse() ?: psiFactory.createEmptyBody()
 
-        element.replace(JetPsiFactory.createIf(element.getProject(), replacementCondition, when (elseBranch) {
-            is JetIfExpression -> JetPsiFactory.wrapInABlock(elseBranch)
+        element.replace(psiFactory.createIf(replacementCondition, when (elseBranch) {
+            is JetIfExpression -> psiFactory.wrapInABlock(elseBranch)
             else -> elseBranch
         }, if (thenBranch is JetBlockExpression && thenBranch.getStatements().isEmpty()) null else thenBranch))
     }

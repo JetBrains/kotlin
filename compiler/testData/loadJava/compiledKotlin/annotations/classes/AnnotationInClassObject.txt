@@ -1,0 +1,25 @@
+package test
+
+internal final class A {
+    /*primary*/ public constructor A()
+
+    internal class object <class-object-for-A> {
+        /*primary*/ private constructor <class-object-for-A>()
+
+        internal final annotation class Anno1 : kotlin.Annotation {
+            /*primary*/ public constructor Anno1()
+        }
+
+        internal final class B {
+            /*primary*/ public constructor B()
+
+            internal final annotation class Anno2 : kotlin.Annotation {
+                /*primary*/ public constructor Anno2()
+            }
+        }
+    }
+}
+
+test.A.Anno1() test.A.B.Anno2() internal final class C {
+    /*primary*/ public constructor C()
+}

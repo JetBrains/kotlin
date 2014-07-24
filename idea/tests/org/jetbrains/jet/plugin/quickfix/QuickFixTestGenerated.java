@@ -477,6 +477,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeInvokeOnString.kt")
+        public void testInvokeOnString() throws Exception {
+            doTest("idea/testData/quickfix/checkArguments/beforeInvokeOnString.kt");
+        }
+        
         @TestMetadata("beforeMixedNamedAndPositionalArguments.kt")
         public void testMixedNamedAndPositionalArguments() throws Exception {
             doTest("idea/testData/quickfix/checkArguments/beforeMixedNamedAndPositionalArguments.kt");
@@ -774,16 +779,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         public void testAllFilesPresentInMigration() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/quickfix/migration"), Pattern.compile("^before(\\w+)\\.kt$"), true);
-        }
-        
-        @TestMetadata("beforeBareSure.kt")
-        public void testBareSure() throws Exception {
-            doTest("idea/testData/quickfix/migration/beforeBareSure.kt");
-        }
-        
-        @TestMetadata("beforeSure.kt")
-        public void testSure() throws Exception {
-            doTest("idea/testData/quickfix/migration/beforeSure.kt");
         }
         
         @TestMetadata("beforeValVarFromParameters.kt")

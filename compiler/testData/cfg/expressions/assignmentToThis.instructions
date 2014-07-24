@@ -6,7 +6,7 @@ fun Int.bar(c: C) {
 L0:
   1 <START>
     v(c: C)
-    magic(c: C) -> <v0>
+    magic[FAKE_INITIALIZER](c: C) -> <v0>
     w(c|<v0>)
   2 mark({ this = c })
     r(c) -> <v1>

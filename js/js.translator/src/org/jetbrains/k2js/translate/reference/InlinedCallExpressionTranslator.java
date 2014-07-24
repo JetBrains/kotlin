@@ -51,7 +51,7 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     @SuppressWarnings("UnusedParameters")
     public static boolean shouldBeInlined(@NotNull JetCallExpression expression, @NotNull TranslationContext context) {
         //TODO: inlining turned off
-        //ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), expression);
+        //ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getFunctionResolvedCall(expression, bindingContext());
         //CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
         //if (descriptor instanceof SimpleFunctionDescriptor) {
         //    return ((SimpleFunctionDescriptor)descriptor).isInline();
@@ -88,7 +88,7 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
 
     @NotNull
     private JetFunction getFunctionBody() {
-        return getFunctionForDescriptor(bindingContext(), getFunctionDescriptor());
+        return getFunctionForDescriptor(getFunctionDescriptor());
     }
 
     @NotNull

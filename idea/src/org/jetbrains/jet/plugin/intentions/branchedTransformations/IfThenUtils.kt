@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.psi.JetThrowExpression
 import org.jetbrains.jet.lang.psi.JetPostfixExpression
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.psi.JetElement
 
 val NULL_PTR_EXCEPTION = "NullPointerException"
 val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"
@@ -121,12 +122,12 @@ fun JetExpression.evaluatesTo(other: JetExpression): Boolean {
 }
 
 fun JetExpression.convertToIfNotNullExpression(conditionLhs: JetExpression, thenClause: JetExpression, elseClause: JetExpression?): JetIfExpression {
-    val condition = JetPsiFactory.createExpression(this.getProject(), "${conditionLhs.getText()} != null")
+    val condition = JetPsiFactory(this).createExpression("${conditionLhs.getText()} != null")
     return this.convertToIfStatement(condition, thenClause, elseClause)
 }
 
 fun JetExpression.convertToIfNullExpression(conditionLhs: JetExpression, thenClause: JetExpression): JetIfExpression {
-    val condition = JetPsiFactory.createExpression(this.getProject(), "${conditionLhs.getText()} == null")
+    val condition = JetPsiFactory(this).createExpression("${conditionLhs.getText()} == null")
     return this.convertToIfStatement(condition, thenClause, null)
 }
 
@@ -144,8 +145,8 @@ fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpres
     KotlinIntroduceVariableHandler.doRefactoring(project, editor, occurrenceInConditional, listOf(occurrenceInConditional, occurrenceInThenClause))
 }
 
-fun PsiElement.replace(expressionAsString: String): PsiElement =
-        this.replace(JetPsiFactory.createExpression(this.getProject(), expressionAsString))
+fun JetElement.replace(expressionAsString: String): PsiElement =
+        this.replace(JetPsiFactory(this).createExpression(expressionAsString))
 
 fun JetSimpleNameExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
     val declaration = this.getReference()?.resolve() as JetDeclaration

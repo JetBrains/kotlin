@@ -20,9 +20,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.text.StringUtil;
 import com.sampullara.cli.Args;
-import com.sampullara.cli.ArgumentUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
@@ -112,7 +110,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
 
-        printArgumentsIfNeeded(errStream, arguments, messageRenderer);
         printVersionIfNeeded(errStream, arguments, messageRenderer);
 
         MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
@@ -175,25 +172,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
     }
 
-    private void printArgumentsIfNeeded(
-            @NotNull PrintStream errStream,
-            @NotNull A arguments,
-            @NotNull MessageRenderer messageRenderer
-    ) {
-        if (arguments.printArgs) {
-            String freeArgs = !arguments.freeArgs.isEmpty() ? " " + StringUtil.join(arguments.freeArgs, " ") : "";
-
-            List<String> argumentsAsList = ArgumentUtils.convertArgumentsToStringList(arguments, createArguments());
-            String argumentsAsString = StringUtil.join(argumentsAsList, " ");
-
-            String printArgsMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
-                                                             "Invoking " + getClass().getSimpleName() +
-                                                             " with arguments " + argumentsAsString + freeArgs,
-                                                             CompilerMessageLocation.NO_LOCATION);
-            errStream.println(printArgsMessage);
-        }
-    }
-
     /**
      * Useful main for derived command line tools
      */
@@ -210,11 +188,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     @NotNull
     public static ExitCode doMainNoExit(@NotNull CLICompiler compiler, @NotNull String[] args) {
         try {
-            ExitCode rc = compiler.exec(System.out, args);
-            if (rc != OK) {
-                System.err.println("exec() finished with " + rc + " return code");
-            }
-            return rc;
+            return compiler.exec(System.err, args);
         }
         catch (CompileEnvironmentException e) {
             System.err.println(e.getMessage());

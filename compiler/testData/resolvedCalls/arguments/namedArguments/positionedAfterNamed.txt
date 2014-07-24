@@ -1,0 +1,20 @@
+class A {}
+class B {}
+
+fun foo(a: A, b: B) {}
+
+fun bar() {
+    <caret>foo(b = B(), A())
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  b : B = B()
+ARGUMENT UNMAPPED:  A()

@@ -54,7 +54,7 @@ L0:
     r(2) -> <v1>
     r(3) -> <v2>
     mark(2 > 3)
-    call(>, compareTo|<v1>, <v2>) -> <v3>
+    call(2 > 3, compareTo|<v1>, <v2>) -> <v3>
     jf(L3|<v3>)                                                NEXT:[read (Unit), mark({ return })]
   4 mark({ return })
 L4 [start finally]:
@@ -139,20 +139,20 @@ L4:
     r(2) -> <v0>
     r(3) -> <v1>
     mark(2 > 3)
-    call(>, compareTo|<v0>, <v1>) -> <v2>
-    jf(L6|<v2>)                              NEXT:[read (Unit), mark({ return@l })]
+    call(2 > 3, compareTo|<v0>, <v1>) -> <v2>
+    jf(L6|<v2>)                                  NEXT:[read (Unit), mark({ return@l })]
   6 mark({ return@l })
-    ret L5                                   NEXT:[<END>]
-- 5 jmp(L7)                                  NEXT:[<END>]                                    PREV:[]
+    ret L5                                       NEXT:[<END>]
+- 5 jmp(L7)                                      NEXT:[<END>]                                        PREV:[]
 L6:
-    read (Unit)                              PREV:[jf(L6|<v2>)]
+    read (Unit)                                  PREV:[jf(L6|<v2>)]
 L5:
 L7:
-  4 <END>                                    NEXT:[<SINK>]                                   PREV:[ret L5, read (Unit)]
+  4 <END>                                        NEXT:[<SINK>]                                       PREV:[ret L5, read (Unit)]
 error:
-    <ERROR>                                  PREV:[]
+    <ERROR>                                      PREV:[]
 sink:
-    <SINK>                                   PREV:[<ERROR>, <END>]
+    <SINK>                                       PREV:[<ERROR>, <END>]
 =====================
 == t4 ==
 fun t4() {
@@ -207,7 +207,7 @@ L3:
     r(2) -> <v1>
     r(3) -> <v2>
     mark(2 > 3)
-    call(>, compareTo|<v1>, <v2>) -> <v3>
+    call(2 > 3, compareTo|<v1>, <v2>) -> <v3>
     jf(L6|<v3>)                                              NEXT:[read (Unit), mark({ return@l })]
   6 mark({ return@l })
 L7 [start finally]:
@@ -266,7 +266,7 @@ L4 [body entry point]:
     r(2) -> <v2>
     r(3) -> <v3>
     mark(2 > 3)
-    call(>, compareTo|<v2>, <v3>) -> <v4>
+    call(2 > 3, compareTo|<v2>, <v3>) -> <v4>
     jf(L7|<v4>)                                                                     NEXT:[read (Unit), mark({ break @l })]
   5 mark({ break @l })
 L8 [start finally]:
@@ -329,7 +329,7 @@ L5 [body entry point]:
     r(2) -> <v2>
     r(3) -> <v3>
     mark(2 > 3)
-    call(>, compareTo|<v2>, <v3>) -> <v4>
+    call(2 > 3, compareTo|<v2>, <v3>) -> <v4>
     jf(L7|<v4>)                                                                       NEXT:[read (Unit), mark({ break @l })]
   5 mark({ break @l })
     jmp(L4 [loop exit point])                                                         NEXT:[read (Unit)]
@@ -390,7 +390,7 @@ L5 [body entry point]:
     r(2) -> <v2>
     r(3) -> <v3>
     mark(2 > 3)
-    call(>, compareTo|<v2>, <v3>) -> <v4>
+    call(2 > 3, compareTo|<v2>, <v3>) -> <v4>
     jf(L7|<v4>)                                                                     NEXT:[read (Unit), mark({ break @l })]
   5 mark({ break @l })
     jmp(L4 [loop exit point])                                                       NEXT:[read (Unit)]
@@ -435,20 +435,20 @@ fun t8(a : Int) {
 L0:
   1 <START>
     v(a : Int)
-    magic(a : Int) -> <v0>
+    magic[FAKE_INITIALIZER](a : Int) -> <v0>
     w(a|<v0>)
   2 mark({ @l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } } })
     mark(@l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } })
   3 r(1) -> <v1>
     r(a) -> <v2>
     mark(1..a)
-    call(.., rangeTo|<v1>, <v2>) -> <v3>
+    call(1..a, rangeTo|<v1>, <v2>) -> <v3>
     v(i)
 L3:
-    jmp?(L2)                                                                               NEXT:[read (Unit), magic(1..a|<v3>) -> <v4>]
+    jmp?(L2)                                                                               NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 L4 [loop entry point]:
 L5 [body entry point]:
-    magic(1..a|<v3>) -> <v4>                                                               PREV:[jmp?(L2), jmp(L4 [loop entry point]), jmp?(L4 [loop entry point])]
+    magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>                                         PREV:[jmp?(L2), jmp(L4 [loop entry point]), jmp?(L4 [loop entry point])]
     w(i|<v4>)
     mark(for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } })
   4 mark({ try { 1 if (2 > 3) { continue @l } } finally { 2 } })
@@ -460,14 +460,14 @@ L5 [body entry point]:
     r(2) -> <v6>
     r(3) -> <v7>
     mark(2 > 3)
-    call(>, compareTo|<v6>, <v7>) -> <v8>
+    call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
     jf(L7|<v8>)                                                                            NEXT:[read (Unit), mark({ continue @l })]
   6 mark({ continue @l })
 L8 [start finally]:
   7 mark({ 2 })
     r(2) -> <v9>
 L9 [finish finally]:
-  6 jmp(L4 [loop entry point])                                                             NEXT:[magic(1..a|<v3>) -> <v4>]
+  6 jmp(L4 [loop entry point])                                                             NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 - 5 jmp(L10)                                                                               NEXT:[jmp(L11 [skipFinallyToErrorBlock])]                                                     PREV:[]
 L7:
     read (Unit)                                                                            PREV:[jf(L7|<v8>)]
@@ -480,7 +480,7 @@ L6 [onExceptionToFinallyBlock]:
 L11 [skipFinallyToErrorBlock]:
   7 mark({ 2 })                                                                            PREV:[jmp(L11 [skipFinallyToErrorBlock])]
     r(2) -> <v9>
-  3 jmp?(L4 [loop entry point])                                                            NEXT:[magic(1..a|<v3>) -> <v4>, read (Unit)]
+  3 jmp?(L4 [loop entry point])                                                            NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>, read (Unit)]
 L2:
     read (Unit)                                                                            PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
 L1:
@@ -508,7 +508,7 @@ fun t9(a : Int) {
 L0:
   1 <START>
     v(a : Int)
-    magic(a : Int) -> <v0>
+    magic[FAKE_INITIALIZER](a : Int) -> <v0>
     w(a|<v0>)
   2 mark({ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 } })
     mark(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 })
@@ -518,13 +518,13 @@ L0:
   4 r(1) -> <v1>
     r(a) -> <v2>
     mark(1..a)
-    call(.., rangeTo|<v1>, <v2>) -> <v3>
+    call(1..a, rangeTo|<v1>, <v2>) -> <v3>
     v(i)
 L4:
-    jmp?(L3)                                                                                 NEXT:[read (Unit), magic(1..a|<v3>) -> <v4>]
+    jmp?(L3)                                                                                 NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 L5 [loop entry point]:
 L6 [body entry point]:
-    magic(1..a|<v3>) -> <v4>                                                                 PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
+    magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>                                           PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
     w(i|<v4>)
     mark(for (i in 1..a) { 1 if (2 > 3) { continue @l } })
   5 mark({ 1 if (2 > 3) { continue @l } })
@@ -533,15 +533,15 @@ L6 [body entry point]:
     r(2) -> <v6>
     r(3) -> <v7>
     mark(2 > 3)
-    call(>, compareTo|<v6>, <v7>) -> <v8>
+    call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
     jf(L7|<v8>)                                                                              NEXT:[read (Unit), mark({ continue @l })]
   6 mark({ continue @l })
-    jmp(L5 [loop entry point])                                                               NEXT:[magic(1..a|<v3>) -> <v4>]
+    jmp(L5 [loop entry point])                                                               NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 - 5 jmp(L8)                                                                                  NEXT:[jmp?(L5 [loop entry point])]                                                              PREV:[]
 L7:
     read (Unit)                                                                              PREV:[jf(L7|<v8>)]
 L8:
-  4 jmp?(L5 [loop entry point])                                                              NEXT:[magic(1..a|<v3>) -> <v4>, read (Unit)]
+  4 jmp?(L5 [loop entry point])                                                              NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>, read (Unit)]
 L3:
     read (Unit)                                                                              PREV:[jmp?(L3), jmp?(L5 [loop entry point])]
   3 r(5) -> <v9>
@@ -579,7 +579,7 @@ fun t10(a : Int) {
 L0:
   1 <START>
     v(a : Int)
-    magic(a : Int) -> <v0>
+    magic[FAKE_INITIALIZER](a : Int) -> <v0>
     w(a|<v0>)
   2 mark({ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 } })
     mark(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 })
@@ -589,13 +589,13 @@ L0:
   4 r(1) -> <v1>
     r(a) -> <v2>
     mark(1..a)
-    call(.., rangeTo|<v1>, <v2>) -> <v3>
+    call(1..a, rangeTo|<v1>, <v2>) -> <v3>
     v(i)
 L4:
-    jmp?(L3)                                                                               NEXT:[read (Unit), magic(1..a|<v3>) -> <v4>]
+    jmp?(L3)                                                                               NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 L5 [loop entry point]:
 L6 [body entry point]:
-    magic(1..a|<v3>) -> <v4>                                                               PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
+    magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>                                         PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
     w(i|<v4>)
     mark(for (i in 1..a) { 1 if (2 > 3) { continue @l } })
   5 mark({ 1 if (2 > 3) { continue @l } })
@@ -604,15 +604,15 @@ L6 [body entry point]:
     r(2) -> <v6>
     r(3) -> <v7>
     mark(2 > 3)
-    call(>, compareTo|<v6>, <v7>) -> <v8>
+    call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
     jf(L7|<v8>)                                                                            NEXT:[read (Unit), mark({ continue @l })]
   6 mark({ continue @l })
-    jmp(L5 [loop entry point])                                                             NEXT:[magic(1..a|<v3>) -> <v4>]
+    jmp(L5 [loop entry point])                                                             NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]
 - 5 jmp(L8)                                                                                NEXT:[jmp?(L5 [loop entry point])]                                                            PREV:[]
 L7:
     read (Unit)                                                                            PREV:[jf(L7|<v8>)]
 L8:
-  4 jmp?(L5 [loop entry point])                                                            NEXT:[magic(1..a|<v3>) -> <v4>, read (Unit)]
+  4 jmp?(L5 [loop entry point])                                                            NEXT:[magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>, read (Unit)]
 L3:
     read (Unit)                                                                            PREV:[jmp?(L3), jmp?(L5 [loop entry point])]
   2 jmp(L9 [skipFinallyToErrorBlock])                                                      NEXT:[mark({ 2 })]
@@ -693,7 +693,7 @@ L3 [start finally]:
   4 mark({ doSmth(3) })
     r(3) -> <v1>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v1>) -> <v2>
+    call(doSmth(3), doSmth|<v1>) -> <v2>
 L4 [finish finally]:
   3 ret(*|<v0>) L1                                      NEXT:[<END>]
 - 2 jmp(L5 [skipFinallyToErrorBlock])                   NEXT:[mark({ doSmth(3) })]                                 PREV:[]
@@ -701,13 +701,13 @@ L2 [onExceptionToFinallyBlock]:
   4 mark({ doSmth(3) })                                 PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
     r(3) -> <v1>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v1>) -> <v2>
+    call(doSmth(3), doSmth|<v1>) -> <v2>
   2 jmp(error)                                          NEXT:[<ERROR>]
 L5 [skipFinallyToErrorBlock]:
 - 4 mark({ doSmth(3) })                                 PREV:[]
 -   r(3) -> <v1>                                        PREV:[]
 -   mark(doSmth(3))                                     PREV:[]
--   call(doSmth, doSmth|<v1>) -> <v2>                   PREV:[]
+-   call(doSmth(3), doSmth|<v1>) -> <v2>                PREV:[]
 L1:
   1 <END>                                               NEXT:[<SINK>]                                              PREV:[ret(*|<v0>) L1]
 error:
@@ -740,18 +740,18 @@ L4 [start finally]:
   4 mark({ doSmth(3) })
     r(3) -> <v1>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v1>) -> <v2>
+    call(doSmth(3), doSmth|<v1>) -> <v2>
 L5 [finish finally]:
   3 ret(*|<v0>) L1                                                                                             NEXT:[<END>]
 - 2 jmp(L6 [afterCatches])                                                                                     NEXT:[jmp(L7 [skipFinallyToErrorBlock])]                                                                          PREV:[]
 L2 [onException]:
   3 v(e: UnsupportedOperationException)                                                                        PREV:[jmp?(L2 [onException])]
-    magic(e: UnsupportedOperationException) -> <v3>
+    magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v3>
     w(e|<v3>)
   4 mark({ doSmth(2) })
     r(2) -> <v4>
     mark(doSmth(2))
-    call(doSmth, doSmth|<v4>) -> <v5>
+    call(doSmth(2), doSmth|<v4>) -> <v5>
   3 jmp(L6 [afterCatches])
 L6 [afterCatches]:
   2 jmp(L7 [skipFinallyToErrorBlock])                                                                          NEXT:[mark({ doSmth(3) })]
@@ -759,15 +759,15 @@ L3 [onExceptionToFinallyBlock]:
   4 mark({ doSmth(3) })                                                                                        PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
     r(3) -> <v1>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v1>) -> <v2>
+    call(doSmth(3), doSmth|<v1>) -> <v2>
   2 jmp(error)                                                                                                 NEXT:[<ERROR>]
 L7 [skipFinallyToErrorBlock]:
   4 mark({ doSmth(3) })                                                                                        PREV:[jmp(L7 [skipFinallyToErrorBlock])]
     r(3) -> <v1>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v1>) -> <v2>
+    call(doSmth(3), doSmth|<v1>) -> <v2>
 L1:
-  1 <END>                                                                                                      NEXT:[<SINK>]                                                                                                     PREV:[ret(*|<v0>) L1, call(doSmth, doSmth|<v1>) -> <v2>]
+  1 <END>                                                                                                      NEXT:[<SINK>]                                                                                                     PREV:[ret(*|<v0>) L1, call(doSmth(3), doSmth|<v1>) -> <v2>]
 error:
     <ERROR>                                                                                                    PREV:[jmp(error)]
 sink:
@@ -794,12 +794,12 @@ L0:
 - 2 jmp(L3 [afterCatches])                                                               NEXT:[<END>]                                                                                PREV:[]
 L2 [onException]:
   3 v(e: UnsupportedOperationException)                                                  PREV:[jmp?(L2 [onException])]
-    magic(e: UnsupportedOperationException) -> <v1>
+    magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v1>
     w(e|<v1>)
   4 mark({ doSmth(2) })
     r(2) -> <v2>
     mark(doSmth(2))
-    call(doSmth, doSmth|<v2>) -> <v3>
+    call(doSmth(2), doSmth|<v2>) -> <v3>
   3 jmp(L3 [afterCatches])
 L1:
 L3 [afterCatches]:
@@ -834,20 +834,20 @@ L4 [start finally]:
   4 mark({ doSmth(3) })
     r(3) -> <v1>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v1>) -> <v2>
+    call(doSmth(3), doSmth|<v1>) -> <v2>
 L5 [finish finally]:
   3 ret(*|<v0>) L1                                                                                            NEXT:[<END>]
 - 2 jmp(L6 [afterCatches])                                                                                    NEXT:[jmp(L7 [skipFinallyToErrorBlock])]                                                                         PREV:[]
 L2 [onException]:
   3 v(e: UnsupportedOperationException)                                                                       PREV:[jmp?(L2 [onException])]
-    magic(e: UnsupportedOperationException) -> <v3>
+    magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v3>
     w(e|<v3>)
   4 mark({ return 2 })
     r(2) -> <v4>
     mark({ doSmth(3) })
     r(3) -> <v1>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v1>) -> <v2>
+    call(doSmth(3), doSmth|<v1>) -> <v2>
     ret(*|<v4>) L1                                                                                            NEXT:[<END>]
 - 3 jmp(L6 [afterCatches])                                                                                    PREV:[]
 L6 [afterCatches]:
@@ -856,13 +856,13 @@ L3 [onExceptionToFinallyBlock]:
   4 mark({ doSmth(3) })                                                                                       PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
     r(3) -> <v1>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v1>) -> <v2>
+    call(doSmth(3), doSmth|<v1>) -> <v2>
   2 jmp(error)                                                                                                NEXT:[<ERROR>]
 L7 [skipFinallyToErrorBlock]:
 - 4 mark({ doSmth(3) })                                                                                       PREV:[]
 -   r(3) -> <v1>                                                                                              PREV:[]
 -   mark(doSmth(3))                                                                                           PREV:[]
--   call(doSmth, doSmth|<v1>) -> <v2>                                                                         PREV:[]
+-   call(doSmth(3), doSmth|<v1>) -> <v2>                                                                      PREV:[]
 L1:
   1 <END>                                                                                                     NEXT:[<SINK>]                                                                                                    PREV:[ret(*|<v0>) L1, ret(*|<v4>) L1]
 error:
@@ -892,11 +892,11 @@ L0:
   3 mark({ doSmth(1) })
     r(1) -> <v0>
     mark(doSmth(1))
-    call(doSmth, doSmth|<v0>) -> <v1>
+    call(doSmth(1), doSmth|<v0>) -> <v1>
   2 jmp(L4 [afterCatches])                                                                                     NEXT:[jmp(L7 [skipFinallyToErrorBlock])]
 L2 [onException]:
   3 v(e: UnsupportedOperationException)                                                                        PREV:[jmp?(L2 [onException])]
-    magic(e: UnsupportedOperationException) -> <v2>
+    magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>
     w(e|<v2>)
   4 mark({ return 2 })
     r(2) -> <v3>
@@ -904,7 +904,7 @@ L5 [start finally]:
   5 mark({ doSmth(3) })
     r(3) -> <v4>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v4>) -> <v5>
+    call(doSmth(3), doSmth|<v4>) -> <v5>
 L6 [finish finally]:
   4 ret(*|<v3>) L1                                                                                             NEXT:[<END>]
 - 3 jmp(L4 [afterCatches])                                                                                     PREV:[]
@@ -914,15 +914,15 @@ L3 [onExceptionToFinallyBlock]:
   5 mark({ doSmth(3) })                                                                                        PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
     r(3) -> <v4>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v4>) -> <v5>
+    call(doSmth(3), doSmth|<v4>) -> <v5>
   2 jmp(error)                                                                                                 NEXT:[<ERROR>]
 L7 [skipFinallyToErrorBlock]:
   5 mark({ doSmth(3) })                                                                                        PREV:[jmp(L7 [skipFinallyToErrorBlock])]
     r(3) -> <v4>
     mark(doSmth(3))
-    call(doSmth, doSmth|<v4>) -> <v5>
+    call(doSmth(3), doSmth|<v4>) -> <v5>
 L1:
-  1 <END>                                                                                                      NEXT:[<SINK>]                                                                                                     PREV:[ret(*|<v3>) L1, call(doSmth, doSmth|<v4>) -> <v5>]
+  1 <END>                                                                                                      NEXT:[<SINK>]                                                                                                     PREV:[ret(*|<v3>) L1, call(doSmth(3), doSmth|<v4>) -> <v5>]
 error:
     <ERROR>                                                                                                    PREV:[jmp(error)]
 sink:
@@ -935,14 +935,14 @@ fun doSmth(i: Int) {
 L0:
   1 <START>
     v(i: Int)
-    magic(i: Int) -> <v0>
+    magic[FAKE_INITIALIZER](i: Int) -> <v0>
     w(i|<v0>)
   2 mark({ })
     read (Unit)
 L1:
-  1 <END>                    NEXT:[<SINK>]
+  1 <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                  PREV:[]
+    <ERROR>                                    PREV:[]
 sink:
-    <SINK>                   PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<ERROR>, <END>]
 =====================

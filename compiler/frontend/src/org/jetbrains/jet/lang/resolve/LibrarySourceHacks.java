@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.callableDescriptorToDeclaration;
 
 public class LibrarySourceHacks {
     private LibrarySourceHacks() {
@@ -36,17 +36,17 @@ public class LibrarySourceHacks {
     public static final Key<Boolean> SKIP_TOP_LEVEL_MEMBERS = Key.create("SKIP_TOP_LEVEL_MEMBERS"); // used when analyzing library source
 
 
-    public static <D extends CallableDescriptor> List<D> filterOutMembersFromLibrarySource(Collection<D> members, BindingTrace trace) {
+    public static <D extends CallableDescriptor> List<D> filterOutMembersFromLibrarySource(Collection<D> members) {
         List<D> filteredMembers = Lists.newArrayList();
         for (D member : members) {
-            if (!shouldSkip(member, trace)) {
+            if (!shouldSkip(member)) {
                 filteredMembers.add(member);
             }
         }
         return filteredMembers;
     }
 
-    private static boolean shouldSkip(CallableDescriptor member, BindingTrace trace) {
+    private static boolean shouldSkip(CallableDescriptor member) {
         CallableDescriptor original = member.getOriginal();
         if (!(original instanceof CallableMemberDescriptor)) {
             return false;
@@ -55,8 +55,7 @@ public class LibrarySourceHacks {
             return false;
         }
 
-        PsiElement declaration = callableDescriptorToDeclaration(trace.getBindingContext(),
-                                                                 (CallableMemberDescriptor) original);
+        PsiElement declaration = callableDescriptorToDeclaration((CallableMemberDescriptor) original);
         if (declaration == null) {
             return false;
         }

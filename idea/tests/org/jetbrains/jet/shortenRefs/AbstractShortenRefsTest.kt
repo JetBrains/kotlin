@@ -24,10 +24,11 @@ import java.io.File
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.JetTestCaseBuilder
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.codeInsight.CodeInsightSettings
 import org.jetbrains.jet.InTextDirectivesUtils
 
-abstract class AbstractShortenRefsTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractShortenRefsTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestCaseBuilder.getHomeDirectory()
     override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 

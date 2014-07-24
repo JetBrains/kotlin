@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable
 
 import com.intellij.ide.DataManager
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.JetTestCaseBuilder
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandler
@@ -37,8 +36,12 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import java.util.ArrayList
 import com.intellij.util.containers.ContainerUtil
 import kotlin.test.assertEquals
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 
-public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestCase() {
+public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
+    override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
+
     val fixture: JavaCodeInsightTestFixture get() = myFixture
 
     protected fun doIntroduceVariableTest(path: String) {
@@ -70,22 +73,24 @@ public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestC
                     }
             )
 
-            val expectedParameterTypes = ArrayList<String>()
             val fileText = file.getText()
+            val expectedDescriptors =
+                    InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_DESCRIPTOR: ").joinToString()
             val expectedTypes =
-                    InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_TYPES: ")
-                            .mapTo(expectedParameterTypes) { "[$it]" }
-                            .joinToString()
+                    InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_TYPES: ").map { "[$it]" }.joinToString()
 
             val renderer = DescriptorRenderer.DEBUG_TEXT
 
             val editor = fixture.getEditor()
             selectElements(editor, file) { (elements, previousSibling) ->
                 ExtractKotlinFunctionHandler().doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling) {
-                    val actualTypes = (ContainerUtil.createMaybeSingletonList(it.receiverParameter) + it.parameters).map {
-                        it.parameterTypeCandidates.map { renderer.renderType(it) }. joinToString(", ", "[", "]")
+                    val allParameters = ContainerUtil.createMaybeSingletonList(it.receiverParameter) + it.parameters
+                    val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
+                    val actualTypes = allParameters.map {
+                        it.parameterTypeCandidates.map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                     }.joinToString()
 
+                    assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
                     assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
                 }
             }

@@ -47,6 +47,11 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
         doTest("idea/testData/libraries/decompiledText/ClassWithClassObject/");
     }
     
+    @TestMetadata("DependencyOnNestedClasses")
+    public void testDependencyOnNestedClasses() throws Exception {
+        doTest("idea/testData/libraries/decompiledText/DependencyOnNestedClasses/");
+    }
+    
     @TestMetadata("Enum")
     public void testEnum() throws Exception {
         doTest("idea/testData/libraries/decompiledText/Enum/");

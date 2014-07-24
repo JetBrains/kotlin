@@ -17,15 +17,11 @@
 package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import com.google.common.collect.ImmutableSet
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lexer.JetToken
 
 public class ReplaceWithDotQualifiedMethodCallIntention : JetSelfTargetingIntention<JetBinaryExpression>("replace.with.dot.qualified.method.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
@@ -46,7 +42,7 @@ public class ReplaceWithDotQualifiedMethodCallIntention : JetSelfTargetingIntent
                 }
         )
 
-        val replacement = JetPsiFactory.createExpression(element.getProject(), replacementExpressionStringBuilder.toString())
+        val replacement = JetPsiFactory(element).createExpression(replacementExpressionStringBuilder.toString())
         element.replace(replacement)
     }
 }

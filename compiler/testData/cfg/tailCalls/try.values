@@ -7,6 +7,6 @@ tailRecursive fun foo() {
     }
 }
 ---------------------
-        <v1>: {<: Throwable}   NEW: magic(e: Throwable) -> <v1>
-foo()   <v0>: Unit             NEW: call(foo, foo) -> <v0>
+        <v1>: {<: Throwable}   NEW: magic[FAKE_INITIALIZER](e: Throwable) -> <v1>
+foo()   <v0>: {<: Unit}        NEW: call(foo(), foo) -> <v0>
 =====================

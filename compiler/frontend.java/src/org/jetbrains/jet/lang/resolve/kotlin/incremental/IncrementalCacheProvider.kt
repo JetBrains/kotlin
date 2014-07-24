@@ -20,6 +20,7 @@ import java.io.File
 import java.util.ServiceLoader
 
 public trait IncrementalCacheProvider {
+    // IncrementalCache should be always closed after using
     public fun getIncrementalCache(baseDir: File): IncrementalCache
 
     public class object {

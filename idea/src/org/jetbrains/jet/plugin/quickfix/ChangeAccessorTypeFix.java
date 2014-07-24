@@ -29,6 +29,8 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccessor> {
     private String renderedType;
 
@@ -65,7 +67,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetPropertyAccessor newElement = (JetPropertyAccessor) element.copy();
-        JetTypeReference newTypeReference = JetPsiFactory.createType(project, renderedType);
+        JetTypeReference newTypeReference = JetPsiFactory(file).createType(renderedType);
 
         if (element.isGetter()) {
             JetTypeReference returnTypeReference = newElement.getReturnTypeReference();

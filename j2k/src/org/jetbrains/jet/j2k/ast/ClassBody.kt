@@ -20,41 +20,30 @@ import org.jetbrains.jet.j2k.*
 
 abstract class Member(val annotations: Annotations, val modifiers: Modifiers) : Element()
 
+//TODO: should be Element?
 class ClassBody (
-        val primaryConstructor: PrimaryConstructor?,
-        val secondaryConstructors: List<SecondaryConstructor>,
-        val normalMembers: List<Member>,
+        val primaryConstructorSignature: PrimaryConstructorSignature?,
+        val members: List<Member>,
         val classObjectMembers: List<Member>,
+        val factoryFunctions: List<FactoryFunction>,
         val lBrace: LBrace,
         val rBrace: RBrace) {
 
-    fun append(builder: CodeBuilder, containingClass: Class?) {
-        if (normalMembers.isEmpty() && classObjectMembers.isEmpty() && secondaryConstructors.isEmpty() && (primaryConstructor?.block?.isEmpty ?: true)) return
+    fun append(builder: CodeBuilder) {
+        if (members.isEmpty() && classObjectMembers.isEmpty()) return
 
         builder append " " append lBrace append "\n"
 
-        builder.append(normalMembers, "\n")
-        var notEmpty = normalMembers.isNotEmpty()
+        builder.append(members, "\n")
 
-        notEmpty = appendPrimaryConstructorBody(builder, notEmpty) || notEmpty
-
-        appendClassObject(builder, containingClass, notEmpty)
+        appendClassObject(builder, members.isNotEmpty())
 
         builder append "\n" append rBrace
     }
 
-    private fun appendPrimaryConstructorBody(builder: CodeBuilder, blankLineBefore: Boolean): Boolean {
-        val constructor = primaryConstructor
-        if (constructor == null || constructor.block?.isEmpty ?: true) return false
+    private fun appendClassObject(builder: CodeBuilder, blankLineBefore: Boolean) {
+        if (classObjectMembers.isEmpty()) return
         if (blankLineBefore) builder.append("\n\n")
-        constructor.appendBody(builder)
-        return true
-    }
-
-    private fun appendClassObject(builder: CodeBuilder, containingClass: Class?, blankLineBefore: Boolean) {
-        if (secondaryConstructors.isEmpty() && classObjectMembers.isEmpty()) return
-        if (blankLineBefore) builder.append("\n\n")
-        val factoryFunctions = secondaryConstructors.map { it.toFactoryFunction(containingClass) }
-        builder.append(factoryFunctions + classObjectMembers, "\n", "class object {\n", "\n}")
+        builder.append(classObjectMembers, "\n", "class object {\n", "\n}")
     }
 }

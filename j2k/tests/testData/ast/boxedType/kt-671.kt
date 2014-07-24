@@ -1,6 +1,6 @@
 package demo
 
-class Test() {
+class Test {
     fun test() {
         val i = Integer.valueOf(100)
         val s = 3

@@ -1,5 +1,5 @@
-class T() {
-    var a: String = 0
-    var b: String = 0
+class T {
+    var a: String
+    var b: String
     var c = "abc"
 }

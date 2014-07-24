@@ -33,8 +33,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetCallElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -46,6 +50,8 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
 
@@ -62,11 +68,8 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         JetCallElement callElement = PsiTreeUtil.getParentOfType(argument, JetCallElement.class);
         assert callElement != null : "The argument has to be inside a function or constructor call";
 
-        JetExpression callee = callElement.getCalleeExpression();
-        if (!(callee instanceof JetReferenceExpression)) return Collections.emptyList();
-
         BindingContext context = ResolvePackage.getBindingContext(argument.getContainingJetFile());
-        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, (JetReferenceExpression) callee);
+        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(callElement, context);
         if (resolvedCall == null) return Collections.emptyList();
 
         CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
@@ -142,7 +145,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
     private static JetValueArgument getParsedArgumentWithName(@NotNull String name, @NotNull JetValueArgument argument) {
         JetExpression argumentExpression = argument.getArgumentExpression();
         assert argumentExpression != null : "Argument should be already parsed.";
-        return JetPsiFactory.createArgumentWithName(argument.getProject(), name, argumentExpression);
+        return JetPsiFactory(argument).createArgumentWithName(name, argumentExpression);
     }
 
     @NotNull

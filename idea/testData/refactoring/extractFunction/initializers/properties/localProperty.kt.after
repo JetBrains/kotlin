@@ -1,0 +1,7 @@
+fun bar(a: Int, b: Int) {
+    fun i(): Int {
+        return a + b
+    }
+
+    val foo = i() - 1
+}

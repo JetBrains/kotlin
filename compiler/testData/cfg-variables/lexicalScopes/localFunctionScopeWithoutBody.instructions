@@ -30,18 +30,19 @@ sink:
 fun local(x: Int) = x + b
 ---------------------
 L3:
-  3 <START>                             INIT: in: {} out: {}
-    v(x: Int)                           INIT: in: {} out: {x=D}
-    magic(x: Int) -> <v0>               INIT: in: {x=D} out: {x=D}
-    w(x|<v0>)                           INIT: in: {x=D} out: {x=ID}     USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
-    r(x) -> <v1>                        INIT: in: {x=ID} out: {x=ID}    USE: in: {b=READ} out: {b=READ, x=READ}
-    r(b) -> <v2>                                                        USE: in: {} out: {b=READ}
+  3 <START>                                    INIT: in: {} out: {}
+    v(x: Int)                                  INIT: in: {} out: {x=D}
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>    INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                  INIT: in: {x=D} out: {x=ID}     USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
+    r(x) -> <v1>                               INIT: in: {x=ID} out: {x=ID}    USE: in: {b=READ} out: {b=READ, x=READ}
+    r(b) -> <v2>                                                               USE: in: {} out: {b=READ}
     mark(x + b)
-    call(+, plus|<v1>, <v2>) -> <v3>
+    call(x + b, plus|<v1>, <v2>) -> <v3>
+    ret(*|<v3>) L4
 L4:
     <END>
 error:
-    <ERROR>                             INIT: in: {} out: {}
+    <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                              INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
 =====================

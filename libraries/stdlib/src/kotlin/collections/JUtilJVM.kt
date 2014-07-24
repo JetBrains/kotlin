@@ -36,25 +36,6 @@ public fun <K, V> sortedMapOf(vararg values: Pair<K, V>): SortedMap<K, V> {
     return answer
 }
 
-/**
- * Returns a new [[LinkedHashMap]] populated with the given pairs where the first value in each pair
- * is the key and the second value is the value. This map preserves insertion order so iterating through
- * the map's entries will be in the same order
- *
- * @includeFunctionBody ../../test/collections/MapTest.kt createLinkedMap
- */
-public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
-    val answer = LinkedHashMap<K, V>(values.size)
-    /**
-    TODO replace by this simpler call when we can pass vararg values into other methods
-    answer.putAll(values)
-     */
-    for (v in values) {
-        answer.put(v.first, v.second)
-    }
-    return answer
-}
-
 /** Returns the Set if its not null otherwise returns the empty set */
 public fun <T> Set<T>?.orEmpty(): Set<T>
         = if (this != null) this else Collections.EMPTY_SET as Set<T>

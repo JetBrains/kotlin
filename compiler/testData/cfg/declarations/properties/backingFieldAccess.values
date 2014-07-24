@@ -8,7 +8,7 @@ class C {
     }
 }
 ---------------------
-         <v0>: C   NEW: magic($a) -> <v0> 
+         <v0>: C   NEW: magic[IMPLICIT_RECEIVER]($a) -> <v0>
 $a       <v1>: *   NEW: r($a|<v0>) -> <v1>
-{ $a }   <v1>: *   COPY                   
+{ $a }   <v1>: *   COPY
 =====================

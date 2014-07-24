@@ -26,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.JetFileType;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class JetFunctionParameterTableModel extends ParameterTableModelBase<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>> {
     private final Project project;
 
@@ -46,8 +48,9 @@ public class JetFunctionParameterTableModel extends ParameterTableModelBase<JetP
         if (parameterInfo == null) {
             parameterInfo = new JetParameterInfo(-1);
         }
-        final PsiCodeFragment paramTypeCodeFragment = JetPsiFactory.createTypeCodeFragment(project, parameterInfo.getTypeText(), myTypeContext);
-        final PsiCodeFragment defaultValueCodeFragment = JetPsiFactory.createExpressionCodeFragment(project, parameterInfo.getDefaultValueText(), myDefaultValueContext);
+        JetPsiFactory psiFactory = JetPsiFactory(project);
+        final PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);
+        final PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(parameterInfo.getDefaultValueText(), myDefaultValueContext);
         return new ParameterTableModelItemBase<JetParameterInfo>(parameterInfo, paramTypeCodeFragment, defaultValueCodeFragment) {
             @Override
             public boolean isEllipsisType() {

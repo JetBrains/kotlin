@@ -116,6 +116,10 @@ class PolyadicExpression(val expressions: List<Expression>, val token: String) :
 }
 
 class LambdaExpression(val arguments: String?, val block: Block) : Expression() {
+    {
+        assignPrototypesFrom(block)
+    }
+
     override fun generateCode(builder: CodeBuilder) {
         builder append block.lBrace append " "
 
@@ -133,9 +137,15 @@ class LambdaExpression(val arguments: String?, val block: Block) : Expression() 
     }
 }
 
-class StarExpression(val methodCall: MethodCallExpression) : Expression() {
+class StarExpression(val operand: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
-        builder append "*" append methodCall
+        builder.append("*").appendOperand(this, operand)
+    }
+}
+
+class RangeExpression(val start: Expression, val end: Expression): Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, start).append("..").appendOperand(this, end)
     }
 }
 
@@ -155,7 +165,7 @@ fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Ex
         if (doubleOrFloatTypes.contains(afterReplace)) {
             if (initializer is LiteralExpression) {
                 if (!initializer.canonicalCode().contains(".")) {
-                    return LiteralExpression(initializer.literalText + ".0")
+                    return LiteralExpression(initializer.literalText + ".0").assignPrototypesFrom(initializer)
                 }
             }
             else {
@@ -165,7 +175,7 @@ fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Ex
                     else -> null
                 }
                 if (conversionFunction != null) {
-                    return MethodCallExpression.buildNotNull(initializer, conversionFunction)
+                    return MethodCallExpression.buildNotNull(initializer, conversionFunction).assignNoPrototype()
                 }
             }
         }

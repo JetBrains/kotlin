@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -124,8 +124,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsExpression> translateArguments(@NotNull JetDelegatorToSuperCall superCall) {
-        ResolvedCall<?> call = context().bindingContext().get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
-        assert call != null : "ResolvedCall for superCall must be not null";
+        ResolvedCall<?> call = BindingContextUtilPackage.getResolvedCallWithAssert(superCall, context().bindingContext());
         return CallArgumentTranslator.translate(call, null, context()).getTranslateArguments();
     }
 

@@ -18,7 +18,6 @@ package org.jetbrains.jet.j2k
 
 public data class ConverterSettings(
         var forceNotNullTypes: Boolean,
-        var forceLocalVariableImmutability: Boolean,
         var specifyLocalVariableTypeByDefault: Boolean,
         var specifyFieldTypeByDefault: Boolean,
         var openByDefault: Boolean) {
@@ -26,7 +25,6 @@ public data class ConverterSettings(
     class object {
         public val defaultSettings: ConverterSettings = ConverterSettings(
                 forceNotNullTypes = true,
-                forceLocalVariableImmutability = true,
                 specifyLocalVariableTypeByDefault = false,
                 specifyFieldTypeByDefault = false,
                 openByDefault = false

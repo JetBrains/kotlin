@@ -17,22 +17,23 @@
 package org.jetbrains.jet.lang.resolve.java.sam;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 
-/* package */ class SamAdapterConstructorDescriptor extends ConstructorDescriptorImpl
-        implements SamAdapterDescriptor<ConstructorDescriptor> {
-    private final ConstructorDescriptor declaration;
+/* package */ class SamAdapterConstructorDescriptor extends JavaConstructorDescriptor implements SamAdapterDescriptor<JavaConstructorDescriptor> {
+    private final JavaConstructorDescriptor declaration;
 
-    public SamAdapterConstructorDescriptor(@NotNull ConstructorDescriptor declaration) {
-        super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(), declaration.isPrimary(), Kind.SYNTHESIZED);
+    public SamAdapterConstructorDescriptor(@NotNull JavaConstructorDescriptor declaration) {
+        super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(),
+              declaration.isPrimary(), Kind.SYNTHESIZED, declaration.getSource());
         this.declaration = declaration;
+        setHasStableParameterNames(declaration.hasStableParameterNames());
+        setHasSynthesizedParameterNames(declaration.hasSynthesizedParameterNames());
     }
 
     @NotNull
     @Override
-    public ConstructorDescriptor getBaseForSynthesized() {
+    public JavaConstructorDescriptor getOriginForSam() {
         return declaration;
     }
 }

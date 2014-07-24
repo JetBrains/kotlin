@@ -31,10 +31,11 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVE
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.codegen.ClassBuilderMode
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
-        private val bindingContext: BindingContext,
+        bindingContext: BindingContext,
         private val diagnostics: DiagnosticHolder
 ) : SignatureCollectingClassBuilderFactory(builderFactory) {
 
@@ -79,9 +80,9 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
                     if (member.getKind() != DELEGATION) {
                         // Delegates don't have declarations in the code
-                        memberElement = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, member)
+                        memberElement = DescriptorToSourceUtils.callableDescriptorToDeclaration(member)
                         if (memberElement == null && member is PropertyAccessorDescriptor) {
-                            memberElement = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, member.getCorrespondingProperty())
+                            memberElement = DescriptorToSourceUtils.callableDescriptorToDeclaration(member.getCorrespondingProperty())
                         }
                     }
                 }

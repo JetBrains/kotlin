@@ -1,6 +1,6 @@
 import kotlinApi.KotlinObject
 
-class C() {
+class C {
     fun foo(): Int {
         KotlinObject.property1 = 1
         KotlinObject.property2 = 2

@@ -40,6 +40,8 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFunctionLiteralExpression> {
     private final String renderedType;
     private final JetTypeReference functionLiteralReturnTypeRef;
@@ -118,7 +120,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         if (functionLiteralReturnTypeRef != null) {
-            functionLiteralReturnTypeRef.replace(JetPsiFactory.createType(project, renderedType));
+            functionLiteralReturnTypeRef.replace(JetPsiFactory(file).createType(renderedType));
         }
         if (appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor, file)) {
             appropriateQuickFix.invoke(project, editor, file);

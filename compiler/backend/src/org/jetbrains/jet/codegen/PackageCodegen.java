@@ -25,6 +25,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
+import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.CodegenContext;
@@ -157,7 +158,7 @@ public class PackageCodegen {
         return callables;
     }
 
-    private void generateDelegationsToPreviouslyCompiled(@NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
+    private void generateDelegationsToPreviouslyCompiled(@NotNull @Mutable Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         for (final DeserializedCallableMemberDescriptor member : previouslyCompiledCallables) {
             generateCallableMemberTasks.put(member, new Runnable() {
                 @Override
@@ -177,6 +178,7 @@ public class PackageCodegen {
                                                                          @Override
                                                                          public void generateBody(
                                                                                  @NotNull MethodVisitor mv,
+                                                                                 @NotNull FrameMap frameMap,
                                                                                  @NotNull JvmMethodSignature signature,
                                                                                  @NotNull MethodContext context,
                                                                                  @NotNull MemberCodegen<?> parentCodegen
@@ -223,6 +225,8 @@ public class PackageCodegen {
             }
         }
 
+        generateDelegationsToPreviouslyCompiled(generateCallableMemberTasks);
+
         if (!generateCallableMemberTasks.isEmpty()) {
             generatePackageFacadeClass(generateCallableMemberTasks, bindings);
         }
@@ -233,8 +237,6 @@ public class PackageCodegen {
             @NotNull List<JvmSerializationBindings> bindings
     ) {
         generateKotlinPackageReflectionField();
-
-        generateDelegationsToPreviouslyCompiled(tasks);
 
         for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(tasks.keySet())) {
             tasks.get(member).run();

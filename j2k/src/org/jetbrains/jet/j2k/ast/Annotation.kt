@@ -58,6 +58,8 @@ class Annotations(val annotations: List<Annotation>, val newLines: Boolean) : El
         }
     }
 
+    override val isEmpty: Boolean = annotations.isEmpty()
+
     fun plus(other: Annotations) = Annotations(annotations + other.annotations, newLines || other.newLines)
 
     class object {

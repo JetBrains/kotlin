@@ -45,9 +45,10 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
             @NotNull Name name,
             boolean hasBody,
             boolean isDefault,
-            Kind kind
+            Kind kind,
+            @NotNull SourceElement source
     ) {
-        super(correspondingProperty.getContainingDeclaration(), annotations, name);
+        super(correspondingProperty.getContainingDeclaration(), annotations, name, source);
         this.modality = modality;
         this.visibility = visibility;
         this.correspondingProperty = correspondingProperty;

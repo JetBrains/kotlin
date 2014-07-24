@@ -1,0 +1,10 @@
+<root>
+  <item
+      name='com.intellij.psi.impl.search.CustomPropertyScopeProvider com.intellij.psi.search.SearchScope getScope(com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.psi.impl.search.CustomPropertyScopeProvider com.intellij.psi.search.SearchScope getScope(com.intellij.openapi.project.Project) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

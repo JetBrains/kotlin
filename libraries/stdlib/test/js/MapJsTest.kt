@@ -23,6 +23,7 @@ class ComplexMapJsTest : MapJsTest() {
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
     // hashMapOf returns ComlpexHashMap because it is Generic
     override fun emptyMutableMap(): MutableMap<String, Int> = hashMapOf()
+    override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = hashMapOf()
 }
 
 class PrimitiveMapJsTest : MapJsTest() {
@@ -39,6 +40,7 @@ class PrimitiveMapJsTest : MapJsTest() {
 
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
     override fun emptyMutableMap(): MutableMap<String, Int> = HashMap()
+    override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = HashMap()
 }
 
 class LinkedHashMapTest : MapJsTest() {
@@ -55,6 +57,7 @@ class LinkedHashMapTest : MapJsTest() {
 
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toList()
     override fun emptyMutableMap(): MutableMap<String, Int> = LinkedHashMap()
+    override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = LinkedHashMap()
 }
 
 abstract class MapJsTest {
@@ -224,6 +227,31 @@ abstract class MapJsTest {
         assertTrue(map.isEmpty())
     }
 
+    test fun nullAsKey() {
+        val map = emptyMutableMapWithNullableKeyValue()
+
+        assertTrue(map.isEmpty())
+        map.put(null, 23)
+        assertFalse(map.isEmpty())
+        assertTrue(map.containsKey(null))
+        assertEquals(23, map[null])
+        assertEquals(23, map.remove(null))
+        assertTrue(map.isEmpty())
+        assertEquals(null, map[null])
+    }
+
+    test fun nullAsValue() {
+        val map = emptyMutableMapWithNullableKeyValue()
+        val KEY = "Key"
+
+        assertTrue(map.isEmpty())
+        map.put(KEY, null)
+        assertFalse(map.isEmpty())
+        assertEquals(null, map[KEY])
+        assertTrue(map.containsValue(null))
+        assertEquals(null, map.remove(KEY))
+        assertTrue(map.isEmpty())
+    }
     /*
 
     TODO fix bug with .set() on Map...
@@ -443,6 +471,8 @@ abstract class MapJsTest {
     fun emptyMap(): Map<String, Int> = emptyMutableMap()
 
     abstract fun emptyMutableMap(): MutableMap<String, Int>
+
+    abstract fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?>
 
     fun createTestMap(): Map<String, Int> = createTestMutableMap()
 

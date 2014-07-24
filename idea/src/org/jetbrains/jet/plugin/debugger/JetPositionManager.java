@@ -22,6 +22,7 @@ import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -42,10 +43,10 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -58,6 +59,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
+import static org.jetbrains.jet.plugin.stubindex.PackageIndexUtil.findFilesWithExactPackage;
 
 public class JetPositionManager implements PositionManager {
     private final DebugProcess myDebugProcess;
@@ -108,7 +110,8 @@ public class JetPositionManager implements PositionManager {
         String referenceInternalName = referenceFqName.replace('.', '/');
         JvmClassName className = JvmClassName.byInternalName(referenceInternalName);
 
-        return DebuggerUtils.findSourceFileForClass(GlobalSearchScope.allScope(myDebugProcess.getProject()), className, sourceName);
+        Project project = myDebugProcess.getProject();
+        return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName);
     }
 
     @NotNull
@@ -189,18 +192,19 @@ public class JetPositionManager implements PositionManager {
     }
 
     private JetTypeMapper prepareTypeMapper(final JetFile file) {
-        FqName fqName = file.getPackageFqName();
+        final FqName fqName = file.getPackageFqName();
         CachedValue<JetTypeMapper> value = myTypeMappers.get(fqName);
         if(value == null) {
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
                 @Override
                 public Result<JetTypeMapper> compute() {
-                    Collection<JetFile> packageFiles = JetFilesProvider.getInstance(file.getProject()).allPackageFiles(file);
+                    Project project = file.getProject();
+                    Collection<JetFile> packageFiles = findFilesWithExactPackage(fqName, GlobalSearchScope.allScope(project), project);
 
                     AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(packageFiles);
                     analyzeExhaust.throwIfError();
 
-                    GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
+                    GenerationState state = new GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION,
                                                                 analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(),
                                                                 new ArrayList<JetFile>(packageFiles)
                     );
@@ -278,19 +282,12 @@ public class JetPositionManager implements PositionManager {
             parent = parent.getParent();
         }
 
-        if ((parent == null || !(parent instanceof JetBinaryExpression)) && !(parent instanceof JetCallExpression)) return false;
+        if (!(parent instanceof JetElement)) return false;
 
-        ResolvedCall<?> call = null;
-        if (parent instanceof JetCallExpression) {
-            call = context.get(BindingContext.RESOLVED_CALL, ((JetCallExpression) parent).getCalleeExpression());
-        }
-        if (parent instanceof JetBinaryExpression) {
-            call = context.get(BindingContext.RESOLVED_CALL, ((JetBinaryExpression) parent).getOperationReference());
-        }
-
+        ResolvedCall<?> call = BindingContextUtilPackage.getResolvedCall((JetElement) parent, context);
         if (call == null) return false;
 
-        InlineStrategy inlineType = InlineUtil.getInlineType(call.getResultingDescriptor().getAnnotations());
+        InlineStrategy inlineType = InlineUtil.getInlineType(call.getResultingDescriptor());
         if (!inlineType.isInline()) return false;
 
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {

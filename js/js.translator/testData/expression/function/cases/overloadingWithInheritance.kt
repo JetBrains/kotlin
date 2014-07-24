@@ -12,9 +12,6 @@ class C : A, B {
     fun foo() = "C"
 }
 
-fun assertEquals(expected: Any, actual: Any) {
-    if (expected != actual) throw Exception("expected = $expected, actual = $actual")
-}
 fun box(): String {
     assertEquals("A", C().foo(1))
     assertEquals("B", C().foo(""))

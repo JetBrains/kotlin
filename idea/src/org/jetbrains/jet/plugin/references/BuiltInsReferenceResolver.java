@@ -40,6 +40,7 @@ import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
@@ -173,14 +174,14 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     @Nullable
     private DeclarationDescriptor findCurrentDescriptorForClass(@NotNull ClassDescriptor originalDescriptor) {
-        if (originalDescriptor.getKind().isSingleton()) {
+        // BindingContext doesn't contain an information about class descriptor of class object. For example see testEmptyRange.
+        if (DescriptorUtils.isClassObject(originalDescriptor)) {
             DeclarationDescriptor currentParent = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
             if (currentParent == null) return null;
             return ((ClassDescriptor) currentParent).getClassObjectDescriptor();
         }
-        else {
-            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(originalDescriptor));
-        }
+
+        return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(originalDescriptor));
     }
 
     @Nullable
@@ -236,7 +237,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
         DeclarationDescriptor descriptor = findCurrentDescriptor(declarationDescriptor.getOriginal());
         if (descriptor != null) {
-            return BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
+            return DescriptorToSourceUtils.descriptorToDeclarations(descriptor);
         }
         return Collections.emptyList();
     }

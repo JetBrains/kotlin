@@ -2,12 +2,6 @@ package foo
 
 import java.util.ArrayList
 
-fun assertThat(a: Any, b: Any) {
-    if (a != b) {
-        throw Exception("$a is not equal to $b")
-    }
-}
-
 fun box(): Boolean {
     var i = 0
     val list = ArrayList<Int>()
@@ -38,22 +32,18 @@ fun box(): Boolean {
         return false
     }
 
-    assertThat(a.equals(b), false)
+    assertNotEquals(a, b, "a != b")
 
     b[0] = a[0]
     b.add(a[1])
-    assertThat(a.equals(b), true)
+    assertEquals(a, b, "a == b")
 
     a.clear()
-    assertThat(a.isEmpty(), true)
+    assertEquals(true, a.isEmpty(), "a.isEmpty()")
 
-    val array = list.copyToArray()
 
-    assertThat(array[0], 1)
-    assertThat(array[1], 500)
-    assertThat(array[2], 2)
-    assertThat(array[3], 3)
-    assertThat(JSON.stringify(list), "[1,500,2,3]")
-    assertThat(list.toString(), "[1, 500, 2, 3]")
+    assertEquals(array(1, 500, 2, 3), list.copyToArray(), "list.copyToArray()")
+    assertEquals("[1,500,2,3]", JSON.stringify(list), "JSON.stringify(list)")
+    assertEquals("[1, 500, 2, 3]", list.toString(), "list.toString()")
     return true;
 }

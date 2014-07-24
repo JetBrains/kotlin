@@ -99,7 +99,9 @@ class StringTest {
         assertEquals("", s.substringAfter("+"))
         assertEquals("", s.substringBefore("-"))
         assertEquals(s, s.substringBefore("="))
-        assertEquals("", s.substringAfter("="))
+        assertEquals(s, s.substringAfter("="))
+        assertEquals("xxx", s.substringBefore("=", "xxx"))
+        assertEquals("xxx", s.substringAfter("=", "xxx"))
 
     }
 
@@ -120,7 +122,9 @@ class StringTest {
         // non-existing delimiter
         assertEquals("/user/folder/file.extension", s.replaceAfter("=", "doc"))
         assertEquals("/user/folder/file.extension", s.replaceAfterLast("=", "another.doc"))
-        assertEquals("new name", s.replaceBefore("=", "new name"))
-        assertEquals("/new/path", s.replaceBeforeLast("=", "/new/path"))
+        assertEquals("/user/folder/file.extension", s.replaceBefore("=", "new name"))
+        assertEquals("/user/folder/file.extension", s.replaceBeforeLast("=", "/new/path"))
+        assertEquals("xxx", s.replaceBefore("=", "new name", "xxx"))
+        assertEquals("xxx", s.replaceBeforeLast("=", "/new/path", "xxx"))
     }
 }

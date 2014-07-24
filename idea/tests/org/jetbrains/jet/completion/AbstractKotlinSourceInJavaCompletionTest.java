@@ -18,6 +18,7 @@ package org.jetbrains.jet.completion;
 
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -46,6 +47,12 @@ public abstract class AbstractKotlinSourceInJavaCompletionTest extends JetFixtur
         }));
         myFixture.configureByFiles(paths);
         super.doTest(testPath);
+    }
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JAVA_LATEST;
     }
 
     @NotNull

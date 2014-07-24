@@ -7,7 +7,7 @@ open class A {
 trait Z {
 }
 
-class B: A, Z {
+class B: A(), Z {
     override fun foo() {
 
     }

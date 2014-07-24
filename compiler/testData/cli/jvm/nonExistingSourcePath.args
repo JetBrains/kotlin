@@ -1,4 +1,3 @@
--src
 not/existing/path
--output
+-d
 $TEMP_DIR$

@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -44,6 +44,8 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclaration> {
     private final static Logger LOG = Logger.getInstance(ChangeVariableTypeFix.class);
@@ -83,21 +85,22 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
         SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
         PsiElement nameIdentifier = element.getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
-        element.addAfter(JetPsiFactory.createType(project, renderedType), nameIdentifier);
-        element.addAfter(JetPsiFactory.createColon(project), nameIdentifier);
+        JetPsiFactory psiFactory = JetPsiFactory(file);
+        element.addAfter(psiFactory.createType(renderedType), nameIdentifier);
+        element.addAfter(psiFactory.createColon(), nameIdentifier);
 
         if (element instanceof JetProperty) {
             JetPropertyAccessor getter = ((JetProperty) element).getGetter();
             JetTypeReference getterReturnTypeRef = getter == null ? null : getter.getReturnTypeReference();
             if (getterReturnTypeRef != null) {
-                getterReturnTypeRef.replace(JetPsiFactory.createType(project, renderedType));
+                getterReturnTypeRef.replace(psiFactory.createType(renderedType));
             }
 
             JetPropertyAccessor setter = ((JetProperty) element).getSetter();
             JetParameter setterParameter = setter == null ? null : setter.getParameter();
             JetTypeReference setterParameterTypeRef = setterParameter == null ? null : setterParameter.getTypeReference();
             if (setterParameterTypeRef != null) {
-                setterParameterTypeRef.replace(JetPsiFactory.createType(project, renderedType));
+                setterParameterTypeRef.replace(psiFactory.createType(renderedType));
             }
         }
     }
@@ -112,7 +115,8 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                 BindingContext context = ResolvePackage.getBindingContext(entry.getContainingJetFile());
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
-                JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                JetFunction componentFunction = (JetFunction) DescriptorToSourceUtils
+                        .descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
                 if (componentFunction == null) return null;
                 JetType expectedType = resolvedCall.getCandidateDescriptor().getReturnType();
                 return expectedType == null ? null : new ChangeVariableTypeFix(entry, expectedType);
@@ -168,7 +172,8 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                     }
 
                     if (overriddenMismatchingProperties.size() == 1 && canChangeOverriddenPropertyType) {
-                        PsiElement overriddenProperty = BindingContextUtils.descriptorToDeclaration(context, overriddenMismatchingProperties.get(0));
+                        PsiElement overriddenProperty = DescriptorToSourceUtils
+                                .descriptorToDeclaration(overriddenMismatchingProperties.get(0));
                         if (overriddenProperty instanceof JetProperty) {
                             actions.add(new ChangeVariableTypeFix((JetProperty) overriddenProperty, propertyType));
                         }

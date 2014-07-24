@@ -49,6 +49,6 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
             } else {
                 "$calleeText$params $functionLiteral"
             }
-        element.replace(JetPsiFactory.createExpression(element.getProject(), newCall))
+        element.replace(JetPsiFactory(element).createExpression(newCall))
     }
 }

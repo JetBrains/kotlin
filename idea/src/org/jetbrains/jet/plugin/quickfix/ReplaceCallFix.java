@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class ReplaceCallFix implements IntentionAction {
     private final boolean toSafe;
 
@@ -75,8 +77,9 @@ public class ReplaceCallFix implements IntentionAction {
 
         JetExpression selector = callExpression.getSelectorExpression();
         if (selector != null) {
-            JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory.createExpression(
-                    project, callExpression.getReceiverExpression().getText() + (toSafe ? "?." : ".") + selector.getText());
+            JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory(callExpression).createExpression(
+                    callExpression.getReceiverExpression().getText() + (toSafe ? "?." : ".") + selector.getText()
+            );
 
             callExpression.replace(newElement);
         }

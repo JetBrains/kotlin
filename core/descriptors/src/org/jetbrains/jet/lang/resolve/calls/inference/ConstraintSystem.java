@@ -86,5 +86,6 @@ public interface ConstraintSystem {
     @NotNull
     TypeSubstitutor getCurrentSubstitutor();
 
+    @NotNull
     ConstraintSystem copy();
 }

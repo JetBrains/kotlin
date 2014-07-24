@@ -1,0 +1,85 @@
+LineBreakpoint created at frameExtFunExtFun.kt:22
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameExtFunExtFun.FrameExtFunExtFunPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameExtFunExtFun.kt:21
+Compile bytecode for valFoo
+Compile bytecode for valTest
+Compile bytecode for aProp
+Compile bytecode for outerProp
+Compile bytecode for bProp
+package frameExtFunExtFun
+
+fun main(args: Array<String>) {
+    Outer().run()
+}
+
+class A {
+    val aProp = 1
+}
+
+class Outer {
+    val outerProp = 1
+
+    fun A.foo() {
+        val valFoo = 1
+        class LocalClass {
+            val lcProp = 1
+            fun B.test() {
+                val valTest = 1
+                lambda {
+                    //Breakpoint!
+                    outerProp + aProp + lcProp + bProp + valFoo + valTest
+                }
+            }
+            fun run() {
+                B().test()
+            }
+        }
+
+        LocalClass().run()
+    }
+
+    fun run() {
+        A().foo()
+    }
+}
+
+class B {
+    val bProp = 1
+}
+
+fun lambda(f: () -> Unit) {
+    f()
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: valFoo
+// RESULT: 1: I
+
+// EXPRESSION: valTest
+// RESULT: 1: I
+
+// EXPRESSION: aProp
+// RESULT: 1: I
+
+// EXPRESSION: outerProp
+// RESULT: 1: I
+
+// EXPRESSION: bProp
+// RESULT: 1: I
+ frame    = invoke():22, Outer$foo$LocalClass$test$1 {frameExtFunExtFun}
+   this     = this = {frameExtFunExtFun.Outer$foo$LocalClass$test$1@uniqueID}kotlin.Function0<kotlin.Unit>
+     field    = this$0: frameExtFunExtFun.Outer$foo$LocalClass = {frameExtFunExtFun.Outer$foo$LocalClass@uniqueID}
+       field    = lcProp: int = 1
+       field    = this$0: frameExtFunExtFun.Outer = {frameExtFunExtFun.Outer@uniqueID}
+         field    = outerProp: int = 1
+       field    = receiver$0: frameExtFunExtFun.A = {frameExtFunExtFun.A@uniqueID}
+         field    = aProp: int = 1
+       field    = $valFoo: int = 1
+     field    = receiver$0: frameExtFunExtFun.B = {frameExtFunExtFun.B@uniqueID}
+       field    = bProp: int = 1
+     field    = $valTest: int = 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

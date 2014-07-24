@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
 import org.jetbrains.jet.asJava.unwrapped
 import org.jetbrains.jet.lang.resolve.OverrideResolver
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -103,7 +104,7 @@ fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean
         val descriptor = getCallDescriptor(bindingContext)
         if (descriptor !is ConstructorDescriptor) return false
 
-        return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor.getContainingDeclaration()) == jetClassOrObject
+        return DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) == jetClassOrObject
     }
 
     checkJavaUsage() || checkKotlinUsage()

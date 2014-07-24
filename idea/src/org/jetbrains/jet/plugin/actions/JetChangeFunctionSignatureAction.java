@@ -38,8 +38,9 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 /**
  * Changes method signature to one of provided signatures.
@@ -119,13 +120,14 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
         };
     }
 
-    private static void changeSignature(final JetNamedFunction element, final Project project, FunctionDescriptor signature) {
+    private static void changeSignature(final JetNamedFunction element, Project project, FunctionDescriptor signature) {
         final String signatureString = CodeInsightUtils.createFunctionSignatureStringFromDescriptor(
                 signature,
                 /* shortTypeNames = */ false);
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
+        final JetPsiFactory psiFactory = JetPsiFactory(element);
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
             @Override
             public void run() {
@@ -137,17 +139,17 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
 
                         if (bodyExpression != null) {
                             if (element.hasBlockBody()) {
-                                newElement = JetPsiFactory.createFunction(project, signatureString + "{}");
+                                newElement = psiFactory.createFunction(signatureString + "{}");
                             }
                             else {
-                                newElement = JetPsiFactory.createFunction(project, signatureString + "= \"dummy\"");
+                                newElement = psiFactory.createFunction(signatureString + "= \"dummy\"");
                             }
                             JetExpression newBodyExpression = newElement.getBodyExpression();
                             assert newBodyExpression != null;
                             newBodyExpression.replace(bodyExpression);
                         }
                         else {
-                            newElement = JetPsiFactory.createFunction(project, signatureString);
+                            newElement = psiFactory.createFunction(signatureString);
                         }
                         newElement = (JetNamedFunction) element.replace(newElement);
                         ShortenReferences.instance$.process(newElement);

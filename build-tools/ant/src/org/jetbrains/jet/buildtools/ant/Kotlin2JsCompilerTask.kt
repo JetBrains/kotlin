@@ -26,7 +26,6 @@ import org.jetbrains.jet.cli.js.K2JSCompiler
 import java.io.File
 import org.apache.tools.ant.BuildException
 import org.jetbrains.jet.cli.common.ExitCode
-import java.util.Arrays
 
 /**
  * Kotlin JavaScript compiler Ant task.
@@ -76,7 +75,7 @@ public class Kotlin2JsCompilerTask : Task() {
         val arguments = K2JSCompilerArguments()
 
         val sourcePaths = src ?: throw BuildException("\"src\" should be specified")
-        arguments.sourceFiles = Util.getPaths(sourcePaths.list())
+        arguments.freeArgs = Util.getPaths(sourcePaths.list()).toList()
 
         val outputFile = output ?: throw BuildException("\"output\" should be specified")
         arguments.outputFile = outputFile.canonicalPath
@@ -87,7 +86,7 @@ public class Kotlin2JsCompilerTask : Task() {
         arguments.main = main
         arguments.sourcemap = sourcemap
 
-        log("Compiling [${arguments.sourceFiles?.makeString(",")}] => [${arguments.outputFile}]");
+        log("Compiling ${arguments.freeArgs} => [${arguments.outputFile}]");
 
         val compiler = K2JSCompiler()
         val exitCode = compiler.exec(MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR, arguments)

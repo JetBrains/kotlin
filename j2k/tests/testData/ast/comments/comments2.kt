@@ -1,6 +1,6 @@
 package foo
 
-class A() {
+class A {
     fun /* nothing to return */ foo(/* no parameters at all */) {
         // let declare a variable
         // with 2 comments before

@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class ChangeToBackingFieldFix extends JetIntentionAction<JetSimpleNameExpression> {
     public ChangeToBackingFieldFix(@NotNull JetSimpleNameExpression element) {
         super(element);
@@ -44,7 +46,7 @@ public class ChangeToBackingFieldFix extends JetIntentionAction<JetSimpleNameExp
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetSimpleNameExpression backingField = (JetSimpleNameExpression) JetPsiFactory.createExpression(project, "$" + element.getText());
+        JetSimpleNameExpression backingField = (JetSimpleNameExpression) JetPsiFactory(file).createExpression("$" + element.getText());
         element.replace(backingField);
     }
 

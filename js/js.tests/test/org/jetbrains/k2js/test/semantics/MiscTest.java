@@ -194,4 +194,8 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testKt5058() throws Exception {
         checkFooBoxIsTrue("KT-5058.kt");
     }
+
+    public void testRightAssocForGeneratedConditionalOperator() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

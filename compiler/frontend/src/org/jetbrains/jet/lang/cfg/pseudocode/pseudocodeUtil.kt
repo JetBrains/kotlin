@@ -31,50 +31,10 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 
-fun JetExpression.isStatement(pseudocode: Pseudocode): Boolean {
-    val value = pseudocode.getElementValue(this);
-    if (value == null) return true
-
-    fun considerUsedIfCreatedBeforeExit(): Boolean {
-        return when {
-            (getParent() as? JetFunction)?.getBodyExpression() == this ->
-                true
-            value.implicitReturnValue ->
-                true
-            else ->
-                false
-        }
-    }
-
-    val instruction = value.createdAt
-    if (considerUsedIfCreatedBeforeExit() && instruction.nextInstructions.any { it == pseudocode.getExitInstruction() }) return false
-    return traverseFollowingInstructions(instruction, HashSet(), TraversalOrder.FORWARD) { value !in it.inputValues }
-}
-
-val PseudoValue.implicitReturnValue: Boolean
-    get() {
-        val pseudocode = createdAt.owner
-
-        val function = pseudocode.getCorrespondingElement() as? JetDeclarationWithBody
-
-        if (function is JetFunctionLiteral || (function != null && !function.hasBlockBody())) {
-            return pseudocode.getElementValue(function.getBodyExpression()) == this
-        }
-        return false
-    }
-
-fun Pseudocode.collectValueUsages(): Map<PseudoValue, List<Instruction>> {
-    val map = HashMap<PseudoValue, MutableList<Instruction>>()
-    traverseFollowingInstructions(getEnterInstruction(), HashSet(), TraversalOrder.FORWARD) {
-        for (value in it.inputValues) {
-            map.getOrPut(value){ ArrayList() }.add(it)
-        }
-        true
-    }
-
-    return map
-}
+fun JetExpression.isStatement(pseudocode: Pseudocode): Boolean =
+        pseudocode.getUsages(pseudocode.getElementValue(this)).isEmpty()
 
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
     val callableDescriptor = resolvedCall.getResultingDescriptor()
@@ -96,27 +56,22 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
     return null
 }
 
-fun getExpectedTypePredicate(
-        value: PseudoValue,
-        valueUsageMap: Map<PseudoValue, List<Instruction>>,
-        bindingContext: BindingContext
-): TypePredicate {
-    val typePredicates = HashSet<TypePredicate?>()
+fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
+    val pseudocode = value.createdAt.owner
+    val typePredicates = LinkedHashSet<TypePredicate?>()
 
     fun addSubtypesOf(jetType: JetType?) = typePredicates.add(jetType?.getSubtypesPredicate())
 
     fun addTypePredicates(value: PseudoValue) {
-        if (value.implicitReturnValue) {
-            val function = value.createdAt.owner.getCorrespondingElement() as? JetDeclarationWithBody
-            val functionDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor
-            addSubtypesOf(functionDescriptor?.getReturnType())
-        }
-
-        valueUsageMap[value]?.forEach {
+        pseudocode.getUsages(value).forEach {
             when (it) {
                 is ReturnValueInstruction -> {
-                    val functionDescriptor = (it.element as JetReturnExpression).getTargetFunctionDescriptor(bindingContext)
-                    addSubtypesOf(functionDescriptor?.getReturnType())
+                    val returnElement = it.element
+                    val functionDescriptor = when(returnElement) {
+                        is JetReturnExpression -> returnElement.getTargetFunctionDescriptor(bindingContext)
+                        else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, value.createdAt.owner.getCorrespondingElement()]
+                    }
+                    addSubtypesOf((functionDescriptor as? CallableDescriptor)?.getReturnType())
                 }
 
                 is ConditionalJumpInstruction ->
@@ -173,4 +128,23 @@ fun getExpectedTypePredicate(
 
     addTypePredicates(value)
     return and(typePredicates.filterNotNull())
+}
+
+public fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: BindingContext): DeclarationDescriptor? {
+    return when (this) {
+        is CallInstruction -> return resolvedCall.getResultingDescriptor()
+        else -> PseudocodeUtil.extractVariableDescriptorIfAny(this, false, bindingContext)
+    }
+}
+
+private fun Pseudocode.collectValueUsages(): Map<PseudoValue, List<Instruction>> {
+    val map = HashMap<PseudoValue, MutableList<Instruction>>()
+    traverseFollowingInstructions(getEnterInstruction(), HashSet(), TraversalOrder.FORWARD) {
+        for (value in it.inputValues) {
+            map.getOrPut(value){ ArrayList() }.add(it)
+        }
+        true
+    }
+
+    return map
 }

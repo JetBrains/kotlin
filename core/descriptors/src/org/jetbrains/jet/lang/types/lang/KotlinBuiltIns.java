@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -305,6 +306,11 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getInlineClassAnnotation() {
         return getBuiltInClassByName("inline");
+    }
+
+    @NotNull
+    public ClassDescriptor getInlineOptionsClassAnnotation() {
+        return getBuiltInClassByName("inlineOptions");
     }
 
     @NotNull
@@ -760,7 +766,7 @@ public class KotlinBuiltIns {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
                     functionDescriptor, null, i, Annotations.EMPTY,
-                    Name.identifier("p" + (i + 1)), parameterType.getType(), false, null);
+                    Name.identifier("p" + (i + 1)), parameterType.getType(), false, null, SourceElement.NO_SOURCE);
             valueParameters.add(valueParameterDescriptor);
         }
         return valueParameters;

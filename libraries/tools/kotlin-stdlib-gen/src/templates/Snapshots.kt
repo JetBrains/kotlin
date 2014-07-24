@@ -62,12 +62,12 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toList()") {
         only(Maps)
         doc { "Returns a List containing all key-value pairs" }
-        returns("List<Map.Entry<K, V>>")
+        returns("List<Pair<K, V>>")
         body {
             """
-            val result = ArrayList<Map.Entry<K, V>>(size)
+            val result = ArrayList<Pair<K, V>>(size)
             for (item in this)
-                result.add(item)
+                result.add(item.key to item.value)
             return result
             """
         }
@@ -104,6 +104,26 @@ fun snapshots(): List<GenericFunction> {
         doc { "Returns a LinkedList containing all elements" }
         returns("LinkedList<T>")
         body { "return toCollection(LinkedList<T>())" }
+    }
+
+    templates add f("toMap(selector: (T) -> K)") {
+        inline(true)
+        typeParam("K")
+        doc {
+            """
+            Returns Map containing all the values from the given collection indexed by *selector*
+            """
+        }
+        returns("Map<K, T>")
+        body {
+            """
+            val result = LinkedHashMap<K, T>()
+            for (element in this) {
+                result.put(selector(element), element)
+            }
+            return result
+            """
+        }
     }
 
     return templates

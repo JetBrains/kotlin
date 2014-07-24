@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.types.PackageType
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.codeInsight.hint.HintManager
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetCallExpression): Boolean {
@@ -48,21 +49,19 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
         val parent = element.getParent()
 
         if (parent is JetDotQualifiedExpression) {
-            val callee = element.getCalleeExpression()
             val typeArguments = element.getTypeArgumentList()
             val valueArguments = element.getValueArgumentList()
             val functionLiteralArguments = element.getFunctionLiteralArguments()
             val numOfTotalValueArguments = (valueArguments?.getArguments()?.size() ?: 0) + functionLiteralArguments.size()
 
             if (typeArguments?.getArguments()?.size() ?: 0 == 0 &&
-                numOfTotalValueArguments == 1 &&
-                callee != null) {
+                    numOfTotalValueArguments == 1) {
 
                 if (valueArguments?.getArguments()?.size() == 1 && valueArguments?.getArguments()?.first()?.isNamed() ?: false) {
                     val file = element.getContainingJetFile()
                     val bindingContext = file.getBindingContext()
-                    val resolvedCallDescriptor = bindingContext[BindingContext.RESOLVED_CALL, callee]
-                    val valueArgumentsMap = resolvedCallDescriptor?.getValueArguments()
+                    val resolvedCall = element.getResolvedCall(bindingContext)
+                    val valueArgumentsMap = resolvedCall?.getValueArguments()
                     val firstArgument = valueArguments?.getArguments()?.first()
 
                     return valueArgumentsMap?.keySet()?.any { it.getName().asString() == firstArgument?.getArgumentName()?.getText() && it.getIndex() == 0 } ?: false
@@ -110,7 +109,7 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
                     functionLiteralArguments.first().getText()
         )
 
-        val replacement = JetPsiFactory.createExpression(element.getProject(), "$leftHandText $operatorText ${rightHandTextStringBuilder.toString()}")
+        val replacement = JetPsiFactory(element).createExpression("$leftHandText $operatorText ${rightHandTextStringBuilder.toString()}")
 
         parent.replace(replacement)
     }

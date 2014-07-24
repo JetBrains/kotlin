@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipOutputStream;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class MockLibraryUtil {
 
@@ -96,9 +96,10 @@ public class MockLibraryUtil {
             Method execMethod = compilerClass.getMethod("exec", PrintStream.class, String[].class);
 
             //noinspection IOResourceOpenedButNotSafelyClosed
-            Enum<?> invocationResult = (Enum<?>) execMethod
-                    .invoke(compilerObject, new PrintStream(outStream),
-                            new String[] {"-src", sourcesPath, "-output", outDir.getAbsolutePath(), "-classpath", sourcesPath});
+            Enum<?> invocationResult = (Enum<?>) execMethod.invoke(
+                    compilerObject, new PrintStream(outStream),
+                    new String[] {sourcesPath, "-d", outDir.getAbsolutePath(), "-classpath", sourcesPath}
+            );
 
             assertEquals(new String(outStream.toByteArray()), ExitCode.OK.name(), invocationResult.name());
         }

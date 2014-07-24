@@ -86,7 +86,7 @@ public class ControlStructureTypingUtils {
 
         SimpleFunctionDescriptorImpl function = SimpleFunctionDescriptorImpl.create(
                 ErrorUtils.getErrorModule(),//todo hack to avoid returning true in 'isError(DeclarationDescriptor)'
-                Annotations.EMPTY, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION);
+                Annotations.EMPTY, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE);
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
                 function, Annotations.EMPTY, false, Variance.INVARIANT,
@@ -99,7 +99,9 @@ public class ControlStructureTypingUtils {
         for (int i = 0; i < argumentNames.size(); i++) {
             JetType argumentType = isArgumentNullable.get(i) ? nullableType : type;
             ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(
-                    function, null, i, Annotations.EMPTY, Name.identifier(argumentNames.get(i)), argumentType, false, null);
+                    function, null, i, Annotations.EMPTY, Name.identifier(argumentNames.get(i)),
+                    argumentType, false, null, SourceElement.NO_SOURCE
+            );
             valueParameters.add(valueParameter);
         }
         function.initialize(
@@ -163,7 +165,7 @@ public class ControlStructureTypingUtils {
     ) {
         final List<ValueArgument> valueArguments = Lists.newArrayList();
         for (JetExpression argument : arguments) {
-            valueArguments.add(CallMaker.makeValueArgument(argument, argument));
+            valueArguments.add(CallMaker.makeValueArgument(argument));
         }
         return new Call() {
             @Nullable
@@ -332,7 +334,7 @@ public class ControlStructureTypingUtils {
             public <D extends CallableDescriptor> void bindResolvedCall(
                     @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
             ) {
-                trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
+                trace.record(RESOLVED_CALL, call, resolvedCall);
             }
 
             @Override

@@ -62,13 +62,18 @@ public abstract class KotlinIntegrationTestBase {
                     new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "testData");
             testDataDir = new File(baseTestDataDir, description.getMethodName());
         }
-
     };
+
+    static {
+        System.setProperty("java.awt.headless", "true");
+    }
 
     protected int runCompiler(String logName, String... arguments) throws Exception {
         File lib = getCompilerLib();
 
-        String classpath = lib.getAbsolutePath() + File.separator + "kotlin-compiler.jar";
+        String classpath = lib.getAbsolutePath() + File.separator +
+                           "kotlin-compiler.jar" + File.pathSeparator +
+                           getKotlinRuntimePath();
 
         Collection<String> javaArgs = new ArrayList<String>();
         javaArgs.add("-cp");

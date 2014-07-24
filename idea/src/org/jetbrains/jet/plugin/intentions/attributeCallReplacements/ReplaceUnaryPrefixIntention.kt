@@ -44,8 +44,7 @@ public open class ReplaceUnaryPrefixIntention : AttributeCallReplacementIntentio
     }
 
     override fun replaceCall(call: CallDescription, editor: Editor) {
-        call.element.replace(JetPsiFactory.createExpression(
-                call.element.getProject(),
+        call.element.replace(JetPsiFactory(call.element).createExpression(
                 lookup(call.functionName)!! + call.element.getReceiverExpression().getText()
         ))
     }

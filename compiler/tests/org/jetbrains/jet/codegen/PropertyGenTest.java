@@ -18,12 +18,12 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.*;
 
-import static org.jetbrains.jet.codegen.CodegenTestUtil.assertIsCurrentTime;
-import static org.jetbrains.jet.codegen.CodegenTestUtil.findDeclaredMethodByName;
+import static org.jetbrains.jet.codegen.CodegenTestUtil.*;
 
 public class PropertyGenTest extends CodegenTestCase {
     @Override
@@ -235,5 +235,22 @@ public class PropertyGenTest extends CodegenTestCase {
             assertInstanceOf(type, ParameterizedType.class);
             assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
         }
+    }
+
+    public void testPrivateClassPropertyAccessors() throws Exception {
+        loadFile("properties/privateClassPropertyAccessors.kt");
+        Class<?> c = generateClass("C");
+        findDeclaredMethodByName(c, "getValWithGet");
+        findDeclaredMethodByName(c, "getVarWithGetSet");
+        findDeclaredMethodByName(c, "setVarWithGetSet");
+        findDeclaredMethodByName(c, "getDelegated");
+        findDeclaredMethodByName(c, "setDelegated");
+        findDeclaredMethodByName(c, "getExtension");
+        findDeclaredMethodByName(c, "setExtension");
+
+        findDeclaredMethodByName(initializedClassLoader.loadClass("C" + JvmAbi.CLASS_OBJECT_SUFFIX), "getClassObjectVal");
+
+        assertNull("Property should not have a getter", findDeclaredMethodByNameOrNull(c, "getVarNoAccessors"));
+        assertNull("Property should not have a setter", findDeclaredMethodByNameOrNull(c, "setVarNoAccessors"));
     }
 }

@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.asJava.namedUnwrappedElement
 import org.jetbrains.jet.lang.resolve.OverrideResolver
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element.namedUnwrappedElement is JetProperty
@@ -185,7 +186,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
                 // Take one of supers for now - API doesn't support substitute to several elements (IDEA-48796)
                 val deepest = supers.first()
                 if (deepest != descriptor) {
-                    val superPsiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, deepest)
+                    val superPsiElement = DescriptorToSourceUtils.descriptorToDeclaration(deepest)
                     return superPsiElement as? JetProperty
                 }
             }

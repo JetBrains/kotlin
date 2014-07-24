@@ -1,3 +1,3 @@
-class C() {
-    var f: Foo = 0
+class C {
+    var f: Foo
 }

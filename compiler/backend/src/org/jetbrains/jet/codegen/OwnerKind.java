@@ -21,5 +21,5 @@ public enum OwnerKind {
 
     IMPLEMENTATION,
 
-    TRAIT_IMPL;
+    TRAIT_IMPL
 }

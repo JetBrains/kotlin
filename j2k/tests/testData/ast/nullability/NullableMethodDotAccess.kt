@@ -1,4 +1,4 @@
-class C() {
+class C {
     fun getString(b: Boolean): String? {
         return if (b) "a" else null
     }

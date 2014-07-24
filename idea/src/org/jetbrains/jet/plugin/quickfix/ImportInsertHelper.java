@@ -34,6 +34,8 @@ import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class ImportInsertHelper {
     private ImportInsertHelper() {
     }
@@ -115,20 +117,21 @@ public class ImportInsertHelper {
     }
 
     public static void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        JetPsiFactory psiFactory = JetPsiFactory(file.getProject());
         if (file instanceof JetCodeFragment) {
-            JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
+            JetImportDirective newDirective = psiFactory.createImportDirective(importPath);
             ((JetCodeFragment) file).addImportsFromString(newDirective.getText());
             return;
         }
 
         JetImportList importList = file.getImportList();
         if (importList != null) {
-            JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
-            importList.add(JetPsiFactory.createNewLine(file.getProject()));
+            JetImportDirective newDirective = psiFactory.createImportDirective(importPath);
+            importList.add(psiFactory.createNewLine());
             importList.add(newDirective);
         }
         else {
-            JetImportList newDirective = JetPsiFactory.createImportDirectiveWithImportList(file.getProject(), importPath);
+            JetImportList newDirective = psiFactory.createImportDirectiveWithImportList(importPath);
             JetPackageDirective packageDirective = file.getPackageDirective();
             if (packageDirective == null) {
                 throw new IllegalStateException("Scripts are not supported: " + file.getName());

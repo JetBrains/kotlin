@@ -1928,99 +1928,63 @@ public inline fun String.single(predicate: (Char) -> Boolean): Char {
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun <T> Array<out T>.singleOrNull(): T? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun BooleanArray.singleOrNull(): Boolean? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun ByteArray.singleOrNull(): Byte? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun CharArray.singleOrNull(): Char? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun DoubleArray.singleOrNull(): Double? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun FloatArray.singleOrNull(): Float? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun IntArray.singleOrNull(): Int? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun LongArray.singleOrNull(): Long? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun ShortArray.singleOrNull(): Short? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
@@ -2028,18 +1992,14 @@ public fun ShortArray.singleOrNull(): Short? {
  */
 public fun <T> Iterable<T>.singleOrNull(): T? {
     when (this) {
-        is List<*> -> return when (size) {
-            0 -> null
-            1 -> this[0] as T?
-            else -> throw IllegalArgumentException("Collection has more than one element")
-        }
+        is List<*> -> return if (size == 1) this[0] as T else null
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
                 return null
             var single = iterator.next()
             if (iterator.hasNext())
-                throw IllegalArgumentException("Collection has more than one element")
+                return null
             return single
         }
     }
@@ -2049,11 +2009,7 @@ public fun <T> Iterable<T>.singleOrNull(): T? {
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun <T> List<T>.singleOrNull(): T? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
@@ -2061,18 +2017,14 @@ public fun <T> List<T>.singleOrNull(): T? {
  */
 public fun <T> Stream<T>.singleOrNull(): T? {
     when (this) {
-        is List<*> -> return when (size) {
-            0 -> null
-            1 -> this[0] as T?
-            else -> throw IllegalArgumentException("Collection has more than one element")
-        }
+        is List<*> -> return if (size == 1) this[0] as T else null
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
                 return null
             var single = iterator.next()
             if (iterator.hasNext())
-                throw IllegalArgumentException("Collection has more than one element")
+                return null
             return single
         }
     }
@@ -2082,11 +2034,7 @@ public fun <T> Stream<T>.singleOrNull(): T? {
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun String.singleOrNull(): Char? {
-    return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
-    }
+    return if (size == 1) this[0] else null
 }
 
 /**
@@ -2097,7 +2045,7 @@ public inline fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2114,7 +2062,7 @@ public inline fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean): Bo
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2131,7 +2079,7 @@ public inline fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean): Byte? {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2148,7 +2096,7 @@ public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char? {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2165,7 +2113,7 @@ public inline fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean): Doub
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2182,7 +2130,7 @@ public inline fun FloatArray.singleOrNull(predicate: (Float) -> Boolean): Float?
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2199,7 +2147,7 @@ public inline fun IntArray.singleOrNull(predicate: (Int) -> Boolean): Int? {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2216,7 +2164,7 @@ public inline fun LongArray.singleOrNull(predicate: (Long) -> Boolean): Long? {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2233,7 +2181,7 @@ public inline fun ShortArray.singleOrNull(predicate: (Short) -> Boolean): Short?
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2250,7 +2198,7 @@ public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2267,7 +2215,7 @@ public inline fun <T> Stream<T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }
@@ -2284,7 +2232,7 @@ public inline fun String.singleOrNull(predicate: (Char) -> Boolean): Char? {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) return null
             single = element
             found = true
         }

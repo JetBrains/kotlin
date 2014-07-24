@@ -104,63 +104,64 @@ public class JetColorSettingsPage implements ColorSettingsPage {
     public AttributesDescriptor[] getAttributeDescriptors() {
         return new AttributesDescriptor[]{
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.keyword"), JetHighlightingColors.KEYWORD),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.builtin.annotation"), JetHighlightingColors.BUILTIN_ANNOTATION),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.builtin.annotation"), JetHighlightingColors.BUILTIN_ANNOTATION),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.number"), JetHighlightingColors.NUMBER),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.string"), JetHighlightingColors.STRING),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.string.escape"), JetHighlightingColors.STRING_ESCAPE),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.string.escape"), JetHighlightingColors.STRING_ESCAPE),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.invalid.escape.in.string"), JetHighlightingColors.INVALID_STRING_ESCAPE),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.operator.sign"), JetHighlightingColors.OPERATOR_SIGN),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.parentheses"), JetHighlightingColors.PARENTHESIS),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.braces"), JetHighlightingColors.BRACES),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.closure.braces"), JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.arrow"), JetHighlightingColors.ARROW),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.closure.braces"), JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.arrow"), JetHighlightingColors.ARROW),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.brackets"), JetHighlightingColors.BRACKETS),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.comma"), JetHighlightingColors.COMMA),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.semicolon"), JetHighlightingColors.SEMICOLON),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.dot"), JetHighlightingColors.DOT),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.safe.access"), JetHighlightingColors.SAFE_ACCESS),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.safe.access"), JetHighlightingColors.SAFE_ACCESS),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.line.comment"), JetHighlightingColors.LINE_COMMENT),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.block.comment"), JetHighlightingColors.BLOCK_COMMENT),
 
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.comment"), JetHighlightingColors.DOC_COMMENT),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.tag"), JetHighlightingColors.KDOC_TAG),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.value"), JetHighlightingColors.KDOC_TAG_VALUE),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.kdoc.comment"), JetHighlightingColors.DOC_COMMENT),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.kdoc.tag"), JetHighlightingColors.KDOC_TAG),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.kdoc.value"), JetHighlightingColors.KDOC_TAG_VALUE),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.class"), JetHighlightingColors.CLASS),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.type.parameter"), JetHighlightingColors.TYPE_PARAMETER),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.abstract.class"), JetHighlightingColors.ABSTRACT_CLASS),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.trait"), JetHighlightingColors.TRAIT),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.annotation"), JetHighlightingColors.ANNOTATION),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.trait"), JetHighlightingColors.TRAIT),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.annotation"), JetHighlightingColors.ANNOTATION),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.object"), JetHighlightingColors.OBJECT),
 
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.var"), JetHighlightingColors.MUTABLE_VARIABLE),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.var"), JetHighlightingColors.MUTABLE_VARIABLE),
 
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.local.variable"), JetHighlightingColors.LOCAL_VARIABLE),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.local.variable"), JetHighlightingColors.LOCAL_VARIABLE),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.parameter"), JetHighlightingColors.PARAMETER),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.captured.variable"), JetHighlightingColors.WRAPPED_INTO_REF),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.captured.variable"), JetHighlightingColors.WRAPPED_INTO_REF),
 
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.instance.property"), JetHighlightingColors.INSTANCE_PROPERTY),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.package.property"), JetHighlightingColors.PACKAGE_PROPERTY),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.property.with.backing"), JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.backing.field.access"), JetHighlightingColors.BACKING_FIELD_ACCESS),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.extension.property"), JetHighlightingColors.EXTENSION_PROPERTY),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.instance.property"), JetHighlightingColors.INSTANCE_PROPERTY),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.package.property"), JetHighlightingColors.PACKAGE_PROPERTY),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.property.with.backing"), JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.backing.field.access"), JetHighlightingColors.BACKING_FIELD_ACCESS),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.extension.property"), JetHighlightingColors.EXTENSION_PROPERTY),
 
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.it"), JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.fun"), JetHighlightingColors.FUNCTION_DECLARATION),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.fun.call"), JetHighlightingColors.FUNCTION_CALL),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.package.fun.call"), JetHighlightingColors.PACKAGE_FUNCTION_CALL),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.extension.fun.call"), JetHighlightingColors.EXTENSION_FUNCTION_CALL),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.constructor.call"), JetHighlightingColors.CONSTRUCTOR_CALL),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.variable.as.function.call"), JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.variable.as.function.like.call"), JetHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.it"), JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.fun"), JetHighlightingColors.FUNCTION_DECLARATION),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.fun.call"), JetHighlightingColors.FUNCTION_CALL),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.package.fun.call"), JetHighlightingColors.PACKAGE_FUNCTION_CALL),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.extension.fun.call"), JetHighlightingColors.EXTENSION_FUNCTION_CALL),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.constructor.call"), JetHighlightingColors.CONSTRUCTOR_CALL),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.variable.as.function.call"), JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.variable.as.function.like.call"), JetHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.bad.character"), JetHighlightingColors.BAD_CHARACTER),
 
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.auto.casted"), JetHighlightingColors.AUTO_CASTED_VALUE),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.auto.casted"), JetHighlightingColors.AUTO_CASTED_VALUE),
 
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.label"), JetHighlightingColors.LABEL),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.label"), JetHighlightingColors.LABEL),
         };
     }
 

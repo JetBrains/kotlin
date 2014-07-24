@@ -1,0 +1,29 @@
+LineBreakpoint created at frameLambda.kt:7
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameLambda.FrameLambdaPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameLambda.kt:6
+Compile bytecode for val1
+package frameLambda
+
+fun main(args: Array<String>) {
+    val val1 = 1
+    foo {
+        //Breakpoint!
+        val1
+    }
+}
+
+fun foo(f: () -> Unit) {
+    f()
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: val1
+// RESULT: 1: I
+ frame    = invoke():7, FrameLambdaPackage$main$1 {frameLambda}
+   this     = this = {frameLambda.FrameLambdaPackage$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
+     field    = $val1: int = 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

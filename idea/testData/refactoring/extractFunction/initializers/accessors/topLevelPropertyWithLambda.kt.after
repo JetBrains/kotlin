@@ -1,0 +1,7 @@
+val a = 1
+val b = 1
+val foo: Int get() = { i() - 1 }.invoke()
+
+fun i(): Int {
+    return a + b
+}

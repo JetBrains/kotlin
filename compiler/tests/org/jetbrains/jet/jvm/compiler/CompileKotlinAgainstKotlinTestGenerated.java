@@ -56,6 +56,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/DefaultConstructor.A.kt");
     }
     
+    @TestMetadata("DoublyNestedClass.A.kt")
+    public void testDoublyNestedClass() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/DoublyNestedClass.A.kt");
+    }
+    
     @TestMetadata("Enum.A.kt")
     public void testEnum() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/Enum.A.kt");
@@ -71,34 +76,29 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/InlinedConstants.A.kt");
     }
     
-    @TestMetadata("InnerClass.A.kt")
-    public void testInnerClass() throws Exception {
-        doTest("compiler/testData/compileKotlinAgainstKotlin/InnerClass.A.kt");
-    }
-    
     @TestMetadata("InnerClassConstructor.A.kt")
     public void testInnerClassConstructor() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/InnerClassConstructor.A.kt");
     }
     
-    @TestMetadata("InnerEnum.A.kt")
-    public void testInnerEnum() throws Exception {
-        doTest("compiler/testData/compileKotlinAgainstKotlin/InnerEnum.A.kt");
-    }
-    
-    @TestMetadata("InnerInnerClass.A.kt")
-    public void testInnerInnerClass() throws Exception {
-        doTest("compiler/testData/compileKotlinAgainstKotlin/InnerInnerClass.A.kt");
-    }
-    
-    @TestMetadata("InnerObject.A.kt")
-    public void testInnerObject() throws Exception {
-        doTest("compiler/testData/compileKotlinAgainstKotlin/InnerObject.A.kt");
-    }
-    
     @TestMetadata("KotlinPropertyAsAnnotationParameter.A.kt")
     public void testKotlinPropertyAsAnnotationParameter() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/KotlinPropertyAsAnnotationParameter.A.kt");
+    }
+    
+    @TestMetadata("NestedClass.A.kt")
+    public void testNestedClass() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/NestedClass.A.kt");
+    }
+    
+    @TestMetadata("NestedEnum.A.kt")
+    public void testNestedEnum() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/NestedEnum.A.kt");
+    }
+    
+    @TestMetadata("NestedObject.A.kt")
+    public void testNestedObject() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/NestedObject.A.kt");
     }
     
     @TestMetadata("PlatformNames.A.kt")

@@ -48,6 +48,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 /**
  * CallTransformer treats specially 'variable as function' call case, other cases keeps unchanged (base realization).
  *
@@ -262,7 +264,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             this.outerCall = call;
             this.explicitExtensionReceiver = explicitExtensionReceiver;
             this.calleeExpressionAsThisObject = calleeExpressionAsThisObject;
-            this.fakeInvokeExpression = (JetSimpleNameExpression) JetPsiFactory.createExpression(call.getCallElement().getProject(), "invoke");
+            this.fakeInvokeExpression = (JetSimpleNameExpression) JetPsiFactory(call.getCallElement()).createExpression( "invoke");
         }
 
         @NotNull
@@ -273,7 +275,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         @NotNull
         @Override
-        public ReceiverValue getThisObject() {
+        public ExpressionReceiver getThisObject() {
             return calleeExpressionAsThisObject;
         }
 

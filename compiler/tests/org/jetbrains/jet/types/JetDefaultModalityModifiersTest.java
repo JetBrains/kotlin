@@ -25,6 +25,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -41,6 +42,8 @@ import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.List;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     private final JetDefaultModalityModifiersTestCase tc = new JetDefaultModalityModifiersTestCase();
@@ -79,7 +82,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private JetScope createScope(JetScope libraryScope) {
-            JetFile file = JetPsiFactory.createFile(getProject(), "abstract class C { abstract fun foo(); abstract val a: Int }");
+            JetFile file = JetPsiFactory(getProject()).createFile("abstract class C { abstract fun foo(); abstract val a: Int }");
             List<JetDeclaration> declarations = file.getDeclarations();
             JetDeclaration aClass = declarations.get(0);
             assert aClass instanceof JetClass;
@@ -94,7 +97,8 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, JetClass aClass) {
-            MutableClassDescriptor classDescriptor = new MutableClassDescriptor(root, scope, kind, false, aClass.getNameAsSafeName());
+            MutableClassDescriptor classDescriptor =
+                    new MutableClassDescriptor(root, scope, kind, false, aClass.getNameAsSafeName(), SourceElement.NO_SOURCE);
             TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
                     LockBasedStorageManager.NO_LOCKS, new ExceptionTracker(), Predicates.<PsiFile>alwaysTrue(), false, false
             );
@@ -104,7 +108,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private void testClassModality(String classDeclaration, ClassKind kind, Modality expectedModality) {
-            JetClass aClass = JetPsiFactory.createClass(getProject(), classDeclaration);
+            JetClass aClass = JetPsiFactory(getProject()).createClass(classDeclaration);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
             assertEquals(expectedModality, classDescriptor.getModality());
@@ -112,7 +116,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
 
         private void testFunctionModality(String classWithFunction, ClassKind kind, Modality expectedFunctionModality) {
-            JetClass aClass = JetPsiFactory.createClass(getProject(), classWithFunction);
+            JetClass aClass = JetPsiFactory(getProject()).createClass(classWithFunction);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
@@ -125,7 +129,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private void testPropertyModality(String classWithProperty, ClassKind kind, Modality expectedPropertyModality) {
-            JetClass aClass = JetPsiFactory.createClass(getProject(), classWithProperty);
+            JetClass aClass = JetPsiFactory(getProject()).createClass(classWithProperty);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
@@ -138,7 +142,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
 
         private void testPropertyAccessorModality(String classWithPropertyWithAccessor, ClassKind kind, Modality expectedPropertyAccessorModality, boolean isGetter) {
-            JetClass aClass = JetPsiFactory.createClass(getProject(), classWithPropertyWithAccessor);
+            JetClass aClass = JetPsiFactory(getProject()).createClass(classWithPropertyWithAccessor);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
             List<JetDeclaration> declarations = aClass.getDeclarations();

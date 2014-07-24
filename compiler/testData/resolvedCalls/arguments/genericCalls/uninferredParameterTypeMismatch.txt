@@ -1,0 +1,16 @@
+fun <T> foo(l: List<T>) {}
+
+fun test() {
+    <caret>foo(11)
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+TYPE_MISMATCH  l : List<???> = 11

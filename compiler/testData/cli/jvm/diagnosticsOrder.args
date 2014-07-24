@@ -1,4 +1,4 @@
--src
-$TESTDATA_DIR$/diagnosticsOrder1.kt:$TESTDATA_DIR$/diagnosticsOrder2.kt
--output
+$TESTDATA_DIR$/diagnosticsOrder1.kt
+$TESTDATA_DIR$/diagnosticsOrder2.kt
+-d
 $TEMP_DIR$

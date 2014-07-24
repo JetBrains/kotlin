@@ -62,6 +62,6 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
             else -> body.getText() ?: throw AssertionError("Body of ForExpression shouldn't be empty: expressionText = ${element.getText()}")
         })
 
-        element.replace(JetPsiFactory.createExpression(element.getProject(), "${buildReceiverText(element)}.forEach { $bodyText }"))
+        element.replace(JetPsiFactory(element).createExpression("${buildReceiverText(element)}.forEach { $bodyText }"))
     }
 }

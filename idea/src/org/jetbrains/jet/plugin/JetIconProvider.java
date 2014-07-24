@@ -123,6 +123,9 @@ public class JetIconProvider extends IconProvider {
                 return JetIcons.FUNCTION;
             }
         }
+
+        if (psiElement instanceof JetFunctionLiteral) return JetIcons.LAMBDA;
+
         if (psiElement instanceof JetClass) {
             JetClass jetClass = (JetClass) psiElement;
             if (jetClass.isTrait()) {

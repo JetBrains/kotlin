@@ -372,18 +372,14 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> return when (size) {
-                    0 -> null
-                    1 -> this[0] as T?
-                    else -> throw IllegalArgumentException("Collection has more than one element")
-                }
+                is List<*> -> return if (size == 1) this[0] as T else null
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
                         return null
                     var single = iterator.next()
                     if (iterator.hasNext())
-                        throw IllegalArgumentException("Collection has more than one element")
+                        return null
                     return single
                 }
             }
@@ -391,11 +387,7 @@ fun elements(): List<GenericFunction> {
         }
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return when (size) {
-                0 -> throw NoSuchElementException("Collection is empty")
-                1 -> this[0]
-                else -> throw IllegalArgumentException("Collection has more than one element")
-            }
+            return if (size == 1) this[0] else null
             """
         }
     }
@@ -431,7 +423,7 @@ fun elements(): List<GenericFunction> {
             var found = false
             for (element in this) {
                 if (predicate(element)) {
-                    if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+                    if (found) return null
                     single = element
                     found = true
                 }

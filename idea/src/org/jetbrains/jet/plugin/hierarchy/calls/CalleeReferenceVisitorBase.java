@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 
 public abstract class CalleeReferenceVisitorBase extends JetTreeVisitorVoid {
     private final BindingContext bindingContext;
@@ -50,7 +50,7 @@ public abstract class CalleeReferenceVisitorBase extends JetTreeVisitorVoid {
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (descriptor == null) return;
 
-        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+        PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
         if (declaration == null) return;
 
         if (isProperty(descriptor, declaration) || isCallable(descriptor, declaration, expression)) {

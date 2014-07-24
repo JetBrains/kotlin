@@ -1,0 +1,20 @@
+class A {}
+
+fun <T> foo(t: T) {}
+
+fun <T> emptyList(): List<T> = throw Exception()
+
+fun bar() {
+    <caret>foo(emptyList())
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+MATCH_MODULO_UNINFERRED_TYPES  t : List<???> = emptyList()

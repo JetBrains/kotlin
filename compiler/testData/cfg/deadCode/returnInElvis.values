@@ -4,6 +4,6 @@ fun foo() {
 }
 ---------------------
 null                 <v0>: *   NEW: r(null) -> <v0>
-return ?: null       <v0>: *   COPY                
-{ return ?: null }   <v0>: *   COPY                
+return ?: null       <v0>: *   COPY
+{ return ?: null }   <v0>: *   COPY
 =====================

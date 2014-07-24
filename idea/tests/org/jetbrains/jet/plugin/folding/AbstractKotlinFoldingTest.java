@@ -19,16 +19,17 @@ package org.jetbrains.jet.plugin.folding;
 import com.google.common.base.Function;
 import com.intellij.codeInsight.folding.JavaCodeFoldingSettings;
 import com.intellij.codeInsight.folding.impl.JavaCodeFoldingSettingsImpl;
-import com.intellij.openapi.editor.FoldRegion;
-import com.intellij.openapi.editor.ex.FoldingModelEx;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.testing.SettingsConfigurator;
+import org.junit.Assert;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -57,9 +58,6 @@ public abstract class AbstractKotlinFoldingTest extends LightCodeInsightFixtureT
 
         doTestWithSettings(directText, doExpandSettingsTestFunction);
 
-        // Clean all regions in model to force IDEA treat all regions as new ones
-        cleanAllFoldedRegions();
-
         String invertedText = fileText
                 .replaceAll("~false~", "true").replaceAll("~true~", "false")
                 .replaceAll(SettingsConfigurator.SET_TRUE_DIRECTIVE, "~TEMP_TRUE_DIRECTIVE~")
@@ -86,27 +84,40 @@ public abstract class AbstractKotlinFoldingTest extends LightCodeInsightFixtureT
         }
     }
 
-    protected void cleanAllFoldedRegions() {
-        final FoldingModelEx model = (FoldingModelEx) myFixture.getEditor().getFoldingModel();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                for (FoldRegion region : model.getAllFoldRegions()) {
-                    model.removeFoldRegion(region);
-                }
-            }
-        };
-        model.runBatchFoldingOperation(runnable);
-    }
-
     private void doExpandSettingsTest(String fileText) {
         try {
             VirtualFile tempFile = PlatformTestCase.createTempFile("kt", null, fileText, Charset.defaultCharset());
-            myFixture.testFoldingWithCollapseStatus(tempFile.getPath());
+            assertFoldingRegionsForFile(tempFile.getPath(), true);
         }
         catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    // Rewritten version of CodeInsightTestFixtureImpl.testFoldingRegions(verificationFileName, true).
+    // Configure test with custom file name to force creating different editors for normal and inverted tests.
+    private void assertFoldingRegionsForFile(String verificationFileName, boolean doCheckCollapseStatus) {
+        String START_FOLD = "<fold\\stext=\'[^\']*\'(\\sexpand=\'[^\']*\')*>";
+        String END_FOLD = "</fold>";
+
+        String expectedContent;
+        File file = new File(verificationFileName);
+
+        try {
+            expectedContent = FileUtil.loadFile(file);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Assert.assertNotNull(expectedContent);
+
+        expectedContent = StringUtil.replace(expectedContent, "\r", "");
+        String cleanContent = expectedContent.replaceAll(START_FOLD, "").replaceAll(END_FOLD, "");
+
+        myFixture.configureByText(file.getName(), cleanContent);
+        String actual = ((CodeInsightTestFixtureImpl)myFixture).getFoldingDescription(doCheckCollapseStatus);
+
+        Assert.assertEquals(expectedContent, actual);
     }
 
     @NotNull

@@ -13,3 +13,4 @@ tmp
 workspace.xml
 *.versionsBackup
 /idea/testData/debugger/tinyApp/classes*
+/jps-plugin/testData/kannotator

@@ -71,6 +71,7 @@ public abstract class AbstractKotlinGotoTest extends JetLightCodeInsightFixtureT
         return dirPath;
     }
 
+    @NotNull
     @Override
     protected String fileName() {
         return getTestName(true) + ".kt";

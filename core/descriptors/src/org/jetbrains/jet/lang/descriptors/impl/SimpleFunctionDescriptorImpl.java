@@ -37,8 +37,10 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @Nullable SimpleFunctionDescriptor original,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @NotNull Kind kind) {
-        super(containingDeclaration, original, annotations, name, kind);
+            @NotNull Kind kind,
+            @NotNull SourceElement source
+    ) {
+        super(containingDeclaration, original, annotations, name, kind, source);
     }
 
     @NotNull
@@ -46,9 +48,10 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull SourceElement source
     ) {
-        return new SimpleFunctionDescriptorImpl(containingDeclaration, null, annotations, name, kind);
+        return new SimpleFunctionDescriptorImpl(containingDeclaration, null, annotations, name, kind, source);
     }
 
 
@@ -65,7 +68,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     ) {
         super.initialize(receiverParameterType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType,
                          modality, visibility);
-        this.inlineStrategy = InlineUtil.getInlineType(getAnnotations());
+        this.inlineStrategy = InlineUtil.getInlineType(this);
         return this;
     }
 
@@ -88,7 +91,9 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                 // TODO : safeSubstitute
                 getAnnotations(),
                 getName(),
-                kind);
+                kind,
+                SourceElement.NO_SOURCE
+                );
     }
 
     @NotNull

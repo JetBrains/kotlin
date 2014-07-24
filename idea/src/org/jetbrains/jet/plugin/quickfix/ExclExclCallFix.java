@@ -34,6 +34,8 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class ExclExclCallFix implements IntentionAction {
 
@@ -83,14 +85,15 @@ public class ExclExclCallFix implements IntentionAction {
             return;
         }
 
+        JetPsiFactory psiFactory = JetPsiFactory(project);
         if (!isRemove) {
             JetExpression modifiedExpression = getExpressionForIntroduceCall(editor, file);
-            JetExpression exclExclExpression = JetPsiFactory.createExpression(project, modifiedExpression.getText() + "!!");
+            JetExpression exclExclExpression = psiFactory.createExpression(modifiedExpression.getText() + "!!");
             modifiedExpression.replace(exclExclExpression);
         }
         else {
             JetPostfixExpression postfixExpression = getExclExclPostfixExpression(editor, file);
-            JetExpression expression = JetPsiFactory.createExpression(project, postfixExpression.getBaseExpression().getText());
+            JetExpression expression = psiFactory.createExpression(postfixExpression.getBaseExpression().getText());
             postfixExpression.replace(expression);
         }
     }

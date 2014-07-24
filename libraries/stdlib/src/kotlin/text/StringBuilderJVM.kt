@@ -1,7 +1,9 @@
 package kotlin
 
+import kotlin.properties.*
+
 /** Line separator for current system. */
-val LINE_SEPARATOR: String = System.getProperty("line.separator")!!
+val LINE_SEPARATOR: String by Delegates.lazy { System.getProperty("line.separator")!! }
 
 /** Appends line separator to Appendable. */
 public fun Appendable.appendln(): Appendable = append(LINE_SEPARATOR)

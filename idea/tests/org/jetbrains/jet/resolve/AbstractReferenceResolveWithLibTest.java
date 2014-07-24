@@ -17,6 +17,7 @@
 package org.jetbrains.jet.resolve;
 
 import com.intellij.testFramework.LightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 

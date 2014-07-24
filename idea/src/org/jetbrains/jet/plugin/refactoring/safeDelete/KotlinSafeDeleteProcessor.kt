@@ -219,10 +219,10 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                     .mapTo(ArrayList<String>()) { overridenDescriptor ->
                         JetBundle.message(
                                 "x.implements.y",
-                                JetRefactoringUtil.formatFunction(declarationDescriptor, bindingContext, true),
-                                JetRefactoringUtil.formatClass(declarationDescriptor.getContainingDeclaration(), bindingContext, true),
-                                JetRefactoringUtil.formatFunction(overridenDescriptor, bindingContext, true),
-                                JetRefactoringUtil.formatClass(overridenDescriptor.getContainingDeclaration(), bindingContext, true)
+                                JetRefactoringUtil.formatFunction(declarationDescriptor, true),
+                                JetRefactoringUtil.formatClass(declarationDescriptor.getContainingDeclaration(), true),
+                                JetRefactoringUtil.formatFunction(overridenDescriptor, true),
+                                JetRefactoringUtil.formatClass(overridenDescriptor.getContainingDeclaration(), true)
                         )
                     }
         }

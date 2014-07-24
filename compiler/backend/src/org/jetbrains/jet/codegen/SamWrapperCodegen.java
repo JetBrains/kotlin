@@ -17,10 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -30,9 +26,13 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Collections;
 
@@ -69,7 +69,8 @@ public class SamWrapperCodegen {
                 samType.getJavaClassDescriptor().getContainingDeclaration(),
                 fqName.shortName(),
                 Modality.FINAL,
-                Collections.singleton(samType.getType())
+                Collections.singleton(samType.getType()),
+                SourceElement.NO_SOURCE
         );
         // e.g. compare(T, T)
         SimpleFunctionDescriptor erasedInterfaceFunction = samType.getAbstractMethod().getOriginal().copy(

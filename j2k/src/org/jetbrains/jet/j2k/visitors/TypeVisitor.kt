@@ -31,16 +31,16 @@ class TypeVisitor(private val converter: TypeConverter, private val importNames:
     override fun visitPrimitiveType(primitiveType: PsiPrimitiveType): Type {
         val name = primitiveType.getCanonicalText()
         return if (name == "void") {
-            Type.Unit
+            UnitType()
         }
         else if (PRIMITIVE_TYPES_NAMES.contains(name)) {
-            PrimitiveType(Identifier(StringUtil.capitalize(name)))
+            PrimitiveType(Identifier(StringUtil.capitalize(name)).assignNoPrototype())
         }
         else if (name == "null") {
-            Type.Null
+            NullType()
         }
         else {
-            PrimitiveType(Identifier(name))
+            PrimitiveType(Identifier(name).assignNoPrototype())
         }
     }
 
@@ -81,7 +81,7 @@ class TypeVisitor(private val converter: TypeConverter, private val importNames:
                 if (kotlinShortName == getShortName(javaClassName!!) && importNames.contains(getPackageName(javaClassName) + ".*")) {
                     classesToImport.add(kotlinClassName)
                 }
-                return Identifier(kotlinShortName)
+                return Identifier(kotlinShortName).assignNoPrototype()
             }
         }
 
@@ -95,11 +95,11 @@ class TypeVisitor(private val converter: TypeConverter, private val importNames:
                     result = Identifier.toKotlin(codeRefElement.getReferenceName()!!) + "." + result
                     qualifier = codeRefElement.getQualifier()
                 }
-                return Identifier(result)
+                return Identifier(result).assignNoPrototype()
             }
         }
 
-        return Identifier(classType.getClassName() ?: "")
+        return Identifier(classType.getClassName() ?: "").assignNoPrototype()
     }
 
     private fun getPackageName(className: String): String = className.substring(0, className.lastIndexOf('.'))

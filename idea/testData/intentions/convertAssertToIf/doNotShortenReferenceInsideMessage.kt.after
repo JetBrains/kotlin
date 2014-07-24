@@ -1,0 +1,7 @@
+fun main(args: Array<String>) {
+    if (!false) {
+        throw AssertionError("mess": kotlin.String)
+    }
+}
+
+// WITH_RUNTIME

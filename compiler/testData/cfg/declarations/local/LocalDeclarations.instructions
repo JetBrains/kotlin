@@ -35,16 +35,16 @@ fun doSmth(i: Int) {}
 L0:
   1 <START>
     v(i: Int)
-    magic(i: Int) -> <v0>
+    magic[FAKE_INITIALIZER](i: Int) -> <v0>
     w(i|<v0>)
   2 mark({})
     read (Unit)
 L1:
-  1 <END>                    NEXT:[<SINK>]
+  1 <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                  PREV:[]
+    <ERROR>                                    PREV:[]
 sink:
-    <SINK>                   PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<ERROR>, <END>]
 =====================
 == test1 ==
 fun test1() {
@@ -63,7 +63,7 @@ L0:
     mark(object { val x : Int { $x = 1 } })
     v(val x : Int)
   3 mark({ $x = 1 })
-    magic($x) -> <v0>
+    magic[IMPLICIT_RECEIVER]($x) -> <v0>
     r(1) -> <v1>
     w($x|<v0>, <v1>)
   2 r(object { val x : Int { $x = 1 } }) -> <v2>
@@ -87,15 +87,15 @@ L0:
   1 <START>
     v(val x : Int)
   2 mark({ $x = 1 })
-    magic($x) -> <v0>
+    magic[IMPLICIT_RECEIVER]($x) -> <v0>
     r(1) -> <v1>
     w($x|<v0>, <v1>)
 L1:
-  1 <END>                NEXT:[<SINK>]
+  1 <END>                                   NEXT:[<SINK>]
 error:
-    <ERROR>              PREV:[]
+    <ERROR>                                 PREV:[]
 sink:
-    <SINK>               PREV:[<ERROR>, <END>]
+    <SINK>                                  PREV:[<ERROR>, <END>]
 =====================
 == test2 ==
 fun test2() {
@@ -161,15 +161,15 @@ fun inner_bar() {
 L3:
   3 <START>
   4 mark({ y = 10 })
-    magic(y) -> <v0>
+    magic[IMPLICIT_RECEIVER](y) -> <v0>
     r(10) -> <v1>
     w(y|<v0>, <v1>)
 L4:
-  3 <END>               NEXT:[<SINK>]
+  3 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>             PREV:[]
+    <ERROR>                                PREV:[]
 sink:
-    <SINK>              PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<ERROR>, <END>]
 =====================
 == test4 ==
 fun test4() {
@@ -193,7 +193,7 @@ L0:
     v(val x : Int)
     v(val y : Int)
   3 mark({ $x = 1 })
-    magic($x) -> <v0>
+    magic[IMPLICIT_RECEIVER]($x) -> <v0>
     r(1) -> <v1>
     w($x|<v0>, <v1>)
   2 jmp?(L2)                                                                                NEXT:[r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }) -> <v2>, d(fun ggg() { y = 10 })]
@@ -216,15 +216,15 @@ fun ggg() {
 L3:
   3 <START>
   4 mark({ y = 10 })
-    magic(y) -> <v0>
+    magic[IMPLICIT_RECEIVER](y) -> <v0>
     r(10) -> <v1>
     w(y|<v0>, <v1>)
 L4:
-  3 <END>               NEXT:[<SINK>]
+  3 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>             PREV:[]
+    <ERROR>                                PREV:[]
 sink:
-    <SINK>              PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<ERROR>, <END>]
 =====================
 == test5 ==
 fun test5() {
@@ -251,7 +251,7 @@ L0:
     r(1) -> <v0>
     w(x|<v0>)
   3 mark({ $x = 2 })
-    magic($x) -> <v1>
+    magic[IMPLICIT_RECEIVER]($x) -> <v1>
     r(2) -> <v2>
     w($x|<v1>, <v2>)
   2 jmp?(L2)                                                                                     NEXT:[jmp?(L5), d(fun foo() { x = 3 })]
@@ -277,15 +277,15 @@ fun foo() {
 L3:
   3 <START>
   4 mark({ x = 3 })
-    magic(x) -> <v0>
+    magic[IMPLICIT_RECEIVER](x) -> <v0>
     r(3) -> <v1>
     w(x|<v0>, <v1>)
 L4:
-  3 <END>               NEXT:[<SINK>]
+  3 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>             PREV:[]
+    <ERROR>                                PREV:[]
 sink:
-    <SINK>              PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<ERROR>, <END>]
 =====================
 == bar ==
 fun bar() {
@@ -295,13 +295,13 @@ fun bar() {
 L6:
   3 <START>
   4 mark({ x = 4 })
-    magic(x) -> <v0>
+    magic[IMPLICIT_RECEIVER](x) -> <v0>
     r(4) -> <v1>
     w(x|<v0>, <v1>)
 L7:
-  3 <END>               NEXT:[<SINK>]
+  3 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>             PREV:[]
+    <ERROR>                                PREV:[]
 sink:
-    <SINK>              PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<ERROR>, <END>]
 =====================

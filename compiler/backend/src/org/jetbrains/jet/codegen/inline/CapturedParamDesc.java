@@ -18,21 +18,11 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 
 public class CapturedParamDesc {
-
     private final CapturedParamOwner containingLambda;
-
     private final String fieldName;
-
     private final Type type;
-
-    public CapturedParamDesc(@NotNull CapturedParamOwner containingLambda, @NotNull EnclosedValueDescriptor descriptor) {
-        this.containingLambda = containingLambda;
-        this.type = descriptor.getType();
-        this.fieldName = descriptor.getFieldName();
-    }
 
     public CapturedParamDesc(@NotNull CapturedParamOwner containingLambda, @NotNull String fieldName, @NotNull Type type) {
         this.containingLambda = containingLambda;
@@ -40,19 +30,22 @@ public class CapturedParamDesc {
         this.type = type;
     }
 
-    public CapturedParamOwner getContainingLambda() {
-        return containingLambda;
+    @NotNull
+    public String getContainingLambdaName() {
+        return containingLambda.getType().getInternalName();
     }
 
+    @NotNull
     public String getFieldName() {
         return fieldName;
     }
 
+    @NotNull
     public Type getType() {
         return type;
     }
 
-
+    @NotNull
     public static CapturedParamDesc createDesc(@NotNull CapturedParamOwner containingLambdaInfo, @NotNull String fieldName, @NotNull Type type) {
         return new CapturedParamDesc(containingLambdaInfo, fieldName, type);
     }

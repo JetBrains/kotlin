@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     private final PsiElement function;
     private final boolean isInherited;
@@ -44,7 +46,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             JetExpression callee = element.getCalleeExpression();
 
             if (callee instanceof JetSimpleNameExpression)
-                callee.replace(JetPsiFactory.createSimpleName(getProject(), changeInfo.getNewName()));
+                callee.replace(JetPsiFactory(getProject()).createSimpleName(changeInfo.getNewName()));
         }
 
         if (arguments != null) {
@@ -81,7 +83,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
 
         parametersBuilder.append(')');
-        JetValueArgumentList newArguments = JetPsiFactory.createCallArguments(getProject(), parametersBuilder.toString());
+        JetValueArgumentList newArguments = JetPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
 
         Map<Integer, JetValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
         int argIndex = 0;
@@ -146,7 +148,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
         if (identifier != null) {
             String newName = parameterInfo.getInheritedName(isInherited, function, changeInfo.getFunctionDescriptor());
-            identifier.replace(JetPsiFactory.createIdentifier(getProject(), newName));
+            identifier.replace(JetPsiFactory(getProject()).createIdentifier(newName));
         }
     }
 }

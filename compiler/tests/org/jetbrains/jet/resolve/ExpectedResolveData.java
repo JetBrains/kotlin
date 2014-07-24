@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -279,7 +279,7 @@ public abstract class ExpectedResolveData {
 
             PsiElement actual = referenceTarget == null
                                 ? bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression)
-                                : BindingContextUtils.descriptorToDeclaration(bindingContext, referenceTarget);
+                                : DescriptorToSourceUtils.descriptorToDeclaration(referenceTarget);
             if (actual instanceof JetSimpleNameExpression) {
                 actual = ((JetSimpleNameExpression)actual).getIdentifier();
             }

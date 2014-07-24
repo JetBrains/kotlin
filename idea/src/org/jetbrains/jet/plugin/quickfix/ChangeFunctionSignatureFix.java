@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -79,8 +79,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             return false;
         }
 
-        BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) file);
-        List<PsiElement> declarations = BindingContextUtils.callableDescriptorToDeclarations(bindingContext, functionDescriptor);
+        List<PsiElement> declarations = DescriptorToSourceUtils.callableDescriptorToDeclarations(functionDescriptor);
         if (declarations.isEmpty()) {
             return false;
         }

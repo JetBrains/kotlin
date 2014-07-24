@@ -27,8 +27,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.LazyType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
@@ -115,6 +117,8 @@ public class DescriptorUtils {
         return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
+    // WARNING! Don't use this method in JVM backend, use JvmCodegenUtil.isCallInsideSameModuleAsDeclared() instead.
+    // The latter handles compilation against compiled part of our module correctly.
     public static boolean areInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
         return getContainingModule(first).equals(getContainingModule(second));
     }
@@ -269,16 +273,6 @@ public class DescriptorUtils {
         return superClassDescriptor.equals(KotlinBuiltIns.getInstance().getAny());
     }
 
-    public static boolean isEnumClassObject(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.CLASS_OBJECT) {
-            DeclarationDescriptor containing = descriptor.getContainingDeclaration();
-            if ((containing instanceof ClassDescriptor) && ((ClassDescriptor) containing).getKind() == ClassKind.ENUM_CLASS) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean isSyntheticClassObject(@NotNull DeclarationDescriptor descriptor) {
         if (isClassObject(descriptor)) {
             DeclarationDescriptor containing = descriptor.getContainingDeclaration();
@@ -341,20 +335,6 @@ public class DescriptorUtils {
                 return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
             }
         });
-    }
-
-    public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
-        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
-        return "valueOf".equals(functionDescriptor.getName().asString())
-               && methodTypeParameters.size() == 1
-               && JetTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
-    }
-
-    public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor functionDescriptor) {
-        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        return "values".equals(functionDescriptor.getName().asString())
-               && methodTypeParameters.isEmpty();
     }
 
     /**

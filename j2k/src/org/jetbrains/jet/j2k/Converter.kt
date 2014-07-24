@@ -23,7 +23,7 @@ import java.util.*
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.openapi.project.Project
-import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.util.PsiMethodUtil
 
 public trait ConversionScope {
     public fun contains(element: PsiElement): Boolean
@@ -38,9 +38,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
                         val methodReturnType: PsiType?,
                         val expressionVisitorFactory: (Converter) -> ExpressionVisitor,
                         val statementVisitorFactory: (Converter) -> StatementVisitor)
-
-    val typeConverter: TypeConverter get() = state.typeConverter
-    val methodReturnType: PsiType? get() = state.methodReturnType
+    val typeConverter: TypeConverter = state.typeConverter
+    val methodReturnType: PsiType? = state.methodReturnType
 
     private val expressionVisitor = state.expressionVisitorFactory(this)
     private val statementVisitor = state.statementVisitorFactory(this)
@@ -63,13 +62,13 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val converted = convertTopElement(element) ?: return ""
         val builder = CodeBuilder(element)
         builder.append(converted)
-        return builder.result
+        return AfterConversionPass(project).run(builder.result)
     }
 
     private fun convertTopElement(element: PsiElement?): Element? = when (element) {
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
-        is PsiMethod -> convertMethod(element, HashSet())
+        is PsiMethod -> convertMethod(element, null, null)
         is PsiField -> convertField(element)
         is PsiStatement -> convertStatement(element)
         is PsiExpression -> convertExpression(element)
@@ -80,7 +79,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         else -> null
     }
 
-    fun convertFile(javaFile: PsiJavaFile): File {
+    private fun convertFile(javaFile: PsiJavaFile): File {
         var convertedChildren = javaFile.getChildren().map {
             if (it is PsiImportList) {
                 val importList = convertImportList(it)
@@ -102,17 +101,27 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return File(convertedChildren, createMainFunction(javaFile)).assignPrototype(javaFile)
     }
 
-    fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
-        return AnonymousClassBody(convertBody(anonymousClass), anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
+    private fun createMainFunction(file: PsiJavaFile): String? {
+        for (`class` in file.getClasses()) {
+            val mainMethod = PsiMethodUtil.findMainMethod(`class`)
+            if (mainMethod != null) {
+                return "fun main(args: Array<String>) = ${`class`.getName()}.${mainMethod.getName()}(args)"
+            }
+        }
+        return null
     }
 
-    private fun convertBody(psiClass: PsiClass): ClassBody {
+    fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
+        return AnonymousClassBody(convertBody(anonymousClass, null), anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
+    }
+
+    private fun convertBody(psiClass: PsiClass, constructorConverter: ConstructorConverter?): ClassBody {
         val membersToRemove = HashSet<PsiMember>()
         val convertedMembers = LinkedHashMap<PsiMember, Member>()
         for (element in psiClass.getChildren()) {
             if (element is PsiMember) {
-                val converted = convertMember(element, membersToRemove)
-                if (!converted.isEmpty) {
+                val converted = convertMember(element, membersToRemove, constructorConverter)
+                if (converted != null && !converted.isEmpty) {
                     convertedMembers.put(element, converted)
                 }
             }
@@ -122,31 +131,47 @@ public class Converter private(val project: Project, val settings: ConverterSett
             convertedMembers.remove(member)
         }
 
-        val primaryConstructor = convertedMembers.values().filterIsInstance(javaClass<PrimaryConstructor>()).firstOrNull()
-        val secondaryConstructors = convertedMembers.values().filterIsInstance(javaClass<SecondaryConstructor>())
-
         val useClassObject = shouldGenerateClassObject(psiClass, convertedMembers)
 
-        val normalMembers = ArrayList<Member>()
+        val members = ArrayList<Member>()
         val classObjectMembers = ArrayList<Member>()
+        val factoryFunctions = ArrayList<FactoryFunction>()
+        var primaryConstructorSignature: PrimaryConstructorSignature? = null
         for ((psiMember, member) in convertedMembers) {
-            if (member is Constructor) continue
-            if (useClassObject && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
+            if (member is PrimaryConstructor) {
+                assert(primaryConstructorSignature == null)
+                primaryConstructorSignature = member.signature()
+                val initializer = member.initializer()
+                if (initializer != null) {
+                    members.add(initializer)
+                }
+            }
+            else if (member is FactoryFunction) {
+                factoryFunctions.add(member)
+            }
+            else if (useClassObject &&
+                    psiMember.hasModifierProperty(PsiModifier.STATIC) &&
+                    // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
+                    (psiMember !is PsiClass || (member as Class).body.factoryFunctions.isNotEmpty())) {
                 classObjectMembers.add(member)
             }
             else {
-                normalMembers.add(member)
+                members.add(member)
             }
         }
 
         val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
-        return ClassBody(primaryConstructor, secondaryConstructors, normalMembers, classObjectMembers, lBrace, rBrace)
+        return ClassBody(primaryConstructorSignature, members, classObjectMembers, factoryFunctions, lBrace, rBrace)
     }
 
     // do not convert private static methods into class object if possible
     private fun shouldGenerateClassObject(psiClass: PsiClass, convertedMembers: Map<PsiMember, Member>): Boolean {
         if (psiClass.isEnum()) return false
+
+        // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
+        if (convertedMembers.values().any { it is Class && !it.modifiers.contains(Modifier.INNER) && it.body.factoryFunctions.isNotEmpty() }) return true
+
         val members = convertedMembers.keySet().filter { !it.isConstructor() }
         val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance(javaClass<PsiClass>()).filter { it.hasModifierProperty(PsiModifier.STATIC) }
@@ -158,8 +183,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
         }
     }
 
-    private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>): Member = when (member) {
-        is PsiMethod -> convertMethod(member, membersToRemove)
+    private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>, constructorConverter: ConstructorConverter?): Member? = when (member) {
+        is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter)
         is PsiField -> convertField(member)
         is PsiClass -> convertClass(member)
         is PsiClassInitializer -> convertInitializer(member)
@@ -173,7 +198,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val implementsTypes = convertToNotNullableTypes(psiClass.getImplementsListTypes())
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
         val name = psiClass.declarationIdentifier()
-        var classBody = convertBody(psiClass)
+
+        val constructorConverter = ConstructorConverter(psiClass, this)
+        var classBody = convertBody(psiClass, constructorConverter)
+        classBody = constructorConverter.postProcessConstructors(classBody)
 
         return when {
             psiClass.isInterface() -> Trait(name, annotations, modifiers, typeParameters, extendsTypes, listOf(), implementsTypes, classBody)
@@ -181,22 +209,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
             psiClass.isEnum() -> Enum(name, annotations, modifiers, typeParameters, listOf(), listOf(), implementsTypes, classBody)
 
             else -> {
-                if (psiClass.getPrimaryConstructor() == null && psiClass.getConstructors().size > 1) {
-                    classBody = generateArtificialPrimaryConstructor(name, classBody)
-                }
-
-                val baseClassParams: List<Expression> = run {
-                    val superVisitor = SuperVisitor()
-                    psiClass.accept(superVisitor)
-                    val resolvedSuperCallParameters = superVisitor.resolvedSuperCallParameters
-                    if (resolvedSuperCallParameters.size() == 1) {
-                        convertExpressions(resolvedSuperCallParameters.single().getExpressions())
-                    }
-                    else {
-                        listOf()
-                    }
-                }
-
                 if (settings.openByDefault && !psiClass.hasModifierProperty(PsiModifier.FINAL)) {
                     modifiers = modifiers.with(Modifier.OPEN)
                 }
@@ -205,66 +217,9 @@ public class Converter private(val project: Project, val settings: ConverterSett
                     modifiers = modifiers.with(Modifier.INNER)
                 }
 
-                Class(name, annotations, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, classBody)
+                Class(name, annotations, modifiers, typeParameters, extendsTypes, constructorConverter.baseClassParams, implementsTypes, classBody)
             }
         }.assignPrototype(psiClass)
-    }
-
-    private fun generateArtificialPrimaryConstructor(className: Identifier, classBody: ClassBody): ClassBody {
-        assert(classBody.primaryConstructor == null)
-
-        val finalOrWithEmptyInitializerFields = classBody.normalMembers.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.isEmpty }
-        val initializers = HashMap<Field, Expression>()
-        for (constructor in classBody.secondaryConstructors) {
-            for (field in finalOrWithEmptyInitializerFields) {
-                initializers.put(field, getDefaultInitializer(field))
-            }
-
-            val newStatements = ArrayList<Statement>()
-            for (statement in constructor.block!!.statements) {
-                var keepStatement = true
-                if (statement is AssignmentExpression) {
-                    val assignee = statement.left
-                    if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == SecondaryConstructor.tempValIdentifier.name) {
-                        val name = (assignee.identifier as Identifier).name
-                        for (field in finalOrWithEmptyInitializerFields) {
-                            if (name == field.identifier.name) {
-                                initializers.put(field, statement.right)
-                                keepStatement = false
-                            }
-
-                        }
-                    }
-
-                }
-
-                if (keepStatement) {
-                    newStatements.add(statement)
-                }
-
-            }
-
-            val initializer = MethodCallExpression.buildNotNull(null, className.name, finalOrWithEmptyInitializerFields.map { initializers[it]!! })
-            val localVar = LocalVariable(SecondaryConstructor.tempValIdentifier,
-                                         Annotations.Empty,
-                                         Modifiers.Empty,
-                                         { ClassType(className, listOf(), Nullability.NotNull, settings) },
-                                         initializer,
-                                         true,
-                                         settings)
-            newStatements.add(0, DeclarationStatement(listOf(localVar)))
-            constructor.block = Block(newStatements, LBrace(), RBrace())
-        }
-
-        //TODO: comments?
-        val parameters = finalOrWithEmptyInitializerFields.map { field ->
-            val varValModifier = if (field.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
-            Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS })
-        }
-
-        val primaryConstructor = PrimaryConstructor(this, Annotations.Empty, Modifiers(listOf(Modifier.PRIVATE)), ParameterList(parameters), Block.Empty)
-        val updatedMembers = classBody.normalMembers.filter { !finalOrWithEmptyInitializerFields.contains(it) }
-        return ClassBody(primaryConstructor, classBody.secondaryConstructors, updatedMembers, classBody.classObjectMembers, classBody.lBrace, classBody.rBrace)
     }
 
     private fun convertInitializer(initializer: PsiClassInitializer): Initializer {
@@ -283,66 +238,73 @@ public class Converter private(val project: Project, val settings: ConverterSett
                          convertElement(field.getArgumentList()))
         }
         else {
-            val initializer = field.getInitializer()
-            val convertedType = typeConverter.convertVariableType(field)
             val isVal = isVal(field)
-            val omitType = !settings.specifyFieldTypeByDefault &&
-                    initializer != null &&
-                    (modifiers.isPrivate && (isVal || convertedType == typeConverter.convertExpressionType(initializer)) ||
-                            modifiers.isInternal && convertedType == typeConverter.convertExpressionType(initializer))
+            val typeToDeclare = variableTypeToDeclare(field,
+                                                      settings.specifyFieldTypeByDefault || modifiers.isPublic || modifiers.isProtected,
+                                                      isVal && modifiers.isPrivate)
+            val initializer = convertExpression(field.getInitializer(), field.getType())
             Field(name,
                   annotations,
                   modifiers,
-                  convertedType,
-                  convertExpression(initializer, field.getType()),
+                  typeToDeclare ?: typeConverter.convertVariableType(field),
+                  initializer,
                   isVal,
-                  !omitType,
-                  field.hasWriteAccesses(field.getContainingClass()))
+                  typeToDeclare != null,
+                  initializer.isEmpty && shouldGenerateDefaultInitializer(field))
         }
         return converted.assignPrototype(field)
     }
 
-    private fun isVal(field: PsiField): Boolean {
-        if (field.hasModifierProperty(PsiModifier.FINAL)) return true
-        if (!field.hasModifierProperty(PsiModifier.PRIVATE)) return false
-        val containingClass = field.getContainingClass() ?: return false
-        val writes = findVariableUsages(field, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
-        if (writes.size == 0) return true
-        if (writes.size > 1) return false
-        val write = writes.single()
-        val parent = write.getParent()
-        if (parent is PsiAssignmentExpression &&
-                parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
-                isQualifierEmptyOrThis(write)) {
-            val constructor = write.getContainingConstructor()
-            if (constructor != null &&
-                    constructor.getContainingClass() == containingClass &&
-                    parent.getParent() is PsiExpressionStatement &&
-                    parent.getParent()?.getParent() == constructor.getBody()) {
-                return true
-            }
-        }
-        return false
+    fun variableTypeToDeclare(variable: PsiVariable, specifyAlways: Boolean, canChangeType: Boolean): Type? {
+        fun convertType() = typeConverter.convertVariableType(variable)
+
+        if (specifyAlways) return convertType()
+
+        val initializer = variable.getInitializer()
+        if (initializer == null) return convertType()
+        if (initializer is PsiLiteralExpression && initializer.getType() == PsiType.NULL) return convertType()
+
+        if (canChangeType) return null
+
+        val convertedType = convertType()
+        var initializerType = convertedExpressionType(initializer, variable.getType())
+        if (initializerType is ErrorType) return null // do not add explicit type when initializer is not resolved, let user add it if really needed
+        return if (convertedType == initializerType) null else convertedType
     }
 
-    private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
-        return withMethodReturnType(method.getReturnType()).doConvertMethod(method, membersToRemove).assignPrototype(method)
+    private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member? {
+        return withMethodReturnType(method.getReturnType()).doConvertMethod(method, membersToRemove, constructorConverter)?.assignPrototype(method)
     }
 
-    private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
+    private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member? {
         val returnType = typeConverter.convertMethodReturnType(method)
 
-        val annotations = convertAnnotations(method) + convertThrows(method)
+        val annotations = (convertAnnotations(method) + convertThrows(method)).assignNoPrototype()
         var modifiers = convertModifiers(method)
 
-        if (method.isConstructor()) {
-            if (method.isPrimaryConstructor()) {
-                return convertPrimaryConstructor(method, annotations, modifiers, membersToRemove)
+        val statementsToInsert = ArrayList<Statement>()
+        for (parameter in method.getParameterList().getParameters()) {
+            if (parameter.hasWriteAccesses(method)) {
+                val variable = LocalVariable(parameter.declarationIdentifier(),
+                                             Annotations.Empty,
+                                             Modifiers.Empty,
+                                             null,
+                                             parameter.declarationIdentifier(),
+                                             false).assignNoPrototype()
+                statementsToInsert.add(DeclarationStatement(listOf(variable)).assignNoPrototype())
+            }
+        }
+        val postProcessBody: (Block) -> Block = { body ->
+            if (statementsToInsert.isEmpty()) {
+                body
             }
             else {
-                val params = convertParameterList(method.getParameterList())
-                return SecondaryConstructor(this, annotations, modifiers, params, convertBlock(method.getBody()))
+                Block(statementsToInsert + body.statements, body.lBrace, body.rBrace).assignPrototypesFrom(body)
             }
+        }
+
+        if (method.isConstructor() && constructorConverter != null) {
+            return constructorConverter.convertConstructor(method, annotations, modifiers, membersToRemove!!, postProcessBody)
         }
         else {
             val isOverride = isOverride(method)
@@ -362,8 +324,8 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
             var params = convertParameterList(method.getParameterList())
             val typeParameterList = convertTypeParameterList(method.getTypeParameterList())
-            val block = convertBlock(method.getBody())
-            return Function(this, method.declarationIdentifier(), annotations, modifiers, returnType, typeParameterList, params, block, containingClass?.isInterface() ?: false)
+            var body = postProcessBody(convertBlock(method.getBody()))
+            return Function(method.declarationIdentifier(), annotations, modifiers, returnType, typeParameterList, params, body, containingClass?.isInterface() ?: false)
         }
     }
 
@@ -402,94 +364,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return false
     }
 
-    private fun convertPrimaryConstructor(constructor: PsiMethod,
-                                          annotations: Annotations,
-                                          modifiers: Modifiers,
-                                          membersToRemove: MutableSet<PsiMember>): PrimaryConstructor {
-        val params = constructor.getParameterList().getParameters()
-        val parameterToField = HashMap<PsiParameter, Pair<PsiField, Type>>()
-        val body = constructor.getBody()
-        val block = if (body != null) {
-            val statementsToRemove = HashSet<PsiStatement>()
-            val usageReplacementMap = HashMap<PsiVariable, String>()
-            for (parameter in params) {
-                val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, constructor) ?: continue
-
-                val fieldType = typeConverter.convertVariableType(field)
-                val parameterType = typeConverter.convertVariableType(parameter)
-                // types can be different only in nullability
-                val `type` = if (fieldType == parameterType) {
-                    fieldType
-                }
-                else if (fieldType.toNotNullType() == parameterType.toNotNullType()) {
-                    if (fieldType.isNullable) fieldType else parameterType // prefer nullable one
-                }
-                else {
-                    continue
-                }
-
-                parameterToField.put(parameter, field to `type`)
-                statementsToRemove.add(initializationStatement)
-                membersToRemove.add(field)
-
-                if (field.getName() != parameter.getName()) {
-                    usageReplacementMap.put(parameter, field.getName()!!)
-                }
-            }
-
-            withExpressionVisitor { ExpressionVisitor(it, usageReplacementMap) }.convertBlock(body, false, { !statementsToRemove.contains(it) })
-        }
-        else {
-            Block.Empty
-        }
-
-        val parameterList = ParameterList(params.map { parameter ->
-            if (!parameterToField.containsKey(parameter)) {
-                convertParameter(parameter)
-            }
-            else {
-                val (field, `type`) = parameterToField[parameter]!!
-                Parameter(field.declarationIdentifier(),
-                          `type`,
-                          if (isVal(field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
-                          convertAnnotations(parameter) + convertAnnotations(field),
-                          convertModifiers(field).filter { it in ACCESS_MODIFIERS }).assignPrototypes(listOf(parameter, field), inheritBlankLinesBefore = false)
-            }
-        })
-        return PrimaryConstructor(this, annotations, modifiers, parameterList, block).assignPrototype(constructor)
-    }
-
-    private fun findBackingFieldForConstructorParameter(parameter: PsiParameter, constructor: PsiMethod): Pair<PsiField, PsiStatement>? {
-        val body = constructor.getBody() ?: return null
-
-        val refs = findVariableUsages(parameter, body)
-
-        if (refs.any { PsiUtil.isAccessedForWriting(it) }) return null
-
-        for (ref in refs) {
-            val assignment = ref.getParent() as? PsiAssignmentExpression ?: continue
-            if (assignment.getOperationSign().getTokenType() != JavaTokenType.EQ) continue
-            val assignee = assignment.getLExpression() as? PsiReferenceExpression ?: continue
-            if (!isQualifierEmptyOrThis(assignee)) continue
-            val field = assignee.resolve() as? PsiField ?: continue
-            if (field.getContainingClass() != constructor.getContainingClass()) continue
-            if (field.hasModifierProperty(PsiModifier.STATIC)) continue
-            if (field.getInitializer() != null) continue
-
-            // assignment should be a top-level statement
-            val statement = assignment.getParent() as? PsiExpressionStatement ?: continue
-            if (statement.getParent() != body) continue
-
-            // and no other assignments to field should exist in the constructor
-            if (findVariableUsages(field, body).any { it != assignee && PsiUtil.isAccessedForWriting(it) && isQualifierEmptyOrThis(it) }) continue
-            //TODO: check access to field before assignment
-
-            return field to statement
-        }
-
-        return null
-    }
-
     fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = { true }): Block {
         if (block == null) return Block.Empty
 
@@ -526,7 +400,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     }
 
     fun convertTypeElement(element: PsiTypeElement?): TypeElement
-            = TypeElement(if (element == null) Type.Empty else typeConverter.convertType(element.getType())).assignPrototype(element)
+            = TypeElement(if (element == null) ErrorType().assignNoPrototype() else typeConverter.convertType(element.getType())).assignPrototype(element)
 
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
             = types.map { typeConverter.convertType(it, Nullability.NotNull) }
@@ -537,42 +411,78 @@ public class Converter private(val project: Project, val settings: ConverterSett
     fun convertParameter(parameter: PsiParameter,
                          nullability: Nullability = Nullability.Default,
                          varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
-                         modifiers: Modifiers = Modifiers.Empty): Parameter {
+                         modifiers: Modifiers = Modifiers.Empty,
+                         defaultValue: Expression? = null): Parameter {
         var `type` = typeConverter.convertVariableType(parameter)
         when (nullability) {
             Nullability.NotNull -> `type` = `type`.toNotNullType()
             Nullability.Nullable -> `type` = `type`.toNullableType()
         }
-        return Parameter(parameter.declarationIdentifier(), `type`, varValModifier, convertAnnotations(parameter), modifiers).assignPrototype(parameter)
+        return Parameter(parameter.declarationIdentifier(), `type`, varValModifier, convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter)
     }
 
-    fun convertExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
-        if (argument == null) return Identifier.Empty
+    fun convertExpression(expression: PsiExpression?, expectedType: PsiType?): Expression {
+        if (expression == null) return Identifier.Empty
 
-        var expression = convertExpression(argument)
-        val actualType = argument.getType()
-        val isPrimitiveTypeOrNull = actualType == null || actualType is PsiPrimitiveType
-        if (isPrimitiveTypeOrNull && expression.isNullable) {
-            expression = BangBangExpression(expression)
+        var convertedExpression = convertExpression(expression)
+        if (expectedType == null || expectedType == PsiType.VOID) return convertedExpression
+
+        val actualType = expression.getType()
+        if (actualType == null) return convertedExpression
+
+        if (convertedExpression.isNullable &&
+                (actualType is PsiPrimitiveType || actualType is PsiClassType && expectedType is PsiPrimitiveType)) {
+            convertedExpression = BangBangExpression(convertedExpression).assignNoPrototype()
         }
-        else if (expectedType is PsiPrimitiveType && actualType is PsiClassType) {
-            if (PsiPrimitiveType.getUnboxedType(actualType) == expectedType) {
-                expression = BangBangExpression(expression)
+
+        if (needConversion(actualType, expectedType) && convertedExpression !is LiteralExpression) {
+            val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedType.getCanonicalText()]
+            if (conversion != null) {
+                convertedExpression = MethodCallExpression.buildNotNull(convertedExpression, conversion)
             }
         }
 
-        if (actualType != null) {
-            if (isConversionNeeded(actualType, expectedType) && expression !is LiteralExpression) {
-                val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedType?.getCanonicalText()]
-                if (conversion != null) {
-                    expression = MethodCallExpression.buildNotNull(expression, conversion)
-                }
-            }
+        return convertedExpression.assignPrototype(expression)
+    }
 
+    fun convertedExpressionType(expression: PsiExpression, expectedType: PsiType): Type {
+        var convertedExpression = convertExpression(expression)
+        val actualType = expression.getType()
+        if (actualType == null) return ErrorType()
+        var resultType = typeConverter.convertType(actualType, if (convertedExpression.isNullable) Nullability.Nullable else Nullability.NotNull)
+
+        if (actualType is PsiPrimitiveType && resultType.isNullable ||
+                expectedType is PsiPrimitiveType && actualType is PsiClassType) {
+            resultType = resultType.toNotNullType()
         }
 
-        return expression.assignPrototype(argument)
+        if (needConversion(actualType, expectedType) && convertedExpression !is LiteralExpression) {
+            val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedType.getCanonicalText()]
+            if (conversion != null) {
+                resultType = typeConverter.convertType(expectedType, Nullability.NotNull)
+            }
+        }
+
+        return resultType
     }
+
+    private fun needConversion(actual: PsiType, expected: PsiType): Boolean {
+        val expectedStr = expected.getCanonicalText()
+        val actualStr = actual.getCanonicalText()
+        return expectedStr != actualStr &&
+                expectedStr != typeConversionMap[actualStr] &&
+                actualStr != typeConversionMap[expectedStr]
+    }
+
+    private val typeConversionMap: Map<String, String> = mapOf(
+            JAVA_LANG_BYTE to "byte",
+            JAVA_LANG_SHORT to "short",
+            JAVA_LANG_INTEGER to "int",
+            JAVA_LANG_LONG to "long",
+            JAVA_LANG_FLOAT to "float",
+            JAVA_LANG_DOUBLE to "double",
+            JAVA_LANG_CHARACTER to "char"
+    )
 
     fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
         if (identifier == null) return Identifier.Empty
@@ -580,8 +490,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return Identifier(identifier.getText()!!).assignPrototype(identifier)
     }
 
-    fun convertModifiers(owner: PsiModifierListOwner): Modifiers
-            = Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second }).assignPrototype(owner.getModifierList(), false)
+    fun convertModifiers(owner: PsiModifierListOwner): Modifiers {
+        return Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
+                .assignPrototype(owner.getModifierList(), CommentsAndSpacesInheritance(blankLinesBefore = false))
+    }
 
     private val MODIFIERS_MAP = listOf(
             PsiModifier.ABSTRACT to Modifier.ABSTRACT,
@@ -610,13 +522,13 @@ public class Converter private(val project: Project, val settings: ConverterSett
         }
 
         val list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable) }.filterNotNull() //TODO: brackets are also needed for local classes
-        return Annotations(list, newLines)
+        return Annotations(list, newLines).assignNoPrototype()
     }
 
     private fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean): Annotation? {
         val qualifiedName = annotation.getQualifiedName()
         if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.getParameterList().getAttributes().isEmpty()) {
-            return Annotation(Identifier("deprecated"), listOf(null to LiteralExpression("\"\"")), brackets).assignPrototype(annotation) //TODO: insert comment
+            return Annotation(Identifier("deprecated").assignNoPrototype(), listOf(null to LiteralExpression("\"\"").assignNoPrototype()), brackets).assignPrototype(annotation) //TODO: insert comment
         }
 
         val nameRef = annotation.getNameReferenceElement()
@@ -627,7 +539,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             val method = annotationClass?.findMethodsByName(it.getName() ?: "value", false)?.firstOrNull()
             val expectedType = method?.getReturnType()
 
-            val attrName = it.getName()?.let { Identifier(it) }
+            val attrName = it.getName()?.let { Identifier(it).assignNoPrototype() }
             val value = it.getValue()
 
             val isVarArg = method == lastMethod /* converted to vararg in Kotlin */
@@ -640,7 +552,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
     private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<Expression> {
         return when (value) {
-            is PsiExpression -> listOf(convertExpression(value as? PsiExpression, expectedType))
+            is PsiExpression -> listOf(convertExpression(value as? PsiExpression, expectedType).assignPrototype(value))
 
             is PsiArrayInitializerMemberValue -> {
                 val componentType = (expectedType as? PsiArrayType)?.getComponentType()
@@ -652,48 +564,35 @@ public class Converter private(val project: Project, val settings: ConverterSett
                     val expectedTypeConverted = typeConverter.convertType(expectedType)
                     if (expectedTypeConverted is ArrayType) {
                         val array = createArrayInitializerExpression(expectedTypeConverted, componentsConverted, needExplicitType = false)
-                        listOf(if (isVararg) StarExpression(array) else array)
+                        if (isVararg) {
+                            listOf(StarExpression(array.assignNoPrototype()).assignPrototype(value))
+                        }
+                        else {
+                            listOf(array.assignPrototype(value))
+                        }
                     }
                     else {
-                        listOf(DummyStringExpression(value.getText()!!))
+                        listOf(DummyStringExpression(value.getText()!!).assignPrototype(value))
                     }
                 }
             }
 
-            else -> listOf(DummyStringExpression(value?.getText() ?: ""))
+            else -> listOf(DummyStringExpression(value?.getText() ?: "").assignPrototype(value))
         }
     }
 
     private fun convertThrows(method: PsiMethod): Annotations {
         val throwsList = method.getThrowsList()
         val types = throwsList.getReferencedTypes()
+        val refElements = throwsList.getReferenceElements()
+        assert(types.size == refElements.size)
         if (types.isEmpty()) return Annotations.Empty
-        val annotation = Annotation(Identifier("throws"),
-                                    types.map { null to MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(typeConverter.convertType(it, Nullability.NotNull))) },
-                                    false)
-        return Annotations(listOf(annotation.assignPrototype(throwsList)),
-                           true)
-    }
-
-    private val TYPE_MAP: Map<String, String> = mapOf(
-            JAVA_LANG_BYTE to "byte",
-            JAVA_LANG_SHORT to "short",
-            JAVA_LANG_INTEGER to "int",
-            JAVA_LANG_LONG to "long",
-            JAVA_LANG_FLOAT to "float",
-            JAVA_LANG_DOUBLE to "double",
-            JAVA_LANG_CHARACTER to "char"
-    )
-
-    private fun isConversionNeeded(actual: PsiType?, expected: PsiType?): Boolean {
-        if (actual == null || expected == null) return false
-
-        val expectedStr = expected.getCanonicalText()
-        val actualStr = actual.getCanonicalText()
-        if (expectedStr == actualStr) return false
-        val o1 = expectedStr == TYPE_MAP[actualStr]
-        val o2 = actualStr == TYPE_MAP[expectedStr]
-        return o1 == o2
+        val arguments = types.indices.map {
+            val convertedType = typeConverter.convertType(types[it], Nullability.NotNull)
+            null to MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(convertedType)).assignPrototype(refElements[it])
+        }
+        val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, false)
+        return Annotations(listOf(annotation.assignPrototype(throwsList)), true).assignPrototype(throwsList)
     }
 }
 

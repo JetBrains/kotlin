@@ -23,8 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 
@@ -36,23 +35,15 @@ public final class DescriptorToDeclarationUtil {
     }
 
     @Nullable
-    public static PsiElement getDeclaration(
-            @NotNull JetFile file,
-            @NotNull DeclarationDescriptor descriptor,
-            @NotNull BindingContext bindingContext
-    ) {
-        return getDeclaration(file.getProject(), descriptor, bindingContext);
+    public static PsiElement getDeclaration(@NotNull JetFile file, @NotNull DeclarationDescriptor descriptor) {
+        return getDeclaration(file.getProject(), descriptor);
     }
 
     @Nullable
-    public static PsiElement getDeclaration(
-            @NotNull Project project,
-            @NotNull DeclarationDescriptor descriptor,
-            @NotNull BindingContext bindingContext
-    ) {
-        Collection<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
+    public static PsiElement getDeclaration(@NotNull Project project, @NotNull DeclarationDescriptor descriptor) {
+        Collection<PsiElement> elements = DescriptorToSourceUtils.descriptorToDeclarations(descriptor);
         if (elements.isEmpty()) {
-            elements = findDeclarationsForDescriptorWithoutTrace(project, descriptor);
+            elements = findDecompiledAndBuiltInDeclarations(project, descriptor);
         }
         if (!elements.isEmpty()) {
             return elements.iterator().next();
@@ -61,7 +52,7 @@ public final class DescriptorToDeclarationUtil {
     }
 
     @NotNull
-    public static Collection<PsiElement> findDeclarationsForDescriptorWithoutTrace(
+    public static Collection<PsiElement> findDecompiledAndBuiltInDeclarations(
             @NotNull Project project,
             @NotNull DeclarationDescriptor descriptor
     ) {

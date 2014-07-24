@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -52,6 +51,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 @SuppressWarnings("unchecked")
 public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
@@ -81,7 +82,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     private JetScope getContextScope() throws IOException {
         // todo comments
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"), true);
-        JetFile jetFile = JetPsiFactory.createFile(getProject(), text);
+        JetFile jetFile = JetPsiFactory(getProject()).createFile(text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
         JetScope topLevelDeclarations = module.getPackage(FqName.ROOT).getMemberScope();
         ClassifierDescriptor contextClass = topLevelDeclarations.getClassifier(Name.identifier("___Context"));
@@ -137,7 +138,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     }
 
     private JetType resolveType(String typeStr) {
-        JetTypeReference jetTypeReference = JetPsiFactory.createType(getProject(), typeStr);
+        JetTypeReference jetTypeReference = JetPsiFactory(getProject()).createType(typeStr);
         AnalyzingUtils.checkForSyntacticErrors(jetTypeReference);
         BindingTrace trace = new BindingTraceContext();
         JetType type = injector.getTypeResolver().resolveType(scope, jetTypeReference, trace, true);

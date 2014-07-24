@@ -27,16 +27,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class ChangeVariableMutabilityFix implements IntentionAction {
     private boolean isVar;
-    
+
     public ChangeVariableMutabilityFix(boolean isVar) {
         this.isVar = isVar;
     }
@@ -44,7 +46,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     public ChangeVariableMutabilityFix() {
         this(false);
     }
-    
+
     @NotNull
     @Override
     public String getText() {
@@ -73,7 +75,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
             BindingContext bindingContext = ResolvePackage.getBindingContext(file);
             VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, simpleNameExpression, true);
             if (descriptor != null) {
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+                PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
                 if (declaration instanceof JetProperty) {
                     return (JetProperty) declaration;
                 }
@@ -85,11 +87,8 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetProperty property = getCorrespondingProperty(editor, (JetFile)file);
-        assert property != null && !property.isVar();
-
-        JetProperty newElement = JetPsiFactory.createProperty(project, property.getText().replaceFirst(
-                property.isVar() ? "var" : "val", property.isVar() ? "val" : "var"));
-        property.replace(newElement);
+        assert property != null;
+        property.getValOrVarNode().getPsi().replace(JetPsiFactory(property).createValOrVarNode(isVar ? "val" : "var").getPsi());
     }
 
     @Override

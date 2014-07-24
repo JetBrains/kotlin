@@ -1,0 +1,31 @@
+LineBreakpoint created at frameObject.kt:6
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameObject.FrameObjectPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameObject.kt:5
+Compile bytecode for O.obProp
+package frameObject
+
+fun main(args: Array<String>) {
+    foo {
+        //Breakpoint!
+        O.obProp
+    }
+}
+
+object O {
+    val obProp = 1
+}
+
+fun foo(f: () -> Unit) {
+    f()
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: O.obProp
+// RESULT: 1: I
+ frame    = invoke():6, FrameObjectPackage$main$1 {frameObject}
+   this     = this = {frameObject.FrameObjectPackage$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

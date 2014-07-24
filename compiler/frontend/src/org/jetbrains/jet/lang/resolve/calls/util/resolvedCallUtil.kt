@@ -18,11 +18,12 @@ package org.jetbrains.jet.lang.resolve.calls.util
 
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentUnmapped
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
+import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatchStatus
+import org.jetbrains.jet.lang.psi.Call
+import org.jetbrains.jet.lang.psi.ValueArgument
 
 public fun <D : CallableDescriptor> ResolvedCall<D>.noErrorsInValueArguments(): Boolean {
     return getCall().getValueArguments().all { argument -> !getArgumentMapping(argument!!).isError() }
@@ -37,9 +38,19 @@ public fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedParameters(): Boo
     return !parameterToArgumentMap.keySet().containsAll(getResultingDescriptor().getValueParameters())
 }
 
-public fun <D : CallableDescriptor> ResolvedCall<D>.hasErrorOnParameter(parameter: ValueParameterDescriptor): Boolean {
+public fun <D : CallableDescriptor> ResolvedCall<D>.hasTypeMismatchErrorOnParameter(parameter: ValueParameterDescriptor): Boolean {
     val resolvedValueArgument = getValueArguments()[parameter]
     if (resolvedValueArgument == null) return true
 
-    return resolvedValueArgument.getArguments().any { argument -> getArgumentMapping(argument).isError() }
+    return resolvedValueArgument.getArguments().any { argument ->
+        val argumentMapping = getArgumentMapping(argument)
+        argumentMapping is ArgumentMatch && argumentMapping.status == ArgumentMatchStatus.TYPE_MISMATCH
+    }
+}
+
+fun Call.getAllValueArguments(): List<ValueArgument> {
+    val arguments = getValueArguments() +
+                    getFunctionLiteralArguments().map { functionLiteral -> CallMaker.makeValueArgument(functionLiteral) }
+    [suppress("UNCHECKED_CAST")]
+    return arguments as List<ValueArgument>
 }

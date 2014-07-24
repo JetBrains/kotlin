@@ -2,6 +2,7 @@ class A {
     fun someOther() = false
 
     private fun formatElement(element: PsiElement): String {
+        var element = element
         element = JetPsiUtil.ascendIfPropertyAccessor(element)
         if (element is JetNamedFunction || element is JetProperty) {
             val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingJetFile()).getBindingContext()

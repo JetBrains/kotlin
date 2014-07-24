@@ -1,4 +1,4 @@
-class C() {
+class C {
     private var s: String? = ""
 
     fun foo() {

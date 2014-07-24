@@ -40,4 +40,16 @@ class ListSpecificTest {
         assertEquals("bar", data.last)
         assertEquals(1, data.lastIndex)
     }
+
+    Test fun mutableList() {
+        val items = listOf("beverage", "location", "name")
+
+        var list = arrayListOf<String>()
+        for (item in items) {
+            list += item
+        }
+
+        assertEquals(3, list.size())
+        assertEquals("beverage,location,name", list.join(","))
+    }
 }

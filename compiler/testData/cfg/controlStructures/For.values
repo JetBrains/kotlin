@@ -5,16 +5,16 @@ fun t1() {
     }
 }
 ---------------------
-                <v3>: Int                  NEW: magic(1..2|<v2>) -> <v3>            
-1               <v0>: Int                  NEW: r(1) -> <v0>                        
-2               <v1>: Int                  NEW: r(2) -> <v1>                        
-1..2            <v2>: {<: Iterable<Int>}   NEW: call(.., rangeTo|<v0>, <v1>) -> <v2>
-i               <v4>: Int                  NEW: r(i) -> <v4>                        
-doSmth(i)       <v5>: *                    NEW: call(doSmth, doSmth|<v4>) -> <v5>   
-{ doSmth(i) }   <v5>: *                    COPY                                     
+                <v3>: Int                  NEW: magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>
+1               <v0>: Int                  NEW: r(1) -> <v0>                                  
+2               <v1>: Int                  NEW: r(2) -> <v1>                                  
+1..2            <v2>: {<: Iterable<Int>}   NEW: call(1..2, rangeTo|<v0>, <v1>) -> <v2>        
+i               <v4>: Int                  NEW: r(i) -> <v4>                                  
+doSmth(i)       <v5>: *                    NEW: call(doSmth(i), doSmth|<v4>) -> <v5>          
+{ doSmth(i) }   <v5>: *                    COPY                                               
 =====================
 == doSmth ==
 fun doSmth(i: Int) {}
 ---------------------
-    <v0>: Int   NEW: magic(i: Int) -> <v0>
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](i: Int) -> <v0>
 =====================

@@ -1,3 +1,0 @@
-INFO: Invoking K2JSCompiler with arguments -suppress warnings -printArgs -sourceFiles compiler/testData/cli/js/simple2js.kt,compiler/testData/cli/js/../warnings.kt
-ERROR: Specify output file via -output
-COMPILATION_ERROR

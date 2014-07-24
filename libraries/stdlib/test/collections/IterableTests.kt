@@ -146,11 +146,11 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     Test
     fun singleOrNull() {
-        fails { data.singleOrNull() }
-        fails { empty.singleOrNull() }
+        expect(null) { data.singleOrNull() }
+        expect(null) { empty.singleOrNull() }
         expect("foo") { data.singleOrNull { it.startsWith("f") } }
         expect("bar") { data.singleOrNull { it.startsWith("b") } }
-        fails {
+        expect(null) {
             data.singleOrNull { it.length == 3 }
         }
     }

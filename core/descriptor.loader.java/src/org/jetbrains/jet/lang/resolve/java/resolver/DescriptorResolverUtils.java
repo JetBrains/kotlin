@@ -245,7 +245,9 @@ public final class DescriptorResolverUtils {
                                typeParameter.isReified(),
                                typeParameter.getVariance(),
                                typeParameter.getName(),
-                               typeParameter.getIndex()));
+                               typeParameter.getIndex(),
+                               SourceElement.NO_SOURCE)
+            );
         }
         return result;
     }

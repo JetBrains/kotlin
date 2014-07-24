@@ -41,10 +41,12 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             boolean hasBody,
             boolean isDefault,
             @NotNull Kind kind,
-            @Nullable PropertyGetterDescriptor original
+            @Nullable PropertyGetterDescriptor original,
+            @NotNull SourceElement source
     )
     {
-        super(modality, visibility, correspondingProperty, annotations, Name.special("<get-" + correspondingProperty.getName() + ">"), hasBody, isDefault, kind);
+        super(modality, visibility, correspondingProperty, annotations, Name.special("<get-" + correspondingProperty.getName() + ">"),
+              hasBody, isDefault, kind, source);
         this.original = original != null ? original : this;
     }
     

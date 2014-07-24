@@ -32,14 +32,14 @@ fun test(ab: Ab) {
 L0:
   1 <START>
     v(ab: Ab)
-    magic(ab: Ab) -> <v0>
+    magic[FAKE_INITIALIZER](ab: Ab) -> <v0>
     w(ab|<v0>)
   2 mark({ ab.getArray()[1] })
     mark(ab.getArray()[1])
     mark(ab.getArray())
     r(ab) -> <v1>
     mark(getArray())
-    call(getArray, getArray|<v1>) -> <v2>
+    call(getArray(), getArray|<v1>) -> <v2>
     r(1) -> <v3>
     mark(ab.getArray()[1])
     call(ab.getArray()[1], get|<v2>, <v3>) -> <v4>

@@ -40,11 +40,12 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
+import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -54,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -135,7 +137,8 @@ public class KotlinToJVMBytecodeCompiler {
                             }
                         }
                 );
-                GenerationState generationState = generate(environment, exhaust, jetFiles, module.getModuleName());
+                GenerationState generationState =
+                        generate(environment, exhaust, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()));
                 outputFiles.put(module, generationState.getFactory());
             }
         }
@@ -274,7 +277,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         exhaust.throwIfError();
 
-        return generate(environment, exhaust, environment.getSourceFiles(), null);
+        return generate(environment, exhaust, environment.getSourceFiles(), null, null);
     }
 
     @Nullable
@@ -282,13 +285,31 @@ public class KotlinToJVMBytecodeCompiler {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
         analyzerWithCompilerReport.analyzeAndReport(
-                new Function0<AnalyzeExhaust>() {
+                environment.getSourceFiles(), new Function0<AnalyzeExhaust>() {
                     @NotNull
                     @Override
                     public AnalyzeExhaust invoke() {
                         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
                         BindingTrace sharedTrace = support.getTrace();
                         ModuleDescriptorImpl sharedModule = support.getModule();
+
+                        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
+                        File incrementalCacheBaseDir = environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
+                        final IncrementalCache incrementalCache;
+                        if (incrementalCacheProvider != null && incrementalCacheBaseDir != null) {
+                            incrementalCache = incrementalCacheProvider.getIncrementalCache(incrementalCacheBaseDir);
+                            Disposer.register(environment.getApplication(), new Disposable() {
+                                @Override
+                                public void dispose() {
+                                    incrementalCache.close();
+                                }
+                            });
+                        }
+                        else {
+                            incrementalCache = null;
+                        }
+
+
                         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                                 environment.getProject(),
                                 environment.getSourceFiles(),
@@ -296,10 +317,10 @@ public class KotlinToJVMBytecodeCompiler {
                                 Predicates.<PsiFile>alwaysTrue(),
                                 sharedModule,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
-                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR)
+                                incrementalCache
                         );
                     }
-                }, environment.getSourceFiles()
+                }
         );
 
         AnalyzeExhaust exhaust = analyzerWithCompilerReport.getAnalyzeExhaust();
@@ -319,17 +340,27 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull JetCoreEnvironment environment,
             @NotNull AnalyzeExhaust exhaust,
             @NotNull List<JetFile> sourceFiles,
-            @Nullable String moduleId
+            @Nullable String moduleId,
+            File outputDirectory
     ) {
         CompilerConfiguration configuration = environment.getConfiguration();
         File incrementalCacheDir = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
         IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
 
-        Collection<FqName> packagesWithRemovedFiles =
-                incrementalCacheDir == null || moduleId == null || incrementalCacheProvider == null
-                ? null
-                : IncrementalPackage.getPackagesWithRemovedFiles(
-                        incrementalCacheProvider.getIncrementalCache(incrementalCacheDir), moduleId, environment.getSourceFiles());
+        Collection<FqName> packagesWithRemovedFiles;
+        if (incrementalCacheDir == null || moduleId == null || incrementalCacheProvider == null) {
+            packagesWithRemovedFiles = null;
+        }
+        else {
+            IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(incrementalCacheDir);
+            try {
+                packagesWithRemovedFiles = IncrementalPackage.getPackagesWithRemovedFiles(
+                        incrementalCache, moduleId, environment.getSourceFiles());
+            }
+            finally {
+                incrementalCache.close();
+            }
+        }
         BindingTraceContext diagnosticHolder = new BindingTraceContext();
         GenerationState generationState = new GenerationState(
                 environment.getProject(),
@@ -342,10 +373,11 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
+                configuration.get(JVMConfigurationKeys.ENABLE_OPTIMIZATION, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG),
                 packagesWithRemovedFiles,
                 moduleId,
-                diagnosticHolder
-        );
+                diagnosticHolder,
+                outputDirectory);
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
         AnalyzerWithCompilerReport.reportDiagnostics(
                 new FilteredJvmDiagnostics(

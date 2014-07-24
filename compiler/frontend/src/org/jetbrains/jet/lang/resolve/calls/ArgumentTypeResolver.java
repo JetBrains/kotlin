@@ -48,6 +48,7 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgum
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.DEPENDENT;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class ArgumentTypeResolver {
@@ -125,15 +126,6 @@ public class ArgumentTypeResolver {
         }
     }
 
-    public void checkUnmappedArgumentTypes(CallResolutionContext<?> context, Set<ValueArgument> unmappedArguments) {
-        for (ValueArgument valueArgument : unmappedArguments) {
-            JetExpression argumentExpression = valueArgument.getArgumentExpression();
-            if (argumentExpression != null) {
-                checkArgumentTypeWithNoCallee(context, argumentExpression);
-            }
-        }
-    }
-
     private void checkArgumentTypeWithNoCallee(CallResolutionContext<?> context, JetExpression argumentExpression) {
         expressionTypingServices.getTypeInfo(argumentExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
         updateResultArgumentTypeIfNotDenotable(context, argumentExpression);
@@ -201,7 +193,7 @@ public class ArgumentTypeResolver {
             JetType type = getShapeTypeOfFunctionLiteral(functionLiteralExpression, context.scope, context.trace, true);
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
-        return expressionTypingServices.getTypeInfo(expression, context);
+        return expressionTypingServices.getTypeInfo(expression, context.replaceContextDependency(INDEPENDENT));
     }
 
     @Nullable
@@ -260,7 +252,7 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    public static <D extends CallableDescriptor> JetType updateResultArgumentTypeIfNotDenotable(
+    public static JetType updateResultArgumentTypeIfNotDenotable(
             @NotNull ResolutionContext context,
             @NotNull JetExpression expression
     ) {

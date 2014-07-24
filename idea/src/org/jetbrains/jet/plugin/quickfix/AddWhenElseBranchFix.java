@@ -33,6 +33,8 @@ import org.jetbrains.jet.lang.psi.JetWhenEntry;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.plugin.JetBundle;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
     private static final String ELSE_ENTRY_TEXT = "else -> {}";
 
@@ -63,10 +65,11 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
         PsiElement whenCloseBrace = element.getCloseBrace();
         assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
 
-        JetWhenEntry entry = JetPsiFactory.createWhenEntry(project, ELSE_ENTRY_TEXT);
+        JetPsiFactory psiFactory = JetPsiFactory(file);
+        JetWhenEntry entry = psiFactory.createWhenEntry(ELSE_ENTRY_TEXT);
 
         PsiElement insertedBranch = element.addBefore(entry, whenCloseBrace);
-        element.addAfter(JetPsiFactory.createNewLine(project), insertedBranch);
+        element.addAfter(psiFactory.createNewLine(), insertedBranch);
 
         JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
         TextRange textRange = insertedWhenEntry.getTextRange();

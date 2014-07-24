@@ -14,8 +14,8 @@ fun foo() {
 == local ==
 fun local(x: Int) = x + b
 ---------------------
-        <v0>: Int   NEW: magic(x: Int) -> <v0>           
-x       <v1>: Int   NEW: r(x) -> <v1>                    
-b       <v2>: Int   NEW: r(b) -> <v2>                    
-x + b   <v3>: Int   NEW: call(+, plus|<v1>, <v2>) -> <v3>
+        <v0>: Int   NEW: magic[FAKE_INITIALIZER](x: Int) -> <v0>
+x       <v1>: Int   NEW: r(x) -> <v1>                           
+b       <v2>: Int   NEW: r(b) -> <v2>                           
+x + b   <v3>: Int   NEW: call(x + b, plus|<v1>, <v2>) -> <v3>   
 =====================

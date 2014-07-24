@@ -39,7 +39,7 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lexer.JetTokens.OPEN_KEYWORD;
 
 public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclaration> {
@@ -67,7 +67,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
         for (CallableMemberDescriptor overriddenDescriptor : getAllDeclaredNonOverridableOverriddenDescriptors(
                 (CallableMemberDescriptor) descriptor)) {
             assert overriddenDescriptor.getKind() == DECLARATION : "Can only be applied to declarations.";
-            PsiElement overriddenMember = descriptorToDeclaration(resolveSession.getBindingContext(), overriddenDescriptor);
+            PsiElement overriddenMember = descriptorToDeclaration(overriddenDescriptor);
             if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember)) {
                 return false;
             }

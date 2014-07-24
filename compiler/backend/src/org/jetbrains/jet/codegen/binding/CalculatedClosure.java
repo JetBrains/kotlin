@@ -19,23 +19,20 @@ package org.jetbrains.jet.codegen.binding;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 import java.util.Map;
 
 public interface CalculatedClosure {
-
     @Nullable
-    ClassDescriptor getEnclosingClass();
-
-    @Nullable
-    JetDelegatorToSuperCall getSuperCall();
+    ResolvedCall<ConstructorDescriptor> getSuperCall();
 
     @Nullable
     ClassDescriptor getCaptureThis();

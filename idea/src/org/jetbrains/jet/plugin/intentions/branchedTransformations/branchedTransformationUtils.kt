@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.intentions.branchedTransformations
 
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.util.JetPsiMatcher
@@ -27,7 +26,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import java.util.Collections
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.jet.utils.*
 
 public val TRANSFORM_WITHOUT_CHECK: String = "Expression must be checked before applying transformation"
 
@@ -141,7 +139,7 @@ public fun JetWhenExpression.flatten(): JetWhenExpression {
 
     val outerEntries = getEntries()
     val innerEntries = nestedWhenExpression.getEntries()
-    val builder = JetPsiFactory.WhenBuilder(subjectExpression)
+    val builder = JetPsiFactory(this).WhenBuilder(subjectExpression)
     for (entry in outerEntries) {
         if (entry.isElse())
             continue
@@ -152,13 +150,13 @@ public fun JetWhenExpression.flatten(): JetWhenExpression {
         builder.entry(entry)
     }
 
-    return replaced(builder.toExpression(getProject()))
+    return replaced(builder.toExpression())
 }
 
 public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
     val subject = getSubjectCandidate()!!
 
-    val builder = JetPsiFactory.WhenBuilder(subject)
+    val builder = JetPsiFactory(this).WhenBuilder(subject)
     for (entry in getEntries()) {
         val branchExpression = entry.getExpression()
         if (entry.isElse()) {
@@ -199,13 +197,13 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
         builder.branchExpression(branchExpression)
     }
 
-    return replaced(builder.toExpression(getProject()))
+    return replaced(builder.toExpression())
 }
 
 public fun JetWhenExpression.eliminateSubject(): JetWhenExpression {
     val subject = getSubjectExpression()!!
 
-    val builder = JetPsiFactory.WhenBuilder()
+    val builder = JetPsiFactory(this).WhenBuilder()
     for (entry in getEntries()) {
         val branchExpression = entry.getExpression()
 
@@ -220,7 +218,7 @@ public fun JetWhenExpression.eliminateSubject(): JetWhenExpression {
         builder.branchExpression(branchExpression)
     }
 
-    return replaced(builder.toExpression(getProject()))
+    return replaced(builder.toExpression())
 }
 
 public fun JetIfExpression.canTransformToWhen(): Boolean = getThen() != null
@@ -266,7 +264,7 @@ public fun JetIfExpression.transformToWhen() {
         override fun hasNext(): Boolean = expression != null
     }
 
-    val builder = JetPsiFactory.WhenBuilder()
+    val builder = JetPsiFactory(this).WhenBuilder()
     branchIterator(this).forEach { ifExpression ->
         ifExpression.getCondition()?.let { condition ->
             val orBranches = condition.splitToOrBranches()
@@ -287,7 +285,7 @@ public fun JetIfExpression.transformToWhen() {
         }
     }
 
-    val whenExpression = builder.toExpression(getProject()).let { whenExpression ->
+    val whenExpression = builder.toExpression().let { whenExpression ->
         if (whenExpression.canIntroduceSubject()) whenExpression.introduceSubject() else whenExpression
     }
     replace(whenExpression)
@@ -306,7 +304,7 @@ public fun JetWhenExpression.transformToIf() {
         }
     }
 
-    val builder = JetPsiFactory.IfChainBuilder()
+    val builder = JetPsiFactory(this).IfChainBuilder()
 
     for (entry in getEntries()) {
         val branch = entry.getExpression()
@@ -319,7 +317,7 @@ public fun JetWhenExpression.transformToIf() {
         }
     }
 
-    replace(builder.toExpression(getProject()))
+    replace(builder.toExpression())
 }
 
 public fun JetWhenExpression.canMergeWithNext(): Boolean {
@@ -367,7 +365,7 @@ public fun JetWhenExpression.mergeWithNext() {
             val block = if (this is JetBlockExpression) this else replaced(wrapInBlock())
             for (element in that.blockExpressionsOrSingle()) {
                 val expression = block.appendElement(element)
-                block.addBefore(JetPsiFactory.createNewLine(getProject()), expression)
+                block.addBefore(JetPsiFactory(this).createNewLine(), expression)
             }
             block
         }

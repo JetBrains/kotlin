@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+
+val foo: String
+    get()  {
+        throw UnsupportedOperationException()
+    }

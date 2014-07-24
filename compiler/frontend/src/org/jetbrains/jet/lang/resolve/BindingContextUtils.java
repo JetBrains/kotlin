@@ -17,14 +17,14 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -32,40 +32,16 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
-import org.jetbrains.jet.util.slicedmap.Slices;
 
-import java.util.*;
+import java.util.Collection;
 
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
-import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.jet.lang.diagnostics.Errors.AMBIGUOUS_LABEL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 public class BindingContextUtils {
     private BindingContextUtils() {
     }
-
-    private static final Slices.KeyNormalizer<DeclarationDescriptor> DECLARATION_DESCRIPTOR_NORMALIZER = new Slices.KeyNormalizer<DeclarationDescriptor>() {
-        @Override
-        public DeclarationDescriptor normalize(DeclarationDescriptor declarationDescriptor) {
-            if (declarationDescriptor instanceof CallableMemberDescriptor) {
-                CallableMemberDescriptor callable = (CallableMemberDescriptor) declarationDescriptor;
-                if (callable.getKind() != DECLARATION) {
-                    throw new IllegalStateException("non-declaration descriptors should be filtered out earlier: " + callable);
-                }
-            }
-            //if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
-            //    VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
-            //    if (descriptor.getOriginal() != descriptor) {
-            //        throw new IllegalStateException("original should be resolved earlier: " + descriptor);
-            //    }
-            //}
-            return declarationDescriptor.getOriginal();
-        }
-    };
-
-    /*package*/ static final ReadOnlySlice<DeclarationDescriptor, PsiElement> DESCRIPTOR_TO_DECLARATION =
-            Slices.<DeclarationDescriptor, PsiElement>sliceBuilder().setKeyNormalizer(DECLARATION_DESCRIPTOR_NORMALIZER).setDebugName("DESCRIPTOR_TO_DECLARATION").build();
 
     @Nullable
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable JetElement element, boolean onlyReference) {
@@ -83,124 +59,6 @@ public class BindingContextUtils {
             return (VariableDescriptor) descriptor;
         }
         return null;
-    }
-
-    @Nullable
-    public static JetFile getContainingFile(@NotNull BindingContext context, @NotNull DeclarationDescriptor declarationDescriptor) {
-        // declarationDescriptor may describe a synthesized element which doesn't have PSI
-        // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
-        DeclarationDescriptor descriptor = findTopLevelParent(declarationDescriptor);
-        if (descriptor == null) return null;
-
-        PsiElement declaration = descriptorToDeclaration(context, descriptor);
-        if (declaration == null) return null;
-
-        PsiFile containingFile = declaration.getContainingFile();
-        if (!(containingFile instanceof JetFile)) return null;
-        return (JetFile) containingFile;
-    }
-
-    @Nullable
-    private static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
-        DeclarationDescriptor descriptor = declarationDescriptor;
-        if (declarationDescriptor instanceof PropertyAccessorDescriptor) {
-            descriptor = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
-        }
-        while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor))) {
-            descriptor = descriptor.getContainingDeclaration();
-        }
-        return descriptor;
-    }
-
-    @Nullable
-    private static PsiElement doGetDescriptorToDeclaration(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
-        return context.get(DESCRIPTOR_TO_DECLARATION, descriptor);
-    }
-
-    // NOTE this is also used by KDoc
-    @Nullable
-    public static PsiElement descriptorToDeclaration(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            return callableDescriptorToDeclaration(context, (CallableMemberDescriptor) descriptor);
-        }
-        else if (descriptor instanceof ClassDescriptor) {
-            return classDescriptorToDeclaration(context, (ClassDescriptor) descriptor);
-        }
-        else {
-            return doGetDescriptorToDeclaration(context, descriptor);
-        }
-    }
-
-    @NotNull
-    public static List<PsiElement> descriptorToDeclarations(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            return callableDescriptorToDeclarations(context, (CallableMemberDescriptor) descriptor);
-        }
-        else {
-            PsiElement psiElement = descriptorToDeclaration(context, descriptor);
-            if (psiElement != null) {
-                return Lists.newArrayList(psiElement);
-            } else {
-                return Lists.newArrayList();
-            }
-        }
-    }
-
-    @Nullable
-    public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
-        if (callable.getKind() == SYNTHESIZED) {
-            CallableMemberDescriptor original = callable.getOriginal();
-            if (original instanceof SynthesizedCallableMemberDescriptor<?>) {
-                DeclarationDescriptor base = ((SynthesizedCallableMemberDescriptor<?>) original).getBaseForSynthesized();
-                return descriptorToDeclaration(context, base);
-            }
-            return null;
-        }
-
-        if (callable.getKind() == DECLARATION) {
-            return doGetDescriptorToDeclaration(context, callable.getOriginal());
-        }
-
-        Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
-        if (overriddenDescriptors.size() != 1) {
-            throw new IllegalStateException(
-                    "Cannot find declaration: fake descriptor " + callable + " has more than one overridden descriptor:\n" +
-                    StringUtil.join(overriddenDescriptors, ",\n"));
-        }
-
-        return callableDescriptorToDeclaration(context, overriddenDescriptors.iterator().next());
-    }
-
-    @NotNull
-    public static List<PsiElement> callableDescriptorToDeclarations(
-            @NotNull BindingContext context,
-            @NotNull CallableMemberDescriptor callable
-    ) {
-        if (callable.getKind() == SYNTHESIZED) {
-            CallableMemberDescriptor original = callable.getOriginal();
-            if (original instanceof SynthesizedCallableMemberDescriptor<?>) {
-                DeclarationDescriptor base = ((SynthesizedCallableMemberDescriptor<?>) original).getBaseForSynthesized();
-                return descriptorToDeclarations(context, base);
-            }
-            return Collections.emptyList();
-        }
-
-        if (callable.getKind() == DECLARATION) {
-            PsiElement psiElement = doGetDescriptorToDeclaration(context, callable);
-            return psiElement != null ? Lists.newArrayList(psiElement) : Lists.<PsiElement>newArrayList();
-        }
-
-        List<PsiElement> r = new ArrayList<PsiElement>();
-        Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
-        for (CallableMemberDescriptor overridden : overriddenDescriptors) {
-            r.addAll(callableDescriptorToDeclarations(context, overridden));
-        }
-        return r;
-    }
-
-    @Nullable
-    public static PsiElement classDescriptorToDeclaration(@NotNull BindingContext context, @NotNull ClassDescriptor clazz) {
-        return doGetDescriptorToDeclaration(context, clazz);
     }
 
     public static void recordFunctionDeclarationToDescriptor(@NotNull BindingTrace trace,
@@ -259,7 +117,7 @@ public class BindingContextUtils {
     ) {
         Collection<PsiElement> targets = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : declarationsByLabel) {
-            PsiElement element = descriptorToDeclaration(trace.getBindingContext(), descriptor);
+            PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
             assert element != null : "Label can only point to something in the same lexical scope";
             targets.add(element);
         }
@@ -300,24 +158,10 @@ public class BindingContextUtils {
             @NotNull BindingContext context
     ) {
         if (expression instanceof JetCallExpression) {
-            return isCallExpressionWithValidReference(expression, context);
+            ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, context);
+            return resolvedCall instanceof VariableAsFunctionResolvedCall;
         }
-
         return expression instanceof JetReferenceExpression;
-    }
-
-    public static boolean isCallExpressionWithValidReference(
-            @NotNull JetExpression expression,
-            @NotNull BindingContext context
-    ) {
-        if (expression instanceof JetCallExpression) {
-            JetExpression calleeExpression = ((JetCallExpression) expression).getCalleeExpression();
-            ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, calleeExpression);
-            if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
@@ -325,4 +169,22 @@ public class BindingContextUtils {
         VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
         return bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null && variableDescriptor.isVar();
     }
+
+    @NotNull
+    public static Pair<FunctionDescriptor, PsiElement> getContainingFunctionSkipFunctionLiterals(
+            @Nullable DeclarationDescriptor startDescriptor,
+            boolean strict
+    ) {
+        FunctionDescriptor containingFunctionDescriptor = DescriptorUtils.getParentOfType(startDescriptor, FunctionDescriptor.class, strict);
+        PsiElement containingFunction =
+                containingFunctionDescriptor != null ? DescriptorToSourceUtils.callableDescriptorToDeclaration(containingFunctionDescriptor) : null;
+        while (containingFunction instanceof JetFunctionLiteral) {
+            containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
+            containingFunction = containingFunctionDescriptor != null ? DescriptorToSourceUtils
+                    .callableDescriptorToDeclaration(containingFunctionDescriptor) : null;
+        }
+
+        return new Pair<FunctionDescriptor, PsiElement>(containingFunctionDescriptor, containingFunction);
+    }
+
 }

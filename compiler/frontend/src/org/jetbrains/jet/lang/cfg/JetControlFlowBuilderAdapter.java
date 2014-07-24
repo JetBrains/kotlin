@@ -72,9 +72,9 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
             @Nullable JetElement valueElement,
             @NotNull List<PseudoValue> inputValues,
             @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
-            boolean synthetic
+            @NotNull MagicKind kind
     ) {
-        return getDelegateBuilder().magic(instructionElement, valueElement, inputValues, expectedTypes, synthetic);
+        return getDelegateBuilder().magic(instructionElement, valueElement, inputValues, expectedTypes, kind);
     }
 
     @NotNull
@@ -86,23 +86,22 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     @NotNull
     @Override
     public ReadValueInstruction readVariable(
-            @NotNull JetElement instructionElement,
-            @NotNull JetExpression valueElement,
+            @NotNull JetExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
-        return getDelegateBuilder().readVariable(instructionElement, valueElement, resolvedCall, receiverValues);
+            @NotNull Map<PseudoValue, ReceiverValue> receiverValues
+    ) {
+        return getDelegateBuilder().readVariable(expression, resolvedCall, receiverValues);
     }
 
     @NotNull
     @Override
     public CallInstruction call(
-            @NotNull JetElement instructionElement,
-            @Nullable JetExpression valueElement,
+            @NotNull JetElement valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
             @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
     ) {
-        return getDelegateBuilder().call(instructionElement, valueElement, resolvedCall, receiverValues, arguments);
+        return getDelegateBuilder().call(valueElement, resolvedCall, receiverValues, arguments);
     }
 
     @NotNull
@@ -234,7 +233,7 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     }
 
     @Override
-    public void returnValue(@NotNull JetReturnExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine) {
+    public void returnValue(@NotNull JetExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine) {
         getDelegateBuilder().returnValue(returnExpression, returnValue, subroutine);
     }
 

@@ -1,4 +1,4 @@
 enum class E {
     I
-    private val name: String = 0
+    private val name: String? = null
 }

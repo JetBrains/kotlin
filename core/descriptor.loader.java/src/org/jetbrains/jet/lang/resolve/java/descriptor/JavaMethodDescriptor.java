@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -30,23 +31,25 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     private Boolean hasStableParameterNames = null;
     private Boolean hasSynthesizedParameterNames = null;
 
-    private JavaMethodDescriptor(
+    protected JavaMethodDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @Nullable SimpleFunctionDescriptor original,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, original, annotations, name, kind);
+        super(containingDeclaration, original, annotations, name, kind, source);
     }
 
     @NotNull
     public static JavaMethodDescriptor createJavaMethod(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
-            @NotNull Name name
+            @NotNull Name name,
+            @NotNull SourceElement source
     ) {
-        return new JavaMethodDescriptor(containingDeclaration, null, annotations, name, Kind.DECLARATION);
+        return new JavaMethodDescriptor(containingDeclaration, null, annotations, name, Kind.DECLARATION, source);
     }
 
     @Override
@@ -81,7 +84,8 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 (SimpleFunctionDescriptor) original,
                 getAnnotations(),
                 getName(),
-                kind
+                kind,
+                SourceElement.NO_SOURCE
         );
         result.setHasStableParameterNames(hasStableParameterNames());
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());

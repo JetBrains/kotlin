@@ -21,10 +21,7 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
+import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
@@ -33,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.utils.DFS;
 
 import javax.inject.Inject;
@@ -47,6 +44,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
 
 public class TypeHierarchyResolver {
     private static final DFS.Neighbors<ClassDescriptor> CLASS_INHERITANCE_EDGES = new DFS.Neighbors<ClassDescriptor>() {
@@ -203,22 +201,16 @@ public class TypeHierarchyResolver {
             descriptor.createTypeConstructor();
 
             ClassKind kind = descriptor.getKind();
-            if (kind == ClassKind.ENUM_ENTRY || kind == ClassKind.OBJECT || kind == ClassKind.ENUM_CLASS) {
-                MutableClassDescriptor classObject = descriptor.getClassObjectDescriptor();
+            if (kind == ClassKind.ENUM_ENTRY || kind == ClassKind.OBJECT) {
+                MutableClassDescriptor classObject = (MutableClassDescriptor) descriptor.getClassObjectDescriptor();
                 assert classObject != null : "Enum entries and named objects should have class objects: " + classOrObject.getText();
 
-                JetType supertype;
-                if (kind == ClassKind.ENUM_CLASS) {
-                    supertype = KotlinBuiltIns.getInstance().getAnyType();
-                }
-                else {
-                    // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.
-                    // We make this class object inherit from the singleton here, thus allowing to use the singleton's class object where
-                    // the instance of the singleton is applicable. Effectively all members of the singleton would be present in its class
-                    // object as fake overrides, so you can access them via standard class object notation: ObjectName.memberName()
-                    supertype = descriptor.getDefaultType();
-                }
-                classObject.setSupertypes(Collections.singleton(supertype));
+                // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.
+                // We make this class object inherit from the singleton here, thus allowing to use the singleton's class object where
+                // the instance of the singleton is applicable. Effectively all members of the singleton would be present in its class
+                // object as fake overrides, so you can access them via standard class object notation: ObjectName.memberName()
+                classObject.setSupertypes(Collections.singleton(descriptor.getDefaultType()));
+
                 classObject.createTypeConstructor();
             }
         }
@@ -292,7 +284,7 @@ public class TypeHierarchyResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull ClassDescriptor superclass
     ) {
-        PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+        PsiElement psiElement = DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
 
         PsiElement elementToMark = null;
         if (psiElement instanceof JetClassOrObject) {
@@ -377,7 +369,7 @@ public class TypeHierarchyResolver {
             owner.addClassifierDescriptor(descriptor);
             trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetNamedDeclarationUtil.getUnsafeFQName(declaration), descriptor);
 
-            descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObject(descriptor));
+            descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObjectForSingleton(descriptor));
         }
 
         @Override
@@ -387,7 +379,7 @@ public class TypeHierarchyResolver {
 
             owner.addClassifierDescriptor(descriptor);
 
-            descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObject(descriptor));
+            descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObjectForSingleton(descriptor));
         }
 
         @Override
@@ -438,19 +430,11 @@ public class TypeHierarchyResolver {
         }
 
 
-        private void createClassObjectForEnumClass(@NotNull MutableClassDescriptor mutableClassDescriptor) {
-            if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-                MutableClassDescriptor classObject = createSyntheticClassObject(mutableClassDescriptor);
-                mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObject);
-                classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObject, trace));
-                classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObject, trace));
-            }
-        }
-
         @NotNull
-        private MutableClassDescriptor createSyntheticClassObject(@NotNull ClassDescriptor classDescriptor) {
-            MutableClassDescriptor classObject = new MutableClassDescriptor(classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false,
-                                                                            getClassObjectName(classDescriptor.getName()));
+        private MutableClassDescriptor createSyntheticClassObjectForSingleton(@NotNull ClassDescriptor classDescriptor) {
+            MutableClassDescriptor classObject =
+                    new MutableClassDescriptor(classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false,
+                                               getClassObjectName(classDescriptor.getName()), SourceElement.NO_SOURCE);
 
             classObject.setModality(Modality.FINAL);
             classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
@@ -468,18 +452,20 @@ public class TypeHierarchyResolver {
             // Kind check is needed in order to not consider enums as inner in any case
             // (otherwise it would be impossible to create a class object in the enum)
             boolean isInner = kind == ClassKind.CLASS && klass.isInner();
-            MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                    containingDeclaration, outerScope, kind, isInner, JetPsiUtil.safeName(klass.getName()));
-            c.getDeclaredClasses().put(klass, mutableClassDescriptor);
-            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetNamedDeclarationUtil.getUnsafeFQName(klass), mutableClassDescriptor);
+            MutableClassDescriptor descriptor = new MutableClassDescriptor(
+                    containingDeclaration, outerScope, kind, isInner, JetPsiUtil.safeName(klass.getName()),
+                    toSourceElement(klass));
+            c.getDeclaredClasses().put(klass, descriptor);
+            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetNamedDeclarationUtil.getUnsafeFQName(klass), descriptor);
 
-            createClassObjectForEnumClass(mutableClassDescriptor);
+            if (descriptor.getKind() == ClassKind.ENUM_CLASS) {
+                ClassDescriptor classObject = new EnumClassObjectDescriptor(LockBasedStorageManager.NO_LOCKS, descriptor);
+                descriptor.getBuilder().setClassObjectDescriptor(classObject);
+            }
 
-            JetScope classScope = mutableClassDescriptor.getScopeForMemberDeclarationResolution();
+            prepareForDeferredCall(descriptor.getScopeForMemberDeclarationResolution(), descriptor, klass);
 
-            prepareForDeferredCall(classScope, mutableClassDescriptor, klass);
-
-            return mutableClassDescriptor;
+            return descriptor;
         }
 
         @NotNull
@@ -488,7 +474,8 @@ public class TypeHierarchyResolver {
                 @NotNull Name name,
                 @NotNull ClassKind kind
         ) {
-            MutableClassDescriptor descriptor = new MutableClassDescriptor(owner.getOwnerForChildren(), outerScope, kind, false, name);
+            MutableClassDescriptor descriptor = new MutableClassDescriptor(owner.getOwnerForChildren(), outerScope, kind, false, name,
+                                                                           toSourceElement(declaration));
 
             prepareForDeferredCall(descriptor.getScopeForMemberDeclarationResolution(), descriptor, declaration);
 
@@ -502,7 +489,7 @@ public class TypeHierarchyResolver {
 
         @NotNull
         private ConstructorDescriptorImpl createPrimaryConstructorForObject(
-                @Nullable PsiElement object,
+                @Nullable JetClassOrObject object,
                 @NotNull MutableClassDescriptor mutableClassDescriptor
         ) {
             ConstructorDescriptorImpl constructorDescriptor = DescriptorResolver

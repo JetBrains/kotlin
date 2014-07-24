@@ -16,11 +16,12 @@
 
 package org.jetbrains.jet.codegen.context;
 
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.org.objectweb.asm.Type;
 
 public final class EnclosedValueDescriptor {
     private final String fieldName;
@@ -28,37 +29,51 @@ public final class EnclosedValueDescriptor {
     private final StackValue innerValue;
     private final Type type;
 
-    public EnclosedValueDescriptor(String fieldName, DeclarationDescriptor descriptor, StackValue innerValue, Type type) {
+    public EnclosedValueDescriptor(
+            @NotNull String fieldName,
+            @Nullable DeclarationDescriptor descriptor,
+            @Nullable StackValue innerValue,
+            @NotNull Type type
+    ) {
         this.fieldName = fieldName;
         this.descriptor = descriptor;
         this.innerValue = innerValue;
         this.type = type;
     }
 
+    @NotNull
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    @Nullable
     public DeclarationDescriptor getDescriptor() {
         return descriptor;
     }
 
+    @Nullable
     public StackValue getInnerValue() {
         return innerValue;
     }
 
+    @NotNull
     public Type getType() {
         return type;
     }
 
-    public StackValue getOuterValue(ExpressionCodegen expressionCodegen) {
-        GenerationState state = expressionCodegen.getState();
+    @NotNull
+    public StackValue getOuterValue(@NotNull ExpressionCodegen codegen) {
         for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
             if (aCase.isCase(descriptor)) {
-                return aCase.outerValue(this, expressionCodegen);
+                return aCase.outerValue(this, codegen);
             }
         }
 
-        throw new IllegalStateException();
+        throw new IllegalStateException("Can't get outer value in " + codegen + " for " + this);
     }
 
-    public String getFieldName() {
-        return fieldName;
+    @Override
+    public String toString() {
+        return fieldName + " " + type + " -> " + descriptor;
     }
 }

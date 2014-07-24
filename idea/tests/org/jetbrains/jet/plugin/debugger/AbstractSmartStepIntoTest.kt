@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.debugger
 
-import com.intellij.debugger.SourcePosition
-import com.intellij.psi.PsiElement
 import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
@@ -27,16 +25,18 @@ import org.jetbrains.jet.InTextDirectivesUtils
 import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.util.PsiFormatUtilBase
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import com.intellij.testFramework.LightProjectDescriptor
 
-abstract class AbstractSmartStepIntoTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTestCase() {
     private val fixture: JavaCodeInsightTestFixture
-        get() = myFixture!!
+        get() = myFixture
 
     protected fun doTest(path: String) {
         fixture.configureByFile(path)
 
         val offset = fixture.getCaretOffset()
-        val line = fixture.getDocument(fixture.getFile())!!.getLineNumber(offset)
+        val line = fixture.getDocument(fixture.getFile()!!)!!.getLineNumber(offset)
 
         val position = MockSourcePosition(_file = fixture.getFile(), _line = line, _offset = offset, _editor = fixture.getEditor())
 
@@ -96,4 +96,6 @@ abstract class AbstractSmartStepIntoTest : LightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String? {
         return PluginTestCaseBase.getTestDataPathBase() + "/debugger/smartStepInto"
     }
+
+    override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
 }

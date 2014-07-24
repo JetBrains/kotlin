@@ -50,6 +50,11 @@ public final class NumberTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    // KT-5345 Type mismatch on Int / Float division
+    public void testIntDivFloat() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testHexademicalConstant() throws Exception {
         try {
             fooBoxTest();

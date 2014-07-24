@@ -17,7 +17,6 @@
 package org.jetbrains.jet.completion
 
 import org.jetbrains.jet.plugin.PluginTestCaseBase
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
@@ -27,14 +26,21 @@ import org.jetbrains.jet.plugin.completion.renderDataFlowValue
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 
-abstract class AbstractDataFlowValueRenderingTest: LightCodeInsightFixtureTestCase() {
+abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() : String {
         return PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
     }
 
+    override fun getProjectDescriptor(): LightProjectDescriptor {
+        return LightCodeInsightFixtureTestCase.JAVA_LATEST
+    }
+
     fun doTest(fileName: String) {
-        val fixture = myFixture!!
+        val fixture = myFixture
         fixture.configureByFile(fileName)
 
         val jetFile = fixture.getFile() as JetFile

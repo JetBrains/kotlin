@@ -18,10 +18,6 @@ fun A.extExplicit() = A.FOO
 fun A.extByThis() = this.FOO
 //fun A.extImplicit() = FOO
 
-fun assertEquals<T>(expected: T, actual: T, id: String) {
-    if (expected != actual) throw Exception("Failed on $id, expected = '$expected', actual = '$actual'")
-}
-
 fun box(): String {
     assertEquals(A.FOO, A.FOO.explicit(), "explicit access")
     assertEquals(A.FOO, A.FOO.byThis(), "access by this")

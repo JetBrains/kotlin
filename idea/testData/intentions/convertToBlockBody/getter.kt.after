@@ -1,0 +1,4 @@
+val foo: String
+    get()  {
+        return "abc"
+    }

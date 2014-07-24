@@ -1,24 +1,17 @@
-public class NonDefault() {
+public class NonDefault {
     class object {
         public fun main(args: Array<String>) {
 
             val value = 3
-            val valueString = ""
+            var valueString = ""
             when (value) {
-                1 -> {
-                    valueString = "ONE"
-                }
-                2 -> {
-                    valueString = "TWO"
-                }
-                3 -> {
-                    valueString = "THREE"
-                }
-                else -> {
-                }
+                1 -> valueString = "ONE"
+                2 -> valueString = "TWO"
+                3 -> valueString = "THREE"
             }
             System.out.println(valueString)
         }
     }
 }
-fun main(args: Array<String>) = NonDefault.main(args as Array<String?>?)
+
+fun main(args: Array<String>) = NonDefault.main(args)

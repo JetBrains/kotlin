@@ -9,7 +9,8 @@ public class Language(protected var code: String) : Serializable {
     }
 }
 
-class Base() {
+
+class Base {
     fun test() {
     }
     override fun toString(): String {
@@ -17,7 +18,7 @@ class Base() {
     }
 }
 
-class Child() : Base() {
+class Child : Base() {
     override fun test() {
     }
     override fun toString(): String {

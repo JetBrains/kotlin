@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,10 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
             @Nullable ConstructorDescriptor original,
             @NotNull Annotations annotations,
             boolean isPrimary,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, original, annotations, NAME, kind);
+        super(containingDeclaration, original, annotations, NAME, kind, source);
         this.isPrimary = isPrimary;
     }
 
@@ -50,9 +51,10 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     public static ConstructorDescriptorImpl create(
             @NotNull ClassDescriptor containingDeclaration,
             @NotNull Annotations annotations,
-            boolean isPrimary
+            boolean isPrimary,
+            @NotNull SourceElement source
     ) {
-        return new ConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION);
+        return new ConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
     }
 
     public ConstructorDescriptorImpl initialize(
@@ -112,7 +114,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind
     ) {
-        if (kind != Kind.DECLARATION) {
+        if (kind != Kind.DECLARATION && kind != Kind.SYNTHESIZED) {
             throw new IllegalStateException("Attempt at creating a constructor that is not a declaration: \n" +
                                             "copy from: " + this + "\n" +
                                             "newOwner: " + newOwner + "\n" +
@@ -124,7 +126,9 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
                 this,
                 Annotations.EMPTY, // TODO
                 isPrimary,
-                Kind.DECLARATION);
+                Kind.DECLARATION,
+                SourceElement.NO_SOURCE
+        );
     }
 
     @NotNull

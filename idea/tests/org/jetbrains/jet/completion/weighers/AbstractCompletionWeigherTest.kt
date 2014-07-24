@@ -20,12 +20,12 @@ import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.InTextDirectivesUtils
 import java.io.File
 import org.jetbrains.jet.plugin.PluginTestCaseBase
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.testng.Assert
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.test.util.configureWithExtraFile
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 
-public abstract class AbstractCompletionWeigherTest() : LightCodeInsightFixtureTestCase() {
+public abstract class AbstractCompletionWeigherTest() : JetLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
         myFixture.configureWithExtraFile(path)
 

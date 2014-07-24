@@ -6,17 +6,17 @@ fun test(a: Any) {
 L0:
   1 <START>
     v(a: Any)
-    magic(a: Any) -> <v0>
+    magic[FAKE_INITIALIZER](a: Any) -> <v0>
     w(a|<v0>)
   2 mark({ a.foo })
     mark(a.foo)
     error(foo, No resolved call)
     r(a) -> <v1>
-    magic(foo|<v1>) -> <v2>
+    magic[UNRESOLVED_CALL](foo|<v1>) -> <v2>
 L1:
-  1 <END>                           NEXT:[<SINK>]
+  1 <END>                                       NEXT:[<SINK>]
 error:
-    <ERROR>                         PREV:[]
+    <ERROR>                                     PREV:[]
 sink:
-    <SINK>                          PREV:[<ERROR>, <END>]
+    <SINK>                                      PREV:[<ERROR>, <END>]
 =====================

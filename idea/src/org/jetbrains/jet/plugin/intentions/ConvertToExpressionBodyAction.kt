@@ -21,15 +21,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.types.JetType
 
 public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
     override fun getFamilyName(): String = JetBundle.message("convert.to.expression.body.action.family.name")
@@ -51,7 +46,7 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
         }
 
         val body = declaration.getBodyExpression()!!
-        declaration.addBefore(JetPsiFactory.createEQ(project), body)
+        declaration.addBefore(JetPsiFactory(declaration).createEQ(), body)
         body.replace(value)
     }
 

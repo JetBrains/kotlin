@@ -170,8 +170,7 @@ public class OverloadResolver {
 
                 OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(member, member2);
                 if (!overloadable.isSuccess()) {
-                    JetDeclaration jetDeclaration = (JetDeclaration) BindingContextUtils
-                            .descriptorToDeclaration(trace.getBindingContext(), member);
+                    JetDeclaration jetDeclaration = (JetDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
                     if (jetDeclaration != null) {
                         redeclarations.add(Pair.create(jetDeclaration, member));
                     }

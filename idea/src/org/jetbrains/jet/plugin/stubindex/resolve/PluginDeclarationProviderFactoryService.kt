@@ -17,29 +17,21 @@
 package org.jetbrains.jet.plugin.stubindex.resolve
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Condition
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.Function
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
-import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 import org.jetbrains.jet.storage.StorageManager
-import org.jetbrains.jet.plugin.search.allScope
+import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 
 public class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryService() {
 
-    override fun create(project: Project, storageManager: StorageManager, files: Collection<JetFile>): DeclarationProviderFactory {
-        val indexedSourcesScope = JetSourceFilterScope.kotlinSourcesAndLibraries(project.allScope())
-        val nonIndexedFiles = files.filter {
-            file ->
-            !file.isPhysical() || !indexedSourcesScope.contains(file.getVirtualFile()!!)
-        }
-        val physicalFilesScope = GlobalSearchScope.filesScope(project, files.filter { it.isPhysical() }.map { it.getVirtualFile()!! })
-        val indexedFilesScope = indexedSourcesScope.intersectWith(physicalFilesScope)
-
-        return PluginDeclarationProviderFactory(project, indexedFilesScope, storageManager, nonIndexedFiles)
+    override fun create(
+            project: Project,
+            storageManager: StorageManager,
+            syntheticFiles: Collection<JetFile>,
+            filesScope: GlobalSearchScope
+    ): DeclarationProviderFactory {
+        return PluginDeclarationProviderFactory(project, JetSourceFilterScope.kotlinSources(filesScope), storageManager, syntheticFiles)
     }
 }

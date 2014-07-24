@@ -74,7 +74,7 @@ public interface JetControlFlowBuilder {
     void nondeterministicJump(@NotNull List<Label> label, @NotNull JetElement element);
     void jumpToError(@NotNull JetElement element);
 
-    void returnValue(@NotNull JetReturnExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine);
+    void returnValue(@NotNull JetExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine);
     void returnNoValue(@NotNull JetReturnExpression returnExpression, @NotNull JetElement subroutine);
 
     void throwException(@NotNull JetThrowExpression throwExpression, @NotNull PseudoValue thrownValue);
@@ -116,7 +116,7 @@ public interface JetControlFlowBuilder {
             @Nullable JetElement valueElement,
             @NotNull List<PseudoValue> inputValues,
             @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
-            boolean synthetic
+            @NotNull MagicKind kind
     );
 
     @NotNull
@@ -127,16 +127,14 @@ public interface JetControlFlowBuilder {
 
     @NotNull
     ReadValueInstruction readVariable(
-            @NotNull JetElement instructionElement,
-            @NotNull JetExpression valueElement,
+            @NotNull JetExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues
     );
 
     @NotNull
     CallInstruction call(
-            @NotNull JetElement instructionElement,
-            @Nullable JetExpression valueElement,
+            @NotNull JetElement valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
             @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments

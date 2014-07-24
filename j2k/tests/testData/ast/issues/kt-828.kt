@@ -1,6 +1,6 @@
-class Test() {
+class Test {
     fun test() {
-        val res = true
+        var res = true
         res = res and false
         res = res or false
         res = res xor false

@@ -1,4 +1,5 @@
 //PARAM_TYPES: C, AImpl, A
+//PARAM_DESCRIPTOR: value-parameter val c: C defined in foo
 trait A {
     fun doA()
 }

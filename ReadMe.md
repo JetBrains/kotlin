@@ -1,6 +1,6 @@
 # Kotlin Programming Language
 
-Welcome to [Kotlin](http://www.jetbrains.com/kotlin)! Some handy links:
+Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
 
  * [Getting Started Guide](http://confluence.jetbrains.net/display/Kotlin/Getting+Started)
  * [Web Demo](http://kotlin-demo.jetbrains.com/)
@@ -97,7 +97,7 @@ Then update the list of plugins in "Browse Repositories", you'll see two version
 
 We love contributions! There's [lots to do on kotlin](http://youtrack.jetbrains.com/issues/KT) and on the [standard library](http://youtrack.jetbrains.com/issues/KT?q=%23%7BStandard+Library%7D+-Resolved) so why not chat with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
 
-If you want to find some issues to start off with, try [this query](http://youtrack.jetbrains.com/issues/KT?q=-Resolved+%23Kontributor) which should find all issues that are not resolved assigned to Kontributor.
+If you want to find some issues to start off with, try [this query](http://youtrack.jetbrains.com/issues?q=tag%3A+%7BUp+For+Grabs%7D) which should find all issues that marked as "up-for-grabs".
 
 Currently only committers can assign issues to themselves so just add a comment if you're starting work on it.
 
@@ -110,9 +110,9 @@ Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/maste
 
 ## If you want to work on the compiler
 
-The Kotlin compiler is currently all written in Java (we plan to port it to Kotlin later). So the easiest way to work on the compiler or IDEA plugin is
+The Kotlin compiler is written in Java and Kotlin (we gradually migrate more and more of it to pure Kotlin). So the easiest way to work on the compiler or IDEA plugin is
 
-* download a clean [IDEA 13 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+13+EAP)
+* download a clean [IDEA 14 EAP build](http://confluence.jetbrains.com/display/IDEADEV/IDEA+14+EAP)
 * [install the Kotlin plugin](#pre-built-plugin)
 * open the [root kotlin project](https://github.com/JetBrains/kotlin) in IDEA (opening the kotlin directory)
 
@@ -125,7 +125,7 @@ You can now run the various Run/Debug Configurations such as
 
 ## If you want to work on the Kotlin libraries
 
-* download a clean [IDEA 13 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+13+EAP)
+* download a clean [IDEA 14 EAP build](http://confluence.jetbrains.com/display/IDEADEV/IDEA+14+EAP)
 * [install the Kotlin plugin](#pre-built-plugin)
 * open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries)
 

@@ -21,9 +21,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 // TODO: Remove when all named declarations get stubs
 @Deprecated
@@ -63,7 +64,7 @@ abstract class JetNamedDeclarationNotStubbed extends JetDeclarationImpl implemen
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return getNameIdentifier().replace(JetPsiFactory.createNameIdentifier(getProject(), name));
+        return getNameIdentifier().replace(JetPsiFactory(this).createNameIdentifier(name));
     }
 
     @Override

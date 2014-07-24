@@ -36,4 +36,7 @@ public interface ValueArgument {
     /* The '*' in something like foo(*arr) i.e. pass an array as a number of vararg arguments */
     @Nullable
     LeafPsiElement getSpreadElement();
+
+    /* The argument is placed externally to call element, e.g. in 'when' condition with subject: 'when (a) { in c -> }' */
+    boolean isExternal();
 }

@@ -20,28 +20,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
 import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 
 import javax.inject.Inject;
 
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
-import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage.MemberSignature;
+import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
 
 public class ConstantDescriptorLoader extends BaseDescriptorLoader implements ConstantLoader {
     @Inject
     @Override
-    public void setStorage(@NotNull DescriptorDeserializersStorage storage) {
+    public void setStorage(@NotNull DescriptorLoadersStorage storage) {
         this.storage = storage;
-    }
-
-    @Inject
-    @Override
-    public void setClassResolver(@NotNull DependencyClassByQualifiedNameResolver classResolver) {
-        this.classResolver = classResolver;
     }
 
     @Inject

@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.openapi.editor.colors.EditorColorsManager com.intellij.openapi.editor.colors.EditorColorsManager getInstance()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

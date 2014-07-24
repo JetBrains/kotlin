@@ -23,9 +23,14 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetBlockExpression;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.psi.JetTryExpression;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.MoveDeclarationsOutHelper;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder {
 
@@ -39,7 +44,7 @@ public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder
             return null;
         }
 
-        JetTryExpression tryExpression = (JetTryExpression) JetPsiFactory.createExpression(project, getCodeTemplate());
+        JetTryExpression tryExpression = (JetTryExpression) JetPsiFactory(project).createExpression(getCodeTemplate());
         tryExpression = (JetTryExpression) container.addAfter(tryExpression, statements[statements.length - 1]);
 
         // TODO move a comment for first statement

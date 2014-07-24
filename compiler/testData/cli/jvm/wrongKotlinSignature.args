@@ -1,6 +1,5 @@
--src
 $TESTDATA_DIR$/wrongKotlinSignature.kt
 -classpath
 $TESTDATA_DIR$/wrongKotlinSignatureLib
--output
+-d
 $TEMP_DIR$

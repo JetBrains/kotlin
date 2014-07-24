@@ -21,21 +21,19 @@ import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.jet.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
-import java.util.HashSet
 
 public object JavaToKotlinTranslator {
     private val DISPOSABLE = Disposer.newDisposable()
 
     private fun createFile(text: String): PsiFile? {
         val javaCoreEnvironment: JavaCoreProjectEnvironment? = setUpJavaCoreEnvironment()
-        return PsiFileFactory.getInstance(javaCoreEnvironment?.getProject())?.createFileFromText("test.java", JavaLanguage.INSTANCE, text)
+        return PsiFileFactory.getInstance(javaCoreEnvironment?.getProject()!!)?.createFileFromText("test.java", JavaLanguage.INSTANCE, text)
     }
 
     fun createFile(project: Project, text: String): PsiJavaFile {

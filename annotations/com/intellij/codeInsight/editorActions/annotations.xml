@@ -20,6 +20,39 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; collectTransferableData(com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, int[], int[])'>
+    <annotation name='kotlin.jvm.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List&lt;T&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; collectTransferableData(com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, int[], int[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; collectTransferableData(com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, int[], int[]) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; collectTransferableData(com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, int[], int[]) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; collectTransferableData(com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, int[], int[]) 3'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; extractTransferableData(java.awt.datatransfer.Transferable)'>
+    <annotation name='kotlin.jvm.KotlinSignature'>
+      <val name="value" val="&quot;fun extractTransferableData(content: Transferable): List&lt;T&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; extractTransferableData(java.awt.datatransfer.Transferable) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor void processTransferableData(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.openapi.editor.RangeMarker, int, com.intellij.openapi.util.Ref&lt;java.lang.Boolean&gt;, T) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
@@ -37,6 +70,26 @@
   </item>
   <item
       name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor void processTransferableData(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.openapi.editor.RangeMarker, int, com.intellij.openapi.util.Ref&lt;java.lang.Boolean&gt;, T) 5'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor void processTransferableData(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.openapi.editor.RangeMarker, int, com.intellij.openapi.util.Ref&lt;java.lang.Boolean&gt;, java.util.List&lt;T&gt;) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor void processTransferableData(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.openapi.editor.RangeMarker, int, com.intellij.openapi.util.Ref&lt;java.lang.Boolean&gt;, java.util.List&lt;T&gt;) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor void processTransferableData(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.openapi.editor.RangeMarker, int, com.intellij.openapi.util.Ref&lt;java.lang.Boolean&gt;, java.util.List&lt;T&gt;) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor void processTransferableData(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.openapi.editor.RangeMarker, int, com.intellij.openapi.util.Ref&lt;java.lang.Boolean&gt;, java.util.List&lt;T&gt;) 4'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor void processTransferableData(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.openapi.editor.RangeMarker, int, com.intellij.openapi.util.Ref&lt;java.lang.Boolean&gt;, java.util.List&lt;T&gt;) 5'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item

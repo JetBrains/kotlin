@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport;
 import org.jetbrains.jet.plugin.util.DebuggerUtils;
 
 import java.util.regex.Matcher;
@@ -65,7 +64,7 @@ public class JetExceptionFilter implements Filter {
         String internalName = fullyQualifiedName.replace('.', '/');
         JvmClassName jvmClassName = JvmClassName.byInternalName(internalName);
 
-        JetFile file = DebuggerUtils.findSourceFileForClass(searchScope, jvmClassName, fileName);
+        JetFile file = DebuggerUtils.findSourceFileForClass(project, searchScope, jvmClassName, fileName);
 
         if (file == null) return null;
         VirtualFile virtualFile = file.getVirtualFile();

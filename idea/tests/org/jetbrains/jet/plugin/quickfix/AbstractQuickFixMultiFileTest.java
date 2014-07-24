@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -30,6 +29,7 @@ import junit.framework.ComparisonFailure;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
+import org.jetbrains.jet.plugin.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCase {
+public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzerTestCase {
 
     protected static boolean shouldBeAvailableAfterExecution() {
         return false;

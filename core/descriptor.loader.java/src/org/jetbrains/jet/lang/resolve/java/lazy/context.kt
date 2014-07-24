@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaResolverCache
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPropertyInitializerEvaluator
+import org.jetbrains.jet.lang.resolve.java.sources.JavaSourceElementFactory
 
 open class GlobalJavaResolverContext(
         val storageManager: StorageManager,
@@ -40,7 +41,8 @@ open class GlobalJavaResolverContext(
         val errorReporter: ErrorReporter,
         val methodSignatureChecker: MethodSignatureChecker,
         val javaResolverCache: JavaResolverCache,
-        val javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator
+        val javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,
+        val sourceElementFactory: JavaSourceElementFactory
 )
 
 open class LazyJavaResolverContext(
@@ -55,10 +57,12 @@ open class LazyJavaResolverContext(
         errorReporter: ErrorReporter,
         methodSignatureChecker: MethodSignatureChecker,
         javaResolverCache: JavaResolverCache,
-        javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator
+        javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,
+        sourceElementFactory: JavaSourceElementFactory
 ) : GlobalJavaResolverContext(storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver,
                               externalAnnotationResolver, externalSignatureResolver,
-                              errorReporter, methodSignatureChecker, javaResolverCache, javaPropertyInitializerEvaluator)
+                              errorReporter, methodSignatureChecker, javaResolverCache, javaPropertyInitializerEvaluator,
+                              sourceElementFactory)
 
 fun LazyJavaResolverContext.withTypes(
         typeParameterResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
@@ -75,6 +79,7 @@ fun LazyJavaResolverContext.withTypes(
         methodSignatureChecker,
         javaResolverCache,
         javaPropertyInitializerEvaluator,
+        sourceElementFactory,
         LazyJavaTypeResolver(this, typeParameterResolver),
         typeParameterResolver)
 
@@ -91,12 +96,13 @@ class LazyJavaResolverContextWithTypes(
         methodSignatureChecker: MethodSignatureChecker,
         javaResolverCache: JavaResolverCache,
         javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,
+        sourceElementFactory: JavaSourceElementFactory,
         val typeResolver: LazyJavaTypeResolver,
         val typeParameterResolver: TypeParameterResolver
 ) : LazyJavaResolverContext(packageFragmentProvider, javaClassResolver, storageManager, finder,
                             kotlinClassFinder, deserializedDescriptorResolver,
-                            externalAnnotationResolver, externalSignatureResolver,
-                            errorReporter, methodSignatureChecker, javaResolverCache, javaPropertyInitializerEvaluator)
+                            externalAnnotationResolver, externalSignatureResolver, errorReporter, methodSignatureChecker,
+                            javaResolverCache, javaPropertyInitializerEvaluator, sourceElementFactory)
 
 fun LazyJavaResolverContextWithTypes.child(
         containingDeclaration: DeclarationDescriptor,

@@ -34,40 +34,42 @@ sink:
     }
 ---------------------
 L3:
-  3 <START>                             INIT: in: {} out: {}
-    v(x: Int)                           INIT: in: {} out: {x=D}
-    magic(x: Int) -> <v0>               INIT: in: {x=D} out: {x=D}
-    w(x|<v0>)                           INIT: in: {x=D} out: {x=ID}
-  4 mark(val y = x + a use(a))          INIT: in: {x=ID} out: {x=ID}
-    v(val y = x + a)                    INIT: in: {x=ID} out: {x=ID, y=D}           USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
-    r(x) -> <v1>                        INIT: in: {x=ID, y=D} out: {x=ID, y=D}      USE: in: {a=READ} out: {a=READ, x=READ}
+  3 <START>                                    INIT: in: {} out: {}
+    v(x: Int)                                  INIT: in: {} out: {x=D}
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>    INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                  INIT: in: {x=D} out: {x=ID}
+  4 mark(val y = x + a use(a))                 INIT: in: {x=ID} out: {x=ID}
+    v(val y = x + a)                           INIT: in: {x=ID} out: {x=ID, y=D}           USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
+    r(x) -> <v1>                               INIT: in: {x=ID, y=D} out: {x=ID, y=D}      USE: in: {a=READ} out: {a=READ, x=READ}
     r(a) -> <v2>
     mark(x + a)
-    call(+, plus|<v1>, <v2>) -> <v3>
-    w(y|<v3>)                           INIT: in: {x=ID, y=D} out: {x=ID, y=ID}     USE: in: {a=READ} out: {a=READ}
-    r(a) -> <v4>                        INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}    USE: in: {} out: {a=READ}
+    call(x + a, plus|<v1>, <v2>) -> <v3>
+    w(y|<v3>)                                  INIT: in: {x=ID, y=D} out: {x=ID, y=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v4>                               INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}    USE: in: {} out: {a=READ}
     mark(use(a))
-    call(use, use|<v4>) -> <v5>
+    call(use(a), use|<v4>) -> <v5>
+  3 ret(*|<v5>) L4                             INIT: in: {x=ID} out: {x=ID}
 L4:
-  3 <END>                               INIT: in: {x=ID} out: {x=ID}
+    <END>
 error:
-    <ERROR>                             INIT: in: {} out: {}
+    <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                              INIT: in: {x=ID} out: {x=ID}                USE: in: {} out: {}
+    <SINK>                                     INIT: in: {x=ID} out: {x=ID}                USE: in: {} out: {}
 =====================
 == use ==
 fun use(vararg a: Any?) = a
 ---------------------
 L0:
-  1 <START>                          INIT: in: {} out: {}
-    v(vararg a: Any?)                INIT: in: {} out: {a=D}
-    magic(vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
-    w(a|<v0>)                        INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
-    r(a) -> <v1>                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+  1 <START>                                            INIT: in: {} out: {}
+    v(vararg a: Any?)                                  INIT: in: {} out: {a=D}
+    magic[FAKE_INITIALIZER](vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                          INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>                                       INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+    ret(*|<v1>) L1
 L1:
     <END>
 error:
-    <ERROR>                          INIT: in: {} out: {}
+    <ERROR>                                            INIT: in: {} out: {}
 sink:
-    <SINK>                           INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

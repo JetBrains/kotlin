@@ -2,6 +2,11 @@ package org.test.customer
 
 class Customer(public val _firstName: String, public val _lastName: String) {
 
+    {
+        doSmthBefore()
+        doSmthAfter()
+    }
+
     public fun getFirstName(): String {
         return _firstName
     }
@@ -14,14 +19,9 @@ class Customer(public val _firstName: String, public val _lastName: String) {
     }
     private fun doSmthAfter() {
     }
-
-    {
-        doSmthBefore()
-        doSmthAfter()
-    }
 }
 
-class CustomerBuilder() {
+class CustomerBuilder {
     public var _firstName: String = "Homer"
     public var _lastName: String = "Simpson"
 
@@ -40,7 +40,7 @@ class CustomerBuilder() {
     }
 }
 
-public class User() {
+public class User {
     class object {
         public fun main() {
             val customer = CustomerBuilder().WithFirstName("Homer").WithLastName("Simpson").Build()

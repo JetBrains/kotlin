@@ -94,13 +94,6 @@ public final class PsiUtils {
     }
 
     @NotNull
-    public static JetExpression getCallee(@NotNull JetCallExpression expression) {
-        JetExpression calleeExpression = expression.getCalleeExpression();
-        assert calleeExpression != null;
-        return calleeExpression;
-    }
-
-    @NotNull
     public static JetExpression getLoopBody(@NotNull JetLoopExpression expression) {
         JetExpression body = expression.getBody();
         assert body != null : "Loops cannot have null bodies.";

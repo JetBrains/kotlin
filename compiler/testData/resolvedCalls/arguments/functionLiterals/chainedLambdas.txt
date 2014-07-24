@@ -1,0 +1,19 @@
+fun <T, S, R> foo(t: T, f: (T) -> S, g: (S) -> R) {}
+
+
+fun test() {
+    <caret>foo(1, { x -> "$x"}, { y -> y.length })
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  t : Int = 1
+SUCCESS  f : (Int) -> String = { x -> "$x"}
+SUCCESS  g : (String) -> Int = { y -> y.length }

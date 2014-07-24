@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 
@@ -66,7 +67,8 @@ public class DescriptorSubstitutor {
                     descriptor.isReified(),
                     descriptor.getVariance(),
                     descriptor.getName(),
-                    descriptor.getIndex()
+                    descriptor.getIndex(),
+                    SourceElement.NO_SOURCE
             );
             substituted.setInitialized();
 

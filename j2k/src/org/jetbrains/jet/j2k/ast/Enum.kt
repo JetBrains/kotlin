@@ -30,15 +30,19 @@ class Enum(
 ) : Class(name, annotations, modifiers, typeParameterList,
           extendsTypes, baseClassParams, implementsTypes, body) {
 
-    override fun appendPrimaryConstructorSignature(builder: CodeBuilder) {
-        body.primaryConstructor?.appendSignature(builder)
-    }
-
     override fun generateCode(builder: CodeBuilder) {
+        builder.append(body.factoryFunctions, "\n", "", "\n\n")
+
         builder append annotations appendWithSpaceAfter presentationModifiers() append "enum class " append name
-        appendPrimaryConstructorSignature(builder)
+
+        if (body.primaryConstructorSignature != null) {
+            builder.append(body.primaryConstructorSignature)
+        }
+
         builder append typeParameterList
+
         appendBaseTypes(builder)
-        body.append(builder, this)
+
+        body.append(builder)
     }
 }

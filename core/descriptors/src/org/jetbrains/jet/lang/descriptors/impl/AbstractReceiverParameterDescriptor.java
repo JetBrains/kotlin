@@ -109,4 +109,10 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
     public CallableDescriptor getOriginal() {
         return this;
     }
+
+    @NotNull
+    @Override
+    public SourceElement getSource() {
+        return SourceElement.NO_SOURCE;
+    }
 }

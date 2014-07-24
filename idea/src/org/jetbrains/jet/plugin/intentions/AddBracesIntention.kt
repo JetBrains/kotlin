@@ -16,17 +16,9 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.psi.JetWhileExpression
-import org.jetbrains.jet.lang.psi.JetForExpression
-import org.jetbrains.jet.lang.psi.JetDoWhileExpression
 import org.jetbrains.jet.lang.psi.JetExpressionImpl
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiFile
 import com.intellij.lang.ASTNode
 import org.jetbrains.jet.JetNodeTypes
 import com.intellij.psi.PsiWhiteSpace
@@ -61,14 +53,15 @@ public class AddBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("
         if (element.getNextSibling()?.getText() == ";") {
             element.getNextSibling()!!.delete()
         }
-        val newElement = bodyNode!!.getPsi()!!.replace(JetPsiFactory.createFunctionBody(element.getProject(), bodyNode.getText()))
+        val psiFactory = JetPsiFactory(element)
+        val newElement = bodyNode!!.getPsi()!!.replace(psiFactory.createFunctionBody(bodyNode.getText()))
 
         //handles the case of the block statement being on a new line
         if (newElement.getPrevSibling() is PsiWhiteSpace) {
-            newElement.getPrevSibling()!!.replace(JetPsiFactory.createWhiteSpace(element.getProject()))
+            newElement.getPrevSibling()!!.replace(psiFactory.createWhiteSpace())
         } else {
             //handles the case of no space between condition and statement
-            newElement.addBefore(JetPsiFactory.createWhiteSpace(element.getProject()), newElement.getFirstChild())
+            newElement.addBefore(psiFactory.createWhiteSpace(), newElement.getFirstChild())
         }
         if (expressionKind == ExpressionKind.DOWHILE) {
             newElement.getNextSibling()?.delete()

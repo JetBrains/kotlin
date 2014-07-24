@@ -22,8 +22,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.plugin.JetBundle;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class ReplaceInfixCallFix extends JetIntentionAction<JetBinaryExpression> {
     public ReplaceInfixCallFix(@NotNull JetBinaryExpression element) {
@@ -49,7 +54,7 @@ public class ReplaceInfixCallFix extends JetIntentionAction<JetBinaryExpression>
         assert left != null && right != null : "Preconditions checked by factory";
         String newText = left.getText() + "?." + element.getOperationReference().getText()
                          + "(" + right.getText() + ")";
-        JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory.createExpression(project, newText);
+        JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory(file).createExpression(newText);
         element.replace(newElement);
     }
 

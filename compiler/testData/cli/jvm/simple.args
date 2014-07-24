@@ -1,4 +1,3 @@
--src
 $TESTDATA_DIR$/simple.kt
--output
+-d
 $TEMP_DIR$

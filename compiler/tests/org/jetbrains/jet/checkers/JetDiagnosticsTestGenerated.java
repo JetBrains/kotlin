@@ -2596,6 +2596,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/extensionProperty.kt");
                 }
                 
+                @TestMetadata("labeledDelegatedExpression.kt")
+                public void testLabeledDelegatedExpression() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/labeledDelegatedExpression.kt");
+                }
+                
                 @TestMetadata("noErrorsForImplicitConstraints.kt")
                 public void testNoErrorsForImplicitConstraints() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/noErrorsForImplicitConstraints.kt");
@@ -2929,6 +2934,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("objectExpressionInConstructor.kt")
                 public void testObjectExpressionInConstructor() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/objectExpressionInConstructor.kt");
+                }
+                
+                @TestMetadata("privateClassPropertyNoClash.kt")
+                public void testPrivateClassPropertyNoClash() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/privateClassPropertyNoClash.kt");
                 }
                 
                 @TestMetadata("topLevel.kt")
@@ -3791,6 +3801,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/typeParameterOnLhsOfDot.kt");
             }
             
+            @TestMetadata("unresolvedArguments.kt")
+            public void testUnresolvedArguments() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/unresolvedArguments.kt");
+            }
+            
             @TestMetadata("variableDeclarationInSelector.kt")
             public void testVariableDeclarationInSelector() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/variableDeclarationInSelector.kt");
@@ -4464,7 +4479,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/inline")
-        @InnerTestClasses({Inline.BinaryExpressions.class, Inline.NonPublicMember.class, Inline.Regressions.class, Inline.UnaryExpressions.class})
+        @InnerTestClasses({Inline.BinaryExpressions.class, Inline.NonLocalReturns.class, Inline.NonPublicMember.class, Inline.Regressions.class, Inline.UnaryExpressions.class})
         public static class Inline extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInInline() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/inline"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4498,6 +4513,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("extensionOnFunction.kt")
             public void testExtensionOnFunction() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inline/extensionOnFunction.kt");
+            }
+            
+            @TestMetadata("fromInlineToNoInline.kt")
+            public void testFromInlineToNoInline() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inline/fromInlineToNoInline.kt");
             }
             
             @TestMetadata("functions.kt")
@@ -4628,6 +4648,89 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/inline/nonLocalReturns")
+            public static class NonLocalReturns extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInNonLocalReturns() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/inline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("anonymousObjects.kt")
+                public void testAnonymousObjects() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/anonymousObjects.kt");
+                }
+                
+                @TestMetadata("anonymousObjectsNested.kt")
+                public void testAnonymousObjectsNested() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/anonymousObjectsNested.kt");
+                }
+                
+                @TestMetadata("explicitReturnType.kt")
+                public void testExplicitReturnType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/explicitReturnType.kt");
+                }
+                
+                @TestMetadata("fromOnlyLocal.kt")
+                public void testFromOnlyLocal() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/fromOnlyLocal.kt");
+                }
+                
+                @TestMetadata("inlineLambda.kt")
+                public void testInlineLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/inlineLambda.kt");
+                }
+                
+                @TestMetadata("labeledReturn.kt")
+                public void testLabeledReturn() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/labeledReturn.kt");
+                }
+                
+                @TestMetadata("lambdaWithGlobalReturnsInsideOnlyLocalOne.kt")
+                public void testLambdaWithGlobalReturnsInsideOnlyLocalOne() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/lambdaWithGlobalReturnsInsideOnlyLocalOne.kt");
+                }
+                
+                @TestMetadata("localFun.kt")
+                public void testLocalFun() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/localFun.kt");
+                }
+                
+                @TestMetadata("nestedNonLocals.kt")
+                public void testNestedNonLocals() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/nestedNonLocals.kt");
+                }
+                
+                @TestMetadata("noInlineLambda.kt")
+                public void testNoInlineLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/noInlineLambda.kt");
+                }
+                
+                @TestMetadata("nonInlinedClass.kt")
+                public void testNonInlinedClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/nonInlinedClass.kt");
+                }
+                
+                @TestMetadata("onlyLocalReturnLambda.kt")
+                public void testOnlyLocalReturnLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/onlyLocalReturnLambda.kt");
+                }
+                
+                @TestMetadata("onlyLocalReturnLambdaBinaryExpr.kt")
+                public void testOnlyLocalReturnLambdaBinaryExpr() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/onlyLocalReturnLambdaBinaryExpr.kt");
+                }
+                
+                @TestMetadata("propertyAccessorsAndConstructor.kt")
+                public void testPropertyAccessorsAndConstructor() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/propertyAccessorsAndConstructor.kt");
+                }
+                
+                @TestMetadata("toOnlyLocal.kt")
+                public void testToOnlyLocal() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/toOnlyLocal.kt");
+                }
+                
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/inline/nonPublicMember")
             public static class NonPublicMember extends AbstractJetDiagnosticsTest {
                 public void testAllFilesPresentInNonPublicMember() throws Exception {
@@ -4695,6 +4798,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/inline/unaryExpressions/mathOperation.kt");
                 }
                 
+                @TestMetadata("notOnCall.kt")
+                public void testNotOnCall() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/unaryExpressions/notOnCall.kt");
+                }
+                
                 @TestMetadata("notOperation.kt")
                 public void testNotOperation() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inline/unaryExpressions/notOperation.kt");
@@ -4706,6 +4814,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 TestSuite suite = new TestSuite("Inline");
                 suite.addTestSuite(Inline.class);
                 suite.addTestSuite(BinaryExpressions.class);
+                suite.addTestSuite(NonLocalReturns.class);
                 suite.addTestSuite(NonPublicMember.class);
                 suite.addTestSuite(Regressions.class);
                 suite.addTestSuite(UnaryExpressions.class);
@@ -5045,6 +5154,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("recursiveRawUpperBound.kt")
             public void testRecursiveRawUpperBound() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/recursiveRawUpperBound.kt");
+            }
+            
+            @TestMetadata("samInConstructorWithGenerics.kt")
+            public void testSamInConstructorWithGenerics() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/samInConstructorWithGenerics.kt");
             }
             
             @TestMetadata("Simple.kt")
@@ -5478,6 +5592,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("disallowForJavaMethods.kt")
             public void testDisallowForJavaMethods() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/namedArguments/disallowForJavaMethods.kt");
+            }
+            
+            @TestMetadata("disallowForSamAdapterConstructor.kt")
+            public void testDisallowForSamAdapterConstructor() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/namedArguments/disallowForSamAdapterConstructor.kt");
+            }
+            
+            @TestMetadata("disallowForSamAdapterFunction.kt")
+            public void testDisallowForSamAdapterFunction() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/namedArguments/disallowForSamAdapterFunction.kt");
             }
             
             @TestMetadata("namedArgumentsAndDefaultValues.kt")
@@ -6107,6 +6231,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/override/ParentInheritsManyImplementations.kt");
             }
             
+            @TestMetadata("PropertyInConstructor.kt")
+            public void testPropertyInConstructor() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/PropertyInConstructor.kt");
+            }
+            
             @TestMetadata("ProtectedAndPrivateFromSupertypes.kt")
             public void testProtectedAndPrivateFromSupertypes() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/ProtectedAndPrivateFromSupertypes.kt");
@@ -6610,6 +6739,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/regressions/kt469.kt");
             }
             
+            @TestMetadata("kt4827.kt")
+            public void testKt4827() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/regressions/kt4827.kt");
+            }
+            
             @TestMetadata("kt498.kt")
             public void testKt498() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/regressions/kt498.kt");
@@ -6951,6 +7085,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("analyzeUnmappedArguments.kt")
                 public void testAnalyzeUnmappedArguments() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/resolve/nestedCalls/analyzeUnmappedArguments.kt");
+                }
+                
+                @TestMetadata("argumentsInParentheses.kt")
+                public void testArgumentsInParentheses() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/nestedCalls/argumentsInParentheses.kt");
                 }
                 
                 @TestMetadata("completeTypeInferenceForNestedInNoneApplicable.kt")

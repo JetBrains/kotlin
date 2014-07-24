@@ -1,11 +1,11 @@
 package demo
 
-class WindowAdapter() {
+class WindowAdapter {
     public fun windowClosing() {
     }
 }
 
-public class Client() : Frame() {
+public class Client : Frame() {
     {
         val a = object : WindowAdapter() {
             override fun windowClosing() {

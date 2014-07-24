@@ -27,8 +27,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*;
-import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArgumentVisitor;
-import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationVisitor;
+import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.*;
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.*;
 
 public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
@@ -113,7 +112,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
             @Override
             @Nullable
-            public AnnotationArgumentVisitor visitArray(@NotNull Name name) {
+            public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
                 if (name.asString().equals(DATA_FIELD_NAME)) {
                     return stringArrayVisitor();
                 }
@@ -125,11 +124,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             }
 
             @NotNull
-            private AnnotationArgumentVisitor stringArrayVisitor() {
+            private AnnotationArrayArgumentVisitor stringArrayVisitor() {
                 final List<String> strings = new ArrayList<String>(1);
-                return new AnnotationArgumentVisitor() {
+                return new AnnotationArrayArgumentVisitor() {
                     @Override
-                    public void visit(@Nullable Name name, @Nullable Object value) {
+                    public void visit(@Nullable Object value) {
                         if (!(value instanceof String)) {
                             throw new IllegalStateException("Unexpected argument value: " + value);
                         }
@@ -138,14 +137,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                     }
 
                     @Override
-                    public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
-                        unexpectedArgument(name, annotationClassName);
-                    }
-
-                    @Nullable
-                    @Override
-                    public AnnotationArgumentVisitor visitArray(@NotNull Name name) {
-                        return unexpectedArgument(name, annotationClassName);
+                    public void visitEnum(@NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
+                        unexpectedArgument(null, annotationClassName);
                     }
 
                     @Override
@@ -186,7 +179,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
             @Nullable
             @Override
-            public AnnotationArgumentVisitor visitArray(@NotNull Name name) {
+            public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
                 return unexpectedArgument(name, KotlinSyntheticClass.CLASS_NAME);
             }
 
@@ -206,7 +199,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     }
 
     @Nullable
-    private AnnotationArgumentVisitor unexpectedArgument(@Nullable Name name, @NotNull JvmClassName annotationClassName) {
+    private AnnotationArrayArgumentVisitor unexpectedArgument(@Nullable Name name, @NotNull JvmClassName annotationClassName) {
         if (isAbiVersionCompatible(version)) {
             throw new IllegalStateException("Unexpected argument " + name + " for annotation " + annotationClassName);
         }

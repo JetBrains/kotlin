@@ -21,8 +21,8 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.Element
-import org.jetbrains.jet.j2k.ast.Modifiers
 import kotlin.platform.platformName
+import org.jetbrains.jet.j2k.ast.CommentsAndSpacesInheritance
 
 fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
@@ -51,7 +51,13 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
     private val commentsAndSpacesUsed = HashSet<PsiElement>()
 
-    public fun append(text: String, endOfLineComment: Boolean = false): CodeBuilder {
+    public fun append(text: String): CodeBuilder
+            = append(text, false)
+
+    private fun appendCommentOrWhiteSpace(element: PsiElement)
+            = append(element.getText()!!, element.isEndOfLineComment())
+
+    private fun append(text: String, endOfLineComment: Boolean = false): CodeBuilder {
         if (text.isEmpty()) {
             assert(!endOfLineComment)
             return this
@@ -73,59 +79,82 @@ class CodeBuilder(private val topElement: PsiElement?) {
     public fun append(element: Element): CodeBuilder {
         if (element.isEmpty) return this // do not insert comment and spaces for empty elements to avoid multiple blank lines
 
-        if (element.prototypes.isEmpty() || topElement == null) {
+        if (element.prototypes == null && topElement != null) {
+            val s = "Element $element has no prototypes assigned.\n" +
+                    "Use Element.assignPrototype() or Element.assignNoPrototype().\n" +
+                    "Element created at:\n${element.createdAt}"
+            throw RuntimeException(s)
+        }
+
+        if (topElement == null || element.prototypes!!.isEmpty()) {
             element.generateCode(this)
             return this
         }
 
-        val prefixElements = ArrayList<PsiElement>(2)
-        val postfixElements = ArrayList<PsiElement>(2)
-        for ((prototype, inheritBlankLinesBefore) in element.prototypes) {
+        val notInsideElements = HashSet<PsiElement>()
+        val prefixElements = ArrayList<PsiElement>(1)
+        val postfixElements = ArrayList<PsiElement>(1)
+        for ((prototype, inheritance) in element.prototypes!!) {
             assert(prototype !is PsiComment)
             assert(prototype !is PsiWhiteSpace)
             assert(topElement.isAncestor(prototype))
-            prefixElements.collectPrefixElements(prototype, inheritBlankLinesBefore)
-            postfixElements.collectPostfixElements(prototype)
+            prefixElements.collectPrefixElements(prototype, inheritance, notInsideElements)
+            postfixElements.collectPostfixElements(prototype, inheritance, notInsideElements)
         }
 
         commentsAndSpacesUsed.addAll(prefixElements)
         commentsAndSpacesUsed.addAll(postfixElements)
 
-        for (i in prefixElements.indices) {
-            val e = prefixElements[i]
+        for ((i, e) in prefixElements.withIndices()) {
             if (i == 0 && e is PsiWhiteSpace) {
-                if (e.newLinesCount() > 1) {  // insert at maximum one blank line
-                    append("\n")
+                val blankLines = e.newLinesCount() - 1
+                for (_ in 1..blankLines) {
+                    append("\n", false)
                 }
             }
             else {
-                append(e.getText()!!, e.isEndOfLineComment())
+                appendCommentOrWhiteSpace(e)
             }
         }
 
         element.generateCode(this)
 
         // scan for all comments inside which are not yet used in the text and put them here to not loose any comment from code
-        for ((prototype, _) in element.prototypes) {
-            prototype.accept(object : JavaRecursiveElementVisitor(){
-                override fun visitComment(comment: PsiComment) {
-                    if (commentsAndSpacesUsed.add(comment)) {
-                        append(comment.getText()!!, comment.isEndOfLineComment())
+        for ((prototype, inheritance) in element.prototypes!!) {
+            if (inheritance.commentsInside) {
+                prototype.accept(object : JavaRecursiveElementVisitor(){
+                    override fun visitComment(comment: PsiComment) {
+                        if (comment !in notInsideElements && commentsAndSpacesUsed.add(comment)) {
+                            appendCommentOrWhiteSpace(comment)
+                        }
                     }
-                }
-            })
+                })
+            }
         }
 
-        postfixElements.forEach { append(it.getText()!!, it.isEndOfLineComment()) }
+        postfixElements.forEach { appendCommentOrWhiteSpace(it) }
 
         return this
     }
 
-    private fun MutableList<PsiElement>.collectPrefixElements(element: PsiElement, allowBlankLinesBefore: Boolean) {
-        val atStart = ArrayList<PsiElement>(2).collectCommentsAndSpacesAtStart(element)
+    private fun MutableList<PsiElement>.collectPrefixElements(element: PsiElement,
+                                                              inheritance: CommentsAndSpacesInheritance,
+                                                              notInsideElements: MutableSet<PsiElement>) {
+        val before = ArrayList<PsiElement>(1).collectCommentsAndSpacesBefore(element)
+        val atStart = ArrayList<PsiElement>(1).collectCommentsAndSpacesAtStart(element)
+        notInsideElements.addAll(atStart)
 
-        val before = ArrayList<PsiElement>(2).collectCommentsAndSpacesBefore(element)
-        if (!allowBlankLinesBefore && before.lastOrNull() is PsiWhiteSpace) {
+        if (!inheritance.blankLinesBefore && !inheritance.commentsBefore) return
+
+        val firstSpace = before.lastOrNull() as? PsiWhiteSpace
+        if (!inheritance.commentsBefore) { // take only first whitespace
+            if (firstSpace != null) {
+                add(firstSpace)
+            }
+            return
+        }
+
+        if (!inheritance.blankLinesBefore && firstSpace != null) {
             before.remove(before.size - 1)
         }
 
@@ -133,10 +162,13 @@ class CodeBuilder(private val topElement: PsiElement?) {
         addAll(atStart)
     }
 
-    private fun MutableList<PsiElement>.collectPostfixElements(element: PsiElement) {
-        val atEnd = ArrayList<PsiElement>(2).collectCommentsAndSpacesAtEnd(element)
+    private fun MutableList<PsiElement>.collectPostfixElements(element: PsiElement, inheritance: CommentsAndSpacesInheritance, notInsideElements: MutableSet<PsiElement>) {
+        val atEnd = ArrayList<PsiElement>(1).collectCommentsAndSpacesAtEnd(element)
+        notInsideElements.addAll(atEnd)
 
-        val after = ArrayList<PsiElement>(2).collectCommentsAndSpacesAfter(element)
+        if (!inheritance.commentsAfter) return
+
+        val after = ArrayList<PsiElement>(1).collectCommentsAndSpacesAfter(element)
         if (after.isNotEmpty()) {
             val last = after.last()
             if (last is PsiWhiteSpace) {

@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -56,6 +57,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
@@ -141,7 +143,7 @@ public class ExpressionTypingUtils {
             @NotNull DeclarationDescriptor scopeContainer,
             @NotNull DeclarationDescriptor variableParent
     ) {
-        PsiElement scopeDeclaration = BindingContextUtils.descriptorToDeclaration(context, scopeContainer);
+        PsiElement scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer);
         if (!(scopeDeclaration instanceof JetFunctionLiteral)) {
             return false;
         }
@@ -153,7 +155,7 @@ public class ExpressionTypingUtils {
             return false;
         }
 
-        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
+        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(callExpression, context);
         if (resolvedCall == null) {
             return false;
         }
@@ -207,19 +209,17 @@ public class ExpressionTypingUtils {
      * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
      *
      * @param callableFQN
-     * @param project
      * @param scope
      * @return
      */
     public static List<CallableDescriptor> canFindSuitableCall(
             @NotNull FqName callableFQN,
-            @NotNull Project project,
             @NotNull JetExpression receiverExpression,
             @NotNull JetType receiverType,
             @NotNull JetScope scope,
             @NotNull ModuleDescriptor module
     ) {
-        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN.asString());
+        JetImportDirective importDirective = JetPsiFactory(receiverExpression).createImportDirective(callableFQN.asString());
 
         Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver()
                 .analyseImportReference(importDirective, scope, new BindingTraceContext(), module);
@@ -331,7 +331,7 @@ public class ExpressionTypingUtils {
             @NotNull String argumentName,
             @NotNull JetType argumentType
     ) {
-        JetExpression fakeExpression = JetPsiFactory.createExpression(project, argumentName);
+        JetExpression fakeExpression = JetPsiFactory(project).createExpression(argumentName);
         trace.record(EXPRESSION_TYPE, fakeExpression, argumentType);
         trace.record(PROCESSED, fakeExpression);
         return fakeExpression;
@@ -363,7 +363,7 @@ public class ExpressionTypingUtils {
             @NotNull List<JetExpression> valueArguments,
             @NotNull Name name
     ) {
-        final JetReferenceExpression fake = JetPsiFactory.createSimpleName(expressionTypingServices.getProject(), "fake");
+        final JetReferenceExpression fake = JetPsiFactory(expressionTypingServices.getProject()).createSimpleName("fake");
         TemporaryBindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve fake call for", name);
         Call call = CallMaker.makeCallWithExpressions(fake, receiver, null, fake, valueArguments);
         OverloadResolutionResults<FunctionDescriptor> results =
@@ -428,7 +428,7 @@ public class ExpressionTypingUtils {
 
     public static void checkVariableShadowing(@NotNull ExpressionTypingContext context, @NotNull VariableDescriptor variableDescriptor, VariableDescriptor oldDescriptor) {
         if (oldDescriptor != null && isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
-            PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
+            PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
             if (declaration != null) {
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
             }
@@ -525,5 +525,21 @@ public class ExpressionTypingUtils {
             current = current.getContainingDeclaration();
         }
         return false;
+    }
+
+    public static boolean dependsOnExpectedType(@Nullable JetExpression expression) {
+        JetExpression expr = JetPsiUtil.deparenthesize(expression, false);
+        if (expr == null) return false;
+
+        if (expr instanceof JetBinaryExpressionWithTypeRHS) {
+            return false;
+        }
+        if (expr instanceof JetBinaryExpression) {
+            return isBinaryExpressionDependentOnExpectedType((JetBinaryExpression) expr);
+        }
+        if (expr instanceof JetUnaryExpression) {
+            return isUnaryExpressionDependentOnExpectedType((JetUnaryExpression) expr);
+        }
+        return true;
     }
 }

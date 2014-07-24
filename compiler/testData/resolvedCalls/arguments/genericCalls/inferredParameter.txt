@@ -1,0 +1,19 @@
+fun <T> foo(t: T, l: List<T>) {}
+
+fun use(vararg a: Any?) = a
+
+fun test(a: Any, ls: List<String>) {
+    use(<caret>foo(11, ls))
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  t : Comparable<out Any?> = 11
+SUCCESS  l : List<Comparable<out Any?>> = ls

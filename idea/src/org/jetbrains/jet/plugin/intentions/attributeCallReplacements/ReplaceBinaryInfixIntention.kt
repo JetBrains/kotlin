@@ -50,8 +50,7 @@ public open class ReplaceBinaryInfixIntention : AttributeCallReplacementIntentio
         val argument = (handleErrors(editor, call.getPositionalArguments()) ?: return)[0].getArgumentExpression()
 
         call.element.replace(
-                JetPsiFactory.createBinaryExpression(
-                        call.element.getProject(),
+                JetPsiFactory(call.element).createBinaryExpression(
                         call.element.getReceiverExpression(),
                         lookup(call.functionName)!!,  // Lookup must succeed
                         argument

@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
     private final String operation;
 
@@ -44,7 +46,7 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpress
             JetExpression left = ((JetBinaryExpressionWithTypeRHS) element).getLeft();
             JetTypeReference right = ((JetBinaryExpressionWithTypeRHS) element).getRight();
             if (right != null) {
-                JetExpression expression = JetPsiFactory.createExpression(project, left.getText() + operation + right.getText());
+                JetExpression expression = JetPsiFactory(file).createExpression(left.getText() + operation + right.getText());
                 element.replace(expression);
             }
         }

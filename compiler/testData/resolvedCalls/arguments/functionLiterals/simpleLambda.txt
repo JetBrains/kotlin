@@ -1,0 +1,16 @@
+fun foo(f: (Int) -> String) {}
+
+fun test() {
+    <caret>foo { x -> "$x"}
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  f : (Int) -> String = { x -> "$x"}

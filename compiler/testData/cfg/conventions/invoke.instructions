@@ -6,16 +6,16 @@ fun foo(f: () -> Unit) {
 L0:
   1 <START>
     v(f: () -> Unit)
-    magic(f: () -> Unit) -> <v0>
+    magic[FAKE_INITIALIZER](f: () -> Unit) -> <v0>
     w(f|<v0>)
   2 mark({ f() })
     r(f) -> <v1>
     mark(f())
-    call(f, invoke|<v1>) -> <v2>
+    call(f(), invoke|<v1>) -> <v2>
 L1:
-  1 <END>                           NEXT:[<SINK>]
+  1 <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>                         PREV:[]
+    <ERROR>                                           PREV:[]
 sink:
-    <SINK>                          PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<ERROR>, <END>]
 =====================

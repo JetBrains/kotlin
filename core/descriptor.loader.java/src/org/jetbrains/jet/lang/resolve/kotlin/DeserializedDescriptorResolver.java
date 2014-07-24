@@ -16,19 +16,25 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
+import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import javax.inject.Inject;
+
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.CLASS;
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.PACKAGE_FACADE;
@@ -52,8 +58,7 @@ public final class DeserializedDescriptorResolver {
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
-            ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
-            return new DeserializedClassDescriptor(context, classData);
+            return context.getClassDeserializer().deserializeClass(JavaProtoBufUtil.readClassDataFrom(data));
         }
         return null;
     }
@@ -62,13 +67,20 @@ public final class DeserializedDescriptorResolver {
     public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, PACKAGE_FACADE);
         if (data != null) {
-            return new DeserializedPackageMemberScope(descriptor, JavaProtoBufUtil.readPackageDataFrom(data), context);
+            //all classes are included in java scope
+            return new DeserializedPackageMemberScope(descriptor, JavaProtoBufUtil.readPackageDataFrom(data), context,
+                                                      new Function0<Collection<Name>>() {
+                @Override
+                public Collection<Name> invoke() {
+                    return Collections.emptyList();
+                }
+            });
         }
         return null;
     }
 
     @Nullable
-    private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
+    public String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
         KotlinClassHeader header = kotlinClass.getClassHeader();
         if (header.getKind() == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
             errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.getVersion());

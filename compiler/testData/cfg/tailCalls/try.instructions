@@ -14,12 +14,12 @@ L0:
     jmp?(L2 [onException])                                     NEXT:[v(e: Throwable), mark({ return foo() })]
   3 mark({ return foo() })
     mark(foo())
-    call(foo, foo) -> <v0>
+    call(foo(), foo) -> <v0>
     ret(*|<v0>) L1                                             NEXT:[<END>]
 - 2 jmp(L3 [afterCatches])                                     NEXT:[<END>]                                                      PREV:[]
 L2 [onException]:
   3 v(e: Throwable)                                            PREV:[jmp?(L2 [onException])]
-    magic(e: Throwable) -> <v1>
+    magic[FAKE_INITIALIZER](e: Throwable) -> <v1>
     w(e|<v1>)
   4 mark({ })
     read (Unit)

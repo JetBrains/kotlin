@@ -23,11 +23,11 @@ L0:
     jmp?(L3 [onExceptionToFinallyBlock])
   3 mark({ foo() })
     mark(foo())
-    call(foo, foo) -> <v1>
+    call(foo(), foo) -> <v1>
   2 jmp(L4 [afterCatches])                                                                                                                          USE: in: {} out: {}
 L2 [onException]:
   3 v(e: Exception)                                                                                      INIT: in: {} out: {e=D}
-    magic(e: Exception) -> <v2>                                                                          INIT: in: {e=D} out: {e=D}
+    magic[FAKE_INITIALIZER](e: Exception) -> <v2>                                                        INIT: in: {e=D} out: {e=D}
     w(e|<v2>)                                                                                            INIT: in: {e=D} out: {e=ID}
   4 mark({ val a = e })                                                                                  INIT: in: {e=ID} out: {e=ID}
     v(val a = e)                                                                                         INIT: in: {e=ID} out: {a=D, e=ID}          USE: in: {e=READ} out: {e=READ}

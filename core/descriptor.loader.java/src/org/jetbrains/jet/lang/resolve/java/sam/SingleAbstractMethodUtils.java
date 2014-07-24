@@ -22,9 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.*;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -147,7 +145,7 @@ public class SingleAbstractMethodUtils {
         assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
                                        ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
-                result, null, 0, Annotations.EMPTY, Name.identifier("function"), parameterType, false, null);
+                result, null, 0, Annotations.EMPTY, Name.identifier("function"), parameterType, false, null, SourceElement.NO_SOURCE);
 
         JetType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + samInterface.getDefaultType() +
@@ -180,7 +178,7 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SamAdapterDescriptor<SimpleFunctionDescriptor> createSamAdapterFunction(@NotNull final SimpleFunctionDescriptor original) {
+    public static SamAdapterDescriptor<JavaMethodDescriptor> createSamAdapterFunction(@NotNull final JavaMethodDescriptor original) {
         final SamAdapterFunctionDescriptor result = new SamAdapterFunctionDescriptor(original);
         return initSamAdapter(original, result, new FunctionInitializer() {
             @Override
@@ -203,7 +201,7 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SamAdapterDescriptor<ConstructorDescriptor> createSamAdapterConstructor(@NotNull final ConstructorDescriptor original) {
+    public static SamAdapterDescriptor<JavaConstructorDescriptor> createSamAdapterConstructor(@NotNull final JavaConstructorDescriptor original) {
         final SamAdapterConstructorDescriptor result = new SamAdapterConstructorDescriptor(original);
         return initSamAdapter(original, result, new FunctionInitializer() {
             @Override
@@ -251,7 +249,9 @@ public class SingleAbstractMethodUtils {
             assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + typeParameters.substitutor;
 
             ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
-                    adapter, null, originalParam.getIndex(), originalParam.getAnnotations(), originalParam.getName(), newType, false, null);
+                    adapter, null, originalParam.getIndex(), originalParam.getAnnotations(),
+                    originalParam.getName(), newType, false, null, SourceElement.NO_SOURCE
+            );
             valueParameters.add(newParam);
         }
 

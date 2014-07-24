@@ -330,7 +330,7 @@ public class DeclarationResolver {
             });
         }
         else {
-            declarations = Collections.singletonList(BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declarationDescriptor));
+            declarations = Collections.singletonList(DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor));
         }
         return declarations;
     }
@@ -344,9 +344,10 @@ public class DeclarationResolver {
 
             Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors();
 
-            ClassDescriptorWithResolutionScopes classObj = classDescriptor.getClassObjectDescriptor();
-            if (classObj != null) {
-                Collection<DeclarationDescriptor> classObjDescriptors = classObj.getScopeForMemberLookup().getOwnDeclaredDescriptors();
+            ClassDescriptor classObj = classDescriptor.getClassObjectDescriptor();
+            if (classObj instanceof ClassDescriptorWithResolutionScopes) {
+                Collection<DeclarationDescriptor> classObjDescriptors =
+                        ((ClassDescriptorWithResolutionScopes) classObj).getScopeForMemberLookup().getOwnDeclaredDescriptors();
                 if (!classObjDescriptors.isEmpty()) {
                     allDescriptors = Lists.newArrayList(allDescriptors);
                     allDescriptors.addAll(classObjDescriptors);
@@ -378,12 +379,12 @@ public class DeclarationResolver {
                             }
 
                             redeclarations.add(Pair.create(
-                                    BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), (ClassDescriptor) descriptor),
-                                    descriptor.getName()));
+                                    DescriptorToSourceUtils.classDescriptorToDeclaration((ClassDescriptor) descriptor), descriptor.getName()
+                            ));
                             if (descriptor2 instanceof PropertyDescriptor) {
                                 redeclarations.add(Pair.create(
-                                        BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor2),
-                                        descriptor2.getName()));
+                                        DescriptorToSourceUtils.descriptorToDeclaration(descriptor2), descriptor2.getName()
+                                ));
                             }
                         }
                     }

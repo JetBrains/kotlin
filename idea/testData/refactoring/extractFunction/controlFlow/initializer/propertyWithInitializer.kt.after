@@ -1,0 +1,10 @@
+// SIBLING:
+fun foo() {
+    val a = i()
+    println(a)
+}
+
+fun i(): Int {
+    val a = 10
+    return a
+}

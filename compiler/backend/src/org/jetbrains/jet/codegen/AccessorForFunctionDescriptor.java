@@ -38,7 +38,7 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
     ) {
         super(containingDeclaration, null, Annotations.EMPTY,
               Name.identifier((descriptor instanceof ConstructorDescriptor ? "$init" : descriptor.getName()) + "$b$" + index),
-              Kind.DECLARATION);
+              Kind.DECLARATION, SourceElement.NO_SOURCE);
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getReceiverParameter()),
                    descriptor instanceof ConstructorDescriptor ? NO_RECEIVER_PARAMETER : descriptor.getExpectedThisObject(),
@@ -56,7 +56,7 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
         for (TypeParameterDescriptor typeParameter : typeParameters) {
             TypeParameterDescriptorImpl copy = TypeParameterDescriptorImpl.createForFurtherModification(
                     this, typeParameter.getAnnotations(), typeParameter.isReified(),
-                    typeParameter.getVariance(), typeParameter.getName(), typeParameter.getIndex()
+                    typeParameter.getVariance(), typeParameter.getName(), typeParameter.getIndex(), SourceElement.NO_SOURCE
             );
             for (JetType upperBound : typeParameter.getUpperBounds()) {
                 copy.addUpperBound(upperBound);

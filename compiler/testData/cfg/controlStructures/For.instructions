@@ -11,28 +11,28 @@ L0:
   3 r(1) -> <v0>
     r(2) -> <v1>
     mark(1..2)
-    call(.., rangeTo|<v0>, <v1>) -> <v2>
+    call(1..2, rangeTo|<v0>, <v1>) -> <v2>
     v(i)
 L3:
-    jmp?(L2)                                   NEXT:[read (Unit), magic(1..2|<v2>) -> <v3>]
+    jmp?(L2)                                          NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>]
 L4 [loop entry point]:
 L5 [body entry point]:
-    magic(1..2|<v2>) -> <v3>                   PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>    PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
     w(i|<v3>)
     mark(for (i in 1..2) { doSmth(i) })
   4 mark({ doSmth(i) })
     r(i) -> <v4>
     mark(doSmth(i))
-    call(doSmth, doSmth|<v4>) -> <v5>
-  3 jmp?(L4 [loop entry point])                NEXT:[magic(1..2|<v2>) -> <v3>, read (Unit)]
+    call(doSmth(i), doSmth|<v4>) -> <v5>
+  3 jmp?(L4 [loop entry point])                       NEXT:[magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>, read (Unit)]
 L2:
-    read (Unit)                                PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    read (Unit)                                       PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
 L1:
-  1 <END>                                      NEXT:[<SINK>]
+  1 <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+    <ERROR>                                           PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<ERROR>, <END>]
 =====================
 == doSmth ==
 fun doSmth(i: Int) {}
@@ -40,14 +40,14 @@ fun doSmth(i: Int) {}
 L0:
   1 <START>
     v(i: Int)
-    magic(i: Int) -> <v0>
+    magic[FAKE_INITIALIZER](i: Int) -> <v0>
     w(i|<v0>)
   2 mark({})
     read (Unit)
 L1:
-  1 <END>                    NEXT:[<SINK>]
+  1 <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                  PREV:[]
+    <ERROR>                                    PREV:[]
 sink:
-    <SINK>                   PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<ERROR>, <END>]
 =====================

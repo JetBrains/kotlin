@@ -1,0 +1,29 @@
+LineBreakpoint created at frameLambdaNotUsed.kt:7
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameLambdaNotUsed.FrameLambdaNotUsedPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameLambdaNotUsed.kt:6
+Compile bytecode for val1
+package frameLambdaNotUsed
+
+fun main(args: Array<String>) {
+    val val1 = 1
+    foo {
+        //Breakpoint!
+        val a = 1
+    }
+}
+
+fun foo(f: () -> Unit) {
+    f()
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: val1
+// RESULT: Cannot find local variable: name = val1
+ frame    = invoke():7, FrameLambdaNotUsedPackage$main$1 {frameLambdaNotUsed}
+   this     = this = {frameLambdaNotUsed.FrameLambdaNotUsedPackage$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
+   local    = a: int = 0
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

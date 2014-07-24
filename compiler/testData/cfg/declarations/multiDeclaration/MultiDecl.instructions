@@ -19,12 +19,13 @@ fun component1() = 1
 L0:
   1 <START>
     r(1) -> <v0>
+    ret(*|<v0>) L1
 L1:
-    <END>           NEXT:[<SINK>]
+    <END>             NEXT:[<SINK>]
 error:
-    <ERROR>         PREV:[]
+    <ERROR>           PREV:[]
 sink:
-    <SINK>          PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<ERROR>, <END>]
 =====================
 == component2 ==
 fun component2() = 2
@@ -32,12 +33,13 @@ fun component2() = 2
 L0:
   1 <START>
     r(2) -> <v0>
+    ret(*|<v0>) L1
 L1:
-    <END>           NEXT:[<SINK>]
+    <END>             NEXT:[<SINK>]
 error:
-    <ERROR>         PREV:[]
+    <ERROR>           PREV:[]
 sink:
-    <SINK>          PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<ERROR>, <END>]
 =====================
 == test ==
 fun test(c: C) {
@@ -48,7 +50,7 @@ fun test(c: C) {
 L0:
   1 <START>
     v(c: C)
-    magic(c: C) -> <v0>
+    magic[FAKE_INITIALIZER](c: C) -> <v0>
     w(c|<v0>)
   2 mark({ val (a, b) = c val d = 1 })
     r(c) -> <v1>
@@ -62,9 +64,9 @@ L0:
     r(1) -> <v4>
     w(d|<v4>)
 L1:
-  1 <END>                                 NEXT:[<SINK>]
+  1 <END>                                    NEXT:[<SINK>]
 error:
-    <ERROR>                               PREV:[]
+    <ERROR>                                  PREV:[]
 sink:
-    <SINK>                                PREV:[<ERROR>, <END>]
+    <SINK>                                   PREV:[<ERROR>, <END>]
 =====================

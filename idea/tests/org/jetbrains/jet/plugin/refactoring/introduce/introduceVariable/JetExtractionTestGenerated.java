@@ -211,7 +211,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
     }
     
     @TestMetadata("idea/testData/refactoring/extractFunction")
-    @InnerTestClasses({ExtractFunction.Basic.class, ExtractFunction.ControlFlow.class, ExtractFunction.DefaultContainer.class, ExtractFunction.Parameters.class, ExtractFunction.TypeParameters.class})
+    @InnerTestClasses({ExtractFunction.Basic.class, ExtractFunction.ControlFlow.class, ExtractFunction.DefaultContainer.class, ExtractFunction.Delegation.class, ExtractFunction.Initializers.class, ExtractFunction.Parameters.class, ExtractFunction.TypeParameters.class})
     public static class ExtractFunction extends AbstractJetExtractionTest {
         public void testAllFilesPresentInExtractFunction() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -233,6 +233,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/fragmentWithMultilineComment.kt");
             }
             
+            @TestMetadata("localClassExtraction.kt")
+            public void testLocalClassExtraction() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassExtraction.kt");
+            }
+            
             @TestMetadata("localClassFunctionRef.kt")
             public void testLocalClassFunctionRef() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassFunctionRef.kt");
@@ -246,6 +251,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("localExtraction.kt")
             public void testLocalExtraction() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localExtraction.kt");
+            }
+            
+            @TestMetadata("localFunExtraction.kt")
+            public void testLocalFunExtraction() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localFunExtraction.kt");
             }
             
             @TestMetadata("localFunctionRef.kt")
@@ -291,7 +301,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow")
-        @InnerTestClasses({ControlFlow.ConditionalJumps.class, ControlFlow.Default.class, ControlFlow.DefiniteReturns.class, ControlFlow.EvaluateExpression.class, ControlFlow.OutputValues.class, ControlFlow.Throws.class, ControlFlow.Unextractable.class})
+        @InnerTestClasses({ControlFlow.ConditionalJumps.class, ControlFlow.Default.class, ControlFlow.DefiniteReturns.class, ControlFlow.EvaluateExpression.class, ControlFlow.Initializer.class, ControlFlow.OutputValues.class, ControlFlow.Throws.class, ControlFlow.Unextractable.class})
         public static class ControlFlow extends AbstractJetExtractionTest {
             public void testAllFilesPresentInControlFlow() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/controlFlow"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -306,6 +316,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("conditionalBreakWithIf.kt")
                 public void testConditionalBreakWithIf() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIf.kt");
+                }
+                
+                @TestMetadata("conditionalBreakWithIfAndExtraVars.kt")
+                public void testConditionalBreakWithIfAndExtraVars() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIfAndExtraVars.kt");
                 }
                 
                 @TestMetadata("conditionalBreakWithIfElse.kt")
@@ -359,6 +374,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("defaultCF.kt")
                 public void testDefaultCF() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCF.kt");
+                }
+                
+                @TestMetadata("defaultCFWithExtraVars.kt")
+                public void testDefaultCFWithExtraVars() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCFWithExtraVars.kt");
                 }
                 
                 @TestMetadata("defaultCFWithJumps.kt")
@@ -484,6 +504,49 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
             }
             
+            @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer")
+            public static class Initializer extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInInitializer() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/controlFlow/initializer"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("propertyWithInitializer.kt")
+                public void testPropertyWithInitializer() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializer.kt");
+                }
+                
+                @TestMetadata("propertyWithInitializerAndExtraVars.kt")
+                public void testPropertyWithInitializerAndExtraVars() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializerAndExtraVars.kt");
+                }
+                
+                @TestMetadata("propertyWithInitializerAndUnusedVars.kt")
+                public void testPropertyWithInitializerAndUnusedVars() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializerAndUnusedVars.kt");
+                }
+                
+                @TestMetadata("propertyWithSeparateInitializer.kt")
+                public void testPropertyWithSeparateInitializer() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithSeparateInitializer.kt");
+                }
+                
+                @TestMetadata("valueUsedInAnonymousObject.kt")
+                public void testValueUsedInAnonymousObject() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInAnonymousObject.kt");
+                }
+                
+                @TestMetadata("valueUsedInLambda.kt")
+                public void testValueUsedInLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInLambda.kt");
+                }
+                
+                @TestMetadata("valueUsedInLocalFunction.kt")
+                public void testValueUsedInLocalFunction() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInLocalFunction.kt");
+                }
+                
+            }
+            
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues")
             public static class OutputValues extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInOutputValues() throws Exception {
@@ -528,6 +591,16 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("singleOutputValueWithWhenElse.kt")
                 public void testSingleOutputValueWithWhenElse() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithWhenElse.kt");
+                }
+                
+                @TestMetadata("valuesUsedInLambdaOnly.kt")
+                public void testValuesUsedInLambdaOnly() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/valuesUsedInLambdaOnly.kt");
+                }
+                
+                @TestMetadata("valuesUsedInNestedBlock.kt")
+                public void testValuesUsedInNestedBlock() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/valuesUsedInNestedBlock.kt");
                 }
                 
             }
@@ -591,6 +664,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/jumpsAndReturns.kt");
                 }
                 
+                @TestMetadata("multipleInitalizersWithNonLocalUsages.kt")
+                public void testMultipleInitalizersWithNonLocalUsages() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleInitalizersWithNonLocalUsages.kt");
+                }
+                
                 @TestMetadata("multipleJumps.kt")
                 public void testMultipleJumps() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleJumps.kt");
@@ -611,21 +689,6 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithReturn.kt");
                 }
                 
-                @TestMetadata("valueUsedInAnonymousObject.kt")
-                public void testValueUsedInAnonymousObject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInAnonymousObject.kt");
-                }
-                
-                @TestMetadata("valueUsedInLambda.kt")
-                public void testValueUsedInLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInLambda.kt");
-                }
-                
-                @TestMetadata("valueUsedInLocalFunction.kt")
-                public void testValueUsedInLocalFunction() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/valueUsedInLocalFunction.kt");
-                }
-                
                 @TestMetadata("variablesOutOfScope.kt")
                 public void testVariablesOutOfScope() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/variablesOutOfScope.kt");
@@ -640,6 +703,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 suite.addTestSuite(Default.class);
                 suite.addTestSuite(DefiniteReturns.class);
                 suite.addTestSuite(EvaluateExpression.class);
+                suite.addTestSuite(Initializer.class);
                 suite.addTestSuite(OutputValues.class);
                 suite.addTestSuite(Throws.class);
                 suite.addTestSuite(Unextractable.class);
@@ -678,11 +742,219 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/localFunction.kt");
             }
             
+            @TestMetadata("nestedLambda.kt")
+            public void testNestedLambda() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/nestedLambda.kt");
+            }
+            
             @TestMetadata("topLevelFunction.kt")
             public void testTopLevelFunction() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/topLevelFunction.kt");
             }
             
+        }
+        
+        @TestMetadata("idea/testData/refactoring/extractFunction/delegation")
+        public static class Delegation extends AbstractJetExtractionTest {
+            public void testAllFilesPresentInDelegation() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/delegation"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("delegationByExpression.kt")
+            public void testDelegationByExpression() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/delegation/delegationByExpression.kt");
+            }
+            
+            @TestMetadata("delegationByExpressionFull.kt")
+            public void testDelegationByExpressionFull() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/delegation/delegationByExpressionFull.kt");
+            }
+            
+            @TestMetadata("delegationBySuperCall.kt")
+            public void testDelegationBySuperCall() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/delegation/delegationBySuperCall.kt");
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/refactoring/extractFunction/initializers")
+        @InnerTestClasses({Initializers.Accessors.class, Initializers.Classes.class, Initializers.Functions.class, Initializers.Properties.class})
+        public static class Initializers extends AbstractJetExtractionTest {
+            public void testAllFilesPresentInInitializers() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/initializers"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("idea/testData/refactoring/extractFunction/initializers/accessors")
+            public static class Accessors extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInAccessors() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/initializers/accessors"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("memberProperty.kt")
+                public void testMemberProperty() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/accessors/memberProperty.kt");
+                }
+                
+                @TestMetadata("memberPropertyWithLambda.kt")
+                public void testMemberPropertyWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/accessors/memberPropertyWithLambda.kt");
+                }
+                
+                @TestMetadata("topLevelProperty.kt")
+                public void testTopLevelProperty() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/accessors/topLevelProperty.kt");
+                }
+                
+                @TestMetadata("topLevelPropertyWithLambda.kt")
+                public void testTopLevelPropertyWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/accessors/topLevelPropertyWithLambda.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/refactoring/extractFunction/initializers/classes")
+            public static class Classes extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInClasses() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/initializers/classes"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("classInitializer.kt")
+                public void testClassInitializer() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/classes/classInitializer.kt");
+                }
+                
+                @TestMetadata("classInitializerWithLambda.kt")
+                public void testClassInitializerWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/classes/classInitializerWithLambda.kt");
+                }
+                
+                @TestMetadata("classParameters.kt")
+                public void testClassParameters() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/classes/classParameters.kt");
+                }
+                
+                @TestMetadata("classParametersWithLambda.kt")
+                public void testClassParametersWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/classes/classParametersWithLambda.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/refactoring/extractFunction/initializers/functions")
+            public static class Functions extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInFunctions() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/initializers/functions"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("localFunction.kt")
+                public void testLocalFunction() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/localFunction.kt");
+                }
+                
+                @TestMetadata("localFunctionParameters.kt")
+                public void testLocalFunctionParameters() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/localFunctionParameters.kt");
+                }
+                
+                @TestMetadata("localFunctionParametersWithLambda.kt")
+                public void testLocalFunctionParametersWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/localFunctionParametersWithLambda.kt");
+                }
+                
+                @TestMetadata("localFunctionWithLambda.kt")
+                public void testLocalFunctionWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/localFunctionWithLambda.kt");
+                }
+                
+                @TestMetadata("memberFunction.kt")
+                public void testMemberFunction() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/memberFunction.kt");
+                }
+                
+                @TestMetadata("memberFunctionParameters.kt")
+                public void testMemberFunctionParameters() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/memberFunctionParameters.kt");
+                }
+                
+                @TestMetadata("memberFunctionParametersWithLambda.kt")
+                public void testMemberFunctionParametersWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/memberFunctionParametersWithLambda.kt");
+                }
+                
+                @TestMetadata("memberFunctionWithLambda.kt")
+                public void testMemberFunctionWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/memberFunctionWithLambda.kt");
+                }
+                
+                @TestMetadata("topLevelFunction.kt")
+                public void testTopLevelFunction() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunction.kt");
+                }
+                
+                @TestMetadata("topLevelFunctionParameters.kt")
+                public void testTopLevelFunctionParameters() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunctionParameters.kt");
+                }
+                
+                @TestMetadata("topLevelFunctionParametersWithLambda.kt")
+                public void testTopLevelFunctionParametersWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunctionParametersWithLambda.kt");
+                }
+                
+                @TestMetadata("topLevelFunctionWithLambda.kt")
+                public void testTopLevelFunctionWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunctionWithLambda.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/refactoring/extractFunction/initializers/properties")
+            public static class Properties extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInProperties() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/initializers/properties"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("localProperty.kt")
+                public void testLocalProperty() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/localProperty.kt");
+                }
+                
+                @TestMetadata("localPropertyWithLambda.kt")
+                public void testLocalPropertyWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/localPropertyWithLambda.kt");
+                }
+                
+                @TestMetadata("memberProperty.kt")
+                public void testMemberProperty() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/memberProperty.kt");
+                }
+                
+                @TestMetadata("memberPropertyWithLambda.kt")
+                public void testMemberPropertyWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/memberPropertyWithLambda.kt");
+                }
+                
+                @TestMetadata("topLevelProperty.kt")
+                public void testTopLevelProperty() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/topLevelProperty.kt");
+                }
+                
+                @TestMetadata("topLevelPropertyWithLambda.kt")
+                public void testTopLevelPropertyWithLambda() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/topLevelPropertyWithLambda.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Initializers");
+                suite.addTestSuite(Initializers.class);
+                suite.addTestSuite(Accessors.class);
+                suite.addTestSuite(Classes.class);
+                suite.addTestSuite(Functions.class);
+                suite.addTestSuite(Properties.class);
+                return suite;
+            }
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/parameters")
@@ -900,6 +1172,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeRef.kt");
                 }
                 
+                @TestMetadata("reducedParameterList.kt")
+                public void testReducedParameterList() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/reducedParameterList.kt");
+                }
+                
                 @TestMetadata("typeRef.kt")
                 public void testTypeRef() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/typeRef.kt");
@@ -1022,6 +1299,8 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             suite.addTestSuite(Basic.class);
             suite.addTest(ControlFlow.innerSuite());
             suite.addTestSuite(DefaultContainer.class);
+            suite.addTestSuite(Delegation.class);
+            suite.addTest(Initializers.innerSuite());
             suite.addTest(Parameters.innerSuite());
             suite.addTestSuite(TypeParameters.class);
             return suite;

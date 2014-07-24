@@ -13,9 +13,9 @@ fun test(ab: Ab) {
     ab.getArray()[1]
 }
 ---------------------
-                       <v0>: {<: Ab}           NEW: magic(ab: Ab) -> <v0>                         
+                       <v0>: {<: Ab}           NEW: magic[FAKE_INITIALIZER](ab: Ab) -> <v0>       
 ab                     <v1>: {<: Ab}           NEW: r(ab) -> <v1>                                 
-getArray()             <v2>: {<: Array<Int>}   NEW: call(getArray, getArray|<v1>) -> <v2>         
+getArray()             <v2>: {<: Array<Int>}   NEW: call(getArray(), getArray|<v1>) -> <v2>       
 ab.getArray()          <v2>: {<: Array<Int>}   COPY                                               
 1                      <v3>: Int               NEW: r(1) -> <v3>                                  
 ab.getArray()[1]       <v4>: *                 NEW: call(ab.getArray()[1], get|<v2>, <v3>) -> <v4>

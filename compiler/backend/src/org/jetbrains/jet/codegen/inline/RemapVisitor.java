@@ -16,21 +16,17 @@
 
 package org.jetbrains.jet.codegen.inline;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 import org.jetbrains.jet.codegen.StackValue;
 
-public class RemapVisitor extends InstructionAdapter {
-
-    private final Label end;
+public class RemapVisitor extends InliningInstructionAdapter {
 
     private final LocalVarRemapper remapper;
-
-    private final boolean remapReturn;
 
     private final FieldRemapper nodeRemapper;
 
@@ -38,27 +34,13 @@ public class RemapVisitor extends InstructionAdapter {
 
     protected RemapVisitor(
             MethodVisitor mv,
-            Label end,
             LocalVarRemapper localVarRemapper,
-            boolean remapReturn,
             FieldRemapper nodeRemapper
     ) {
-        super(InlineCodegenUtil.API, mv);
+        super(mv);
         this.instructionAdapter = new InstructionAdapter(mv);
-        this.end = end;
         this.remapper = localVarRemapper;
-        this.remapReturn = remapReturn;
         this.nodeRemapper = nodeRemapper;
-    }
-
-    @Override
-    public void visitInsn(int opcode) {
-        if (remapReturn && opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
-            super.visitJumpInsn(Opcodes.GOTO, end);
-        }
-        else {
-            super.visitInsn(opcode);
-        }
     }
 
     @Override
@@ -73,13 +55,13 @@ public class RemapVisitor extends InstructionAdapter {
 
     @Override
     public void visitLocalVariable(
-            String name, String desc, String signature, Label start, Label end, int index
+            @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
     ) {
         remapper.visitLocalVariable(name, desc, signature, start, end, index, mv);
     }
 
     @Override
-    public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+    public void visitFieldInsn(int opcode, @NotNull String owner, @NotNull String name, @NotNull String desc) {
         if (name.startsWith("$$$")) {
             if (nodeRemapper instanceof RegeneratedLambdaFieldRemapper || nodeRemapper.isRoot()) {
                 FieldInsnNode fin = new FieldInsnNode(opcode, owner, name, desc);
@@ -103,6 +85,11 @@ public class RemapVisitor extends InstructionAdapter {
 
     @Override
     public void visitMaxs(int maxStack, int maxLocals) {
+
+    }
+
+    @Override
+    public void visitEnd() {
 
     }
 

@@ -17,12 +17,12 @@ L0:
     r(1) -> <v0>
     r(2) -> <v1>
     mark(1 < 2)
-    call(<, compareTo|<v0>, <v1>) -> <v2>
+    call(1 < 2, compareTo|<v0>, <v1>) -> <v2>
     jf(L2|<v2>)
   3 mark({ use(b) })                                                                                   USE: in: {b=READ} out: {b=READ}
     r(b) -> <v3>                                                                                       USE: in: {} out: {b=READ}
     mark(use(b))
-    call(use, use|<v3>) -> <v4>
+    call(use(b), use|<v3>) -> <v4>
   2 jmp(L3)                                                                                            USE: in: {} out: {}
 L2:
   3 mark({ b = true })
@@ -40,15 +40,16 @@ sink:
 fun use(vararg a: Any?) = a
 ---------------------
 L0:
-  1 <START>                          INIT: in: {} out: {}
-    v(vararg a: Any?)                INIT: in: {} out: {a=D}
-    magic(vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
-    w(a|<v0>)                        INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
-    r(a) -> <v1>                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+  1 <START>                                            INIT: in: {} out: {}
+    v(vararg a: Any?)                                  INIT: in: {} out: {a=D}
+    magic[FAKE_INITIALIZER](vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                          INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>                                       INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+    ret(*|<v1>) L1
 L1:
     <END>
 error:
-    <ERROR>                          INIT: in: {} out: {}
+    <ERROR>                                            INIT: in: {} out: {}
 sink:
-    <SINK>                           INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

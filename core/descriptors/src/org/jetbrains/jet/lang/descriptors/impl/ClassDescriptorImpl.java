@@ -43,9 +43,10 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull Modality modality,
-            @NotNull Collection<JetType> supertypes
+            @NotNull Collection<JetType> supertypes,
+            @NotNull SourceElement source
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name);
+        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
         this.modality = modality;
 
         this.typeConstructor = TypeConstructorImpl.createForClass(this, Annotations.EMPTY, false, getName().asString(),

@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetModuleUtil;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -31,7 +32,6 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
 public class DataFlowValueFactory {
     private DataFlowValueFactory() {}
@@ -166,13 +166,14 @@ public class DataFlowValueFactory {
     ) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, simpleNameExpression);
         if (declarationDescriptor instanceof VariableDescriptor) {
-            ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, simpleNameExpression);
+            ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(simpleNameExpression, bindingContext);
             // todo uncomment assert
             // KT-4113
             // for now it fails for resolving 'invoke' convention, return it after 'invoke' algorithm changes
             // assert resolvedCall != null : "Cannot create right identifier info if the resolved call is not known yet for " + declarationDescriptor;
 
-            IdentifierInfo receiverInfo = resolvedCall != null ? getIdForImplicitReceiver(resolvedCall.getThisObject(), simpleNameExpression) : null;
+            IdentifierInfo receiverInfo =
+                    resolvedCall != null ? getIdForImplicitReceiver(resolvedCall.getThisObject(), simpleNameExpression) : null;
 
             VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
             return combineInfo(receiverInfo, createInfo(variableDescriptor, isStableVariable(variableDescriptor)));

@@ -40,27 +40,24 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
 import org.jetbrains.jet.lang.descriptors.Modality
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import java.util.ArrayList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor
-import org.jetbrains.jet.lang.resolve.name.SpecialNames
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
 import org.jetbrains.jet.lang.resolve.java.lazy.resolveTopLevelClassInModule
+import org.jetbrains.jet.lang.descriptors.impl.EnumClassObjectDescriptor
+import org.jetbrains.jet.lang.descriptors.SourceElement
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
         containingDeclaration: DeclarationDescriptor,
         internal val fqName: FqName,
         private val jClass: JavaClass
-) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName()), LazyJavaDescriptor, JavaClassDescriptor {
+) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName(),
+                        outerC.sourceElementFactory.source(jClass)), LazyJavaDescriptor, JavaClassDescriptor {
 
     private val c: LazyJavaResolverContextWithTypes = outerC.child(this, jClass.getTypeParameters().toSet());
 
@@ -100,35 +97,9 @@ class LazyJavaClassDescriptor(
 
     private val _classObjectDescriptor = c.storageManager.createNullableLazyValue {
         if (jClass.isEnum()) {
-            val classObject = MutableClassDescriptor(this, this.getUnsubstitutedInnerClassesScope(), ClassKind.CLASS_OBJECT, false,
-                                                     SpecialNames.getClassObjectName(this.getName()))
-            classObject.setSupertypes(listOf(KotlinBuiltIns.getInstance().getAnyType()))
-            classObject.setModality(Modality.FINAL)
-            classObject.setVisibility(jClass.getVisibility())
-            classObject.setTypeParameterDescriptors(listOf())
-            classObject.createTypeConstructor()
-            classObject.setPrimaryConstructor(DescriptorFactory.createPrimaryConstructorForObject(classObject))
-
-            val scope = LazyJavaClassMemberScope(c, classObject, jClass, enumClassObject = true)
-            val writableScope = WritableScopeImpl(scope, classObject, RedeclarationHandler.THROW_EXCEPTION, "Enum class object scope")
-            writableScope.changeLockLevel(WritableScope.LockLevel.BOTH)
-
-            classObject.setScopeForMemberLookup(writableScope)
-
-            createEnumSyntheticMethods(classObject, this.getDefaultType())
-
-            classObject
+            EnumClassObjectDescriptor(c.storageManager, this)
         }
         else null
-    }
-
-    private fun createEnumSyntheticMethods(classObject: MutableClassDescriptor, enumType: JetType) {
-        val valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(enumType)
-        val valuesMethod = DescriptorFactory.createEnumClassObjectValuesMethod(classObject, valuesReturnType)
-        classObject.getBuilder().addFunctionDescriptor(valuesMethod)
-
-        val valueOfMethod = DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, enumType)
-        classObject.getBuilder().addFunctionDescriptor(valueOfMethod)
     }
 
     override fun getCorrespondingPackageFragment() =

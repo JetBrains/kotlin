@@ -21,6 +21,6 @@ import org.jetbrains.jet.j2k.CodeBuilder
 class AnonymousClassBody(body: ClassBody, val extendsTrait: Boolean)
 : Class(Identifier.Empty, Annotations.Empty, Modifiers.Empty, TypeParameterList.Empty, listOf(), listOf(), listOf(), body) {
     override fun generateCode(builder: CodeBuilder) {
-        body.append(builder, null)
+        body.append(builder)
     }
 }

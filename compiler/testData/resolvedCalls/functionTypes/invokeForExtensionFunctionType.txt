@@ -1,0 +1,10 @@
+fun bar(f: Int.()->Unit) {
+    1.f<caret>()
+}
+
+
+Resolved call:
+
+Explicit receiver kind = BOTH_RECEIVERS
+This object = f
+Receiver argument = 1

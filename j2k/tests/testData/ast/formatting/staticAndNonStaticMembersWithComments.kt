@@ -1,4 +1,5 @@
-class F() {
+class F {
+
 
     //c3
 
@@ -24,7 +25,7 @@ class F() {
 
         fun f1() {
         }
-        var i = 0
+        var i: Int? = 0
 
         //c5
 

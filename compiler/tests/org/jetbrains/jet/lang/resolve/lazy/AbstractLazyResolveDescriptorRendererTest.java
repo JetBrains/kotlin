@@ -25,10 +25,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
+import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -43,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTestWithEnvironment {
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -56,7 +59,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
     protected void doTest(@NotNull String testFile) throws IOException {
         String fileText = FileUtil.loadFile(new File(testFile), true);
 
-        JetFile psiFile = JetPsiFactory.createFile(getProject(), fileText);
+        JetFile psiFile = JetPsiFactory(getProject()).createFile(fileText);
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
         final ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");

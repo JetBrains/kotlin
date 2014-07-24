@@ -1,0 +1,9 @@
+Cleaning output files:
+out/production/module/test/Klass$object.class
+out/production/module/test/Klass.class
+out/production/module/test/TestPackage-const-*.class
+out/production/module/test/TestPackage.class
+End of files
+Compiling files:
+src/const.kt
+End of files

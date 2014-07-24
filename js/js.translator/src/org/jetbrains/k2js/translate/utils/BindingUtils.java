@@ -23,9 +23,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.types.JetType;
@@ -76,20 +76,16 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static JetFunction getFunctionForDescriptor(@NotNull BindingContext context,
-            @NotNull SimpleFunctionDescriptor descriptor) {
-        PsiElement result = BindingContextUtils.callableDescriptorToDeclaration(context, descriptor);
-        assert result instanceof JetFunction
-                : message(context, descriptor, "SimpleFunctionDescriptor should have declaration of type JetFunction");
+    public static JetFunction getFunctionForDescriptor(@NotNull SimpleFunctionDescriptor descriptor) {
+        PsiElement result = DescriptorToSourceUtils.callableDescriptorToDeclaration(descriptor);
+        assert result instanceof JetFunction : message(descriptor, "SimpleFunctionDescriptor should have declaration of type JetFunction");
         return (JetFunction) result;
     }
 
     @NotNull
-    private static JetParameter getParameterForDescriptor(@NotNull BindingContext context,
-            @NotNull ValueParameterDescriptor descriptor) {
-        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
-        assert result instanceof JetParameter :
-                message(context, descriptor, "ValueParameterDescriptor should have corresponding JetParameter");
+    private static JetParameter getParameterForDescriptor(@NotNull ValueParameterDescriptor descriptor) {
+        PsiElement result = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
+        assert result instanceof JetParameter : message(descriptor, "ValueParameterDescriptor should have corresponding JetParameter");
         return (JetParameter) result;
     }
 
@@ -134,39 +130,6 @@ public final class BindingUtils {
     public static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull JetReferenceExpression reference) {
         return context.get(BindingContext.REFERENCE_TARGET, reference);
-    }
-
-    @NotNull
-    public static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context, @NotNull JetExpression expression) {
-        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
-        assert resolvedCall != null : message(expression, expression.getText() + " must resolve to a call");
-        return resolvedCall;
-    }
-
-    @NotNull
-    public static ResolvedCall<?> getResolvedCallForProperty(@NotNull BindingContext context, @NotNull JetExpression expression) {
-        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
-        assert resolvedCall != null : message(expression, expression.getText() + " must resolve to a call");
-        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            return ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall();
-        }
-        return resolvedCall;
-    }
-
-    @NotNull
-    public static ResolvedCall<? extends FunctionDescriptor> getResolvedCallForCallExpression(@NotNull BindingContext context,
-            @NotNull JetCallExpression expression) {
-        JetExpression calleeExpression = PsiUtils.getCallee(expression);
-        return getFunctionResolvedCall(context, calleeExpression);
-    }
-
-    @NotNull
-    public static ResolvedCall<? extends FunctionDescriptor> getFunctionResolvedCall(@NotNull BindingContext context,
-            @NotNull JetExpression expression) {
-        ResolvedCall<?> resolvedCall = getResolvedCall(context, expression);
-        assert resolvedCall.getResultingDescriptor() instanceof FunctionDescriptor
-                : message(expression, "ResolvedCall for this expression must be ResolvedCall<? extends FunctionDescriptor>");
-        return (ResolvedCall<? extends FunctionDescriptor>) resolvedCall;
     }
 
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {
@@ -217,21 +180,20 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static JetExpression getDefaultArgument(@NotNull BindingContext context,
-            @NotNull ValueParameterDescriptor parameterDescriptor) {
+    public static JetExpression getDefaultArgument(@NotNull ValueParameterDescriptor parameterDescriptor) {
         ValueParameterDescriptor descriptorWhichDeclaresDefaultValue =
-                getOriginalDescriptorWhichDeclaresDefaultValue(context, parameterDescriptor);
-        JetParameter psiParameter = getParameterForDescriptor(context, descriptorWhichDeclaresDefaultValue);
+                getOriginalDescriptorWhichDeclaresDefaultValue(parameterDescriptor);
+        JetParameter psiParameter = getParameterForDescriptor(descriptorWhichDeclaresDefaultValue);
         JetExpression defaultValue = psiParameter.getDefaultValue();
-        assert defaultValue != null : message(context, parameterDescriptor, "No default value found in PSI");
+        assert defaultValue != null : message(parameterDescriptor, "No default value found in PSI");
         return defaultValue;
     }
 
     private static ValueParameterDescriptor getOriginalDescriptorWhichDeclaresDefaultValue(
-            BindingContext context, @NotNull ValueParameterDescriptor parameterDescriptor) {
+            @NotNull ValueParameterDescriptor parameterDescriptor
+    ) {
         ValueParameterDescriptor result = parameterDescriptor;
-        assert result.hasDefaultValue() :
-                message(context, parameterDescriptor, "Unsupplied parameter must have default value");
+        assert result.hasDefaultValue() : message(parameterDescriptor, "Unsupplied parameter must have default value");
         while (!result.declaresDefaultValue()) {
             result = result.getOverriddenDescriptors().iterator().next();
         }

@@ -17,8 +17,8 @@ fun lazyBooleans(a : Boolean, b : Boolean) : Unit {
     14
 }
 ---------------------
-                                                                                                              <v0>: Boolean    NEW: magic(a : Boolean) -> <v0>                       
-                                                                                                              <v1>: Boolean    NEW: magic(b : Boolean) -> <v1>                       
+                                                                                                              <v0>: Boolean    NEW: magic[FAKE_INITIALIZER](a : Boolean) -> <v0>     
+                                                                                                              <v1>: Boolean    NEW: magic[FAKE_INITIALIZER](b : Boolean) -> <v1>     
 a                                                                                                             <v2>: Boolean    NEW: r(a) -> <v2>                                     
 1                                                                                                             <v3>: *          NEW: r(1) -> <v3>                                     
 { 1 }                                                                                                         <v3>: *          COPY                                                  
@@ -28,14 +28,14 @@ if (a) { 1 } else { 2 }                                                         
 3                                                                                                             <v6>: *          NEW: r(3) -> <v6>                                     
 a                                                                                                             <v7>: Boolean    NEW: r(a) -> <v7>                                     
 b                                                                                                             <v8>: Boolean    NEW: r(b) -> <v8>                                     
-a && b                                                                                                        <v9>: Boolean    NEW: magic(a && b|<v7>, <v8>) -> <v9>                 
+a && b                                                                                                        <v9>: Boolean    NEW: magic[AND](a && b|<v7>, <v8>) -> <v9>            
 5                                                                                                             <v10>: *         NEW: r(5) -> <v10>                                    
 6                                                                                                             <v11>: *         NEW: r(6) -> <v11>                                    
 if (a && b) 5 else 6                                                                                          <v12>: *         NEW: merge(if (a && b) 5 else 6|<v10>, <v11>) -> <v12>
 7                                                                                                             <v13>: *         NEW: r(7) -> <v13>                                    
 a                                                                                                             <v14>: Boolean   NEW: r(a) -> <v14>                                    
 b                                                                                                             <v15>: Boolean   NEW: r(b) -> <v15>                                    
-a || b                                                                                                        <v16>: Boolean   NEW: magic(a || b|<v14>, <v15>) -> <v16>              
+a || b                                                                                                        <v16>: Boolean   NEW: magic[OR](a || b|<v14>, <v15>) -> <v16>          
 8                                                                                                             <v17>: *         NEW: r(8) -> <v17>                                    
 9                                                                                                             <v18>: *         NEW: r(9) -> <v18>                                    
 if (a || b) 8 else 9                                                                                          <v19>: *         NEW: merge(if (a || b) 8 else 9|<v17>, <v18>) -> <v19>

@@ -29,8 +29,7 @@ public open class ReplaceGetIntention : AttributeCallReplacementIntention("repla
             it.getArgumentExpression()?.getText() ?: ""
         }.makeString(", ")
 
-        call.element.replace(JetPsiFactory.createExpression(
-                call.element.getProject(),
+        call.element.replace(JetPsiFactory(call.element).createExpression(
                 "${call.element.getReceiverExpression().getText()}[${argumentString}]"
         ))
     }

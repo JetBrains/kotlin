@@ -43,12 +43,11 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
         containingDeclaration: ClassDescriptor,
-        private val jClass: JavaClass,
-        private val enumClassObject: Boolean = false
+        private val jClass: JavaClass
 ) : LazyJavaMemberScope(c, containingDeclaration) {
 
     override fun computeMemberIndex(): MemberIndex {
-        return object : ClassMemberIndex(jClass, { !enumClassObject && !it.isStatic() }) {
+        return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
             // For SAM-constructors
             override fun getAllMethodNames(): Collection<Name> = super.getAllMethodNames() + getAllClassNames()
         }
@@ -60,7 +59,7 @@ public class LazyJavaClassMemberScope(
             val constructor = resolveConstructor(jCtor, getContainingDeclaration(), jClass.isStatic())
             val samAdapter = resolveSamAdapter(constructor)
             if (samAdapter != null) {
-                (samAdapter as ConstructorDescriptorImpl).setReturnType(containingDeclaration.getDefaultType())
+                samAdapter.setReturnType(containingDeclaration.getDefaultType())
                 listOf(constructor, samAdapter)
             }
             else
@@ -108,14 +107,16 @@ public class LazyJavaClassMemberScope(
         return MethodSignatureData(effectiveSignature, superFunctions, propagated.getErrors() + effectiveSignature.getErrors())
     }
 
-    private fun resolveSamAdapter(original: ConstructorDescriptor): ConstructorDescriptor? {
+    private fun resolveSamAdapter(original: JavaConstructorDescriptor): JavaConstructorDescriptor? {
         return if (SingleAbstractMethodUtils.isSamAdapterNecessary(original))
-                   SingleAbstractMethodUtils.createSamAdapterConstructor(original) as ConstructorDescriptor
+                   SingleAbstractMethodUtils.createSamAdapterConstructor(original) as JavaConstructorDescriptor
                else null
     }
 
-    private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor, isStaticClass: Boolean): ConstructorDescriptor {
-        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(classDescriptor, Annotations.EMPTY, /* isPrimary = */ false)
+    private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor, isStaticClass: Boolean): JavaConstructorDescriptor {
+        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
+                classDescriptor, Annotations.EMPTY, /* isPrimary = */ false, c.sourceElementFactory.source(constructor)
+        )
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
         val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
@@ -148,7 +149,9 @@ public class LazyJavaClassMemberScope(
             return null
 
         val classDescriptor = getContainingDeclaration()
-        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(classDescriptor, Annotations.EMPTY, /* isPrimary = */ true)
+        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
+                classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.sourceElementFactory.source(jClass)
+        )
         val typeParameters = classDescriptor.getTypeConstructor().getParameters()
         val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
                               else Collections.emptyList<ValueParameterDescriptor>()
@@ -199,7 +202,8 @@ public class LazyJavaClassMemberScope(
                     TypeUtils.makeNotNullable(returnType),
                     method.hasAnnotationParameterDefaultValue(),
                     // Nulls are not allowed in annotation arguments in Java
-                    varargElementType?.let { TypeUtils.makeNotNullable(it) }
+                    varargElementType?.let { TypeUtils.makeNotNullable(it) },
+                    c.sourceElementFactory.source(method)
             ))
         }
 
@@ -223,7 +227,7 @@ public class LazyJavaClassMemberScope(
                 EnumEntrySyntheticClassDescriptor.create(c.storageManager, getContainingDeclaration(), name,
                                                          c.storageManager.createLazyValue {
                                                              memberIndex().getAllFieldNames() + memberIndex().getAllMethodNames()
-                                                         })
+                                                         }, c.sourceElementFactory.source(field))
             }
             else null
         }
@@ -239,7 +243,7 @@ public class LazyJavaClassMemberScope(
         }
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? = if (enumClassObject) null else nestedClasses(name)
+    override fun getClassifier(name: Name): ClassifierDescriptor? = nestedClasses(name)
     override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet() + enumEntryIndex().keySet()
 
     // TODO

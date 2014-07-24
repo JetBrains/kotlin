@@ -115,8 +115,8 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                                             exhaust.getModuleDescriptor(), exhaust.getBindingContext(),
                                             Collections.singletonList(jetFile), true, true,
                                             GenerationState.GenerateClassFilter.GENERATE_ALL,
-                                            enableInline.isSelected(), null, null,
-                                            DiagnosticHolder.DO_NOTHING);
+                                            enableInline.isSelected(), enableOptimization.isSelected(), null, null,
+                                            DiagnosticHolder.DO_NOTHING, null);
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }
             catch (ProcessCanceledException e) {
@@ -181,6 +181,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private final Project myProject;
     private final ToolWindow toolWindow;
     private final JCheckBox enableInline;
+    private final JCheckBox enableOptimization;
 
     public KotlinBytecodeToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
@@ -196,7 +197,9 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
         /*TODO: try to extract default parameter from compiler options*/
         enableInline = new JCheckBox("Enable inline");
+        enableOptimization = new JCheckBox("Enable optimization");
         optionPanel.add(enableInline, BorderLayout.WEST);
+        optionPanel.add(enableOptimization, BorderLayout.CENTER);
 
         new InfinitePeriodicalTask(UPDATE_DELAY, Alarm.ThreadToUse.SWING_THREAD, this, new Computable<LongRunningReadTask>() {
             @Override

@@ -31,6 +31,8 @@ import org.jetbrains.jet.plugin.configuration.ui.NonConfiguredKotlinProjectCompo
 import javax.swing.event.HyperlinkEvent;
 import java.util.Collection;
 
+import static kotlin.KotlinPackage.first;
+
 public class ConfigureKotlinNotification extends Notification {
     private static final String TITLE = "Configure Kotlin";
 
@@ -59,29 +61,19 @@ public class ConfigureKotlinNotification extends Notification {
 
     @NotNull
     public static String getNotificationString(Project project) {
-        StringBuilder builder = new StringBuilder("Configure ");
-
         Collection<Module> modules = ConfigureKotlinInProjectUtils.getNonConfiguredModules(project);
+
         final boolean isOnlyOneModule = modules.size() == 1;
-        if (isOnlyOneModule) {
-            builder.append("'").append(modules.iterator().next().getName()).append("' module");
-        }
-        else {
-            builder.append("modules");
-        }
 
-        builder.append(" in '").append(project.getName()).append("' project");
-        builder.append("<br/>");
-
+        String modulesString = isOnlyOneModule ? String.format("'%s' module", first(modules).getName()) : "modules";
         String links = StringUtil.join(ConfigureKotlinInProjectUtils.getAbleToRunConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
             @Override
             public String fun(KotlinProjectConfigurator configurator) {
                 return getLink(configurator, isOnlyOneModule);
             }
         }, "<br/>");
-        builder.append(links);
 
-        return builder.toString();
+        return String.format("Configure %s in '%s' project<br/> %s", modulesString, project.getName(), links);
     }
 
     @NotNull

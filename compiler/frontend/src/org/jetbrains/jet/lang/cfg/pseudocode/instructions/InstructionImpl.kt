@@ -23,7 +23,7 @@ import com.google.common.collect.Sets
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 
-public abstract class InstructionImpl(public override val lexicalScope: LexicalScope): Instruction {
+public abstract class InstructionImpl(override val lexicalScope: LexicalScope): Instruction {
     private var _owner: Pseudocode? = null
 
     override var owner: Pseudocode

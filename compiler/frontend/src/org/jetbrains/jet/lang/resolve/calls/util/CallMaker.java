@@ -18,12 +18,10 @@ package org.jetbrains.jet.lang.resolve.calls.util;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.psi.Call.CallType;
 import org.jetbrains.jet.lang.psi.debugText.DebugTextPackage;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -39,9 +37,21 @@ public class CallMaker {
 
         private final JetElement reportErrorsOn;
 
-        private ExpressionValueArgument(@Nullable JetExpression expression, @NotNull JetElement reportErrorsOn) {
+        private final boolean isExternal;
+
+        private ExpressionValueArgument(
+                @Nullable JetExpression expression,
+                @NotNull JetElement reportErrorsOn,
+                boolean isExternal
+        ) {
             this.expression = expression;
             this.reportErrorsOn = expression == null ? reportErrorsOn : expression;
+            this.isExternal = isExternal;
+        }
+
+        @Override
+        public boolean isExternal() {
+            return isExternal;
         }
 
         @Override
@@ -68,6 +78,23 @@ public class CallMaker {
         @Override
         public LeafPsiElement getSpreadElement() {
             return null;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ExpressionValueArgument argument = (ExpressionValueArgument) o;
+
+            if (expression != null ? !expression.equals(argument.expression) : argument.expression != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return expression != null ? expression.hashCode() : 0;
         }
     }
 
@@ -221,7 +248,12 @@ public class CallMaker {
 
     @NotNull
     public static ValueArgument makeValueArgument(@Nullable JetExpression expression, @NotNull JetElement reportErrorsOn) {
-        return new ExpressionValueArgument(expression, reportErrorsOn);
+        return new ExpressionValueArgument(expression, reportErrorsOn, false);
+    }
+
+    @NotNull
+    public static ValueArgument makeExternalValueArgument(@NotNull JetExpression expression) {
+        return new ExpressionValueArgument(expression, expression, true);
     }
 
     @NotNull

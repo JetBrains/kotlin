@@ -28,8 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,10 +50,10 @@ public class DiagnosticUtils {
     private DiagnosticUtils() {
     }
 
-    public static String atLocation(BindingContext bindingContext, DeclarationDescriptor descriptor) {
-        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+    public static String atLocation(DeclarationDescriptor descriptor) {
+        PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
         if (element == null) {
-            element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor.getOriginal());
+            element = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getOriginal());
         }
         if (element == null && descriptor instanceof ASTNode) {
             element = DiagnosticUtils.getClosestPsiElement((ASTNode) descriptor);

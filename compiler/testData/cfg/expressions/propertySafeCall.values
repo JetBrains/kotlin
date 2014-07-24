@@ -3,9 +3,9 @@ fun test(s: String?) {
     s?.length
 }
 ---------------------
-                <v0>: {<: String?}         NEW: magic(s: String?) -> <v0>
-s               <v1>: {<: CharSequence?}   NEW: r(s) -> <v1>             
-length          <v2>: *                    NEW: r(length|<v1>) -> <v2>   
-s?.length       <v2>: *                    COPY                          
-{ s?.length }   <v2>: *                    COPY                          
+                <v0>: {<: String?}         NEW: magic[FAKE_INITIALIZER](s: String?) -> <v0>
+s               <v1>: {<: CharSequence?}   NEW: r(s) -> <v1>                               
+length          <v2>: *                    NEW: r(length|<v1>) -> <v2>                     
+s?.length       <v2>: *                    COPY                                            
+{ s?.length }   <v2>: *                    COPY                                            
 =====================

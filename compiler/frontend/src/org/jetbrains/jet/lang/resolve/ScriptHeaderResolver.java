@@ -20,8 +20,8 @@ import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.descriptors.ScriptDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.ScriptDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -33,6 +33,8 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
 
 // SCRIPT: Resolve declarations in scripts
 public class ScriptHeaderResolver {
@@ -65,7 +67,7 @@ public class ScriptHeaderResolver {
 
         FqName nameForScript = ScriptNameUtil.classNameForScript(script);
         Name className = nameForScript.shortName();
-        ScriptDescriptorImpl scriptDescriptor = new ScriptDescriptorImpl(ns, priority, outerScope, className);
+        ScriptDescriptorImpl scriptDescriptor = new ScriptDescriptorImpl(ns, priority, outerScope, className, toSourceElement(script));
 
         WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");
         scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);

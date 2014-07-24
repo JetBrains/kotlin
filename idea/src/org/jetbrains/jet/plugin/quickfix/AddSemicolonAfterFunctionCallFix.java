@@ -23,8 +23,13 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.plugin.JetBundle;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class AddSemicolonAfterFunctionCallFix extends JetIntentionAction<JetCallExpression> {
     JetFunctionLiteralExpression literal;
@@ -56,7 +61,7 @@ public class AddSemicolonAfterFunctionCallFix extends JetIntentionAction<JetCall
         int caretOffset = editor.getCaretModel().getOffset();
         element.getParent().addRangeAfter(afterArgumentList, literal, element);
         element.deleteChildRange(afterArgumentList, literal);
-        element.getParent().addAfter(JetPsiFactory.createSemicolon(project), element);
+        element.getParent().addAfter(JetPsiFactory(file).createSemicolon(), element);
         editor.getCaretModel().moveToOffset(caretOffset + 1);
     }
 

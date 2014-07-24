@@ -22,8 +22,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetConstantExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetStringTemplateEntry;
+import org.jetbrains.jet.lang.psi.JetStringTemplateExpression;
 import org.jetbrains.jet.plugin.JetBundle;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinStringTemplateSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -39,7 +44,9 @@ public class KotlinStringTemplateSurrounder extends KotlinExpressionSurrounder {
     @Nullable
     @Override
     public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetStringTemplateExpression stringTemplateExpression = (JetStringTemplateExpression)JetPsiFactory.createExpression(project, getCodeTemplate(expression));
+        JetStringTemplateExpression stringTemplateExpression = (JetStringTemplateExpression) JetPsiFactory(expression).createExpression(
+                getCodeTemplate(expression)
+        );
         JetStringTemplateEntry templateEntry = stringTemplateExpression.getEntries()[0];
         JetExpression innerExpression = templateEntry.getExpression();
         assert innerExpression != null : "JetExpression should exists for " + stringTemplateExpression.toString();

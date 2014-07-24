@@ -1,0 +1,53 @@
+LineBreakpoint created at frameThis0.kt:15
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameThis0.FrameThis0Package
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameThis0.kt:14
+Compile bytecode for val1
+Compile bytecode for val2
+Compile bytecode for prop1
+Compile bytecode for prop1 + val1 + val2
+package frameThis0
+
+fun main(args: Array<String>) {
+    A().test()
+}
+
+class A {
+    val prop1 = 1
+
+    fun test() {
+        val val1 = 1
+        foo {
+            val val2 = 1
+            //Breakpoint!
+            prop1 + val1 + val2
+        }
+    }
+}
+
+fun foo(f: () -> Unit) {
+    f()
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: val1
+// RESULT: 1: I
+
+// EXPRESSION: val2
+// RESULT: 1: I
+
+// EXPRESSION: prop1
+// RESULT: 1: I
+
+// EXPRESSION: prop1 + val1 + val2
+// RESULT: 3: I
+ frame    = invoke():15, A$test$1 {frameThis0}
+   this     = this = {frameThis0.A$test$1@uniqueID}kotlin.Function0<kotlin.Unit>
+     field    = this$0: frameThis0.A = {frameThis0.A@uniqueID}
+       field    = prop1: int = 1
+     field    = $val1: int = 1
+   local    = val2: int = 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

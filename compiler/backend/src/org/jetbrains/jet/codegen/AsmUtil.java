@@ -28,7 +28,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -50,13 +50,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
+import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
 import static org.jetbrains.jet.lang.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -317,16 +317,6 @@ public class AsmUtil {
             return ACC_PUBLIC;
         }
         return null;
-    }
-
-    @NotNull
-    public static Type getTraitImplThisParameterType(@NotNull ClassDescriptor traitDescriptor, @NotNull JetTypeMapper typeMapper) {
-        JetType jetType = getSuperClass(traitDescriptor);
-        Type type = typeMapper.mapType(jetType);
-        if (type.getInternalName().equals("java/lang/Object")) {
-            return typeMapper.mapType(traitDescriptor.getDefaultType());
-        }
-        return type;
     }
 
     private static Type stringValueOfType(Type type) {
@@ -785,7 +775,7 @@ public class AsmUtil {
             container = container.getContainingDeclaration();
         }
 
-        JetFile containingFile = BindingContextUtils.getContainingFile(typeMapper.getBindingContext(), originalDescriptor);
+        JetFile containingFile = DescriptorToSourceUtils.getContainingFile(originalDescriptor);
         assert containingFile != null : "Containing file should be present for " + classDescriptor;
         return PackagePartClassUtils.getPackagePartInternalName(containingFile);
     }
@@ -797,5 +787,10 @@ public class AsmUtil {
         else {
             v.aconst(type);
         }
+    }
+
+    @NotNull
+    public static Type getArrayOf(@NotNull String internalClassName) {
+        return Type.getType("[L" + internalClassName + ";");
     }
 }

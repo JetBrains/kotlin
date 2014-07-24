@@ -42,6 +42,7 @@ public open class ReplaceContainsIntention : AttributeCallReplacementIntention("
         val argument = (handleErrors(editor, call.getPositionalArguments()) ?: return)[0].getArgumentExpression()
 
         // Append semicolon to previous statement if needed
+        val psiFactory = JetPsiFactory(call.element)
         if (argument is JetFunctionLiteralExpression) {
             val previousElement = JetPsiUtil.skipSiblingsBackwardByPredicate(call.element) {
                 // I checked, it can't be null.
@@ -49,12 +50,11 @@ public open class ReplaceContainsIntention : AttributeCallReplacementIntention("
             }
             if (previousElement != null && previousElement is JetExpression) {
                 // If the parent is null, something is very wrong.
-                previousElement.getParent()!!.addAfter(JetPsiFactory.createSemicolon(call.element.getProject()), previousElement)
+                previousElement.getParent()!!.addAfter(psiFactory.createSemicolon(), previousElement)
             }
         }
 
-        call.element.replace(JetPsiFactory.createBinaryExpression(
-                call.element.getProject(),
+        call.element.replace(psiFactory.createBinaryExpression(
                 argument,
                 "in",
                 call.element.getReceiverExpression()

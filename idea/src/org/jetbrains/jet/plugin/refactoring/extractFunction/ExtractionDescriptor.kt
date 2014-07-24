@@ -34,9 +34,14 @@ import org.jetbrains.jet.lang.psi.JetTypeConstraint
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import com.intellij.openapi.util.text.StringUtil
 
 trait Parameter {
     val argumentText: String
+    val originalDescriptor: DeclarationDescriptor
     val name: String
     val mirrorVarName: String?
     val parameterType: JetType
@@ -66,7 +71,7 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
     [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
     override fun invoke(e: JetElement): JetElement {
         val thisExpr = e.getParent() as? JetThisExpression
-        return (thisExpr ?: e).replaced(JetPsiFactory.createSimpleName(e.getProject(), parameter.nameForRef))
+        return (thisExpr ?: e).replaced(JetPsiFactory(e).createSimpleName(parameter.nameForRef))
     }
 }
 
@@ -76,8 +81,7 @@ class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacem
     [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
     override fun invoke(e: JetElement): JetElement {
         val selector = (e.getParent() as? JetCallExpression) ?: e
-        val newExpr = selector.replace(
-                JetPsiFactory.createExpression(e.getProject(), "${parameter.nameForRef}.${selector.getText()}")
+        val newExpr = selector.replace(JetPsiFactory(e).createExpression("${parameter.nameForRef}.${selector.getText()}")
         ) as JetQualifiedExpression
 
         return with(newExpr.getSelectorExpression()!!) { if (this is JetCallExpression) getCalleeExpression()!! else this }
@@ -94,9 +98,15 @@ class FqNameReplacement(val fqName: FqName): Replacement {
 
 trait ControlFlow {
     val returnType: JetType
+    val declarationsToCopy: List<JetDeclaration>
+
+    fun toDefault(): ControlFlow = DefaultControlFlow(returnType, declarationsToCopy)
 }
 
-class DefaultControlFlow(override val returnType: JetType = DEFAULT_RETURN_TYPE): ControlFlow
+class DefaultControlFlow(
+        override val returnType: JetType = DEFAULT_RETURN_TYPE,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow
 
 trait JumpBasedControlFlow : ControlFlow {
     val elementsToReplace: List<JetElement>
@@ -105,25 +115,42 @@ trait JumpBasedControlFlow : ControlFlow {
 
 class ConditionalJump(
         override val elementsToReplace: List<JetElement>,
-        override val elementToInsertAfterCall: JetElement
+        override val elementToInsertAfterCall: JetElement,
+        override val declarationsToCopy: List<JetDeclaration>
 ): JumpBasedControlFlow {
     override val returnType: JetType get() = KotlinBuiltIns.getInstance().getBooleanType()
 }
 
 class UnconditionalJump(
         override val elementsToReplace: List<JetElement>,
-        override val elementToInsertAfterCall: JetElement
+        override val elementToInsertAfterCall: JetElement,
+        override val declarationsToCopy: List<JetDeclaration>
 ): JumpBasedControlFlow {
     override val returnType: JetType get() = KotlinBuiltIns.getInstance().getUnitType()
 }
 
-class ExpressionEvaluation(override val returnType: JetType): ControlFlow
+class ExpressionEvaluation(
+        override val returnType: JetType,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow
 
-class ExpressionEvaluationWithCallSiteReturn(override val returnType: JetType): ControlFlow
+class ExpressionEvaluationWithCallSiteReturn(
+        override val returnType: JetType,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow
 
-class ParameterUpdate(val parameter: Parameter): ControlFlow {
+class ParameterUpdate(
+        val parameter: Parameter,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow {
     override val returnType: JetType get() = parameter.parameterType
 }
+
+class Initializer(
+        val initializedDeclaration: JetProperty,
+        override val returnType: JetType,
+        override val declarationsToCopy: List<JetDeclaration>
+): ControlFlow
 
 data class ExtractionDescriptor(
         val extractionData: ExtractionData,
@@ -152,10 +179,11 @@ class AnalysisResult (
         NO_CONTAINER
         SUPER_CALL
         DENOTABLE_TYPES
+        ERROR_TYPES
         MULTIPLE_OUTPUT
         OUTPUT_AND_EXIT_POINT
         MULTIPLE_EXIT_POINTS
-        VARIABLES_ARE_USED_OUTSIDE
+        DECLARATIONS_ARE_USED_OUTSIDE
         DECLARATIONS_OUT_OF_SCOPE
 
         var additionalInfo: List<String>? = null
@@ -166,21 +194,22 @@ class AnalysisResult (
         }
 
         fun renderMessage(): String {
-            val message = JetRefactoringBundle.message(when(this) {
-                NO_EXPRESSION -> "cannot.refactor.no.expression"
-                NO_CONTAINER -> "cannot.refactor.no.container"
-                SUPER_CALL -> "cannot.extract.super.call"
-                DENOTABLE_TYPES -> "parameter.types.are.not.denotable"
-                MULTIPLE_OUTPUT -> "selected.code.fragment.has.multiple.output.values"
-                OUTPUT_AND_EXIT_POINT -> "selected.code.fragment.has.output.values.and.exit.points"
-                MULTIPLE_EXIT_POINTS -> "selected.code.fragment.has.multiple.exit.points"
-                VARIABLES_ARE_USED_OUTSIDE -> "variables.are.used.outside.of.selected.code.fragment"
-                DECLARATIONS_OUT_OF_SCOPE -> "declarations.will.move.out.of.scope"
-            })!!
-            if (additionalInfo != null) {
-                return "$message\n${additionalInfo?.makeString("\n")}"
-            }
-            return message
+            val message = JetRefactoringBundle.message(
+                    when (this) {
+                        NO_EXPRESSION -> "cannot.refactor.no.expression"
+                        NO_CONTAINER -> "cannot.refactor.no.container"
+                        SUPER_CALL -> "cannot.extract.super.call"
+                        DENOTABLE_TYPES -> "parameter.types.are.not.denotable"
+                        ERROR_TYPES -> "error.types.in.generated.function"
+                        MULTIPLE_OUTPUT -> "selected.code.fragment.has.multiple.output.values"
+                        OUTPUT_AND_EXIT_POINT -> "selected.code.fragment.has.output.values.and.exit.points"
+                        MULTIPLE_EXIT_POINTS -> "selected.code.fragment.has.multiple.exit.points"
+                        DECLARATIONS_ARE_USED_OUTSIDE -> "declarations.are.used.outside.of.selected.code.fragment"
+                        DECLARATIONS_OUT_OF_SCOPE -> "declarations.will.move.out.of.scope"
+                    }
+            )
+
+            return additionalInfo?.let { "$message\n\n${it.map { StringUtil.htmlEmphasize(it) }.joinToString("\n")}" } ?: message
         }
     }
 }

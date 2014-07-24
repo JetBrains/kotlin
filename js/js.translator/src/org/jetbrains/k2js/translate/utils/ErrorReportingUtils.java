@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 
 public final class ErrorReportingUtils {
     private ErrorReportingUtils() {
@@ -43,21 +42,12 @@ public final class ErrorReportingUtils {
     }
 
     @NotNull
-    public static String message(@NotNull BindingContext context,
-            @NotNull DeclarationDescriptor descriptor,
-            @NotNull String explainingMessage) {
-        return explainingMessage + " at " + DiagnosticUtils.atLocation(context, descriptor) + ".";
+    public static String message(@NotNull DeclarationDescriptor descriptor, @NotNull String explainingMessage) {
+        return explainingMessage + " at " + DiagnosticUtils.atLocation(descriptor) + ".";
     }
 
     @NotNull
     public static String message(@NotNull PsiElement element) {
         return "Error at " + DiagnosticUtils.atLocation(element) + ".";
-    }
-
-    @NotNull
-    public static RuntimeException reportErrorWithLocation(@NotNull RuntimeException e,
-            @NotNull DeclarationDescriptor descriptor,
-            @NotNull BindingContext bindingContext) {
-        throw reportErrorWithLocation(e, DiagnosticUtils.atLocation(bindingContext, descriptor));
     }
 }

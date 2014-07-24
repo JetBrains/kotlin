@@ -30,10 +30,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmSignaturePackage;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
@@ -99,7 +99,9 @@ public class SignaturesPropagationData {
         JavaMethodDescriptor autoMethodDescriptor = JavaMethodDescriptor.createJavaMethod(
                 containingClass,
                 Annotations.EMPTY,
-                method.getName()
+                method.getName(),
+                //TODO: what to do?
+                SourceElement.NO_SOURCE
         );
         autoMethodDescriptor.initialize(
                 receiverType,
@@ -253,7 +255,8 @@ public class SignaturesPropagationData {
                         stableName != null ? stableName : originalParam.getName(),
                         altType,
                         originalParam.declaresDefaultValue(),
-                        varargCheckResult.isVararg ? KotlinBuiltIns.getInstance().getArrayElementType(altType) : null
+                        varargCheckResult.isVararg ? KotlinBuiltIns.getInstance().getArrayElementType(altType) : null,
+                        SourceElement.NO_SOURCE
                 ));
             }
         }

@@ -27,8 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -133,9 +134,9 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             }
         }
 
-        ImmutableMap<JetElement, ResolvedCall<?>> resolvedCallsEntries = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL);
-        for (Map.Entry<JetElement, ResolvedCall<?>> entry : resolvedCallsEntries.entrySet()) {
-            JetElement element = entry.getKey();
+        ImmutableMap<Call, ResolvedCall<?>> resolvedCallsEntries = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL);
+        for (Map.Entry<Call, ResolvedCall<?>> entry : resolvedCallsEntries.entrySet()) {
+            JetElement element = entry.getKey().getCallElement();
             ResolvedCall<?> resolvedCall = entry.getValue();
 
             DiagnosticUtils.LineAndColumn lineAndColumn =

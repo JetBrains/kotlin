@@ -74,14 +74,15 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingIntentio
         val expression = element.unparenthesize()!!
         val invertedOperation = JetPsiUtil.getOperationToken(expression as JetOperationExpression)!!.negate()!!
 
+        val psiFactory = JetPsiFactory(expression)
         element.replace(
                 when (expression) {
-                    is JetIsExpression -> JetPsiFactory.createExpression(
-                            expression.getProject(),
-                            "${expression.getLeftHandSide().getText() ?: ""} ${invertedOperation.getValue()} ${expression.getTypeRef()?.getText() ?: ""}"
-                    )
-                    is JetBinaryExpression -> JetPsiFactory.createBinaryExpression(
-                            expression.getProject(),
+                    is JetIsExpression -> {
+                        psiFactory.createExpression(
+                                "${expression.getLeftHandSide().getText() ?: ""} ${invertedOperation.getValue()} ${expression.getTypeRef()?.getText() ?: ""}"
+                        )
+                    }
+                    is JetBinaryExpression -> psiFactory.createBinaryExpression(
                             expression.getLeft(),
                             invertedOperation.getValue(),
                             expression.getRight()

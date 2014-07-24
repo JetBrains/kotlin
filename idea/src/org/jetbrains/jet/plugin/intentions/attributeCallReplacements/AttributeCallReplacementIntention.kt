@@ -24,7 +24,6 @@ import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.ValueArgument
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument
@@ -33,6 +32,7 @@ import org.jetbrains.jet.plugin.util.Maybe
 import org.jetbrains.jet.plugin.util.MaybeError
 import org.jetbrains.jet.plugin.util.MaybeValue
 import com.intellij.codeInsight.hint.HintManager
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 // Internal because you shouldn't construct this manually. You can end up with an inconsistant CallDescription.
 public class CallDescription internal (
@@ -87,15 +87,14 @@ public class CallDescription internal (
 }
 
 public fun JetQualifiedExpression.toCallDescription(): CallDescription? {
-    val call = getSelectorExpression()
-    if (call !is JetCallExpression) return null
+    val callExpression = getSelectorExpression() as? JetCallExpression ?: return null
 
-    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(call)
+    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(callExpression)
     // This should work. Nothing that returns a CallableDescriptor returns null and (out T is T)
-    val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call.getCalleeExpression()] ?:
+    val resolvedCall = callExpression.getResolvedCall(bindingContext) ?:
         return null
 
-    return CallDescription(this, call, resolvedCall)
+    return CallDescription(this, callExpression, resolvedCall)
 }
 
 public abstract class AttributeCallReplacementIntention(name: String) : JetSelfTargetingIntention<JetDotQualifiedExpression>(name, javaClass()) {

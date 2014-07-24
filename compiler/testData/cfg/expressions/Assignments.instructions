@@ -40,7 +40,7 @@ L0:
     r(x) -> <v2>
     r(2) -> <v3>
     mark(x += 2)
-    call(+=, plus|<v2>, <v3>) -> <v4>
+    call(x += 2, plus|<v2>, <v3>) -> <v4>
     w(x|<v4>)
     mark(if (true) 1 else 2)
     r(true) -> <v5>
@@ -54,21 +54,21 @@ L3:
     w(x|<v8>)
     v(val y = true && false)
     r(true) -> <v9>
-    jf(L4|<v9>)                                                                                                                             NEXT:[magic(true && false|<v9>, <v10>) -> <v11>, r(false) -> <v10>]
+    jf(L4|<v9>)                                                                                                                             NEXT:[magic[AND](true && false|<v9>, <v10>) -> <v11>, r(false) -> <v10>]
     r(false) -> <v10>
 L4:
-    magic(true && false|<v9>, <v10>) -> <v11>                                                                                               PREV:[jf(L4|<v9>), r(false) -> <v10>]
+    magic[AND](true && false|<v9>, <v10>) -> <v11>                                                                                          PREV:[jf(L4|<v9>), r(false) -> <v10>]
     w(y|<v11>)
     v(val z = false && true)
     r(false) -> <v12>
-    jf(L5|<v12>)                                                                                                                            NEXT:[magic(false && true|<v12>, <v13>) -> <v14>, r(true) -> <v13>]
+    jf(L5|<v12>)                                                                                                                            NEXT:[magic[AND](false && true|<v12>, <v13>) -> <v14>, r(true) -> <v13>]
     r(true) -> <v13>
 L5:
-    magic(false && true|<v12>, <v13>) -> <v14>                                                                                              PREV:[jf(L5|<v12>), r(true) -> <v13>]
+    magic[AND](false && true|<v12>, <v13>) -> <v14>                                                                                         PREV:[jf(L5|<v12>), r(true) -> <v13>]
     w(z|<v14>)
     v(val t = Test())
     mark(Test())
-    call(Test, <init>) -> <v15>
+    call(Test(), <init>) -> <v15>
     w(t|<v15>)
     r(t) -> <v16>
     r(1) -> <v17>
@@ -78,7 +78,7 @@ L5:
     r(x|<v18>) -> <v19>
     r(1) -> <v20>
     mark(t.x += 1)
-    call(+=, plus|<v19>, <v20>) -> <v21>
+    call(t.x += 1, plus|<v19>, <v20>) -> <v21>
     r(t) -> <v22>
     w(t.x|<v22>, <v21>)
 L1:

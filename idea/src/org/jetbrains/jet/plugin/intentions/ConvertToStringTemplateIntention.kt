@@ -57,7 +57,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBin
 
         val rightStr = mkString(element.getRight(), false)
         val resultStr = fold(element.getLeft(), rightStr)
-        val expr = JetPsiFactory.createExpression(element.getProject(), resultStr)
+        val expr = JetPsiFactory(element).createExpression(resultStr)
 
         element.replace(expr)
     }

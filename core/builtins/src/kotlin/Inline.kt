@@ -24,3 +24,11 @@ public enum class InlineStrategy {
     AS_FUNCTION
     IN_PLACE
 }
+
+
+public annotation class inlineOptions(vararg val value: InlineOption)
+
+public enum class InlineOption {
+    LOCAL_CONTINUE_AND_BREAK
+    ONLY_LOCAL_RETURN
+}

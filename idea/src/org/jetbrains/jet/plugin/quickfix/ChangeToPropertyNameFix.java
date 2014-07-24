@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExpression> {
     public ChangeToPropertyNameFix(@NotNull JetSimpleNameExpression element) {
         super(element);
@@ -53,7 +55,7 @@ public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExp
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactory.createExpression(project, getPropertyName());
+        JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactory(file).createExpression(getPropertyName());
         element.replace(propertyName);
     }
 

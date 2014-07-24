@@ -21,9 +21,9 @@ fun test(c: C) {
     val d = 1
 }
 ---------------------
-    <v0>: C     NEW: magic(c: C) -> <v0>             
-a   <v2>: Int   NEW: call(a, component1|<v1>) -> <v2>
-b   <v3>: Int   NEW: call(b, component2|<v1>) -> <v3>
-c   <v1>: C     NEW: r(c) -> <v1>                    
-1   <v4>: Int   NEW: r(1) -> <v4>                    
+    <v0>: C     NEW: magic[FAKE_INITIALIZER](c: C) -> <v0>
+a   <v2>: Int   NEW: call(a, component1|<v1>) -> <v2>     
+b   <v3>: Int   NEW: call(b, component2|<v1>) -> <v3>     
+c   <v1>: C     NEW: r(c) -> <v1>                         
+1   <v4>: Int   NEW: r(1) -> <v4>                         
 =====================

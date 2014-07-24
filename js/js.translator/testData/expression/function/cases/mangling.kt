@@ -137,14 +137,6 @@ open private class OpenPrivateClass {
 
 // Helpers
 
-native
-fun String.search(regexp: RegExp): Int = noImpl
-
-native
-class RegExp(regexp: String, flags: String = "") {
-    fun exec(s: String): Array<String>? = noImpl
-}
-
 val CALEE_NAME = RegExp("""\b\w*(baz[^(]*)""")
 
 fun Function0<Unit>.extractNames(): Array<String> {

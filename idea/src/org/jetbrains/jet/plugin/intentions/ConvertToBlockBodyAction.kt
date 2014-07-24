@@ -21,15 +21,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.types.JetType
 
 public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
     override fun getFamilyName(): String = JetBundle.message("convert.to.block.body.action.family.name")
@@ -50,7 +44,7 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
 
             val oldBodyText = body.getText()!!
             val newBodyText = if (needReturn) "return ${oldBodyText}" else oldBodyText
-            return JetPsiFactory.createFunctionBody(project, newBodyText)
+            return JetPsiFactory(declaration).createFunctionBody(newBodyText)
         }
 
         if (declaration is JetNamedFunction) {

@@ -15,13 +15,13 @@ L0:
   3 r(1) -> <v1>
     r(10) -> <v2>
     mark(1..10)
-    call(.., rangeTo|<v1>, <v2>) -> <v3>
+    call(1..10, rangeTo|<v1>, <v2>) -> <v3>
     v(i)                                                         INIT: in: {} out: {i=D}
 L3:
     jmp?(L2)                                                     INIT: in: {i=D} out: {i=D}
 L4 [loop entry point]:
 L5 [body entry point]:
-    magic(1..10|<v3>) -> <v4>
+    magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>
     w(i|<v4>)                                                    INIT: in: {i=D} out: {i=ID}
     mark(for (i in 1..10) { val a = i })                         INIT: in: {i=ID} out: {i=ID}
   4 mark({ val a = i })

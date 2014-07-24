@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 
@@ -28,22 +29,25 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
     private Boolean hasStableParameterNames = null;
     private Boolean hasSynthesizedParameterNames = null;
 
-    private JavaConstructorDescriptor(
+    protected JavaConstructorDescriptor(
             @NotNull ClassDescriptor containingDeclaration,
             @Nullable JavaConstructorDescriptor original,
             @NotNull Annotations annotations,
-            boolean isPrimary
+            boolean isPrimary,
+            @NotNull Kind kind,
+            @NotNull SourceElement source
     ) {
-        super(containingDeclaration, original, annotations, isPrimary, Kind.DECLARATION);
+        super(containingDeclaration, original, annotations, isPrimary, kind, source);
     }
 
     @NotNull
     public static JavaConstructorDescriptor createJavaConstructor(
             @NotNull ClassDescriptor containingDeclaration,
             @NotNull Annotations annotations,
-            boolean isPrimary
+            boolean isPrimary,
+            @NotNull SourceElement source
     ) {
-        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary);
+        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
     }
 
     @Override
@@ -73,14 +77,15 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind
     ) {
-        if (kind != Kind.DECLARATION) {
+        if (kind != Kind.DECLARATION && kind != Kind.SYNTHESIZED) {
             throw new IllegalStateException("Attempt at creating a constructor that is not a declaration: \n" +
                                             "copy from: " + this + "\n" +
                                             "newOwner: " + newOwner + "\n" +
                                             "kind: " + kind);
         }
-        JavaConstructorDescriptor result =
-                new JavaConstructorDescriptor((ClassDescriptor) newOwner, this, Annotations.EMPTY /* TODO */, isPrimary);
+        JavaConstructorDescriptor result = new JavaConstructorDescriptor(
+                (ClassDescriptor) newOwner, this, Annotations.EMPTY /* TODO */, isPrimary, kind, SourceElement.NO_SOURCE
+        );
         result.setHasStableParameterNames(hasStableParameterNames());
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;

@@ -22,28 +22,33 @@ import kotlin.reflect.*
 // TODO: properties of built-in classes
 
 open class KMemberPropertyImpl<T : Any, out R>(
-        public override val name: String,
+        override val name: String,
         protected val owner: KClassImpl<T>
 ) : KMemberProperty<T, R>, KPropertyImpl<R> {
+    // TODO: extract, make lazy (weak?), use our descriptors knowledge
     override val field: Field?
-        get() = try {
-            owner.jClass.getDeclaredField(name)
+    override val getter: Method?
+
+    {
+        try {
+            field = owner.jClass.getDeclaredField(name)
         }
         catch (e: NoSuchFieldException) {
-            null
+            field = null
         }
 
-    // TODO: extract, make lazy (weak?), use our descriptors knowledge
-    override val getter: Method = try {
-        owner.jClass.getMaybeDeclaredMethod(getterName(name))
-    }
-    catch (e: NoSuchMethodException) {
-        throw NoSuchPropertyException(e)
+        try {
+            getter = owner.jClass.getMaybeDeclaredMethod(getterName(name))
+        }
+        catch (e: NoSuchMethodException) {
+            if (field == null) throw NoSuchPropertyException(e)
+            getter = null
+        }
     }
 
     override fun get(receiver: T): R {
         try {
-            return getter(receiver) as R
+            return (if (getter != null) getter!!(receiver) else field!!.get(receiver)) as R
         }
         catch (e: java.lang.IllegalAccessException) {
             throw kotlin.reflect.IllegalAccessException(e)
@@ -65,16 +70,22 @@ class KMutableMemberPropertyImpl<T : Any, R>(
         name: String,
         owner: KClassImpl<T>
 ) : KMutableMemberProperty<T, R>, KMutablePropertyImpl<R>, KMemberPropertyImpl<T, R>(name, owner) {
-    override val setter: Method = try {
-        owner.jClass.getMaybeDeclaredMethod(setterName(name), getter.getReturnType()!!)
-    }
-    catch (e: NoSuchMethodException) {
-        throw NoSuchPropertyException(e)
+    override val setter: Method?
+
+    {
+        try {
+            val returnType = if (getter != null) getter.getReturnType() else field!!.getType()
+            setter = owner.jClass.getMaybeDeclaredMethod(setterName(name), returnType!!)
+        }
+        catch (e: NoSuchMethodException) {
+            if (field == null) throw NoSuchPropertyException(e)
+            setter = null
+        }
     }
 
     override fun set(receiver: T, value: R) {
         try {
-            setter(receiver, value)
+            if (setter != null) setter!!(receiver, value) else field!!.set(receiver, value)
         }
         catch (e: java.lang.IllegalAccessException) {
             throw kotlin.reflect.IllegalAccessException(e)

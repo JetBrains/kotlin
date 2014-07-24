@@ -20,28 +20,28 @@ fun assignments() : Unit {
     t.x += 1
 }
 ---------------------
-1                                                                                                                                <v0>: Int        NEW: r(1) -> <v0>                                
-2                                                                                                                                <v1>: Int        NEW: r(2) -> <v1>                                
-x                                                                                                                                <v2>: Int        NEW: r(x) -> <v2>                                
-2                                                                                                                                <v3>: Int        NEW: r(2) -> <v3>                                
-x += 2                                                                                                                           <v4>: Int        NEW: call(+=, plus|<v2>, <v3>) -> <v4>           
-true                                                                                                                             <v5>: Boolean    NEW: r(true) -> <v5>                             
-1                                                                                                                                <v6>: Int        NEW: r(1) -> <v6>                                
-2                                                                                                                                <v7>: Int        NEW: r(2) -> <v7>                                
-if (true) 1 else 2                                                                                                               <v8>: Int        NEW: merge(if (true) 1 else 2|<v6>, <v7>) -> <v8>
-true                                                                                                                             <v9>: Boolean    NEW: r(true) -> <v9>                             
-false                                                                                                                            <v10>: Boolean   NEW: r(false) -> <v10>                           
-true && false                                                                                                                    <v11>: Boolean   NEW: magic(true && false|<v9>, <v10>) -> <v11>   
-false                                                                                                                            <v12>: Boolean   NEW: r(false) -> <v12>                           
-true                                                                                                                             <v13>: Boolean   NEW: r(true) -> <v13>                            
-false && true                                                                                                                    <v14>: Boolean   NEW: magic(false && true|<v12>, <v13>) -> <v14>  
-Test()                                                                                                                           <v15>: Test      NEW: call(Test, <init>) -> <v15>                 
-t                                                                                                                                <v16>: Test      NEW: r(t) -> <v16>                               
-1                                                                                                                                <v17>: Int       NEW: r(1) -> <v17>                               
-t                                                                                                                                <v22>: Test      NEW: r(t) -> <v22>                               
-x                                                                                                                                <v19>: Int       NEW: r(x|<v18>) -> <v19>                         
-t.x                                                                                                                              <v19>: Int       COPY                                             
-1                                                                                                                                <v20>: Int       NEW: r(1) -> <v20>                               
-t.x += 1                                                                                                                         <v21>: Int       NEW: call(+=, plus|<v19>, <v20>) -> <v21>        
-{ var x = 1 x = 2 x += 2 x = if (true) 1 else 2 val y = true && false val z = false && true val t = Test(); t.x = 1 t.x += 1 }   <v21>: Int       COPY                                             
+1                                                                                                                                <v0>: Int        NEW: r(1) -> <v0>                                   
+2                                                                                                                                <v1>: Int        NEW: r(2) -> <v1>                                   
+x                                                                                                                                <v2>: Int        NEW: r(x) -> <v2>                                   
+2                                                                                                                                <v3>: Int        NEW: r(2) -> <v3>                                   
+x += 2                                                                                                                           <v4>: Int        NEW: call(x += 2, plus|<v2>, <v3>) -> <v4>          
+true                                                                                                                             <v5>: Boolean    NEW: r(true) -> <v5>                                
+1                                                                                                                                <v6>: Int        NEW: r(1) -> <v6>                                   
+2                                                                                                                                <v7>: Int        NEW: r(2) -> <v7>                                   
+if (true) 1 else 2                                                                                                               <v8>: Int        NEW: merge(if (true) 1 else 2|<v6>, <v7>) -> <v8>   
+true                                                                                                                             <v9>: Boolean    NEW: r(true) -> <v9>                                
+false                                                                                                                            <v10>: Boolean   NEW: r(false) -> <v10>                              
+true && false                                                                                                                    <v11>: Boolean   NEW: magic[AND](true && false|<v9>, <v10>) -> <v11> 
+false                                                                                                                            <v12>: Boolean   NEW: r(false) -> <v12>                              
+true                                                                                                                             <v13>: Boolean   NEW: r(true) -> <v13>                               
+false && true                                                                                                                    <v14>: Boolean   NEW: magic[AND](false && true|<v12>, <v13>) -> <v14>
+Test()                                                                                                                           <v15>: Test      NEW: call(Test(), <init>) -> <v15>                  
+t                                                                                                                                <v16>: Test      NEW: r(t) -> <v16>                                  
+1                                                                                                                                <v17>: Int       NEW: r(1) -> <v17>                                  
+t                                                                                                                                <v22>: Test      NEW: r(t) -> <v22>                                  
+x                                                                                                                                <v19>: Int       NEW: r(x|<v18>) -> <v19>                            
+t.x                                                                                                                              <v19>: Int       COPY                                                
+1                                                                                                                                <v20>: Int       NEW: r(1) -> <v20>                                  
+t.x += 1                                                                                                                         <v21>: Int       NEW: call(t.x += 1, plus|<v19>, <v20>) -> <v21>     
+{ var x = 1 x = 2 x += 2 x = if (true) 1 else 2 val y = true && false val z = false && true val t = Test(); t.x = 1 t.x += 1 }   <v21>: Int       COPY                                                
 =====================

@@ -26,7 +26,7 @@ class Field(
         val initializer: Element,
         val isVal: Boolean,
         val explicitType: Boolean,
-        private val hasWriteAccesses: Boolean
+        private val defaultInitializer: Boolean
 ) : Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) {
@@ -40,8 +40,8 @@ class Field(
         }
 
         var initializerToUse = initializer
-        if (initializerToUse.isEmpty && !(isVal && hasWriteAccesses)) {
-            initializerToUse = getDefaultInitializer(this)
+        if (initializerToUse.isEmpty && defaultInitializer) {
+            initializerToUse = getDefaultInitializer(this) ?: Expression.Empty
         }
         if (!initializerToUse.isEmpty) {
             builder append " = " append initializerToUse

@@ -32,7 +32,7 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingIntention<Je
                 .makeString(separator = "+")
                 .replaceAll("""$quote\+$quote""", "")
 
-        val replacement = JetPsiFactory.createExpression(element.getProject(), result)
+        val replacement = JetPsiFactory(element).createExpression(result)
 
         element.replace(replacement)
     }

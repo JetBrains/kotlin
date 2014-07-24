@@ -54,7 +54,7 @@ public class ErrorDuringFileAnalyzeNotificationProvider(val project: Project) : 
 
     override fun getKey() = ERROR_HIGHLIGHT_PANEL_KEY
 
-    override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor?): EditorNotificationPanel? {
+    override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
         if (file.getFileType() != JetFileType.INSTANCE) {
             return null
         }

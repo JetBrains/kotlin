@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.JvmCodegenUtil;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
@@ -37,9 +38,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
             @Nullable MutableClosure closure,
             boolean isInliningLambda
     ) {
-        super(contextDescriptor instanceof PropertyAccessorDescriptor
-              ? ((PropertyAccessorDescriptor) contextDescriptor).getCorrespondingProperty()
-              : contextDescriptor, contextKind, parentContext, closure,
+        super(JvmCodegenUtil.getDirectMember(contextDescriptor), contextKind, parentContext, closure,
               parentContext.hasThisDescriptor() ? parentContext.getThisDescriptor() : null, null);
         this.isInliningLambda = isInliningLambda;
     }

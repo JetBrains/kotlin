@@ -23,8 +23,6 @@ import com.intellij.psi.PsiReference
 import org.jetbrains.jet.lang.psi.JetClass
 
 public class JetTargetElementEvaluator : TargetElementEvaluator {
-    override fun includeSelfInGotoImplementation(element: PsiElement): Boolean =
-            !(element is JetClass && element.isAbstract())
-
-    override fun getElementByReference(ref: PsiReference?, flags: Int): PsiElement? = null
+    override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is JetClass && element.isAbstract())
+    override fun getElementByReference(ref: PsiReference, flags: Int): PsiElement? = null
 }

@@ -1,5 +1,5 @@
-class A() {
-    public class Nested() {
+class A {
+    public class Nested {
         fun foo() {
             privateStatic1()
         }

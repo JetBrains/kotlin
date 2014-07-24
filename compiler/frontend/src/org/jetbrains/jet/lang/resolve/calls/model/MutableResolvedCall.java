@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collection;
-import java.util.Set;
-
 public interface MutableResolvedCall<D extends CallableDescriptor> extends ResolvedCall<D>  {
 
     @NotNull
@@ -38,22 +35,6 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
     void addStatus(@NotNull ResolutionStatus status);
 
     void setStatusToSuccess();
-
-    /**
-     * Resolved call can have incomplete type parameters
-     * if ResolutionStatus is INCOMPLETE_TYPE_INFERENCE (might be completed successfully)
-     * or OTHER_ERROR (cannot be completed successfully, but if there's only one candidate, should be completed anyway).
-     * @return true if resolved call has unknown type parameters (inference is incomplete)
-     */
-    //todo remove, replace with "typeArguments.isEmpty() && !typeParameters.isEmpty()"
-    boolean hasIncompleteTypeParameters();
-
-    void setHasIncompleteTypeParameters(boolean hasIncompleteTypeParameters);
-
-    //todo remove: use value to parameter map status
-    boolean isDirty();
-
-    void argumentHasNoType();
 
     @NotNull
     DelegatingBindingTrace getTrace();
@@ -66,19 +47,11 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
 
     void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument);
 
-    void recordArgumentMatch(@NotNull ValueArgument valueArgument, @NotNull ValueParameterDescriptor parameter, boolean hasTypeMismatch);
-
-    @NotNull
-    Set<ValueArgument> getUnmappedArguments();
-
-    void addUnmappedArguments(@NotNull Collection<? extends ValueArgument> unmappedArguments);
+    void recordArgumentMatchStatus(@NotNull ValueArgument valueArgument, @NotNull ArgumentMatchStatus matchStatus);
 
     @Override
     @NotNull
     MutableDataFlowInfoForArguments getDataFlowInfoForArguments();
-
-    void setInitialDataFlowInfo(@NotNull DataFlowInfo info);
-
 
     @Nullable
     ConstraintSystem getConstraintSystem();

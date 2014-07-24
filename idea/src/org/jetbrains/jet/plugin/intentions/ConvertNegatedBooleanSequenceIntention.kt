@@ -20,11 +20,9 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.lexer.JetTokens
-import com.intellij.psi.impl.source.tree.PsiErrorElementImpl
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetExpression
 import java.util.LinkedList
 
 
@@ -56,7 +54,7 @@ public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingIntention<
                 "!(${bareExpressions.last()}", { negated, expression -> "$expression $operatorText $negated" }
         )
 
-        val newExpression = JetPsiFactory.createExpression(element.getProject(), "$negatedExpression)")
+        val newExpression = JetPsiFactory(element).createExpression("$negatedExpression)")
 
         val insertedElement = element.replace(newExpression)
         val insertedElementParent = insertedElement.getParent() as? JetParenthesizedExpression ?: return

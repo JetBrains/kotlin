@@ -117,7 +117,7 @@ public final class AnalyzerWithCompilerReport {
         if (!descriptorsWithErrors.isEmpty()) {
             StringBuilder message = new StringBuilder("The following Java entities have annotations with wrong Kotlin signatures:\n");
             for (DeclarationDescriptor descriptor : descriptorsWithErrors) {
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bc, descriptor);
+                PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
                 assert declaration instanceof PsiModifierListOwner;
 
                 List<String> errors = bc.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
@@ -219,7 +219,7 @@ public final class AnalyzerWithCompilerReport {
         return hasErrors;
     }
 
-    public void analyzeAndReport(@NotNull Function0<AnalyzeExhaust> analyzer, @NotNull Collection<JetFile> files) {
+    public void analyzeAndReport(@NotNull Collection<JetFile> files, @NotNull Function0<AnalyzeExhaust> analyzer) {
         analyzeExhaust = analyzer.invoke();
         reportAbiVersionErrors();
         reportSyntaxErrors(files);

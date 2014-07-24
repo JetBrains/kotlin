@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.debugger;
 
-import com.intellij.debugger.DebuggerTestCase;
+import com.intellij.debugger.impl.DescriptorTestCase;
 import com.intellij.debugger.impl.OutputChecker;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -26,12 +26,14 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
@@ -48,7 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
+public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     protected static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
     private static boolean IS_TINY_APP_COMPILED = false;
 
@@ -66,6 +68,7 @@ public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
 
         UsefulTestCase.edt(new Runnable() {
             @Override
@@ -87,6 +90,12 @@ public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
             }
         });
 
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        super.tearDown();
     }
 
     @Override

@@ -1,0 +1,37 @@
+LineBreakpoint created at frameClassObject.kt:15
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameClassObject.FrameClassObjectPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameClassObject.kt:14
+Compile bytecode for prop
+package frameClassObject
+
+fun main(args: Array<String>) {
+    A().test()
+}
+
+class A {
+    class object {
+        val prop = 1
+    }
+
+    fun test() {
+        foo {
+            //Breakpoint!
+            prop
+        }
+    }
+}
+
+fun foo(f: () -> Unit) {
+    f()
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: prop
+// RESULT: 1: I
+ frame    = invoke():15, A$test$1 {frameClassObject}
+   this     = this = {frameClassObject.A$test$1@uniqueID}kotlin.Function0<kotlin.Unit>
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

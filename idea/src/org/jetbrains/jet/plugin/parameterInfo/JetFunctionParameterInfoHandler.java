@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -151,7 +151,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         return true;
     }
 
-    private static String renderParameter(ValueParameterDescriptor parameter, boolean named, BindingContext bindingContext) {
+    private static String renderParameter(ValueParameterDescriptor parameter, boolean named) {
         StringBuilder builder = new StringBuilder();
         if (named) builder.append("[");
         if (parameter.getVarargElementType() != null) {
@@ -161,7 +161,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 .append(": ")
                 .append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(parameter)));
         if (parameter.hasDefaultValue()) {
-            PsiElement parameterDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, parameter);
+            PsiElement parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
             builder.append(" = ").append(getDefaultExpressionString(parameterDeclaration));
         }
         if (named) builder.append("]");
@@ -258,7 +258,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                     }
                     else {
                         ValueParameterDescriptor param = valueParameters.get(i);
-                        builder.append(renderParameter(param, false, bindingContext));
+                        builder.append(renderParameter(param, false));
                         if (i <= currentParameterIndex && !isArgumentTypeValid(bindingContext, argument, param)) {
                             isGrey = true;
                         }
@@ -267,7 +267,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 }
                 else {
                     ValueParameterDescriptor param = valueParameters.get(i);
-                    builder.append(renderParameter(param, false, bindingContext));
+                    builder.append(renderParameter(param, false));
                 }
             }
 
@@ -282,7 +282,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                             if (referenceExpression != null && !usedIndexes[j] && param.getName().equals(referenceExpression.getReferencedNameAsName())) {
                                 takeAnyArgument = false;
                                 usedIndexes[j] = true;
-                                builder.append(renderParameter(param, true, bindingContext));
+                                builder.append(renderParameter(param, true));
                                 if (i < currentParameterIndex && !isArgumentTypeValid(bindingContext, argument, param)) {
                                     isGrey = true;
                                 }
@@ -301,7 +301,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                         ValueParameterDescriptor param = valueParameters.get(j);
                         if (!usedIndexes[j]) {
                             usedIndexes[j] = true;
-                            builder.append(renderParameter(param, true, bindingContext));
+                            builder.append(renderParameter(param, true));
                             break;
                         }
                     }

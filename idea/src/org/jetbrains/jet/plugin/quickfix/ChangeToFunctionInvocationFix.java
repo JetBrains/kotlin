@@ -23,8 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.JetBundle;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetExpression> {
 
@@ -47,7 +48,7 @@ public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetExpress
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetExpression reference = (JetExpression) element.copy();
-        element.replace(JetPsiFactory.createExpression(project, reference.getText() + "()"));
+        element.replace(JetPsiFactory(file).createExpression(reference.getText() + "()"));
     }
 
     public static JetSingleIntentionActionFactory createFactory() {

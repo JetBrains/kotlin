@@ -25,11 +25,12 @@ L0:
     r(this) -> <v1>
     r($bar|<v1>) -> <v2>
     mark("foo" + this.$bar)
-    call(+, plus|<v0>, <v2>) -> <v3>
+    call("foo" + this.$bar, plus|<v0>, <v2>) -> <v3>
+    ret(*|<v3>) L1
 L1:
-    <END>                               NEXT:[<SINK>]
+    <END>                                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+    <ERROR>                                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                                              PREV:[<ERROR>, <END>]
 =====================

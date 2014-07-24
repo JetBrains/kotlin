@@ -1,0 +1,21 @@
+class A {}
+
+fun foo(a: A) {}
+fun foo(a: A, s: String) {}
+fun foo(a: A, any: Any) {}
+
+fun bar() {
+    <caret>foo(A(), "")
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  a : A = A()
+SUCCESS  s : String = ""

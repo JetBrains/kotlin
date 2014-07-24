@@ -7,7 +7,7 @@ ERR:
 
 BUILD FAILED
 [TestData]/build.xml:5: org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException: Wrong value for inline option: 'wrong'. Should be 'on'/'off' or 'true'/'false'
-	at org.jetbrains.jet.buildtools.ant.BytecodeCompilerTask.execute(BytecodeCompilerTask.java:147)
+	at org.jetbrains.jet.buildtools.ant.BytecodeCompilerTask.execute(BytecodeCompilerTask.java:153)
 	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:291)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)

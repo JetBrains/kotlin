@@ -19,19 +19,16 @@ package org.jetbrains.jet.codegen.binding;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
 public final class MutableClosure implements CalculatedClosure {
-    private final JetDelegatorToSuperCall superCall;
+    private final ResolvedCall<ConstructorDescriptor> superCall;
 
     private final ClassDescriptor enclosingClass;
     private final CallableDescriptor enclosingReceiverDescriptor;
@@ -43,9 +40,9 @@ public final class MutableClosure implements CalculatedClosure {
     private List<Pair<String, Type>> recordedFields;
 
     MutableClosure(
-            JetDelegatorToSuperCall superCall,
-            ClassDescriptor enclosingClass,
-            CallableDescriptor enclosingReceiverDescriptor
+            @Nullable ResolvedCall<ConstructorDescriptor> superCall,
+            @Nullable ClassDescriptor enclosingClass,
+            @Nullable CallableDescriptor enclosingReceiverDescriptor
     ) {
         this.superCall = superCall;
         this.enclosingClass = enclosingClass;
@@ -53,13 +50,12 @@ public final class MutableClosure implements CalculatedClosure {
     }
 
     @Nullable
-    @Override
     public ClassDescriptor getEnclosingClass() {
         return enclosingClass;
     }
 
     @Override
-    public JetDelegatorToSuperCall getSuperCall() {
+    public ResolvedCall<ConstructorDescriptor> getSuperCall() {
         return superCall;
     }
 
@@ -75,6 +71,7 @@ public final class MutableClosure implements CalculatedClosure {
     @Override
     public JetType getCaptureReceiverType() {
         if (captureReceiver) {
+            //noinspection ConstantConditions
             ReceiverParameterDescriptor parameter = enclosingReceiverDescriptor.getReceiverParameter();
             assert parameter != null : "Receiver parameter should exist in " + enclosingReceiverDescriptor;
             return parameter.getType();

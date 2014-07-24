@@ -84,7 +84,7 @@ class KotlinEvaluateExpressionCache(val project: Project) {
     private fun canBeEvaluatedInThisContext(compiledData: CompiledDataDescriptor, context: EvaluationContextImpl): Boolean {
         return compiledData.parameters.all { (p): Boolean ->
             val (name, jetType) = p
-            val value = context.getFrameProxy()?.getStackFrame()?.findLocalVariable(name, failIfNotFound = false)
+            val value = context.findLocalVariable(name, asmType = null, checkType = false, failIfNotFound = false)
             if (value == null) return@all false
 
             val thisDescriptor = value.asmType.getClassDescriptor()

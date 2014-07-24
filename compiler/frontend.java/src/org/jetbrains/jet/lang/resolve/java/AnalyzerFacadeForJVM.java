@@ -19,7 +19,11 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
@@ -29,7 +33,7 @@ import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -47,6 +51,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
@@ -80,8 +85,12 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     @NotNull
     @Override
-    public JvmSetup createSetup(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
-        return createSetup(fileProject, files, new BindingTraceContext(), true);
+    public JvmSetup createSetup(
+            @NotNull Project fileProject,
+            @NotNull Collection<JetFile> syntheticFiles,
+            @NotNull GlobalSearchScope filesScope
+    ) {
+        return createSetup(fileProject, syntheticFiles, filesScope, new BindingTraceContext(), true);
     }
 
     @NotNull
@@ -91,20 +100,27 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull BindingTrace trace,
             boolean addBuiltIns
     ) {
-
-        return createSetup(project, files, trace, addBuiltIns).getLazyResolveSession();
+        List<VirtualFile> virtualFiles = KotlinPackage.map(files, new Function1<JetFile, VirtualFile>() {
+            @Override
+            public VirtualFile invoke(JetFile file) {
+                return file.getVirtualFile();
+            }
+        });
+        return createSetup(project, Collections.<JetFile>emptyList(),
+                           GlobalSearchScope.filesScope(project, virtualFiles), trace, addBuiltIns).getLazyResolveSession();
     }
 
-    private static JvmSetup createSetup(
-            Project project,
-            Collection<JetFile> files,
-            BindingTrace trace,
+    public static JvmSetup createSetup(
+            @NotNull Project project,
+            @NotNull Collection<JetFile> syntheticFiles,
+            @NotNull GlobalSearchScope filesScope,
+            @NotNull BindingTrace trace,
             boolean addBuiltIns
     ) {
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
 
-        DeclarationProviderFactory declarationProviderFactory =
-                DeclarationProviderFactoryService.createDeclarationProviderFactory(project, globalContext.getStorageManager(), files);
+        DeclarationProviderFactory declarationProviderFactory = DeclarationProviderFactoryService.object$
+                .createDeclarationProviderFactory(project, globalContext.getStorageManager(), syntheticFiles, filesScope);
 
         InjectorForLazyResolveWithJava resolveWithJava = new InjectorForLazyResolveWithJava(
                 project,
@@ -131,7 +147,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             ModuleDescriptorImpl module,
             List<String> moduleIds,
-            File incrementalCacheDir
+            IncrementalCache incrementalCache
     ) {
         GlobalContext globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
@@ -146,9 +162,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         try {
             module.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-            IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
-            if (incrementalCacheDir != null && moduleIds != null && incrementalCacheProvider != null) {
-                IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(incrementalCacheDir);
+            if (incrementalCache != null && moduleIds != null) {
                 for (String moduleId : moduleIds) {
                     module.addFragmentProvider(
                             DependencyKind.SOURCES,

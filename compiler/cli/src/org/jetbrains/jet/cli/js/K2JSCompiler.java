@@ -76,13 +76,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
-        if (arguments.sourceFiles == null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -sourceFiles", NO_LOCATION);
+        if (arguments.freeArgs.isEmpty()) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify at least one source file or directory", NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
         }
 
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(arguments.sourceFiles));
+        configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs);
         JetCoreEnvironment environmentForJS = JetCoreEnvironment.createForProduction(rootDisposable, configuration);
 
         Project project = environmentForJS.getProject();
@@ -174,12 +174,12 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static boolean analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
             @NotNull final List<JetFile> sources, @NotNull final Config config) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
-        analyzerWithCompilerReport.analyzeAndReport(new Function0<AnalyzeExhaust>() {
+        analyzerWithCompilerReport.analyzeAndReport(sources, new Function0<AnalyzeExhaust>() {
             @Override
             public AnalyzeExhaust invoke() {
                 return AnalyzerFacadeForJS.analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), config);
             }
-        }, sources);
+        });
         return analyzerWithCompilerReport.hasErrors();
     }
 

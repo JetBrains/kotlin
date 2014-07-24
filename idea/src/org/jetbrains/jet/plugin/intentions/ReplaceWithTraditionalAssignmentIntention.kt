@@ -53,6 +53,6 @@ public class ReplaceWithTraditionalAssignmentIntention : JetSelfTargetingIntenti
             return replacementStringBuilder.toString()
         }
 
-        element.replace(JetPsiFactory.createExpression(element.getProject(), buildReplacement(element)))
+        element.replace(JetPsiFactory(element).createExpression(buildReplacement(element)))
     }
 }

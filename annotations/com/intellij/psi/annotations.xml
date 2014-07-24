@@ -249,6 +249,10 @@
   <item name='com.intellij.psi.PsiElement com.intellij.psi.PsiElement replace(com.intellij.psi.PsiElement)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item
+      name='com.intellij.psi.PsiElementFactory.SERVICE com.intellij.psi.PsiElementFactory getInstance(com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.psi.PsiElementVisitor void visitBinaryFile(com.intellij.psi.PsiBinaryFile) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
@@ -298,6 +302,12 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.intellij.psi.PsiExpressionStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiFileFactory com.intellij.psi.PsiFileFactory getInstance(com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiFileFactory com.intellij.psi.PsiFileFactory getInstance(com.intellij.openapi.project.Project) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.intellij.psi.PsiForStatement'>

@@ -8,13 +8,14 @@ fun illegalWhenBlock(a: Any): Any {
 L0:
   1 <START>
     v(a: Any)
-    magic(a: Any) -> <v0>
+    magic[FAKE_INITIALIZER](a: Any) -> <v0>
     w(a|<v0>)
   2 mark({ when(a) { is Int -> return a } })
     mark(when(a) { is Int -> return a })
     r(a) -> <v1>
     mark(is Int -> return a)
-    magic(is Int|<v1>) -> <v2>
+    mark(is Int)
+    magic[IS](is Int|<v1>) -> <v2>
     jmp?(L4|<v2>)                               NEXT:[<END>, r(a) -> <v3>]
 L3:
     r(a) -> <v3>

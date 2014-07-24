@@ -23,16 +23,10 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.List;
 
 public interface ConstructorDescriptor extends FunctionDescriptor {
-    /**
-     * @throws UnsupportedOperationException -- no type parameters supported for constructors
-     */
     @NotNull
     @Override
     List<TypeParameterDescriptor> getTypeParameters();
 
-    /**
-     * @throws UnsupportedOperationException -- return type is not stored for constructors
-     */
     @NotNull
     @Override
     JetType getReturnType();
@@ -40,6 +34,10 @@ public interface ConstructorDescriptor extends FunctionDescriptor {
     @NotNull
     @Override
     ClassDescriptor getContainingDeclaration();
+
+    @NotNull
+    @Override
+    ConstructorDescriptor getOriginal();
 
     /**
      * @return "&lt;init&gt;" -- name is not stored for constructors

@@ -22,7 +22,8 @@ class Parameter(val identifier: Identifier,
                 val `type`: Type,
                 val varVal: Parameter.VarValModifier,
                 val annotations: Annotations,
-                val modifiers: Modifiers) : Element() {
+                val modifiers: Modifiers,
+                val defaultValue: Expression? = null) : Element() {
     public enum class VarValModifier {
         None
         Val
@@ -42,6 +43,10 @@ class Parameter(val identifier: Identifier,
             VarValModifier.Val -> builder.append("val ")
         }
 
-        builder.append(identifier).append(":").append(`type`)
+        builder append identifier append ":" append `type`
+
+        if (defaultValue != null) {
+            builder append " = " append defaultValue
+        }
     }
 }

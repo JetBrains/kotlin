@@ -150,7 +150,7 @@ public object UsagesSearch: QueryFactory<PsiReference, UsagesSearchRequest>() {
 fun UsagesSearchRequest.search(): Query<PsiReference> = UsagesSearch.search(this)
 
 fun <A: PsiElement, B: PsiElement> UsagesSearchTarget<A>.retarget(element: B) =
-        UsagesSearchTarget<B>(element, scope, location, restrictByTargetScope)
+        UsagesSearchTarget(element, scope, location, restrictByTargetScope)
 
 val <T: PsiElement> UsagesSearchTarget<T>.effectiveScope: SearchScope
     get() = if (restrictByTargetScope) scope and element.effectiveScope else scope

@@ -22,10 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -142,7 +139,7 @@ public class LabelResolver {
         DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
         JetElement element;
         if (declarationDescriptor instanceof FunctionDescriptor || declarationDescriptor instanceof ClassDescriptor) {
-            element = (JetElement) BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
+            element = (JetElement) DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor);
         }
         else {
             throw new UnsupportedOperationException(declarationDescriptor.getClass().toString()); // TODO
@@ -198,7 +195,7 @@ public class LabelResolver {
             else {
                 throw new UnsupportedOperationException("Unsupported descriptor: " + declarationDescriptor); // TODO
             }
-            PsiElement element = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
+            PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor);
             assert element != null : "No PSI element for descriptor: " + declarationDescriptor;
             context.trace.record(LABEL_TARGET, targetLabel, element);
             context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor);

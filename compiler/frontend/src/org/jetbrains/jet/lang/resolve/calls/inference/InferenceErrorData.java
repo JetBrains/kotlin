@@ -47,6 +47,7 @@ public class InferenceErrorData {
         this.expectedType = expectedType;
     }
 
+    @NotNull
     public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
             @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @NotNull JetType expectedType) {
         return new InferenceErrorData(descriptor, constraintSystem, valueArgumentsTypes, receiverArgumentType, expectedType);

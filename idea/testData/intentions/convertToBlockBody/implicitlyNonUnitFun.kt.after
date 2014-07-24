@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+import java.net.URI
+
+fun foo(): URI {
+    return java.io.File("x").toURI()
+}

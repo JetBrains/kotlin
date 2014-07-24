@@ -1,6 +1,6 @@
 <project name="Update Dependencies" default="update">
-    <property name="jb.buildserver.build.id" value="4351133"/>
-    <property name="public.buildserver.build.id" value="141741"/>
+    <property name="jb.buildserver.build.id" value="4410735"/>
+    <property name="public.buildserver.build.id" value="144918"/>
 
     <condition property="os.tag" value="win.zip">
       <os family="windows" />
@@ -19,7 +19,7 @@
       </and>
     </condition>
 
-    <property name="idea.build.number" value="135.SNAPSHOT"/>
+    <property name="idea.build.number" value="138.SNAPSHOT"/>
 
     <property name="idea.archive.name" value="ideaIC-${idea.build.number}.${os.tag}"/>
 
@@ -27,14 +27,14 @@
 
     <property name="continuous.idea.version" value=".lastSuccessful"/>
 
-    <target name="update" depends="fetch-third-party,fetch-annotations">
+    <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
         <execute_update
             base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"
         />
     </target>
 
-    <target name="jb_update" depends="fetch-third-party,fetch-annotations">
+    <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
         <execute_update
             base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"
@@ -159,8 +159,8 @@
         <get-maven-library prefix="org/fusesource/jansi" lib="jansi" version="1.9"/>
         -->
 
-        <!-- Guava 14 sources-->
-        <get-maven-library prefix="com/google/guava" lib="guava" version="14.0.1" bin="false"/>
+        <!-- Guava 17 sources-->
+        <get-maven-library prefix="com/google/guava" lib="guava" version="17.0" bin="false"/>
 
         <!-- ASM -->
         <get src="https://raw.github.com/JetBrains/intellij-community/master/lib/src/asm5-src.zip"
@@ -260,26 +260,37 @@
                     <mkdir dir="${jps-test}"/>
                     <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/core/guava-14.0.1.jar" dest="${core}/guava-14.0.1.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/guava-17.0.jar" dest="${core}/guava-17.0.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
                     <!--<get src="@{base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar" usetimestamp="true"/>-->
 
-                    <get src="@{base.url}/jps/groovy-jps-plugin.jar" dest="${jps}/groovy-jps-plugin.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/groovy_rt.jar" dest="${jps}/groovy_rt.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jdom.jar" dest="${jps}/jdom.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jgoodies-forms.jar" dest="${jps}/jgoodies-forms.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jna.jar" dest="${jps}/jna.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jps-builders.jar" dest="${jps}/jps-builders.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jps-model.jar" dest="${jps}/jps-model.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/log4j.jar" dest="${jps}/log4j.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/nanoxml-2.2.3.jar" dest="${jps}/nanoxml-2.2.3.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/protobuf-2.5.0.jar" dest="${jps}/protobuf-2.5.0.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/trove4j.jar" dest="${jps}/trove4j.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/ui-designer-jps-plugin.jar" dest="${jps}/ui-designer-jps-plugin.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/util.jar" dest="${jps}/util.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/standalone-jps-IC-${idea.build.number}.zip"
+                         dest="dependencies/download/standalone-jps.zip"
+                         usetimestamp="true" />
 
-                    <get src="@{base.url}/jps/test/jps-build-test.jar" dest="${jps-test}/jps-build-test.jar" usetimestamp="true"/>
+                    <property name="jps.extracted.dir" value="dependencies/download/standalone-jps" />
+                    <unzip src="dependencies/download/standalone-jps.zip" dest="${jps.extracted.dir}" />
+
+                    <copy todir="${jps}" flatten="true">
+                      <resources>
+                        <file file="${jps.extracted.dir}/groovy-jps-plugin.jar" />
+                        <file file="${jps.extracted.dir}/groovy_rt.jar" />
+                        <file file="${jps.extracted.dir}/jdom.jar" />
+                        <file file="${jps.extracted.dir}/jgoodies-forms.jar" />
+                        <file file="${jps.extracted.dir}/jna.jar" />
+                        <file file="${jps.extracted.dir}/jps-builders.jar" />
+                        <file file="${jps.extracted.dir}/jps-model.jar" />
+                        <file file="${jps.extracted.dir}/log4j.jar" />
+                        <file file="${jps.extracted.dir}/nanoxml-2.2.3.jar" />
+                        <file file="${jps.extracted.dir}/protobuf-2.5.0.jar" />
+                        <file file="${jps.extracted.dir}/trove4j.jar" />
+                        <file file="${jps.extracted.dir}/ui-designer-jps-plugin.jar" />
+                        <file file="${jps.extracted.dir}/util.jar" />
+                      </resources>
+                    </copy>
+
+                    <get src="@{base.url}/jps/jps-build-test-IC-${idea.build.number}.jar" dest="${jps-test}/jps-build-test.jar" usetimestamp="true"/>
 
                     <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
 
@@ -297,7 +308,7 @@
                     <matches pattern=".+\.mac\.zip" string="@{build.zip}"/>
                     <then>
                         <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK">
-                            <cutdirsmapper dirs="1"/>
+                            <cutdirsmapper dirs="2"/>
                         </unzip>
                         <!-- Java can't manipulate permissions -->
                         <exec executable="chmod">

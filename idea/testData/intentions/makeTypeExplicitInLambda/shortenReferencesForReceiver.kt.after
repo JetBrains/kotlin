@@ -1,3 +1,7 @@
+import kotlin.support.AbstractIterator
+
 fun main() {
-    val randomFunction: kotlin.Array<kotlin.Int>.(x: Int) -> Boolean = { Array<Int>.(y: Int): Boolean -> if (this[0] < y) true else false}
+    val randomFunction: kotlin.support.AbstractIterator<kotlin.Int>.(x: Int) -> Boolean = { AbstractIterator<Int>.(y: Int): Boolean -> if (this.next() < y) true else false}
 }
+
+// WITH_RUNTIME

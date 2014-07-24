@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,24 +18,15 @@ package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.SynthesizedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 
-public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl
-        implements SynthesizedCallableMemberDescriptor<JavaClassDescriptor> {
-    private final JavaClassDescriptor samInterface;
+public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl {
 
     public SamConstructorDescriptor(
             @NotNull ClassOrPackageFragmentDescriptor containingDeclaration,
             @NotNull JavaClassDescriptor samInterface
     ) {
-        super(containingDeclaration, null, samInterface.getAnnotations(), samInterface.getName(), Kind.SYNTHESIZED);
-        this.samInterface = samInterface;
-    }
-
-    @NotNull
-    @Override
-    public JavaClassDescriptor getBaseForSynthesized() {
-        return samInterface;
+        super(containingDeclaration, null, samInterface.getAnnotations(), samInterface.getName(),
+              Kind.SYNTHESIZED, samInterface.getSource());
     }
 }

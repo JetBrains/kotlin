@@ -1,4 +1,3 @@
--src
 $TESTDATA_DIR$/conflictingOverloads.kt
--output
+-d
 $TEMP_DIR$

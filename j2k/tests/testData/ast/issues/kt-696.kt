@@ -1,6 +1,6 @@
 package test
 
-class Base() {
+class Base {
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -14,7 +14,7 @@ class Base() {
     }
 }
 
-class Child() : Base() {
+class Child : Base() {
     override fun hashCode(): Int {
         return super.hashCode()
     }

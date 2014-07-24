@@ -31,6 +31,8 @@ import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.JetBundle;
 
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+
 public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
     public AddFunctionBodyFix(@NotNull JetFunction element) {
         super(element);
@@ -56,11 +58,12 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetFunction newElement = (JetFunction) element.copy();
+        JetPsiFactory psiFactory = JetPsiFactory(file);
         if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
-            newElement.add(JetPsiFactory.createWhiteSpace(project));
+            newElement.add(psiFactory.createWhiteSpace());
         }
         if (!newElement.hasBody()) {
-            newElement.add(JetPsiFactory.createEmptyBody(project));
+            newElement.add(psiFactory.createEmptyBody());
         }
         element.replace(newElement);
     }

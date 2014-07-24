@@ -5,8 +5,12 @@ package test
 public class Test(str: String) {
     var myStr = "String2"
 
+    {
+        myStr = str
+    }
+
     public fun sout(str: String) {
-        System.out!!.println(str)
+        System.out.println(str)
     }
 
     public fun dummy(str: String): String {
@@ -20,9 +24,5 @@ public class Test(str: String) {
         sout(dummy(test))
 
         Test(test)
-    }
-
-    {
-        myStr = str
     }
 }

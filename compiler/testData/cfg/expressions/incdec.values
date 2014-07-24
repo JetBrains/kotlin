@@ -3,7 +3,7 @@ fun bar(n: Int) {
 
 }
 ---------------------
-    <v0>: Int   NEW: magic(n: Int) -> <v0>
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](n: Int) -> <v0>
 =====================
 == foo ==
 fun foo() {
@@ -14,18 +14,18 @@ fun foo() {
     bar(--a)
 }
 ---------------------
-1                                                   <v0>: Int    NEW: r(1) -> <v0>                 
-a                                                   <v1>: Int    NEW: r(a) -> <v1>                 
-a++                                                 <v1>: Int    COPY                              
-bar(a++)                                            <v3>: *      NEW: call(bar, bar|<v1>) -> <v3>  
-a                                                   <v4>: Int    NEW: r(a) -> <v4>                 
-a--                                                 <v4>: Int    COPY                              
-bar(a--)                                            <v6>: *      NEW: call(bar, bar|<v4>) -> <v6>  
-a                                                   <v7>: Int    NEW: r(a) -> <v7>                 
-++a                                                 <v8>: Int    NEW: call(++, inc|<v7>) -> <v8>   
-bar(++a)                                            <v9>: *      NEW: call(bar, bar|<v8>) -> <v9>  
-a                                                   <v10>: Int   NEW: r(a) -> <v10>                
---a                                                 <v11>: Int   NEW: call(--, dec|<v10>) -> <v11> 
-bar(--a)                                            <v12>: *     NEW: call(bar, bar|<v11>) -> <v12>
-{ var a = 1 bar(a++) bar(a--) bar(++a) bar(--a) }   <v12>: *     COPY                              
+1                                                   <v0>: Int    NEW: r(1) -> <v0>
+a                                                   <v1>: Int    NEW: r(a) -> <v1>
+a++                                                 <v1>: Int    COPY
+bar(a++)                                            <v3>: *      NEW: call(bar(a++), bar|<v1>) -> <v3>
+a                                                   <v4>: Int    NEW: r(a) -> <v4>
+a--                                                 <v4>: Int    COPY
+bar(a--)                                            <v6>: *      NEW: call(bar(a--), bar|<v4>) -> <v6>
+a                                                   <v7>: Int    NEW: r(a) -> <v7>
+++a                                                 <v8>: Int    NEW: call(++a, inc|<v7>) -> <v8>
+bar(++a)                                            <v9>: *      NEW: call(bar(++a), bar|<v8>) -> <v9>
+a                                                   <v10>: Int   NEW: r(a) -> <v10>
+--a                                                 <v11>: Int   NEW: call(--a, dec|<v10>) -> <v11>
+bar(--a)                                            <v12>: *     NEW: call(bar(--a), bar|<v11>) -> <v12>
+{ var a = 1 bar(a++) bar(a--) bar(++a) bar(--a) }   <v12>: *     COPY
 =====================

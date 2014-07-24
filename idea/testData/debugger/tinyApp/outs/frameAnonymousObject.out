@@ -1,0 +1,35 @@
+LineBreakpoint created at frameAnonymousObject.kt:11
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! frameAnonymousObject.FrameAnonymousObjectPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameAnonymousObject.kt:10
+package frameAnonymousObject
+
+fun main(args: Array<String>) {
+    val val1 = 1
+    val o = object {
+        val obProp = 1
+
+        fun run() {
+            foo {
+                //Breakpoint!
+                val1 + obProp
+            }
+        }
+    }
+
+    o.run()
+}
+
+fun foo(f: () -> Unit) {
+    f()
+}
+
+// PRINT_FRAME
+ frame    = invoke():11, FrameAnonymousObjectPackage$main$o$1$run$1 {frameAnonymousObject}
+   this     = this = {frameAnonymousObject.FrameAnonymousObjectPackage$main$o$1$run$1@uniqueID}kotlin.Function0<kotlin.Unit>
+     field    = this$0: frameAnonymousObject.FrameAnonymousObjectPackage$main$o$1 = {frameAnonymousObject.FrameAnonymousObjectPackage$main$o$1@uniqueID}
+       field    = obProp: int = 1
+       field    = $val1: int = 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

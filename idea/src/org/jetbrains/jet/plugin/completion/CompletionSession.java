@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
@@ -176,6 +177,9 @@ class CompletionSession {
 
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+
+            if (KotlinBuiltIns.getInstance().isUnit(classDescriptor.getDefaultType())) return true;
+
             ClassKind kind = classDescriptor.getKind();
             return !(kind == ClassKind.OBJECT || kind == ClassKind.CLASS_OBJECT);
         }

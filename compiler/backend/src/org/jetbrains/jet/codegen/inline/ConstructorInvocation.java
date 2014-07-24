@@ -36,7 +36,7 @@ public class ConstructorInvocation {
 
     private String newConstructorDescriptor;
 
-    private List<CapturedParamInfo> allRecapturedParameters;
+    private List<CapturedParamDesc> allRecapturedParameters;
 
     private Map<String, LambdaInfo> capturedLambdasToInline;
 
@@ -84,11 +84,11 @@ public class ConstructorInvocation {
         this.newConstructorDescriptor = newConstructorDescriptor;
     }
 
-    public List<CapturedParamInfo> getAllRecapturedParameters() {
+    public List<CapturedParamDesc> getAllRecapturedParameters() {
         return allRecapturedParameters;
     }
 
-    public void setAllRecapturedParameters(List<CapturedParamInfo> allRecapturedParameters) {
+    public void setAllRecapturedParameters(List<CapturedParamDesc> allRecapturedParameters) {
         this.allRecapturedParameters = allRecapturedParameters;
     }
 

@@ -1,7 +1,7 @@
 Wrong value for inline option: 'wrong'. Should be 'on'/'off' or 'true'/'false'
 Usage: kotlinc-jvm <options> <source files>
 where possible options include:
-  -src <path>                Source file or directory (allows many paths separated by the system path separator)
+  -d <directory|jar>         Destination for generated class files
   -jar <path>                Resulting .jar file path
   -output <path>             Output directory path for .class files
   -classpath <path>          Paths where to find user class files
@@ -16,10 +16,10 @@ where possible options include:
   -script                    Evaluate the script file
   -kotlinHome <path>         Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
   -inline {on,off}           Inlining mode (default is on)
+  -optimize {on,off}         Optimization mode (default is on)
   -tags                      Demarcate each compilation message (error, warning, etc) with an open and close tag
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
   -help (-h)                 Print a synopsis of standard options
   -suppress warnings         Suppress all compiler warnings
-  -printArgs                 Print command line arguments
 INTERNAL_ERROR

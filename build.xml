@@ -48,7 +48,7 @@
       <then>
         <path id="javac2.classpath">
           <pathelement location="${idea.sdk}/lib/javac2.jar"/>
-          <pathelement location="${idea.sdk}/lib/asm4-all.jar"/>
+          <pathelement location="${idea.sdk}/lib/asm-all.jar"/>
         </path>
         <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
         <echo message="Use javac2 from Idea lib"/>
@@ -148,6 +148,8 @@
             <fileset dir="compiler/frontend/src"/>
             <fileset dir="core/descriptors/src"/>
             <fileset dir="core/descriptor.loader.java/src"/>
+            <fileset dir="core/serialization/src"/>
+            <fileset dir="core/serialization.java/src"/>
             <fileset dir="compiler/frontend.java/src"/>
             <fileset dir="compiler/backend-common/src"/>
             <fileset dir="compiler/backend/src"/>
@@ -564,8 +566,7 @@
               <assertions>
                 <enable/>
               </assertions>
-              <arg value="-src"/>
-              <arg value="@{src}"/>
+              <arg line="@{src}"/>
               <arg value="-output"/>
               <arg value="@{output}"/>
               <arg value="-noStdlib"/>
@@ -575,7 +576,7 @@
           </sequential>
         </macrodef>
 
-        <new_kotlinc src="${basedir}/core/builtins/src${path.separator}${basedir}/core/runtime.jvm/src${path.separator}${basedir}/core/reflection/src"
+        <new_kotlinc src="${basedir}/core/builtins/src ${basedir}/core/runtime.jvm/src ${basedir}/core/reflection/src"
                      output="${output}/classes/runtime"
                      classpath="${basedir}/core/runtime.jvm/src"/>
 
@@ -622,17 +623,19 @@
         </jar>
     </target>
 
-    <!-- builds redistributables from sources -->
+    <!-- See description -->
     <target name="dist"
-            depends="clean,init,prepareDist,preloader,builtins,compiler,compilerSources,antTools,jdkAnnotations,androidSdkAnnotations,runtime,runtime_sources,jslib"/>
+            depends="clean,init,prepareDist,preloader,builtins,compiler,compilerSources,antTools,jdkAnnotations,androidSdkAnnotations,runtime,runtime_sources,jslib"
+            description="Builds redistributables from sources"/>
 
     <!-- builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc -->
     <target name="dist_quick"
             depends="clean,init,prepareDist,preloader,builtins,compiler_quick,antTools,jdkAnnotations,androidSdkAnnotations,runtime,runtime_sources,jslib"/>
 
-    <!-- builds compiler jar from project out dir -->
+    <!-- See description -->
     <target name="dist_quick_compiler_only"
-            depends="init,prepareDist,preloader,builtins,compiler_quick"/>
+            depends="init,prepareDist,preloader,builtins,compiler_quick"
+            description="Builds compiler jar from project out dir"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
@@ -640,6 +643,33 @@
             <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" includes="*.bat" filemode="644"/>
             <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" excludes="*.bat" filemode="755"/>
         </zip>
-        <echo message="##teamcity[publishArtifacts '${output.relative}/${output.name}.zip']"/>
     </target>
+
+    <target name="kotlin-for-upsource" depends="dist">
+        <jar jarfile="${output}/kotlin-for-upsource0.jar">
+            <fileset dir="${output}/classes/compiler"/>
+            <fileset dir="${output}/classes/runtime"/>
+            <fileset dir="${output}/builtins">
+                <include name="kotlin/**"/>
+                <exclude name="kotlin/internal/**"/>
+            </fileset>
+            <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
+            <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
+
+            <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
+            <fileset dir="${output}/classes/stdlib"/>
+
+            <!-- icons, etc. -->
+            <fileset dir="idea/resources"/>
+        </jar>
+        <sleep seconds="1"/>
+        <jar jarfile="${output}/kotlin-for-upsource.jar">
+            <zipfileset src="${output}/kotlin-for-upsource0.jar">
+                <exclude name="javax/**/*.java"/>
+            </zipfileset>
+        </jar>
+        <delete file="${output}/kotlin-for-upsource0.jar"/>
+    </target>
+
+    <target name="build-artifacts" depends="zip,kotlin-for-upsource"/>
 </project>

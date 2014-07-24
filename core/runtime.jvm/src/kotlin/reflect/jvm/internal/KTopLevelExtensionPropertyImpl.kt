@@ -20,7 +20,7 @@ import java.lang.reflect.*
 import kotlin.reflect.*
 
 open class KTopLevelExtensionPropertyImpl<T, out R>(
-        public override val name: String,
+        override val name: String,
         protected val owner: KPackageImpl,
         protected val receiverClass: Class<T>
 ) : KTopLevelExtensionProperty<T, R>, KPropertyImpl<R> {

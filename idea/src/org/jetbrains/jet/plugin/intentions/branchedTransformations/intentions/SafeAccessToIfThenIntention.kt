@@ -39,9 +39,10 @@ public class SafeAccessToIfThenIntention : JetSelfTargetingIntention<JetSafeQual
 
         val receiverTemplate = if (receiver is JetBinaryExpression) "(%s)" else "%s"
         val receiverAsString = receiverTemplate.format(receiver.getText())
-        val dotQualifiedExpression = JetPsiFactory.createExpression(element.getProject(), "${receiverAsString}.${selector!!.getText()}")
+        val psiFactory = JetPsiFactory(element)
+        val dotQualifiedExpression = psiFactory.createExpression("${receiverAsString}.${selector!!.getText()}")
 
-        val elseClause = if (element.isStatement()) null else JetPsiFactory.createExpression(element.getProject(), "null")
+        val elseClause = if (element.isStatement()) null else psiFactory.createExpression("null")
         val ifExpression = element.convertToIfNotNullExpression(receiver, dotQualifiedExpression, elseClause)
 
         if (!receiverIsStable) {

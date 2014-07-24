@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
@@ -67,14 +68,14 @@ public class JvmRuntimeTypes {
             @NotNull String... typeParameters
     ) {
         MutableClassDescriptor descriptor = new MutableClassDescriptor(packageFragment, packageFragment.getMemberScope(),
-                                                                       ClassKind.CLASS, false, Name.identifier(name));
+                                                                       ClassKind.CLASS, false, Name.identifier(name), SourceElement.NO_SOURCE);
         List<TypeParameterDescriptor> typeParameterDescriptors = new ArrayList<TypeParameterDescriptor>(typeParameters.length);
         for (int i = 0; i < typeParameters.length; i++) {
             String[] s = typeParameters[i].split(" ");
             Variance variance = Variance.valueOf(s[0].toUpperCase() + "_VARIANCE");
             String typeParameterName = s[1];
             TypeParameterDescriptorImpl typeParameter = TypeParameterDescriptorImpl.createForFurtherModification(
-                    descriptor, Annotations.EMPTY, false, variance, Name.identifier(typeParameterName), i
+                    descriptor, Annotations.EMPTY, false, variance, Name.identifier(typeParameterName), i, SourceElement.NO_SOURCE
             );
             typeParameter.setInitialized();
             typeParameterDescriptors.add(typeParameter);

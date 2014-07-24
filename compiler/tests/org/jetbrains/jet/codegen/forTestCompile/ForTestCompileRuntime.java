@@ -17,6 +17,8 @@
 package org.jetbrains.jet.codegen.forTestCompile;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ArrayUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
@@ -57,8 +59,9 @@ public class ForTestCompileRuntime {
     }
 
     private static void compileBuiltIns(@NotNull File destDir) throws IOException {
-        String src = BUILT_INS_SRC_PATH + File.pathSeparator + RUNTIME_JVM_SRC_PATH + File.pathSeparator + REFLECTION_SRC_PATH;
-        compileKotlinToJvm("built-ins", destDir, src, src);
+        compileKotlinToJvm("built-ins", destDir,
+                           BUILT_INS_SRC_PATH + File.pathSeparator + RUNTIME_JVM_SRC_PATH + File.pathSeparator + REFLECTION_SRC_PATH,
+                           BUILT_INS_SRC_PATH, RUNTIME_JVM_SRC_PATH, REFLECTION_SRC_PATH);
 
         JetTestUtils.compileJavaFiles(
                 javaFilesUnder(RUNTIME_JVM_SRC_PATH),
@@ -75,25 +78,25 @@ public class ForTestCompileRuntime {
     }
 
     private static void compileStdlib(@NotNull File destDir) throws IOException {
-        compileKotlinToJvm("stdlib", destDir, "libraries/stdlib/src", destDir.getPath());
+        compileKotlinToJvm("stdlib", destDir, destDir.getPath(), "libraries/stdlib/src");
     }
 
     private static void compileKotlinToJvm(
             @NotNull String debugName,
             @NotNull File destDir,
-            @NotNull String src,
-            @NotNull String classPath
+            @NotNull String classPath,
+            @NotNull String... src
     ) {
-        ExitCode exitCode = new K2JVMCompiler().exec(
-                System.out,
-                "-output", destDir.getPath(),
-                "-src", src,
+        List<String> args = KotlinPackage.arrayListOf(
+                "-d", destDir.getPath(),
                 "-noStdlib",
                 "-noJdkAnnotations",
                 "-suppress", "warnings",
                 "-annotations", JetTestUtils.getJdkAnnotationsJar().getAbsolutePath(),
                 "-classpath", classPath
         );
+        args.addAll(Arrays.asList(src));
+        ExitCode exitCode = new K2JVMCompiler().exec(System.out, ArrayUtil.toStringArray(args));
         if (exitCode != ExitCode.OK) {
             throw new IllegalStateException("Compilation of " + debugName + " failed: " + exitCode);
         }

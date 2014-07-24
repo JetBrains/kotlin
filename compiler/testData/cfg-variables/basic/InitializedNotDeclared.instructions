@@ -7,16 +7,16 @@ class A {
 }
 ---------------------
 L0:
-  1 <START>             INIT: in: {} out: {}
+  1 <START>                                INIT: in: {} out: {}
   2 mark({ x = 1 })
-    magic(x) -> <v0>
-    r(1) -> <v1>                                        USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
-    w(x|<v0>, <v1>)     INIT: in: {} out: {x=I}         USE: in: {} out: {x=ONLY_WRITTEN_NEVER_READ}
-  1 v(val x: Int)       INIT: in: {x=I} out: {x=ID}
+    magic[IMPLICIT_RECEIVER](x) -> <v0>
+    r(1) -> <v1>                                                           USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
+    w(x|<v0>, <v1>)                        INIT: in: {} out: {x=I}         USE: in: {} out: {x=ONLY_WRITTEN_NEVER_READ}
+  1 v(val x: Int)                          INIT: in: {x=I} out: {x=ID}
 L1:
-    <END>               INIT: in: {x=ID} out: {x=ID}
+    <END>                                  INIT: in: {x=ID} out: {x=ID}
 error:
-    <ERROR>             INIT: in: {} out: {}
+    <ERROR>                                INIT: in: {} out: {}
 sink:
-    <SINK>              INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
+    <SINK>                                 INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
 =====================

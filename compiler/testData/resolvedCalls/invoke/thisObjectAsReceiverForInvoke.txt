@@ -1,0 +1,14 @@
+class Foo {
+    fun invoke() {}
+}
+
+fun bar(f: Foo) {
+    f<caret>()
+}
+
+
+Resolved call:
+
+Explicit receiver kind = THIS_OBJECT
+This object = f
+Receiver argument = NO_RECEIVER

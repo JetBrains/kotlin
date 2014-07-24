@@ -6,13 +6,13 @@ fun foo() {
     use(a)
 }
 ---------------------
-1                                   <v0>: Int   NEW: r(1) -> <v0>               
-a                                   <v1>: Int   NEW: r(a) -> <v1>               
-use(a)                              <v2>: *     NEW: call(use, use|<v1>) -> <v2>
-2                                   <v3>: Int   NEW: r(2) -> <v3>               
-a                                   <v4>: Int   NEW: r(a) -> <v4>               
-use(a)                              <v5>: *     NEW: call(use, use|<v4>) -> <v5>
-{ var a = 1 use(a) a = 2 use(a) }   <v5>: *     COPY                            
+1                                   <v0>: Int   NEW: r(1) -> <v0>                  
+a                                   <v1>: Int   NEW: r(a) -> <v1>                  
+use(a)                              <v2>: *     NEW: call(use(a), use|<v1>) -> <v2>
+2                                   <v3>: Int   NEW: r(2) -> <v3>                  
+a                                   <v4>: Int   NEW: r(a) -> <v4>                  
+use(a)                              <v5>: *     NEW: call(use(a), use|<v4>) -> <v5>
+{ var a = 1 use(a) a = 2 use(a) }   <v5>: *     COPY                               
 =====================
 == bar ==
 fun bar() {
@@ -25,6 +25,6 @@ fun bar() {
 == use ==
 fun use(a: Int) = a
 ---------------------
-    <v0>: Int   NEW: magic(a: Int) -> <v0>
-a   <v1>: Int   NEW: r(a) -> <v1>         
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](a: Int) -> <v0>
+a   <v1>: Int   NEW: r(a) -> <v1>                           
 =====================

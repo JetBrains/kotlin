@@ -31,8 +31,11 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 
 public final class CallCandidateResolutionContext<D extends CallableDescriptor> extends CallResolutionContext<CallCandidateResolutionContext<D>> {
+    @NotNull
     public final MutableResolvedCall<D> candidateCall;
+    @NotNull
     public final TracingStrategy tracing;
+    @NotNull
     public final ReceiverValue explicitExtensionReceiverForInvoke;
 
     private CallCandidateResolutionContext(
@@ -63,7 +66,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing, @NotNull Call call, @NotNull ReceiverValue explicitExtensionReceiverForInvoke
     ) {
-        candidateCall.setInitialDataFlowInfo(context.dataFlowInfo);
+        candidateCall.getDataFlowInfoForArguments().setInitialDataFlowInfo(context.dataFlowInfo);
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
@@ -84,6 +87,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return create(candidateCall, context, trace, tracing, context.call);
     }
 
+    @NotNull
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
             @NotNull MutableResolvedCall<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
     ) {

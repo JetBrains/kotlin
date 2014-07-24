@@ -9,21 +9,21 @@ fun foo() {
   a[10] += 1
 }
 ---------------------
-Array<Int>                                                  <v0>: {<: Array<Int>}    NEW: call(Array, <init>) -> <v0>                       
-3                                                           <v1>: *                  NEW: r(3) -> <v1>                                      
-a                                                           <v2>: {<: Array<Int>}    NEW: r(a) -> <v2>                                      
-10                                                          <v3>: Int                NEW: r(10) -> <v3>                                     
-4                                                           <v4>: Int                NEW: r(4) -> <v4>                                      
-a[10] = 4                                                   <v5>: *                  NEW: call(a[10] = 4, set|<v2>, <v3>, <v4>) -> <v5>     
-2                                                           <v6>: *                  NEW: r(2) -> <v6>                                      
-a                                                           <v7>: {<: Array<Int>}    NEW: r(a) -> <v7>                                      
-10                                                          <v8>: Int                NEW: r(10) -> <v8>                                     
-a[10]                                                       <v9>: *                  NEW: call(a[10], get|<v7>, <v8>) -> <v9>               
-100                                                         <v10>: *                 NEW: r(100) -> <v10>                                   
-a                                                           <v16>: {<: Array<Int>}   NEW: r(a) -> <v16>                                     
-10                                                          <v17>: Int               NEW: r(10) -> <v17>                                    
-a[10]                                                       <v13>: Int               NEW: call(a[10], get|<v11>, <v12>) -> <v13>            
-1                                                           <v14>: Int               NEW: r(1) -> <v14>                                     
+Array<Int>                                                  <v0>: {<: Array<Int>}    NEW: call(Array<Int>, <init>) -> <v0>
+3                                                           <v1>: *                  NEW: r(3) -> <v1>
+a                                                           <v2>: {<: Array<Int>}    NEW: r(a) -> <v2>
+10                                                          <v3>: Int                NEW: r(10) -> <v3>
+4                                                           <v4>: Int                NEW: r(4) -> <v4>
+a[10] = 4                                                   <v5>: *                  NEW: call(a[10] = 4, set|<v2>, <v3>, <v4>) -> <v5>
+2                                                           <v6>: *                  NEW: r(2) -> <v6>
+a                                                           <v7>: {<: Array<Int>}    NEW: r(a) -> <v7>
+10                                                          <v8>: Int                NEW: r(10) -> <v8>
+a[10]                                                       <v9>: *                  NEW: call(a[10], get|<v7>, <v8>) -> <v9>
+100                                                         <v10>: *                 NEW: r(100) -> <v10>
+a                                                           <v16>: {<: Array<Int>}   NEW: r(a) -> <v16>
+10                                                          <v17>: Int               NEW: r(10) -> <v17>
+a[10]                                                       <v13>: Int               NEW: call(a[10], get|<v11>, <v12>) -> <v13>
+1                                                           <v14>: Int               NEW: r(1) -> <v14>
 a[10] += 1                                                  <v18>: *                 NEW: call(a[10] += 1, set|<v16>, <v17>, <v15>) -> <v18>
-{ val a = Array<Int> 3 a[10] = 4 2 a[10] 100 a[10] += 1 }   <v18>: *                 COPY                                                   
+{ val a = Array<Int> 3 a[10] = 4 2 a[10] 100 a[10] += 1 }   <v18>: *                 COPY
 =====================

@@ -1,0 +1,1 @@
+class C(private val string: String, a: Int = string.length())

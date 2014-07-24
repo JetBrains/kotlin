@@ -26,8 +26,7 @@ public open class ReplaceInvokeIntention : AttributeCallReplacementIntention("re
     }
 
     override fun replaceCall(call: CallDescription, editor: Editor) {
-        call.element.replace(JetPsiFactory.createExpression(
-                call.element.getProject(),
+        call.element.replace(JetPsiFactory(call.element).createExpression(
                 call.element.getReceiverExpression().getText() +
                 (call.callElement.getTypeArgumentList()?.getText() ?: "") +
                 (call.callElement.getValueArgumentList()?.getText() ?: "") +

@@ -23,6 +23,7 @@
     </option>
     <envs>
       <env name="kotlin.tests.actually.compile" value="true" />
+      <env name="NO_FS_ROOTS_ACCESS_CHECK" value="true" />
     </envs>
     <patterns />
     <RunnerSettings RunnerId="Debug">

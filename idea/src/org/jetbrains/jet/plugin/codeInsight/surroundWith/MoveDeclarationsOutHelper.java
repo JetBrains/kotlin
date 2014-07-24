@@ -37,8 +37,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.psi.JetPsiFactory.createExpression;
-import static org.jetbrains.jet.lang.psi.JetPsiFactory.createNewLine;
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class MoveDeclarationsOutHelper {
 
@@ -53,7 +52,8 @@ public class MoveDeclarationsOutHelper {
         List<JetProperty> propertiesDeclarations = new ArrayList<JetProperty>();
 
         // Dummy element to add new declarations at the beginning
-        PsiElement dummyFirstStatement = container.addBefore(createExpression(project, "dummyStatement "), statements[0]);
+        JetPsiFactory psiFactory = JetPsiFactory(project);
+        PsiElement dummyFirstStatement = container.addBefore(psiFactory.createExpression("dummyStatement "), statements[0]);
 
         try {
             SearchScope scope = new LocalSearchScope(container);
@@ -66,14 +66,14 @@ public class MoveDeclarationsOutHelper {
                         JetProperty declaration = createVariableDeclaration(property, generateDefaultInitializers);
                         declaration = (JetProperty) container.addBefore(declaration, dummyFirstStatement);
                         propertiesDeclarations.add(declaration);
-                        container.addAfter(createNewLine(project), declaration);
+                        container.addAfter(psiFactory.createNewLine(), declaration);
 
                         JetBinaryExpression assignment = createVariableAssignment(property);
                         resultStatements.add(property.replace(assignment));
                     }
                     else {
                         PsiElement newStatement = container.addBefore(statement, dummyFirstStatement);
-                        container.addAfter(createNewLine(project), newStatement);
+                        container.addAfter(psiFactory.createNewLine(), newStatement);
                         container.deleteChildRange(statement, statement);
                     }
                 }
@@ -95,7 +95,7 @@ public class MoveDeclarationsOutHelper {
     private static JetBinaryExpression createVariableAssignment(@NotNull JetProperty property) {
         String propertyName = property.getName();
         assert propertyName != null : "Property should have a name " + property.getText();
-        JetBinaryExpression assignment = (JetBinaryExpression) createExpression(property.getProject(), propertyName + " = x");
+        JetBinaryExpression assignment = (JetBinaryExpression) JetPsiFactory(property).createExpression(propertyName + " = x");
         JetExpression right = assignment.getRight();
         assert right != null : "Created binary expression should have a right part " + assignment.getText();
         JetExpression initializer = property.getInitializer();
@@ -134,7 +134,7 @@ public class MoveDeclarationsOutHelper {
             typeString = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(propertyType);
         }
 
-        return JetPsiFactory.createProperty(property.getProject(), property.getName(), typeString, property.isVar(), initializer);
+        return JetPsiFactory(property).createProperty(property.getName(), typeString, property.isVar(), initializer);
     }
 
     private static boolean needToDeclareOut(@NotNull PsiElement element, int lastStatementOffset, @NotNull SearchScope scope) {

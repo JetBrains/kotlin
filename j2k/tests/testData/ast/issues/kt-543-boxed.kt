@@ -1,7 +1,7 @@
 package demo
 
-class Test() {
-    fun putInt(i: Int) {
+class Test {
+    fun putInt(i: Int?) {
     }
 
     fun test() {

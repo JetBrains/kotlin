@@ -24,15 +24,15 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 
 import java.io.File;
 import java.util.List;
 
-public abstract class AbstractHighlightingTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractHighlightingTest extends JetLightCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {

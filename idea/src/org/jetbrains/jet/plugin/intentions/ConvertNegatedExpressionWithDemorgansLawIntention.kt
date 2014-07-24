@@ -19,17 +19,15 @@ package org.jetbrains.jet.plugin.intentions
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.impl.source.tree.PsiErrorElementImpl
-import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetConstantExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import java.util.ArrayList
 import java.util.LinkedList
+import org.jetbrains.jet.plugin.JetBundle
 
 public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingIntention<JetPrefixExpression>(
         "convert.negated.expression.with.demorgans.law", javaClass()
@@ -41,10 +39,11 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
 
         val parenthesizedExpression = element.getBaseExpression() as? JetParenthesizedExpression
         val baseExpression = parenthesizedExpression?.getExpression() as? JetBinaryExpression ?: return false
-        val operatorToken = baseExpression.getOperationToken() ?: return false
 
-        if (!(operatorToken == JetTokens.ANDAND || operatorToken == JetTokens.OROR)) {
-            return false
+        when (baseExpression.getOperationToken()) {
+            JetTokens.ANDAND -> setText(JetBundle.message("convert.negated.expression.with.demorgans.law.andToOr"))
+            JetTokens.OROR -> setText(JetBundle.message("convert.negated.expression.with.demorgans.law.orToAnd"))
+            else -> return false
         }
 
         val elements = splitBooleanSequence(baseExpression) ?: return false
@@ -54,7 +53,7 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
     override fun applyTo(element: JetPrefixExpression, editor: Editor) {
         val parenthesizedExpression = element.getBaseExpression() as JetParenthesizedExpression
         val baseExpression = parenthesizedExpression.getExpression() as JetBinaryExpression
-        val operatorText = when(baseExpression.getOperationToken()) {
+        val operatorText = when (baseExpression.getOperationToken()) {
             JetTokens.ANDAND -> JetTokens.OROR.getValue()
             JetTokens.OROR -> JetTokens.ANDAND.getValue()
             else -> throw IllegalArgumentException(
@@ -65,12 +64,12 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
         val negatedExpression = negatedElements.subList(0, negatedElements.lastIndex).foldRight(
                 "${negatedElements.last()}", { negated, exp -> "$exp $operatorText $negated" })
 
-        val newExpression = JetPsiFactory.createExpression(element.getProject(), negatedExpression)
+        val newExpression = JetPsiFactory(element).createExpression(negatedExpression)
         element.replace(newExpression)
     }
 
     fun handleSpecial(expression: JetExpression): String {
-        return when(expression) {
+        return when (expression) {
             is JetSimpleNameExpression, is JetConstantExpression, is JetPrefixExpression,
             is JetParenthesizedExpression -> "!${expression.getText()}"
             else -> "!(${expression.getText()})"

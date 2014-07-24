@@ -1,16 +1,16 @@
 package demo
 
-class Container() {
+class Container {
     var myBoolean = true
 }
 
-class One() {
+class One {
     class object {
         var myContainer = Container()
     }
 }
 
-class Test() {
+class Test {
     fun test() {
         if (One.myContainer.myBoolean)
             System.out.println("Ok")

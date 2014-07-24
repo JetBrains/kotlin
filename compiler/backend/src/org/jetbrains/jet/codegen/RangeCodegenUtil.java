@@ -115,6 +115,16 @@ public class RangeCodegenUtil {
         return map.get(DescriptorUtils.getFqNameSafe(declarationDescriptor));
     }
 
+    @Nullable
+    public static PrimitiveType getPrimitiveRangeOrProgressionElementType(@NotNull FqName rangeOrProgressionName) {
+        PrimitiveType result = RANGE_TO_ELEMENT_TYPE.get(rangeOrProgressionName);
+        return result != null ? result : PROGRESSION_TO_ELEMENT_TYPE.get(rangeOrProgressionName);
+    }
+
+    public static boolean isRangeOrProgression(@NotNull FqName className) {
+        return getPrimitiveRangeOrProgressionElementType(className) != null;
+    }
+
     public static boolean isOptimizableRangeTo(CallableDescriptor rangeTo) {
         if ("rangeTo".equals(rangeTo.getName().asString())) {
             if (isPrimitiveNumberClassDescriptor(rangeTo.getContainingDeclaration())) {

@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.cli.jvm;
 
-import junit.framework.Assert;
 import org.jetbrains.jet.cli.CliBaseTest;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -44,11 +44,6 @@ public class K2JvmCliTest extends CliBaseTest {
 
     @Test
     public void nonExistingSourcePath() throws Exception {
-        executeCompilerCompareOutputJVM();
-    }
-
-    @Test
-    public void script() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 

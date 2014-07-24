@@ -24,10 +24,9 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
 public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpression>("convert.to.for.each.loop.intention", javaClass()) {
     private fun getFunctionLiteralArgument(element: JetExpression): JetFunctionLiteralExpression? {
@@ -75,16 +74,14 @@ public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpres
             }
         }
 
-        val callee = JetPsiUtil.getCalleeExpressionIfAny(element)
         val functionLiteral = getFunctionLiteralArgument(element)
 
-        if (callee != null &&
-            functionLiteral != null &&
+        if (functionLiteral != null &&
             isWellFormedFunctionLiteral(functionLiteral) &&
             checkTotalNumberOfArguments(element)) {
 
-            val context = element.getContainingJetFile().getLazyResolveSession().resolveToElement(callee)
-            val resolvedCall = context[BindingContext.RESOLVED_CALL, callee]
+            val context = element.getContainingJetFile().getLazyResolveSession().resolveToElement(element)
+            val resolvedCall = element.getResolvedCall(context)
             val functionFqName = if (resolvedCall != null) DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() else null
 
             return "kotlin.forEach".equals(functionFqName);
@@ -116,6 +113,6 @@ public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpres
 
         val functionLiteral = getFunctionLiteralArgument(element)!!
 
-        element.replace(JetPsiFactory.createExpression(element.getProject(), generateLoopText(receiver, functionLiteral)))
+        element.replace(JetPsiFactory(element).createExpression(generateLoopText(receiver, functionLiteral)))
     }
 }

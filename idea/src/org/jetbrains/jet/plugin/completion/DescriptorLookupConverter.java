@@ -25,8 +25,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
@@ -122,24 +121,21 @@ public final class DescriptorLookupConverter {
     }
 
     @NotNull
-    public static LookupElement createLookupElement(
-            @NotNull KotlinCodeAnalyzer analyzer,
-            @NotNull BindingContext bindingContext,
-            @NotNull DeclarationDescriptor descriptor) {
+    public static LookupElement createLookupElement(@NotNull KotlinCodeAnalyzer analyzer, @NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
             descriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
         }
-        return createLookupElement(analyzer, descriptor, BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
+        return createLookupElement(analyzer, descriptor, DescriptorToSourceUtils.descriptorToDeclaration(descriptor));
     }
 
     public static LookupElement[] collectLookupElements(
             @NotNull KotlinCodeAnalyzer analyzer,
-            @NotNull BindingContext bindingContext,
-            @NotNull Iterable<DeclarationDescriptor> descriptors) {
+            @NotNull Iterable<DeclarationDescriptor> descriptors
+    ) {
         List<LookupElement> result = Lists.newArrayList();
 
         for (DeclarationDescriptor descriptor : descriptors) {
-            result.add(createLookupElement(analyzer, bindingContext, descriptor));
+            result.add(createLookupElement(analyzer, descriptor));
         }
 
         return result.toArray(new LookupElement[result.size()]);

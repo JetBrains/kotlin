@@ -76,7 +76,6 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
         for ((name, value) in directives) {
             when (name) {
                 "forceNotNullTypes" -> settings.forceNotNullTypes = parseBoolean(value)
-                "forceLocalVariableImmutability" -> settings.forceLocalVariableImmutability = parseBoolean(value)
                 "specifyLocalVariableTypeByDefault" -> settings.specifyLocalVariableTypeByDefault = parseBoolean(value)
                 "specifyFieldTypeByDefault" -> settings.specifyFieldTypeByDefault = parseBoolean(value)
                 "openByDefault" -> settings.openByDefault = parseBoolean(value)
@@ -95,10 +94,7 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
                                                 "using the first line of test data file")
         }
 
-        val reformatInFun = when (prefix) {
-            "element", "expression", "statement" -> true
-            else -> false
-        }
+        val reformatInFun = prefix in setOf("element", "expression", "statement")
 
         val actual = reformat(rawConverted, project, reformatInFun)
         val kotlinPath = javaPath.replace(".java", ".kt")
@@ -136,7 +132,7 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = fileToKotlin("final class C {" + text + "}", settings, project).replaceAll("class C\\(\\) \\{", "")
+        val result = fileToKotlin("final class C {" + text + "}", settings, project).replaceAll("class C \\{", "")
         return result.substring(0, (result.lastIndexOf("}"))).trim()
     }
 

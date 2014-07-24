@@ -27,9 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetIfExpression;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.MoveDeclarationsOutHelper;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder {
 
@@ -43,7 +44,7 @@ public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder 
             return null;
         }
 
-        JetIfExpression ifExpression = (JetIfExpression) JetPsiFactory.createExpression(project, getCodeTemplate());
+        JetIfExpression ifExpression = (JetIfExpression) JetPsiFactory(project).createExpression(getCodeTemplate());
         ifExpression = (JetIfExpression) container.addAfter(ifExpression, statements[statements.length - 1]);
 
         // TODO move a comment for first statement

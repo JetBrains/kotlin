@@ -1,4 +1,4 @@
-class A() {
+class A {
     var field = foo()
 
     fun foo(): Int {

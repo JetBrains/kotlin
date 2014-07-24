@@ -1,0 +1,19 @@
+fun <T> foo(t: T, l: MutableList<T>) {}
+
+fun use(vararg a: Any?) = a
+
+fun test(ls: MutableList<String>) {
+    use(<caret>foo(11, ls))
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+MATCH_MODULO_UNINFERRED_TYPES  t : ??? = 11
+MATCH_MODULO_UNINFERRED_TYPES  l : MutableList<???> = ls

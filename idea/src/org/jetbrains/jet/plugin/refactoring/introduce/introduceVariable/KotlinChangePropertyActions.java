@@ -17,21 +17,23 @@
 package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+
+import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinChangePropertyActions {
     private KotlinChangePropertyActions() {
     }
 
-    public static void declareValueOrVariable(Project project, boolean isVariable, JetProperty property) {
+    public static void declareValueOrVariable(boolean isVariable, JetProperty property) {
         ASTNode node;
+        JetPsiFactory psiFactory = JetPsiFactory(property);
         if (isVariable) {
-            node = JetPsiFactory.createVarNode(project);
+            node = psiFactory.createVarNode();
         }
         else {
-            node = JetPsiFactory.createValNode(project);
+            node = psiFactory.createValNode();
         }
         property.getValOrVarNode().getPsi().replace(node.getPsi());
     }

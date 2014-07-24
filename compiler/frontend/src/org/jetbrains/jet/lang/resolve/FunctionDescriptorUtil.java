@@ -122,22 +122,27 @@ public class FunctionDescriptorUtil {
                 function.getContainingDeclaration(),
                 function.getAnnotations(),
                 function.getName(),
-                function.getKind());
+                function.getKind(),
+                SourceElement.NO_SOURCE
+        );
         List<ValueParameterDescriptor> parameters = new ArrayList<ValueParameterDescriptor>(newParameters.size());
         int idx = 0;
         for (ValueParameterDescriptor parameter : newParameters) {
             JetType returnType = parameter.getReturnType();
             assert returnType != null;
 
-            parameters.add(new ValueParameterDescriptorImpl(
-                    descriptor,
-                    null,
-                    idx,
-                    parameter.getAnnotations(),
-                    parameter.getName(),
-                    returnType,
-                    parameter.declaresDefaultValue(),
-                    parameter.getVarargElementType())
+            parameters.add(
+                    new ValueParameterDescriptorImpl(
+                            descriptor,
+                            null,
+                            idx,
+                            parameter.getAnnotations(),
+                            parameter.getName(),
+                            returnType,
+                            parameter.declaresDefaultValue(),
+                            parameter.getVarargElementType(),
+                            SourceElement.NO_SOURCE
+                    )
             );
             idx++;
         }
