@@ -8,5 +8,5 @@ trait <lineMarker></lineMarker>B : A
 trait <lineMarker></lineMarker>C : B, A
 
 class SomeClass() : C {
-    override val <lineMarker descr="<b>internal</b> <b>open</b> <b>val</b> f: kotlin.Int <i>defined in</i> SomeClass<br/>overrides<br/><b>internal</b> <b>open</b> <b>val</b> f: kotlin.Int <i>defined in</i> A"></lineMarker>f: Int = 4
+    override val <lineMarker descr="Overrides property in 'A'"></lineMarker>f: Int = 4
 }

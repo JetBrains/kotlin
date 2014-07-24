@@ -42,27 +42,26 @@ import com.intellij.psi.search.searches.AllOverridingMethodsSearch;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.util.*;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -239,27 +238,18 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
 
-        if (!(descriptor instanceof CallableMemberDescriptor)) {
-            return null;
-        }
+        if (!(descriptor instanceof CallableMemberDescriptor)) return null;
 
         Set<? extends CallableMemberDescriptor> overriddenMembers = OverrideResolver.getDirectlyOverriddenDeclarations(
                 (CallableMemberDescriptor) descriptor);
-        if (overriddenMembers.size() == 0) {
-            return null;
-        }
-
-        boolean allOverriddenAbstract = true;
-        for (CallableMemberDescriptor function : overriddenMembers) {
-            allOverriddenAbstract &= function.getModality() == Modality.ABSTRACT;
-        }
+        if (overriddenMembers.isEmpty()) return null;
 
         // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
         // clearing the whole BindingTrace.
         return new LineMarkerInfo<JetElement>(
                 (JetElement) element,
                 element.getTextOffset(),
-                allOverriddenAbstract ? IMPLEMENTING_MARK : OVERRIDING_MARK,
+                isImplementsAndNotOverrides((CallableMemberDescriptor) descriptor, overriddenMembers) ? IMPLEMENTING_MARK : OVERRIDING_MARK,
                 Pass.UPDATE_ALL,
                 new Function<JetElement, String>() {
                     @Override
@@ -271,45 +261,57 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         );
     }
 
-    private static String calculateTooltipString(PsiElement element) {
-        JetFile file = (JetFile)element.getContainingFile();
-        if (file == null) return "";
-
-        BindingContext bindingContext = ResolvePackage.getBindingContext(file);
-
+    private static String calculateTooltipString(JetElement element) {
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(element);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-        if (!(descriptor instanceof CallableMemberDescriptor)) {
-            return "";
-        }
 
-        Set<CallableMemberDescriptor> overriddenMembers = OverrideResolver
-                .getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-        if (overriddenMembers.size() == 0) {
-            return "";
-        }
+        if (!(descriptor instanceof CallableMemberDescriptor)) return "";
+        CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) descriptor;
 
-        boolean allOverriddenAbstract = true;
+        Set<CallableMemberDescriptor> overriddenMembers = OverrideResolver.getDirectlyOverriddenDeclarations(callableDescriptor);
+        if (overriddenMembers.isEmpty()) return "";
+
+        final boolean isAbstract = callableDescriptor.getModality() == Modality.ABSTRACT;
+
+        final DescriptorRenderer renderer = new DescriptorRendererBuilder()
+                .setTextFormat(DescriptorRenderer.TextFormat.HTML)
+                .setWithDefinedIn(false)
+                .setStartFromName(true)
+                .setWithoutSuperTypes(true)
+                .build();
+
+        List<String> containingStrings = ContainerUtil.map(overriddenMembers, new Function<CallableMemberDescriptor, String>() {
+            @Override
+            public String fun(CallableMemberDescriptor overriddenDescriptor) {
+                DeclarationDescriptor declaration = overriddenDescriptor.getContainingDeclaration();
+                String memberKind =
+                        overriddenDescriptor instanceof PropertyAccessorDescriptor || overriddenDescriptor instanceof PropertyDescriptor ?
+                        "property" : "function";
+
+                boolean isBaseAbstract = overriddenDescriptor.getModality() == Modality.ABSTRACT;
+
+                return String.format("%s %s in '%s'",
+                                     !isAbstract && isBaseAbstract ? "Implements" : "Overrides",
+                                     memberKind, renderer.render(declaration));
+            }
+        });
+
+        Collections.sort(containingStrings);
+
+        return StringUtil.join(containingStrings, "<br/>");
+    }
+
+    private static boolean isImplementsAndNotOverrides(
+            CallableMemberDescriptor descriptor,
+            Collection<? extends CallableMemberDescriptor> overriddenMembers
+    ) {
+        if (descriptor.getModality() == Modality.ABSTRACT) return false;
+
         for (CallableMemberDescriptor function : overriddenMembers) {
-            allOverriddenAbstract &= function.getModality() == Modality.ABSTRACT;
+            if (function.getModality() != Modality.ABSTRACT) return false;
         }
 
-        String implementsOrOverrides = allOverriddenAbstract ? "implements" : "overrides";
-        String memberKind = element instanceof JetNamedFunction ? "function" : "property";
-
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(DescriptorRenderer.HTML.render(descriptor));
-        int overrideCount = overriddenMembers.size();
-        if (overrideCount >= 1) {
-            builder.append("<br/>").append(implementsOrOverrides).append("<br/>");
-            builder.append(DescriptorRenderer.HTML.render(overriddenMembers.iterator().next()));
-        }
-        if (overrideCount > 1) {
-            int otherCount = overrideCount - 1;
-            builder.append("<br/>and ").append(otherCount).append(" other ").append(StringUtil.pluralize(memberKind, otherCount));
-        }
-
-        return builder.toString();
+        return true;
     }
 
     @Override
