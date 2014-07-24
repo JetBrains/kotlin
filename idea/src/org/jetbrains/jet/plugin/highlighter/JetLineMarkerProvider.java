@@ -28,6 +28,7 @@ import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.ide.util.PsiClassListCellRenderer;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
@@ -45,6 +46,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -254,51 +256,19 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
         // clearing the whole BindingTrace.
-        return new LineMarkerInfo<PsiElement>(
-                element,
+        return new LineMarkerInfo<JetElement>(
+                (JetElement) element,
                 element.getTextOffset(),
                 allOverriddenAbstract ? IMPLEMENTING_MARK : OVERRIDING_MARK,
                 Pass.UPDATE_ALL,
-                new Function<PsiElement, String>() {
+                new Function<JetElement, String>() {
                     @Override
-                    public String fun(PsiElement element) {
+                    public String fun(JetElement element) {
                         return calculateTooltipString(element);
                     }
                 },
-                new GutterIconNavigationHandler<PsiElement>() {
-                    @Override
-                    public void navigate(MouseEvent event, PsiElement elt) {
-                        iconNavigatorHandler(event, elt);
-                    }
-                }
+                new KotlinSuperNavigationHandler()
         );
-    }
-
-    private static void iconNavigatorHandler(MouseEvent event, PsiElement elt) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) elt);
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, elt);
-        if (!(descriptor instanceof CallableMemberDescriptor)) return;
-
-        Set<CallableMemberDescriptor> overriddenMembers =
-                OverrideResolver.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-        if (overriddenMembers.isEmpty()) return;
-
-        List<NavigatablePsiElement> list = Lists.newArrayList();
-        for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
-            Collection<PsiElement> declarations = DescriptorToDeclarationUtil.INSTANCE$.resolveToPsiElements(elt.getProject(), overriddenMember);
-            for (PsiElement declaration : declarations) {
-                if (declaration instanceof NavigatablePsiElement) {
-                    list.add((NavigatablePsiElement) declaration);
-                }
-            }
-        }
-
-        PsiElementListNavigator.openTargets(
-                event,
-                ArrayUtil.toObjectArray(list, NavigatablePsiElement.class),
-                JetBundle.message("navigation.title.super.declaration", descriptor.getName()),
-                JetBundle.message("navigation.findUsages.title.super.declaration", descriptor.getName()),
-                new JetFunctionPsiElementCellRenderer(bindingContext));
     }
 
     private static String calculateTooltipString(PsiElement element) {
@@ -511,5 +481,51 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
 
         return overridden;
+    }
+
+    public static class KotlinSuperNavigationHandler implements GutterIconNavigationHandler<JetElement> {
+        private List<NavigatablePsiElement> testNavigableElements;
+
+        @TestOnly
+        @NotNull
+        public Collection<NavigatablePsiElement> getNavigationElements() {
+            Collection<NavigatablePsiElement> navigationResult = testNavigableElements;
+            testNavigableElements = null;
+            return navigationResult;
+        }
+
+        @Override
+        public void navigate(MouseEvent e, JetElement element) {
+            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(element);
+            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+            if (!(descriptor instanceof CallableMemberDescriptor)) return;
+
+            Set<CallableMemberDescriptor> overriddenMembers =
+                    OverrideResolver.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+            if (overriddenMembers.isEmpty()) return;
+
+            List<NavigatablePsiElement> superDeclarations = Lists.newArrayList();
+            for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
+                Collection<PsiElement> declarations =
+                        DescriptorToDeclarationUtil.INSTANCE$.resolveToPsiElements(element.getProject(), overriddenMember);
+                for (PsiElement declaration : declarations) {
+                    if (declaration instanceof NavigatablePsiElement) {
+                        superDeclarations.add((NavigatablePsiElement) declaration);
+                    }
+                }
+            }
+
+            if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                PsiElementListNavigator.openTargets(
+                        e,
+                        ArrayUtil.toObjectArray(superDeclarations, NavigatablePsiElement.class),
+                        JetBundle.message("navigation.title.super.declaration", descriptor.getName()),
+                        JetBundle.message("navigation.findUsages.title.super.declaration", descriptor.getName()),
+                        new JetFunctionPsiElementCellRenderer(bindingContext));
+            }
+            else {
+                testNavigableElements = superDeclarations;
+            }
+        }
     }
 }
