@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin;
 
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
 import org.jetbrains.jet.JetTestCaseBuilder;
@@ -25,12 +24,12 @@ public abstract class KotlinHierarchyViewTestBase extends HierarchyViewTestBase 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VirtualDirectoryImpl.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
     }
 
     @Override
     protected void tearDown() throws Exception {
-        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VirtualDirectoryImpl.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
         super.tearDown();
     }
 }
