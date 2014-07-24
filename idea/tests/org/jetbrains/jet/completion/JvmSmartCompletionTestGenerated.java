@@ -416,6 +416,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/NullableThis.kt");
     }
     
+    @TestMetadata("ObjectsFromType.kt")
+    public void testObjectsFromType() throws Exception {
+        doTest("idea/testData/completion/smart/ObjectsFromType.kt");
+    }
+    
     @TestMetadata("OverloadedConstructorArgument.kt")
     public void testOverloadedConstructorArgument() throws Exception {
         doTest("idea/testData/completion/smart/OverloadedConstructorArgument.kt");

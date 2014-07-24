@@ -82,6 +82,11 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             else if (DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor)) {
                 classifier = { ExpectedInfoClassification.MATCHES } /* we do not need to check type of enum entry because it's taken from proper enum */
             }
+            else if (descriptor is ClassDescriptor && DescriptorUtils.isObject(descriptor)) {
+                classifier = { expectedInfo ->
+                    if (descriptor.getDefaultType().isSubtypeOf(expectedInfo.`type`)) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
+                }
+            }
             else {
                 return
             }
@@ -101,9 +106,11 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             classObject.getDefaultType().getMemberScope().getAllDescriptors().forEach(::processMember)
         }
 
-        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-            classDescriptor.getDefaultType().getMemberScope().getAllDescriptors().forEach(::processMember)
+        var members = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
+        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
+            members = members.filter { DescriptorUtils.isObject(it) }
         }
+        members.forEach(::processMember)
     }
 
     private fun createLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
