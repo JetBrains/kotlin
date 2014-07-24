@@ -157,9 +157,14 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest("idea/testData/resolve/references/JavaReference.kt");
     }
     
-    @TestMetadata("MultiDeclarationReference.kt")
-    public void testMultiDeclarationReference() throws Exception {
-        doTest("idea/testData/resolve/references/MultiDeclarationReference.kt");
+    @TestMetadata("MultiDeclarationExtension.kt")
+    public void testMultiDeclarationExtension() throws Exception {
+        doTest("idea/testData/resolve/references/MultiDeclarationExtension.kt");
+    }
+    
+    @TestMetadata("MultiDeclarationMember.kt")
+    public void testMultiDeclarationMember() throws Exception {
+        doTest("idea/testData/resolve/references/MultiDeclarationMember.kt");
     }
     
     @TestMetadata("PackageReference.kt")
@@ -170,11 +175,6 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("PackageReferenceInImport.kt")
     public void testPackageReferenceInImport() throws Exception {
         doTest("idea/testData/resolve/references/PackageReferenceInImport.kt");
-    }
-    
-    @TestMetadata("PairMultiDeclaration.kt")
-    public void testPairMultiDeclaration() throws Exception {
-        doTest("idea/testData/resolve/references/PairMultiDeclaration.kt");
     }
     
     @TestMetadata("PropertyPlaceInClassObjectInObject.kt")
