@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
-import org.jetbrains.jet.utils.addToStdlib.*
 
 import java.util.*
 
@@ -61,7 +60,7 @@ public class PseudocodeVariableDataCollector(
 
         // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
         // Thus they can be filtered out upon leaving the inner scope.
-        return data.filterKeys_tmp { variable ->
+        return data.filterKeys { variable ->
             val lexicalScope = lexicalScopeVariableInfo.declaredIn[variable]
             // '-1' for variables declared outside this pseudocode
             val depth = lexicalScope?.depth ?: -1

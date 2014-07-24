@@ -22,7 +22,10 @@ import com.intellij.util.ProcessingContext
 import com.intellij.patterns.PlatformPatterns
 
 public class JetReferenceContributor() : PsiReferenceContributor() {
-    public override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+    public override fun registerReferenceProviders(registrar: PsiReferenceRegistrar?) {
+        if (registrar == null) {
+            return
+        }
         with(registrar) {
             registerProvider(javaClass<JetSimpleNameExpression>()) {
                 JetSimpleNameReference(it)

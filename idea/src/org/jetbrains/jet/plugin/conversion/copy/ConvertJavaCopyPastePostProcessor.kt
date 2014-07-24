@@ -32,34 +32,29 @@ import org.jetbrains.jet.plugin.editor.JetEditorOptions
 import java.awt.datatransfer.Transferable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.codeInsight.editorActions.ReferenceTransferableData
 
-public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData>() {
+public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
 
-    override fun extractTransferableData(content: Transferable): List<TextBlockTransferableData> {
+    override fun extractTransferableData(content: Transferable): TextBlockTransferableData? {
         try {
             if (content.isDataFlavorSupported(CopiedCode.DATA_FLAVOR)) {
-                return listOf(content.getTransferData(CopiedCode.DATA_FLAVOR) as TextBlockTransferableData)
+                return (content.getTransferData(CopiedCode.DATA_FLAVOR) as TextBlockTransferableData)
             }
         }
         catch (e: Throwable) {
             LOG.error(e)
         }
-        return listOf()
+        return null
     }
 
-    public override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List<TextBlockTransferableData> {
-        if (file !is PsiJavaFile) return listOf()
+    public override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): TextBlockTransferableData? {
+        if (file !is PsiJavaFile) return null
 
         val lightFile = PsiFileFactory.getInstance(file.getProject())!!.createFileFromText(file.getText()!!, file)
-        return listOf(CopiedCode(lightFile as? PsiJavaFile, startOffsets, endOffsets))
+        return CopiedCode(lightFile as? PsiJavaFile, startOffsets, endOffsets)
     }
 
-    public override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, values: List<TextBlockTransferableData>) {
-        assert(values.size() == 1)
-
-        val value = values.first()
-        
+    public override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, value: TextBlockTransferableData) {
         if (value !is CopiedCode) return
 
         val sourceFile = value.getFile() ?: return
