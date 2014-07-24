@@ -160,10 +160,8 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
                 k2jsArgs.verbose = true;
             }
             List<String> sources = getSources();
-            if (sources.size() > 0) {
-                k2jsArgs.sourceFiles = sources.toArray(new String[sources.size()]);
-            }
-            getLog().info("Compiling Kotlin src from " + Arrays.asList(k2jsArgs.sourceFiles) + " to JavaScript at: " + outputFile);
+            k2jsArgs.freeArgs.addAll(sources);
+            getLog().info("Compiling Kotlin src from " + sources + " to JavaScript at: " + outputFile);
         }
     }
 

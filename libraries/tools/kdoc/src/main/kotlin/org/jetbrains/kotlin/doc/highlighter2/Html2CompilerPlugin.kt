@@ -26,11 +26,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
     private val srcOutputRoot = File(docOutputRoot, names.htmlSourceDirName)
 
     private val sourceDirs: List<File> =
-        compilerArguments
-                .src
-                .orEmpty()
-                .split(File.pathSeparatorChar)
-                .map { path -> File(path).getCanonicalFile() }
+        compilerArguments.freeArgs.orEmpty().map { path -> File(path).getCanonicalFile() }
 
     private val sourceDirPaths: List<String> = sourceDirs.map { d -> d.getPath() }
 

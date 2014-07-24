@@ -293,11 +293,11 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             arguments.module = module;
         }
         else {
-            if (sources.size() <= 0)
+            if (sources.isEmpty())
                 throw new MojoExecutionException("No source roots to compile");
 
-            arguments.src = join(sources, File.pathSeparator);
-            log.info("Compiling Kotlin sources from " + arguments.src);
+            arguments.freeArgs.addAll(sources);
+            log.info("Compiling Kotlin sources from " + sources);
 
             // TODO: Move it compiler
             classpathList.addAll(sources);

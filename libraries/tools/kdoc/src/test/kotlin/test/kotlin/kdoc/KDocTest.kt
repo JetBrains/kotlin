@@ -27,10 +27,9 @@ class KDocTest {
         val args = KDocArguments()
         //args.module = moduleName
         args.kotlinHome = "../../../dist/kotlinc"
-        val sourceDirs = listOf("../../stdlib/src",
+        args.freeArgs = listOf("../../stdlib/src",
                                "../../kunit/src/main/kotlin",
                                "../../kotlin-jdbc/src/main/kotlin")
-        args.src = sourceDirs.makeString(File.pathSeparator)
         args.outputDir = "target/classes-stdlib"
         args.noStdlib = true
         args.classpath = "../runtime/target/kotlin-runtime-0.1-SNAPSHOT.jar${File.pathSeparator}../../lib/junit-4.9.jar"

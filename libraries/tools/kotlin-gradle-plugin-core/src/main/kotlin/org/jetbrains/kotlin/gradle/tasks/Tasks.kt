@@ -99,11 +99,7 @@ public open class KotlinCompile(): AbstractCompile() {
             return
         }
 
-        val customSources = args.src;
-        if (customSources == null || customSources.isEmpty()) {
-            args.src = sources.map { it.getAbsolutePath() } .makeString(File.pathSeparator)
-        }
-
+        args.freeArgs = sources.map { it.getAbsolutePath() }
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
             val existingClasspathEntries =  getClasspath().filter(KSpec<File?>({ it != null && it.exists() }))
@@ -182,11 +178,11 @@ public open class KDoc(): SourceTask() {
         cfg.packageSummaryText.putAll(kdocOptions.packageSummaryText)
 
         // KDoc compiler does not accept list of files as input. Try to pass directories instead.
-        args.src = getSource().map { it.getParentFile()!!.getAbsolutePath() }.toSet().makeString(File.pathSeparator)
+        args.freeArgs = getSource().map { it.getParentFile()!!.getAbsolutePath() }
         // Drop compiled sources to temp. Why KDoc compiles anything after all?!
         args.outputDir = getTemporaryDir()?.getAbsolutePath()
 
-        getLogger().warn(args.src)
+        getLogger().warn(args.freeArgs.toString())
         val embeddedAnnotations = getAnnotations(getProject(), getLogger())
         val userAnnotations = (kdocArgs.annotations ?: "").split(File.pathSeparatorChar).toList()
         val allAnnotations = if (kdocArgs.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map {it.getPath()})
