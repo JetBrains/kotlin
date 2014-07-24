@@ -16,11 +16,9 @@
 
 package kotlin.jvm.internal;
 
-import kotlin.Function0;
 import kotlin.IntRange;
 import kotlin.KotlinNullPointerException;
 
-import java.lang.Deprecated;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -86,14 +84,6 @@ public class Intrinsics {
 
     public static IntRange arrayIndices(int length) {
         return new IntRange(0, length - 1);
-    }
-
-    // TODO: remove this function when ABI version is advanced
-    @Deprecated // A better implementation of synchronized is used now
-    public static <R> R stupidSync(Object lock, Function0<R> block) {
-        synchronized (lock) {
-            return block.invoke();
-        }
     }
 
     private static final Set<String> METHOD_NAMES_TO_SKIP = new HashSet<String>(Arrays.asList(
