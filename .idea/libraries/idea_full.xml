@@ -8,7 +8,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/guava-17.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/guava-14.0.1-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/dependencies/asm5-src.zip!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/antLayout/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-api/src" />
