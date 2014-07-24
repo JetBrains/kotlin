@@ -1,16 +1,18 @@
+package com.myapp
+
 import android.app.Activity
 import android.view.View
 import android.widget.*
 
 val Activity.item_detail_container: FrameLayout
-    get() = findViewById(R.id.item_detail_container) as FrameLayout
+    get() = findViewById(0) as FrameLayout
 
 val Activity.textView1: TextView
-    get() = findViewById(R.id.textView1) as TextView
+    get() = findViewById(0) as TextView
 
 val Activity.password: EditText
-    get() = findViewById(R.id.password) as EditText
+    get() = findViewById(0) as EditText
 
 val Activity.login: Button
-    get() = findViewById(R.id.login) as Button
+    get() = findViewById(0) as Button
 

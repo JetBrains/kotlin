@@ -1,3 +1,3 @@
 package android.view
 
-class View
+trait View
