@@ -833,9 +833,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     Type componentType = signature.getReturnType();
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     if (!componentType.equals(Type.VOID_TYPE)) {
-                        iv.load(0, classAsmType);
-                        String desc = "()" + componentType.getDescriptor();
-                        iv.invokevirtual(classAsmType.getInternalName(), PropertyCodegen.getterName(parameter.getName()), desc, false);
+                        PropertyDescriptor property =
+                                bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, descriptorToDeclaration(parameter));
+                        genPropertyOnStack(iv, context, property, 0);
                     }
                     iv.areturn(componentType);
                 }
