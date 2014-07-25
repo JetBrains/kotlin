@@ -1889,19 +1889,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
             JetFile file = DescriptorToSourceUtils.getContainingFile(propertyDescriptor);
-            if (file != null && file.getName() == "ANDROIDXML.kt") {
+            if (file != null && file.getName() == AndroidConst.SYNTHETIC_FILENAME) {
 
-                String userData = (String) file.getUserData(AndroidConst.ANDROID_SYNTHETIC);
-                String androidPackage = file.getUserData(AndroidConst.ANDROID_USER_PACKAGE);
+                String userData = file.getUserData(AndroidConst.ANDROID_SYNTHETIC);
+                if (userData != null && userData.equals("OK")) {
+                    String androidPackage = file.getUserData(AndroidConst.ANDROID_USER_PACKAGE);
 
-                Type retType = typeMapper.mapType(propertyDescriptor.getReturnType());
-                v.load(0, Type.getType("Landroid/app/Activity;"));
-                v.getstatic(androidPackage.replace(".", "/") + "/R$id",
-                            propertyDescriptor.getName().asString(), "I");
-                v.invokevirtual("android/app/Activity", "findViewById", "(I)" + "Landroid/view/View;");
-                v.checkcast(retType);
+                    Type retType = typeMapper.mapType(propertyDescriptor.getReturnType());
+                    v.load(0, Type.getType("Landroid/app/Activity;"));
+                    v.getstatic(androidPackage.replace(".", "/") + "/R$id",
+                                propertyDescriptor.getName().asString(), "I");
+                    v.invokevirtual("android/app/Activity", "findViewById", "(I)" + "Landroid/view/View;", false);
+                    v.checkcast(retType);
 
-                return StackValue.onStack(retType);
+                    return StackValue.onStack(retType);
+                }
             }
 
             boolean directToField =
