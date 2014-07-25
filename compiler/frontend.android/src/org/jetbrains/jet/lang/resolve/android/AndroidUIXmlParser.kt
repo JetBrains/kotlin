@@ -38,6 +38,13 @@ import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
 import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
 import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.impl.PsiModificationTrackerImpl
+import java.util.Queue
+import com.intellij.psi.PsiFile
+import org.xml.sax.InputSource
+import java.io.ByteArrayInputStream
+import com.intellij.openapi.diagnostic.Log
 
 abstract class AndroidUIXmlParser {
 
@@ -51,18 +58,18 @@ abstract class AndroidUIXmlParser {
                                      "android.view.View",
                                      "android.widget.*")
 
-    abstract val searchPath: String?
-    abstract val androidAppPackage: String
+    protected abstract val searchPath: String?
+    protected abstract val androidAppPackage: String
 
-    val saxParser = initSAX()
+    private val saxParser = initSAX()
 
-    val fileCache = HashMap<VirtualFile, String>()
-    var lastCachedPsi: JetFile? = null
-    val fileModificationTime = HashMap<VirtualFile, Long>()
+    private val fileCache = HashMap<PsiFile, String>()
+    private var lastCachedPsi: JetFile? = null
+    private val fileModificationTime = HashMap<PsiFile, Long>()
 
-    val filesToProcess = ConcurrentLinkedQueue<VirtualFile>()
-    var listenerSetUp = false
-    volatile var invalidateCaches = false
+    protected val filesToProcess: Queue<PsiFile> = ConcurrentLinkedQueue()
+    protected var listenerSetUp: Boolean = false
+    protected volatile var invalidateCaches: Boolean = false
 
     public fun parseToString(): String? {
         val cacheState = doParse()
@@ -71,6 +78,7 @@ abstract class AndroidUIXmlParser {
     }
 
     public fun parseToPsi(project: Project): JetFile? {
+        populateQueue(project)
         val cacheState = doParse()
         if (cacheState == null) return null
         return if (cacheState == CacheAction.MISS || lastCachedPsi == null) {
@@ -124,7 +132,7 @@ abstract class AndroidUIXmlParser {
         return kw
     }
 
-    private fun parseSingleFileWithCache(file: VirtualFile): Pair<String, CacheAction> {
+    private fun parseSingleFileWithCache(file: PsiFile): Pair<String, CacheAction> {
         val lastRecorded = fileModificationTime[file] ?: -1
         if (file.getModificationStamp() > lastRecorded)
             return Pair(parseSingleFile(file), CacheAction.MISS)
@@ -132,17 +140,19 @@ abstract class AndroidUIXmlParser {
             return Pair(fileCache[file]!!, CacheAction.HIT)
     }
 
-    private fun parseSingleFile(file: VirtualFile): String {
+    private fun parseSingleFile(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
         val handler = AndroidXmlHandler({ id, wClass -> ids.add(AndroidWidget(id, wClass)) })
         fileModificationTime[file] = file.getModificationStamp()
         try {
-            saxParser.parse(file.getInputStream()!!, handler)
+            val source = InputSource(ByteArrayInputStream(file.getText()!!.getBytes("utf-8")))
+            saxParser.parse(source, handler)
             val res = produceKotlinProperties(KotlinStringWriter(), ids).toString()
             fileCache[file] = res
             return res
         } catch (e: Exception) {
-            fileCache[file] = ""
+            Log.print(e.getMessage())
+            invalidateCaches()
             return ""
         }
     }
@@ -173,6 +183,13 @@ abstract class AndroidUIXmlParser {
         fileModificationTime.clear()
         lastCachedPsi = null
         invalidateCaches = false
+    }
+
+    protected fun populateQueue(project: Project) {
+        val fileManager = VirtualFileManager.getInstance()
+        val watchDir = fileManager.findFileByUrl("file://" + searchPath)
+        val psiManager = PsiManager.getInstance(project)
+        filesToProcess.addAll(watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) } ?.mapNotNull { it })
     }
 
     protected abstract fun lazySetup()
