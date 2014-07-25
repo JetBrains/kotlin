@@ -42,8 +42,10 @@ import org.jetbrains.k2js.translate.declaration.PackageDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
+import org.jetbrains.k2js.translate.test.JSRhinoUnitTester;
 import org.jetbrains.k2js.translate.test.JSTestGenerator;
 import org.jetbrains.k2js.translate.test.JSTester;
+import org.jetbrains.k2js.translate.test.QUnitTester;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousData;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
@@ -162,12 +164,10 @@ public final class Translation {
 
     private static void mayBeGenerateTests(@NotNull Collection<JetFile> files, @NotNull Config config,
             @NotNull JsBlock rootBlock, @NotNull TranslationContext context) {
-        JSTester tester = config.getTester();
-        if (tester != null) {
-            tester.initialize(context, rootBlock);
-            JSTestGenerator.generateTestCalls(context, files, tester);
-            tester.deinitialize();
-        }
+        JSTester tester = config.isTestConfig() ? new JSRhinoUnitTester() : new QUnitTester();
+        tester.initialize(context, rootBlock);
+        JSTestGenerator.generateTestCalls(context, files, tester);
+        tester.deinitialize();
     }
 
     //TODO: determine whether should throw exception

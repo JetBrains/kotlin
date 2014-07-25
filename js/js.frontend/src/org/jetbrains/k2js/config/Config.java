@@ -23,8 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.k2js.translate.test.JSTester;
-import org.jetbrains.k2js.translate.test.QUnitTester;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -222,9 +220,7 @@ public abstract class Config {
         return allFiles;
     }
 
-    //TODO: should be null by default I suppose but we can't communicate it to K2JSCompiler atm
-    @Nullable
-    public JSTester getTester() {
-        return new QUnitTester();
+    public boolean isTestConfig() {
+        return false;
     }
 }

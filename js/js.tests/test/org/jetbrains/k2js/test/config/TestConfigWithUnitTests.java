@@ -22,8 +22,6 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.translate.test.JSRhinoUnitTester;
-import org.jetbrains.k2js.translate.test.JSTester;
 
 import java.util.List;
 
@@ -41,10 +39,6 @@ public class TestConfigWithUnitTests extends TestConfig {
         }
     };
 
-    @Override
-    public JSTester getTester() {
-        return new JSRhinoUnitTester();
-    }
 
     public TestConfigWithUnitTests(@NotNull Project project,
             @NotNull EcmaVersion version,
@@ -52,5 +46,10 @@ public class TestConfigWithUnitTests extends TestConfig {
             @NotNull BindingContext libraryContext,
             @NotNull ModuleDescriptor module) {
         super(project, version, files, libraryContext, module, false);
+    }
+
+    @Override
+    public boolean isTestConfig() {
+        return true;
     }
 }
