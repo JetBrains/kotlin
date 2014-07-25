@@ -19,11 +19,11 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class JavaClassProperty extends IntrinsicMethod {
         }
         else {
             receiver.put(type, v);
-            v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;");
+            v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
         }
 
         return getType(Class.class);

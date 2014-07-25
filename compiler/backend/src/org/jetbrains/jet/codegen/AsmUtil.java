@@ -345,7 +345,7 @@ public class AsmUtil {
         iv.anew(Type.getObjectType(exception));
         iv.dup();
         iv.aconst(message);
-        iv.invokespecial(exception, "<init>", "(Ljava/lang/String;)V");
+        iv.invokespecial(exception, "<init>", "(Ljava/lang/String;)V", false);
         iv.athrow();
     }
 
@@ -395,18 +395,18 @@ public class AsmUtil {
     public static void genStringBuilderConstructor(InstructionAdapter v) {
         v.visitTypeInsn(NEW, "java/lang/StringBuilder");
         v.dup();
-        v.invokespecial("java/lang/StringBuilder", "<init>", "()V");
+        v.invokespecial("java/lang/StringBuilder", "<init>", "()V", false);
     }
 
     public static void genInvokeAppendMethod(InstructionAdapter v, Type type) {
         type = stringBuilderAppendType(type);
-        v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;");
+        v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;", false);
     }
 
     public static StackValue genToString(InstructionAdapter v, StackValue receiver, Type receiverType) {
         Type type = stringValueOfType(receiverType);
         receiver.put(type, v);
-        v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;");
+        v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
         return StackValue.onStack(JAVA_STRING_TYPE);
     }
 
@@ -414,24 +414,24 @@ public class AsmUtil {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
-                iv.invokestatic("java/util/Arrays", "hashCode", "([Ljava/lang/Object;)I");
+                iv.invokestatic("java/util/Arrays", "hashCode", "([Ljava/lang/Object;)I", false);
             }
             else {
-                iv.invokestatic("java/util/Arrays", "hashCode", "(" + type.getDescriptor() + ")I");
+                iv.invokestatic("java/util/Arrays", "hashCode", "(" + type.getDescriptor() + ")I", false);
             }
         }
         else if (type.getSort() == Type.OBJECT) {
-            iv.invokevirtual("java/lang/Object", "hashCode", "()I");
+            iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
         }
         else if (type.getSort() == Type.LONG) {
             genLongHashCode(mv, iv);
         }
         else if (type.getSort() == Type.DOUBLE) {
-            iv.invokestatic("java/lang/Double", "doubleToLongBits", "(D)J");
+            iv.invokestatic("java/lang/Double", "doubleToLongBits", "(D)J", false);
             genLongHashCode(mv, iv);
         }
         else if (type.getSort() == Type.FLOAT) {
-            iv.invokestatic("java/lang/Float", "floatToIntBits", "(F)I");
+            iv.invokestatic("java/lang/Float", "floatToIntBits", "(F)I", false);
         }
         else if (type.getSort() == Type.BOOLEAN) {
             Label end = new Label();
@@ -473,7 +473,7 @@ public class AsmUtil {
                 return StackValue.cmp(opToken, leftType);
             }
             else {
-                v.invokestatic("kotlin/jvm/internal/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z");
+                v.invokestatic("kotlin/jvm/internal/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
 
                 if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
                     genInvertBoolean(v);
@@ -549,7 +549,8 @@ public class AsmUtil {
             if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
                 v.load(index, asmType);
                 v.visitLdcInsn(parameter.getName().asString());
-                v.invokestatic("kotlin/jvm/internal/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
+                v.invokestatic("kotlin/jvm/internal/Intrinsics", "checkParameterIsNotNull",
+                               "(Ljava/lang/Object;Ljava/lang/String;)V", false);
             }
         }
     }
@@ -591,7 +592,8 @@ public class AsmUtil {
             v.dup();
             v.visitLdcInsn(descriptor.getContainingDeclaration().getName().asString());
             v.visitLdcInsn(descriptor.getName().asString());
-            v.invokestatic("kotlin/jvm/internal/Intrinsics", assertMethodToCall, "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
+            v.invokestatic("kotlin/jvm/internal/Intrinsics", assertMethodToCall,
+                           "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V", false);
         }
     }
 

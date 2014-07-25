@@ -19,11 +19,11 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -58,16 +58,16 @@ public class CompareTo extends IntrinsicMethod {
         codegen.gen(argument, type);
 
         if (type == Type.INT_TYPE) {
-            v.invokestatic("kotlin/jvm/internal/Intrinsics", "compare", "(II)I");
+            v.invokestatic("kotlin/jvm/internal/Intrinsics", "compare", "(II)I", false);
         }
         else if (type == Type.LONG_TYPE) {
-            v.invokestatic("kotlin/jvm/internal/Intrinsics", "compare", "(JJ)I");
+            v.invokestatic("kotlin/jvm/internal/Intrinsics", "compare", "(JJ)I", false);
         }
         else if (type == Type.FLOAT_TYPE) {
-            v.invokestatic("java/lang/Float", "compare", "(FF)I");
+            v.invokestatic("java/lang/Float", "compare", "(FF)I", false);
         }
         else if (type == Type.DOUBLE_TYPE) {
-            v.invokestatic("java/lang/Double", "compare", "(DD)I");
+            v.invokestatic("java/lang/Double", "compare", "(DD)I", false);
         }
         else {
             throw new UnsupportedOperationException();

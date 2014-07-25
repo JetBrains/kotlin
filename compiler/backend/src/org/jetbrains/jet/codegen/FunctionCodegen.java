@@ -382,7 +382,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             iv.load(k, argType);
             k += argType.getSize();
         }
-        iv.invokestatic(context.getDelegateToClassType().getInternalName(), asmMethod.getName(), asmMethod.getDescriptor());
+        iv.invokestatic(context.getDelegateToClassType().getInternalName(), asmMethod.getName(), asmMethod.getDescriptor(), false);
         iv.areturn(asmMethod.getReturnType());
     }
 
@@ -531,7 +531,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         }
         v.iconst(mask);
         String desc = method.getAsmMethod().getDescriptor().replace(")", "I)");
-        v.invokespecial(methodOwner.getInternalName(), "<init>", desc);
+        v.invokespecial(methodOwner.getInternalName(), "<init>", desc, false);
         v.areturn(Type.VOID_TYPE);
         endVisit(mv, "default constructor for " + methodOwner.getInternalName(), null);
     }

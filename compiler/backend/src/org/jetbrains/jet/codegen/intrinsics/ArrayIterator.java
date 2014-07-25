@@ -18,8 +18,6 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -32,6 +30,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -59,7 +59,7 @@ public class ArrayIterator extends IntrinsicMethod {
         assert funDescriptor != null;
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
         if (containingDeclaration.equals(KotlinBuiltIns.getInstance().getArray())) {
-            v.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
+            v.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;", false);
             return getType(Iterator.class);
         }
 
@@ -70,7 +70,7 @@ public class ArrayIterator extends IntrinsicMethod {
                 FqName fqName = new FqName(BUILT_INS_PACKAGE_FQ_NAME + "." + primitiveType.getTypeName() + "Iterator");
                 String iteratorDesc = asmDescByFqNameWithoutInnerClasses(fqName);
                 String methodSignature = "([" + asmTypeForPrimitive(jvmPrimitiveType) + ")" + iteratorDesc;
-                v.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", methodSignature);
+                v.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", methodSignature, false);
                 return Type.getType(iteratorDesc);
             }
         }

@@ -18,16 +18,16 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.util.Printer;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
-import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,13 +137,14 @@ public class CallableMethod implements Callable {
 
         String desc = method.getDescriptor().replace(")", "I)");
         if ("<init>".equals(method.getName())) {
-            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc);
+            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc, false);
         }
         else {
             if (getInvokeOpcode() != INVOKESTATIC) {
                 desc = desc.replace("(", "(" + defaultImplParam.getDescriptor());
             }
-            v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(), method.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
+            v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(),
+                              method.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc, false);
         }
     }
 

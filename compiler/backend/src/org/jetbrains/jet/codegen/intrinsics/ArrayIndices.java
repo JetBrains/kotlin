@@ -18,16 +18,16 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
-import static org.jetbrains.org.objectweb.asm.Type.INT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.INT_RANGE_TYPE;
+import static org.jetbrains.org.objectweb.asm.Type.INT_TYPE;
 
 public class ArrayIndices extends IntrinsicMethod {
     @NotNull
@@ -42,7 +42,7 @@ public class ArrayIndices extends IntrinsicMethod {
     ) {
         receiver.put(receiver.type, v);
         v.arraylength();
-        v.invokestatic("kotlin/jvm/internal/Intrinsics", "arrayIndices", Type.getMethodDescriptor(INT_RANGE_TYPE, INT_TYPE));
+        v.invokestatic("kotlin/jvm/internal/Intrinsics", "arrayIndices", Type.getMethodDescriptor(INT_RANGE_TYPE, INT_TYPE), false);
         return INT_RANGE_TYPE;
     }
 }

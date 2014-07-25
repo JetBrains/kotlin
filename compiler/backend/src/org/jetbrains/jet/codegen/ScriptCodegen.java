@@ -142,7 +142,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
         assert classType != null;
 
         instructionAdapter.load(0, classType);
-        instructionAdapter.invokespecial("java/lang/Object", "<init>", "()V");
+        instructionAdapter.invokespecial("java/lang/Object", "<init>", "()V", false);
 
         instructionAdapter.load(0, classType);
 

@@ -517,7 +517,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 mv.visitCode();
 
                 iv.load(0, classAsmType);
-                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray", "(Ljava/util/Collection;)[Ljava/lang/Object;");
+                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray", "(Ljava/util/Collection;)[Ljava/lang/Object;", false);
                 iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
 
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
@@ -534,7 +534,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.load(0, classAsmType);
                 iv.load(1, Type.getObjectType("[Ljava/lang/Object;"));
 
-                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray", "(Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;");
+                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray",
+                                "(Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;", false);
                 iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
 
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
@@ -673,10 +674,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (asmType.getSort() == Type.ARRAY) {
                     Type elementType = correctElementType(asmType);
                     if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
-                        iv.invokestatic("java/util/Arrays", "equals", "([Ljava/lang/Object;[Ljava/lang/Object;)Z");
+                        iv.invokestatic("java/util/Arrays", "equals", "([Ljava/lang/Object;[Ljava/lang/Object;)Z", false);
                     }
                     else {
-                        iv.invokestatic("java/util/Arrays", "equals", "([" + elementType.getDescriptor() + "[" + elementType.getDescriptor() + ")Z");
+                        iv.invokestatic("java/util/Arrays", "equals",
+                                        "([" + elementType.getDescriptor() + "[" + elementType.getDescriptor() + ")Z", false);
                     }
                 }
                 else {
@@ -770,7 +772,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     first = false;
                 }
                 else {
-                    iv.aconst(", " + propertyDescriptor.getName().asString()+"=");
+                    iv.aconst(", " + propertyDescriptor.getName().asString() + "=");
                 }
                 genInvokeAppendMethod(iv, JAVA_STRING_TYPE);
 
@@ -779,12 +781,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (type.getSort() == Type.ARRAY) {
                     Type elementType = correctElementType(type);
                     if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
-                        iv.invokestatic("java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;");
+                        iv.invokestatic("java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;", false);
                         type = JAVA_STRING_TYPE;
                     }
                     else {
                         if (elementType.getSort() != Type.CHAR) {
-                            iv.invokestatic("java/util/Arrays", "toString", "(" + type.getDescriptor() + ")Ljava/lang/String;");
+                            iv.invokestatic("java/util/Arrays", "toString", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
                             type = JAVA_STRING_TYPE;
                         }
                     }
@@ -795,7 +797,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.aconst(")");
             genInvokeAppendMethod(iv, JAVA_STRING_TYPE);
 
-            iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
+            iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
             iv.areturn(JAVA_STRING_TYPE);
 
             FunctionCodegen.endVisit(mv, "toString", myClass);
@@ -812,7 +814,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             else {
                 //noinspection ConstantConditions
                 Method method = typeMapper.mapSignature(propertyDescriptor.getGetter()).getAsmMethod();
-                iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
+                iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor(), false);
                 return method.getReturnType();
             }
         }
@@ -833,7 +835,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     if (!componentType.equals(Type.VOID_TYPE)) {
                         iv.load(0, classAsmType);
                         String desc = "()" + componentType.getDescriptor();
-                        iv.invokevirtual(classAsmType.getInternalName(), PropertyCodegen.getterName(parameter.getName()), desc);
+                        iv.invokevirtual(classAsmType.getInternalName(), PropertyCodegen.getterName(parameter.getName()), desc, false);
                     }
                     iv.areturn(componentType);
                 }
@@ -884,7 +886,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
 
                     Method constructorAsmMethod = typeMapper.mapSignature(constructor).getAsmMethod();
-                    iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorAsmMethod.getDescriptor());
+                    iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorAsmMethod.getDescriptor(), false);
 
                     iv.areturn(thisDescriptorType);
                 }
@@ -1260,10 +1262,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (descriptor.getKind() == ClassKind.ENUM_CLASS || descriptor.getKind() == ClassKind.ENUM_ENTRY) {
             iv.load(1, JAVA_STRING_TYPE);
             iv.load(2, Type.INT_TYPE);
-            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "(Ljava/lang/String;I)V");
+            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "(Ljava/lang/String;I)V", false);
         }
         else {
-            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V");
+            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V", false);
         }
     }
 
@@ -1529,7 +1531,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             iv.invokespecial("java/lang/Object", "clone", "()Ljava/lang/Object;", false);
                         }
                         else {
-                            iv.invokestatic(traitImplType.getInternalName(), traitMethod.getName(), traitMethod.getDescriptor());
+                            iv.invokestatic(traitImplType.getInternalName(), traitMethod.getName(), traitMethod.getDescriptor(), false);
                         }
 
                         Type returnType = signature.getReturnType();
@@ -1706,7 +1708,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             codegen.invokeMethodWithArguments(method, resolvedCall, StackValue.none());
         }
         else {
-            iv.invokespecial(implClass.getInternalName(), "<init>", "(Ljava/lang/String;I)V");
+            iv.invokespecial(implClass.getInternalName(), "<init>", "(Ljava/lang/String;I)V", false);
         }
 
         iv.dup();

@@ -18,12 +18,12 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -42,20 +42,22 @@ public class Concat extends IntrinsicMethod {
             List<JetExpression> arguments,
             StackValue receiver
     ) {
-        if (receiver == null || receiver == StackValue.none()) {                                                     // LHS + RHS
+        if (receiver == null || receiver == StackValue.none()) {
+            // LHS + RHS
             genStringBuilderConstructor(v);
-            codegen.invokeAppend(arguments.get(0));                                // StringBuilder(LHS)
+            codegen.invokeAppend(arguments.get(0));
             codegen.invokeAppend(arguments.get(1));
         }
-        else {                                    // LHS.plus(RHS)
+        else {
+            // LHS.plus(RHS)
             receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
             genStringBuilderConstructor(v);
-            v.swap();                                                              // StringBuilder LHS
-            genInvokeAppendMethod(v, returnType);  // StringBuilder(LHS)
+            v.swap();
+            genInvokeAppendMethod(v, returnType);
             codegen.invokeAppend(arguments.get(0));
         }
 
-        v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
+        v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
         return JAVA_STRING_TYPE;
     }
 }
