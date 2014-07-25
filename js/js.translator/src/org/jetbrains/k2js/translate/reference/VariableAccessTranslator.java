@@ -63,13 +63,13 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
     @NotNull
     @Override
     public JsExpression translateAsGet() {
-        return CallTranslator.instance$.translateGet(context(), resolvedCall, receiver);
+        return CallTranslator.INSTANCE$.translateGet(context(), resolvedCall, receiver);
     }
 
     @NotNull
     @Override
     public JsExpression translateAsSet(@NotNull JsExpression setTo) {
-        return CallTranslator.instance$.translateSet(context(), resolvedCall, setTo, receiver);
+        return CallTranslator.INSTANCE$.translateSet(context(), resolvedCall, setTo, receiver);
     }
 
     @NotNull

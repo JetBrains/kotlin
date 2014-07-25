@@ -119,7 +119,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     ) {
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
 
-        DeclarationProviderFactory declarationProviderFactory = DeclarationProviderFactoryService.object$
+        DeclarationProviderFactory declarationProviderFactory = DeclarationProviderFactoryService.OBJECT$
                 .createDeclarationProviderFactory(project, globalContext.getStorageManager(), syntheticFiles, filesScope);
 
         InjectorForLazyResolveWithJava resolveWithJava = new InjectorForLazyResolveWithJava(

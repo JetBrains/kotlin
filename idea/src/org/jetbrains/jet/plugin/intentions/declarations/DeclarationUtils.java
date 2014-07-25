@@ -125,7 +125,7 @@ public class DeclarationUtils {
         );
 
         if (inferredType != null) {
-            ShortenReferences.instance$.process(property.getTypeRef());
+            ShortenReferences.INSTANCE$.process(property.getTypeRef());
         }
 
         return newInitializer;

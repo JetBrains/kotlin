@@ -1,5 +1,5 @@
 public interface TraitClassObjectField extends kotlin.jvm.internal.KObject {
-    TraitClassObjectField.object object$;
+    TraitClassObjectField.object OBJECT$;
     @org.jetbrains.annotations.Nullable
     java.lang.String x = "";
 

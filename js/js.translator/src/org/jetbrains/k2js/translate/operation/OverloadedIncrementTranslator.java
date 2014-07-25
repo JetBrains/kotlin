@@ -42,7 +42,7 @@ public final class OverloadedIncrementTranslator extends IncrementTranslator {
     @Override
     @NotNull
     protected JsExpression operationExpression(@NotNull JsExpression receiver) {
-        return CallTranslator.instance$.translate(context(), resolvedCall, receiver);
+        return CallTranslator.INSTANCE$.translate(context(), resolvedCall, receiver);
     }
 
 }

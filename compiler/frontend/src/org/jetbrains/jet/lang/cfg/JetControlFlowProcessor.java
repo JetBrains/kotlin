@@ -216,7 +216,7 @@ public class JetControlFlowProcessor {
 
         @NotNull
         private Map<PseudoValue, TypePredicate> defaultTypeMap(List<PseudoValue> values) {
-            return PseudocodePackage.expectedTypeFor(AllTypes.instance$, values);
+            return PseudocodePackage.expectedTypeFor(AllTypes.INSTANCE$, values);
         }
 
         private void mergeValues(@NotNull List<JetExpression> from, @NotNull JetExpression to) {
@@ -268,7 +268,7 @@ public class JetControlFlowProcessor {
         @NotNull
         private AccessTarget getResolvedCallAccessTarget(JetElement element) {
             ResolvedCall<?> resolvedCall = getResolvedCall(element, trace.getBindingContext());
-            return resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.instance$;
+            return resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE$;
         }
 
         @NotNull
@@ -276,7 +276,7 @@ public class JetControlFlowProcessor {
             DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             return descriptor instanceof VariableDescriptor
                    ? new AccessTarget.Declaration((VariableDescriptor) descriptor)
-                   : AccessTarget.BlackBox.instance$;
+                   : AccessTarget.BlackBox.INSTANCE$;
         }
 
         @Override
@@ -457,7 +457,7 @@ public class JetControlFlowProcessor {
             }
 
             Map<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
-            AccessTarget accessTarget = AccessTarget.BlackBox.instance$;
+            AccessTarget accessTarget = AccessTarget.BlackBox.INSTANCE$;
             boolean unsupported = false;
             if (left instanceof JetSimpleNameExpression || left instanceof JetQualifiedExpression) {
                 accessTarget = getResolvedCallAccessTarget(PsiUtilPackage.getQualifiedElementSelector(left));
@@ -892,7 +892,7 @@ public class JetControlFlowProcessor {
             JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
             JetExpression loopRange = expression.getLoopRange();
 
-            TypePredicate loopRangeTypePredicate = AllTypes.instance$;
+            TypePredicate loopRangeTypePredicate = AllTypes.INSTANCE$;
             ResolvedCall<?> iteratorResolvedCall = trace.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange);
             if (iteratorResolvedCall != null) {
                 ReceiverValue iteratorReceiver = getExplicitReceiverValue(iteratorResolvedCall);
@@ -1400,7 +1400,7 @@ public class JetControlFlowProcessor {
             TypePredicate expectedTypePredicate =
                     PseudocodePackage.getSubtypesPredicate(trace.get(BindingContext.TYPE, specifier.getTypeReference()));
             if (expectedTypePredicate == null) {
-                expectedTypePredicate = AllTypes.instance$;
+                expectedTypePredicate = AllTypes.INSTANCE$;
             }
             builder.magic(specifier, specifier, arguments, PseudocodePackage.expectedTypeFor(expectedTypePredicate, arguments), MagicKind.VALUE_CONSUMER);
         }

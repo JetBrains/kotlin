@@ -154,7 +154,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
                         UsagesSearchRequest request =
                                 getSearchHelper(kotlinOptions).newRequest(FindUsagesPackage.toSearchTarget(options, (T) element, true));
 
-                        for (PsiReference ref : UsagesSearch.instance$.search(request)) {
+                        for (PsiReference ref : UsagesSearch.INSTANCE$.search(request)) {
                             processUsage(processor, ref);
                         }
 

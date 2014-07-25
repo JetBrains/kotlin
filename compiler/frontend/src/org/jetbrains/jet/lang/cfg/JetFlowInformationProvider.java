@@ -957,7 +957,7 @@ public class JetFlowInformationProvider {
         @Override
         public Unit invoke(Instruction instruction, D enterData, D exitData) {
             execute(instruction, enterData, exitData);
-            return Unit.instance$;
+            return Unit.INSTANCE$;
         }
 
         public abstract void execute(Instruction instruction, D enterData, D exitData);
@@ -967,7 +967,7 @@ public class JetFlowInformationProvider {
         @Override
         public Unit invoke(P p) {
             execute(p);
-            return Unit.instance$;
+            return Unit.INSTANCE$;
         }
 
         public abstract void execute(P p);

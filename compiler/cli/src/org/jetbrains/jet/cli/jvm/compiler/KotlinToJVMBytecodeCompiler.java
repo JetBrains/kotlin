@@ -293,7 +293,7 @@ public class KotlinToJVMBytecodeCompiler {
                         BindingTrace sharedTrace = support.getTrace();
                         ModuleDescriptorImpl sharedModule = support.getModule();
 
-                        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
+                        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.OBJECT$.getInstance();
                         File incrementalCacheBaseDir = environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
                         final IncrementalCache incrementalCache;
                         if (incrementalCacheProvider != null && incrementalCacheBaseDir != null) {
@@ -345,7 +345,7 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         CompilerConfiguration configuration = environment.getConfiguration();
         File incrementalCacheDir = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
-        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
+        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.OBJECT$.getInstance();
 
         Collection<FqName> packagesWithRemovedFiles;
         if (incrementalCacheDir == null || moduleId == null || incrementalCacheProvider == null) {

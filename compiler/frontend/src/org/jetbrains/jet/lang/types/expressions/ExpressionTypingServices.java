@@ -396,7 +396,7 @@ public class ExpressionTypingServices {
             if (defaultValue != null) {
                 getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), dataFlowInfo, trace);
                 if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(declaringScope))) {
-                    ConstantExpressionEvaluator.object$.evaluate(defaultValue, trace, valueParameterDescriptor.getType());
+                    ConstantExpressionEvaluator.OBJECT$.evaluate(defaultValue, trace, valueParameterDescriptor.getType());
                 }
             }
         }

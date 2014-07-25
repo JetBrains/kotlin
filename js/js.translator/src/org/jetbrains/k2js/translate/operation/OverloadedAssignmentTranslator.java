@@ -57,6 +57,6 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression overloadedMethodInvocation() {
-        return CallTranslator.instance$.translate(context(), resolvedCall, accessTranslator.translateAsGet());
+        return CallTranslator.INSTANCE$.translate(context(), resolvedCall, accessTranslator.translateAsGet());
     }
 }

@@ -272,7 +272,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     public ArgumentMapping getArgumentMapping(@NotNull ValueArgument valueArgument) {
         ArgumentMatch argumentMatch = argumentToParameterMap.get(valueArgument);
         if (argumentMatch == null) {
-            return ArgumentUnmapped.instance$;
+            return ArgumentUnmapped.INSTANCE$;
         }
         return argumentMatch;
     }

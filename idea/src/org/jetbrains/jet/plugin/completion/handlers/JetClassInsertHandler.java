@@ -53,7 +53,7 @@ public class JetClassInsertHandler implements InsertHandler<LookupElement> {
                         psiDocumentManager.commitAllDocuments();
                         RangeMarker rangeMarker = document.createRangeMarker(classNameEnd, classNameEnd + tempSuffix.length());
 
-                        ShortenReferences.instance$.process((JetFile) context.getFile(), startOffset, classNameEnd);
+                        ShortenReferences.INSTANCE$.process((JetFile) context.getFile(), startOffset, classNameEnd);
                         psiDocumentManager.commitAllDocuments();
                         psiDocumentManager.doPostponedOperationsAndUnblockDocument(document);
 

@@ -4,6 +4,6 @@ import server.O
 
 class Client {
     fun fooBar() {
-        println("foo = " + O.instance$.getFoo())
+        println("foo = " + O.INSTANCE$.getFoo())
     }
 }

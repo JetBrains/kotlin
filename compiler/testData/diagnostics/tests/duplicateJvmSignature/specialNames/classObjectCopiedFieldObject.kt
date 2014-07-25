@@ -1,7 +1,7 @@
 class C {
     <!CONFLICTING_JVM_DECLARATIONS!>class object<!> {
-        <!CONFLICTING_JVM_DECLARATIONS!>val `object$`<!> = this
+        <!CONFLICTING_JVM_DECLARATIONS!>val `OBJECT$`<!> = this
     }
 
-    val `object$` = C
+    val `OBJECT$` = C
 }

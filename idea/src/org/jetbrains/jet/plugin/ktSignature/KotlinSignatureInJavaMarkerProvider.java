@@ -95,7 +95,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
         BindingContext bindingContext = ResolvePackage.getLazyResolveSession(project, TargetPlatform.JVM).getBindingContext();
 
-        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.instance$.get(project);
+        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.INSTANCE$.get(project);
 
         for (PsiElement element : elements) {
             if (!(element instanceof PsiMember)) {

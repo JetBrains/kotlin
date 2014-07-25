@@ -4,6 +4,6 @@ import a.*;
 
 class J {
     void bar() {
-        Test t = Test.instance$;
+        Test t = Test.INSTANCE$;
     }
 }

@@ -4,7 +4,7 @@ import kotlinApi.KotlinClass;
 class C {
     int foo() {
         KotlinClass.staticVar = KotlinClass.staticVar * 2;
-        KotlinClass.object$.setStaticProperty(KotlinClass.object$.getStaticVar() + KotlinClass.object$.getStaticProperty());
-        return KotlinClass.object$.staticFun(1);
+        KotlinClass.OBJECT$.setStaticProperty(KotlinClass.OBJECT$.getStaticVar() + KotlinClass.OBJECT$.getStaticProperty());
+        return KotlinClass.OBJECT$.staticFun(1);
     }
 }

@@ -209,7 +209,7 @@ public class JetCoreEnvironment {
                                          @Override
                                          public Unit invoke(String s) {
                                              report(ERROR, s);
-                                             return Unit.instance$;
+                                             return Unit.INSTANCE$;
                                          }
                                      }));
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(

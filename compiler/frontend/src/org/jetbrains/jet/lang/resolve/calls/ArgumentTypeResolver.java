@@ -290,6 +290,6 @@ public class ArgumentTypeResolver {
             return;
         }
 
-        ConstantExpressionEvaluator.object$.evaluate(expression, trace, numberType);
+        ConstantExpressionEvaluator.OBJECT$.evaluate(expression, trace, numberType);
     }
 }

@@ -260,7 +260,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         manager.startTemplate(editor, builder.buildInlineTemplate(), new TemplateEditingAdapter() {
             @Override
             public void templateFinished(Template template, boolean brokenOff) {
-                ShortenReferences.instance$.process(getTypeRef(namedDeclaration));
+                ShortenReferences.INSTANCE$.process(getTypeRef(namedDeclaration));
             }
         });
     }

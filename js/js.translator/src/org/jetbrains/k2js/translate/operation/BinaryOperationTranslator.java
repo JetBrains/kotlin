@@ -155,7 +155,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateAsOverloadedBinaryOperation() {
         ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCallWithAssert(expression, bindingContext());
-        JsExpression result = CallTranslator.instance$.translate(context(), resolvedCall, getReceiver());
+        JsExpression result = CallTranslator.INSTANCE$.translate(context(), resolvedCall, getReceiver());
         return mayBeWrapWithNegation(result);
     }
 

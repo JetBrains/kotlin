@@ -53,10 +53,10 @@ public class JavaToKotlinAction extends AnAction {
             return;
         }
 
-        final Converter converter = Converter.object$.create(project,
+        final Converter converter = Converter.OBJECT$.create(project,
                                                              ConverterSettings.defaultSettings,
                                                              new FilesConversionScope(selectedJavaFiles),
-                                                             J2kPostProcessor.instance$);
+                                                             J2kPostProcessor.INSTANCE$);
         CommandProcessor.getInstance().executeCommand(
                 project,
                 new Runnable() {

@@ -141,7 +141,7 @@ public final class PropertyTranslator extends AbstractTranslator {
         JsExpression value;
         ResolvedCall<FunctionDescriptor> delegatedCall = bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor);
         if (delegatedCall != null) {
-            value = CallTranslator.instance$.translate(context(), delegatedCall, getDelegateNameRef(getPropertyName()));
+            value = CallTranslator.INSTANCE$.translate(context(), delegatedCall, getDelegateNameRef(getPropertyName()));
         } else {
             value = backingFieldReference(context(), this.descriptor);
         }
@@ -171,7 +171,7 @@ public final class PropertyTranslator extends AbstractTranslator {
         ResolvedCall<FunctionDescriptor> delegatedCall = bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL,
                                                                               setterDescriptor);
         if (delegatedCall != null) {
-            setExpression = CallTranslator.instance$.translate(contextWithAliased, delegatedCall, getDelegateNameRef(getPropertyName()));
+            setExpression = CallTranslator.INSTANCE$.translate(contextWithAliased, delegatedCall, getDelegateNameRef(getPropertyName()));
         } else {
             setExpression = assignmentToBackingField(contextWithAliased, descriptor, defaultParameterRef);
         }

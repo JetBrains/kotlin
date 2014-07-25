@@ -248,15 +248,15 @@ public class QuickFixes {
 
         factories.put(MANY_CLASSES_IN_SUPERTYPE_LIST, RemoveSupertypeFix.createFactory());
 
-        factories.put(NO_GET_METHOD, CreateFunctionFromUsageFix.object$.createCreateGetFunctionFromUsageFactory());
-        factories.put(NO_SET_METHOD, CreateFunctionFromUsageFix.object$.createCreateSetFunctionFromUsageFactory());
-        JetSingleIntentionActionFactory createHasNextFromUsageFactory = CreateFunctionFromUsageFix.object$.createCreateHasNextFunctionFromUsageFactory();
+        factories.put(NO_GET_METHOD, CreateFunctionFromUsageFix.OBJECT$.createCreateGetFunctionFromUsageFactory());
+        factories.put(NO_SET_METHOD, CreateFunctionFromUsageFix.OBJECT$.createCreateSetFunctionFromUsageFactory());
+        JetSingleIntentionActionFactory createHasNextFromUsageFactory = CreateFunctionFromUsageFix.OBJECT$.createCreateHasNextFunctionFromUsageFactory();
         factories.put(HAS_NEXT_MISSING, createHasNextFromUsageFactory);
         factories.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, createHasNextFromUsageFactory);
-        JetSingleIntentionActionFactory createNextFromUsageFactory = CreateFunctionFromUsageFix.object$.createCreateNextFunctionFromUsageFactory();
+        JetSingleIntentionActionFactory createNextFromUsageFactory = CreateFunctionFromUsageFix.OBJECT$.createCreateNextFunctionFromUsageFactory();
         factories.put(NEXT_MISSING, createNextFromUsageFactory);
         factories.put(NEXT_NONE_APPLICABLE, createNextFromUsageFactory);
-        factories.put(ITERATOR_MISSING, CreateFunctionFromUsageFix.object$.createCreateIteratorFunctionFromUsageFactory());
-        factories.put(COMPONENT_FUNCTION_MISSING, CreateFunctionFromUsageFix.object$.createCreateComponentFunctionFromUsageFactory());
+        factories.put(ITERATOR_MISSING, CreateFunctionFromUsageFix.OBJECT$.createCreateIteratorFunctionFromUsageFactory());
+        factories.put(COMPONENT_FUNCTION_MISSING, CreateFunctionFromUsageFix.OBJECT$.createCreateComponentFunctionFromUsageFactory());
     }
 }

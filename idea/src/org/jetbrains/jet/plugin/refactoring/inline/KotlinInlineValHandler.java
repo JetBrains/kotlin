@@ -295,7 +295,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
                     functionLiteral.addAfter(whitespaceToAdd, openBraceElement);
                 }
             }
-            ShortenReferences.instance$.process(functionLiteralExpression.getValueParameters());
+            ShortenReferences.INSTANCE$.process(functionLiteralExpression.getValueParameters());
         }
     }
 
@@ -337,7 +337,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetPsiFactory psiFactory = JetPsiFactory(containingFile);
         for (JetCallExpression call : callsToAddArguments) {
             call.addAfter(psiFactory.createTypeArguments("<" + typeArguments + ">"), call.getCalleeExpression());
-            ShortenReferences.instance$.process(call.getTypeArgumentList());
+            ShortenReferences.INSTANCE$.process(call.getTypeArgumentList());
         }
     }
 

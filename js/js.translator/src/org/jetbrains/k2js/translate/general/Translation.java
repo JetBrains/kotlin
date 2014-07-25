@@ -177,6 +177,6 @@ public final class Translation {
         }
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(context.bindingContext(), mainFunction);
         JsArrayLiteral argument = new JsArrayLiteral(toStringLiteralList(arguments, context.program()));
-        return CallTranslator.instance$.buildCall(context, functionDescriptor, Collections.singletonList(argument), null).makeStmt();
+        return CallTranslator.INSTANCE$.buildCall(context, functionDescriptor, Collections.singletonList(argument), null).makeStmt();
     }
 }

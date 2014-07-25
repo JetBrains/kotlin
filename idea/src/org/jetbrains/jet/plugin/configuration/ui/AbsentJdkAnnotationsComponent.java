@@ -110,7 +110,7 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
                     public void run() {
                         Collection<Sdk> sdks = collectSdksWithoutAnnotations();
                         if (!sdks.isEmpty()) {
-                            AbsentSdkAnnotationsNotificationManager.instance$.notify(myProject, sdks);
+                            AbsentSdkAnnotationsNotificationManager.INSTANCE$.notify(myProject, sdks);
                         }
                     }
                 });

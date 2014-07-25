@@ -47,6 +47,6 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
 
     @NotNull
     private JsExpression translate() {
-        return CallTranslator.instance$.translate(context(), resolvedCall, receiver);
+        return CallTranslator.INSTANCE$.translate(context(), resolvedCall, receiver);
     }
 }

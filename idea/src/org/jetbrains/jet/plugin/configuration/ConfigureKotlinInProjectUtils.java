@@ -94,7 +94,7 @@ public class ConfigureKotlinInProjectUtils {
     }
 
     private static void showConfigureKotlinNotification(@NotNull Project project) {
-        ConfigureKotlinNotificationManager.instance$.notify(project);
+        ConfigureKotlinNotificationManager.INSTANCE$.notify(project);
     }
 
     @NotNull

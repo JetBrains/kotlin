@@ -1235,7 +1235,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean generateInitializerInOuter = isClassObjectWithBackingFieldsInOuter(descriptor);
         if (generateInitializerInOuter) {
             final ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
-            //generate object$
+            //generate OBJECT$
             parentCodegen.genInitSingleton(descriptor, StackValue.singleton(descriptor, typeMapper));
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override

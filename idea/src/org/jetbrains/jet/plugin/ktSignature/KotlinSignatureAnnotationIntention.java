@@ -169,7 +169,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     @NotNull
     private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMember psiMember) {
         BindingContext bindingContext = ResolvePackage.getLazyResolveSession(project, TargetPlatform.JVM).getBindingContext();
-        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.instance$.get(project);
+        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.INSTANCE$.get(project);
 
         PsiClass containingClass = psiMember.getContainingClass();
         assert containingClass != null;

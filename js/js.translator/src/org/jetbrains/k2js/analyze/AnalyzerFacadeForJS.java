@@ -136,7 +136,7 @@ public final class AnalyzerFacadeForJS {
             @NotNull Config config
     ) {
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        DeclarationProviderFactory declarationProviderFactory = DeclarationProviderFactoryService.object$
+        DeclarationProviderFactory declarationProviderFactory = DeclarationProviderFactoryService.OBJECT$
                 .createDeclarationProviderFactory(
                         config.getProject(),
                         globalContext.getStorageManager(),

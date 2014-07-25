@@ -96,7 +96,7 @@ public class JetPluginUtil {
     }
 
     public static boolean isGradleModule(@NotNull Module module) {
-        return ModuleTypeCacheManager.object$.geInstance(module.getProject()).isGradleModule(module);
+        return ModuleTypeCacheManager.OBJECT$.geInstance(module.getProject()).isGradleModule(module);
     }
 
     public static boolean isMavenModule(@NotNull Module module) {

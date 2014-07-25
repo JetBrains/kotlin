@@ -413,7 +413,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 }
                 propertyRef.set(property);
                 if (noTypeInference) {
-                    ShortenReferences.instance$.process(property);
+                    ShortenReferences.INSTANCE$.process(property);
                 }
             }
         };

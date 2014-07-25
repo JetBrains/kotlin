@@ -60,7 +60,7 @@ public final class JSTestGenerator {
             @NotNull ClassDescriptor classDescriptor, @NotNull JSTester tester) {
         JsExpression expression = ReferenceTranslator.translateAsFQReference(classDescriptor, context);
         JsNew testClass = new JsNew(expression);
-        JsExpression functionToTestCall = CallTranslator.instance$.buildCall(context, functionDescriptor,
+        JsExpression functionToTestCall = CallTranslator.INSTANCE$.buildCall(context, functionDescriptor,
                                                                              Collections.<JsExpression>emptyList(), testClass);
         JsStringLiteral testName = context.program().getStringLiteral(classDescriptor.getName() + "." + functionDescriptor.getName());
         tester.constructTestMethodInvocation(functionToTestCall, testName);
