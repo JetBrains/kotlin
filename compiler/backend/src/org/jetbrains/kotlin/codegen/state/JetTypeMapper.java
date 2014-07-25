@@ -578,7 +578,7 @@ public class JetTypeMapper {
                 }
                 else {
                     invokeOpcode = INVOKESTATIC;
-                    signature = mapSignature(functionDescriptor, OwnerKind.TRAIT_IMPL);
+                    signature = mapSignature(descriptor.getOriginal(), OwnerKind.TRAIT_IMPL);
                     owner = mapTraitImpl(currentOwner);
                 }
             }

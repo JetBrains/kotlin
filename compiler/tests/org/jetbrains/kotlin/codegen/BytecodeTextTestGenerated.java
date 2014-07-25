@@ -215,12 +215,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
-    @TestMetadata("traitImplGeneratedOnce.kt")
-    public void testTraitImplGeneratedOnce() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/traitImplGeneratedOnce.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -508,6 +502,33 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("splitedExceptionTable.kt")
         public void testSplitedExceptionTable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/splitedExceptionTable.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/interfaces")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Interfaces extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInInterfaces() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/interfaces"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("firstInheritedMethodIsAbstract.kt")
+        public void testFirstInheritedMethodIsAbstract() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/interfaces/firstInheritedMethodIsAbstract.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noAnyMethodsOnInterfaceInheritance.kt")
+        public void testNoAnyMethodsOnInterfaceInheritance() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/interfaces/noAnyMethodsOnInterfaceInheritance.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("traitImplGeneratedOnce.kt")
+        public void testTraitImplGeneratedOnce() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/interfaces/traitImplGeneratedOnce.kt");
             doTest(fileName);
         }
     }

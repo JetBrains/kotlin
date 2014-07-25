@@ -56,8 +56,9 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     @NotNull
     @Override
-    public Set<? extends PropertyAccessorDescriptor> getOverriddenDescriptors() {
-        return super.getOverriddenDescriptors(true);
+    @SuppressWarnings("unchecked")
+    public Set<? extends PropertyGetterDescriptor> getOverriddenDescriptors() {
+        return (Set) super.getOverriddenDescriptors(true);
     }
 
     @NotNull

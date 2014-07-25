@@ -18,8 +18,14 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 public interface PropertySetterDescriptor extends PropertyAccessorDescriptor {
     @NotNull
     @Override
     PropertySetterDescriptor getOriginal();
+
+    @Override
+    @NotNull
+    Set<? extends PropertySetterDescriptor> getOverriddenDescriptors();
 }

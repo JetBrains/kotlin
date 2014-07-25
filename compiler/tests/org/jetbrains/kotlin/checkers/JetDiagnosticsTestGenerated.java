@@ -4328,12 +4328,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("traitFunctionOverriddenByPropertyInTrait.kt")
-                public void testTraitFunctionOverriddenByPropertyInTrait() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByPropertyInTrait.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("traitFunctionOverriddenByPropertyNoImpl.kt")
                 public void testTraitFunctionOverriddenByPropertyNoImpl() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByPropertyNoImpl.kt");
@@ -4343,12 +4337,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("traitPropertyOverriddenByFunction.kt")
                 public void testTraitPropertyOverriddenByFunction() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunction.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("traitPropertyOverriddenByFunctionInTrait.kt")
-                public void testTraitPropertyOverriddenByFunctionInTrait() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunctionInTrait.kt");
                     doTest(fileName);
                 }
 
@@ -4709,6 +4697,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("oneTrait.kt")
                 public void testOneTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/traitImpl/oneTrait.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("traitFunctionOverriddenByPropertyInTrait.kt")
+                public void testTraitFunctionOverriddenByPropertyInTrait() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/traitImpl/traitFunctionOverriddenByPropertyInTrait.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("traitPropertyOverriddenByFunctionInTrait.kt")
+                public void testTraitPropertyOverriddenByFunctionInTrait() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/traitImpl/traitPropertyOverriddenByFunctionInTrait.kt");
                     doTest(fileName);
                 }
 

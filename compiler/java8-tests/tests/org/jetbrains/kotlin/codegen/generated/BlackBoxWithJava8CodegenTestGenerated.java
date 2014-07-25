@@ -77,6 +77,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("longChainOfKotlinExtendsFromJavaWithDefault")
+    public void testLongChainOfKotlinExtendsFromJavaWithDefault() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/longChainOfKotlinExtendsFromJavaWithDefault/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("samOnInterfaceWithDefaultMethod")
     public void testSamOnInterfaceWithDefaultMethod() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/samOnInterfaceWithDefaultMethod/");

@@ -395,6 +395,21 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/interfaces")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Interfaces extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInInterfaces() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/interfaces"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("inheritJavaInterface.kt")
+        public void testInheritJavaInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/interfaces/inheritJavaInterface.kt");
+            doTestAgainstJava(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/notNullAssertions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

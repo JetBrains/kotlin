@@ -7045,6 +7045,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt5393.kt")
+        public void testKt5393() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt5393.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt5393_property.kt")
+        public void testKt5393_property() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt5393_property.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt5393_toString.kt")
+        public void testKt5393_toString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt5393_toString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt5495.kt")
         public void testKt5495() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt5495.kt");
@@ -7054,6 +7072,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("multiple.kt")
         public void testMultiple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/multiple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("traitImplDelegationWithCovariantOverride.kt")
+        public void testTraitImplDelegationWithCovariantOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/traitImplDelegationWithCovariantOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("traitImplDiamond.kt")
+        public void testTraitImplDiamond() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/traitImplDiamond.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("traitImplGenericDelegation.kt")
+        public void testTraitImplGenericDelegation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/traitImplGenericDelegation.kt");
             doTest(fileName);
         }
 

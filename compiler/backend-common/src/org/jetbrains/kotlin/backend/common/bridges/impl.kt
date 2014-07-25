@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.backend.common.bridges
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
-import org.jetbrains.kotlin.types.TypeUtils
 
 public fun <Signature> generateBridgesForFunctionDescriptor(
         descriptor: FunctionDescriptor,
@@ -64,36 +65,50 @@ private data class DescriptorBasedFunctionHandle(val descriptor: FunctionDescrip
 /**
  * Given a fake override in a class, returns an overridden declaration with implementation in trait, such that a method delegating to that
  * trait implementation should be generated into the class containing the fake override; or null if the given function is not a fake
- * override of any trait implementation or such method was already generated into some superclass
+ * override of any trait implementation or such method was already generated into the superclass or is a method from Any.
  */
 public fun findTraitImplementation(descriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
     if (descriptor.getKind().isReal()) return null
     if (CallResolverUtil.isOrOverridesSynthesized(descriptor)) return null
 
-    // TODO: this logic is quite common for bridge generation, find a way to abstract it to a single place
-    // TODO: don't use filterOutOverridden() here, it's an internal front-end utility (see its implementation)
-    val overriddenDeclarations = OverrideResolver.getOverriddenDeclarations(descriptor)
-    val filteredOverriddenDeclarations = OverrideResolver.filterOutOverridden(overriddenDeclarations)
+    val implementation = findImplementationFromInterface(descriptor) ?: return null
+    val immediateConcreteSuper = firstSuperMethodFromKotlin(descriptor, implementation) ?: return null
 
-    var implementation: CallableMemberDescriptor? = null
-    for (overriddenDeclaration in filteredOverriddenDeclarations) {
-        if (DescriptorUtils.isTrait(overriddenDeclaration.getContainingDeclaration()) && overriddenDeclaration.getModality() != Modality.ABSTRACT) {
-            implementation = overriddenDeclaration
-        }
-    }
-    if (implementation == null) {
+    if (!DescriptorUtils.isTrait(immediateConcreteSuper.getContainingDeclaration())) {
+        // If this implementation is already generated into the superclass, we need not generate it again, it'll be inherited
         return null
     }
 
-    // If this implementation is already generated into one of the superclasses, we need not generate it again, it'll be inherited
-    val containingClass = descriptor.getContainingDeclaration() as ClassDescriptor
-    val implClassType = implementation!!.getDispatchReceiverParameter()!!.getType()
-    for (supertype in containingClass.getDefaultType().getConstructor().getSupertypes()) {
-        if (!DescriptorUtils.isTrait(supertype.getConstructor().getDeclarationDescriptor()!!) &&
-            TypeUtils.getAllSupertypes(supertype).contains(implClassType)) {
-            return null
-        }
-    }
+    return immediateConcreteSuper
+}
 
-    return implementation
+/**
+ * Given a fake override, returns an overridden non-abstract function from an interface which is the actual implementation of this function
+ * that should be called when the given fake override is called.
+ */
+public fun findImplementationFromInterface(descriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
+    val overridden = OverrideResolver.getOverriddenDeclarations(descriptor)
+    val filtered = OverrideResolver.filterOutOverridden(overridden)
+
+    val result = filtered.firstOrNull { it.getModality() != Modality.ABSTRACT } ?: return null
+
+    val container = result.getContainingDeclaration()
+    if (DescriptorUtils.isClass(container) || DescriptorUtils.isEnumClass(container)) return null
+
+    return result
+}
+
+/**
+ * Given a fake override and its implementation (non-abstract declaration) somewhere in supertypes,
+ * returns the first immediate super function of the given fake override which overrides that implementation.
+ * The returned function should be called from TImpl-bridges generated for the given fake override.
+ */
+public fun firstSuperMethodFromKotlin(
+        descriptor: CallableMemberDescriptor,
+        implementation: CallableMemberDescriptor
+): CallableMemberDescriptor? {
+    return descriptor.getOverriddenDescriptors().firstOrNull { overridden ->
+        overridden.getModality() != Modality.ABSTRACT &&
+        (overridden == implementation || OverrideResolver.overrides(overridden, implementation))
+    }
 }
