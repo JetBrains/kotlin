@@ -47,11 +47,8 @@ public class JetGotoSymbolContributor implements ChooseByNameContributor {
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
         GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
 
-        Collection<? extends NavigationItem> functions = StubIndex.getInstance().get(
-                JetFunctionShortNameIndex.getInstance().getKey(), name, project, scope);
-
-        Collection<? extends NavigationItem> properties = StubIndex.getInstance().get(
-                JetPropertyShortNameIndex.getInstance().getKey(), name, project, scope);
+        Collection<? extends NavigationItem> functions = JetFunctionShortNameIndex.getInstance().get(name, project, scope);
+        Collection<? extends NavigationItem> properties = JetPropertyShortNameIndex.getInstance().get(name, project, scope);
 
         List<NavigationItem> items = new ArrayList<NavigationItem>(Collections2.filter(functions, Predicates.notNull()));
         items.addAll(properties);

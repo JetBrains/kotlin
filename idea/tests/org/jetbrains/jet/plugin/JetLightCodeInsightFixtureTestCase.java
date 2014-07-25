@@ -84,6 +84,9 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
                     return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
                 }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SOURCES")) {
+                    return ProjectDescriptorWithStdlibSources.INSTANCE;
+                }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
                     return JetStdJSProjectDescriptor.INSTANCE;
                 }
