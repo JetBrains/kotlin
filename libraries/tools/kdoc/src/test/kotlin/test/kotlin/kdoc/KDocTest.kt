@@ -30,7 +30,7 @@ class KDocTest {
         args.freeArgs = listOf("../../stdlib/src",
                                "../../kunit/src/main/kotlin",
                                "../../kotlin-jdbc/src/main/kotlin")
-        args.outputDir = "target/classes-stdlib"
+        args.destination = "target/classes-stdlib"
         args.noStdlib = true
         args.classpath = "../runtime/target/kotlin-runtime-0.1-SNAPSHOT.jar${File.pathSeparator}../../lib/junit-4.9.jar"
 

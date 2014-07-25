@@ -107,7 +107,7 @@ public open class KotlinCompile(): AbstractCompile() {
             args.classpath = effectiveClassPath
         }
 
-        args.outputDir = if (StringUtils.isEmpty(kotlinOptions.outputDir)) { kotlinDestinationDir?.getPath() } else { kotlinOptions.outputDir }
+        args.destination = if (StringUtils.isEmpty(kotlinOptions.destination)) { kotlinDestinationDir?.getPath() } else { kotlinOptions.destination }
 
         val embeddedAnnotations = getAnnotations(getProject(), getLogger())
         val userAnnotations = (kotlinOptions.annotations ?: "").split(File.pathSeparatorChar).toList()
@@ -139,7 +139,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
         getLogger().debug("Copying resulting files to classes")
         // Copy kotlin classes to all classes directory
-        val outputDirFile = File(args.outputDir!!)
+        val outputDirFile = File(args.destination!!)
         if (outputDirFile.exists()) {
             FileUtils.copyDirectory(outputDirFile, getDestinationDir())
         }
@@ -180,7 +180,7 @@ public open class KDoc(): SourceTask() {
         // KDoc compiler does not accept list of files as input. Try to pass directories instead.
         args.freeArgs = getSource().map { it.getParentFile()!!.getAbsolutePath() }
         // Drop compiled sources to temp. Why KDoc compiles anything after all?!
-        args.outputDir = getTemporaryDir()?.getAbsolutePath()
+        args.destination = getTemporaryDir()?.getAbsolutePath()
 
         getLogger().warn(args.freeArgs.toString())
         val embeddedAnnotations = getAnnotations(getProject(), getLogger())

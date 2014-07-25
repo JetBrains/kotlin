@@ -316,7 +316,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         }
 
         log.info("Classes directory is " + output);
-        arguments.outputDir = output;
+        arguments.destination = output;
 
         arguments.noJdkAnnotations = true;
         arguments.annotations = getFullAnnotationsPath(log, annotationPaths);

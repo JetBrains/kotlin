@@ -50,7 +50,7 @@ class KDocSampleTest {
         classesOutputDir.rmrf()
         classesOutputDir.mkdirsProperly()
 
-        args.outputDir = classesOutputDir.getPath()
+        args.destination = classesOutputDir.getPath()
 
         args.docConfig.docOutputDir = outputDir.getPath()
         args.docConfig.title = "Sample"
