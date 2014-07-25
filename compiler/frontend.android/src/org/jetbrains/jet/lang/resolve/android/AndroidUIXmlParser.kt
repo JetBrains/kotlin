@@ -75,7 +75,7 @@ abstract class AndroidUIXmlParser {
         if (cacheState == null) return null
         return if (cacheState == CacheAction.MISS || lastCachedPsi == null) {
             try {
-                val vf = LightVirtualFile("ANDROIDXML.kt", renderString())
+                val vf = LightVirtualFile(SYNTHETIC_FILENAME, renderString())
                 val psiFile = PsiManager.getInstance(project).findFile(vf) as JetFile
                 psiFile.putUserData(ANDROID_SYNTHETIC, "OK")
                 psiFile.putUserData(ANDROID_USER_PACKAGE, androidAppPackage)
