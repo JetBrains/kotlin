@@ -1465,6 +1465,10 @@ public open class Throwable {
 
 public object Unit {
     /*primary*/ private constructor Unit()
+
+    public class object <class-object-for-Unit> : kotlin.Unit {
+        /*primary*/ private constructor <class-object-for-Unit>()
+    }
 }
 
 public final annotation class data : kotlin.Annotation {
