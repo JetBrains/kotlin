@@ -25,7 +25,7 @@ fun foo(f: () -> Unit) {
 // EXPRESSION: O.obProp
 // RESULT: 1: I
  frame    = invoke():6, FrameObjectPackage$main$1 {frameObject}
-   this     = this = {frameObject.FrameObjectPackage$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
+   this     = this = {frameObject.FrameObjectPackage$main$1@uniqueID}"kotlin.Function0<kotlin.Unit>"
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

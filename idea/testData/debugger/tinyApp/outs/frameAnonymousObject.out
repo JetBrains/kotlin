@@ -26,7 +26,7 @@ fun foo(f: () -> Unit) {
 
 // PRINT_FRAME
  frame    = invoke():11, FrameAnonymousObjectPackage$main$o$1$run$1 {frameAnonymousObject}
-   this     = this = {frameAnonymousObject.FrameAnonymousObjectPackage$main$o$1$run$1@uniqueID}kotlin.Function0<kotlin.Unit>
+   this     = this = {frameAnonymousObject.FrameAnonymousObjectPackage$main$o$1$run$1@uniqueID}"kotlin.Function0<kotlin.Unit>"
      field    = this$0: frameAnonymousObject.FrameAnonymousObjectPackage$main$o$1 = {frameAnonymousObject.FrameAnonymousObjectPackage$main$o$1@uniqueID}
        field    = obProp: int = 1
        field    = $val1: int = 1

@@ -33,8 +33,8 @@ fun foo(f: () -> Unit) {
 // EXPRESSION: val1 + val2
 // RESULT: 2: I
  frame    = invoke():9, FrameInnerLambdaPackage$main$1$1 {frameInnerLambda}
-   this     = this = {frameInnerLambda.FrameInnerLambdaPackage$main$1$1@uniqueID}kotlin.Function0<kotlin.Unit>
-     field    = this$0: frameInnerLambda.FrameInnerLambdaPackage$main$1 = {frameInnerLambda.FrameInnerLambdaPackage$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
+   this     = this = {frameInnerLambda.FrameInnerLambdaPackage$main$1$1@uniqueID}"kotlin.Function0<kotlin.Unit>"
+     field    = this$0: frameInnerLambda.FrameInnerLambdaPackage$main$1 = {frameInnerLambda.FrameInnerLambdaPackage$main$1@uniqueID}"kotlin.Function0<kotlin.Unit>"
        field    = $val1: int = 1
      field    = $val2: int = 1
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'

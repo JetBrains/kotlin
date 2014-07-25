@@ -18,8 +18,8 @@ fun foo(f: () -> Unit) {
 
 // PRINT_FRAME
  frame    = invoke():7, FrameSharedVarPackage$main$1 {frameSharedVar}
-   this     = this = {frameSharedVar.FrameSharedVarPackage$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
-     field    = $var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}1
+   this     = this = {frameSharedVar.FrameSharedVarPackage$main$1@uniqueID}"kotlin.Function0<kotlin.Unit>"
+     field    = $var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}"1"
        field    = element: int = 1
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

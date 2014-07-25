@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
      field    = topVal1: int = 1
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
    local    = val1: int = 1
-   local    = val2: java.lang.String = {@uniqueID}str
+   local    = val2: java.lang.String = {@uniqueID}"str"
      field    = value: char[] = {char[3]@uniqueID}
        unknown  = [0] = 's' 115
        unknown  = [1] = 't' 116

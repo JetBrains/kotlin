@@ -43,7 +43,7 @@ fun foo(f: () -> Unit) {
 // EXPRESSION: prop1 + val1 + val2
 // RESULT: 3: I
  frame    = invoke():15, A$test$1 {frameThis0}
-   this     = this = {frameThis0.A$test$1@uniqueID}kotlin.Function0<kotlin.Unit>
+   this     = this = {frameThis0.A$test$1@uniqueID}"kotlin.Function0<kotlin.Unit>"
      field    = this$0: frameThis0.A = {frameThis0.A@uniqueID}
        field    = prop1: int = 1
      field    = $val1: int = 1
