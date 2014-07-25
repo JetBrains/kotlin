@@ -11,6 +11,7 @@ where possible options include:
   -module <path>             Path to the module file to compile
   -script                    Evaluate the script file
   -kotlin-home <path>        Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
+  -androidRes <path>         Android resources path
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
