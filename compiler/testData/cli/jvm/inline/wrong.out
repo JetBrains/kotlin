@@ -2,8 +2,6 @@ Wrong value for inline option: 'wrong'. Should be 'on'/'off' or 'true'/'false'
 Usage: kotlinc-jvm <options> <source files>
 where possible options include:
   -d <directory|jar>         Destination for generated class files
-  -jar <path>                Resulting .jar file path
-  -output <path>             Output directory path for .class files
   -classpath <path>          Paths where to find user class files
   -annotations <path>        Paths to external annotations
   -includeRuntime            Include Kotlin runtime in to resulting .jar

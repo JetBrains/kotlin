@@ -127,8 +127,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 outputDir = isJar ? null : new File(destination);
             }
             else {
-                jar = arguments.jar != null ? new File(arguments.jar) : null;
-                outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
+                jar = null;
+                outputDir = null;
             }
 
             if (arguments.module != null) {

@@ -28,14 +28,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<directory|jar>")
     public String destination;
 
-    @Argument(value = "jar", description = "Resulting .jar file path")
-    @ValueDescription("<path>")
-    public String jar;
-
-    @Argument(value = "output", description = "Output directory path for .class files")
-    @ValueDescription("<path>")
-    public String outputDir;
-
     @Argument(value = "classpath", description = "Paths where to find user class files")
     @ValueDescription("<path>")
     public String classpath;
