@@ -19,13 +19,8 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
-import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -105,6 +100,7 @@ public final class ClassTranslator extends AbstractTranslator {
 
         List<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
         List<JsPropertyInitializer> staticProperties = new SmartList<JsPropertyInitializer>();
+        ExplicitDelegationTranslator explicitDelegationTranslator = new ExplicitDelegationTranslator(classDeclaration, descriptor, context());
 
         boolean isTopLevelDeclaration = context() == declarationContext;
 
@@ -125,13 +121,14 @@ public final class ClassTranslator extends AbstractTranslator {
 
         invocationArguments.add(getSuperclassReferences(declarationContext));
         if (!isTrait()) {
-            JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod();
+            JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod(explicitDelegationTranslator);
             invocationArguments.add(initializer.getBody().getStatements().isEmpty() ? JsLiteral.NULL : initializer);
         }
 
         translatePropertiesAsConstructorParameters(declarationContext, properties);
         DeclarationBodyVisitor bodyVisitor = new DeclarationBodyVisitor(properties, staticProperties);
         bodyVisitor.traverseContainer(classDeclaration, declarationContext);
+        explicitDelegationTranslator.generateDelegated(descriptor, properties);
         mayBeAddEnumEntry(bodyVisitor.getEnumEntryList(), staticProperties, declarationContext);
 
         if (KotlinBuiltIns.getInstance().isData(descriptor)) {
@@ -241,7 +238,7 @@ public final class ClassTranslator extends AbstractTranslator {
         for (JetParameter parameter : getPrimaryConstructorParameters(classDeclaration)) {
             PropertyDescriptor descriptor = getPropertyDescriptorForConstructorParameter(bindingContext(), parameter);
             if (descriptor != null) {
-                PropertyTranslator.translateAccessors(descriptor, result, classDeclarationContext);
+                PropertyTranslator.object$.translateAccessors(descriptor, result, classDeclarationContext);
             }
         }
     }

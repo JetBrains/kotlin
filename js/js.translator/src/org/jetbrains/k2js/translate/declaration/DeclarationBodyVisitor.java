@@ -114,7 +114,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @Override
     public Void visitProperty(@NotNull JetProperty expression, TranslationContext context) {
         PropertyDescriptor propertyDescriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), expression);
-        PropertyTranslator.translateAccessors(propertyDescriptor, expression, result, context);
+        PropertyTranslator.object$.translateAccessors(propertyDescriptor, expression, result, context);
         return null;
     }
 

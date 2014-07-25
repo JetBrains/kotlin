@@ -23,16 +23,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
-import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.declaration.ExplicitDelegationTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.reference.CallArgumentTranslator;
 
@@ -62,7 +60,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsFunction generateInitializeMethod() {
+    public JsFunction generateInitializeMethod(ExplicitDelegationTranslator explicitDelegationTranslator) {
         //TODO: it's inconsistent that we have scope for class and function for constructor, currently have problems implementing better way
         ConstructorDescriptor primaryConstructor = getConstructor(bindingContext(), classDeclaration);
         JsFunction result = context().getFunctionObject(primaryConstructor);
@@ -70,6 +68,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         // for properties declared as constructor parameters
         result.getParameters().addAll(translatePrimaryConstructorParameters());
         mayBeAddCallToSuperMethod(result);
+        explicitDelegationTranslator.addInitCode(initializerStatements);
         new InitializerVisitor(initializerStatements).traverseContainer(classDeclaration, context());
 
         List<JsStatement> statements = result.getBody().getStatements();
