@@ -130,12 +130,14 @@
             <isfalse value="${bootstrap.build.no.tests}"/>
             <then>
                 <replace dir="${basedir}/compiler" token="instance$" value="INSTANCE$"/>
+                <replace dir="${basedir}/core" token="instance$" value="INSTANCE$"/>
                 <replace dir="${basedir}/idea" token="instance$" value="INSTANCE$"/>
-                <replace dir="${basedir}/j2k/tests/testData/ast" token="instance$" value="INSTANCE$"/>
+                <replace dir="${basedir}/j2k" token="instance$" value="INSTANCE$"/>
                 <replace dir="${basedir}/js/js.translator/src" token="instance$" value="INSTANCE$"/>
                 <replace dir="${basedir}/compiler" excludes="**/classInClassObject.kt" token="object$" value="OBJECT$"/>
+                <replace dir="${basedir}/core" token="object$" value="OBJECT$"/>
                 <replace dir="${basedir}/idea" token="object$" value="OBJECT$"/>
-                <replace dir="${basedir}/j2k/tests/testData/ast" token="object$" value="OBJECT$"/>
+                <replace dir="${basedir}/j2k" token="object$" value="OBJECT$"/>
                 <replace dir="${basedir}/js/js.translator/src" token="object$" value="OBJECT$"/>
             </then>
         </if>
