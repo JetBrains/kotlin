@@ -83,7 +83,7 @@ public class CallExpressionResolver {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
                 JetType result = getExtendedClassObjectType(expression, classObjectType, classifier, context);
                 checkClassObjectVisibility(classifier, expression, context);
-                return DataFlowUtils.checkType(result, expression, context);
+                return result;
             }
         }
         JetType[] result = new JetType[1];
