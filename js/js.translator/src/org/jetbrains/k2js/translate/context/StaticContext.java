@@ -24,6 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -48,12 +49,12 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedNa
  */
 public final class StaticContext {
 
-    public static StaticContext generateStaticContext(@NotNull BindingContext bindingContext, @NotNull EcmaVersion ecmaVersion) {
+    public static StaticContext generateStaticContext(@NotNull BindingContext bindingContext, @NotNull EcmaVersion ecmaVersion, @NotNull ModuleDescriptor moduleDescriptor) {
         JsProgram program = new JsProgram("main");
         Namer namer = Namer.newInstance(program.getRootScope());
         Intrinsics intrinsics = new Intrinsics();
         StandardClasses standardClasses = StandardClasses.bindImplementations(namer.getKotlinScope());
-        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, program.getRootScope(), ecmaVersion);
+        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, program.getRootScope(), ecmaVersion, moduleDescriptor);
     }
 
     @NotNull
@@ -69,6 +70,9 @@ public final class StaticContext {
 
     @NotNull
     private final StandardClasses standardClasses;
+
+    @NotNull
+    private final ReflectionTypes reflectionTypes;
 
     @NotNull
     private final JsScope rootScope;
@@ -93,7 +97,7 @@ public final class StaticContext {
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
             @NotNull Namer namer, @NotNull Intrinsics intrinsics,
-            @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull EcmaVersion ecmaVersion) {
+            @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull EcmaVersion ecmaVersion, @NotNull ModuleDescriptor moduleDescriptor) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.namer = namer;
@@ -101,6 +105,7 @@ public final class StaticContext {
         this.rootScope = rootScope;
         this.standardClasses = standardClasses;
         this.ecmaVersion = ecmaVersion;
+        this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
     }
 
     public boolean isEcma5() {
@@ -125,6 +130,11 @@ public final class StaticContext {
     @NotNull
     public Namer getNamer() {
         return namer;
+    }
+
+    @NotNull
+    public ReflectionTypes getReflectionTypes() {
+        return reflectionTypes;
     }
 
     @NotNull

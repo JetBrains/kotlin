@@ -233,6 +233,9 @@
                 <include name="html5/**"/>
                 <include name="stdlib/TuplesCode.kt"/>
             </fileset>
+            <fileset dir="${basedir}/core/reflection/src">
+                <include name="kotlin/**"/>
+            </fileset>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>

@@ -19,8 +19,6 @@ package org.jetbrains.k2js.test;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -31,10 +29,10 @@ import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.config.TestConfig;
 import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
+import org.jetbrains.k2js.test.utils.JsTestUtils;
 import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -174,8 +172,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     @NotNull
     protected List<String> additionalKotlinFiles() {
         List<String> additionalFiles = Lists.newArrayList();
-        additionalFiles.addAll(kotlinFilesInDirectory(pathToTestFilesRoot() + COMMON_FILES_DIR));
-        additionalFiles.addAll(kotlinFilesInDirectory(pathToTestFiles() + COMMON_FILES_DIR));
+        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(pathToTestFilesRoot() + COMMON_FILES_DIR));
+        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(pathToTestFiles() + COMMON_FILES_DIR));
         return additionalFiles;
     }
 
@@ -238,30 +236,4 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return getExpectedPath() + testName + ".out";
     }
 
-    @NotNull
-    private static List<String> kotlinFilesInDirectory(@NotNull String directory) {
-        File dir = new File(directory);
-
-        if (!dir.isDirectory()) {
-            return ContainerUtil.emptyList();
-        }
-
-        File[] kotlinFiles = dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(@NotNull File dir, @NotNull String name) {
-                return name.endsWith(".kt");
-            }
-        });
-
-        if (kotlinFiles == null) {
-            return ContainerUtil.emptyList();
-        }
-
-        return ContainerUtil.map2List(kotlinFiles, new Function<File, String>() {
-            @Override
-            public String fun(File kotlinFile) {
-                return kotlinFile.getAbsolutePath();
-            }
-        });
-    }
 }

@@ -1,0 +1,19 @@
+package foo
+
+native
+fun nativeFun(i:Int, s:String): String = js.noImpl
+
+fun bar(funRef: (Int, String) -> String): String = funRef(4, "boo")
+
+fun box(): String {
+    var r = nativeFun(4, "boo")
+    if (r != "nativeFun 4 boo") return r
+
+    r = bar(::nativeFun)
+    if (r != "nativeFun 4 boo") return r
+
+    r = (::nativeFun)(4, "boo")
+    if (r != "nativeFun 4 boo") return r
+
+    return "OK"
+}
