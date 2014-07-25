@@ -4,12 +4,11 @@ trait A {
     fun bar(arg: Int = 240) : Int = bar2(arg/2)
 }
 
-open abstract class B() : A, java.lang.Object() {
+open abstract class B : A {
     override fun bar2(arg: Int) : Int = arg
 }
 
-class C() : B() {
-}
+class C : B()
 
 fun box() : String {
     if(C().bar(10) != 5) return "fail"
