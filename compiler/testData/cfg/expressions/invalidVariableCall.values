@@ -1,0 +1,10 @@
+== foo ==
+fun foo(i: Int) {
+    i()
+}
+---------------------
+          <v0>: Int   NEW: magic[FAKE_INITIALIZER](i: Int) -> <v0>
+i         <v1>: *     NEW: r(i) -> <v1>
+i()       !<v2>: *
+{ i() }   !<v2>: *    COPY
+=====================

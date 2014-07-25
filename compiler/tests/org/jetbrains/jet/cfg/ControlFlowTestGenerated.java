@@ -368,7 +368,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         public void testAssignments() throws Exception {
             doTest("compiler/testData/cfg/expressions/Assignments.kt");
         }
-
+        
         @TestMetadata("callableReferences.kt")
         public void testCallableReferences() throws Exception {
             doTest("compiler/testData/cfg/expressions/callableReferences.kt");
@@ -392,6 +392,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         @TestMetadata("incdec.kt")
         public void testIncdec() throws Exception {
             doTest("compiler/testData/cfg/expressions/incdec.kt");
+        }
+        
+        @TestMetadata("invalidVariableCall.kt")
+        public void testInvalidVariableCall() throws Exception {
+            doTest("compiler/testData/cfg/expressions/invalidVariableCall.kt");
         }
         
         @TestMetadata("LazyBooleans.kt")

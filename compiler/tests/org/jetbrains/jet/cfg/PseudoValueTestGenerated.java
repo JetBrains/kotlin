@@ -358,9 +358,7 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
         @TestMetadata("compiler/testData/cfg/expressions")
         public static class Expressions extends AbstractPseudoValueTest {
             public void testAllFilesPresentInExpressions() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                             new File("compiler/testData/cfg/expressions"), Pattern.compile("^(.+)\\.kt$"),
-                                                             true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cfg/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("assignmentToThis.kt")
@@ -372,7 +370,7 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             public void testAssignments() throws Exception {
                 doTest("compiler/testData/cfg/expressions/Assignments.kt");
             }
-
+            
             @TestMetadata("callableReferences.kt")
             public void testCallableReferences() throws Exception {
                 doTest("compiler/testData/cfg/expressions/callableReferences.kt");
@@ -396,6 +394,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             @TestMetadata("incdec.kt")
             public void testIncdec() throws Exception {
                 doTest("compiler/testData/cfg/expressions/incdec.kt");
+            }
+            
+            @TestMetadata("invalidVariableCall.kt")
+            public void testInvalidVariableCall() throws Exception {
+                doTest("compiler/testData/cfg/expressions/invalidVariableCall.kt");
             }
             
             @TestMetadata("LazyBooleans.kt")

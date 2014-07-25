@@ -1499,12 +1499,12 @@ public class JetControlFlowProcessor {
             if (resultingDescriptor instanceof VariableDescriptor) {
                 // If a callee of the call is just a variable (without 'invoke'), 'read variable' is generated.
                 // todo : process arguments for such a case (KT-5387)
-                JetExpression calleeExpression = PsiUtilPackage.getCalleeExpressionIfAny(callElement);
-                assert calleeExpression != null
+                JetExpression callExpression = callElement instanceof JetExpression ? (JetExpression) callElement : null;
+                assert callExpression != null
                         : "Variable-based call without callee expression: " + callElement.getText();
                 assert parameterValues.isEmpty()
                         : "Variable-based call with non-empty argument list: " + callElement.getText();
-                return builder.readVariable(calleeExpression, resolvedCall, receivers);
+                return builder.readVariable(callExpression, resolvedCall, receivers);
             }
             mark(resolvedCall.getCall().getCallElement());
             return builder.call(callElement, resolvedCall, receivers, parameterValues);
