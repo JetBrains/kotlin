@@ -15,11 +15,11 @@ fun B.b() {
 }
 
 fun test() {
-    @b { B.() ->
+    @b <!UNUSED_FUNCTION_LITERAL!>{ B.() ->
         object : A {
             override fun foo() {
                 this@b.bar()
             }
         }
-    }
+    }<!>
 }

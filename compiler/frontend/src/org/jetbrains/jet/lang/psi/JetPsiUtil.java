@@ -282,29 +282,6 @@ public class JetPsiUtil {
         return null;
     }
 
-    public static boolean isImplicitlyUsed(@NotNull JetElement element) {
-        PsiElement parent = element.getParent();
-        if (!(parent instanceof JetBlockExpression)) return true;
-        JetBlockExpression block = (JetBlockExpression) parent;
-        List<JetElement> statements = block.getStatements();
-        if (statements.get(statements.size() - 1) == element) {
-            JetExpression expression = getDirectParentOfTypeForBlock(block, JetIfExpression.class);
-            if (expression == null) {
-                expression = getDirectParentOfTypeForBlock(block, JetWhenExpression.class);
-            }
-            if (expression == null) {
-                expression = getDirectParentOfTypeForBlock(block, JetFunctionLiteral.class);
-            }
-            if (expression == null) {
-                expression = getDirectParentOfTypeForBlock(block, JetTryExpression.class);
-            }
-            if (expression != null) {
-                return isImplicitlyUsed(expression);
-            }
-        }
-        return false;
-    }
-
     public static void deleteClass(@NotNull JetClassOrObject clazz) {
         CheckUtil.checkWritable(clazz);
         JetFile file = clazz.getContainingJetFile();

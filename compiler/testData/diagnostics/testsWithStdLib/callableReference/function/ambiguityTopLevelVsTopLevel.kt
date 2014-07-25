@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 fun foo(x: Int, <!UNUSED_PARAMETER!>y<!>: Any) = x
 fun foo(<!UNUSED_PARAMETER!>x<!>: Any, y: Int) = y
 

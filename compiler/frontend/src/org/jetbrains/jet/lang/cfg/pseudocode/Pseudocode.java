@@ -64,4 +64,6 @@ public interface Pseudocode {
 
     @NotNull
     List<? extends Instruction> getUsages(@Nullable PseudoValue value);
+
+    boolean isSideEffectFree(@NotNull Instruction instruction);
 }

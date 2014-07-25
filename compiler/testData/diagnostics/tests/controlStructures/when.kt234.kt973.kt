@@ -21,7 +21,7 @@ fun test1(t : Pair<Int, Int>) : Int {
 }
 
 //more tests
-fun t1(x: Int) = when(x) {
+fun t1(x: Int) = when(<!UNUSED_EXPRESSION!>x<!>) {
     else -> 1
 }
 

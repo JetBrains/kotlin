@@ -2,7 +2,7 @@ inline fun inlineFunWithInvoke(s: (p: Int) -> Unit) {
     (s: (p: Int) -> Unit)(11)
     (s: (p: Int) -> Unit).invoke(11)
     (s: (p: Int) -> Unit) invoke 11
-    (<!USAGE_IS_NOT_INLINABLE!>s<!>)
+    (<!USAGE_IS_NOT_INLINABLE, UNUSED_EXPRESSION!>s<!>)
 }
 
 inline fun Function1<Int, Unit>.inlineExt() {

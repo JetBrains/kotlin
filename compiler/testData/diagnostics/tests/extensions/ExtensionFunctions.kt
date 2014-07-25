@@ -71,5 +71,5 @@ import outer.*
             val c = Command()
             c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)
 
-            if (command == null) 1
+            if (command == null) <!UNUSED_EXPRESSION!>1<!>
         }

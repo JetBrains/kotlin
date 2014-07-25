@@ -2,13 +2,10 @@
 
 fun foo(s: String?) {
     when {
-        s == null -> 1
-        <!DEBUG_INFO_AUTOCAST!>s<!>.foo() -> 2
-        else -> 3
+        s == null -> <!UNUSED_EXPRESSION!>1<!>
+        <!DEBUG_INFO_AUTOCAST!>s<!>.foo() -> <!UNUSED_EXPRESSION!>2<!>
+        else -> <!UNUSED_EXPRESSION!>3<!>
     }
 }
 
 fun String.foo() = true
-
-
-

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode
 
-import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*
@@ -31,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
+import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
     val callableDescriptor = resolvedCall.getResultingDescriptor()
@@ -133,5 +132,33 @@ public fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: Bind
     return when (this) {
         is CallInstruction -> return resolvedCall.getResultingDescriptor()
         else -> PseudocodeUtil.extractVariableDescriptorIfAny(this, false, bindingContext)
+    }
+}
+
+public val Instruction.sideEffectFree: Boolean
+    get() = owner.isSideEffectFree(this)
+
+private fun Instruction.calcSideEffectFree(): Boolean {
+    if (this !is InstructionWithValue) return false
+    if (!inputValues.all { it.createdAt?.sideEffectFree ?: false }) return false
+
+    return when (this) {
+        is ReadValueInstruction -> target.let {
+            when (it) {
+                is AccessTarget.Call -> when (it.resolvedCall.getResultingDescriptor()) {
+                    is LocalVariableDescriptor, is ValueParameterDescriptor, is ReceiverParameterDescriptor -> true
+                    else -> false
+                }
+
+                else -> when (element) {
+                    is JetConstantExpression, is JetFunctionLiteralExpression, is JetStringTemplateExpression -> true
+                    else -> false
+                }
+            }
+        }
+
+        is MagicInstruction -> kind.sideEffectFree
+
+        else -> false
     }
 }

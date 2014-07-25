@@ -111,6 +111,11 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/testsWithStdLib/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("unused.kt")
+        public void testUnused() throws Exception {
+            doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/unused.kt");
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function")
         public static class Function extends AbstractJetDiagnosticsTestWithStdLib {
             @TestMetadata("abstractClassConstructors.kt")

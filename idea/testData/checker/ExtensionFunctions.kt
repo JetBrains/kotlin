@@ -66,5 +66,5 @@ fun Int.foo() = this
             val c = Command()
             c<warning>?.</warning>equals2(null)
 
-            if (command == null) 1
+            if (command == null) <warning>1</warning>
         }

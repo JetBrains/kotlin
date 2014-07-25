@@ -18,13 +18,16 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import com.google.common.collect.*;
 import com.intellij.util.containers.BidirectionalMap;
+import jet.runtime.typeinfo.JetValueParameter;
 import kotlin.Function0;
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.*;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MergeInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.AbstractJumpInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction;
@@ -95,6 +98,7 @@ public class PseudocodeImpl implements Pseudocode {
 
     private final Map<PseudoValue, List<Instruction>> valueUsages = Maps.newHashMap();
     private final Map<PseudoValue, Set<PseudoValue>> mergedValues = Maps.newHashMap();
+    private final Set<Instruction> sideEffectFree = Sets.newHashSet();
 
     private Pseudocode parent = null;
     private Set<LocalFunctionDeclarationInstruction> localDeclarations = null;
@@ -239,6 +243,9 @@ public class PseudocodeImpl implements Pseudocode {
                 addValueUsage(mergedValue, instruction);
             }
         }
+        if (PseudocodePackage.calcSideEffectFree(instruction)) {
+            sideEffectFree.add(instruction);
+        }
     }
 
     /*package*/ void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
@@ -281,6 +288,11 @@ public class PseudocodeImpl implements Pseudocode {
     public List<? extends Instruction> getUsages(@Nullable PseudoValue value) {
         List<? extends Instruction> result = valueUsages.get(value);
         return result != null ? result : Collections.<Instruction>emptyList();
+    }
+
+    @Override
+    public boolean isSideEffectFree(@NotNull Instruction instruction) {
+        return sideEffectFree.contains(instruction);
     }
 
     /*package*/ void bindElementToValue(@NotNull JetElement element, @NotNull PseudoValue value) {
