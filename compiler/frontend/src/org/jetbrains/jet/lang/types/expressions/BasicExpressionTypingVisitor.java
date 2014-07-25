@@ -360,9 +360,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
             context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
             context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
-            if (superTypeQualifier != null) {
-                context.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, superTypeQualifier, context.scope);
-            }
+        }
+        if (superTypeQualifier != null) {
+            context.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, superTypeQualifier, context.scope);
         }
         return result;
     }
