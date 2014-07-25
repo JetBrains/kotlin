@@ -42,11 +42,11 @@ if (a || b) 8 else 9                                                            
 10                                                                                                            <v20>: *         NEW: r(10) -> <v20>                                   
 a                                                                                                             <v21>: Boolean   NEW: r(a) -> <v21>                                    
 11                                                                                                            <v22>: *         NEW: r(11) -> <v22>                                   
-if (a) 11                                                                                                     <v22>: *         COPY                                                  
-12                                                                                                            <v23>: *         NEW: r(12) -> <v23>                                   
-a                                                                                                             <v24>: Boolean   NEW: r(a) -> <v24>                                    
-13                                                                                                            <v25>: *         NEW: r(13) -> <v25>                                   
-if (a) else 13                                                                                                <v25>: *         COPY                                                  
-14                                                                                                            <v26>: *         NEW: r(14) -> <v26>                                   
-{ if (a) { 1 } else { 2 } 3 if (a && b) 5 else 6 7 if (a || b) 8 else 9 10 if (a) 11 12 if (a) else 13 14 }   <v26>: *         COPY                                                  
+if (a) 11                                                                                                     <v23>: *         NEW: merge(if (a) 11|<v22>) -> <v23>                  
+12                                                                                                            <v24>: *         NEW: r(12) -> <v24>                                   
+a                                                                                                             <v25>: Boolean   NEW: r(a) -> <v25>                                    
+13                                                                                                            <v26>: *         NEW: r(13) -> <v26>                                   
+if (a) else 13                                                                                                <v27>: *         NEW: merge(if (a) else 13|<v26>) -> <v27>             
+14                                                                                                            <v28>: *         NEW: r(14) -> <v28>                                   
+{ if (a) { 1 } else { 2 } 3 if (a && b) 5 else 6 7 if (a || b) 8 else 9 10 if (a) 11 12 if (a) else 13 14 }   <v28>: *         COPY                                                  
 =====================

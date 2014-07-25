@@ -220,17 +220,7 @@ public class JetControlFlowProcessor {
         }
 
         private void mergeValues(@NotNull List<JetExpression> from, @NotNull JetExpression to) {
-            List<PseudoValue> values = elementsToValues(from);
-            switch (values.size()) {
-                case 0:
-                    break;
-                case 1:
-                    builder.bindValue(values.get(0), to);
-                    break;
-                default:
-                    builder.merge(to, values);
-                    break;
-            }
+            builder.merge(to, elementsToValues(from));
         }
 
         private void copyValue(@Nullable JetElement from, @NotNull JetElement to) {

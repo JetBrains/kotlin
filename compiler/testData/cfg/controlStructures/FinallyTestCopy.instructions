@@ -304,44 +304,47 @@ L0:
     w(list|<v0>)
   2 mark({ try { doSmth() } finally { if(list != null) { } } })
     mark(try { doSmth() } finally { if(list != null) { } })
-    jmp?(L2 [onExceptionToFinallyBlock])                           NEXT:[mark({ if(list != null) { } }), mark({ doSmth() })]
+    jmp?(L2 [onExceptionToFinallyBlock])                                     NEXT:[mark({ if(list != null) { } }), mark({ doSmth() })]
   3 mark({ doSmth() })
     mark(doSmth())
     call(doSmth(), doSmth) -> <v1>
-  2 jmp(L3 [skipFinallyToErrorBlock])                              NEXT:[mark({ if(list != null) { } })]
+  2 jmp(L3 [skipFinallyToErrorBlock])                                        NEXT:[mark({ if(list != null) { } })]
 L2 [onExceptionToFinallyBlock]:
 L4 [start finally]:
-  3 mark({ if(list != null) { } })                                 PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+  3 mark({ if(list != null) { } })                                           PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
     mark(if(list != null) { })
     r(list) -> <v2>
     r(null) -> <v3>
     mark(list != null)
     call(list != null, equals|<v2>, <v3>) -> <v4>
-    jf(L5|<v4>)                                                    NEXT:[read (Unit), mark({ })]
+    jf(L5|<v4>)                                                              NEXT:[read (Unit), mark({ })]
   4 mark({ })
     read (Unit)
-  3 jmp(L6)                                                        NEXT:[jmp(error)]
+  3 jmp(L6)                                                                  NEXT:[merge(if(list != null) { }|!<v5>) -> <v6>]
 L5:
-    read (Unit)                                                    PREV:[jf(L5|<v4>)]
+    read (Unit)                                                              PREV:[jf(L5|<v4>)]
 L6:
+    merge(if(list != null) { }|!<v5>) -> <v6>                                PREV:[jmp(L6), read (Unit)]
 L7 [finish finally]:
-  2 jmp(error)                                                     NEXT:[<ERROR>]                                                        PREV:[jmp(L6), read (Unit)]
+  2 jmp(error)                                                               NEXT:[<ERROR>]
 L3 [skipFinallyToErrorBlock]:
-  3 mark({ if(list != null) { } })                                 PREV:[jmp(L3 [skipFinallyToErrorBlock])]
+  3 mark({ if(list != null) { } })                                           PREV:[jmp(L3 [skipFinallyToErrorBlock])]
     mark(if(list != null) { })
     r(list) -> <v2>
     r(null) -> <v3>
     mark(list != null)
     call(list != null, equals|<v2>, <v3>) -> <v4>
-    jf(copy L5|<v4>)                                               NEXT:[read (Unit), mark({ })]
+    jf(copy L5|<v4>)                                                         NEXT:[read (Unit), mark({ })]
   4 mark({ })
     read (Unit)
-  3 jmp(copy L6)                                                   NEXT:[<END>]
-    read (Unit)                                                    PREV:[jf(copy L5|<v4>)]
+  3 jmp(copy L6)                                                             NEXT:[merge(if(list != null) { }|!<v5>) -> <v6>]
+    read (Unit)                                                              PREV:[jf(copy L5|<v4>)]
+    merge(if(list != null) { }|!<v5>) -> <v6>                                PREV:[jmp(copy L6), read (Unit)]
+  2 merge(try { doSmth() } finally { if(list != null) { } }|<v1>) -> <v7>
 L1:
-  1 <END>                                                          NEXT:[<SINK>]                                                         PREV:[jmp(copy L6), read (Unit)]
+  1 <END>                                                                    NEXT:[<SINK>]
 error:
-    <ERROR>                                                        PREV:[jmp(error)]
+    <ERROR>                                                                  PREV:[jmp(error)]
 sink:
-    <SINK>                                                         PREV:[<ERROR>, <END>]
+    <SINK>                                                                   PREV:[<ERROR>, <END>]
 =====================

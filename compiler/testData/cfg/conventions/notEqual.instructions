@@ -20,12 +20,13 @@ L0:
     jf(L2|<v4>)                                NEXT:[read (Unit), mark({})]
   3 mark({})
     read (Unit)
-  2 jmp(L3)                                    NEXT:[<END>]
+  2 jmp(L3)                                    NEXT:[merge(if (a != b) {}|!<v5>) -> <v6>]
 L2:
     read (Unit)                                PREV:[jf(L2|<v4>)]
-L1:
 L3:
-  1 <END>                                      NEXT:[<SINK>]                                     PREV:[jmp(L3), read (Unit)]
+    merge(if (a != b) {}|!<v5>) -> <v6>        PREV:[jmp(L3), read (Unit)]
+L1:
+  1 <END>                                      NEXT:[<SINK>]
 error:
     <ERROR>                                    PREV:[]
 sink:

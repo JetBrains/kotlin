@@ -9,6 +9,6 @@ a                    <v2>: OR{{<: Any}, {<: Any}}   NEW: r(a) -> <v2>
 b                    <v3>: *                        NEW: r(b) -> <v3>                           
 a != b               <v4>: Boolean                  NEW: call(a != b, equals|<v2>, <v3>) -> <v4>
 {}                   !<v5>: *                                                                   
-if (a != b) {}       !<v5>: *                       COPY                                        
-{ if (a != b) {} }   !<v5>: *                       COPY                                        
+if (a != b) {}       <v6>: *                        NEW: merge(if (a != b) {}|!<v5>) -> <v6>    
+{ if (a != b) {} }   <v6>: *                        COPY                                        
 =====================
