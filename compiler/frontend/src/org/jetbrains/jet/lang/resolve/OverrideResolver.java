@@ -192,7 +192,7 @@ public class OverrideResolver {
                 if (element instanceof JetDeclaration) {
                     trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element, descriptor));
                 }
-                return Unit.VALUE;
+                return Unit.instance$;
             }
         };
     }

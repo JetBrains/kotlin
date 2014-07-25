@@ -47,7 +47,7 @@ public abstract class AbstractMultiFileHighlightingTest extends KotlinCompletion
                     @Override
                     public Unit invoke() {
                         checkHighlighting(myEditor, true, false);
-                        return Unit.VALUE;
+                        return Unit.instance$;
                     }
                 }
         );

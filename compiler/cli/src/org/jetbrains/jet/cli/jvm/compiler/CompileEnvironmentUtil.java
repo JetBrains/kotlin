@@ -62,7 +62,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.jar.*;
 
@@ -304,7 +303,7 @@ public class CompileEnvironmentUtil {
                             }
                         }
                     }
-                    return Unit.VALUE;
+                    return Unit.instance$;
                 }
             });
         }

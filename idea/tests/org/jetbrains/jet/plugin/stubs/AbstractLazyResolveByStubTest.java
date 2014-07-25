@@ -63,7 +63,7 @@ public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTes
                     @Override
                     public Unit invoke() {
                         performTest(path, checkPrimaryConstructors, checkPropertyAccessors);
-                        return Unit.VALUE;
+                        return Unit.instance$;
                     }
                 }
         );
