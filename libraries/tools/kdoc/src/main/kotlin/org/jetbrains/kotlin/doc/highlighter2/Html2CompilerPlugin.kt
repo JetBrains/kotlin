@@ -104,7 +104,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
                                                 elementType.toString()
                                         }
                                         // TODO
-                                        else -> psi.getClass().getName()
+                                        else -> psi.javaClass.getName()
                                     }
 
                                     for (t in splitPsi(psiFile)) {
