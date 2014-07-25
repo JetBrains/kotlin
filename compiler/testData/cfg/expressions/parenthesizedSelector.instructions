@@ -1,0 +1,88 @@
+== with ==
+fun <T> with(t: T, f :  T.() -> Unit) {
+    t.f()
+}
+---------------------
+L0:
+  1 <START>
+    v(t: T)
+    magic[FAKE_INITIALIZER](t: T) -> <v0>
+    w(t|<v0>)
+    v(f : T.() -> Unit)
+    magic[FAKE_INITIALIZER](f : T.() -> Unit) -> <v1>
+    w(f|<v1>)
+  2 mark({ t.f() })
+    mark(t.f())
+    r(f) -> <v2>
+    r(t) -> <v3>
+    mark(f())
+    call(f(), invoke|<v2>, <v3>) -> <v4>
+L1:
+  1 <END>                                                NEXT:[<SINK>]
+error:
+    <ERROR>                                              PREV:[]
+sink:
+    <SINK>                                               PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+val Int.foo: String.() -> Unit get() = {}
+---------------------
+L0:
+  1 <START>
+    v(val Int.foo: String.() -> Unit get() = {})
+L1:
+    <END>                                           NEXT:[<SINK>]
+error:
+    <ERROR>                                         PREV:[]
+sink:
+    <SINK>                                          PREV:[<ERROR>, <END>]
+=====================
+== bar ==
+fun bar() {
+    with(1) {
+        "".(foo)()
+    }
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ with(1) { "".(foo)() } })
+    r(1) -> <v0>
+    mark({ "".(foo)() })
+    jmp?(L2)                                                 NEXT:[r({ "".(foo)() }) -> <v1>, d({ "".(foo)() })]
+    d({ "".(foo)() })                                        NEXT:[<SINK>]
+L2:
+    r({ "".(foo)() }) -> <v1>                                PREV:[jmp?(L2)]
+    mark(with(1) { "".(foo)() })
+    call(with(1) { "".(foo)() }, with|<v0>, <v1>) -> <v2>
+L1:
+  1 <END>                                                    NEXT:[<SINK>]
+error:
+    <ERROR>                                                  PREV:[]
+sink:
+    <SINK>                                                   PREV:[<ERROR>, <END>, d({ "".(foo)() })]
+=====================
+== anonymous_0 ==
+{
+        "".(foo)()
+    }
+---------------------
+L3:
+  3 <START>
+  4 mark("".(foo)())
+    mark("".(foo)())
+    mark((foo))
+    magic[IMPLICIT_RECEIVER](foo) -> <v0>
+    r(foo|<v0>) -> <v1>
+    mark("")
+    r("") -> <v2>
+    mark((foo)())
+    call((foo)(), invoke|<v1>, <v2>) -> <v3>
+  3 ret(*|<v3>) L4
+L4:
+    <END>                                       NEXT:[<SINK>]
+error:
+    <ERROR>                                     PREV:[]
+sink:
+    <SINK>                                      PREV:[<ERROR>, <END>]
+=====================

@@ -1,0 +1,42 @@
+== with ==
+fun <T> with(t: T, f :  T.() -> Unit) {
+    t.f()
+}
+---------------------
+            <v0>: {<: T}              NEW: magic[FAKE_INITIALIZER](t: T) -> <v0>            
+            <v1>: {<: T.() -> Unit}   NEW: magic[FAKE_INITIALIZER](f : T.() -> Unit) -> <v1>
+t           <v3>: {<: T}              NEW: r(t) -> <v3>                                     
+f           <v2>: {<: T.() -> Unit}   NEW: r(f) -> <v2>                                     
+f()         <v4>: *                   NEW: call(f(), invoke|<v2>, <v3>) -> <v4>             
+t.f()       <v4>: *                   COPY                                                  
+{ t.f() }   <v4>: *                   COPY                                                  
+=====================
+== foo ==
+val Int.foo: String.() -> Unit get() = {}
+---------------------
+=====================
+== bar ==
+fun bar() {
+    with(1) {
+        "".(foo)()
+    }
+}
+---------------------
+1                            <v0>: Int                   NEW: r(1) -> <v0>                                         
+{ "".(foo)() }               <v1>: {<: Int.() -> Unit}   NEW: r({ "".(foo)() }) -> <v1>                            
+with(1) { "".(foo)() }       <v2>: *                     NEW: call(with(1) { "".(foo)() }, with|<v0>, <v1>) -> <v2>
+{ with(1) { "".(foo)() } }   <v2>: *                     COPY                                                      
+=====================
+== anonymous_0 ==
+{
+        "".(foo)()
+    }
+---------------------
+             <v0>: Int                      NEW: magic[IMPLICIT_RECEIVER](foo) -> <v0>   
+""           <v2>: String                   NEW: r("") -> <v2>                           
+foo          <v1>: {<: String.() -> Unit}   NEW: r(foo|<v0>) -> <v1>                     
+(foo)        <v1>: {<: String.() -> Unit}   COPY                                         
+(foo)()      <v3>: Unit                     NEW: call((foo)(), invoke|<v1>, <v2>) -> <v3>
+"".(foo)()   <v3>: Unit                     COPY                                         
+"".(foo)()   <v3>: Unit                     COPY                                         
+=====================

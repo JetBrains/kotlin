@@ -411,6 +411,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest("compiler/testData/cfg/expressions/nothingExpr.kt");
             }
             
+            @TestMetadata("parenthesizedSelector.kt")
+            public void testParenthesizedSelector() throws Exception {
+                doTest("compiler/testData/cfg/expressions/parenthesizedSelector.kt");
+            }
+            
             @TestMetadata("propertySafeCall.kt")
             public void testPropertySafeCall() throws Exception {
                 doTest("compiler/testData/cfg/expressions/propertySafeCall.kt");
