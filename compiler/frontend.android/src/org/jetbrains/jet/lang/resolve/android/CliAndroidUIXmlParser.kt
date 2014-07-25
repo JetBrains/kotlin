@@ -25,9 +25,7 @@ class CliAndroidUIXmlParser(val project: Project, override val searchPath: Strin
     override var androidAppPackage: String = ""
 
     override fun lazySetup() {
-        val fileManager = VirtualFileManager.getInstance()
-        val watchDir = fileManager.findFileByUrl("file://" + searchPath)
-        filesToProcess.addAll(watchDir?.getChildren()?.toArrayList() ?: ArrayList(0))
+        populateQueue(project)
         androidAppPackage = readManifest()._package
     }
 }
