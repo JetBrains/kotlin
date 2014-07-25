@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2014 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.lang.resolve.android;
 
 import com.intellij.openapi.project.Project;
@@ -16,7 +32,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 
 public class AndroidXmlTest extends TestCaseWithTmpdir {
@@ -27,65 +42,6 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
     private final File fakeWidgetsSrc = new File(getTestDataPath() + "/fakeHelpers/Widgets.kt");
     private final File fakeMyActivitySrc = new File(getTestDataPath() + "/converter/singleFile/MyActivity.kt");
     private final String singleFileResPath = getTestDataPath() + "/converter/singleFile/res/layout/";
-
-    public static class ByteClassLoader extends URLClassLoader {
-
-        private Queue<OutputFile> q;
-        private final Map<String, Class> extraClassDefs = new HashMap<String, Class>();
-
-        @NotNull
-        @Override
-        protected Class<?> findClass(String name) throws ClassNotFoundException {
-            final Class aClass = extraClassDefs.get(name);
-            if (aClass != null) return aClass;
-            else return super.findClass(name);
-        }
-
-        public ByteClassLoader(URL[] urls, ClassLoader parent, List<OutputFile> files) {
-            super(urls, parent);
-            q = new LinkedList<OutputFile>(files);
-        }
-
-        private void loadBytes(OutputFile f) {
-            try {
-                final byte[] b = f.asByteArray();
-                final String name = relPathToClassName(f.getRelativePath());
-                final Class<?> aClass = defineClass(name, b, 0, b.length);
-                extraClassDefs.put(name, aClass);
-                q.remove(f);
-            } catch (NoClassDefFoundError e) {
-                OutputFile found = findByClassName(e.getMessage());
-                if (found == null) throw e;
-                else {
-                    loadBytes(found);
-                    loadBytes(f);
-                }
-            }
-        }
-
-        public void loadFiles() {
-            OutputFile f = q.peek();
-            while (f != null) {
-                loadBytes(f);
-                f = q.peek();
-            }
-        }
-
-        private OutputFile findByClassName(String name) {
-            String path = classNameToRelPath(name);
-            for (OutputFile file: q)
-                if (file.getRelativePath().equals(path)) return file;
-            return null;
-        }
-
-        private String relPathToClassName(String path) {
-            return path.replace(".class", "").replace("/", ".");
-        }
-
-        private String classNameToRelPath(String name) {
-            return name.replace(".", "/").concat(".class");
-        }
-    }
 
     @Override
     public void setUp() throws Exception {
@@ -139,7 +95,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
     }
 
     private List<File> addDefaultFiles() {
-        final File fakeRClass = new File(getTestDataPath() + "/converter/singleFile/R.kt");
+        File fakeRClass = new File(getTestDataPath() + "/converter/singleFile/R.kt");
         List<File> files = new ArrayList<File>();
         files.add(fakeActivitySrc);
         files.add(fakeViewSrc);
@@ -165,9 +121,9 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
 
         files.add(fakeMyActivitySrc);
         GenerationState state = compileManyFilesGetGenerationState(files, resPath);
-        ByteClassLoader classLoader = new ByteClassLoader(new URL[] {}, getClass().getClassLoader(), state.getFactory().asList());
+        ByteArrayClassLoader classLoader = new ByteArrayClassLoader(new URL[] {}, getClass().getClassLoader(), state.getFactory().asList());
         classLoader.loadFiles();
-        final Class<?> activity = classLoader.findClass("com.myapp.MyActivity");
+        Class<?> activity = classLoader.findClass("com.myapp.MyActivity");
         String res =(String) activity.getMethod("test").invoke(activity.newInstance());
         Disposer.dispose(getTestRootDisposable());
         assertEquals("OK", res);
