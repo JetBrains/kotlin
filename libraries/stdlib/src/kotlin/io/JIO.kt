@@ -162,7 +162,7 @@ public fun InputStream.buffered(bufferSize: Int = defaultBufferSize): InputStrea
 else
     BufferedInputStream(this, bufferSize)
 
-/** Creates a reader on an input stream with specified *encoding* */
+/** Creates a reader on an input stream with specified *encoding* defaulting to UTF8 */
 public fun InputStream.reader(encoding: Charset = defaultCharset): InputStreamReader = InputStreamReader(this, encoding)
 
 /** Creates a reader on an input stream with specified *encoding* */
@@ -176,7 +176,7 @@ public fun InputStream.reader(encoding: CharsetDecoder): InputStreamReader = Inp
 public fun OutputStream.buffered(bufferSize: Int = defaultBufferSize): BufferedOutputStream
         = if (this is BufferedOutputStream) this else BufferedOutputStream(this, bufferSize)
 
-/** Creates a writer on an output stream with specified *encoding* */
+/** Creates a writer on an output stream with specified *encoding* defaulting to UTF8 */
 public fun OutputStream.writer(encoding: Charset = defaultCharset): OutputStreamWriter = OutputStreamWriter(this, encoding)
 
 /** Creates a writer on an output stream with specified *encoding* */
@@ -303,14 +303,14 @@ public fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long
  *
  * This method is not recommended on huge files.
  */
-public fun URL.readText(encoding: String = Charset.defaultCharset().name()): String = readBytes().toString(encoding)
+public fun URL.readText(encoding: String): String = readBytes().toString(encoding)
 
 /**
- * Reads the entire content of the URL as a String with the specified character encoding.
+ * Reads the entire content of the URL as a String with the specified character encoding defaulting to UTF-8.
  *
  * This method is not recommended on huge files.
  */
-public fun URL.readText(encoding: Charset): String = readBytes().toString(encoding)
+public fun URL.readText(encoding: Charset = defaultCharset): String = readBytes().toString(encoding)
 
 /**
  * Reads the entire content of the URL as bytes

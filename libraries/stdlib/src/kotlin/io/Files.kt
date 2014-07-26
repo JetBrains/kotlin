@@ -114,37 +114,37 @@ public fun File.appendBytes(data: ByteArray): Unit {
  *
  * This method is not recommended on huge files.
  */
-public fun File.readText(encoding:String = Charset.defaultCharset().name()) : String = readBytes().toString(encoding)
+public fun File.readText(encoding: String) : String = readBytes().toString(encoding)
 
 /**
- * Reads the entire content of the file as a String using a character encoding.
+ * Reads the entire content of the file as a String using a character encoding defaulting to UTF-8
  *
  * This method is not recommended on huge files.
  */
-public fun File.readText(encoding: Charset) : String = readBytes().toString(encoding)
+public fun File.readText(encoding: Charset = defaultCharset) : String = readBytes().toString(encoding)
 
 /**
  * Writes the text as the contents of the file using the a
  * character encoding.
  */
-public fun File.writeText(text: String, encoding: String = Charset.defaultCharset().name()): Unit { writeBytes(text.toByteArray(encoding)) }
+public fun File.writeText(text: String, encoding: String): Unit { writeBytes(text.toByteArray(encoding)) }
 
 /**
- * Writes the text as the contents of the file using a character encoding.
+ * Writes the text as the contents of the file using a character encoding defaulting to UTF-8.
  */
-public fun File.writeText(text: String, encoding: Charset): Unit { writeBytes(text.toByteArray(encoding)) }
+public fun File.writeText(text: String, encoding: Charset = defaultCharset): Unit { writeBytes(text.toByteArray(encoding)) }
 
 /**
- * Appends text to the contents of the file using a given character encoding.
+ * Appends text to the contents of the file using a given character encoding defaulting to UTF-8.
  */
-public fun File.appendText(text: String, encoding: Charset): Unit {
+public fun File.appendText(text: String, encoding: Charset = defaultCharset): Unit {
     appendBytes(text.toByteArray(encoding))
 }
 
 /**
  * Appends text to the contents of the file using a character encoding.
  */
-public fun File.appendText(text: String, encoding: String = Charset.defaultCharset().name()): Unit {
+public fun File.appendText(text: String, encoding: String): Unit {
     appendBytes(text.toByteArray(encoding))
 }
 
@@ -187,12 +187,21 @@ fun File.forEachBlock(closure : (ByteArray, Int) -> Unit) : Unit {
 }
 
 /**
- * Reads file line by line. Default charset is UTF-8.
+ * Reads file line by line using the specified encoding.
  *
  * You may use this function on huge files
  */
-fun File.forEachLine (charset : String = "UTF-8", closure : (line : String) -> Unit) : Unit {
-    val reader = BufferedReader(InputStreamReader(FileInputStream(this), charset))
+fun File.forEachLine (encoding : String, closure : (line : String) -> Unit) : Unit {
+    forEachLine(Charset.forName(encoding), closure)
+}
+
+/**
+ * Reads file line by line using the specified encoding defaulting to UTF-8.
+ *
+ * You may use this function on huge files
+ */
+fun File.forEachLine (encoding : Charset = defaultCharset, closure : (line : String) -> Unit) : Unit {
+    val reader = BufferedReader(InputStreamReader(FileInputStream(this), encoding))
     try {
         reader.forEachLine(closure)
     } finally {
@@ -201,14 +210,23 @@ fun File.forEachLine (charset : String = "UTF-8", closure : (line : String) -> U
 }
 
 /**
- * Reads file content as strings list. By default uses UTF-8 charset.
+ * Reads file content as strings list using the specified encoding.
  *
  * Do not use this function for huge files.
  */
-fun File.readLines(charset : String = "UTF-8") : List<String> {
+fun File.readLines(encoding : String) : List<String> {
+    return readLines(Charset.forName(encoding))
+}
+
+/**
+ * Reads file content as strings list using the specified encoding defaulting to UTF-8.
+ *
+ * Do not use this function for huge files.
+ */
+fun File.readLines(encoding : Charset = defaultCharset) : List<String> {
     val rs = ArrayList<String>()
 
-    this.forEachLine(charset) { (line : String) : Unit ->
+    this.forEachLine(encoding) { (line : String) : Unit ->
         rs.add(line);
     }
 
