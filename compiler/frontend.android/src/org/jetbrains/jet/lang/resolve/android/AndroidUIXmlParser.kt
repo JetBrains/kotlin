@@ -45,6 +45,8 @@ import com.intellij.psi.PsiFile
 import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
 import com.intellij.openapi.diagnostic.Log
+import org.xml.sax.SAXException
+import com.intellij.openapi.diagnostic.Logger
 
 abstract class AndroidUIXmlParser {
 
@@ -61,15 +63,22 @@ abstract class AndroidUIXmlParser {
     protected abstract val searchPath: String?
     protected abstract val androidAppPackage: String
 
-    private val saxParser = initSAX()
+    protected val saxParser: SAXParser = initSAX()
+
+    protected fun initSAX(): SAXParser {
+        val saxFactory = SAXParserFactory.newInstance()
+        saxFactory?.setNamespaceAware(true)
+        return saxFactory!!.newSAXParser()
+    }
 
     private val fileCache = HashMap<PsiFile, String>()
     private var lastCachedPsi: JetFile? = null
-    private val fileModificationTime = HashMap<PsiFile, Long>()
+    protected val fileModificationTime: HashMap<PsiFile, Long> = HashMap()
 
     protected val filesToProcess: Queue<PsiFile> = ConcurrentLinkedQueue()
     protected var listenerSetUp: Boolean = false
-    protected volatile var invalidateCaches: Boolean = false
+
+    protected val LOG: Logger = Logger.getInstance(this.javaClass)
 
     public fun parseToString(): String? {
         val cacheState = doParse()
@@ -100,11 +109,6 @@ abstract class AndroidUIXmlParser {
         return file.extension == "xml"
     }
 
-    private fun initSAX(): SAXParser {
-        val saxFactory = SAXParserFactory.newInstance()
-        saxFactory?.setNamespaceAware(true)
-        return saxFactory!!.newSAXParser()
-    }
 
     private fun searchForUIXml(path: String): Collection<File> {
         return searchForUIXml(arrayListOf(File(path)))
@@ -141,26 +145,17 @@ abstract class AndroidUIXmlParser {
     }
 
     private fun parseSingleFile(file: PsiFile): String {
-        val ids: MutableCollection<AndroidWidget> = ArrayList()
-        val handler = AndroidXmlHandler({ id, wClass -> ids.add(AndroidWidget(id, wClass)) })
+        val res = parseSingleFileImpl(file)
         fileModificationTime[file] = file.getModificationStamp()
-        try {
-            val source = InputSource(ByteArrayInputStream(file.getText()!!.getBytes("utf-8")))
-            saxParser.parse(source, handler)
-            val res = produceKotlinProperties(KotlinStringWriter(), ids).toString()
-            fileCache[file] = res
-            return res
-        } catch (e: Exception) {
-            Log.print(e.getMessage())
-            invalidateCaches()
-            return ""
-        }
+        fileCache[file] = res
+        return res
     }
+
+    abstract fun parseSingleFileImpl(file: PsiFile): String
 
     private fun doParse(): CacheAction? {
         if (searchPath == null || searchPath == "") return null
         lazySetup()
-        if (invalidateCaches) invalidateCaches()
         var overallCacheMiss = false
         var file = filesToProcess.poll()
         while (file != null) {
@@ -182,7 +177,6 @@ abstract class AndroidUIXmlParser {
         fileCache.clear()
         fileModificationTime.clear()
         lastCachedPsi = null
-        invalidateCaches = false
     }
 
     protected fun populateQueue(project: Project) {
@@ -214,7 +208,7 @@ abstract class AndroidUIXmlParser {
         }
     }
 
-    private fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
+    protected fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
         for (id in ids) {
             val body = arrayListOf("return findViewById(0) as ${id.className}")
             kw.writeImmutableExtensionProperty(receiver = "Activity",

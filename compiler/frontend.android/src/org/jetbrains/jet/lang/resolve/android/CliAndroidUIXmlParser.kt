@@ -19,14 +19,33 @@ package org.jetbrains.jet.lang.resolve.android
 import com.intellij.openapi.vfs.VirtualFileManager
 import java.util.ArrayList
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import java.io.ByteArrayInputStream
+import org.xml.sax.InputSource
+import javax.xml.parsers.SAXParser
+import javax.xml.parsers.SAXParserFactory
 
 class CliAndroidUIXmlParser(val project: Project, override val searchPath: String?): AndroidUIXmlParser() {
 
     override var androidAppPackage: String = ""
 
+
     override fun lazySetup() {
         populateQueue(project)
         androidAppPackage = readManifest()._package
+    }
+
+    override fun parseSingleFileImpl(file: PsiFile): String {
+        val ids: MutableCollection<AndroidWidget> = ArrayList()
+        val handler = AndroidXmlHandler({ id, wClass -> ids.add(AndroidWidget(id, wClass)) })
+        try {
+            val source = InputSource(ByteArrayInputStream(file.getText()!!.getBytes("utf-8")))
+            saxParser.parse(source, handler)
+            return produceKotlinProperties(KotlinStringWriter(), ids).toString()
+        } catch (e: Throwable) {
+            LOG.error(e)
+            return ""
+        }
     }
 }
 

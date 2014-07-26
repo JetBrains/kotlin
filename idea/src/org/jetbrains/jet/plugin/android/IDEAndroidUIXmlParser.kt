@@ -22,6 +22,9 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import java.util.ArrayList
 import com.intellij.openapi.vfs.VirtualFileAdapter
 import com.intellij.openapi.vfs.VirtualFileEvent
+import com.intellij.psi.PsiFile
+import org.jetbrains.jet.lang.resolve.android.AndroidWidget
+import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
 
 class IDEAndroidUIXmlParser(val project: Project): AndroidUIXmlParser() {
     override val searchPath: String? = project.getBasePath() + "/res/layout/"
@@ -32,6 +35,12 @@ class IDEAndroidUIXmlParser(val project: Project): AndroidUIXmlParser() {
         androidAppPackage = readManifest()._package
         populateQueue(project)
         listenerSetUp = true
+    }
+
+    override fun parseSingleFileImpl(file: PsiFile): String {
+        val ids: MutableCollection<AndroidWidget> = ArrayList()
+        file.accept(AndroidXmlVisitor({ id, wClass -> ids.add(AndroidWidget(id, wClass))}))
+        return produceKotlinProperties(KotlinStringWriter(), ids).toString()
     }
 }
 
