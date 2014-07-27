@@ -16,22 +16,22 @@
 
 package org.jetbrains.jet.repl;
 
-import com.google.common.collect.Lists;
-import com.google.common.io.CharStreams;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.utils.UtilsPackage;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ReplSessionTestFile {
+    private static final Pattern START_PATTERN = Pattern.compile(">>>( *)(.*)$");
+    private static final Pattern SUBSTRING_PATTERN = Pattern.compile("substring: (.*)");
 
     public enum MatchType {
         EQUALS,
@@ -39,88 +39,50 @@ public class ReplSessionTestFile {
     }
 
     public static class OneLine {
-        @NotNull
-        private final String code;
-        @NotNull
-        private final String expected;
-        @NotNull
-        private final MatchType matchType;
+        public final String code;
+        public final String expected;
+        public final MatchType matchType;
 
         public OneLine(@NotNull String code, @NotNull String expected, @NotNull MatchType matchType) {
             this.code = code;
             this.expected = expected;
             this.matchType = matchType;
         }
-
-        @NotNull
-        public String getCode() {
-            return code;
-        }
-
-        @NotNull
-        public String getExpected() {
-            return expected;
-        }
-
-        @NotNull
-        public MatchType getMatchType() {
-            return matchType;
-        }
     }
 
     @NotNull
-    private final List<OneLine> lines;
-
-    public ReplSessionTestFile(@NotNull List<OneLine> lines) {
-        this.lines = lines;
-    }
-
-    @NotNull
-    public List<OneLine> getLines() {
-        return lines;
-    }
-
-    public static ReplSessionTestFile load(@NotNull File file) {
+    public static List<OneLine> load(@NotNull File file) {
+        Queue<String> lines;
         try {
-            FileInputStream inputStream = new FileInputStream(file);
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
-                List<String> lines = CharStreams.readLines(reader);
-                return load(new SimpleLinesParser(lines));
-            } finally {
-                inputStream.close();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            lines = new ArrayDeque<String>(FileUtil.loadLines(file));
         }
-    }
+        catch (IOException e) {
+            throw UtilsPackage.rethrow(e);
+        }
 
-    private static ReplSessionTestFile load(@NotNull SimpleLinesParser parser) throws IOException {
-        List<OneLine> list = Lists.newArrayList();
+        List<OneLine> result = new ArrayList<OneLine>();
 
-        Pattern startPattern = Pattern.compile(">>>( |$)(.*)");
-        Pattern substringPattern = Pattern.compile("substring: (.*)");
-
-        while (!parser.lookingAtEof()) {
-            Matcher matcher = parser.next(startPattern);
+        while (!lines.isEmpty()) {
+            String line = lines.poll();
+            Matcher matcher = START_PATTERN.matcher(line);
+            assert matcher.matches() : "Line doesn't match start pattern: " + line;
             String code = matcher.group(2);
 
-            StringBuilder value = new StringBuilder();
-
-            Matcher substringMatcher = parser.lookingAt(substringPattern);
-            if (substringMatcher != null) {
-                list.add(new OneLine(code, substringMatcher.group(1), MatchType.SUBSTRING));
-                parser.next();
+            Matcher substringMatcher = SUBSTRING_PATTERN.matcher(lines.peek());
+            if (substringMatcher.matches()) {
+                result.add(new OneLine(code, substringMatcher.group(1), MatchType.SUBSTRING));
+                lines.poll();
                 continue;
             }
 
-            while (!parser.lookingAtEof() && parser.lookingAt(startPattern) == null) {
-                value.append(parser.next()).append("\n");
+            StringBuilder value = new StringBuilder();
+            while (!lines.isEmpty() && !START_PATTERN.matcher(lines.peek()).matches()) {
+                value.append(lines.poll()).append("\n");
             }
 
-            list.add(new OneLine(code, value.toString(), MatchType.EQUALS));
+            result.add(new OneLine(code, value.toString(), MatchType.EQUALS));
         }
-        return new ReplSessionTestFile(list);
-    }
 
+        return result;
+    }
 }

@@ -28,6 +28,9 @@ import org.junit.Assert;
 
 import java.io.File;
 
+import static org.jetbrains.jet.repl.ReplSessionTestFile.MatchType.EQUALS;
+import static org.jetbrains.jet.repl.ReplSessionTestFile.MatchType.SUBSTRING;
+
 public abstract class AbstractReplInterpreterTest extends UsefulTestCase {
     static {
         System.setProperty("java.awt.headless", "true");
@@ -37,14 +40,10 @@ public abstract class AbstractReplInterpreterTest extends UsefulTestCase {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
         ReplInterpreter repl = new ReplInterpreter(getTestRootDisposable(), configuration);
 
-        ReplSessionTestFile file = ReplSessionTestFile.load(new File(path));
-        for (ReplSessionTestFile.OneLine line : file.getLines()) {
-            String code = line.getCode();
+        for (ReplSessionTestFile.OneLine line : ReplSessionTestFile.load(new File(path))) {
+            String expected = StringUtil.convertLineSeparators(line.expected).replaceFirst("\n$", "");
 
-            String expected = StringUtil.convertLineSeparators(line.getExpected()).replaceFirst("\n$", "");
-            ReplSessionTestFile.MatchType matchType = line.getMatchType();
-
-            ReplInterpreter.LineResult lineResult = repl.eval(code);
+            ReplInterpreter.LineResult lineResult = repl.eval(line.code);
             Object actual;
             if (lineResult.getType() == ReplInterpreter.LineResultType.SUCCESS) {
                 actual = lineResult.getValue();
@@ -57,10 +56,10 @@ public abstract class AbstractReplInterpreterTest extends UsefulTestCase {
             }
             String actualString = StringUtil.convertLineSeparators(actual != null ? actual.toString() : "null").replaceFirst("\n$", "");
 
-            if (matchType == ReplSessionTestFile.MatchType.EQUALS) {
-                Assert.assertEquals("after evaluation of: " + code, expected, actualString);
+            if (line.matchType == EQUALS) {
+                Assert.assertEquals("after evaluation of: " + line.code, expected, actualString);
             }
-            else if (matchType == ReplSessionTestFile.MatchType.SUBSTRING) {
+            else if (line.matchType == SUBSTRING) {
                 Assert.assertTrue("must contain substring: " + expected + ", actual: " + actualString, actualString.contains(expected));
             }
         }
