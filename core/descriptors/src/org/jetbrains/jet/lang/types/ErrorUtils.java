@@ -233,7 +233,7 @@ public class ErrorUtils {
 
             ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE);
             errorConstructor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
-                                        Visibilities.INTERNAL, false);
+                                        Visibilities.INTERNAL);
             JetScope memberScope = createErrorScope(getName().asString());
             errorConstructor.setReturnType(
                     new ErrorTypeImpl(

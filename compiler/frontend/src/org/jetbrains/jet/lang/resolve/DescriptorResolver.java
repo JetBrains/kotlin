@@ -1277,12 +1277,9 @@ public class DescriptorResolver {
         parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         ConstructorDescriptorImpl constructor = constructorDescriptor.initialize(
                 typeParameters,
-                resolveValueParameters(
-                        constructorDescriptor,
-                        parameterScope,
-                        valueParameters, trace),
-                resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)),
-                isConstructorOfStaticNestedClass(constructorDescriptor));
+                resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace),
+                resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor))
+        );
         if (isAnnotationClass(classDescriptor)) {
             CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace);
         }

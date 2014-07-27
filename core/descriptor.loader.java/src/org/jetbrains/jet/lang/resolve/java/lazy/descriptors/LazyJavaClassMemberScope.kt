@@ -56,7 +56,7 @@ public class LazyJavaClassMemberScope(
     internal val _constructors = c.storageManager.createLazyValue {
         jClass.getConstructors().flatMap {
             jCtor ->
-            val constructor = resolveConstructor(jCtor, getContainingDeclaration(), jClass.isStatic())
+            val constructor = resolveConstructor(jCtor, getContainingDeclaration())
             val samAdapter = resolveSamAdapter(constructor)
             if (samAdapter != null) {
                 samAdapter.setReturnType(containingDeclaration.getDefaultType())
@@ -113,7 +113,7 @@ public class LazyJavaClassMemberScope(
                else null
     }
 
-    private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor, isStaticClass: Boolean): JavaConstructorDescriptor {
+    private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor): JavaConstructorDescriptor {
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
                 classDescriptor, Annotations.EMPTY, /* isPrimary = */ false, c.sourceElementFactory.source(constructor)
         )
@@ -125,8 +125,7 @@ public class LazyJavaClassMemberScope(
         constructorDescriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
                 effectiveSignature.getValueParameters(),
-                constructor.getVisibility(),
-                isStaticClass
+                constructor.getVisibility()
         )
         constructorDescriptor.setHasStableParameterNames(effectiveSignature.hasStableParameterNames())
         constructorDescriptor.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
@@ -157,7 +156,7 @@ public class LazyJavaClassMemberScope(
                               else Collections.emptyList<ValueParameterDescriptor>()
         constructorDescriptor.setHasSynthesizedParameterNames(false)
 
-        constructorDescriptor.initialize(typeParameters, valueParameters, getConstructorVisibility(classDescriptor), jClass.isStatic())
+        constructorDescriptor.initialize(typeParameters, valueParameters, getConstructorVisibility(classDescriptor))
         constructorDescriptor.setHasStableParameterNames(true)
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
         c.javaResolverCache.recordConstructor(jClass, constructorDescriptor);

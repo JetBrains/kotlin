@@ -210,12 +210,7 @@ public class SingleAbstractMethodUtils {
                     @NotNull List<ValueParameterDescriptor> valueParameters,
                     @Nullable JetType returnType
             ) {
-                result.initialize(
-                        typeParameters,
-                        valueParameters,
-                        original.getVisibility(),
-                        original.getExpectedThisObject() == ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER
-                );
+                result.initialize(typeParameters, valueParameters, original.getVisibility());
             }
         });
     }

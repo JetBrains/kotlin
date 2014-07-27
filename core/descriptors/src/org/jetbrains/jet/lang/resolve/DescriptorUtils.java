@@ -315,10 +315,6 @@ public class DescriptorUtils {
         return receiverParameterDescriptor == null ? null : receiverParameterDescriptor.getType();
     }
 
-    public static boolean isConstructorOfStaticNestedClass(@Nullable CallableDescriptor descriptor) {
-        return descriptor instanceof ConstructorDescriptor && isStaticNestedClass(descriptor.getContainingDeclaration());
-    }
-
     /**
      * @return true if descriptor is a class inside another class and does not have access to the outer class
      */

@@ -281,7 +281,7 @@ public class TaskPrioritizer {
             @NotNull Call call
     ) {
         for (D extension : descriptors) {
-            if (DescriptorUtils.isConstructorOfStaticNestedClass(extension)) {
+            if (extension instanceof ConstructorDescriptor && DescriptorUtils.isStaticNestedClass(extension.getContainingDeclaration())) {
                 // We don't want static nested classes' constructors to be resolved with expectedThisObject
                 continue;
             }

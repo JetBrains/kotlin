@@ -167,13 +167,9 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
     public static ConstructorDescriptorImpl createConstructor(
             @NotNull ScriptDescriptor scriptDescriptor, @NotNull List<ValueParameterDescriptor> valueParameters
     ) {
-        return ConstructorDescriptorImpl.create(scriptDescriptor.getClassDescriptor(), Annotations.EMPTY, true, SourceElement.NO_SOURCE)
-                .initialize(
-                        Collections.<TypeParameterDescriptor>emptyList(),
-                        valueParameters,
-                        Visibilities.PUBLIC,
-                        false
-                );
+        return ConstructorDescriptorImpl
+                .create(scriptDescriptor.getClassDescriptor(), Annotations.EMPTY, true, SourceElement.NO_SOURCE)
+                .initialize(Collections.<TypeParameterDescriptor>emptyList(), valueParameters, Visibilities.PUBLIC);
     }
 
     @NotNull

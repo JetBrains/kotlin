@@ -59,19 +59,20 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     public ConstructorDescriptorImpl initialize(
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @NotNull Visibility visibility,
-            boolean isStatic
+            @NotNull Visibility visibility
     ) {
-        super.initialize(null, isStatic ? NO_RECEIVER_PARAMETER : getExpectedThisObject(getContainingDeclaration()), typeParameters,
-                         unsubstitutedValueParameters, null, Modality.FINAL, visibility);
+        super.initialize(null, calculateExpectedThisObject(), typeParameters, unsubstitutedValueParameters, null, Modality.FINAL, visibility);
         return this;
     }
 
     @Nullable
-    private static ReceiverParameterDescriptor getExpectedThisObject(@NotNull ClassDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof ClassDescriptor) {
-            return ((ClassDescriptor) containingDeclaration).getThisAsReceiverParameter();
+    private ReceiverParameterDescriptor calculateExpectedThisObject() {
+        ClassDescriptor classDescriptor = getContainingDeclaration();
+        if (classDescriptor.isInner()) {
+            DeclarationDescriptor classContainer = classDescriptor.getContainingDeclaration();
+            if (classContainer instanceof ClassDescriptor) {
+                return ((ClassDescriptor) classContainer).getThisAsReceiverParameter();
+            }
         }
         return NO_RECEIVER_PARAMETER;
     }
