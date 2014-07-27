@@ -45,7 +45,8 @@ public class ReplFromTerminal {
             public void run() {
                 try {
                     replInterpreter = new ReplInterpreter(disposable, compilerConfiguration);
-                } catch (Throwable e) {
+                }
+                catch (Throwable e) {
                     replInitializationFailed = e;
                 }
                 synchronized (waitRepl) {
@@ -58,7 +59,8 @@ public class ReplFromTerminal {
             consoleReader = new ConsoleReader("kotlin", System.in, System.out, null);
             consoleReader.setHistoryEnabled(true);
             consoleReader.setHistory(new FileHistory(new File(new File(System.getProperty("user.home")), ".kotlin_history")));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw UtilsPackage.rethrow(e);
         }
     }
@@ -71,7 +73,8 @@ public class ReplFromTerminal {
             while (replInterpreter == null && replInitializationFailed == null) {
                 try {
                     waitRepl.wait();
-                } catch (Throwable e) {
+                }
+                catch (Throwable e) {
                     throw UtilsPackage.rethrow(e);
                 }
             }
@@ -93,12 +96,15 @@ public class ReplFromTerminal {
                     break;
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw UtilsPackage.rethrow(e);
-        } finally {
+        }
+        finally {
             try {
                 ((FileHistory) consoleReader.getHistory()).flush();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.err.println("failed to flush history: " + e);
             }
         }

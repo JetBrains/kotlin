@@ -30,7 +30,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFile;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorToString;
@@ -56,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.storage.ExceptionTracker;
@@ -79,40 +79,39 @@ import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClass
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
 
 public class ReplInterpreter {
-
     private int lineNumber = 0;
+
     @Nullable
     private JetScope lastLineScope;
     private final List<EarlierLine> earlierLines = Lists.newArrayList();
     private final List<String> previousIncompleteLines = Lists.newArrayList();
     private final ReplClassLoader classLoader;
 
-    @NotNull
-    private final InjectorForTopDownAnalyzerForJvm injector;
-    @NotNull
-    private final TopDownAnalysisContext topDownAnalysisContext;
-    @NotNull
-    private final JetCoreEnvironment jetCoreEnvironment;
-    @NotNull
+    private final PsiFileFactoryImpl psiFileFactory;
     private final BindingTraceContext trace;
-    @NotNull
     private final ModuleDescriptorImpl module;
+    private final TopDownAnalysisContext topDownAnalysisContext;
+    private final TopDownAnalyzer topDownAnalyzer;
 
     public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        jetCoreEnvironment = JetCoreEnvironment.createForProduction(disposable, configuration);
-        Project project = jetCoreEnvironment.getProject();
-        trace = new BindingTraceContext();
-        module = AnalyzerFacadeForJVM.createJavaModule("<repl>");
+        JetCoreEnvironment environment = JetCoreEnvironment.createForProduction(disposable, configuration);
+        Project project = environment.getProject();
+        this.psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
+        this.trace = new BindingTraceContext();
+        this.module = AnalyzerFacadeForJVM.createJavaModule("<repl>");
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.createForLocalDeclarations(
                 new LockBasedStorageManager(),
                 new ExceptionTracker(), // dummy
                 Predicates.<PsiFile>alwaysTrue()
         );
-        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
-        topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
+        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
+        this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
+        this.topDownAnalyzer = injector.getTopDownAnalyzer();
+
         module.initialize(new CompositePackageFragmentProvider(
-                Arrays.asList(injector.getTopDownAnalyzer().getPackageFragmentProvider(),
-                              injector.getJavaDescriptorResolver().getPackageFragmentProvider()
+                Arrays.asList(
+                        topDownAnalyzer.getPackageFragmentProvider(),
+                        injector.getJavaDescriptorResolver().getPackageFragmentProvider()
                 )
         ));
         module.addDependencyOnModule(module);
@@ -120,7 +119,6 @@ public class ReplInterpreter {
         module.seal();
 
         List<URL> classpath = Lists.newArrayList();
-
         for (File file : configuration.getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             try {
                 classpath.add(file.toURI().toURL());
@@ -130,7 +128,7 @@ public class ReplInterpreter {
             }
         }
 
-        classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[0])));
+        this.classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[classpath.size()])));
     }
 
     private static void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
@@ -144,11 +142,9 @@ public class ReplInterpreter {
     }
 
     public static class LineResult {
-
         private final Object value;
         private final boolean unit;
         private final String errorText;
-        @NotNull
         private final LineResultType type;
 
         private LineResult(Object value, boolean unit, String errorText, @NotNull LineResultType type) {
@@ -164,7 +160,7 @@ public class ReplInterpreter {
         }
 
         private void checkSuccessful() {
-            if (!(getType() == LineResultType.SUCCESS)) {
+            if (getType() != LineResultType.SUCCESS) {
                 throw new IllegalStateException("it is error");
             }
         }
@@ -193,7 +189,7 @@ public class ReplInterpreter {
                 errorText = "<unknown error>";
             }
             else if (!errorText.endsWith("\n")) {
-                errorText = errorText + "\n";
+                errorText += "\n";
             }
             return new LineResult(null, false, errorText, LineResultType.ERROR);
         }
@@ -212,13 +208,14 @@ public class ReplInterpreter {
 
         StringBuilder fullText = new StringBuilder();
         for (String prevLine : previousIncompleteLines) {
-            fullText.append(prevLine + "\n");
+            fullText.append(prevLine).append("\n");
         }
         fullText.append(line);
 
         LightVirtualFile virtualFile = new LightVirtualFile("line" + lineNumber + JetParserDefinition.STD_SCRIPT_EXT, JetLanguage.INSTANCE, fullText.toString());
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        JetFile psiFile = (JetFile) psiFileFactory.trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        assert psiFile != null : "Script file not analyzed at line " + lineNumber + ": " + fullText;
 
         MessageCollectorToString errorCollector = new MessageCollectorToString();
 
@@ -239,6 +236,7 @@ public class ReplInterpreter {
         prepareForTheNextReplLine(topDownAnalysisContext);
         trace.clearDiagnostics();
 
+        //noinspection ConstantConditions
         psiFile.getScript().putUserData(ScriptHeaderResolver.PRIORITY_KEY, lineNumber);
 
         ScriptDescriptor scriptDescriptor = doAnalyze(psiFile, errorCollector);
@@ -252,15 +250,12 @@ public class ReplInterpreter {
             earlierScripts.add(Pair.create(earlierLine.getScriptDescriptor(), earlierLine.getClassType()));
         }
 
-        BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), module).getBindingContext();
-        GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.BINARIES,
-                                                              module, bindingContext, Collections.singletonList(psiFile)
-        );
+        GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.BINARIES,
+                                                    module, trace.getBindingContext(), Collections.singletonList(psiFile));
 
-        compileScript(psiFile.getScript(), scriptClassType, earlierScripts, generationState,
-                      CompilationErrorHandler.THROW_EXCEPTION);
+        compileScript(psiFile.getScript(), scriptClassType, earlierScripts, state, CompilationErrorHandler.THROW_EXCEPTION);
 
-        for (OutputFile outputFile : generationState.getFactory().asList()) {
+        for (OutputFile outputFile : state.getFactory().asList()) {
             classLoader.addClass(JvmClassName.byInternalName(outputFile.getRelativePath().replaceFirst("\\.class$", "")), outputFile.asByteArray());
         }
 
@@ -279,7 +274,8 @@ public class ReplInterpreter {
             Object scriptInstance;
             try {
                 scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
-            } catch (Throwable e) {
+            }
+            catch (Throwable e) {
                 return LineResult.error(Throwables.getStackTraceAsString(e));
             }
             Field rvField = scriptClass.getDeclaredField("rv");
@@ -288,13 +284,10 @@ public class ReplInterpreter {
 
             earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassType));
 
-            return LineResult.successful(
-                        rv,
-                        KotlinBuiltIns.getInstance().getUnitType().equals(
-                                scriptDescriptor.getScriptCodeDescriptor().getReturnType()
-                        )
-            );
-        } catch (Throwable e) {
+            JetType returnType = scriptDescriptor.getScriptCodeDescriptor().getReturnType();
+            return LineResult.successful(rv, returnType != null && KotlinBuiltIns.getInstance().isUnit(returnType));
+        }
+        catch (Throwable e) {
             PrintWriter writer = new PrintWriter(System.err);
             classLoader.dumpClasses(writer);
             writer.flush();
@@ -306,7 +299,8 @@ public class ReplInterpreter {
     private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull MessageCollector messageCollector) {
         WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, module,
-                new TraceBasedRedeclarationHandler(trace), "Root scope in analyzePackage");
+                new TraceBasedRedeclarationHandler(trace), "Root scope in analyzePackage"
+        );
 
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
@@ -322,8 +316,7 @@ public class ReplInterpreter {
 
         // dummy builder is used because "root" is module descriptor,
         // packages added to module explicitly in
-        injector.getTopDownAnalyzer().doProcess(topDownAnalysisContext,
-                                                scope, new PackageLikeBuilderDummy(), Collections.singletonList(psiFile));
+        topDownAnalyzer.doProcess(topDownAnalysisContext, scope, new PackageLikeBuilderDummy(), Collections.singletonList(psiFile));
 
         boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext().getDiagnostics(), messageCollector);
         if (hasErrors) {
@@ -373,7 +366,8 @@ public class ReplInterpreter {
                 state,
                 script.getContainingJetFile().getPackageFqName(),
                 Collections.singleton(script.getContainingJetFile()),
-                errorHandler);
+                errorHandler
+        );
     }
 
 }
