@@ -29,7 +29,10 @@ import java.util.regex.Pattern
 import org.junit.Assert
 
 private val START_PATTERN = Pattern.compile(">>>( *)(.*)$")
+private val INCOMPLETE_PATTERN = Pattern.compile("\\.\\.\\.( *)(.*)$")
 private val SUBSTRING_PATTERN = Pattern.compile("substring: (.*)")
+
+private val INCOMPLETE_LINE_MESSAGE = "incomplete line"
 
 public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
     {
@@ -50,15 +53,26 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
         while (lines.isNotEmpty()) {
             val line = lines.poll()!!
-            val matcher = START_PATTERN.matcher(line)
-            assert(matcher.matches()) { "Line doesn't match start pattern: $line" }
+            var matcher = START_PATTERN.matcher(line)
+            if (!matcher.matches()) {
+                matcher = INCOMPLETE_PATTERN.matcher(line)
+            }
+            assert(matcher.matches()) { "Line doesn't begin with \">>>\" or \"...\": $line" }
             val code = matcher.group(2)!!
 
             if (lines.isNotEmpty()) {
-                val substringMatcher = SUBSTRING_PATTERN.matcher(lines.peek()!!)
+                val nextLine = lines.peek()!!
+
+                val substringMatcher = SUBSTRING_PATTERN.matcher(nextLine)
                 if (substringMatcher.matches()) {
                     result.add(OneLine(code, substringMatcher.group(1)!!, MatchType.SUBSTRING))
                     lines.poll()
+                    continue
+                }
+
+                val incompleteMatcher = INCOMPLETE_PATTERN.matcher(nextLine)
+                if (incompleteMatcher.matches()) {
+                    result.add(OneLine(code, INCOMPLETE_LINE_MESSAGE, MatchType.EQUALS))
                     continue
                 }
             }
@@ -85,7 +99,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
             val actual = when (lineResult.getType()) {
                 ReplInterpreter.LineResultType.SUCCESS -> lineResult.getValue()?.toString() ?: ""
                 ReplInterpreter.LineResultType.ERROR -> lineResult.getErrorText()
-                ReplInterpreter.LineResultType.INCOMPLETE -> "incomplete"
+                ReplInterpreter.LineResultType.INCOMPLETE -> INCOMPLETE_LINE_MESSAGE
             }
             val actualString = StringUtil.convertLineSeparators(actual).replaceFirst("\n$", "")
 

@@ -1,5 +1,4 @@
 >>> fun clock() =
-incomplete
->>>     12
+...     12
 >>> clock()
 12

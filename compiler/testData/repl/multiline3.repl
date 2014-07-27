@@ -1,9 +1,6 @@
 >>> fun get7() =
-incomplete
->>>     4 +
-incomplete
->>>     2 +
-incomplete
->>>     1
+...     4 +
+...     2 +
+...     1
 >>> get7()
 7
