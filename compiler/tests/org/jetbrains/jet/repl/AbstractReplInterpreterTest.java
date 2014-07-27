@@ -116,7 +116,7 @@ public abstract class AbstractReplInterpreterTest extends UsefulTestCase {
             else {
                 actual = lineResult.getErrorText();
             }
-            String actualString = StringUtil.convertLineSeparators(actual != null ? actual.toString() : "null").replaceFirst("\n$", "");
+            String actualString = StringUtil.convertLineSeparators(actual != null ? actual.toString() : "").replaceFirst("\n$", "");
 
             if (line.matchType == MatchType.EQUALS) {
                 Assert.assertEquals("after evaluation of: " + line.code, expected, actualString);

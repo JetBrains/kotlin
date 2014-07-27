@@ -1,6 +1,5 @@
 >>> throw Exception("hi there")
 substring: Exception: hi there
 >>> fun foo() = 2
-null
 >>> foo()
 2

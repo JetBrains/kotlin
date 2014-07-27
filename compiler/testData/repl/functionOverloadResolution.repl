@@ -1,6 +1,4 @@
 >>> fun foo() = 10
-null
 >>> fun foo() = 11
-null
 >>> foo()
 11
