@@ -58,6 +58,7 @@ public class ReplFromTerminal {
         try {
             consoleReader = new ConsoleReader("kotlin", System.in, System.out, null);
             consoleReader.setHistoryEnabled(true);
+            consoleReader.setExpandEvents(false);
             consoleReader.setHistory(new FileHistory(new File(new File(System.getProperty("user.home")), ".kotlin_history")));
         }
         catch (Exception e) {
