@@ -72,4 +72,42 @@ class InvocationUtil {
 
         return (JsFunction) returnExpr;
     }
+
+    /**
+     * Tests if invocation is JavaScript call function
+     *
+     * @return true  if invocation is something like `x.call(thisReplacement)`
+     *         false otherwise
+     */
+    public static boolean isCallInvocation(JsInvocation invocation) {
+        JsExpression qualifier = invocation.getQualifier();
+        if (!(qualifier instanceof JsNameRef)) {
+            return false;
+        }
+
+        JsNameRef qualifierNameRef = (JsNameRef) qualifier;
+        return qualifierNameRef.getIdent().equals("call")
+               && invocation.getArguments().size() == 1;
+    }
+
+    public static boolean hasReceiver(@NotNull JsInvocation invocation) {
+        return getReceiverImpl(invocation) != null;
+    }
+
+    @NotNull
+    public static JsExpression getReceiver(@NotNull JsInvocation invocation) {
+        JsExpression receiver = getReceiverImpl(invocation);
+        assert receiver != null;
+        return receiver;
+    }
+
+    @Nullable
+    private static JsExpression getReceiverImpl(@NotNull JsInvocation invocation) {
+        JsExpression qualifier = invocation.getQualifier();
+        if (!(qualifier instanceof JsNameRef)) {
+            return null;
+        }
+
+        return  ((JsNameRef) qualifier).getQualifier();
+    }
 }

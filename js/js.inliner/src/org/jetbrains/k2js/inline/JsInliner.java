@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.IdentityHashMap;
 import java.util.Stack;
+import java.util.List;
 
 import static org.jetbrains.k2js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 
@@ -68,6 +69,31 @@ public class JsInliner extends JsVisitorWithContextImpl {
         @Override
         public FunctionContext getFunctionContext() {
             return functionContext;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression getThisReplacement(JsInvocation call) {
+            if (InvocationUtil.isCallInvocation(call)) {
+                return call.getArguments().get(0);
+            }
+
+            if (InvocationUtil.hasReceiver(call)) {
+                return InvocationUtil.getReceiver(call);
+            }
+
+            return JsLiteral.THIS;
+        }
+
+        @NotNull
+        @Override
+        public List<JsExpression> getArguments(JsInvocation call) {
+            List<JsExpression> arguments = call.getArguments();
+            if (InvocationUtil.isCallInvocation(call)) {
+                return arguments.subList(1, arguments.size());
+            }
+
+            return arguments;
         }
 
         @Override

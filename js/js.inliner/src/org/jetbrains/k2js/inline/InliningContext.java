@@ -19,6 +19,8 @@ package org.jetbrains.k2js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 interface InliningContext {
     @NotNull
     <T extends JsNode> RenamingContext<T> getRenamingContext();
@@ -28,6 +30,12 @@ interface InliningContext {
 
     @NotNull
     FunctionContext getFunctionContext();
+
+    @NotNull
+    JsExpression getThisReplacement(JsInvocation call);
+
+    @NotNull
+    List<JsExpression> getArguments(JsInvocation call);
 
     boolean isResultNeeded(JsInvocation call);
 }

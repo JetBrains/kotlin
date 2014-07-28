@@ -20,22 +20,26 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import static org.jetbrains.k2js.inline.InlinePackage.needToAlias;
 import static org.jetbrains.k2js.inline.InlinePackage.aliasArgumentsIfNeeded;
 import static org.jetbrains.k2js.inline.InlinePackage.renameLocals;
+import static org.jetbrains.k2js.inline.InlinePackage.replaceThisReference;
+import static org.jetbrains.k2js.inline.InlinePackage.hasThisReference;
 
 import java.util.*;
 
 class FunctionInlineMutator {
     private static final String BREAK_LABEL = "break_inlined";
     private static final String RESULT_LABEL = "result_inlined";
+    private static final String THIS_ALIAS = "self";
 
-    private JsBlock body;
-    private final boolean isResultNeeded;
+    private final JsInvocation call;
+    private final InliningContext inliningContext;
     private final JsFunction invokedFunction;
-    private final List<JsExpression> arguments;
-    private final List<JsParameter> parameters;
+    private final boolean isResultNeeded;
     private final RenamingContext<JsBlock> renamingContext;
     private final InsertionPoint<JsStatement> insertionPoint;
+    private JsBlock body;
     private JsNameRef resultExpr = null;
     private JsLabel breakLabel = null;
 
@@ -61,21 +65,42 @@ class FunctionInlineMutator {
     }
 
     private FunctionInlineMutator(@NotNull JsInvocation call, @NotNull InliningContext inliningContext) {
+        this.inliningContext = inliningContext;
+        this.call = call;
+
         FunctionContext functionContext = inliningContext.getFunctionContext();
         invokedFunction = functionContext.getFunctionDefinition(call);
         body = invokedFunction.getBody().deepCopy();
         isResultNeeded = inliningContext.isResultNeeded(call);
-        arguments = call.getArguments();
-        parameters = invokedFunction.getParameters();
         renamingContext = inliningContext.getRenamingContext();
         insertionPoint = inliningContext.getStatementContext().getInsertionPoint();
     }
 
     private void process() {
-        aliasArgumentsIfNeeded(renamingContext, arguments, parameters);
+        replaceThis();
+        aliasArgumentsIfNeeded(renamingContext, getArguments(), getParameters());
         renameLocals(renamingContext, invokedFunction);
         applyRenaming();
         replaceReturns();
+    }
+
+    private void replaceThis() {
+        if (!hasThisReference(body)) {
+            return;
+        }
+
+        JsExpression thisReplacement = inliningContext.getThisReplacement(call);
+        if (thisReplacement == JsLiteral.THIS) {
+            return;
+        }
+
+        if (needToAlias(thisReplacement)) {
+            JsName thisName = renamingContext.getFreshName(THIS_ALIAS);
+            renamingContext.newVar(thisName, thisReplacement);
+            thisReplacement = thisName.makeRef();
+        }
+
+        replaceThisReference(body, thisReplacement);
     }
 
     private void applyRenaming() {
@@ -116,5 +141,15 @@ class FunctionInlineMutator {
 
         assert resultExpr == null || resultExpr instanceof JsNameRef;
         ReplaceReturnVisitor.replaceReturn(body, (JsNameRef) resultExpr, breakLabelRef);
+    }
+
+    @NotNull
+    private List<JsExpression> getArguments() {
+        return inliningContext.getArguments(call);
+    }
+
+    @NotNull
+    private List<JsParameter> getParameters() {
+        return invokedFunction.getParameters();
     }
 }
