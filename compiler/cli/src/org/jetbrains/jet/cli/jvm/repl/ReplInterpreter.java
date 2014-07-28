@@ -222,7 +222,7 @@ public class ReplInterpreter {
         AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport =
                 AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorCollector);
 
-        if (syntaxErrorReport.isOnlyErrorAtEof()) {
+        if (syntaxErrorReport.isHasErrors() && syntaxErrorReport.isAllErrorsAtEof()) {
             previousIncompleteLines.add(line);
             return LineResult.incomplete();
         }
