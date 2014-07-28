@@ -35,12 +35,6 @@ public abstract class AbstractIterator<T>: Iterator<T> {
         return nextValue as T
     }
 
-    /** Returns the next element in the iteration without advancing the iteration */
-    fun peek(): T {
-        if (!hasNext()) throw NoSuchElementException()
-        return nextValue as T;
-    }
-
     private fun tryToComputeNext(): Boolean {
         state = State.Failed
         computeNext();
