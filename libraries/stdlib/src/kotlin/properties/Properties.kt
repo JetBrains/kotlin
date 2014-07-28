@@ -9,8 +9,6 @@ public class ChangeEvent(
         public val oldValue: Any?,
         public val newValue: Any?
 ) {
-    var propogationId: Any? = null
-
     override fun toString(): String = "ChangeEvent($name, $oldValue, $newValue)"
 }
 
