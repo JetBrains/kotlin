@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import org.jetbrains.annotations.NotNull;
+import com.intellij.util.SmartList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +22,11 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     public JsBlock(JsStatement statement) {
-        this(Collections.singletonList(statement));
+        this(new SmartList<JsStatement>(statement));
     }
 
     public JsBlock(JsStatement... statements) {
-        this(Arrays.asList(statements));
+        this(new SmartList<JsStatement>(statements));
     }
 
     public JsBlock(@NotNull List<JsStatement> statements) {
