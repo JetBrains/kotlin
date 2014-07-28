@@ -13,7 +13,7 @@ fun foo(a: Int) {
     println(c)
 }
 
-fun unit(a: Int, b: Int) {
+private fun unit(a: Int, b: Int) {
     if (a > 0) {
         println(a)
     }

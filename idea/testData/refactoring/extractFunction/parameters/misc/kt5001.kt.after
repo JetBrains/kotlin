@@ -10,7 +10,7 @@ fun main(args: Array<String>) {
     else false
 }
 
-fun b(): Boolean {
+private fun b(): Boolean {
     val al = 0
     return al.bar(1)
 }

@@ -3,6 +3,6 @@
 val n = 1
 fun foo(a: Int, b: Int = { i(a) }) = a + b - 1
 
-fun i(a: Int): Int {
+private fun i(a: Int): Int {
     return a + n
 }

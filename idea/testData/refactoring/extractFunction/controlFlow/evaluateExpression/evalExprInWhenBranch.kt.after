@@ -10,6 +10,6 @@ fun foo(a: Int): Int {
     }
 }
 
-fun i(b: Int): Int {
+private fun i(b: Int): Int {
     return b
 }

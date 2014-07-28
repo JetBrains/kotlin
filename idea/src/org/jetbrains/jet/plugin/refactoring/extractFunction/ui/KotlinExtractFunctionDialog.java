@@ -29,8 +29,6 @@ import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClassBody;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 import org.jetbrains.jet.plugin.refactoring.RefactoringPackage;
@@ -81,8 +79,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private boolean isVisibilitySectionAvailable() {
-        PsiElement target = originalDescriptor.getDescriptor().getExtractionData().getTargetSibling().getParent();
-        return target instanceof JetClassBody || target instanceof JetFile;
+        return ExtractFunctionPackage.isVisibilityApplicable(originalDescriptor.getDescriptor().getExtractionData());
     }
 
     private String getFunctionName() {
@@ -132,7 +129,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         boolean enableVisibility = isVisibilitySectionAvailable();
         visibilityBox.setEnabled(enableVisibility);
         if (enableVisibility) {
-            visibilityBox.setSelectedItem("private");
+            visibilityBox.setSelectedItem(originalDescriptor.getDescriptor().getVisibility());
         }
         visibilityBox.addItemListener(
                 new ItemListener() {

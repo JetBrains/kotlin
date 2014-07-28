@@ -12,7 +12,7 @@ fun foo(a: Int): Int {
     return 1
 }
 
-fun b(a: Int, b: Int): Boolean {
+private fun b(a: Int, b: Int): Boolean {
     if (a + b > 0) return true
     else {
         println(a - b)

@@ -7,7 +7,7 @@ fun foo(a: Int) {
     unit(a)
 }
 
-fun unit(a: Int) {
+private fun unit(a: Int) {
     var t = a
     while (t > 0) {
         if (t == 2) continue

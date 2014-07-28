@@ -6,7 +6,7 @@ fun main(args: Array<String>) {
     }
 }
 
-fun i(): Int {
+private fun i(): Int {
     val a = 1
     return a
 }

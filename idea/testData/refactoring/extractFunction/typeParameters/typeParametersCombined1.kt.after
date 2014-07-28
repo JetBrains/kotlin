@@ -15,6 +15,6 @@ class A<T: Data>(val t: T) {
     }
 }
 
-fun <T : Data, U : Data, V : Data> i(a: A<T>, b: A.B<U>, v: V): Int {
+private fun <T : Data, U : Data, V : Data> i(a: A<T>, b: A.B<U>, v: V): Int {
     return a.t.x + b.u.x + v.x
 }

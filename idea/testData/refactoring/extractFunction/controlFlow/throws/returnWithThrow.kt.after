@@ -9,7 +9,7 @@ fun foo(a: Int): Int {
     return i(a, b)
 }
 
-fun i(a: Int, b: Int): Int {
+private fun i(a: Int, b: Int): Int {
     if (a > 0) throw Exception("") else return a + b
     return a - b
 }

@@ -13,7 +13,7 @@ class MyClass {
     }
 }
 
-fun i(): Int {
+private fun i(): Int {
     MyClass.coFun()
     return MyClass.coProp + 10
 }

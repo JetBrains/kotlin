@@ -8,7 +8,7 @@ class A {
             return i(a, b)
         }
 
-        fun i(a: Int, b: Int): Int {
+        private fun i(a: Int, b: Int): Int {
             return a + b - 1
         }
     }

@@ -11,7 +11,7 @@ class A<T: Data>(val t: T) where T: DataEx {
             return i(v)
         }
 
-        fun <V : Data> i(v: V): Int where V : DataEx {
+        private fun <V : Data> i(v: V): Int where V : DataEx {
             return t.x + u.x + v.x
         }
     }

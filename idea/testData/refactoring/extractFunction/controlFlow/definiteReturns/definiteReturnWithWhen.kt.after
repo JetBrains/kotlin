@@ -8,7 +8,7 @@ fun foo(a: Int): Int {
     return i(a, b)
 }
 
-fun i(a: Int, b: Int): Int {
+private fun i(a: Int, b: Int): Int {
     when (a + b) {
         0 -> return b
         1 -> return -b

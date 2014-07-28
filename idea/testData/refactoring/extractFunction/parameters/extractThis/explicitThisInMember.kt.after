@@ -19,6 +19,6 @@ public class A(): Z() {
     }
 }
 
-fun i(a1: A, b1: A.B): Int {
+private fun i(a1: A, b1: A.B): Int {
     return a1.a + b1.b + b1.z
 }

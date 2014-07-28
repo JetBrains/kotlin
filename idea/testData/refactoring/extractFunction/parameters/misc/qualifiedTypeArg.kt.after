@@ -11,6 +11,6 @@ class MyClass {
     }
 }
 
-fun unit() {
+private fun unit() {
     val t: MyClass.P<MyClass.P.Q>? = null
 }

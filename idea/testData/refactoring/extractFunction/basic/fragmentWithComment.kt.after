@@ -6,7 +6,7 @@ fun foo(a: Int): Int {
     return -a
 }
 
-fun b(a: Int): Boolean {
+private fun b(a: Int): Boolean {
     // test
     println(a)
     if (a > 0) return true

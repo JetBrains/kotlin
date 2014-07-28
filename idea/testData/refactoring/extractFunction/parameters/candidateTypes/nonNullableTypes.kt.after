@@ -15,6 +15,6 @@ fun foo(s: String?, x: X<Any>) {
     }
 }
 
-fun unit(s: String, x: X<Any>) {
+private fun unit(s: String, x: X<Any>) {
     x.add(s)
 }

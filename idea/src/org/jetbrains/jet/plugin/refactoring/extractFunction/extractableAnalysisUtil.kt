@@ -581,6 +581,13 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
     return instructions
 }
 
+fun ExtractionData.isVisibilityApplicable(): Boolean {
+    return when (targetSibling.getParent()) {
+        is JetClassBody, is JetFile -> true
+        else -> false
+    }
+}
+
 fun ExtractionData.performAnalysis(): AnalysisResult {
     if (originalElements.empty) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_EXPRESSION))
@@ -664,7 +671,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             ExtractableCodeDescriptor(
                     this,
                     functionName,
-                    "",
+                    if (isVisibilityApplicable()) "private" else "",
                     adjustedParameters.sortBy { it.name },
                     receiverParameter,
                     paramsInfo.typeParameters.sortBy { it.originalDeclaration.getName()!! },

@@ -12,7 +12,7 @@ class MyClass {
     }
 }
 
-fun unit() {
+private fun unit() {
     MyClass.P.A.foo()
     MyClass.P.A.a
 }

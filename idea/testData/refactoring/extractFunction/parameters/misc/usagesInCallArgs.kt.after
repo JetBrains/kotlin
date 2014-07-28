@@ -13,7 +13,7 @@ public class A() {
     }
 }
 
-fun i(a: A, t: Int, u: Int, x: Int): Int {
+private fun i(a: A, t: Int, u: Int, x: Int): Int {
     return a.bar(t - x, u + x)
 }
 

@@ -35,6 +35,6 @@ fun foo(c: C) {
     c.doC()
 }
 
-fun unit(c: C) {
+private fun unit(c: C) {
     c.doB()
 }

@@ -15,7 +15,7 @@ fun foo(a: Int) {
 
 }
 
-fun unit(a: Int, b: Int) {
+private fun unit(a: Int, b: Int) {
     when {
         a > 0 -> {
             bar(a)
