@@ -1753,11 +1753,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/kt1568.kt");
         }
         
-        @TestMetadata("kt1733.kt")
-        public void testKt1733() throws Exception {
-            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/kt1733.kt");
-        }
-        
         @TestMetadata("kt1770.kt")
         public void testKt1770() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/kt1770.kt");

@@ -43,7 +43,7 @@ class FancyLines() {
         context.bezierCurveTo(width * Math.random(), height * Math.random(),
                               width * Math.random(), height * Math.random(), x, y);
 
-        hue += Math.random() * 10;
+        hue += (Math.random() * 10).toInt();
 
         context.strokeStyle = "hsl($hue, 50%, 50%)";
 

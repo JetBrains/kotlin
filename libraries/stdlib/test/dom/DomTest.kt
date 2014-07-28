@@ -23,7 +23,7 @@ class DomTest {
         e.setAttribute("class", "bar")
         assertCssClass(e, "bar")
 
-        doc += e
+        doc + e
         println("document ${doc.toXmlString()}")
     }
 
