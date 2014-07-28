@@ -5,12 +5,11 @@ import java.util.NoSuchElementException
 // TODO should not need this - its here for the JS stuff
 import java.lang.UnsupportedOperationException
 
-// not using an enum for now as JS generation doesn't support it
-private object State {
-    val Ready = 0
-    val NotReady = 1
-    val Done = 2
-    val Failed = 3
+private enum class State {
+    Ready
+    NotReady
+    Done
+    Failed
 }
 
 /**
