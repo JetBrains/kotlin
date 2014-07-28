@@ -125,7 +125,7 @@ public class ReplFromTerminal {
                 return WhatNextAfterOneLine.QUIT;
             }
 
-            if (line.startsWith(":")) {
+            if (line.startsWith(":") && (line.length() == 1 || line.charAt(1) != ':')) {
                 boolean notQuit = oneCommand(line.substring(1));
                 return notQuit ? WhatNextAfterOneLine.READ_LINE : WhatNextAfterOneLine.QUIT;
             }

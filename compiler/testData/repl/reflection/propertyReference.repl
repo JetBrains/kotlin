@@ -1,0 +1,6 @@
+>>> val foo = "REPL"
+>>> ::foo.name
+foo
+>>> ::
+... foo.name
+foo

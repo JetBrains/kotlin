@@ -2442,7 +2442,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return generateTopLevelPropertyReference(descriptor);
             }
             else if (containingDeclaration instanceof ClassDescriptor) {
-                return generateMemberPropertyReference(descriptor);
+                return generateMemberPropertyReference(descriptor, (ClassDescriptor) containingDeclaration);
+            }
+            else if (containingDeclaration instanceof ScriptDescriptor) {
+                return generateMemberPropertyReference(descriptor, ((ScriptDescriptor) containingDeclaration).getClassDescriptor());
             }
             else {
                 throw new UnsupportedOperationException("Unsupported callable reference container: " + containingDeclaration);
@@ -2485,8 +2488,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue generateMemberPropertyReference(@NotNull VariableDescriptor descriptor) {
-        ClassDescriptor containingClass = (ClassDescriptor) descriptor.getContainingDeclaration();
+    private StackValue generateMemberPropertyReference(@NotNull VariableDescriptor descriptor, @NotNull ClassDescriptor containingClass) {
         Type classAsmType = typeMapper.mapClass(containingClass);
 
         if (containingClass instanceof JavaClassDescriptor) {
