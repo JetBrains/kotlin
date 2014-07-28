@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.jet.lang.psi.JetNamedFunction
 
 trait Parameter {
     val argumentText: String
@@ -152,7 +153,7 @@ class Initializer(
         override val declarationsToCopy: List<JetDeclaration>
 ): ControlFlow
 
-data class ExtractionDescriptor(
+data class ExtractableCodeDescriptor(
         val extractionData: ExtractionData,
         val name: String,
         val visibility: String,
@@ -163,8 +164,21 @@ data class ExtractionDescriptor(
         val controlFlow: ControlFlow
 )
 
+class ExtractionGeneratorOptions(
+        val inTempFile: Boolean = false
+) {
+    class object {
+        val DEFAULT = ExtractionGeneratorOptions()
+    }
+}
+
+data class ExtractionResult(
+        val function: JetNamedFunction,
+        val nameByOffset: Map<Int, JetElement>
+)
+
 class AnalysisResult (
-        val descriptor: ExtractionDescriptor?,
+        val descriptor: ExtractableCodeDescriptor?,
         val status: Status,
         val messages: List<ErrorMessage>
 ) {
@@ -214,7 +228,7 @@ class AnalysisResult (
     }
 }
 
-class ExtractionDescriptorWithConflicts(
-        val descriptor: ExtractionDescriptor,
+class ExtractableCodeDescriptorWithConflicts(
+        val descriptor: ExtractableCodeDescriptor,
         val conflicts: MultiMap<PsiElement, String>
 )

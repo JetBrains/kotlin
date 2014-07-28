@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.jet.lang.cfg.pseudocode.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.cfg.Label
-import org.jetbrains.jet.lang.psi.JetPsiFactory.FunctionBuilder
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
@@ -44,14 +43,10 @@ import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.utils.DFS
 import org.jetbrains.jet.utils.DFS.*
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
-import org.jetbrains.jet.lang.psi.psiUtil.prependElement
-import org.jetbrains.jet.lang.psi.psiUtil.appendElement
-import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.jet.lang.psi.psiUtil.replaced
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
@@ -62,11 +57,9 @@ import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
-import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
-import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.psi.psiUtil.isFunctionLiteralOutsideParentheses
 import org.jetbrains.jet.plugin.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
@@ -668,7 +661,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     receiverParameter?.let { adjustedParameters.remove(it) }
 
     return AnalysisResult(
-            ExtractionDescriptor(
+            ExtractableCodeDescriptor(
                     this,
                     functionName,
                     "",
@@ -683,18 +676,17 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     )
 }
 
-fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
+fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts {
     val conflicts = MultiMap<PsiElement, String>()
 
-    val nameByOffset = HashMap<Int, JetElement>()
-    val function = generateFunction(true, nameByOffset)
+    val result = generateFunction(ExtractionGeneratorOptions(inTempFile = true))
 
-    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(function.getBodyExpression()!!)
+    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(result.function.getBodyExpression()!!)
 
     for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
         if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
 
-        val currentRefExpr = nameByOffset[originalOffset] as JetSimpleNameExpression?
+        val currentRefExpr = result.nameByOffset[originalOffset] as JetSimpleNameExpression?
         if (currentRefExpr == null) continue
 
         if (currentRefExpr.getParent() is JetThisExpression) continue
@@ -704,7 +696,7 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
         val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
         val currentTarget =
                 currentDescriptor?.let { DescriptorToDeclarationUtil.getDeclaration(extractionData.project, it) } as? PsiNamedElement
-        if (currentTarget is JetParameter && currentTarget.getParent() == function.getValueParameterList()) continue
+        if (currentTarget is JetParameter && currentTarget.getParent() == result.function.getValueParameterList()) continue
         if (currentDescriptor is LocalVariableDescriptor
         && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 
@@ -733,7 +725,7 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
         }
     }
 
-    return ExtractionDescriptorWithConflicts(this, conflicts)
+    return ExtractableCodeDescriptorWithConflicts(this, conflicts)
 }
 
 private fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDescriptor?, originalDescriptor: DeclarationDescriptor?): Boolean {
@@ -745,251 +737,3 @@ private fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationD
     return false
 }
 
-fun ExtractionDescriptor.getFunctionText(
-        withBody: Boolean = true,
-        descriptorRenderer: DescriptorRenderer = DescriptorRenderer.FQ_NAMES_IN_TYPES
-): String {
-    return FunctionBuilder().let { builder ->
-        builder.modifier(visibility)
-
-        builder.typeParams(typeParameters.map { it.originalDeclaration.getText()!! })
-
-        receiverParameter?.let { builder.receiver(descriptorRenderer.renderType(it.parameterType)) }
-
-        builder.name(name)
-
-        parameters.forEach { parameter ->
-            builder.param(parameter.name, descriptorRenderer.renderType(parameter.parameterType))
-        }
-
-        with(controlFlow.returnType) {
-            if (isDefault() || isError()) builder.noReturnType() else builder.returnType(descriptorRenderer.renderType(this))
-        }
-
-        builder.typeConstraints(typeParameters.flatMap { it.originalConstraints }.map { it.getText()!! })
-
-        if (withBody) {
-            builder.blockBody(extractionData.getCodeFragmentText())
-        }
-
-        builder.toFunctionText()
-    }
-}
-
-fun createNameCounterpartMap(from: JetElement, to: JetElement): Map<JetSimpleNameExpression, JetSimpleNameExpression> {
-    val map = HashMap<JetSimpleNameExpression, JetSimpleNameExpression>()
-
-    val fromOffset = from.getTextRange()!!.getStartOffset()
-    from.accept(
-            object: JetTreeVisitorVoid() {
-                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                    val offset = expression.getTextRange()!!.getStartOffset() - fromOffset
-                    val newExpression = to.findElementAt(offset)?.getParentByType(javaClass<JetSimpleNameExpression>())
-                    assert(newExpression!= null, "Couldn't find expression at $offset in '${to.getText()}'")
-
-                    map[expression] = newExpression!!
-                }
-            }
-    )
-
-    return map
-}
-
-fun ExtractionDescriptor.generateFunction(
-        inTempFile: Boolean = false,
-        nameByOffset: MutableMap<Int, JetElement> = HashMap()
-): JetNamedFunction {
-    val psiFactory = JetPsiFactory(extractionData.originalFile)
-    fun createFunction(): JetNamedFunction {
-        return with(extractionData) {
-            if (inTempFile) {
-                createTemporaryFunction("${getFunctionText()}\n")
-            }
-            else {
-                psiFactory.createFunction(getFunctionText())
-            }
-        }
-    }
-
-    fun adjustFunctionBody(function: JetNamedFunction) {
-        val body = function.getBodyExpression() as JetBlockExpression
-
-        val exprReplacementMap = HashMap<JetElement, (JetElement) -> JetElement>()
-        val originalOffsetByExpr = LinkedHashMap<JetElement, Int>()
-
-        val bodyOffset = body.getBlockContentOffset()
-        val file = body.getContainingFile()!!
-
-        /*
-         * Sort by descending position so that internals of value/type arguments in calls and qualified types are replaced
-         * before calls/types themselves
-         */
-        for ((offsetInBody, resolveResult) in extractionData.refOffsetToDeclaration.entrySet().sortDescendingBy { it.key }) {
-            val expr = file.findElementAt(bodyOffset + offsetInBody)?.getParentByType(javaClass<JetSimpleNameExpression>())
-            assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
-
-            originalOffsetByExpr[expr!!] = offsetInBody
-
-            replacementMap[offsetInBody]?.let { replacement ->
-                if (replacement !is ParameterReplacement || replacement.parameter != receiverParameter) {
-                    exprReplacementMap[expr] = replacement
-                }
-            }
-        }
-
-        val replacingReturn: JetExpression?
-        val expressionsToReplaceWithReturn: List<JetElement>
-        if (controlFlow is JumpBasedControlFlow) {
-            replacingReturn = psiFactory.createExpression(if (controlFlow is ConditionalJump) "return true" else "return")
-            expressionsToReplaceWithReturn = controlFlow.elementsToReplace.map { jumpElement ->
-                val offsetInBody = jumpElement.getTextRange()!!.getStartOffset() - extractionData.originalStartOffset!!
-                val expr = file.findElementAt(bodyOffset + offsetInBody)?.getParentByType(jumpElement.javaClass)
-                assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
-
-                expr!!
-            }
-        }
-        else {
-            replacingReturn = null
-            expressionsToReplaceWithReturn = Collections.emptyList()
-        }
-
-        if (replacingReturn != null) {
-            for (expr in expressionsToReplaceWithReturn) {
-                expr.replace(replacingReturn)
-            }
-        }
-
-        for ((expr, originalOffset) in originalOffsetByExpr) {
-            if (expr.isValid()) {
-                nameByOffset.put(originalOffset, exprReplacementMap[expr]?.invoke(expr) ?: expr)
-            }
-        }
-
-        for (param in parameters) {
-            param.mirrorVarName?.let { varName ->
-                body.prependElement(psiFactory.createProperty(varName, null, true, param.name))
-            }
-        }
-
-        when (controlFlow) {
-            is ParameterUpdate ->
-                body.appendElement(psiFactory.createReturn(controlFlow.parameter.nameForRef))
-
-            is Initializer ->
-                body.appendElement(psiFactory.createReturn(controlFlow.initializedDeclaration.getName()!!))
-
-            is ConditionalJump ->
-                body.appendElement(psiFactory.createReturn("false"))
-
-            is ExpressionEvaluation ->
-                body.getStatements().last?.let {
-                    val newExpr = it.replaced(psiFactory.createReturn(it.getText() ?: throw AssertionError("Return expression shouldn't be empty: code fragment = ${body.getText()}"))).getReturnedExpression()!!
-                    val counterpartMap = createNameCounterpartMap(it, newExpr)
-                    nameByOffset.entrySet().forEach { e -> counterpartMap[e.getValue()]?.let { e.setValue(it) } }
-                }
-        }
-    }
-
-    fun insertFunction(function: JetNamedFunction): JetNamedFunction {
-        return with(extractionData) {
-            val targetContainer = targetSibling.getParent()!!
-            val emptyLines = psiFactory.createWhiteSpace("\n\n")
-            if (insertBefore) {
-                val functionInFile = targetContainer.addBefore(function, targetSibling) as JetNamedFunction
-                targetContainer.addBefore(emptyLines, targetSibling)
-
-                functionInFile
-            }
-            else {
-                val functionInFile = targetContainer.addAfter(function, targetSibling) as JetNamedFunction
-                targetContainer.addAfter(emptyLines, targetSibling)
-
-                functionInFile
-            }
-        }
-    }
-
-    fun insertCall(anchor: PsiElement, wrappedCall: JetExpression?) {
-        if (wrappedCall == null) {
-            anchor.delete()
-            return
-        }
-
-        val firstExpression = extractionData.getExpressions().firstOrNull()
-        if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
-            val functionLiteralArgument = PsiTreeUtil.getParentOfType(firstExpression, javaClass<JetFunctionLiteralArgument>())!!
-            //todo use the right binding context
-            functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, BindingContext.EMPTY)
-            return
-        }
-        anchor.replace(wrappedCall)
-    }
-
-    fun makeCall(function: JetNamedFunction): JetNamedFunction {
-        val anchor = extractionData.originalElements.first
-        if (anchor == null) return function
-
-        val anchorParent = anchor.getParent()!!
-
-        anchor.getNextSibling()?.let { from ->
-            val to = extractionData.originalElements.last
-            if (to != anchor) {
-                anchorParent.deleteChildRange(from, to);
-            }
-        }
-
-        val callText = parameters
-                .map { it.argumentText }
-                .joinToString(separator = ", ", prefix = "$name(", postfix = ")")
-
-        val copiedDeclarations = HashMap<JetDeclaration, JetDeclaration>()
-        for (decl in controlFlow.declarationsToCopy) {
-            val declCopy = psiFactory.createDeclaration<JetDeclaration>(decl.getText()!!)
-            copiedDeclarations[decl] = anchorParent.addBefore(declCopy, anchor) as JetDeclaration
-            anchorParent.addBefore(psiFactory.createNewLine(), anchor)
-        }
-
-        val wrappedCall = when (controlFlow) {
-            is ExpressionEvaluationWithCallSiteReturn ->
-                psiFactory.createReturn(callText)
-
-            is ParameterUpdate ->
-                psiFactory.createExpression("${controlFlow.parameter.argumentText} = $callText")
-
-            is Initializer -> {
-                val newDecl = copiedDeclarations[controlFlow.initializedDeclaration] as JetProperty
-                newDecl.replace(DeclarationUtils.changePropertyInitializer(newDecl, psiFactory.createExpression(callText)))
-                null
-            }
-
-            is ConditionalJump ->
-                psiFactory.createExpression("if ($callText) ${controlFlow.elementToInsertAfterCall.getText()}")
-
-            is UnconditionalJump -> {
-                anchorParent.addAfter(
-                        psiFactory.createExpression(controlFlow.elementToInsertAfterCall.getText()!!),
-                        anchor
-                )
-                anchorParent.addAfter(psiFactory.createNewLine(), anchor)
-
-                psiFactory.createExpression(callText)
-            }
-
-            else ->
-                psiFactory.createExpression(callText)
-        }
-        insertCall(anchor, wrappedCall)
-
-        return function
-    }
-
-    val function = createFunction()
-    adjustFunctionBody(function)
-
-    if (inTempFile) return function
-
-    val functionInPlace = makeCall(insertFunction(function))
-    ShortenReferences.process(functionInPlace)
-    return functionInPlace
-}

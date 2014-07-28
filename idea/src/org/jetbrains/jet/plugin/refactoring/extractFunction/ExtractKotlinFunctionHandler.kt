@@ -73,7 +73,7 @@ public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boole
             file: JetFile,
             elements: List<PsiElement>,
             targetSibling: PsiElement,
-            preprocessor: ((ExtractionDescriptor) -> Unit)? = null
+            preprocessor: ((ExtractableCodeDescriptor) -> Unit)? = null
     ) {
         val project = file.getProject()
 
@@ -83,19 +83,21 @@ public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boole
             throw ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
         }
 
-        fun doRefactor(descriptor: ExtractionDescriptor) {
+        fun doRefactor(descriptor: ExtractableCodeDescriptor, generatorOptions: ExtractionGeneratorOptions) {
             preprocessor?.invoke(descriptor)
-            project.executeWriteCommand(EXTRACT_FUNCTION) { descriptor.generateFunction() }
+            project.executeWriteCommand(EXTRACT_FUNCTION) { descriptor.generateFunction(generatorOptions) }
         }
 
         fun validateAndRefactor() {
             val validationResult = analysisResult.descriptor!!.validate()
             project.checkConflictsInteractively(validationResult.conflicts) {
                 if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
-                    doRefactor(validationResult.descriptor)
+                    doRefactor(validationResult.descriptor, ExtractionGeneratorOptions.DEFAULT)
                 }
                 else {
-                    KotlinExtractFunctionDialog(project, validationResult) { doRefactor(it.getCurrentDescriptor()) }.show()
+                    KotlinExtractFunctionDialog(project, validationResult) {
+                        doRefactor(it.getCurrentDescriptor(), it.getGeneratorOptions())
+                    }.show()
                 }
             }
         }

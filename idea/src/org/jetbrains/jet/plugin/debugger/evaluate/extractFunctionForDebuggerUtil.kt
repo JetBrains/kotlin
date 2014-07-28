@@ -38,6 +38,7 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 
 fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
@@ -96,10 +97,12 @@ fun getFunctionForExtractedFragment(
 
         val validationResult = analysisResult.descriptor!!.validate()
         if (!validationResult.conflicts.isEmpty()) {
-            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().map { it.getText() }.joinToString(",")}")
+            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet()?.map { it.getText() }?.makeString(",")}")
         }
 
-        return validationResult.descriptor.generateFunction(true)
+        return validationResult.descriptor
+                .generateFunction(ExtractionGeneratorOptions(inTempFile = true))
+                .function
     }
 
     return runReadAction { generateFunction() }

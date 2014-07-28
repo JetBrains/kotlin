@@ -54,14 +54,14 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     private final Project project;
 
-    private final ExtractionDescriptorWithConflicts originalDescriptor;
-    private ExtractionDescriptor currentDescriptor;
+    private final ExtractableCodeDescriptorWithConflicts originalDescriptor;
+    private ExtractableCodeDescriptor currentDescriptor;
 
     private final Function1<KotlinExtractFunctionDialog, Unit> onAccept;
 
     public KotlinExtractFunctionDialog(
             @NotNull Project project,
-            @NotNull ExtractionDescriptorWithConflicts originalDescriptor,
+            @NotNull ExtractableCodeDescriptorWithConflicts originalDescriptor,
             @NotNull Function1<KotlinExtractFunctionDialog, Unit> onAccept) {
         super(project, true);
 
@@ -202,8 +202,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     @NotNull
-    private ExtractionDescriptor createDescriptor() {
-        ExtractionDescriptor descriptor = originalDescriptor.getDescriptor();
+    private ExtractableCodeDescriptor createDescriptor() {
+        ExtractableCodeDescriptor descriptor = originalDescriptor.getDescriptor();
 
         List<KotlinParameterTablePanel.ParameterInfo> parameterInfos = parameterTablePanel.getParameterInfos();
 
@@ -240,7 +240,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             }
         }
 
-        return new ExtractionDescriptor(
+        return new ExtractableCodeDescriptor(
                 descriptor.getExtractionData(),
                 getFunctionName(),
                 getVisibility(),
@@ -253,7 +253,12 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     @NotNull
-    public ExtractionDescriptor getCurrentDescriptor() {
+    public ExtractableCodeDescriptor getCurrentDescriptor() {
         return currentDescriptor;
+    }
+
+    @NotNull
+    public ExtractionGeneratorOptions getGeneratorOptions() {
+        return ExtractionGeneratorOptions.DEFAULT;
     }
 }
