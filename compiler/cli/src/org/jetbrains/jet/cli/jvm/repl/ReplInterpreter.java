@@ -276,7 +276,7 @@ public class ReplInterpreter {
                 scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
             }
             catch (Throwable e) {
-                return LineResult.error(Throwables.getStackTraceAsString(e));
+                return LineResult.error(Throwables.getStackTraceAsString(e.getCause()));
             }
             Field rvField = scriptClass.getDeclaredField("rv");
             rvField.setAccessible(true);
