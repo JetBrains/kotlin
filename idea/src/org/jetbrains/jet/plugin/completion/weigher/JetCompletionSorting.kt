@@ -23,25 +23,30 @@ import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.WeighingContext
+import org.jetbrains.jet.plugin.completion.*
 
 public fun CompletionResultSet.addJetSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
 
-    sorter = sorter.weighBefore("stats", JetKindWeigher())
+    object PriorityWeigher : LookupElementWeigher("priority", false, false) {
+        override fun weigh(element: LookupElement, context: WeighingContext)
+                = (element.getUserData(ITEM_PRIORITY_KEY) ?: ItemPriority.DEFAULT).ordinal()
+    }
+
+    sorter = sorter.weighBefore("stats", PriorityWeigher, JetKindWeigher())
 
     sorter = sorter.weighAfter(
             "stats",
             JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile),
             JetAccessibleWeigher())
 
-    sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher())
+    object PreferMatchingItemWeigher : LookupElementWeigher("preferMatching", false, true) {
+        override fun weigh(element: LookupElement, context: WeighingContext): Comparable<Int> {
+            val prefix = context.itemPattern(element)
+            return if (element.getLookupString() == prefix) 0 else 1
+        }
+    }
+    sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
     return withRelevanceSorter(sorter)
-}
-
-class PreferMatchingItemWeigher : LookupElementWeigher("preferMatching", false, true) {
-    override fun weigh(element: LookupElement, context: WeighingContext): Comparable<Int> {
-        val prefix = context.itemPattern(element)
-        return if (element.getLookupString() == prefix) 0 else 1
-    }
 }

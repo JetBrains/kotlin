@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -29,10 +30,18 @@ import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
+import static com.intellij.patterns.PsiJavaPatterns.elementType;
+import static com.intellij.patterns.PsiJavaPatterns.psiElement;
+
 public class JetCompletionContributor extends CompletionContributor {
+    private static final ElementPattern<PsiElement> AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(
+            psiElement().withText(""),
+            psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)));
+
     public JetCompletionContributor() {
         CompletionProvider<CompletionParameters> provider = new CompletionProvider<CompletionParameters>() {
             @Override
@@ -51,7 +60,11 @@ public class JetCompletionContributor extends CompletionContributor {
     public static void doSimpleReferenceCompletion(CompletionParameters parameters, CompletionResultSet result) {
         PsiElement position = parameters.getPosition();
 
-        if (!(position.getContainingFile() instanceof JetFile)) {
+        if (!(position.getContainingFile() instanceof JetFile)) return;
+
+        if (AFTER_NUMBER_LITERAL.accepts(parameters.getPosition())) {
+            // First Kotlin completion contributors - stop here will stop all completion
+            result.stopHere();
             return;
         }
 

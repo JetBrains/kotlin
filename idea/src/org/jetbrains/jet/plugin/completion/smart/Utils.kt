@@ -90,15 +90,6 @@ fun LookupElement.addTail(tail: Tail?): LookupElement {
 fun LookupElement.addTail(matchedExpectedInfos: Collection<ExpectedInfo>): LookupElement
     = addTail(mergeTails(matchedExpectedInfos.map { it.tail }))
 
-fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(this)
-
-val KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY = Key<Unit>("KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY")
-
-fun LookupElement.keepOldArgumentListOnTab(): LookupElement {
-    putUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY, Unit)
-    return this
-}
-
 enum class ExpectedInfoClassification {
     MATCHES
     MAKE_NOT_NULLABLE

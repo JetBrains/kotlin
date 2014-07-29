@@ -72,7 +72,7 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
                })
     }
 
-    fun doParamsCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
+    private fun doParamsCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
         val valueArgument = PsiTreeUtil.getParentOfType(parameters.getPosition(), javaClass<JetValueArgument>())!!
 
         val callElement = PsiTreeUtil.getParentOfType(valueArgument, javaClass<JetCallElement>())
@@ -95,13 +95,14 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
             for (parameter in funDescriptor.getValueParameters()) {
                 val name = parameter.getName().asString()
                 if (result.getPrefixMatcher().prefixMatches(name) && name !in usedArguments) {
-                    val lookupElementBuilder = LookupElementBuilder.create(NamedParameterLookupObject(parameter.getName()), "${name}")
+                    val lookupElement = LookupElementBuilder.create(NamedParameterLookupObject(parameter.getName()), "${name}")
                             .withPresentableText("${name} = ")
                             .withTailText("${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
                             .withIcon(JetIcons.PARAMETER)
                             .withInsertHandler(NamedParameterInsertHandler)
+                            .assignPriority(ItemPriority.NAMED_PARAMETER)
 
-                    kotlinResultSet.addElement(lookupElementBuilder)
+                    kotlinResultSet.addElement(lookupElement)
                 }
             }
         }
