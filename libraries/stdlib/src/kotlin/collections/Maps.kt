@@ -27,17 +27,17 @@ public val <K, V> Map.Entry<K, V>.value: V
     get() = getValue()
 
 /** Returns the key of the entry */
-fun <K, V> Map.Entry<K, V>.component1(): K {
+public fun <K, V> Map.Entry<K, V>.component1(): K {
     return getKey()
 }
 
 /** Returns the value of the entry */
-fun <K, V> Map.Entry<K, V>.component2(): V {
+public fun <K, V> Map.Entry<K, V>.component2(): V {
     return getValue()
 }
 
 /** Converts entry to Pair with key being first component and value being second */
-fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> {
+public fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> {
     return Pair(getKey(), getValue())
 }
 

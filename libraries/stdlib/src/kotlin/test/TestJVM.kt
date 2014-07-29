@@ -53,7 +53,7 @@ public var asserter: Asserter
 /**
  * Default implementation to avoid dependency on JUnit or TestNG
  */
-class DefaultAsserter() : Asserter {
+private class DefaultAsserter() : Asserter {
 
     public override fun assertTrue(message : String, actual : Boolean) {
         if (!actual) {

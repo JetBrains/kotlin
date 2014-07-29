@@ -19,12 +19,12 @@ import kotlin.InlineOption.ONLY_LOCAL_RETURN
  *      String readFile(String name) throws IOException {...}
  */
 Retention(RetentionPolicy.SOURCE)
-public annotation class throws(vararg val exceptionClasses: Class<out Throwable>)
+public annotation class throws(public vararg val exceptionClasses: Class<out Throwable>)
 
 [Intrinsic("kotlin.javaClass.property")] public val <T> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
 
-[Intrinsic("kotlin.javaClass.function")] fun <reified T> javaClass() : Class<T> = null as Class<T>
+[Intrinsic("kotlin.javaClass.function")] public fun <reified T> javaClass(): Class<T> = null as Class<T>
 
 public inline fun <R> synchronized(lock: Any, [inlineOptions(ONLY_LOCAL_RETURN)] block: () -> R): R {
     monitorEnter(lock)

@@ -33,7 +33,8 @@ deprecated("Replace Iterator<T> with Stream<T> by using stream() function instea
 public fun <T> Iterator<T>.skip(n: Int): Iterator<T> = SkippingIterator(this, n)
 
 deprecated("Use FilteringStream<T> instead")
-class FilterIterator<T>(val iterator : Iterator<T>, val predicate: (T)-> Boolean) : AbstractIterator<T>() {
+public class FilterIterator<T>(private val iterator: Iterator<T>, private val predicate: (T) -> Boolean) :
+        AbstractIterator<T>() {
     override protected fun computeNext(): Unit {
         while (iterator.hasNext()) {
             val next = iterator.next()
@@ -47,7 +48,7 @@ class FilterIterator<T>(val iterator : Iterator<T>, val predicate: (T)-> Boolean
 }
 
 deprecated("Use FilteringStream<T> instead")
-class FilterNotNullIterator<T:Any>(val iterator : Iterator<T?>?) : AbstractIterator<T>() {
+public class FilterNotNullIterator<T : Any>(private val iterator: Iterator<T?>?) : AbstractIterator<T>() {
     override protected fun computeNext(): Unit {
         if (iterator != null) {
             while (iterator.hasNext()) {
@@ -63,8 +64,9 @@ class FilterNotNullIterator<T:Any>(val iterator : Iterator<T?>?) : AbstractItera
 }
 
 deprecated("Use TransformingStream<T> instead")
-class MapIterator<T, R>(val iterator : Iterator<T>, val transform: (T) -> R) : AbstractIterator<R>() {
-    override protected fun computeNext() : Unit {
+public class MapIterator<T, R>(private val iterator: Iterator<T>, private val transform: (T) -> R) :
+        AbstractIterator<R>() {
+    override protected fun computeNext(): Unit {
         if (iterator.hasNext()) {
             setNext((transform)(iterator.next()))
         } else {
@@ -74,10 +76,11 @@ class MapIterator<T, R>(val iterator : Iterator<T>, val transform: (T) -> R) : A
 }
 
 deprecated("Use FlatteningStream<T> instead")
-class FlatMapIterator<T, R>(val iterator : Iterator<T>, val transform: (T) -> Iterator<R>) : AbstractIterator<R>() {
-    var transformed: Iterator<R> = iterate<R> { null }
+public class FlatMapIterator<T, R>(private val iterator: Iterator<T>, private val transform: (T) -> Iterator<R>) :
+        AbstractIterator<R>() {
+    private var transformed: Iterator<R> = iterate<R> { null }
 
-    override protected fun computeNext() : Unit {
+    override protected fun computeNext(): Unit {
         while (true) {
             if (transformed.hasNext()) {
                 setNext(transformed.next())
@@ -94,7 +97,8 @@ class FlatMapIterator<T, R>(val iterator : Iterator<T>, val transform: (T) -> It
 }
 
 deprecated("Use LimitedStream<T> instead")
-class TakeWhileIterator<T>(val iterator: Iterator<T>, val predicate: (T) -> Boolean) : AbstractIterator<T>() {
+public class TakeWhileIterator<T>(private val iterator: Iterator<T>, private val predicate: (T) -> Boolean) :
+        AbstractIterator<T>() {
     override protected fun computeNext() : Unit {
         if (iterator.hasNext()) {
             val item = iterator.next()
@@ -109,7 +113,7 @@ class TakeWhileIterator<T>(val iterator: Iterator<T>, val predicate: (T) -> Bool
 
 /** An [[Iterator]] which invokes a function to calculate the next value in the iteration until the function returns *null* */
 deprecated("Use FunctionStream<T> instead")
-class FunctionIterator<T:Any>(val nextFunction: () -> T?): AbstractIterator<T>() {
+public class FunctionIterator<T : Any>(private val nextFunction: () -> T?) : AbstractIterator<T>() {
 
     override protected fun computeNext(): Unit {
         val next = (nextFunction)()
@@ -123,12 +127,12 @@ class FunctionIterator<T:Any>(val nextFunction: () -> T?): AbstractIterator<T>()
 
 /** An [[Iterator]] which iterates over a number of iterators in sequence */
 deprecated("Use Multistream<T> instead")
-fun CompositeIterator<T>(vararg iterators: Iterator<T>): CompositeIterator<T> = CompositeIterator(iterators.iterator())
+public fun CompositeIterator<T>(vararg iterators: Iterator<T>): CompositeIterator<T> = CompositeIterator(iterators.iterator())
 
 deprecated("Use Multistream<T> instead")
-class CompositeIterator<T>(val iterators: Iterator<Iterator<T>>): AbstractIterator<T>() {
+public class CompositeIterator<T>(private val iterators: Iterator<Iterator<T>>) : AbstractIterator<T>() {
 
-    var currentIter: Iterator<T>? = null
+    private var currentIter: Iterator<T>? = null
 
     override protected fun computeNext(): Unit {
         while (true) {
@@ -155,8 +159,8 @@ class CompositeIterator<T>(val iterators: Iterator<Iterator<T>>): AbstractIterat
 
 /** A singleton [[Iterator]] which invokes once over a value */
 deprecated("Use streams for lazy collection operations.")
-class SingleIterator<T>(val value: T): AbstractIterator<T>() {
-    var first = true
+public class SingleIterator<T>(private val value: T) : AbstractIterator<T>() {
+    private var first = true
 
     override protected fun computeNext(): Unit {
         if (first) {
@@ -169,8 +173,8 @@ class SingleIterator<T>(val value: T): AbstractIterator<T>() {
 }
 
 deprecated("Use streams for lazy collection operations.")
-class IndexIterator<T>(val iterator : Iterator<T>): Iterator<Pair<Int, T>> {
-    private var index : Int = 0
+public class IndexIterator<T>(private val iterator: Iterator<T>) : Iterator<Pair<Int, T>> {
+    private var index: Int = 0
 
     override fun next(): Pair<Int, T> {
         return Pair(index++, iterator.next())
@@ -183,7 +187,7 @@ class IndexIterator<T>(val iterator : Iterator<T>): Iterator<Pair<Int, T>> {
 
 deprecated("Use ZippingStream<T> instead.")
 public class PairIterator<T, S>(
-        val iterator1 : Iterator<T>, val iterator2 : Iterator<S>
+        private val iterator1: Iterator<T>, private val iterator2: Iterator<S>
 ): AbstractIterator<Pair<T, S>>() {
     protected override fun computeNext() {
         if (iterator1.hasNext() && iterator2.hasNext()) {
@@ -196,7 +200,7 @@ public class PairIterator<T, S>(
 }
 
 deprecated("Use streams for lazy collection operations.")
-class SkippingIterator<T>(val iterator: Iterator<T>, val n: Int): Iterator<T> {
+public class SkippingIterator<T>(private val iterator: Iterator<T>, private val n: Int) : Iterator<T> {
     private var firstTime: Boolean = true
 
     private fun skip() {

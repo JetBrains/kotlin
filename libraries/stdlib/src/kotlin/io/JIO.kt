@@ -215,7 +215,7 @@ public fun BufferedReader.lines(): Stream<String> = LinesStream(this)
 deprecated("Use lines() function which returns Stream<String>")
 public fun BufferedReader.lineIterator(): Iterator<String> = lines().iterator()
 
-class LinesStream(val reader: BufferedReader) : Stream<String> {
+private class LinesStream(private val reader: BufferedReader) : Stream<String> {
     override fun iterator(): Iterator<String> {
         return object : Iterator<String> {
             private var nextValue: String? = null

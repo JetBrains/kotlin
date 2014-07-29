@@ -2,11 +2,11 @@ package kotlin
 
 import java.util.*
 
-class stdlib_emptyListClass : List<Any> by ArrayList<Any>() {}
+private class stdlib_emptyListClass : List<Any> by ArrayList<Any>() {}
 private val stdlib_emptyList : List<Any> = ArrayList<Any>() // TODO: Change to stdlib_emptyListClass() when KT-5192 is fixed
 private fun stdlib_emptyList<T>() = stdlib_emptyList as List<T>
 
-class stdlib_emptyMapClass : Map<Any, Any> by HashMap<Any, Any>() {}
+private class stdlib_emptyMapClass : Map<Any, Any> by HashMap<Any, Any>() {}
 private val stdlib_emptyMap : Map<Any, Any> = HashMap<Any, Any>() // TODO: Change to stdlib_emptyMapClass() when KT-5192 is fixed
 private fun stdlib_emptyMap<K,V>() = stdlib_emptyMap as Map<K,V>
 
@@ -71,7 +71,7 @@ public val Int.indices: IntRange
 public fun <T> Collection<T>.isNotEmpty(): Boolean = !this.isEmpty()
 
 /** Returns true if this collection is not empty */
-val Collection<*>.notEmpty: Boolean
+public val Collection<*>.notEmpty: Boolean
     get() = isNotEmpty()
 
 /** Returns the Collection if its not null otherwise it returns the empty list */
@@ -105,7 +105,7 @@ answer.sort(comparator)
  *
  * @includeFunctionBody ../../test/collections/ListSpecificTest.kt first
  */
-val <T> List<T>.first: T?
+public val <T> List<T>.first: T?
     get() = this.head
 
 
@@ -114,7 +114,7 @@ val <T> List<T>.first: T?
  *
  * @includeFunctionBody ../../test/collections/ListSpecificTest.kt last
  */
-val <T> List<T>.last: T?
+public val <T> List<T>.last: T?
     get() {
         val s = this.size
         return if (s > 0) this[s - 1] else null
@@ -125,7 +125,7 @@ val <T> List<T>.last: T?
  *
  * @includeFunctionBody ../../test/collections/ListSpecificTest.kt lastIndex
  */
-val <T> List<T>.lastIndex: Int
+public val <T> List<T>.lastIndex: Int
     get() = this.size - 1
 
 /**
@@ -133,7 +133,7 @@ val <T> List<T>.lastIndex: Int
  *
  * @includeFunctionBody ../../test/collections/ListSpecificTest.kt head
  */
-val <T> List<T>.head: T?
+public val <T> List<T>.head: T?
     get() = if (this.isNotEmpty()) this[0] else null
 
 /**
@@ -141,7 +141,7 @@ val <T> List<T>.head: T?
  *
  * @includeFunctionBody ../../test/collections/ListSpecificTest.kt tail
  */
-val <T> List<T>.tail: List<T>
+public val <T> List<T>.tail: List<T>
     get() {
         return this.drop(1)
     }

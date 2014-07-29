@@ -1,15 +1,15 @@
 package kotlin.concurrent
 
-abstract class FunctionalList<T>(public val size: Int) {
+public abstract class FunctionalList<T>(public val size: Int) {
     public abstract val head: T
     public abstract val tail: FunctionalList<T>
 
-    val empty : Boolean
+    public val empty: Boolean
         get() = size == 0
 
-    public fun add(element: T) : FunctionalList<T> = FunctionalList.Standard(element, this)
+    public fun add(element: T): FunctionalList<T> = FunctionalList.Standard(element, this)
 
-    public fun reversed() : FunctionalList<T> {
+    public fun reversed(): FunctionalList<T> {
         if(empty)
             return this
 
@@ -39,18 +39,18 @@ abstract class FunctionalList<T>(public val size: Int) {
     }
 
     class object {
-        class Empty<T>() : FunctionalList<T>(0) {
+        private class Empty<T>() : FunctionalList<T>(0) {
             override val head: T
-            get() = throw java.util.NoSuchElementException()
+                get() = throw java.util.NoSuchElementException()
             override val tail: FunctionalList<T>
-            get() = throw java.util.NoSuchElementException()
+                get() = throw java.util.NoSuchElementException()
         }
 
-        class Standard<T>(override val head: T, override val tail: FunctionalList<T>) : FunctionalList<T>(tail.size+1)
+        private class Standard<T>(override val head: T, override val tail: FunctionalList<T>) : FunctionalList<T>(tail.size + 1)
 
-        public fun <T> emptyList() : FunctionalList<T> = Empty<T>()
+        public fun <T> emptyList(): FunctionalList<T> = Empty<T>()
 
-        public fun <T> of(element: T) : FunctionalList<T> = FunctionalList.Standard<T>(element,emptyList())
+        public fun <T> of(element: T): FunctionalList<T> = FunctionalList.Standard<T>(element, emptyList())
     }
 }
 

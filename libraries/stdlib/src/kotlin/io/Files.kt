@@ -23,40 +23,41 @@ public fun File.recurse(block: (File) -> Unit): Unit {
 /**
  * Returns this if the file is a directory or the parent if its a file inside a directory
  */
-val File.directory: File
-get() = if (this.isDirectory()) this else this.getParentFile()!!
+public val File.directory: File
+    get() = if (this.isDirectory()) this else this.getParentFile()!!
 
 /**
  * Returns the canonical path of the file
  */
-val File.canonicalPath: String
-get() = getCanonicalPath()
+public val File.canonicalPath: String
+    get() = getCanonicalPath()
 
 /**
  * Returns the file name or "" for an empty name
  */
-val File.name: String
-get() = getName()
+public val File.name: String
+    get() = getName()
 
 /**
  * Returns the file path or "" for an empty name
  */
-val File.path: String
-get() = getPath()
+public val File.path: String
+    get() = getPath()
 
 /**
  * Returns true if the file ends with the given extension
  */
-val File.extension: String
-get() {
-    val text = this.name
-    val idx = text.lastIndexOf('.')
-    return if (idx >= 0) {
-        text.substring(idx + 1)
-    } else {
-        ""
+public val File.extension: String
+    get() {
+        val text = this.name
+        val idx = text.lastIndexOf('.')
+        return if (idx >= 0) {
+            text.substring(idx + 1)
+        }
+        else {
+            ""
+        }
     }
-}
 
 /**
 * Returns true if the given file is in the same directory or a descendant directory
@@ -168,7 +169,7 @@ public fun File.copyTo(file: File, bufferSize: Int = defaultBufferSize): Long {
  *
  * You can use this function for huge files
  */
-fun File.forEachBlock(closure : (ByteArray, Int) -> Unit) : Unit {
+public fun File.forEachBlock(closure: (ByteArray, Int) -> Unit): Unit {
     val arr = ByteArray(4096)
     val fis = FileInputStream(this)
 
@@ -191,7 +192,7 @@ fun File.forEachBlock(closure : (ByteArray, Int) -> Unit) : Unit {
  *
  * You may use this function on huge files
  */
-fun File.forEachLine (charset : String = "UTF-8", closure : (line : String) -> Unit) : Unit {
+public fun File.forEachLine(charset: String = "UTF-8", closure: (line: String) -> Unit): Unit {
     val reader = BufferedReader(InputStreamReader(FileInputStream(this), charset))
     try {
         reader.forEachLine(closure)
@@ -205,7 +206,7 @@ fun File.forEachLine (charset : String = "UTF-8", closure : (line : String) -> U
  *
  * Do not use this function for huge files.
  */
-fun File.readLines(charset : String = "UTF-8") : List<String> {
+public fun File.readLines(charset: String = "UTF-8"): List<String> {
     val rs = ArrayList<String>()
 
     this.forEachLine(charset) { (line : String) : Unit ->
@@ -218,7 +219,7 @@ fun File.readLines(charset : String = "UTF-8") : List<String> {
 /**
  * Returns an array of files and directories in the directory that satisfy the specified filter.
  */
-fun File.listFiles(filter : (file : File) -> Boolean) : Array<File>? = listFiles(
+public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listFiles(
     object : FileFilter {
         override fun accept(file: File) = filter(file)
     }
