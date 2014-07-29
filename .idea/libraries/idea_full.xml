@@ -191,8 +191,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/ui-designer/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/ui-designer/jps-plugin/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/ui-designer/jps-plugin/testSrc" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/typeMigration/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/typeMigration/test" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/xslt-debugger/rt/impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/xslt-debugger/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/xslt-debugger/engine/src" />
@@ -202,8 +200,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-decompiler/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-decompiler/test" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/ShortcutPromoter/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/structuralsearch/source" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/structuralsearch/testSource" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/ui-designer-core/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/InspectionGadgets/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/InspectionGadgets/test" />
