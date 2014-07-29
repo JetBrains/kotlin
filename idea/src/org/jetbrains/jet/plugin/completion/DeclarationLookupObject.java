@@ -27,8 +27,8 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
  * Stores information about resolved descriptor and position of that descriptor.
  * Position will be used for removing duplicates
  */
-public final class JetLookupObject {
-    private static final Logger LOG = Logger.getInstance("#" + JetLookupObject.class.getName());
+public final class DeclarationLookupObject {
+    private static final Logger LOG = Logger.getInstance("#" + DeclarationLookupObject.class.getName());
 
     @Nullable
     private final DeclarationDescriptor descriptor;
@@ -39,7 +39,11 @@ public final class JetLookupObject {
     @Nullable
     private final PsiElement psiElement;
 
-    public JetLookupObject(@Nullable DeclarationDescriptor descriptor, @NotNull KotlinCodeAnalyzer analyzer, @Nullable PsiElement psiElement) {
+    public DeclarationLookupObject(
+            @Nullable DeclarationDescriptor descriptor,
+            @NotNull KotlinCodeAnalyzer analyzer,
+            @Nullable PsiElement psiElement
+    ) {
         this.descriptor = descriptor;
         this.analyzer = analyzer;
         this.psiElement = psiElement;
@@ -70,7 +74,7 @@ public final class JetLookupObject {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        JetLookupObject lookupObject = (JetLookupObject) obj;
+        DeclarationLookupObject lookupObject = (DeclarationLookupObject) obj;
 
         if (!analyzer.equals(lookupObject.analyzer)) {
             LOG.warn("Descriptors from different resolve sessions");

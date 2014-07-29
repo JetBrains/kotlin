@@ -46,7 +46,7 @@ public final class DescriptorLookupConverter {
     public static LookupElement createLookupElement(@NotNull KotlinCodeAnalyzer analyzer,
             @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
         LookupElementBuilder element = LookupElementBuilder.create(
-                new JetLookupObject(descriptor, analyzer, declaration), descriptor.getName().asString());
+                new DeclarationLookupObject(descriptor, analyzer, declaration), descriptor.getName().asString());
 
         String presentableText = descriptor.getName().asString();
         String typeText = "";

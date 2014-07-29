@@ -23,7 +23,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.plugin.completion.JetLookupObject
+import org.jetbrains.jet.plugin.completion.DeclarationLookupObject
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
@@ -33,7 +33,7 @@ public object JetClassInsertHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val file = context.getFile()
         if (file is JetFile) {
-            val descriptor = (item.getObject() as? JetLookupObject)?.getDescriptor() as? ClassDescriptor
+            val descriptor = (item.getObject() as? org.jetbrains.jet.plugin.completion.DeclarationLookupObject)?.getDescriptor() as? ClassDescriptor
             if (descriptor != null) {
                 val startOffset = context.getStartOffset()
                 val document = context.getDocument()

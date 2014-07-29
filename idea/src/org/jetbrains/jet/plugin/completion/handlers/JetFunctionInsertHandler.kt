@@ -29,7 +29,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.plugin.completion.JetLookupObject
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
@@ -156,8 +155,8 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
                 if (element == null) return@runReadAction
 
                 val file = context.getFile()
-                if (file is JetFile && item.getObject() is JetLookupObject) {
-                    val descriptor = (item.getObject() as JetLookupObject).getDescriptor()
+                if (file is JetFile && item.getObject() is org.jetbrains.jet.plugin.completion.DeclarationLookupObject) {
+                    val descriptor = (item.getObject() as org.jetbrains.jet.plugin.completion.DeclarationLookupObject).getDescriptor()
 
                     if (descriptor is SimpleFunctionDescriptor) {
                         val functionDescriptor = descriptor as SimpleFunctionDescriptor

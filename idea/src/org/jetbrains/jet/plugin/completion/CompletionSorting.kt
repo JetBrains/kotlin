@@ -68,7 +68,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
     override fun weigh(element: LookupElement): Weight {
         val o = element.getObject()
         return when (o) {
-            is JetLookupObject -> when (o.getDescriptor()) {
+            is DeclarationLookupObject -> when (o.getDescriptor()) {
                 is LocalVariableDescriptor, is ValueParameterDescriptor -> Weight.localOrParameter
                 is PropertyDescriptor -> Weight.property
                 is PackageViewDescriptor -> Weight.packages
@@ -85,7 +85,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
 private object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
         val o = element.getObject()
-        if (o is JetLookupObject) {
+        if (o is DeclarationLookupObject) {
             val descriptor = o.getDescriptor()
             if (descriptor != null && KotlinBuiltIns.getInstance().isDeprecated(descriptor)) return 1
         }
@@ -114,7 +114,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
 
     override fun weigh(element: LookupElement): Weight {
         val o = element.getObject()
-        if (o is JetLookupObject) {
+        if (o is DeclarationLookupObject) {
             val elementFile = o.getPsiElement()?.getContainingFile()
             if (elementFile is JetFile && elementFile.getOriginalFile() == file) {
                 return Weight.thisFile
