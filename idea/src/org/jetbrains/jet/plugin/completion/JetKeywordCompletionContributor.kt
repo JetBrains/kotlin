@@ -23,8 +23,6 @@ import com.intellij.psi.filters.position.LeftNeighbour
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.lexer.JetTokens
-import com.intellij.codeInsight.completion.CompletionContributor
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.filters.position.SuperParentFilter
 import com.intellij.psi.util.PsiTreeUtil
@@ -41,6 +39,8 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.filters.position.PatternFilter
+
+class KeywordLookupObject(val keyword: String)
 
 public open class JetKeywordCompletionContributor() : CompletionContributor() {
     {
@@ -116,7 +116,7 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
     }
 
     private fun registerScopeKeywordsCompletion(placeFilter : ElementFilter, keywords : Collection<JetToken>) {
-        extend(CompletionType.BASIC, getPlacePattern(placeFilter), KeywordsCompletionProvider(keywords.map { it.toString()!! }))
+        extend(CompletionType.BASIC, getPlacePattern(placeFilter), KeywordsCompletionProvider(keywords.map { it.toString() }))
     }
 
     private inner class BunchKeywordRegister() {
@@ -128,11 +128,11 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
         }
 
         fun registerAll() {
-            for (entry in orFiltersToKeywords.entrySet()!!) {
+            for ((filters, token) in orFiltersToKeywords.entrySet()) {
                 val orFilter = OrFilter()
-                entry.key.forEach { filter -> orFilter.addFilter(filter) }
+                filters.forEach { filter -> orFilter.addFilter(filter) }
 
-                registerScopeKeywordsCompletion(orFilter, entry.value)
+                registerScopeKeywordsCompletion(orFilter, token)
             }
         }
     }
@@ -232,8 +232,7 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
 
         private open class InPropertyBodyFilter() : PositionElementFilter() {
             override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
-                if (!(element is PsiElement))
-                    return false
+                if (element !is PsiElement) return false
 
                 val property = PsiTreeUtil.getParentOfType(context, javaClass<JetProperty>(), false)
                 return property != null && isAfterName(property, (element as PsiElement))
@@ -269,17 +268,15 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
             private val debugName : String
 
             {
-                debugName = keywords.sort().makeString(separator = ", ")
+                debugName = keywords.sort().joinToString(separator = ", ")
 
                 elements = keywords.map { keyword ->
-                    val lookupElementBuilder = LookupElementBuilder.create(keyword).bold()
-
-                    if (!JetKeywordCompletionContributor.FUNCTION_KEYWORDS.contains(keyword)) {
-                        lookupElementBuilder.withInsertHandler(JetKeywordCompletionContributor.KEYWORDS_INSERT_HANDLER)
-                    }
-                    else {
-                        lookupElementBuilder.withInsertHandler(JetFunctionInsertHandler.NO_PARAMETERS_HANDLER)
-                    }
+                    LookupElementBuilder.create(KeywordLookupObject(keyword), keyword)
+                            .bold()
+                            .withInsertHandler(if (keyword !in FUNCTION_KEYWORDS)
+                                                               KEYWORDS_INSERT_HANDLER
+                                                           else
+                                                               JetFunctionInsertHandler.NO_PARAMETERS_HANDLER)
                 }
             }
 

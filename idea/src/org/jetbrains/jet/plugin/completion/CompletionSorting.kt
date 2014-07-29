@@ -60,8 +60,8 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
 
         localOrParameter
         property
-        probableKeyword
-        normal
+        keyword
+        default
         packages
     }
 
@@ -72,12 +72,12 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
                 is LocalVariableDescriptor, is ValueParameterDescriptor -> Weight.localOrParameter
                 is PropertyDescriptor -> Weight.property
                 is PackageViewDescriptor -> Weight.packages
-                else -> Weight.normal
+                else -> Weight.default
             }
 
-            is String -> Weight.probableKeyword
+            is KeywordLookupObject -> Weight.keyword
 
-            else -> Weight.normal
+            else -> Weight.default
         }
     }
 }

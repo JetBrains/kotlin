@@ -39,7 +39,6 @@ import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion;
-import org.jetbrains.jet.plugin.completion.weigher.WeigherPackage;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
@@ -78,7 +77,7 @@ class CompletionSession {
         // which sometimes works incorrectly for Kotlin
         result = result.withPrefixMatcher(CompletionUtil.findJavaIdentifierPrefix(parameters));
 
-        result = WeigherPackage.addJetSorting(result, parameters);
+        result = CompletionPackage.addKotlinSorting(result, parameters);
 
         this.jetResult = new JetCompletionResultSet(result, resolveSession, expressionBindingContext, descriptorFilter);
     }
