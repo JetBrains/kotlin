@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.JetIcons
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.plugin.completion.weigher.addJetSorting
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertHandler
@@ -75,7 +74,7 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
         val callElement = PsiTreeUtil.getParentOfType(valueArgument, javaClass<JetCallElement>()) ?: return
         val callSimpleName = callElement.getCallNameExpression() ?: return
 
-        val kotlinResultSet = result.addJetSorting(parameters)
+        val kotlinResultSet = result.addKotlinSorting(parameters)
 
         val callReference = callSimpleName.getReference() as JetReference
 

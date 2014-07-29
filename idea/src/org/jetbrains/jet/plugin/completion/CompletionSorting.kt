@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.completion.weigher
+package org.jetbrains.jet.plugin.completion
 
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionParameters
@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.name.isValidJavaFqName
 import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 
-public fun CompletionResultSet.addJetSorting(parameters: CompletionParameters): CompletionResultSet {
+public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
 
     sorter = sorter.weighBefore("stats", PriorityWeigher, KindWeigher)

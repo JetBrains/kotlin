@@ -36,7 +36,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.codeInsight.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler
-import org.jetbrains.jet.plugin.completion.weigher.addJetSorting
 import com.intellij.util.ProcessingContext
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.filters.position.FilterPattern
@@ -285,7 +284,7 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
             }
 
             override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext?, result: CompletionResultSet) {
-                result.addJetSorting(parameters).withPrefixMatcher(SimplePrefixMatcher(result.getPrefixMatcher().getPrefix())).addAllElements(elements)
+                result.addKotlinSorting(parameters).withPrefixMatcher(SimplePrefixMatcher(result.getPrefixMatcher().getPrefix())).addAllElements(elements)
             }
 
             override fun toString() : String = debugName
