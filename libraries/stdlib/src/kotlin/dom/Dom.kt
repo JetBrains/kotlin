@@ -350,6 +350,10 @@ fun Node.plus(child: Node?): Node {
     return this
 }
 
+fun Node.plusAssign(child: Node?) {
+    this + child
+}
+
 fun Element.plus(text: String?): Element = this.addText(text)
 
 fun Element.plusAssign(text: String?): Element = this.addText(text)

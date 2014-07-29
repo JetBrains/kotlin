@@ -5899,11 +5899,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/operatorsOverloading"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
-            @TestMetadata("AssignOperatorAmbiguity.kt")
-            public void testAssignOperatorAmbiguity() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignOperatorAmbiguity.kt");
-            }
-            
             @TestMetadata("AssignmentOperations.kt")
             public void testAssignmentOperations() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignmentOperations.kt");
