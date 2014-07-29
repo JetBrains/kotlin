@@ -201,7 +201,7 @@
         </unzip>
 
         <!-- Bootstrap compiler -->
-        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
+        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/M8.tcbuildtag/kotlin-plugin-{build.number}.zip"
              dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
         <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
         <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
