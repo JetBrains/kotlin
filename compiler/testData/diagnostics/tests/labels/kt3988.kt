@@ -15,7 +15,7 @@ fun new2(body: Comment2.() -> Unit) = body
 fun main(args: Array<String>) {
     new {
         new2 {
-            this@new //UNRESOLVED REFERENCE
+            <!UNUSED_EXPRESSION!>this@new<!> //UNRESOLVED REFERENCE
         }
     }
 }

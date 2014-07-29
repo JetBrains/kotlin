@@ -74,8 +74,8 @@ try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }       <v3>: *   NEW:
 2 > 3                     <v2>: Boolean                NEW: call(2 > 3, compareTo|<v0>, <v1>) -> <v2>   
 return@l                  !<v3>: *                                                                      
 { return@l }              !<v3>: *                     COPY                                             
-if (2 > 3) { return@l }   <v4>: Unit                   NEW: merge(if (2 > 3) { return@l }|!<v3>) -> <v4>
-if (2 > 3) { return@l }   <v4>: Unit                   COPY                                             
+if (2 > 3) { return@l }   <v4>: *                      NEW: merge(if (2 > 3) { return@l }|!<v3>) -> <v4>
+if (2 > 3) { return@l }   <v4>: *                      COPY
 =====================
 == t4 ==
 fun t4() {
@@ -113,12 +113,12 @@ fun t4() {
 2 > 3                                             <v3>: Boolean                NEW: call(2 > 3, compareTo|<v1>, <v2>) -> <v3>                          
 return@l                                          !<v5>: *                                                                                             
 { return@l }                                      !<v5>: *                     COPY                                                                    
-if (2 > 3) { return@l }                           <v6>: Unit                   NEW: merge(if (2 > 3) { return@l }|!<v5>) -> <v6>                       
-{ 1 if (2 > 3) { return@l } }                     <v6>: Unit                   COPY                                                                    
+if (2 > 3) { return@l }                           <v6>: *                      NEW: merge(if (2 > 3) { return@l }|!<v5>) -> <v6>
+{ 1 if (2 > 3) { return@l } }                     <v6>: *                      COPY
 2                                                 <v4>: *                      NEW: r(2) -> <v4>                                                       
 { 2 }                                             <v4>: *                      COPY                                                                    
-try { 1 if (2 > 3) { return@l } } finally { 2 }   <v7>: Unit                   NEW: merge(try { 1 if (2 > 3) { return@l } } finally { 2 }|<v6>) -> <v7>
-try { 1 if (2 > 3) { return@l } } finally { 2 }   <v7>: Unit                   COPY                                                                    
+try { 1 if (2 > 3) { return@l } } finally { 2 }   <v7>: *                      NEW: merge(try { 1 if (2 > 3) { return@l } } finally { 2 }|<v6>) -> <v7>
+try { 1 if (2 > 3) { return@l } } finally { 2 }   <v7>: *                      COPY
 =====================
 == t5 ==
 fun t5() {

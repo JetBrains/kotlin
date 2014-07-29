@@ -22,10 +22,10 @@ fun inline() {
 fun notInline() {
     val <info descr="Value captured in a closure">y2</info> = 1
     run { <info descr="Value captured in a closure">y2</info> }
-    run2 { <info descr="Value captured in a closure">y2</info> }
+    run2 { <warning><info descr="Value captured in a closure">y2</info></warning> }
 
     val <info descr="Value captured in a closure">y3</info> = 1
-    run2 { <info descr="Value captured in a closure">y3</info> }
+    run2 { <warning><info descr="Value captured in a closure">y3</info></warning> }
     run { <info descr="Value captured in a closure">y3</info> }
 
     // wrapped, using in not inline
@@ -33,7 +33,7 @@ fun notInline() {
     { <info descr="Value captured in a closure">z</info> }()
 
     val <info descr="Value captured in a closure">z1</info> = 3
-    run2 { <info descr="Value captured in a closure">z1</info> }
+    run2 { <warning><info descr="Value captured in a closure">z1</info></warning> }
 }
 
 fun nestedDifferent() { // inline within non-inline and vice-versa

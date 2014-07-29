@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.AccessTarget;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MagicKind;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -100,6 +101,13 @@ public class JetControlFlowProcessor {
     }
 
     private void generateImplicitReturnValue(@NotNull JetExpression bodyExpression, @NotNull JetElement subroutine) {
+        CallableDescriptor subroutineDescriptor = (CallableDescriptor) trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine);
+        if (subroutineDescriptor == null) return;
+
+        JetType returnType = subroutineDescriptor.getReturnType();
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        if (returnType != null && builtIns.isUnit(returnType) && subroutineDescriptor instanceof AnonymousFunctionDescriptor) return;
+
         PseudoValue returnValue = builder.getBoundValue(bodyExpression);
         if (returnValue == null) return;
 

@@ -78,9 +78,8 @@ L3:
     r("") -> <v2>
     mark((foo)())
     call((foo)(), invoke|<v1>, <v2>) -> <v3>
-  3 ret(*|<v3>) L4
 L4:
-    <END>                                       NEXT:[<SINK>]
+  3 <END>                                       NEXT:[<SINK>]
 error:
     <ERROR>                                     PREV:[]
 sink:

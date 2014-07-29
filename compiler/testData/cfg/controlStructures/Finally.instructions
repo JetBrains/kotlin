@@ -152,9 +152,8 @@ L6:
     read (Unit)                                     PREV:[jf(L6|<v2>)]
 L7:
     merge(if (2 > 3) { return@l }|!<v3>) -> <v4>
-  4 ret(*|<v4>) L5
 L5:
-    <END>                                           NEXT:[<SINK>]                                          PREV:[ret L5, ret(*|<v4>) L5]
+  4 <END>                                           NEXT:[<SINK>]                                          PREV:[ret L5, merge(if (2 > 3) { return@l }|!<v3>) -> <v4>]
 error:
     <ERROR>                                         PREV:[]
 sink:
@@ -235,9 +234,8 @@ L10 [skipFinallyToErrorBlock]:
   7 mark({ 2 })                                                            PREV:[jmp(L10 [skipFinallyToErrorBlock])]
     r(2) -> <v4>
   4 merge(try { 1 if (2 > 3) { return@l } } finally { 2 }|<v6>) -> <v7>
-  3 ret(*|<v7>) L4
 L4:
-    <END>                                                                  NEXT:[<SINK>]                                                                 PREV:[ret L4, ret(*|<v7>) L4]
+  3 <END>                                                                  NEXT:[<SINK>]                                                                 PREV:[ret L4, merge(try { 1 if (2 > 3) { return@l } } finally { 2 }|<v6>) -> <v7>]
 error:
     <ERROR>                                                                PREV:[jmp(error)]
 sink:

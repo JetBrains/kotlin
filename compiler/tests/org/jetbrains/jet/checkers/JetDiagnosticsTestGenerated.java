@@ -1541,6 +1541,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInWhileFromBreak.kt");
                 }
                 
+                @TestMetadata("expressionInUnitLiteral.kt")
+                public void testExpressionInUnitLiteral() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/expressionInUnitLiteral.kt");
+                }
+                
                 @TestMetadata("kt2585_1.kt")
                 public void testKt2585_1() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/kt2585_1.kt");
@@ -3491,6 +3496,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("unusedLiteral.kt")
             public void testUnusedLiteral() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/unusedLiteral.kt");
+            }
+            
+            @TestMetadata("unusedLiteralInsideUnitLiteral.kt")
+            public void testUnusedLiteralInsideUnitLiteral() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/functionLiterals/unusedLiteralInsideUnitLiteral.kt");
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/functionLiterals/return")

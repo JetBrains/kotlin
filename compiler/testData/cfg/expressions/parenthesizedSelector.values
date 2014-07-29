@@ -36,7 +36,7 @@ with(1) { "".(foo)() }       <v2>: *                     NEW: call(with(1) { "".
 ""           <v2>: String                   NEW: r("") -> <v2>                           
 foo          <v1>: {<: String.() -> Unit}   NEW: r(foo|<v0>) -> <v1>                     
 (foo)        <v1>: {<: String.() -> Unit}   COPY                                         
-(foo)()      <v3>: Unit                     NEW: call((foo)(), invoke|<v1>, <v2>) -> <v3>
-"".(foo)()   <v3>: Unit                     COPY                                         
-"".(foo)()   <v3>: Unit                     COPY                                         
+(foo)()      <v3>: *                        NEW: call((foo)(), invoke|<v1>, <v2>) -> <v3>
+"".(foo)()   <v3>: *                        COPY
+"".(foo)()   <v3>: *                        COPY
 =====================
