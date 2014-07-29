@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
- * Position will be used for removing duplicates
+ * Position will be used for sorting
  */
 public final class DeclarationLookupObject {
     private static final Logger LOG = Logger.getInstance("#" + DeclarationLookupObject.class.getName());
@@ -61,7 +61,7 @@ public final class DeclarationLookupObject {
 
     @Override
     public String toString() {
-        return super.toString() + " " + descriptor + " " + psiElement;
+        return super.toString() + " " + descriptor;
     }
 
     @Override
