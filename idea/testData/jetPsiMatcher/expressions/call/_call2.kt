@@ -1,2 +1,0 @@
-// NOT_EQUAL
-f()

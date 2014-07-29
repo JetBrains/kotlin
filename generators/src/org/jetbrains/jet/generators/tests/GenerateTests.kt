@@ -42,7 +42,6 @@ import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
 import org.jetbrains.jet.repl.AbstractReplInterpreterTest
 import org.jetbrains.jet.cfg.AbstractControlFlowTest
-import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
 import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest
@@ -294,11 +293,6 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractAdditionalLazyResolveDescriptorRendererTest>()) {
             model("resolve/additionalLazyResolve")
-        }
-
-        testClass(javaClass<AbstractJetPsiMatcherTest>()) {
-            model("jetPsiMatcher/expressions", testMethod = "doTestExpressions")
-            model("jetPsiMatcher/types", testMethod = "doTestTypes")
         }
 
         testClass(javaClass<AbstractJetPsiCheckerTest>()) {

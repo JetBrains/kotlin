@@ -1,1 +1,0 @@
-super<Int>@label.foo()

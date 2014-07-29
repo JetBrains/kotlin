@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.intentions.branchedTransformations
 
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.plugin.util.JetPsiMatcher
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils.*
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import java.util.ArrayList
@@ -26,6 +25,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import java.util.Collections
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
+import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult
+import org.jetbrains.jet.plugin.util.psi.patternMatching.matches
 
 public val TRANSFORM_WITHOUT_CHECK: String = "Expression must be checked before applying transformation"
 
@@ -70,8 +74,7 @@ public fun JetWhenExpression.canFlatten(): Boolean {
     val elseBranch = getElseExpression()
     if (elseBranch !is JetWhenExpression) return false
 
-    return JetPsiUtil.checkWhenExpressionHasSingleElse(elseBranch) &&
-        JetPsiMatcher.checkElementMatch(subject, elseBranch.getSubjectExpression())
+    return JetPsiUtil.checkWhenExpressionHasSingleElse(elseBranch) && subject.matches(elseBranch.getSubjectExpression())
 }
 
 fun JetWhenExpression.getSubjectCandidate(): JetExpression?  {
@@ -113,7 +116,7 @@ fun JetWhenExpression.getSubjectCandidate(): JetExpression?  {
             if (lastCandidate == null) {
                 lastCandidate = currCandidate
             }
-            else if (!JetPsiMatcher.checkElementMatch(lastCandidate, currCandidate)) return null
+            else if (!lastCandidate.matches(currCandidate)) return null
 
         }
     }
@@ -179,14 +182,7 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
                     when (op) {
                         JetTokens.IN_KEYWORD -> builder.range(rhs, false)
                         JetTokens.NOT_IN -> builder.range(rhs, true)
-                        JetTokens.EQEQ -> {
-                            if (JetPsiMatcher.checkElementMatch(subject, lhs)) {
-                                builder.condition(rhs)
-                            }
-                            else {
-                                builder.condition(lhs)
-                            }
-                        }
+                        JetTokens.EQEQ -> builder.condition(if (subject.matches(lhs)) rhs else lhs)
                         else -> assert(false, TRANSFORM_WITHOUT_CHECK)
                     }
                 }
@@ -321,14 +317,8 @@ public fun JetWhenExpression.transformToIf() {
 }
 
 public fun JetWhenExpression.canMergeWithNext(): Boolean {
-    fun checkConditions(e1: JetWhenEntry, e2: JetWhenEntry): Boolean {
-        if (e1.isElse() != e2.isElse()) return false
-
-        val conditions1 = e1.getConditions().toList()
-        val conditions2 = e2.getConditions().toList()
-        return conditions1.size == conditions2.size &&
-            (conditions1 zip conditions2).all { pair -> JetPsiMatcher.checkElementMatch(pair.first, pair.second)}
-    }
+    fun checkConditions(e1: JetWhenEntry, e2: JetWhenEntry): Boolean =
+            e1.getConditions().toList().toRange().matches(e2.getConditions().toList().toRange())
 
     fun JetWhenEntry.declarationNames(): Set<String> =
             getExpression()?.blockExpressionsOrSingle()
@@ -348,7 +338,7 @@ public fun JetWhenExpression.canMergeWithNext(): Boolean {
     val sibling = PsiTreeUtil.skipSiblingsForward(this, javaClass<PsiWhiteSpace>())
 
     if (sibling !is JetWhenExpression) return false
-    if (!JetPsiMatcher.checkElementMatch(getSubjectExpression(), sibling.getSubjectExpression())) return false
+    if (!getSubjectExpression().matches(sibling.getSubjectExpression())) return false
 
     val entries1 = getEntries()
     val entries2 = sibling.getEntries()
