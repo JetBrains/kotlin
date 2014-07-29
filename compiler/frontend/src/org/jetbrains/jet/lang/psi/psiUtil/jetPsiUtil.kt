@@ -341,3 +341,8 @@ public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = tr
     val stream = stream(this, stepFun)
     return if (withItself) stream else stream.drop(1)
 }
+
+public fun PsiElement.parents(withItself: Boolean = true): Stream<PsiElement> {
+    val stream = stream(this) { if (it is PsiFile) null else it.getParent() }
+    return if (withItself) stream else stream.drop(1)
+}

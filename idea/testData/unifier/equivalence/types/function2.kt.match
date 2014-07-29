@@ -1,0 +1,9 @@
+Function2<Any, Int, String>
+
+kotlin.Function2<kotlin.Any, kotlin.Int, kotlin.String>
+
+(Any, Int) -> String
+
+(a: Any, n: Int) -> kotlin.String
+
+(t: Any, u: Int) -> kotlin.String

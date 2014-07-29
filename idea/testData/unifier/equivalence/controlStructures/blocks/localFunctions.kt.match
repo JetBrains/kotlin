@@ -1,0 +1,11 @@
+{
+            fun a() = 1
+            fun b() = a() + 1
+            println(a() - b())
+        }
+
+{
+            fun b() = 1
+            fun a() = b() + 1
+            println(b() - a())
+        }

@@ -119,6 +119,7 @@ import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.jet.codegen.AbstractScriptCodegenTest
 import org.jetbrains.jet.plugin.parameterInfo.AbstractFunctionParameterInfoTest
+import org.jetbrains.jet.psi.patternMatching.AbstractJetPsiUnifierTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -307,6 +308,10 @@ fun main(args: Array<String>) {
             model("checker/rendering")
             model("checker/duplicateJvmSignature")
             model("checker/infos", testMethod = "doTestWithInfos")
+        }
+
+        testClass(javaClass<AbstractJetPsiUnifierTest>()) {
+            model("unifier")
         }
 
         testClass(javaClass<AbstractCodeFragmentHighlightingTest>()) {

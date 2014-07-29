@@ -1,0 +1,13 @@
+object A {
+            val a = 1
+            fun b() = a + 1
+            val c: Int
+                get() = b() + 1
+        }
+
+object D {
+            fun b() = a + 1
+            val a = 1
+            val c: Int
+                get() = b() + 1
+        }

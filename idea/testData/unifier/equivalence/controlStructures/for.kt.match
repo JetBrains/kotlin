@@ -1,0 +1,11 @@
+for (i in a - b..a + b) {
+        println(i*i)
+    }
+
+for (k in a - b..a + b) {
+        println(k*k)
+    }
+
+for (i in (a - b..a + b)) {
+        println(i*i)
+    }
