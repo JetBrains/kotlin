@@ -22,7 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil
 
 public class FirstChildInParentFilter(val level: Int = 1) : PositionElementFilter() {
     override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
-        if (!(element is PsiElement)) return false
+        if (element !is PsiElement) return false
 
         var parent: PsiElement? = element
         for (i in 1..level) {

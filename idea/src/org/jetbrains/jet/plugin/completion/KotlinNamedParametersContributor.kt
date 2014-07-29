@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.psi.JetCallElement
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.jet.plugin.completion.KotlinNamedParametersContributor.NamedParameterLookupObject
 import org.jetbrains.jet.plugin.JetIcons
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.plugin.completion.weigher.addJetSorting
@@ -49,8 +48,6 @@ import org.jetbrains.jet.plugin.util.FirstChildInParentFilter
 import org.jetbrains.jet.lang.psi.psiUtil.getCallNameExpression
 
 public class KotlinNamedParametersContributor : CompletionContributor() {
-    public class NamedParameterLookupObject(val name: Name) {}
-
     private val InNamedParameterFilter = AndFilter(
             LeafElementFilter(JetTokens.IDENTIFIER),
             OrFilter(
@@ -75,11 +72,8 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
     private fun doParamsCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
         val valueArgument = PsiTreeUtil.getParentOfType(parameters.getPosition(), javaClass<JetValueArgument>())!!
 
-        val callElement = PsiTreeUtil.getParentOfType(valueArgument, javaClass<JetCallElement>())
-        if (callElement == null) return
-
-        val callSimpleName = callElement.getCallNameExpression()
-        if (callSimpleName == null) return
+        val callElement = PsiTreeUtil.getParentOfType(valueArgument, javaClass<JetCallElement>()) ?: return
+        val callSimpleName = callElement.getCallNameExpression() ?: return
 
         val kotlinResultSet = result.addJetSorting(parameters)
 
@@ -95,12 +89,13 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
             for (parameter in funDescriptor.getValueParameters()) {
                 val name = parameter.getName().asString()
                 if (result.getPrefixMatcher().prefixMatches(name) && name !in usedArguments) {
-                    val lookupElement = LookupElementBuilder.create(NamedParameterLookupObject(parameter.getName()), "${name}")
-                            .withPresentableText("${name} = ")
+                    val lookupElement = LookupElementBuilder.create("$name")
+                            .withPresentableText("$name = ")
                             .withTailText("${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
                             .withIcon(JetIcons.PARAMETER)
                             .withInsertHandler(NamedParameterInsertHandler)
                             .assignPriority(ItemPriority.NAMED_PARAMETER)
+                    lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_EQ, true);
 
                     kotlinResultSet.addElement(lookupElement)
                 }
