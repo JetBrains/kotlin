@@ -1,0 +1,14 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+  [kotlinc] Compiling [[[TestData]/hello.kt]] => [[Temp]/hello.jar]
+
+ERR:
+
+BUILD FAILED
+[TestData]/build.xml:5: Invalid argument: -option-never-to-be-supported
+
+Total time: [time]
+
+Return code: 1
