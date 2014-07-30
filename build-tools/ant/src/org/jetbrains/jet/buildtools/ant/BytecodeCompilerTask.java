@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.buildtools.ant;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.jetbrains.jet.buildtools.core.BytecodeCompiler;
 import org.jetbrains.jet.buildtools.core.Util;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,9 +41,7 @@ import static org.jetbrains.jet.buildtools.core.Util.getPath;
  * http://svn.apache.org/viewvc/ant/core/trunk/src/main/org/apache/tools/ant/taskdefs/Javac.java?view=markup.
  */
 public class BytecodeCompilerTask extends Task {
-
     private File output;
-    private File jar;
     private File stdlib;
     private Path src;
     private Path externalAnnotations;
@@ -54,10 +52,6 @@ public class BytecodeCompilerTask extends Task {
 
     public void setOutput(File output) {
         this.output = output;
-    }
-
-    public void setJar(File jar) {
-        this.jar = jar;
     }
 
     public void setStdlib(File stdlib) {
@@ -141,49 +135,39 @@ public class BytecodeCompilerTask extends Task {
     @Override
     public void execute() {
         BytecodeCompiler compiler = new BytecodeCompiler();
-        String stdlibPath = (this.stdlib != null ? getPath(this.stdlib) : null);
-        String[] classpath = (this.compileClasspath != null ? this.compileClasspath.list() : null);
-        String[] externalAnnotationsPath = (this.externalAnnotations != null) ? this.externalAnnotations.list() : null;
+        String stdlibPath = (stdlib != null ? getPath(stdlib) : null);
+        String[] classpath = (compileClasspath != null ? compileClasspath.list() : null);
+        String[] externalAnnotationsPath = (externalAnnotations != null) ? externalAnnotations.list() : null;
 
         List<String> args = new ArrayList<String>();
         for (Commandline.Argument argument : additionalArguments) {
             args.addAll(Arrays.asList(argument.getParts()));
         }
 
-        if (this.src != null) {
+        if (output == null) {
+            throw new BuildException("\"output\" should be specified");
+        }
 
-            if ((this.output == null) && (this.jar == null)) {
-                throw new CompileEnvironmentException("\"output\" or \"jar\" should be specified");
-            }
-
-            String[] source = Util.getPaths(this.src.list());
-            String destination = getPath(this.output != null ? this.output : this.jar);
+        if (src != null) {
+            String[] source = Util.getPaths(src.list());
+            String destination = getPath(output);
 
             log(String.format("Compiling [%s] => [%s]", Arrays.toString(source), destination));
-
-            if (this.output != null) {
-                compiler.sourcesToDir(source, destination, stdlibPath, classpath, externalAnnotationsPath, args);
-            }
-            else {
-                compiler.sourcesToJar(source, destination, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath, args);
-            }
+            compiler.compileSources(source, destination, includeRuntime, stdlibPath, classpath, externalAnnotationsPath, args);
         }
-        else if (this.module != null) {
-
-            if (this.output != null) {
-                throw new CompileEnvironmentException("Module compilation is only supported for jar destination");
+        else if (module != null) {
+            if (!output.toString().endsWith(".jar")) {
+                throw new BuildException("Module compilation is only supported for jar destination");
             }
 
-            String modulePath = getPath(this.module);
-            String jarPath = (this.jar != null ? getPath(this.jar) : null);
+            String modulePath = getPath(module);
+            String jarPath = getPath(output);
 
-            log(jarPath != null ? String.format("Compiling [%s] => [%s]", modulePath, jarPath) :
-                String.format("Compiling [%s]", modulePath));
-
-            compiler.moduleToJar(modulePath, jarPath, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath, args);
+            log(String.format("Compiling [%s] => [%s]", modulePath, jarPath));
+            compiler.compileModule(modulePath, jarPath, includeRuntime, stdlibPath, classpath, externalAnnotationsPath, args);
         }
         else {
-            throw new CompileEnvironmentException("\"src\" or \"module\" should be specified");
+            throw new BuildException("\"src\" or \"module\" should be specified");
         }
     }
 }
