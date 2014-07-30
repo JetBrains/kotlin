@@ -32,7 +32,8 @@ import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
+import org.jetbrains.jet.lang.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -41,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
@@ -49,10 +49,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
@@ -128,14 +125,19 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                 declarationProviderFactory,
                 trace);
 
-        resolveWithJava.getModule().addFragmentProvider(
-                DependencyKind.BINARIES, resolveWithJava.getJavaDescriptorResolver().getPackageFragmentProvider());
+        ModuleDescriptorImpl module = resolveWithJava.getModule();
+        module.initialize(
+                new CompositePackageFragmentProvider(
+                        Arrays.asList(
+                                resolveWithJava.getResolveSession().getPackageFragmentProvider(),
+                                resolveWithJava.getJavaDescriptorResolver().getPackageFragmentProvider()
+                        )));
 
+        module.addDependencyOnModule(module);
         if (addBuiltIns) {
-            resolveWithJava.getModule().addFragmentProvider(
-                    DependencyKind.BUILT_INS,
-                    KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+            module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         }
+        module.seal();
         return new JvmSetup(resolveWithJava.getResolveSession(), resolveWithJava.getJavaDescriptorResolver());
     }
 
@@ -160,12 +162,11 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         try {
-            module.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
+            List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();
 
             if (incrementalCache != null && moduleIds != null) {
                 for (String moduleId : moduleIds) {
-                    module.addFragmentProvider(
-                            DependencyKind.SOURCES,
+                    additionalProviders.add(
                             new IncrementalPackageFragmentProvider(
                                     files, module, globalContext.getStorageManager(), injector.getDeserializationGlobalContextForJava(),
                                     incrementalCache, moduleId, injector.getJavaDescriptorResolver()
@@ -173,8 +174,9 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                     );
                 }
             }
+            additionalProviders.add(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-            injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files);
+            injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files, additionalProviders);
             return AnalyzeExhaust.success(trace.getBindingContext(), module);
         }
         finally {

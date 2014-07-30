@@ -115,7 +115,7 @@ public class JetExpectedResolveDataUtil {
 
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
-        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, new BindingTraceContext());
+        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, new BindingTraceContext(), false);
         JavaClass javaClass = injector.getJavaClassFinder().findClass(new FqName(qualifiedName));
         Assert.assertNotNull("Class wasn't found: " + qualifiedName, javaClass);
         assertInstanceOf(javaClass, JavaClassImpl.class);

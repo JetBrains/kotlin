@@ -71,7 +71,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
 
                 BindingTrace trace = new BindingTraceContext();
                 InjectorForJavaDescriptorResolver injector =
-                        InjectorForJavaDescriptorResolverUtil.create(commonEnvironment.getProject(), trace);
+                        InjectorForJavaDescriptorResolverUtil.create(commonEnvironment.getProject(), trace, false);
 
                 BindingContext bindingContext = trace.getBindingContext();
 

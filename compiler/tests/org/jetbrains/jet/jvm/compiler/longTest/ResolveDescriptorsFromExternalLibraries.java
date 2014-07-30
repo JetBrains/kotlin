@@ -168,8 +168,8 @@ public class ResolveDescriptorsFromExternalLibraries {
             }
         }
 
-        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(
-                jetCoreEnvironment.getProject(), new BindingTraceContext());
+        InjectorForJavaDescriptorResolver injector =
+                InjectorForJavaDescriptorResolverUtil.create(jetCoreEnvironment.getProject(), new BindingTraceContext(), false);
         ModuleDescriptor moduleDescriptor = injector.getModule();
 
         boolean hasErrors;

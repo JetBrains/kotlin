@@ -36,7 +36,6 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClass
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -45,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
@@ -158,7 +158,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         // we need the same binding trace for resolve from Java and Kotlin
         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
         BindingTrace trace = support.getTrace();
-        ModuleDescriptorImpl module = support.getModule();
+        ModuleDescriptorImpl module = support.newModule();
 
         TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
                 new LockBasedStorageManager(),
@@ -173,9 +173,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 trace,
                 module);
 
-        module.addFragmentProvider(DependencyKind.BINARIES, injectorForAnalyzer.getJavaDescriptorResolver().getPackageFragmentProvider());
-
-        injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(parameters, environment.getSourceFiles());
+        injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(
+                parameters, environment.getSourceFiles(),
+                injectorForAnalyzer.getJavaDescriptorResolver().getPackageFragmentProvider()
+        );
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null : "Test package not found";

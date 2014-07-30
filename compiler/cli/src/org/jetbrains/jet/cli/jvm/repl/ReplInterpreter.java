@@ -43,6 +43,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilderDummy;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
@@ -70,12 +71,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
-import static org.jetbrains.jet.lang.descriptors.DependencyKind.*;
 
 public class ReplInterpreter {
 
@@ -109,9 +110,14 @@ public class ReplInterpreter {
         );
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
-        module.addFragmentProvider(SOURCES, injector.getTopDownAnalyzer().getPackageFragmentProvider());
-        module.addFragmentProvider(BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
-        module.addFragmentProvider(BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
+        module.initialize(new CompositePackageFragmentProvider(
+                Arrays.asList(injector.getTopDownAnalyzer().getPackageFragmentProvider(),
+                              injector.getJavaDescriptorResolver().getPackageFragmentProvider()
+                )
+        ));
+        module.addDependencyOnModule(module);
+        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        module.seal();
 
         List<URL> classpath = Lists.newArrayList();
 

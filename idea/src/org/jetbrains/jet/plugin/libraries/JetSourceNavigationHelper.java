@@ -44,7 +44,6 @@ import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -53,6 +52,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -216,24 +216,7 @@ public class JetSourceNavigationHelper {
             }
         }
 
-        Project project = decompiledDeclaration.getProject();
-        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
-                globalContext.getStorageManager(),
-                getContainingFiles(candidates));
-
-        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
-                                                                         AnalyzerFacadeForJVM.DEFAULT_IMPORTS,
-                                                                         PlatformToKotlinClassMap.EMPTY);
-
-        moduleDescriptor.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
-
-        KotlinCodeAnalyzer analyzer = new InjectorForLazyResolve(
-                project,
-                globalContext,
-                moduleDescriptor,
-                providerFactory,
-                new BindingTraceContext()).getResolveSession();
+        KotlinCodeAnalyzer analyzer = createAnalyzer(candidates, decompiledDeclaration.getProject());
 
         for (JetNamedDeclaration candidate : candidates) {
             //noinspection unchecked
@@ -246,6 +229,36 @@ public class JetSourceNavigationHelper {
         }
 
         return null;
+    }
+
+    @NotNull
+    private static KotlinCodeAnalyzer createAnalyzer(
+            @NotNull Collection<JetNamedDeclaration> candidates,
+            @NotNull Project project
+    ) {
+        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
+        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
+                globalContext.getStorageManager(),
+                getContainingFiles(candidates)
+        );
+
+        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
+                                                                         AnalyzerFacadeForJVM.DEFAULT_IMPORTS,
+                                                                         PlatformToKotlinClassMap.EMPTY);
+
+        moduleDescriptor.addDependencyOnModule(moduleDescriptor);
+        moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        moduleDescriptor.seal();
+
+        ResolveSession resolveSession = new InjectorForLazyResolve(
+                project,
+                globalContext,
+                moduleDescriptor,
+                providerFactory,
+                new BindingTraceContext()).getResolveSession();
+
+        moduleDescriptor.initialize(resolveSession.getPackageFragmentProvider());
+        return resolveSession;
     }
 
     @Nullable

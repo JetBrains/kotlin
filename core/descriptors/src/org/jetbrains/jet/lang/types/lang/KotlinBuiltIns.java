@@ -109,7 +109,9 @@ public class KotlinBuiltIns {
                                                   Collections.<ImportPath>emptyList(),
                                                   PlatformToKotlinClassMap.EMPTY);
         builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), builtInsModule);
-        builtInsModule.addFragmentProvider(DependencyKind.SOURCES, builtinsPackageFragment.getProvider());
+        builtInsModule.initialize(builtinsPackageFragment.getProvider());
+        builtInsModule.addDependencyOnModule(builtInsModule);
+        builtInsModule.seal();
 
         primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);

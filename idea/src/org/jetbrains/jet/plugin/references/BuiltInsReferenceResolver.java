@@ -102,6 +102,8 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                         Predicates.<PsiFile>alwaysFalse(), true, false);
                 ModuleDescriptorImpl module = new ModuleDescriptorImpl(
                         Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
+                module.addDependencyOnModule(module);
+                module.seal();
                 BindingTraceContext trace = new BindingTraceContext();
                 InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                         myProject, topDownAnalysisParameters, trace, module);

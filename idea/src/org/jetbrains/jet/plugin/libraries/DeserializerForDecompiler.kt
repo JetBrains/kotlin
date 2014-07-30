@@ -58,6 +58,8 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     private val moduleDescriptor =
             ModuleDescriptorImpl(Name.special("<module for building decompiled sources>"), listOf(), PlatformToKotlinClassMap.EMPTY)
 
+    private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), listOf(), PlatformToKotlinClassMap.EMPTY)
+
     override fun resolveTopLevelClass(classFqName: FqName) = deserializationContext.classDeserializer.deserializeClass(classFqName.toClassId())
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
@@ -140,10 +142,17 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     }
 
     {
-        moduleDescriptor.addFragmentProvider(DependencyKind.BUILT_INS,
-                                             KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider())
-        moduleDescriptor.addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider)
-        moduleDescriptor.addFragmentProvider(DependencyKind.BINARIES, PackageFragmentProviderForMissingDependencies(moduleDescriptor))
+        moduleDescriptor.initialize(packageFragmentProvider)
+        moduleDescriptor.addDependencyOnModule(moduleDescriptor)
+        moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
+        val moduleContainingMissingDependencies = createDummyModule("module containing missing dependencies for decompiled sources")
+        moduleContainingMissingDependencies.addDependencyOnModule(moduleContainingMissingDependencies)
+        moduleContainingMissingDependencies.initialize(
+                PackageFragmentProviderForMissingDependencies(moduleContainingMissingDependencies)
+        )
+        moduleDescriptor.addDependencyOnModule(moduleContainingMissingDependencies)
+        moduleDescriptor.seal()
+        moduleContainingMissingDependencies.seal()
     }
     val deserializationContext = DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
                                                               constantLoader, packageFragmentProvider)

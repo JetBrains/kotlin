@@ -59,6 +59,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.utils.KotlinPaths;
 
@@ -291,8 +292,7 @@ public class KotlinToJVMBytecodeCompiler {
                     public AnalyzeExhaust invoke() {
                         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
                         BindingTrace sharedTrace = support.getTrace();
-                        ModuleDescriptorImpl sharedModule = support.getModule();
-
+                        ModuleDescriptorImpl sharedModule = support.newModule();
                         IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.OBJECT$.getInstance();
                         File incrementalCacheBaseDir = environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
                         final IncrementalCache incrementalCache;

@@ -30,7 +30,6 @@ import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -79,10 +78,13 @@ public final class AnalyzerFacadeForJS {
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(), globalContext.getExceptionTracker(), completely, false, false);
 
+        owner.addDependencyOnModule(owner);
+        owner.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         ModuleDescriptor libraryModule = config.getLibraryModule();
         if (libraryModule != null) {
-            owner.addFragmentProvider(DependencyKind.BINARIES, libraryModule.getPackageFragmentProvider()); // "import" analyzed library module
+            owner.addDependencyOnModule((ModuleDescriptorImpl) libraryModule); // "import" analyzed library module
         }
+        owner.seal();
 
         BindingContext libraryContext = config.getLibraryContext();
         BindingTrace trace = libraryContext == null
@@ -136,14 +138,18 @@ public final class AnalyzerFacadeForJS {
                         filesScope
                 );
         ModuleDescriptorImpl module = createJsModule("<lazy module>");
-        module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        module.addDependencyOnModule(module);
+        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        module.seal();
 
-        return new InjectorForLazyResolve(
+        ResolveSession session = new InjectorForLazyResolve(
                 config.getProject(),
                 globalContext,
                 module,
                 declarationProviderFactory,
                 new BindingTraceContext()).getResolveSession();
+        module.initialize(session.getPackageFragmentProvider());
+        return session;
     }
 
     @NotNull

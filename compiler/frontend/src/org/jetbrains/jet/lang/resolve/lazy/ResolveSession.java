@@ -150,9 +150,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
         };
 
-        // TODO: parameter modification
-        rootDescriptor.addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
-
         this.scriptDescriptors = storageManager.createMemoizedFunction(
                 new Function1<JetScript, LazyScriptDescriptor>() {
                     @Override

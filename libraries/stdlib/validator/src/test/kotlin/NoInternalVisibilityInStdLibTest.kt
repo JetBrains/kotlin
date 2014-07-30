@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.junit.Assert
 import java.util.HashSet
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 
 // this list is not designed to contain all packages, it is need for sanity check in case test code breaks
 private val PACKAGES_SHOULD_BE_VALIDATED = listOf("kotlin", "kotlin.concurrent", "kotlin.jvm") map { FqName(it) }
@@ -102,12 +103,15 @@ class NoInternalVisibilityInStdLibTest {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "../src/kotlin")
             configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots())
             val environment = JetCoreEnvironment.createForProduction(disposable, configuration)
+            val module = AnalyzerFacadeForJVM.createJavaModule("<module for validating std lib>")
+            module.addDependencyOnModule(module)
+            module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
             AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                     environment.getProject(),
                     environment.getSourceFiles(),
                     BindingTraceContext(),
                     { true },
-                    AnalyzerFacadeForJVM.createJavaModule("<module for validating std lib>"),
+                    module,
                     null,
                     null
             ).getModuleDescriptor()

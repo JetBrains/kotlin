@@ -18,14 +18,25 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class InjectorForJavaDescriptorResolverUtil {
     @NotNull
-    public static InjectorForJavaDescriptorResolver create(@NotNull Project project, @NotNull BindingTrace bindingTrace) {
+    public static InjectorForJavaDescriptorResolver create(
+            @NotNull Project project,
+            @NotNull BindingTrace bindingTrace,
+            boolean dependendOnBuitlins
+    ) {
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, bindingTrace);
-        injector.getModule().addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
+        ModuleDescriptorImpl module = injector.getModule();
+        module.initialize(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
+        module.addDependencyOnModule(module);
+        if (dependendOnBuitlins) {
+            module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        }
+        module.seal();
         return injector;
     }
 }
