@@ -29,20 +29,19 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 
-public class JetCompletionResultSet(public val result: CompletionResultSet,
-                                    public val resolveSession: ResolveSessionForBodies,
-                                    public val bindingContext: BindingContext,
-                                    private val descriptorFilter: (DeclarationDescriptor) -> Boolean) {
+class CompletionResultSetWrapper(public val resultSet: CompletionResultSet,
+                                 private val resolveSession: ResolveSessionForBodies,
+                                 private val descriptorFilter: (DeclarationDescriptor) -> Boolean) {
     public var isSomethingAdded: Boolean = false
         private set
 
-    public fun addAllElements(descriptors: Iterable<DeclarationDescriptor>) {
+    public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>) {
         for (descriptor in descriptors) {
-            addElement(descriptor)
+            addDescriptorElements(descriptor)
         }
     }
 
-    public fun addElement(descriptor: DeclarationDescriptor) {
+    public fun addDescriptorElements(descriptor: DeclarationDescriptor) {
         if (!descriptorFilter(descriptor))  return
 
         addElement(DescriptorLookupConverter.createLookupElement(resolveSession, descriptor))
@@ -73,11 +72,9 @@ public class JetCompletionResultSet(public val result: CompletionResultSet,
     }
 
     public fun addElement(element: LookupElement) {
-        if (!result.getPrefixMatcher().prefixMatches(element)) return
-
-        result.addElement(element)
-        isSomethingAdded = true
+        if (resultSet.getPrefixMatcher().prefixMatches(element)) {
+            resultSet.addElement(element)
+            isSomethingAdded = true
+        }
     }
-
-    public val shortNameFilter: (String) -> Boolean = { result.getPrefixMatcher().prefixMatches(it) }
 }

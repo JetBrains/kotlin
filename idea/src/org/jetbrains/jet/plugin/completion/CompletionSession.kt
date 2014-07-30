@@ -36,23 +36,21 @@ class CompletionSession(public val parameters: CompletionParameters,
                         resultSet: CompletionResultSet,
                         private val jetReference: JetSimpleNameReference,
                         position: PsiElement) {
-    private val inDescriptor: DeclarationDescriptor?
-    public val jetResult: JetCompletionResultSet
 
     private val resolveSession = (position.getContainingFile() as JetFile).getLazyResolveSession()
     private val bindingContext = resolveSession.resolveToElement(jetReference.expression)
     private val position = parameters.getPosition()
 
-    ;{
-        inDescriptor = bindingContext.get<JetExpression, JetScope>(BindingContext.RESOLUTION_SCOPE, jetReference.expression)?.getContainingDeclaration()
+    private val inDescriptor: DeclarationDescriptor? = bindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.expression)?.getContainingDeclaration()
 
+    public val result: CompletionResultSetWrapper = run {
         // set prefix matcher here to override default one which relies on CompletionUtil.findReferencePrefix()
         // which sometimes works incorrectly for Kotlin
         var result = resultSet.withPrefixMatcher(CompletionUtil.findJavaIdentifierPrefix(parameters))
 
         result = result.addKotlinSorting(parameters)
 
-        this.jetResult = JetCompletionResultSet(result, resolveSession, bindingContext, { isVisibleDescriptor(it) })
+        CompletionResultSetWrapper(result, resolveSession, { isVisibleDescriptor(it) })
     }
 
     public fun completeForReference() {
@@ -62,11 +60,11 @@ class CompletionSession(public val parameters: CompletionParameters,
 
         if (shouldRunOnlyTypeCompletion()) {
             if (parameters.getInvocationCount() >= 2) {
-                JetTypesCompletionHelper.addJetTypes(parameters, jetResult)
+                TypesCompletion(parameters, resolveSession).addAllTypes(result)
             }
             else {
                 addReferenceVariants { isPartOfTypeDeclaration(it) }
-                JavaCompletionContributor.advertiseSecondCompletion(parameters.getPosition().getProject(), jetResult.result)
+                JavaCompletionContributor.advertiseSecondCompletion(parameters.getPosition().getProject(), result.resultSet)
             }
 
             return
@@ -74,7 +72,7 @@ class CompletionSession(public val parameters: CompletionParameters,
 
         addReferenceVariants { true }
 
-        val prefix = jetResult.result.getPrefixMatcher().getPrefix()
+        val prefix = result.resultSet.getPrefixMatcher().getPrefix()
 
         // Try to avoid computing not-imported descriptors for empty prefix
         if (prefix.isEmpty()) {
@@ -84,7 +82,7 @@ class CompletionSession(public val parameters: CompletionParameters,
         }
 
         if (shouldRunTopLevelCompletion()) {
-            JetTypesCompletionHelper.addJetTypes(parameters, jetResult)
+            TypesCompletion(parameters, resolveSession).addAllTypes(result)
             addJetTopLevelFunctions()
             addJetTopLevelObjects()
         }
@@ -97,9 +95,9 @@ class CompletionSession(public val parameters: CompletionParameters,
     public fun completeSmart() {
         assert(parameters.getCompletionType() == CompletionType.SMART)
 
-        val descriptors = TipsManager.getReferenceVariants(jetReference.expression, jetResult.bindingContext)
+        val descriptors = TipsManager.getReferenceVariants(jetReference.expression, bindingContext)
         val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile)
-        completion.buildLookupElements(descriptors)?.forEach { jetResult.addElement(it) }
+        completion.buildLookupElements(descriptors)?.forEach { result.addElement(it) }
     }
 
     private fun isOnlyKeywordCompletion(position: PsiElement)
@@ -108,7 +106,7 @@ class CompletionSession(public val parameters: CompletionParameters,
     private fun addJetExtensions() {
         val project = position.getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
-        jetResult.addAllElements(namesCache.getJetCallableExtensions({ jetResult.shortNameFilter(it!!) }, jetReference.expression, resolveSession, GlobalSearchScope.allScope(project)))
+        result.addDescriptorElements(namesCache.getJetCallableExtensions({ result.resultSet.getPrefixMatcher().prefixMatches(it!!) }, jetReference.expression, resolveSession, GlobalSearchScope.allScope(project)))
     }
 
     private fun isPartOfTypeDeclaration(descriptor: DeclarationDescriptor): Boolean {
@@ -126,7 +124,7 @@ class CompletionSession(public val parameters: CompletionParameters,
     }
 
     private fun addJetTopLevelFunctions() {
-        val actualPrefix = jetResult.result.getPrefixMatcher().getPrefix()
+        val actualPrefix = result.resultSet.getPrefixMatcher().getPrefix()
         val project = position.getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
         val scope = GlobalSearchScope.allScope(project)
@@ -135,7 +133,7 @@ class CompletionSession(public val parameters: CompletionParameters,
         // TODO: Fix complete extension not only on contains
         for (name in functionNames) {
             if (name.contains(actualPrefix)) {
-                jetResult.addAllElements(namesCache.getTopLevelFunctionDescriptorsByName(name, jetReference.expression, resolveSession, scope))
+                result.addDescriptorElements(namesCache.getTopLevelFunctionDescriptorsByName(name, jetReference.expression, resolveSession, scope))
             }
         }
     }
@@ -147,8 +145,8 @@ class CompletionSession(public val parameters: CompletionParameters,
         val objectNames = namesCache.getAllTopLevelObjectNames()
 
         for (name in objectNames) {
-            if (jetResult.result.getPrefixMatcher().prefixMatches(name)) {
-                jetResult.addAllElements(namesCache.getTopLevelObjectsByName(name, jetReference.expression, resolveSession, scope))
+            if (result.resultSet.getPrefixMatcher().prefixMatches(name)) {
+                result.addDescriptorElements(namesCache.getTopLevelObjectsByName(name, jetReference.expression, resolveSession, scope))
             }
         }
     }
@@ -158,7 +156,7 @@ class CompletionSession(public val parameters: CompletionParameters,
         // expression we are at first of it
         val typeReference = PsiTreeUtil.getParentOfType(position, javaClass<JetTypeReference>())
         if (typeReference != null) {
-            val firstPartReference = PsiTreeUtil.findChildOfType<JetSimpleNameExpression>(typeReference, javaClass<JetSimpleNameExpression>())
+            val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
             return firstPartReference == jetReference.expression
         }
 
@@ -179,12 +177,12 @@ class CompletionSession(public val parameters: CompletionParameters,
     }
 
     private fun shouldRunExtensionsCompletion(): Boolean {
-        return parameters.getInvocationCount() > 1 || jetResult.result.getPrefixMatcher().getPrefix().length >= 3
+        return parameters.getInvocationCount() > 1 || result.resultSet.getPrefixMatcher().getPrefix().length >= 3
     }
 
     private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean) {
-        val descriptors = TipsManager.getReferenceVariants(jetReference.expression, jetResult.bindingContext)
-        jetResult.addAllElements(descriptors.filter { filterCondition(it) })
+        val descriptors = TipsManager.getReferenceVariants(jetReference.expression, bindingContext)
+        result.addDescriptorElements(descriptors.filter { filterCondition(it) })
     }
 
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {

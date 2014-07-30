@@ -33,34 +33,33 @@ import org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 
-object JetTypesCompletionHelper {
-    fun addJetTypes(parameters: CompletionParameters, jetCompletionResult: JetCompletionResultSet) {
-        assert(parameters.getInvocationCount() >= 2, "Method should be used only for force completion. In other case complete classes from scope")
-
-        jetCompletionResult.addAllElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses())
+class TypesCompletion(val parameters: CompletionParameters, val resolveSession: ResolveSessionForBodies) {
+    fun addAllTypes(result: CompletionResultSetWrapper) {
+        result.addDescriptorElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses())
 
         val project = parameters.getOriginalFile().getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
-        jetCompletionResult.addAllElements(namesCache.getJetClassesDescriptors({ jetCompletionResult.shortNameFilter(it!!) }, jetCompletionResult.resolveSession, GlobalSearchScope.allScope(project)))
+        result.addDescriptorElements(namesCache.getJetClassesDescriptors({ result.resultSet.getPrefixMatcher().prefixMatches(it!!) }, resolveSession, GlobalSearchScope.allScope(project)))
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
-            addAdaptedJavaCompletion(parameters, jetCompletionResult)
+            addAdaptedJavaCompletion(result)
         }
     }
 
     /**
      * Add java elements with performing conversion to kotlin elements if necessary.
      */
-    private fun addAdaptedJavaCompletion(parameters: CompletionParameters, jetCompletionResult: JetCompletionResultSet) {
-        JavaClassNameCompletionContributor.addAllClasses(parameters, false, JavaCompletionSorting.addJavaSorting(parameters, jetCompletionResult.result).getPrefixMatcher(), object : Consumer<LookupElement> {
+    private fun addAdaptedJavaCompletion(result: CompletionResultSetWrapper) {
+        JavaClassNameCompletionContributor.addAllClasses(parameters, false, JavaCompletionSorting.addJavaSorting(parameters, result.resultSet).getPrefixMatcher(), object : Consumer<LookupElement> {
             override fun consume(lookupElement: LookupElement?) {
                 if (lookupElement is JavaPsiClassReferenceElement) {
                     val psiClass = lookupElement.getObject()
 
-                    if (addJavaClassAsJetLookupElement(psiClass, jetCompletionResult)) return
+                    if (addJavaClassAsJetLookupElement(psiClass, result)) return
 
-                    jetCompletionResult.addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
+                    result.addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                         override fun handleInsert(context: InsertionContext) {
                             JetJavaClassInsertHandler.handleInsert(context, lookupElement)
                         }
@@ -70,7 +69,7 @@ object JetTypesCompletionHelper {
         })
     }
 
-    private fun addJavaClassAsJetLookupElement(aClass: PsiClass, jetCompletionResult: JetCompletionResultSet): Boolean {
+    private fun addJavaClassAsJetLookupElement(aClass: PsiClass, result: CompletionResultSetWrapper): Boolean {
         if (aClass is KotlinLightClass) {
             // Do nothing. Kotlin not-compiled class should have already been added as kotlin element before.
             return true
@@ -80,7 +79,7 @@ object JetTypesCompletionHelper {
             if (JetFromJavaDescriptorHelper.getCompiledClassKind(aClass) != ClassKind.CLASS_OBJECT) {
                 val qualifiedName = aClass.getQualifiedName()
                 if (qualifiedName != null) {
-                    jetCompletionResult.addAllElements(ResolveSessionUtils.getClassDescriptorsByFqName(jetCompletionResult.resolveSession, FqName(qualifiedName)))
+                    result.addDescriptorElements(ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession, FqName(qualifiedName)))
                 }
             }
 
