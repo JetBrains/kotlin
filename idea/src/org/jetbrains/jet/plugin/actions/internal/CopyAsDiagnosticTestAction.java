@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.actions;
+package org.jetbrains.jet.plugin.actions.internal;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
@@ -39,8 +36,8 @@ import java.util.List;
 public class CopyAsDiagnosticTestAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
-        Editor editor = e.getData(PlatformDataKeys.EDITOR);
-        PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
+        Editor editor = e.getData(CommonDataKeys.EDITOR);
+        PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         assert editor != null && psiFile != null;
 
         BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) psiFile);
@@ -58,8 +55,8 @@ public class CopyAsDiagnosticTestAction extends AnAction {
 
     @Override
     public void update(AnActionEvent e) {
-        Editor editor = e.getData(PlatformDataKeys.EDITOR);
-        PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
+        Editor editor = e.getData(CommonDataKeys.EDITOR);
+        PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         e.getPresentation().setEnabled(editor != null && psiFile instanceof JetFile && ApplicationManager.getApplication().isInternal());
     }
 

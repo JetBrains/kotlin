@@ -66,11 +66,6 @@
       <keyboard-shortcut keymap="Mac OS X" first-keystroke="control shift T"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
-    <action id="CopyAsDiagnosticTest" class="org.jetbrains.jet.plugin.actions.CopyAsDiagnosticTestAction"
-            text="Copy Current File As Diagnostic Test">
-      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
-      <add-to-group group-id="CodeMenu" anchor="last"/>
-    </action>
     <action id="ConvertJavaToKotlin" class="org.jetbrains.jet.plugin.actions.JavaToKotlinAction"
             text="Convert Java File to Kotlin File">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift J"/>
@@ -100,6 +95,12 @@
     <action id="ExtractFunction" class="org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractFunctionAction"
             text="Extract _Function..." use-shortcut-of="ExtractMethod">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
+    </action>
+
+    <action id="CopyAsDiagnosticTest" class="org.jetbrains.jet.plugin.actions.internal.CopyAsDiagnosticTestAction"
+            text="Copy Current File As Diagnostic Test">
+      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
     <action id="ExtractFunctionToScope" class="org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractFunctionToScopeAction"
