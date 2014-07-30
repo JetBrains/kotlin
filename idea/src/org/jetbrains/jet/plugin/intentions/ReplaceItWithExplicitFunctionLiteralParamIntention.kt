@@ -56,14 +56,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBa
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
         val simpleNameExpression = PsiTreeUtil.getParentOfType(element, javaClass<JetSimpleNameExpression>())
-        if (simpleNameExpression == null || simpleNameExpression.getReferencedName() != "it") {
-            return false
-        }
-
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(simpleNameExpression)
-        val reference = simpleNameExpression.getReference() as JetReference?
-        val simpleNameTarget = reference?.resolveToDescriptors()?.firstOrNull() as? ValueParameterDescriptor?
-        if (simpleNameTarget == null || bindingContext.get(BindingContext.AUTO_CREATED_IT, simpleNameTarget) != true) {
+        if (simpleNameExpression == null || !isAutoCreatedIt(simpleNameExpression)) {
             return false
         }
 
@@ -73,5 +66,22 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBa
 
     override fun getFamilyName(): String {
         return JetBundle.message("replace.it.with.explicit.function.literal.param.family")
+    }
+
+    class object {
+        fun isAutoCreatedIt(simpleNameExpression: JetSimpleNameExpression): Boolean {
+            if (simpleNameExpression.getReferencedName() != "it") {
+                return false
+            }
+
+            val bindingContext = AnalyzerFacadeWithCache.getContextForElement(simpleNameExpression)
+            val reference = simpleNameExpression.getReference() as JetReference?
+            val simpleNameTarget = reference?.resolveToDescriptors()?.firstOrNull() as? ValueParameterDescriptor?
+            if (simpleNameTarget == null || bindingContext.get(BindingContext.AUTO_CREATED_IT, simpleNameTarget) != true) {
+                return false
+            }
+
+            return true
+        }
     }
 }

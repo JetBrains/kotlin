@@ -257,6 +257,7 @@
     <renamePsiElementProcessor implementation="org.jetbrains.jet.plugin.refactoring.rename.RenameKotlinPropertyProcessor"
                                id="KotlinProperty"
                                order="first"/>
+    <renameHandler implementation="org.jetbrains.jet.plugin.refactoring.rename.RenameKotlinImplicitLambdaParameter"/>
 
     <spellchecker.support implementationClass="org.jetbrains.jet.plugin.KotlinSpellcheckingStrategy" language="jet"/>
 
