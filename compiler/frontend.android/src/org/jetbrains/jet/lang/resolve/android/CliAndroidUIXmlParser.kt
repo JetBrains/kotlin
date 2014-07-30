@@ -49,6 +49,9 @@ class CliAndroidUIXmlParser(val project: Project, override val searchPath: Strin
         }
     }
 
+    override fun idToXmlAttribute(id: String): PsiElement? {
+        return null
+    }
     override fun renameId(oldName: String?, newName: String?, allRenames: MutableMap<PsiElement, String>) {
         return
     }
