@@ -190,6 +190,12 @@ public class BytecodeCompiler {
                 throw new CompileEnvironmentException(errorMessage(src, false));
             }
         }
+        catch (BuildException e) {
+            throw e;
+        }
+        catch (CompileEnvironmentException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new CompileEnvironmentException(errorMessage(src, true), e);
         }
@@ -221,6 +227,12 @@ public class BytecodeCompiler {
             if (!success) {
                 throw new CompileEnvironmentException(errorMessage(src, false));
             }
+        }
+        catch (BuildException e) {
+            throw e;
+        }
+        catch (CompileEnvironmentException e) {
+            throw e;
         }
         catch (Exception e) {
             throw new CompileEnvironmentException(errorMessage(src, true), e);
@@ -261,6 +273,12 @@ public class BytecodeCompiler {
             if (!success) {
                 throw new CompileEnvironmentException(errorMessage(new String[]{module}, false));
             }
+        }
+        catch (BuildException e) {
+            throw e;
+        }
+        catch (CompileEnvironmentException e) {
+            throw e;
         }
         catch (Exception e) {
             throw new CompileEnvironmentException(errorMessage(new String[]{module}, true), e);
