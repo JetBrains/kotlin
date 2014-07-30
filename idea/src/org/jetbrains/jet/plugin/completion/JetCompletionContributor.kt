@@ -112,7 +112,7 @@ public class JetCompletionContributor : CompletionContributor() {
             return
         }
 
-        if (EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(position) && parameters.getInvocationCount() == 0) {
+        if (EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(position) && parameters.getInvocationCount() == 0) { // no auto-popup on typing after "val", "var" and "fun"
             result.stopHere()
             return
         }
@@ -127,15 +127,17 @@ public class JetCompletionContributor : CompletionContributor() {
             try {
                 result.restartCompletionWhenNothingMatches()
 
+                val configuration = CompletionSessionConfiguration(parameters)
                 if (parameters.getCompletionType() == CompletionType.BASIC) {
-                    val somethingAdded = BasicCompletionSession(parameters, result, jetReference).complete()
+                    val somethingAdded = BasicCompletionSession(configuration, parameters, result, jetReference).complete()
                     if (!somethingAdded && parameters.getInvocationCount() < 2) {
                         // Rerun completion if nothing was found
-                        BasicCompletionSession(parameters.withInvocationCount(2), result, jetReference).complete()
+                        val newConfiguration = CompletionSessionConfiguration(completeNonImportedDeclarations = true, completeNonAccessibleDeclarations = parameters.getInvocationCount() > 0)
+                        BasicCompletionSession(newConfiguration, parameters, result, jetReference).complete()
                     }
                 }
                 else {
-                    SmartCompletionSession(parameters, result, jetReference).complete()
+                    SmartCompletionSession(configuration, parameters, result, jetReference).complete()
                 }
             }
             catch (e: ProcessCanceledException) {

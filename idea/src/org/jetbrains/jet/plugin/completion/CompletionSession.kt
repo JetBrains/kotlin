@@ -32,7 +32,16 @@ import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 
-abstract class CompletionSessionBase(public val parameters: CompletionParameters,
+class CompletionSessionConfiguration(
+        val completeNonImportedDeclarations: Boolean,
+        val completeNonAccessibleDeclarations: Boolean)
+
+fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
+        completeNonImportedDeclarations = parameters.getInvocationCount() >= 2,
+        completeNonAccessibleDeclarations = parameters.getInvocationCount() >= 2)
+
+abstract class CompletionSessionBase(protected val configuration: CompletionSessionConfiguration,
+                                     protected val parameters: CompletionParameters,
                                      resultSet: CompletionResultSet,
                                      protected val jetReference: JetSimpleNameReference) {
 
@@ -50,8 +59,7 @@ abstract class CompletionSessionBase(public val parameters: CompletionParameters
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
-        // Show everything if user insist on showing completion list
-        if (parameters.getInvocationCount() >= 2) return true
+        if (configuration.completeNonAccessibleDeclarations) return true
 
         if (descriptor is DeclarationDescriptorWithVisibility && inDescriptor != null) {
             return Visibilities.isVisible(descriptor as DeclarationDescriptorWithVisibility, inDescriptor)
@@ -61,8 +69,12 @@ abstract class CompletionSessionBase(public val parameters: CompletionParameters
     }
 }
 
-class BasicCompletionSession(parameters: CompletionParameters, resultSet: CompletionResultSet, jetReference: JetSimpleNameReference)
-: CompletionSessionBase(parameters, resultSet, jetReference) {
+class BasicCompletionSession(configuration: CompletionSessionConfiguration,
+                             parameters: CompletionParameters,
+                             resultSet: CompletionResultSet,
+                             jetReference: JetSimpleNameReference)
+: CompletionSessionBase(configuration, parameters, resultSet, jetReference) {
+
     private val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
 
     public fun complete(): Boolean {
@@ -79,7 +91,7 @@ class BasicCompletionSession(parameters: CompletionParameters, resultSet: Comple
         if (isOnlyKeywordCompletion(position)) return
 
         if (shouldRunOnlyTypeCompletion()) {
-            if (parameters.getInvocationCount() >= 2) {
+            if (configuration.completeNonImportedDeclarations) {
                 TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
             }
             else {
@@ -96,7 +108,7 @@ class BasicCompletionSession(parameters: CompletionParameters, resultSet: Comple
 
         // Try to avoid computing not-imported descriptors for empty prefix
         if (prefix.isEmpty()) {
-            if (parameters.getInvocationCount() < 2) return
+            if (!configuration.completeNonImportedDeclarations) return
 
             if (PsiTreeUtil.getParentOfType(jetReference.expression, javaClass<JetDotQualifiedExpression>()) == null) return
         }
@@ -176,7 +188,7 @@ class BasicCompletionSession(parameters: CompletionParameters, resultSet: Comple
     }
 
     private fun shouldRunTopLevelCompletion(): Boolean {
-        if (parameters.getInvocationCount() < 2) {
+        if (!configuration.completeNonImportedDeclarations) {
             return false
         }
 
@@ -189,7 +201,7 @@ class BasicCompletionSession(parameters: CompletionParameters, resultSet: Comple
     }
 
     private fun shouldRunExtensionsCompletion(): Boolean {
-        return parameters.getInvocationCount() > 1 || prefixMatcher.getPrefix().length >= 3
+        return configuration.completeNonImportedDeclarations || prefixMatcher.getPrefix().length >= 3
     }
 
     private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean) {
@@ -198,8 +210,8 @@ class BasicCompletionSession(parameters: CompletionParameters, resultSet: Comple
     }
 }
 
-class SmartCompletionSession(parameters: CompletionParameters, resultSet: CompletionResultSet, jetReference: JetSimpleNameReference)
-: CompletionSessionBase(parameters, resultSet, jetReference) {
+class SmartCompletionSession(configuration: CompletionSessionConfiguration, parameters: CompletionParameters, resultSet: CompletionResultSet, jetReference: JetSimpleNameReference)
+: CompletionSessionBase(configuration, parameters, resultSet, jetReference) {
     public fun complete() {
         val descriptors = TipsManager.getReferenceVariants(jetReference.expression, bindingContext)
         val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile)

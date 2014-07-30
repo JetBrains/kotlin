@@ -369,6 +369,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest("idea/testData/completion/basic/common/NoObjectInTypePosition.kt");
         }
         
+        @TestMetadata("NoSecondPressCompletionInAutoPopup.kt")
+        public void testNoSecondPressCompletionInAutoPopup() throws Exception {
+            doTest("idea/testData/completion/basic/common/NoSecondPressCompletionInAutoPopup.kt");
+        }
+        
         @TestMetadata("NoTopLevelCompletionInQualifiedUserTypes.kt")
         public void testNoTopLevelCompletionInQualifiedUserTypes() throws Exception {
             doTest("idea/testData/completion/basic/common/NoTopLevelCompletionInQualifiedUserTypes.kt");
