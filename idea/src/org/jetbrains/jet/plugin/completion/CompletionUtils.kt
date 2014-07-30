@@ -19,6 +19,9 @@ package org.jetbrains.jet.plugin.completion
 import com.intellij.openapi.util.Key
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.codeInsight.completion.CompletionService
+import com.intellij.codeInsight.completion.CompletionProgressIndicator
 
 enum class ItemPriority {
     DEFAULT
@@ -41,3 +44,13 @@ fun LookupElement.keepOldArgumentListOnTab(): LookupElement {
     return this
 }
 
+fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanceledException {
+    val indicator = CompletionService.getCompletionService().getCurrentCompletion() as CompletionProgressIndicator
+
+    // Force cancel to avoid deadlock in CompletionThreading.delegateWeighing()
+    if (!indicator.isCanceled()) {
+        indicator.cancel()
+    }
+
+    return exception
+}

@@ -17,20 +17,15 @@
 package org.jetbrains.jet.plugin.completion
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
 import com.intellij.util.ProcessingContext
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetPackageDirective
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.codeInsight.TipsManager
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 
 /**
@@ -47,10 +42,10 @@ public class JetPackagesContributor : CompletionContributor() {
     {
         extend(CompletionType.BASIC, ACTIVATION_PATTERN, object : CompletionProvider<CompletionParameters>() {
             override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-                val position = parameters.getPosition()
-                if (position.getContainingFile() !is JetFile)  return
+                val file = parameters.getPosition().getContainingFile()
+                if (file !is JetFile) return
 
-                val ref = parameters.getPosition().getContainingFile()!!.findReferenceAt(parameters.getOffset())
+                val ref = file.findReferenceAt(parameters.getOffset())
 
                 if (ref is JetSimpleNameReference) {
                     val name = ref.expression.getText() ?: return
@@ -63,16 +58,17 @@ public class JetPackagesContributor : CompletionContributor() {
                         val bindingContext = resolveSession.resolveToElement(ref.expression)
 
                         val variants = TipsManager.getPackageReferenceVariants(ref.expression, bindingContext)
-                        for (variant in DescriptorLookupConverter.collectLookupElements(resolveSession, variants)) {
-                            if (!variant.getLookupString().contains(DUMMY_IDENTIFIER)) {
-                                result.addElement(variant)
+                        for (variant in variants) {
+                            val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, variant)
+                            if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {
+                                result.addElement(lookupElement)
                             }
                         }
 
                         result.stopHere()
                     }
                     catch (e: ProcessCanceledException) {
-                        throw CompletionProgressIndicatorUtil.rethrowWithCancelIndicator(e)
+                        throw rethrowWithCancelIndicator(e)
                     }
                 }
             }

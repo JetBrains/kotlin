@@ -133,7 +133,7 @@ public class JetCompletionContributor : CompletionContributor() {
                     }
                 }
                 catch (e: ProcessCanceledException) {
-                    throw CompletionProgressIndicatorUtil.rethrowWithCancelIndicator(e)
+                    throw rethrowWithCancelIndicator(e)
                 }
             }
         }
