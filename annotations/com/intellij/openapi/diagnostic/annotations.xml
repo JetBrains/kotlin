@@ -2,4 +2,7 @@
   <item name='com.intellij.openapi.diagnostic.Logger com.intellij.openapi.diagnostic.Logger getInstance(java.lang.Class)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.openapi.diagnostic.Logger com.intellij.openapi.diagnostic.Logger getInstance(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>

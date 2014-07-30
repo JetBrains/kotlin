@@ -128,6 +128,7 @@ public final class DescriptorLookupConverter {
         return createLookupElement(analyzer, descriptor, DescriptorToSourceUtils.descriptorToDeclaration(descriptor));
     }
 
+    @NotNull
     public static LookupElement[] collectLookupElements(
             @NotNull KotlinCodeAnalyzer analyzer,
             @NotNull Iterable<DeclarationDescriptor> descriptors

@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.psi.filters.ElementFilter boolean isClassAcceptable(java.lang.Class) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

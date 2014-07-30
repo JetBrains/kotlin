@@ -291,10 +291,12 @@ class CompletionSession {
         return parameters.getPosition();
     }
 
+    @NotNull
     public JetCompletionResultSet getJetResult() {
         return jetResult;
     }
 
+    @NotNull
     public CompletionParameters getParameters() {
         return parameters;
     }

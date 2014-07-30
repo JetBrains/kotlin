@@ -19,11 +19,13 @@ package org.jetbrains.jet.plugin.completion;
 import com.intellij.codeInsight.completion.CompletionProgressIndicator;
 import com.intellij.codeInsight.completion.CompletionService;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import org.jetbrains.annotations.NotNull;
 
 public class CompletionProgressIndicatorUtil {
     private CompletionProgressIndicatorUtil() {
     }
 
+    @NotNull
     public static ProcessCanceledException rethrowWithCancelIndicator(ProcessCanceledException exception) {
         CompletionProgressIndicator indicator = (CompletionProgressIndicator) CompletionService.getCompletionService().getCurrentCompletion();
         assert indicator != null;

@@ -42,7 +42,7 @@ import com.intellij.psi.filters.position.PatternFilter
 
 class KeywordLookupObject(val keyword: String)
 
-public open class JetKeywordCompletionContributor() : CompletionContributor() {
+public class JetKeywordCompletionContributor : CompletionContributor() {
     {
         val inTopLevel = notIdentifier(InTopFilter())
         val inTypeParameterFirstChildFilter = InTypeParameterFirstChildFilter()
@@ -160,11 +160,11 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
             PlatformPatterns.psiElement().and(FilterPattern(AndFilter(GENERAL_FILTER, placeFilter)))
 
         private open class CommentFilter() : ElementFilter {
-            override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
-                return (element is PsiElement) && JetPsiUtil.isInComment(element as PsiElement)
-            }
+            override fun isAcceptable(element : Any?, context : PsiElement?)
+                    = (element is PsiElement) && JetPsiUtil.isInComment(element as PsiElement)
 
-            override fun isClassAcceptable(hintClass: Class<out Any?>?): Boolean = true
+            override fun isClassAcceptable(hintClass: Class<out Any?>)
+                    = true
         }
 
         private open class ParentFilter(filter : ElementFilter) : PositionElementFilter() {
@@ -192,9 +192,8 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
         }
 
         private open class InNonClassBlockFilter() : PositionElementFilter() {
-            override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
-                return PsiTreeUtil.getParentOfType(context, javaClass<JetBlockExpression>(), true, javaClass<JetClassBody>()) != null
-            }
+            override fun isAcceptable(element : Any?, context : PsiElement?)
+                    = PsiTreeUtil.getParentOfType(context, javaClass<JetBlockExpression>(), true, javaClass<JetClassBody>()) != null
         }
 
         private open class InTypeParameterFirstChildFilter() : PositionElementFilter() {
@@ -280,7 +279,7 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
                 }
             }
 
-            override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext?, result: CompletionResultSet) {
+            override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
                 result.addKotlinSorting(parameters).withPrefixMatcher(SimplePrefixMatcher(result.getPrefixMatcher().getPrefix())).addAllElements(elements)
             }
 

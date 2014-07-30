@@ -36,6 +36,7 @@ import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import com.intellij.openapi.editor.Document
 import org.jetbrains.jet.lang.types.JetType
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.jet.plugin.completion.DeclarationLookupObject
 
 public enum class CaretPosition {
     IN_BRACKETS
@@ -155,20 +156,19 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
                 if (element == null) return@runReadAction
 
                 val file = context.getFile()
-                if (file is JetFile && item.getObject() is org.jetbrains.jet.plugin.completion.DeclarationLookupObject) {
-                    val descriptor = (item.getObject() as org.jetbrains.jet.plugin.completion.DeclarationLookupObject).getDescriptor()
-
-                    if (descriptor is SimpleFunctionDescriptor) {
-                        val functionDescriptor = descriptor as SimpleFunctionDescriptor
+                val o = item.getObject()
+                if (file is JetFile && o is DeclarationLookupObject) {
+                    val descriptor = o.descriptor as? SimpleFunctionDescriptor
+                    if (descriptor != null) {
 
                         if (PsiTreeUtil.getParentOfType(element, javaClass<JetQualifiedExpression>()) != null &&
-                                functionDescriptor.getReceiverParameter() == null) {
+                                descriptor.getReceiverParameter() == null) {
                             return@runReadAction
                         }
 
-                        if (DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) {
+                        if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
                             ApplicationManager.getApplication()?.runWriteAction {
-                                val fqn = DescriptorUtils.getFqNameSafe(functionDescriptor)
+                                val fqn = DescriptorUtils.getFqNameSafe(descriptor)
                                 ImportInsertHelper.addImportDirectiveIfNeeded(fqn, file)
                             }
                         }

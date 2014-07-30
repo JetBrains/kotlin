@@ -33,7 +33,7 @@ public object JetClassInsertHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val file = context.getFile()
         if (file is JetFile) {
-            val descriptor = (item.getObject() as? org.jetbrains.jet.plugin.completion.DeclarationLookupObject)?.getDescriptor() as? ClassDescriptor
+            val descriptor = (item.getObject() as? DeclarationLookupObject)?.descriptor as? ClassDescriptor
             if (descriptor != null) {
                 val startOffset = context.getStartOffset()
                 val document = context.getDocument()

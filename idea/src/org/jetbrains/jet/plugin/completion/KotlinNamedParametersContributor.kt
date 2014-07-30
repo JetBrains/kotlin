@@ -62,7 +62,7 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
         extend(CompletionType.BASIC,
                PlatformPatterns.psiElement().and(FilterPattern(InNamedParameterFilter)),
                object : CompletionProvider<CompletionParameters>() {
-                   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext?, result: CompletionResultSet) {
+                   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
                        doParamsCompletion(parameters, result)
                    }
                })

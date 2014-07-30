@@ -2,6 +2,9 @@
   <item name='com.intellij.patterns.ObjectPattern Self and(com.intellij.patterns.ElementPattern)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.patterns.PlatformPatterns com.intellij.patterns.IElementTypePattern elementType()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item
       name='com.intellij.patterns.PlatformPatterns com.intellij.patterns.PsiElementPattern.Capture&lt;T&gt; psiElement(java.lang.Class&lt;T&gt;)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
@@ -14,7 +17,100 @@
       name='com.intellij.patterns.PlatformPatterns com.intellij.patterns.PsiElementPattern.Capture&lt;com.intellij.psi.PsiElement&gt; psiElement(com.intellij.psi.tree.IElementType)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.patterns.PsiElementPattern Self afterLeaf(java.lang.String...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.PsiElementPattern Self afterLeafSkipping(com.intellij.patterns.ElementPattern, com.intellij.patterns.ElementPattern)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.PsiElementPattern Self withElementType(com.intellij.patterns.ElementPattern&lt;com.intellij.psi.tree.IElementType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.patterns.PsiElementPattern Self withElementType(com.intellij.psi.tree.IElementType)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.PsiElementPattern Self withName(com.intellij.patterns.ElementPattern&lt;java.lang.String&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.PsiElementPattern Self withName(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.PsiElementPattern Self withName(java.lang.String...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.PsiElementPattern Self withText(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.PsiElementPattern Self withoutText(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.PsiJavaPatterns com.intellij.patterns.IElementTypePattern elementType()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.PsiJavaPatterns com.intellij.patterns.PsiJavaElementPattern.Capture&lt;com.intellij.psi.PsiElement&gt; psiElement()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.TreeElementPattern Self afterSibling(com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.TreeElementPattern Self afterSiblingSkipping(com.intellij.patterns.ElementPattern, com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.TreeElementPattern Self inside(boolean, com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.TreeElementPattern Self inside(boolean, com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;, com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.TreeElementPattern Self inside(com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.TreeElementPattern Self inside(java.lang.Class&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.TreeElementPattern Self insideSequence(boolean, com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.TreeElementPattern Self isFirstAcceptedChild(com.intellij.patterns.ElementPattern&lt;? super ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.TreeElementPattern Self withChild(com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.TreeElementPattern Self withChildren(com.intellij.patterns.ElementPattern&lt;java.util.Collection&lt;ParentType&gt;&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.TreeElementPattern Self withFirstChild(com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.TreeElementPattern Self withLastChild(com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.TreeElementPattern Self withParent(com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.TreeElementPattern Self withParent(java.lang.Class&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.TreeElementPattern Self withParents(java.lang.Class&lt;? extends ParentType&gt;...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.patterns.TreeElementPattern Self withSuperParent(int, com.intellij.patterns.ElementPattern&lt;? extends ParentType&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.patterns.TreeElementPattern Self withSuperParent(int, java.lang.Class&lt;? extends ParentType&gt;)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
 </root>

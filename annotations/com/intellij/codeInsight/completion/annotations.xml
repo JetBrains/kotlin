@@ -1,5 +1,25 @@
 <root>
   <item
+      name='com.intellij.codeInsight.completion.CompletionParameters com.intellij.codeInsight.completion.CompletionParameters delegateToClassName()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionParameters com.intellij.codeInsight.completion.CompletionParameters withInvocationCount(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionParameters com.intellij.codeInsight.completion.CompletionParameters withType(com.intellij.codeInsight.completion.CompletionType)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionProvider void addCompletionVariants(V, com.intellij.util.ProcessingContext, com.intellij.codeInsight.completion.CompletionResultSet) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionProvider void addCompletions(V, com.intellij.util.ProcessingContext, com.intellij.codeInsight.completion.CompletionResultSet) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.codeInsight.completion.CompletionSorter com.intellij.codeInsight.completion.CompletionSorter weighAfter(java.lang.String, com.intellij.codeInsight.lookup.LookupElementWeigher...)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
