@@ -35,13 +35,13 @@ import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 
-class TypesCompletion(val parameters: CompletionParameters, val resolveSession: ResolveSessionForBodies) {
-    fun addAllTypes(result: CompletionResultSetWrapper) {
+class TypesCompletion(val parameters: CompletionParameters, val resolveSession: ResolveSessionForBodies, val prefixMatcher: PrefixMatcher) {
+    fun addAllTypes(result: LookupElementsCollector) {
         result.addDescriptorElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses())
 
         val project = parameters.getOriginalFile().getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
-        result.addDescriptorElements(namesCache.getJetClassesDescriptors({ result.prefixMatcher.prefixMatches(it!!) }, resolveSession, GlobalSearchScope.allScope(project)))
+        result.addDescriptorElements(namesCache.getJetClassesDescriptors({ prefixMatcher.prefixMatches(it!!) }, resolveSession, GlobalSearchScope.allScope(project)))
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(result)
@@ -51,8 +51,8 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
     /**
      * Add java elements with performing conversion to kotlin elements if necessary.
      */
-    private fun addAdaptedJavaCompletion(result: CompletionResultSetWrapper) {
-        JavaClassNameCompletionContributor.addAllClasses(parameters, false, result.prefixMatcher, object : Consumer<LookupElement> {
+    private fun addAdaptedJavaCompletion(result: LookupElementsCollector) {
+        JavaClassNameCompletionContributor.addAllClasses(parameters, false, prefixMatcher, object : Consumer<LookupElement> {
             override fun consume(lookupElement: LookupElement?) {
                 if (lookupElement is JavaPsiClassReferenceElement) {
                     val psiClass = lookupElement.getObject()
@@ -69,7 +69,7 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
         })
     }
 
-    private fun addJavaClassAsJetLookupElement(aClass: PsiClass, result: CompletionResultSetWrapper): Boolean {
+    private fun addJavaClassAsJetLookupElement(aClass: PsiClass, result: LookupElementsCollector): Boolean {
         if (aClass is KotlinLightClass) {
             // Do nothing. Kotlin not-compiled class should have already been added as kotlin element before.
             return true

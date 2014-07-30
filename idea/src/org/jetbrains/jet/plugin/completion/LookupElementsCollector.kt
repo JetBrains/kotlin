@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.completion
 
-import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
@@ -27,14 +26,20 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.codeInsight.completion.PrefixMatcher
+import java.util.ArrayList
+import com.intellij.codeInsight.completion.CompletionResultSet
 
-class CompletionResultSetWrapper(private val resultSet: CompletionResultSet,
-                                 private val resolveSession: ResolveSessionForBodies,
-                                 private val descriptorFilter: (DeclarationDescriptor) -> Boolean) {
-    public var isSomethingAdded: Boolean = false
-        private set
+class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
+                              private val resolveSession: ResolveSessionForBodies,
+                              private val descriptorFilter: (DeclarationDescriptor) -> Boolean) {
+    private val elements = ArrayList<LookupElement>()
 
-    public val prefixMatcher: PrefixMatcher = resultSet.getPrefixMatcher()
+    public fun flushToResultSet(resultSet: CompletionResultSet) {
+        resultSet.addAllElements(elements)
+    }
+
+    public val isEmpty: Boolean
+        get() = elements.isEmpty()
 
     public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>) {
         for (descriptor in descriptors) {
@@ -74,8 +79,7 @@ class CompletionResultSetWrapper(private val resultSet: CompletionResultSet,
 
     public fun addElement(element: LookupElement) {
         if (prefixMatcher.prefixMatches(element)) {
-            resultSet.addElement(element)
-            isSomethingAdded = true
+            elements.add(element)
         }
     }
 }

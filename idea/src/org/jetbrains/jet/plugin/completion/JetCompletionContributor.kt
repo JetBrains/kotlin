@@ -120,12 +120,11 @@ public class JetCompletionContributor : CompletionContributor() {
 
                     var session = CompletionSession(parameters, result, jetReference, position)
                     if (parameters.getCompletionType() == CompletionType.BASIC) {
-                        session.completeForReference()
-
-                        if (!session.result.isSomethingAdded && session.parameters.getInvocationCount() < 2) {
+                        val somethingAdded = session.completeBasic()
+                        if (!somethingAdded && session.parameters.getInvocationCount() < 2) {
                             // Rerun completion if nothing was found
                             session = CompletionSession(parameters.withInvocationCount(2), result, jetReference, position)
-                            session.completeForReference()
+                            session.completeBasic()
                         }
                     }
                     else {

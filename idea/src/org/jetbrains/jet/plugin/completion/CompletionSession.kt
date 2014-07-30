@@ -49,16 +49,26 @@ class CompletionSession(public val parameters: CompletionParameters,
             .withPrefixMatcher(CompletionUtil.findJavaIdentifierPrefix(parameters))
             .addKotlinSorting(parameters)
 
-    public val result: CompletionResultSetWrapper = CompletionResultSetWrapper(this.resultSet, resolveSession, { isVisibleDescriptor(it) })
+    private val prefixMatcher = this.resultSet.getPrefixMatcher()
 
-    public fun completeForReference() {
+    private val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
+
+    public fun completeBasic(): Boolean {
         assert(parameters.getCompletionType() == CompletionType.BASIC)
 
+        fillCollectorBasic()
+
+        collector.flushToResultSet(resultSet)
+
+        return !collector.isEmpty
+    }
+
+    private fun fillCollectorBasic() {
         if (isOnlyKeywordCompletion(position)) return
 
         if (shouldRunOnlyTypeCompletion()) {
             if (parameters.getInvocationCount() >= 2) {
-                TypesCompletion(parameters, resolveSession).addAllTypes(result)
+                TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
             }
             else {
                 addReferenceVariants { isPartOfTypeDeclaration(it) }
@@ -70,7 +80,7 @@ class CompletionSession(public val parameters: CompletionParameters,
 
         addReferenceVariants { true }
 
-        val prefix = result.prefixMatcher.getPrefix()
+        val prefix = prefixMatcher.getPrefix()
 
         // Try to avoid computing not-imported descriptors for empty prefix
         if (prefix.isEmpty()) {
@@ -80,7 +90,7 @@ class CompletionSession(public val parameters: CompletionParameters,
         }
 
         if (shouldRunTopLevelCompletion()) {
-            TypesCompletion(parameters, resolveSession).addAllTypes(result)
+            TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
             addJetTopLevelFunctions()
             addJetTopLevelObjects()
         }
@@ -88,14 +98,17 @@ class CompletionSession(public val parameters: CompletionParameters,
         if (shouldRunExtensionsCompletion()) {
             addJetExtensions()
         }
+
     }
 
+    //TODO: no collector is needed here
     public fun completeSmart() {
         assert(parameters.getCompletionType() == CompletionType.SMART)
 
         val descriptors = TipsManager.getReferenceVariants(jetReference.expression, bindingContext)
         val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile)
-        completion.buildLookupElements(descriptors)?.forEach { result.addElement(it) }
+        completion.buildLookupElements(descriptors)?.forEach { resultSet.addElement(it) }
+        collector.flushToResultSet(resultSet)
     }
 
     private fun isOnlyKeywordCompletion(position: PsiElement)
@@ -104,7 +117,7 @@ class CompletionSession(public val parameters: CompletionParameters,
     private fun addJetExtensions() {
         val project = position.getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
-        result.addDescriptorElements(namesCache.getJetCallableExtensions({ result.prefixMatcher.prefixMatches(it!!) }, jetReference.expression, resolveSession, GlobalSearchScope.allScope(project)))
+        collector.addDescriptorElements(namesCache.getJetCallableExtensions({ prefixMatcher.prefixMatches(it!!) }, jetReference.expression, resolveSession, GlobalSearchScope.allScope(project)))
     }
 
     private fun isPartOfTypeDeclaration(descriptor: DeclarationDescriptor): Boolean {
@@ -122,7 +135,7 @@ class CompletionSession(public val parameters: CompletionParameters,
     }
 
     private fun addJetTopLevelFunctions() {
-        val actualPrefix = result.prefixMatcher.getPrefix()
+        val actualPrefix = prefixMatcher.getPrefix()
         val project = position.getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
         val scope = GlobalSearchScope.allScope(project)
@@ -131,7 +144,7 @@ class CompletionSession(public val parameters: CompletionParameters,
         // TODO: Fix complete extension not only on contains
         for (name in functionNames) {
             if (name.contains(actualPrefix)) {
-                result.addDescriptorElements(namesCache.getTopLevelFunctionDescriptorsByName(name, jetReference.expression, resolveSession, scope))
+                collector.addDescriptorElements(namesCache.getTopLevelFunctionDescriptorsByName(name, jetReference.expression, resolveSession, scope))
             }
         }
     }
@@ -143,8 +156,8 @@ class CompletionSession(public val parameters: CompletionParameters,
         val objectNames = namesCache.getAllTopLevelObjectNames()
 
         for (name in objectNames) {
-            if (result.prefixMatcher.prefixMatches(name)) {
-                result.addDescriptorElements(namesCache.getTopLevelObjectsByName(name, jetReference.expression, resolveSession, scope))
+            if (prefixMatcher.prefixMatches(name)) {
+                collector.addDescriptorElements(namesCache.getTopLevelObjectsByName(name, jetReference.expression, resolveSession, scope))
             }
         }
     }
@@ -175,12 +188,12 @@ class CompletionSession(public val parameters: CompletionParameters,
     }
 
     private fun shouldRunExtensionsCompletion(): Boolean {
-        return parameters.getInvocationCount() > 1 || result.prefixMatcher.getPrefix().length >= 3
+        return parameters.getInvocationCount() > 1 || prefixMatcher.getPrefix().length >= 3
     }
 
     private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean) {
         val descriptors = TipsManager.getReferenceVariants(jetReference.expression, bindingContext)
-        result.addDescriptorElements(descriptors.filter { filterCondition(it) })
+        collector.addDescriptorElements(descriptors.filter { filterCondition(it) })
     }
 
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
