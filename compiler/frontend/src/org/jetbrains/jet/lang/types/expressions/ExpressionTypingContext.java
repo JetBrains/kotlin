@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -47,7 +46,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     @NotNull
     public static ExpressionTypingContext newContext(@NotNull ResolutionContext context) {
         return new ExpressionTypingContext(
-                context.trace, context.scope, context.scope.getContainingDeclaration(), context.dataFlowInfo, context.expectedType,
+                context.trace, context.scope, context.dataFlowInfo, context.expectedType,
                 context.contextDependency, context.resolutionResultsCache, context.callResolverExtension, context.isAnnotationContext,
                 context.collectAllCandidates
         );
@@ -65,17 +64,15 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             boolean isAnnotationContext
     ) {
         return new ExpressionTypingContext(
-                trace, scope, scope.getContainingDeclaration(), dataFlowInfo, expectedType, contextDependency,
+                trace, scope, dataFlowInfo, expectedType, contextDependency,
                 resolutionResultsCache, callResolverExtension, isAnnotationContext, false);
     }
 
-    public final DeclarationDescriptor containingDeclaration;
     private CompileTimeConstantChecker compileTimeConstantChecker;
 
     private ExpressionTypingContext(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
-            @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
@@ -86,7 +83,6 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callResolverExtension,
               isAnnotationContext, collectAllCandidates);
-        this.containingDeclaration = containingDeclaration;
     }
 
     @Override
@@ -99,7 +95,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ResolutionResultsCache resolutionResultsCache,
             boolean collectAllCandidates
     ) {
-        return new ExpressionTypingContext(trace, scope, containingDeclaration, dataFlowInfo,
+        return new ExpressionTypingContext(trace, scope, dataFlowInfo,
                                            expectedType, contextDependency, resolutionResultsCache, callResolverExtension,
                                            isAnnotationContext, collectAllCandidates);
     }
