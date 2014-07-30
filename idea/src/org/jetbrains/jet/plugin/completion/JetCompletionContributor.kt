@@ -83,13 +83,12 @@ public class JetCompletionContributor : CompletionContributor() {
                     }
 
                     val expressionEnd = expression.getTextRange()!!.getEndOffset()
-                    val suggestedReplacementOffset: Int
-                    if (expression is JetCallExpression) {
+                    val suggestedReplacementOffset = if (expression is JetCallExpression) {
                         val calleeExpression = (expression as JetCallExpression).getCalleeExpression()
-                        suggestedReplacementOffset = if (calleeExpression != null) calleeExpression.getTextRange()!!.getEndOffset() else expressionEnd
+                        if (calleeExpression != null) calleeExpression.getTextRange()!!.getEndOffset() else expressionEnd
                     }
                     else {
-                        suggestedReplacementOffset = expressionEnd
+                        expressionEnd
                     }
                     if (suggestedReplacementOffset > context.getReplacementOffset()) {
                         context.setReplacementOffset(suggestedReplacementOffset)
@@ -123,7 +122,7 @@ public class JetCompletionContributor : CompletionContributor() {
                     if (parameters.getCompletionType() == CompletionType.BASIC) {
                         session.completeForReference()
 
-                        if (!session.getJetResult().isSomethingAdded() && session.getParameters().getInvocationCount() < 2) {
+                        if (!session.jetResult.isSomethingAdded && session.parameters.getInvocationCount() < 2) {
                             // Rerun completion if nothing was found
                             session = CompletionSession(parameters.withInvocationCount(2), result, jetReference, position)
                             session.completeForReference()
@@ -139,22 +138,8 @@ public class JetCompletionContributor : CompletionContributor() {
             }
         }
 
-        private fun getJetReference(parameters: CompletionParameters): JetSimpleNameReference? {
-            val element = parameters.getPosition()
-            val parent = element.getParent()
-            if (parent != null) {
-                val references = parent.getReferences()
-                if (references.size != 0) {
-                    for (reference in references) {
-                        if (reference is JetSimpleNameReference) {
-                            return reference as JetSimpleNameReference
-                        }
-                    }
-                }
-            }
-
-            return null
-        }
+        private fun getJetReference(parameters: CompletionParameters): JetSimpleNameReference?
+                = parameters.getPosition().getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
 
         private fun isAtEndOfLine(offset: Int, document: Document): Boolean {
             var i = offset

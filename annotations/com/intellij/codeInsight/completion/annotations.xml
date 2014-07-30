@@ -28,6 +28,18 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
+      name='com.intellij.codeInsight.completion.CompletionUtil java.lang.String findIdentifierPrefix(com.intellij.psi.PsiElement, int, com.intellij.patterns.ElementPattern&lt;java.lang.Character&gt;, com.intellij.patterns.ElementPattern&lt;java.lang.Character&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionUtil java.lang.String findJavaIdentifierPrefix(com.intellij.codeInsight.completion.CompletionParameters)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionUtil java.lang.String findJavaIdentifierPrefix(com.intellij.psi.PsiElement, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.codeInsight.completion.InsertHandler void handleInsert(com.intellij.codeInsight.completion.InsertionContext, T) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
@@ -39,6 +51,10 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.intellij.codeInsight.completion.InsertionContext com.intellij.openapi.project.Project getProject()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.JavaCompletionSorting com.intellij.codeInsight.completion.CompletionResultSet addJavaSorting(com.intellij.codeInsight.completion.CompletionParameters, com.intellij.codeInsight.completion.CompletionResultSet)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.intellij.codeInsight.completion.OffsetKey com.intellij.codeInsight.completion.OffsetKey create(java.lang.String)'>

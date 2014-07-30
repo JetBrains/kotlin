@@ -63,6 +63,7 @@ import static org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper.getTop
  */
 public class JetShortNamesCache extends PsiShortNamesCache {
 
+    @NotNull
     public static JetShortNamesCache getKotlinInstance(@NotNull Project project) {
         PsiShortNamesCache[] extensions = Extensions.getArea(project).getExtensionPoint(PsiShortNamesCache.EP_NAME).getExtensions();
         for (PsiShortNamesCache extension : extensions) {
@@ -354,6 +355,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         return functionFQNs;
     }
 
+    @NotNull
     public Collection<ClassDescriptor> getJetClassesDescriptors(
             @NotNull Condition<String> acceptedShortNameCondition,
             @NotNull KotlinCodeAnalyzer analyzer,
