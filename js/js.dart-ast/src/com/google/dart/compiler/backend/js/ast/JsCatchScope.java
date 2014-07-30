@@ -19,6 +19,7 @@ public class JsCatchScope extends JsScope {
     }
 
     @Override
+    @NotNull
     public JsName declareName(String identifier) {
         // Declare into parent scope!
         return getParent().declareName(identifier);

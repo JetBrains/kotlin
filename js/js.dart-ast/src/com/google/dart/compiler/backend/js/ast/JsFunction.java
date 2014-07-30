@@ -6,13 +6,16 @@ package com.google.dart.compiler.backend.js.ast;
 
 import com.google.dart.compiler.common.Symbol;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public final class JsFunction extends JsLiteral implements HasName {
+    @NotNull
     private JsBlock body;
     private List<JsParameter> params;
+    @NotNull
     private final JsScope scope;
     private JsName name;
 
@@ -20,7 +23,7 @@ public final class JsFunction extends JsLiteral implements HasName {
         this(parentScope, (JsName) null);
     }
 
-    public JsFunction(JsScope parentScope, JsBlock body) {
+    public JsFunction(JsScope parentScope, @NotNull JsBlock body) {
         this(parentScope, (JsName) null);
         this.body = body;
     }
@@ -30,6 +33,7 @@ public final class JsFunction extends JsLiteral implements HasName {
         scope = new JsScope(parentScope, name == null ? null : name.getIdent());
     }
 
+    @NotNull
     public JsBlock getBody() {
         return body;
     }
@@ -44,6 +48,7 @@ public final class JsFunction extends JsLiteral implements HasName {
         return name;
     }
 
+    @NotNull
     public List<JsParameter> getParameters() {
         if (params == null) {
             params = new SmartList<JsParameter>();
@@ -51,11 +56,12 @@ public final class JsFunction extends JsLiteral implements HasName {
         return params;
     }
 
+    @NotNull
     public JsScope getScope() {
         return scope;
     }
 
-    public void setBody(JsBlock body) {
+    public void setBody(@NotNull JsBlock body) {
         this.body = body;
     }
 
