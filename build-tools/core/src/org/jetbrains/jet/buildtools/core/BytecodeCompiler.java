@@ -28,7 +28,9 @@ import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
-import org.jetbrains.jet.cli.jvm.compiler.*;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -125,8 +127,8 @@ public class BytecodeCompiler {
         }
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
 
-        configuration.put(ENABLE_INLINE, enableInline);
-        configuration.put(ENABLE_OPTIMIZATION, enableOptimization);
+        configuration.put(DISABLE_INLINE, !enableInline);
+        configuration.put(DISABLE_OPTIMIZATION, !enableOptimization);
 
         // lets register any compiler plugins
         configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, getCompilerPlugins());

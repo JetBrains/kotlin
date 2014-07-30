@@ -59,7 +59,6 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 public class InlineCodegenUtil {
     public static final int API = Opcodes.ASM5;
     public static final String INVOKE = "invoke";
-    public static final boolean DEFAULT_INLINE_FLAG = true;
 
     public static final String CAPTURED_FIELD_PREFIX = "$";
 

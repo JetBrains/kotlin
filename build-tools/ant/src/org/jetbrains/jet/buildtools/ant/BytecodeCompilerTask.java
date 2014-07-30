@@ -23,8 +23,6 @@ import org.jetbrains.jet.buildtools.core.BytecodeCompiler;
 import org.jetbrains.jet.buildtools.core.Util;
 import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
-import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -143,7 +141,6 @@ public class BytecodeCompilerTask extends Task {
 
     @Override
     public void execute() {
-
         BytecodeCompiler compiler = new BytecodeCompiler();
         String stdlibPath = (this.stdlib != null ? getPath(this.stdlib) : null);
         String[] classpath = (this.compileClasspath != null ? this.compileClasspath.list() : null);
@@ -157,8 +154,8 @@ public class BytecodeCompilerTask extends Task {
             throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", optimize));
         }
 
-        boolean enableInline = CompilerArgumentsUtil.optionToBooleanFlag(inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG);
-        boolean enableOptimization = CompilerArgumentsUtil.optionToBooleanFlag(optimize, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG);
+        boolean enableInline = CompilerArgumentsUtil.optionToBooleanFlag(inline, true);
+        boolean enableOptimization = CompilerArgumentsUtil.optionToBooleanFlag(optimize, true);
 
         if (this.src != null) {
 

@@ -294,14 +294,15 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     context.getModule(),
                     context.getBindingContext(),
                     Lists.newArrayList(files),
-                    /*not-null assertions*/false, false,
+                    /*disable not-null assertions*/false, false,
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
-                    /*to generate inline flag on methods*/true,
-                    /*optimize*/true,
+                    /*disableInline=*/false,
+                    /*disableOptimization=*/false,
                     null,
                     null,
                     forExtraDiagnostics,
-                    null);
+                    null
+            );
             KotlinCodegenFacade.prepareForCompilation(state);
 
             bindingContext = state.getBindingContext();

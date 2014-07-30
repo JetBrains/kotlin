@@ -100,10 +100,10 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                                                   ? CommandLineScriptUtils.scriptParameters()
                                                                   : Collections.<AnalyzerScriptParameter>emptyList());
 
-        configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, !arguments.noCallAssertions);
-        configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, !arguments.noParamAssertions);
-        configuration.put(JVMConfigurationKeys.ENABLE_INLINE, !arguments.noInline);
-        configuration.put(JVMConfigurationKeys.ENABLE_OPTIMIZATION, !arguments.noOptimize);
+        configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions);
+        configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions);
+        configuration.put(JVMConfigurationKeys.DISABLE_INLINE, arguments.noInline);
+        configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize);
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 

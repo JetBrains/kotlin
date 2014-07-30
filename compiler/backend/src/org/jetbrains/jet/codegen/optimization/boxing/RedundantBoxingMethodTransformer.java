@@ -20,7 +20,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -279,7 +278,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
             @NotNull Pair<AbstractInsnNode, Type> castWithType
     ) {
         AbstractInsnNode castInsn = castWithType.getFirst();
-        MethodNode castInsnsListener = new MethodNode(OptimizationUtils.API);
+        MethodNode castInsnsListener = new MethodNode(Opcodes.ASM5);
         new InstructionAdapter(castInsnsListener).cast(value.getPrimitiveType(), castWithType.getSecond());
 
         for (AbstractInsnNode insn : castInsnsListener.instructions.toArray()) {

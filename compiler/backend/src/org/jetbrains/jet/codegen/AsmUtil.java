@@ -535,7 +535,7 @@ public class AsmUtil {
             @NotNull FunctionDescriptor descriptor,
             @NotNull FrameMap frameMap
     ) {
-        if (!state.isGenerateNotNullParamAssertions()) return;
+        if (!state.isParamAssertionsEnabled()) return;
 
         // Private method is not accessible from other classes, no assertions needed
         if (getVisibilityAccessFlag(descriptor) == ACC_PRIVATE) return;
@@ -580,7 +580,7 @@ public class AsmUtil {
             @NotNull CallableDescriptor descriptor,
             @NotNull String assertMethodToCall
     ) {
-        if (!state.isGenerateNotNullAssertions()) return;
+        if (!state.isCallAssertionsEnabled()) return;
 
         if (!isDeclaredInJava(descriptor)) return;
 

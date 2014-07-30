@@ -21,10 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
-import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.optimization.OptimizationClassBuilderFactory;
-import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.codegen.when.MappingsClassesForWhenByEnum;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -89,13 +87,13 @@ public class GenerationState {
     @NotNull
     private final JetTypeMapper typeMapper;
 
-    private final boolean generateNotNullAssertions;
+    private final boolean disableCallAssertions;
 
-    private final boolean generateNotNullParamAssertions;
+    private final boolean disableParamAssertions;
 
     private final GenerateClassFilter generateClassFilter;
 
-    private final boolean inlineEnabled;
+    private final boolean disableInline;
 
     @Nullable
     private List<ScriptDescriptor> earlierScriptsForReplInterpreter;
@@ -121,10 +119,8 @@ public class GenerationState {
             @NotNull BindingContext bindingContext,
             @NotNull List<JetFile> files
     ) {
-        this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, false, GenerateClassFilter.GENERATE_ALL,
-             InlineCodegenUtil.DEFAULT_INLINE_FLAG, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG,
-             null, null, DiagnosticHolder.DO_NOTHING, null
-        );
+        this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, true, GenerateClassFilter.GENERATE_ALL,
+             false, false, null, null, DiagnosticHolder.DO_NOTHING, null);
     }
 
     public GenerationState(
@@ -134,11 +130,11 @@ public class GenerationState {
             @NotNull ModuleDescriptor module,
             @NotNull BindingContext bindingContext,
             @NotNull List<JetFile> files,
-            boolean generateNotNullAssertions,
-            boolean generateNotNullParamAssertions,
+            boolean disableCallAssertions,
+            boolean disableParamAssertions,
             GenerateClassFilter generateClassFilter,
-            boolean inlineEnabled,
-            boolean optimizationEnabled,
+            boolean disableInline,
+            boolean disableOptimization,
             @Nullable Collection<FqName> packagesWithRemovedFiles,
             @Nullable String moduleId,
             @NotNull DiagnosticHolder diagnostics,
@@ -151,7 +147,7 @@ public class GenerationState {
         this.moduleId = moduleId;
         this.packagesWithRemovedFiles = packagesWithRemovedFiles == null ? Collections.<FqName>emptySet() : packagesWithRemovedFiles;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
-        this.inlineEnabled = inlineEnabled;
+        this.disableInline = disableInline;
 
         this.bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
         this.bindingContext = bindingTrace.getBindingContext();
@@ -161,15 +157,15 @@ public class GenerationState {
 
         this.intrinsics = new IntrinsicMethods();
 
-        if (optimizationEnabled) {
+        if (!disableOptimization) {
             builderFactory = new OptimizationClassBuilderFactory(builderFactory);
         }
 
         this.classFileFactory = new ClassFileFactory(this, new BuilderFactoryForDuplicateSignatureDiagnostics(
                 builderFactory, this.bindingContext, diagnostics));
 
-        this.generateNotNullAssertions = generateNotNullAssertions;
-        this.generateNotNullParamAssertions = generateNotNullParamAssertions;
+        this.disableCallAssertions = disableCallAssertions;
+        this.disableParamAssertions = disableParamAssertions;
         this.generateClassFilter = generateClassFilter;
 
         ReflectionTypes reflectionTypes = new ReflectionTypes(module);
@@ -231,12 +227,12 @@ public class GenerationState {
         return mappingsClassesForWhenByEnum;
     }
 
-    public boolean isGenerateNotNullAssertions() {
-        return generateNotNullAssertions;
+    public boolean isCallAssertionsEnabled() {
+        return !disableCallAssertions;
     }
 
-    public boolean isGenerateNotNullParamAssertions() {
-        return generateNotNullParamAssertions;
+    public boolean isParamAssertionsEnabled() {
+        return !disableParamAssertions;
     }
 
     @NotNull
@@ -250,7 +246,7 @@ public class GenerationState {
     }
 
     public boolean isInlineEnabled() {
-        return inlineEnabled;
+        return !disableInline;
     }
 
     public void beforeCompile() {
