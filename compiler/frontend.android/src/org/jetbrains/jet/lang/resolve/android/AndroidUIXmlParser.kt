@@ -89,6 +89,8 @@ abstract class AndroidUIXmlParser {
 
     protected fun getXmlLayoutFiles(): Collection<PsiFile> = fileCache.keySet()
 
+    public abstract fun idToXmlAttribute(id: String): PsiElement?
+
     public fun parseToPsi(project: Project): JetFile? {
         populateQueue(project)
         val cacheState = doParse()
@@ -182,11 +184,15 @@ abstract class AndroidUIXmlParser {
         lastCachedPsi = null
     }
 
-    protected fun populateQueue(project: Project) {
+    protected fun getXmlLayouts(project: Project): Collection<PsiFile> {
         val fileManager = VirtualFileManager.getInstance()
         val watchDir = fileManager.findFileByUrl("file://" + searchPath)
         val psiManager = PsiManager.getInstance(project)
-        filesToProcess.addAll(watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) } ?.mapNotNull { it } ?: ArrayList(0))
+        return watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) } ?.mapNotNull { it } ?: ArrayList(0)
+    }
+
+    protected fun populateQueue(project: Project) {
+        filesToProcess.addAll(getXmlLayouts(project))
     }
 
     protected abstract fun lazySetup()

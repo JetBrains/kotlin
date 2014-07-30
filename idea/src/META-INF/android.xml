@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <gotoDeclarationHandler implementation="org.jetbrains.jet.plugin.android.AndroidGotoDeclarationHandler"/>
+  </extensions>
+</idea-plugin>
