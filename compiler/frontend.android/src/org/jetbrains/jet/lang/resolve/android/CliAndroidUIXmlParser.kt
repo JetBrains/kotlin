@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream
 import org.xml.sax.InputSource
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
+import com.intellij.psi.PsiElement
 
 class CliAndroidUIXmlParser(val project: Project, override val searchPath: String?): AndroidUIXmlParser() {
 
@@ -46,6 +47,10 @@ class CliAndroidUIXmlParser(val project: Project, override val searchPath: Strin
             LOG.error(e)
             return ""
         }
+    }
+
+    override fun renameId(oldName: String?, newName: String?, allRenames: MutableMap<PsiElement, String>) {
+        return
     }
 }
 
