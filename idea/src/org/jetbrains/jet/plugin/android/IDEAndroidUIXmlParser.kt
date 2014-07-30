@@ -29,15 +29,46 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.PsiElement
+import java.util.HashMap
+import com.intellij.psi.xml.XmlAttribute
 
 class IDEAndroidUIXmlParser(val project: Project): AndroidUIXmlParser() {
     override val searchPath: String? = project.getBasePath() + "/res/layout/"
     override var androidAppPackage: String = ""
 
+    val idToXmlAttributeCache = HashMap<String, PsiElement>()
+
+    private fun setupElementCache() {
+        for (file in getXmlLayouts(project)) {
+            if (file is XmlFile) {
+                file.accept(object : XmlElementVisitor() {
+                    override fun visitElement(element: PsiElement) {
+                        element.acceptChildren(this)
+                    }
+                    override fun visitXmlTag(tag: XmlTag?) {
+                        val idPrefix = "@+id/"
+                        val attribute = tag?.getAttribute("android:id")
+                        val s = attribute?.getValue()
+                        if (attribute != null && (s?.startsWith(idPrefix) ?: false)) {
+                            idToXmlAttributeCache[s!!.replace(idPrefix, "")] = attribute
+                        }
+                        tag?.acceptChildren(this)
+                    }
+                })
+            }
+        }
+
+    }
+
+    override fun idToXmlAttribute(id: String): PsiElement? {
+        return idToXmlAttributeCache[id]
+    }
+
     override protected fun lazySetup() {
         if (listenerSetUp) return
         androidAppPackage = readManifest()._package
         populateQueue(project)
+        setupElementCache()
         listenerSetUp = true
     }
 
