@@ -224,13 +224,8 @@
     <typeDeclarationProvider implementation="org.jetbrains.jet.plugin.codeInsight.JetTypeDeclarationProvider"/>
 
     <completion.contributor language="jet"
-                            id="JetPackagesContributor"
-                            order="first"
-                            implementationClass="org.jetbrains.jet.plugin.completion.JetPackagesContributor"/>
-
-    <completion.contributor language="jet"
                             id="JetCompletionContributor"
-                            order="after JetPackagesContributor"
+                            order="first"
                             implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
 
     <completion.contributor language="jet"

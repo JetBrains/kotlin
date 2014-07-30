@@ -60,7 +60,7 @@ public class JetCompletionContributor : CompletionContributor() {
         val dummyIdentifier = when {
             context.getCompletionType() == CompletionType.SMART -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
 
-            JetPackagesContributor.ACTIVATION_PATTERN.accepts(tokenBefore) -> JetPackagesContributor.DUMMY_IDENTIFIER
+            PackageDirectiveCompletion.ACTIVATION_PATTERN.accepts(tokenBefore) -> PackageDirectiveCompletion.DUMMY_IDENTIFIER
 
             EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(tokenBefore) -> EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER
 
@@ -113,6 +113,11 @@ public class JetCompletionContributor : CompletionContributor() {
         }
 
         if (EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(position) && parameters.getInvocationCount() == 0) {
+            result.stopHere()
+            return
+        }
+
+        if (PackageDirectiveCompletion.perform(parameters, result)) {
             result.stopHere()
             return
         }
