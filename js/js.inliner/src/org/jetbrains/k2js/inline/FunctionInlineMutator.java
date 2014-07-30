@@ -20,13 +20,10 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jetbrains.k2js.inline.InlinePackage.needToAlias;
-import static org.jetbrains.k2js.inline.InlinePackage.aliasArgumentsIfNeeded;
-import static org.jetbrains.k2js.inline.InlinePackage.renameLocals;
-import static org.jetbrains.k2js.inline.InlinePackage.replaceThisReference;
-import static org.jetbrains.k2js.inline.InlinePackage.hasThisReference;
+import static org.jetbrains.k2js.inline.InlinePackage.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 class FunctionInlineMutator {
     private static final String BREAK_LABEL = "break_inlined";
@@ -77,8 +74,12 @@ class FunctionInlineMutator {
     }
 
     private void process() {
+        List<JsExpression> arguments = getArguments();
+        List<JsParameter> parameters = getParameters();
+
         replaceThis();
-        aliasArgumentsIfNeeded(renamingContext, getArguments(), getParameters());
+        removeRedundantDefaultInitializers(arguments, parameters, body);
+        aliasArgumentsIfNeeded(renamingContext, arguments, parameters);
         renameLocals(renamingContext, invokedFunction);
         applyRenaming();
         replaceReturns();

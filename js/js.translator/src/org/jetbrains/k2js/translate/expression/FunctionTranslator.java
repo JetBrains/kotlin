@@ -130,7 +130,9 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     public static void addParameters(List<JsParameter> list, FunctionDescriptor descriptor, TranslationContext context) {
         for (ValueParameterDescriptor valueParameter : descriptor.getValueParameters()) {
-            list.add(new JsParameter(context.getNameForDescriptor(valueParameter)));
+            JsParameter jsParameter = new JsParameter(context.getNameForDescriptor(valueParameter));
+            jsParameter.setHasDefaultValue(valueParameter.hasDefaultValue());
+            list.add(jsParameter);
         }
     }
 

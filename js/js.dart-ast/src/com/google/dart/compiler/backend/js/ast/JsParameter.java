@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public final class JsParameter extends SourceInfoAwareJsNode implements HasName {
     @NotNull
     private final JsName name;
+    private boolean hasDefaultValue = false;
 
     public JsParameter(@NotNull JsName name) {
         this.name = name;
@@ -28,6 +29,14 @@ public final class JsParameter extends SourceInfoAwareJsNode implements HasName 
     @NotNull
     public Symbol getSymbol() {
         return name;
+    }
+
+    public boolean hasDefaultValue() {
+        return hasDefaultValue;
+    }
+
+    public void setHasDefaultValue(boolean hasDefaultValue) {
+        this.hasDefaultValue = hasDefaultValue;
     }
 
     @Override
