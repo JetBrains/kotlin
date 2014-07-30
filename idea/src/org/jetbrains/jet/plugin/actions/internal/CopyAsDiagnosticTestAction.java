@@ -55,9 +55,11 @@ public class CopyAsDiagnosticTestAction extends AnAction {
 
     @Override
     public void update(AnActionEvent e) {
+        e.getPresentation().setVisible(ApplicationManager.getApplication().isInternal());
+
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-        e.getPresentation().setEnabled(editor != null && psiFile instanceof JetFile && ApplicationManager.getApplication().isInternal());
+        e.getPresentation().setEnabled(editor != null && psiFile instanceof JetFile);
     }
 
 }
