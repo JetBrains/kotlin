@@ -118,17 +118,15 @@ public class JetCompletionContributor : CompletionContributor() {
                 try {
                     result.restartCompletionWhenNothingMatches()
 
-                    var session = CompletionSession(parameters, result, jetReference, position)
                     if (parameters.getCompletionType() == CompletionType.BASIC) {
-                        val somethingAdded = session.completeBasic()
-                        if (!somethingAdded && session.parameters.getInvocationCount() < 2) {
+                        val somethingAdded = BasicCompletionSession(parameters, result, jetReference).complete()
+                        if (!somethingAdded && parameters.getInvocationCount() < 2) {
                             // Rerun completion if nothing was found
-                            session = CompletionSession(parameters.withInvocationCount(2), result, jetReference, position)
-                            session.completeBasic()
+                            BasicCompletionSession(parameters.withInvocationCount(2), result, jetReference).complete()
                         }
                     }
                     else {
-                        session.completeSmart()
+                        SmartCompletionSession(parameters, result, jetReference).complete()
                     }
                 }
                 catch (e: ProcessCanceledException) {

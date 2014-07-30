@@ -23,7 +23,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache
@@ -31,39 +30,52 @@ import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.codeInsight.TipsManager
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 
-class CompletionSession(public val parameters: CompletionParameters,
-                        resultSet: CompletionResultSet,
-                        private val jetReference: JetSimpleNameReference,
-                        position: PsiElement) {
+abstract class CompletionSessionBase(public val parameters: CompletionParameters,
+                                     resultSet: CompletionResultSet,
+                                     protected val jetReference: JetSimpleNameReference) {
 
-    private val resolveSession = (position.getContainingFile() as JetFile).getLazyResolveSession()
-    private val bindingContext = resolveSession.resolveToElement(jetReference.expression)
-    private val position = parameters.getPosition()
-
-    private val inDescriptor: DeclarationDescriptor? = bindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.expression)?.getContainingDeclaration()
+    protected val resolveSession: ResolveSessionForBodies = (parameters.getPosition().getContainingFile() as JetFile).getLazyResolveSession()
+    protected val bindingContext: BindingContext = resolveSession.resolveToElement(jetReference.expression)
+    protected val position: PsiElement = parameters.getPosition()
+    protected val inDescriptor: DeclarationDescriptor? = bindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.expression)?.getContainingDeclaration()
 
     // set prefix matcher here to override default one which relies on CompletionUtil.findReferencePrefix()
     // which sometimes works incorrectly for Kotlin
-    private val resultSet = resultSet
+    protected val resultSet: CompletionResultSet = resultSet
             .withPrefixMatcher(CompletionUtil.findJavaIdentifierPrefix(parameters))
             .addKotlinSorting(parameters)
 
-    private val prefixMatcher = this.resultSet.getPrefixMatcher()
+    protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
+    protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
+        // Show everything if user insist on showing completion list
+        if (parameters.getInvocationCount() >= 2) return true
+
+        if (descriptor is DeclarationDescriptorWithVisibility && inDescriptor != null) {
+            return Visibilities.isVisible(descriptor as DeclarationDescriptorWithVisibility, inDescriptor)
+        }
+
+        return true
+    }
+}
+
+class BasicCompletionSession(parameters: CompletionParameters, resultSet: CompletionResultSet, jetReference: JetSimpleNameReference)
+: CompletionSessionBase(parameters, resultSet, jetReference) {
     private val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
 
-    public fun completeBasic(): Boolean {
+    public fun complete(): Boolean {
         assert(parameters.getCompletionType() == CompletionType.BASIC)
 
-        fillCollectorBasic()
+        collectElements()
 
         collector.flushToResultSet(resultSet)
 
         return !collector.isEmpty
     }
 
-    private fun fillCollectorBasic() {
+    private fun collectElements() {
         if (isOnlyKeywordCompletion(position)) return
 
         if (shouldRunOnlyTypeCompletion()) {
@@ -98,17 +110,6 @@ class CompletionSession(public val parameters: CompletionParameters,
         if (shouldRunExtensionsCompletion()) {
             addJetExtensions()
         }
-
-    }
-
-    //TODO: no collector is needed here
-    public fun completeSmart() {
-        assert(parameters.getCompletionType() == CompletionType.SMART)
-
-        val descriptors = TipsManager.getReferenceVariants(jetReference.expression, bindingContext)
-        val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile)
-        completion.buildLookupElements(descriptors)?.forEach { resultSet.addElement(it) }
-        collector.flushToResultSet(resultSet)
     }
 
     private fun isOnlyKeywordCompletion(position: PsiElement)
@@ -195,15 +196,13 @@ class CompletionSession(public val parameters: CompletionParameters,
         val descriptors = TipsManager.getReferenceVariants(jetReference.expression, bindingContext)
         collector.addDescriptorElements(descriptors.filter { filterCondition(it) })
     }
+}
 
-    private fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
-        // Show everything if user insist on showing completion list
-        if (parameters.getInvocationCount() >= 2) return true
-
-        if (descriptor is DeclarationDescriptorWithVisibility && inDescriptor != null) {
-            return Visibilities.isVisible(descriptor as DeclarationDescriptorWithVisibility, inDescriptor)
-        }
-
-        return true
+class SmartCompletionSession(parameters: CompletionParameters, resultSet: CompletionResultSet, jetReference: JetSimpleNameReference)
+: CompletionSessionBase(parameters, resultSet, jetReference) {
+    public fun complete() {
+        val descriptors = TipsManager.getReferenceVariants(jetReference.expression, bindingContext)
+        val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile)
+        completion.buildLookupElements(descriptors)?.forEach { resultSet.addElement(it) }
     }
 }
