@@ -28,25 +28,19 @@ import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
-import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
-import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -321,24 +315,23 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         arguments.noJdkAnnotations = true;
         arguments.annotations = getFullAnnotationsPath(log, annotationPaths);
         log.info("Using kotlin annotations from " + arguments.annotations);
-        arguments.inline = inline;
-        arguments.optimize = optimize;
+        arguments.noInline = !CompilerArgumentsUtil.optionToBooleanFlag(inline, true);
+        arguments.noOptimize = !CompilerArgumentsUtil.optionToBooleanFlag(optimize, true);
 
-        if (!CompilerArgumentsUtil.checkOption(arguments.inline)) {
-            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", arguments.inline));
+        if (!CompilerArgumentsUtil.checkOption(inline)) {
+            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", inline));
         }
 
-        if (!CompilerArgumentsUtil.checkOption(arguments.optimize)) {
-            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", arguments.optimize));
+        if (!CompilerArgumentsUtil.checkOption(optimize)) {
+            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", optimize));
         }
 
-        log.info("Method inlining is " + CompilerArgumentsUtil.optionToBooleanFlag(arguments.inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG));
-        log.info(
-                "Optimization mode is " + CompilerArgumentsUtil.optionToBooleanFlag(
-                        arguments.optimize,
-                        OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG
-                )
-        );
+        if (arguments.noInline) {
+            log.info("Method inlining is turned off");
+        }
+        if (arguments.noOptimize) {
+            log.info("Optimization is turned off");
+        }
     }
 
     protected String getFullAnnotationsPath(Log log, List<String> annotations) {

@@ -40,8 +40,10 @@ test {
 }
 
 compileKotlin {
-    kotlinOptions.annotations = "externalAnnotations"
-    kotlinOptions.inline = false
+    kotlinOptions.noInline = true
+    kotlinOptions.noOptimize = true
+    kotlinOptions.noCallAssertions = true
+    kotlinOptions.noParamAssertions = true
 }
 
 

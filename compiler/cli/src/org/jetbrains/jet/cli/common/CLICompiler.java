@@ -61,12 +61,11 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     protected boolean parseArguments(@NotNull PrintStream errStream, @NotNull A arguments, @NotNull String[] args) {
         try {
             arguments.freeArgs = Args.parse(arguments, args);
-            checkArguments(arguments);
             return true;
         }
         catch (IllegalArgumentException e) {
             errStream.println(e.getMessage());
-            usage(errStream);
+            usage(errStream, false);
         }
         catch (Throwable t) {
             // Always use tags
@@ -75,15 +74,11 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         return false;
     }
 
-    protected void checkArguments(@NotNull A argument) {
-
-    }
-
     /**
      * Allow derived classes to add additional command line arguments
      */
-    protected void usage(@NotNull PrintStream target) {
-        Usage.print(target, createArguments());
+    protected void usage(@NotNull PrintStream target, boolean extraHelp) {
+        Usage.print(target, createArguments(), extraHelp);
     }
 
     /**
@@ -102,8 +97,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
      */
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull A arguments) {
-        if (arguments.help) {
-            usage(errStream);
+        if (arguments.help || arguments.extraHelp) {
+            usage(errStream, arguments.extraHelp);
             return OK;
         }
 

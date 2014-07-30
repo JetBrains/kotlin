@@ -1,0 +1,9 @@
+Usage: kotlinc-jvm <options> <source files>
+where advanced options include:
+  -Xno-call-assertions       Don't generate not-null assertion after each invocation of method returning not-null
+  -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
+  -Xno-inline                Disable method inlining
+  -Xno-optimize              Disable optimizations
+
+Advanced options are non-standard and may be changed or removed without any notice.
+OK

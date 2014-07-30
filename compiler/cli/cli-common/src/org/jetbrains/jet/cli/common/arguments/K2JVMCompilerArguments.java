@@ -48,12 +48,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "noJdkAnnotations", description = "Don't include JDK external annotations into classpath")
     public boolean noJdkAnnotations;
 
-    @Argument(value = "notNullAssertions", description = "Generate not-null assertion after each invocation of method returning not-null")
-    public boolean notNullAssertions;
-
-    @Argument(value = "notNullParamAssertions", description = "Generate not-null assertions on parameters of methods accessible from Java")
-    public boolean notNullParamAssertions;
-
     @Argument(value = "module", description = "Path to the module file to compile")
     @ValueDescription("<path>")
     public String module;
@@ -65,13 +59,19 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String kotlinHome;
 
-    @Argument(value = "inline", description = "Inlining mode (default is on)")
-    @ValueDescription("{on,off}")
-    public String inline;
+    // Advanced options
 
-    @Argument(value = "optimize", description = "Optimization mode (default is on)")
-    @ValueDescription("{on,off}")
-    public String optimize;
+    @Argument(value = "Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
+    public boolean noCallAssertions;
+
+    @Argument(value = "Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
+    public boolean noParamAssertions;
+
+    @Argument(value = "Xno-inline", description = "Disable method inlining")
+    public boolean noInline;
+
+    @Argument(value = "Xno-optimize", description = "Disable optimizations")
+    public boolean noOptimize;
 
     @Override
     @NotNull

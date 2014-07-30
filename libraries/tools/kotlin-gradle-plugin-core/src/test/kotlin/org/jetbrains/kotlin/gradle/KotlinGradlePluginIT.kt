@@ -1,16 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
-import com.google.common.io.Files
-import com.intellij.openapi.util.SystemInfo
-import java.io.File
-import java.util.Arrays
-import java.util.Scanner
-import org.junit.Before
-import org.junit.After
 import org.junit.Test
-import kotlin.test.assertTrue
-import kotlin.test.assertEquals
-import kotlin.test.fail
 import org.junit.Ignore
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
 
@@ -37,14 +27,8 @@ class BasicKotlinGradleIT : BaseGradleIT() {
         }
     }
 
-    Test fun testInlineDisabled() {
-        Project("inlineDisabled", "1.6").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
-            assertSuccessful()
-        }
-    }
-
-    Test fun testOptimizationDisabled() {
-        Project("optimizationDisabled", "1.6").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+    Test fun testAdvancedOptions() {
+        Project("advancedOptions", "1.6").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
         }
     }

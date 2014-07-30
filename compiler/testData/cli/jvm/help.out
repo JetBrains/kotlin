@@ -7,16 +7,13 @@ where possible options include:
   -noJdk                     Don't include Java runtime into classpath
   -noStdlib                  Don't include Kotlin runtime into classpath
   -noJdkAnnotations          Don't include JDK external annotations into classpath
-  -notNullAssertions         Generate not-null assertion after each invocation of method returning not-null
-  -notNullParamAssertions    Generate not-null assertions on parameters of methods accessible from Java
   -module <path>             Path to the module file to compile
   -script                    Evaluate the script file
   -kotlinHome <path>         Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
-  -inline {on,off}           Inlining mode (default is on)
-  -optimize {on,off}         Optimization mode (default is on)
   -tags                      Demarcate each compilation message (error, warning, etc) with an open and close tag
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
   -help (-h)                 Print a synopsis of standard options
   -suppress warnings         Suppress all compiler warnings
+  -X                         Print a synopsis of advanced options
 OK

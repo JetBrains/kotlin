@@ -12,4 +12,5 @@ where possible options include:
   -version                   Display compiler version
   -help (-h)                 Print a synopsis of standard options
   -suppress warnings         Suppress all compiler warnings
+  -X                         Print a synopsis of advanced options
 OK

@@ -1,0 +1,5 @@
+Usage: kotlinc-js <options> <source files>
+where advanced options include:
+
+Advanced options are non-standard and may be changed or removed without any notice.
+OK

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.doc.KDocConfig
 import java.util.concurrent.Callable
 import org.gradle.api.Project
-import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil
 
 public open class KotlinCompile(): AbstractCompile() {
 
@@ -116,16 +115,10 @@ public open class KotlinCompile(): AbstractCompile() {
 
         args.noStdlib = true
         args.noJdkAnnotations = true
-        args.inline = kotlinOptions.inline
-        args.optimize = kotlinOptions.optimize
-
-        if (!CompilerArgumentsUtil.checkOption(args.inline)) {
-            throw GradleException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", args.inline))
-        }
-
-        if (!CompilerArgumentsUtil.checkOption(args.optimize)) {
-            throw GradleException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", args.optimize))
-        }
+        args.noInline = kotlinOptions.noInline
+        args.noOptimize = kotlinOptions.noOptimize
+        args.noCallAssertions = kotlinOptions.noCallAssertions
+        args.noParamAssertions = kotlinOptions.noParamAssertions
 
         val messageCollector = GradleMessageCollector(getLogger())
         getLogger().debug("Calling compiler")

@@ -142,8 +142,6 @@ public class KotlinCompilerRunner {
         setupCommonSettings(settings);
 
         settings.module = moduleFile.getAbsolutePath();
-        settings.notNullAssertions = true;
-        settings.notNullParamAssertions = true;
         settings.noStdlib = true;
         settings.noJdkAnnotations = true;
         settings.noJdk = true;

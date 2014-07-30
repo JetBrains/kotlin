@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
@@ -33,8 +32,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
-import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -103,12 +100,10 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                                                   ? CommandLineScriptUtils.scriptParameters()
                                                                   : Collections.<AnalyzerScriptParameter>emptyList());
 
-        configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, arguments.notNullAssertions);
-        configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);
-        configuration.put(JVMConfigurationKeys.ENABLE_INLINE,
-                          CompilerArgumentsUtil.optionToBooleanFlag(arguments.inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG));
-        configuration.put(JVMConfigurationKeys.ENABLE_OPTIMIZATION,
-                          CompilerArgumentsUtil.optionToBooleanFlag(arguments.optimize, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG));
+        configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, !arguments.noCallAssertions);
+        configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, !arguments.noParamAssertions);
+        configuration.put(JVMConfigurationKeys.ENABLE_INLINE, !arguments.noInline);
+        configuration.put(JVMConfigurationKeys.ENABLE_OPTIMIZATION, !arguments.noOptimize);
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
@@ -208,18 +203,4 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         }
         return annotationsPath;
     }
-
-    @Override
-    protected void checkArguments(@NotNull K2JVMCompilerArguments argument) {
-        super.checkArguments(argument);
-
-        if (!CompilerArgumentsUtil.checkOption(argument.inline)) {
-            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", argument.inline));
-        }
-
-        if (!CompilerArgumentsUtil.checkOption(argument.optimize)) {
-            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", argument.optimize));
-        }
-    }
-
 }
