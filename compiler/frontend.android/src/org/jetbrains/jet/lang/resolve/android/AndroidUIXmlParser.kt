@@ -47,6 +47,7 @@ import java.io.ByteArrayInputStream
 import com.intellij.openapi.diagnostic.Log
 import org.xml.sax.SAXException
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.PsiElement
 
 abstract class AndroidUIXmlParser {
 
@@ -85,6 +86,8 @@ abstract class AndroidUIXmlParser {
         if (cacheState == null) return null
         return renderString()
     }
+
+    protected fun getXmlLayoutFiles(): Collection<PsiFile> = fileCache.keySet()
 
     public fun parseToPsi(project: Project): JetFile? {
         populateQueue(project)
@@ -183,7 +186,7 @@ abstract class AndroidUIXmlParser {
         val fileManager = VirtualFileManager.getInstance()
         val watchDir = fileManager.findFileByUrl("file://" + searchPath)
         val psiManager = PsiManager.getInstance(project)
-        filesToProcess.addAll(watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) } ?.mapNotNull { it })
+        filesToProcess.addAll(watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) } ?.mapNotNull { it } ?: ArrayList(0))
     }
 
     protected abstract fun lazySetup()
@@ -219,4 +222,5 @@ abstract class AndroidUIXmlParser {
         return kw.output()
     }
 
+    abstract fun renameId(oldName: String?, newName: String?, allRenames: MutableMap<PsiElement, String>)
 }
