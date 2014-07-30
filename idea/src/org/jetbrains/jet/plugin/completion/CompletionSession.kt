@@ -43,15 +43,13 @@ class CompletionSession(public val parameters: CompletionParameters,
 
     private val inDescriptor: DeclarationDescriptor? = bindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.expression)?.getContainingDeclaration()
 
-    public val result: CompletionResultSetWrapper = run {
-        // set prefix matcher here to override default one which relies on CompletionUtil.findReferencePrefix()
-        // which sometimes works incorrectly for Kotlin
-        var result = resultSet.withPrefixMatcher(CompletionUtil.findJavaIdentifierPrefix(parameters))
+    // set prefix matcher here to override default one which relies on CompletionUtil.findReferencePrefix()
+    // which sometimes works incorrectly for Kotlin
+    private val resultSet = resultSet
+            .withPrefixMatcher(CompletionUtil.findJavaIdentifierPrefix(parameters))
+            .addKotlinSorting(parameters)
 
-        result = result.addKotlinSorting(parameters)
-
-        CompletionResultSetWrapper(result, resolveSession, { isVisibleDescriptor(it) })
-    }
+    public val result: CompletionResultSetWrapper = CompletionResultSetWrapper(this.resultSet, resolveSession, { isVisibleDescriptor(it) })
 
     public fun completeForReference() {
         assert(parameters.getCompletionType() == CompletionType.BASIC)
@@ -64,7 +62,7 @@ class CompletionSession(public val parameters: CompletionParameters,
             }
             else {
                 addReferenceVariants { isPartOfTypeDeclaration(it) }
-                JavaCompletionContributor.advertiseSecondCompletion(parameters.getPosition().getProject(), result.resultSet)
+                JavaCompletionContributor.advertiseSecondCompletion(parameters.getPosition().getProject(), resultSet)
             }
 
             return
@@ -72,7 +70,7 @@ class CompletionSession(public val parameters: CompletionParameters,
 
         addReferenceVariants { true }
 
-        val prefix = result.resultSet.getPrefixMatcher().getPrefix()
+        val prefix = result.prefixMatcher.getPrefix()
 
         // Try to avoid computing not-imported descriptors for empty prefix
         if (prefix.isEmpty()) {
@@ -106,7 +104,7 @@ class CompletionSession(public val parameters: CompletionParameters,
     private fun addJetExtensions() {
         val project = position.getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
-        result.addDescriptorElements(namesCache.getJetCallableExtensions({ result.resultSet.getPrefixMatcher().prefixMatches(it!!) }, jetReference.expression, resolveSession, GlobalSearchScope.allScope(project)))
+        result.addDescriptorElements(namesCache.getJetCallableExtensions({ result.prefixMatcher.prefixMatches(it!!) }, jetReference.expression, resolveSession, GlobalSearchScope.allScope(project)))
     }
 
     private fun isPartOfTypeDeclaration(descriptor: DeclarationDescriptor): Boolean {
@@ -124,7 +122,7 @@ class CompletionSession(public val parameters: CompletionParameters,
     }
 
     private fun addJetTopLevelFunctions() {
-        val actualPrefix = result.resultSet.getPrefixMatcher().getPrefix()
+        val actualPrefix = result.prefixMatcher.getPrefix()
         val project = position.getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
         val scope = GlobalSearchScope.allScope(project)
@@ -145,7 +143,7 @@ class CompletionSession(public val parameters: CompletionParameters,
         val objectNames = namesCache.getAllTopLevelObjectNames()
 
         for (name in objectNames) {
-            if (result.resultSet.getPrefixMatcher().prefixMatches(name)) {
+            if (result.prefixMatcher.prefixMatches(name)) {
                 result.addDescriptorElements(namesCache.getTopLevelObjectsByName(name, jetReference.expression, resolveSession, scope))
             }
         }
@@ -177,7 +175,7 @@ class CompletionSession(public val parameters: CompletionParameters,
     }
 
     private fun shouldRunExtensionsCompletion(): Boolean {
-        return parameters.getInvocationCount() > 1 || result.resultSet.getPrefixMatcher().getPrefix().length >= 3
+        return parameters.getInvocationCount() > 1 || result.prefixMatcher.getPrefix().length >= 3
     }
 
     private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean) {

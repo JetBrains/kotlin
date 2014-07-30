@@ -21,19 +21,20 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.openapi.util.Condition
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
+import com.intellij.codeInsight.completion.PrefixMatcher
 
-class CompletionResultSetWrapper(public val resultSet: CompletionResultSet,
+class CompletionResultSetWrapper(private val resultSet: CompletionResultSet,
                                  private val resolveSession: ResolveSessionForBodies,
                                  private val descriptorFilter: (DeclarationDescriptor) -> Boolean) {
     public var isSomethingAdded: Boolean = false
         private set
+
+    public val prefixMatcher: PrefixMatcher = resultSet.getPrefixMatcher()
 
     public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>) {
         for (descriptor in descriptors) {
@@ -72,7 +73,7 @@ class CompletionResultSetWrapper(public val resultSet: CompletionResultSet,
     }
 
     public fun addElement(element: LookupElement) {
-        if (resultSet.getPrefixMatcher().prefixMatches(element)) {
+        if (prefixMatcher.prefixMatches(element)) {
             resultSet.addElement(element)
             isSomethingAdded = true
         }

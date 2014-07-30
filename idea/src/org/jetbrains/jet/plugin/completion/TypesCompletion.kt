@@ -41,7 +41,7 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
 
         val project = parameters.getOriginalFile().getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
-        result.addDescriptorElements(namesCache.getJetClassesDescriptors({ result.resultSet.getPrefixMatcher().prefixMatches(it!!) }, resolveSession, GlobalSearchScope.allScope(project)))
+        result.addDescriptorElements(namesCache.getJetClassesDescriptors({ result.prefixMatcher.prefixMatches(it!!) }, resolveSession, GlobalSearchScope.allScope(project)))
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(result)
@@ -52,7 +52,7 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
      * Add java elements with performing conversion to kotlin elements if necessary.
      */
     private fun addAdaptedJavaCompletion(result: CompletionResultSetWrapper) {
-        JavaClassNameCompletionContributor.addAllClasses(parameters, false, result.resultSet.getPrefixMatcher(), object : Consumer<LookupElement> {
+        JavaClassNameCompletionContributor.addAllClasses(parameters, false, result.prefixMatcher, object : Consumer<LookupElement> {
             override fun consume(lookupElement: LookupElement?) {
                 if (lookupElement is JavaPsiClassReferenceElement) {
                     val psiClass = lookupElement.getObject()
