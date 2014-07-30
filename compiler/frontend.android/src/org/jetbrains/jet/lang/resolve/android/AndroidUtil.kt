@@ -39,16 +39,21 @@ class AndroidWidget(val id: String, val className: String): AndroidResource
 
 class AndroidManifest(val _package: String): AndroidResource
 
-fun isAndroidSyntheticFile(f: VirtualFile?): Boolean {
+//fun isAndroidSyntheticFile(f: VirtualFile?): Boolean {
+//    if (f?.getName() == AndroidConst.SYNTHETIC_FILENAME) {
+//        val userData = f?.getUserData(AndroidConst.ANDROID_SYNTHETIC);
+//        return (userData != null && userData.equals("OK"))
+//    }
+//    return false
+//}
+
+fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
+//    return isAndroidSyntheticFile(f?.getVirtualFile())
     if (f?.getName() == AndroidConst.SYNTHETIC_FILENAME) {
         val userData = f?.getUserData(AndroidConst.ANDROID_SYNTHETIC);
         return (userData != null && userData.equals("OK"))
     }
     return false
-}
-
-fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
-    return isAndroidSyntheticFile(f?.getVirtualFile())
 }
 
 fun isAndroidSyntheticElement(element: PsiElement?): Boolean {

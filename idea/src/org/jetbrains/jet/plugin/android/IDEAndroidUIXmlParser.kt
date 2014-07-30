@@ -25,6 +25,10 @@ import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.resolve.android.AndroidWidget
 import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
+import com.intellij.psi.xml.XmlFile
+import com.intellij.psi.XmlElementVisitor
+import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.PsiElement
 
 class IDEAndroidUIXmlParser(val project: Project): AndroidUIXmlParser() {
     override val searchPath: String? = project.getBasePath() + "/res/layout/"
@@ -41,6 +45,26 @@ class IDEAndroidUIXmlParser(val project: Project): AndroidUIXmlParser() {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
         file.accept(AndroidXmlVisitor({ id, wClass -> ids.add(AndroidWidget(id, wClass))}))
         return produceKotlinProperties(KotlinStringWriter(), ids).toString()
+    }
+
+    override fun renameId(oldName: String?, newName: String?, allRenames: MutableMap<PsiElement, String>) {
+        for (file in getXmlLayoutFiles()) {
+            if (file is XmlFile) {
+                file.accept(object : XmlElementVisitor() {
+                    override fun visitElement(element: PsiElement) {
+                        element.acceptChildren(this)
+                    }
+                    override fun visitXmlTag(tag: XmlTag?) {
+                        val idPrefix = "@+id/"
+                        val attribute = tag?.getAttribute("android:id")
+                        if (attribute != null && attribute.getValue() == idPrefix + oldName) {
+                            allRenames[XmlAttributeValueWrapper(attribute.getValueElement()!!)] = idPrefix+newName
+                        }
+                        tag?.acceptChildren(this)
+                    }
+                })
+            }
+        }
     }
 }
 
