@@ -31,13 +31,20 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 
 import com.intellij.patterns.PsiJavaPatterns.elementType
 import com.intellij.patterns.PsiJavaPatterns.psiElement
+import com.intellij.patterns.PsiElementPattern
+import com.intellij.psi.PsiElement
 
 public class JetCompletionContributor : CompletionContributor() {
 
-    {
+    private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(psiElement().withText(""), psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)))
+
+    private val EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER: String = "KotlinExtensionDummy.fake() {}" // A way to add reference into file at completion place
+    private val EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement().afterLeaf(JetTokens.FUN_KEYWORD.toString(), JetTokens.VAL_KEYWORD.toString(), JetTokens.VAR_KEYWORD.toString())
+
+    ;{
         val provider = object : CompletionProvider<CompletionParameters>() {
             override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-                doSimpleReferenceCompletion(parameters, result)
+                performCompletion(parameters, result)
             }
         }
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(), provider)
@@ -50,26 +57,21 @@ public class JetCompletionContributor : CompletionContributor() {
 
         val offset = context.getStartOffset()
         val tokenBefore = psiFile.findElementAt(Math.max(0, offset - 1))
-        if (context.getCompletionType() == CompletionType.SMART) {
-            context.setDummyIdentifier(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$") // add '$' to ignore context after the caret
+        val dummyIdentifier = when {
+            context.getCompletionType() == CompletionType.SMART -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
+
+            JetPackagesContributor.ACTIVATION_PATTERN.accepts(tokenBefore) -> JetPackagesContributor.DUMMY_IDENTIFIER
+
+            EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(tokenBefore) -> EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER
+
+            else -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
         }
-        else {
-            if (JetPackagesContributor.ACTIVATION_PATTERN.accepts(tokenBefore)) {
-                context.setDummyIdentifier(JetPackagesContributor.DUMMY_IDENTIFIER)
-            }
-            else if (JetExtensionReceiverTypeContributor.ACTIVATION_PATTERN.accepts(tokenBefore)) {
-                context.setDummyIdentifier(JetExtensionReceiverTypeContributor.DUMMY_IDENTIFIER)
-            }
-            else {
-                context.setDummyIdentifier(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED)
-            }
-        }
+        context.setDummyIdentifier(dummyIdentifier)
 
         // this code will make replacement offset "modified" and prevents altering it by the code in CompletionProgressIndicator
         context.setReplacementOffset(context.getReplacementOffset())
 
         if (context.getCompletionType() == CompletionType.SMART && !isAtEndOfLine(offset, context.getEditor().getDocument()) /* do not use parent expression if we are at the end of line - it's probably parsed incorrectly */) {
-
             val tokenAt = psiFile.findElementAt(Math.max(0, offset))
             if (tokenAt != null) {
                 var parent = tokenAt.getParent()
@@ -100,54 +102,55 @@ public class JetCompletionContributor : CompletionContributor() {
         }
     }
 
-    class object {
-        private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(psiElement().withText(""), psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)))
+    private fun performCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
+        val position = parameters.getPosition()
+        if (position.getContainingFile() !is JetFile) return
 
-        public fun doSimpleReferenceCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
-            val position = parameters.getPosition()
-            if (position.getContainingFile() !is JetFile) return
-
-            if (AFTER_NUMBER_LITERAL.accepts(parameters.getPosition())) {
-                // First Kotlin completion contributors - stop here will stop all completion
-                result.stopHere()
-                return
-            }
-
-            val jetReference = getJetReference(parameters)
-            if (jetReference != null) {
-                try {
-                    result.restartCompletionWhenNothingMatches()
-
-                    if (parameters.getCompletionType() == CompletionType.BASIC) {
-                        val somethingAdded = BasicCompletionSession(parameters, result, jetReference).complete()
-                        if (!somethingAdded && parameters.getInvocationCount() < 2) {
-                            // Rerun completion if nothing was found
-                            BasicCompletionSession(parameters.withInvocationCount(2), result, jetReference).complete()
-                        }
-                    }
-                    else {
-                        SmartCompletionSession(parameters, result, jetReference).complete()
-                    }
-                }
-                catch (e: ProcessCanceledException) {
-                    throw rethrowWithCancelIndicator(e)
-                }
-            }
+        if (AFTER_NUMBER_LITERAL.accepts(parameters.getPosition())) {
+            // First Kotlin completion contributors - stop here will stop all completion
+            result.stopHere()
+            return
         }
 
-        private fun getJetReference(parameters: CompletionParameters): JetSimpleNameReference?
-                = parameters.getPosition().getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
-
-        private fun isAtEndOfLine(offset: Int, document: Document): Boolean {
-            var i = offset
-            val chars = document.getCharsSequence()
-            while (i < chars.length()) {
-                val c = chars.charAt(i)
-                if (c == '\n' || c == 'r') return true
-                if (!Character.isWhitespace(c)) return false
-                i++
-            }
-            return true
+        if (EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(position) && parameters.getInvocationCount() == 0) {
+            result.stopHere()
+            return
         }
+
+        val jetReference = getJetReference(parameters)
+        if (jetReference != null) {
+            try {
+                result.restartCompletionWhenNothingMatches()
+
+                if (parameters.getCompletionType() == CompletionType.BASIC) {
+                    val somethingAdded = BasicCompletionSession(parameters, result, jetReference).complete()
+                    if (!somethingAdded && parameters.getInvocationCount() < 2) {
+                        // Rerun completion if nothing was found
+                        BasicCompletionSession(parameters.withInvocationCount(2), result, jetReference).complete()
+                    }
+                }
+                else {
+                    SmartCompletionSession(parameters, result, jetReference).complete()
+                }
+            }
+            catch (e: ProcessCanceledException) {
+                throw rethrowWithCancelIndicator(e)
+            }
+        }
+    }
+
+    private fun getJetReference(parameters: CompletionParameters): JetSimpleNameReference?
+            = parameters.getPosition().getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
+
+    private fun isAtEndOfLine(offset: Int, document: Document): Boolean {
+        var i = offset
+        val chars = document.getCharsSequence()
+        while (i < chars.length()) {
+            val c = chars.charAt(i)
+            if (c == '\n' || c == 'r') return true
+            if (!Character.isWhitespace(c)) return false
+            i++
+        }
+        return true
     }
 }

@@ -36,19 +36,18 @@ public class JetPackagesContributor : CompletionContributor() {
     class object {
         val DUMMY_IDENTIFIER = "___package___"
 
-        val ACTIVATION_PATTERN: ElementPattern<out PsiElement> = PlatformPatterns.psiElement().inside(javaClass<JetPackageDirective>())
+        val ACTIVATION_PATTERN = PlatformPatterns.psiElement().inside(javaClass<JetPackageDirective>())
     }
 
     {
         extend(CompletionType.BASIC, ACTIVATION_PATTERN, object : CompletionProvider<CompletionParameters>() {
             override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-                val file = parameters.getPosition().getContainingFile()
-                if (file !is JetFile) return
+                val file = parameters.getPosition().getContainingFile() as JetFile
 
                 val ref = file.findReferenceAt(parameters.getOffset())
 
                 if (ref is JetSimpleNameReference) {
-                    val name = ref.expression.getText() ?: return
+                    val name = ref.expression.getText()!!
 
                     try {
                         val prefixLength = parameters.getOffset() - ref.expression.getTextOffset()

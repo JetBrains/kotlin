@@ -150,7 +150,6 @@ public class JetKeywordCompletionContributor : CompletionContributor() {
                 CommentFilter(),
                 ParentFilter(ClassFilter(javaClass<JetLiteralStringTemplateEntry>())),
                 ParentFilter(ClassFilter(javaClass<JetConstantExpression>())),
-                PatternFilter(JetExtensionReceiverTypeContributor.ACTIVATION_PATTERN),
                 LeftNeighbour(TextFilter("."))
         ))
 

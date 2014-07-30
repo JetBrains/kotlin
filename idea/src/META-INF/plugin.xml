@@ -229,13 +229,8 @@
                             implementationClass="org.jetbrains.jet.plugin.completion.JetPackagesContributor"/>
 
     <completion.contributor language="jet"
-                            id="JetExtensionFunctionReceiverContributor"
-                            order="after JetPackagesContributor"
-                            implementationClass="org.jetbrains.jet.plugin.completion.JetExtensionReceiverTypeContributor"/>
-
-    <completion.contributor language="jet"
                             id="JetCompletionContributor"
-                            order="after JetExtensionFunctionReceiverContributor"
+                            order="after JetPackagesContributor"
                             implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
 
     <completion.contributor language="jet"
