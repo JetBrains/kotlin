@@ -62,7 +62,7 @@ object JetTypesCompletionHelper {
 
                     jetCompletionResult.addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                         override fun handleInsert(context: InsertionContext) {
-                            JetJavaClassInsertHandler.INSTANCE.handleInsert(context, lookupElement)
+                            JetJavaClassInsertHandler.handleInsert(context, lookupElement)
                         }
                     })
                 }

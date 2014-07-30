@@ -138,7 +138,7 @@ public class JetKeywordCompletionContributor : CompletionContributor() {
     }
 
     class object {
-        private val KEYWORDS_INSERT_HANDLER = JetKeywordInsertHandler()
+        private val KEYWORDS_INSERT_HANDLER = JetKeywordInsertHandler
         private val FUNCTION_KEYWORDS = listOf(JetTokens.GET_KEYWORD.toString(), JetTokens.SET_KEYWORD.toString())
 
         private val NOT_IDENTIFIER_FILTER = NotFilter(AndFilter(
