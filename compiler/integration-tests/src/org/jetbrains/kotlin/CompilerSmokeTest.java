@@ -16,12 +16,16 @@
 
 package org.jetbrains.kotlin;
 
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,6 +37,19 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     @Override
     protected File getTestDataDir() {
         return new File(new File(INTEGRATION_TEST_DATA_BASE_DIR, "smoke"), name.getMethodName());
+    }
+
+    private int runCompiler(String logName, String... arguments) throws Exception {
+        String classpath = getCompilerLib().getAbsolutePath() + File.separator + "kotlin-compiler.jar" + File.pathSeparator +
+                           getKotlinRuntimePath();
+
+        Collection<String> javaArgs = new ArrayList<String>();
+        javaArgs.add("-cp");
+        javaArgs.add(classpath);
+        javaArgs.add("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
+        Collections.addAll(javaArgs, arguments);
+
+        return runJava(logName, ArrayUtil.toStringArray(javaArgs));
     }
 
     @Test
