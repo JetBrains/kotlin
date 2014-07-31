@@ -1,5 +1,8 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <gotoDeclarationHandler implementation="org.jetbrains.jet.plugin.android.AndroidGotoDeclarationHandler"/>
+    <renamePsiElementProcessor implementation="org.jetbrains.jet.plugin.android.AndroidRenameProcessor"
+                               id="KotlinProperty"
+                               order="first"/>
   </extensions>
 </idea-plugin>

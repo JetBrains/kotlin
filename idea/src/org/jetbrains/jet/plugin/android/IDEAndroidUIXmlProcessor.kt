@@ -14,41 +14,33 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android
+package org.jetbrains.jet.plugin.android
 
-import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.openapi.project.Project
+import java.util.ArrayList
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.resolve.android.AndroidWidget
+import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
+import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
 
-class CliAndroidUIXmlParser(val project: Project, override val searchPath: String?) : AndroidUIXmlParser() {
-
+class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project) {
+    override val searchPath: String? = project.getBasePath() + "/res/layout/"
     override var androidAppPackage: String = ""
 
+    override val resourceManager: AndroidResourceManager = IDEAndroidResourceManager(project, searchPath)
 
-    override fun lazySetup() {
-        populateQueue(project)
+    override protected fun lazySetup() {
+        if (listenerSetUp) return
         androidAppPackage = readManifest()._package
+        populateQueue()
+        listenerSetUp = true
     }
 
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
-        val handler = AndroidXmlHandler({ id, wClass -> ids.add(AndroidWidget(id, wClass)) })
-        try {
-            saxParser.parse(file.getVirtualFile()?.getInputStream()!!, handler)
-            return produceKotlinProperties(KotlinStringWriter(), ids).toString()
-        }
-        catch (e: Throwable) {
-            LOG.error(e)
-            return ""
-        }
-    }
-
-    override fun idToXmlAttribute(id: String): PsiElement? {
-        return null
-    }
-    override fun renameId(oldName: String?, newName: String?, allRenames: MutableMap<PsiElement, String>) {
-        return
+        file.accept(AndroidXmlVisitor({ id, wClass -> ids.add(AndroidWidget(id, wClass)) }))
+        return produceKotlinProperties(KotlinStringWriter(), ids).toString()
     }
 }
 

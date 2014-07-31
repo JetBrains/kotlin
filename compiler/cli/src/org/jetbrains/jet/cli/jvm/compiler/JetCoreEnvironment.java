@@ -53,8 +53,8 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlParser;
-import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlParser;
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor;
+import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.CliDeclarationProviderFactoryService;
@@ -210,7 +210,7 @@ public class JetCoreEnvironment {
                 configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
         String s = configuration.get(JVMConfigurationKeys.ANDROID_RES_PATH);
-        project.registerService(AndroidUIXmlParser.class, new CliAndroidUIXmlParser(project, s));
+        project.registerService(AndroidUIXmlProcessor.class, new CliAndroidUIXmlProcessor(project, s));
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
     }
 

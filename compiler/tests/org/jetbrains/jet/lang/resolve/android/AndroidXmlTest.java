@@ -106,7 +106,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
 
     public void testConverterOneFile() throws Exception {
         JetCoreEnvironment jetCoreEnvironment = getEnvironment(singleFileResPath);
-        AndroidUIXmlParser parser = new CliAndroidUIXmlParser(jetCoreEnvironment.getProject(), singleFileDir.getAbsolutePath());
+        AndroidUIXmlProcessor parser = new CliAndroidUIXmlProcessor(jetCoreEnvironment.getProject(), singleFileDir.getAbsolutePath());
 
         String actual = parser.parseToString();
         String expected = loadOrCreate(new File(getTestDataPath() + "/converter/singleFile/layout.kt"), actual);

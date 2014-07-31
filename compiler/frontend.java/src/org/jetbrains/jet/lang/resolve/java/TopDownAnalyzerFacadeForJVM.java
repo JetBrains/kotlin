@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlParser;
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
@@ -112,7 +112,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     }
 
     private static Collection<JetFile> searchAndAddAndroidDeclarations(Project project, Collection<JetFile> files) {
-        AndroidUIXmlParser parser = ServiceManager.getService(project, AndroidUIXmlParser.class);
+        AndroidUIXmlProcessor parser = ServiceManager.getService(project, AndroidUIXmlProcessor.class);
         JetFile file = parser.parseToPsi(project);
         if (file != null) files.add(file);
         return files;
