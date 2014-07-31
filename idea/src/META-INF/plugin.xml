@@ -103,6 +103,10 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
+    <action id="KotlinInternalMode" class="org.jetbrains.jet.plugin.actions.internal.KotlinInternalModeToggleAction">
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+    </action>
+
     <action id="ExtractFunctionToScope" class="org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractFunctionToScopeAction"
             text="Extract Function to _Scope...">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>

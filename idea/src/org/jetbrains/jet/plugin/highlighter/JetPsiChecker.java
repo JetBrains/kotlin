@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.actions.internal.KotlinInternalModeToggleAction;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
@@ -263,7 +264,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
         @NotNull
         private static String getMessage(@NotNull Diagnostic diagnostic) {
             String message = IdeErrorMessages.RENDERER.render(diagnostic);
-            if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
+            if (KotlinInternalModeToggleAction.OBJECT$.isEnabled() || ApplicationManager.getApplication().isUnitTestMode()) {
                 String factoryName = diagnostic.getFactory().getName();
                 if (message.startsWith("<html>")) {
                     message = String.format("<html>[%s] %s", factoryName, message.substring("<html>".length()));
@@ -280,7 +281,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
         @NotNull
         private static String getDefaultMessage(@NotNull Diagnostic diagnostic) {
             String message = DefaultErrorMessages.RENDERER.render(diagnostic);
-            if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
+            if (KotlinInternalModeToggleAction.OBJECT$.isEnabled() || ApplicationManager.getApplication().isUnitTestMode()) {
                 return String.format("[%s] %s", diagnostic.getFactory().getName(), message);
             }
             return message;
