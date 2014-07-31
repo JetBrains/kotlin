@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 
-class AndroidXmlVisitor(val elementCallback: (String, String)-> Unit): XmlElementVisitor() {
+class AndroidXmlVisitor(val elementCallback: (String, String) -> Unit) : XmlElementVisitor() {
 
     override fun visitElement(element: PsiElement) {
         element.acceptChildren(this)

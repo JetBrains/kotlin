@@ -20,7 +20,7 @@ import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
 import java.util.HashMap
 
-class AndroidXmlHandler(val elementCallback: (String, String)-> Unit): DefaultHandler() {
+class AndroidXmlHandler(val elementCallback: (String, String) -> Unit) : DefaultHandler() {
 
     override fun startDocument() {
         super<DefaultHandler>.startDocument()
@@ -46,7 +46,7 @@ class AndroidXmlHandler(val elementCallback: (String, String)-> Unit): DefaultHa
 
 public fun Attributes.toMap(): HashMap<String, String> {
     val res = HashMap<String, String>()
-    for (index in 0..getLength()-1) {
+    for (index in 0..getLength() - 1) {
         val attrName = getLocalName(index)!!
         val attrVal = getValue(index)!!
         res[attrName] = attrVal
