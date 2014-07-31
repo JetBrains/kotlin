@@ -45,7 +45,6 @@ public class BytecodeCompilerTask extends Task {
     private File stdlib;
     private Path src;
     private Path externalAnnotations;
-    private File module;
     private Path compileClasspath;
     private boolean includeRuntime = true;
     private final List<Commandline.Argument> additionalArguments = new ArrayList<Commandline.Argument>();
@@ -80,10 +79,6 @@ public class BytecodeCompilerTask extends Task {
         return externalAnnotations.createPath();
     }
 
-    public void setModule(File module) {
-        this.module = module;
-    }
-
     public void setIncludeRuntime(boolean includeRuntime) {
         this.includeRuntime = includeRuntime;
     }
@@ -108,7 +103,6 @@ public class BytecodeCompilerTask extends Task {
         }
     }
 
-
     /**
      * Adds a reference to a classpath defined elsewhere.
      *
@@ -121,7 +115,6 @@ public class BytecodeCompilerTask extends Task {
         this.compileClasspath.createPath().setRefid(ref);
     }
 
-
     /**
      * Set the nested {@code <classpath>} to be used for this compilation.
      *
@@ -131,43 +124,28 @@ public class BytecodeCompilerTask extends Task {
         setClasspath(classpath);
     }
 
-
     @Override
     public void execute() {
-        BytecodeCompiler compiler = new BytecodeCompiler();
-        String stdlibPath = (stdlib != null ? getPath(stdlib) : null);
-        String[] classpath = (compileClasspath != null ? compileClasspath.list() : null);
-        String[] externalAnnotationsPath = (externalAnnotations != null) ? externalAnnotations.list() : null;
+        String stdlibPath = stdlib != null ? getPath(stdlib) : null;
+        String[] classpath = compileClasspath != null ? compileClasspath.list() : null;
+        String[] externalAnnotationsPath = externalAnnotations != null ? externalAnnotations.list() : null;
 
         List<String> args = new ArrayList<String>();
         for (Commandline.Argument argument : additionalArguments) {
             args.addAll(Arrays.asList(argument.getParts()));
         }
 
+        if (src == null) {
+            throw new BuildException("\"src\" should be specified");
+        }
         if (output == null) {
             throw new BuildException("\"output\" should be specified");
         }
 
-        if (src != null) {
-            String[] source = Util.getPaths(src.list());
-            String destination = getPath(output);
+        String[] source = Util.getPaths(src.list());
+        String destination = getPath(output);
 
-            log(String.format("Compiling [%s] => [%s]", Arrays.toString(source), destination));
-            compiler.compileSources(source, destination, includeRuntime, stdlibPath, classpath, externalAnnotationsPath, args);
-        }
-        else if (module != null) {
-            if (!output.toString().endsWith(".jar")) {
-                throw new BuildException("Module compilation is only supported for jar destination");
-            }
-
-            String modulePath = getPath(module);
-            String jarPath = getPath(output);
-
-            log(String.format("Compiling [%s] => [%s]", modulePath, jarPath));
-            compiler.compileModule(modulePath, jarPath, includeRuntime, stdlibPath, classpath, externalAnnotationsPath, args);
-        }
-        else {
-            throw new BuildException("\"src\" or \"module\" should be specified");
-        }
+        log(String.format("Compiling [%s] => [%s]", Arrays.toString(source), destination));
+        BytecodeCompiler.compileSources(source, destination, includeRuntime, stdlibPath, classpath, externalAnnotationsPath, args);
     }
 }

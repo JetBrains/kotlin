@@ -22,15 +22,12 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.sampullara.cli.Args;
-import kotlin.modules.Module;
 import org.apache.tools.ant.BuildException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
-import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
-import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
@@ -43,24 +40,17 @@ import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
-import static org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil.loadModuleDescriptions;
 
 public class BytecodeCompiler {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
-
-    public BytecodeCompiler() {
-    }
-
     @NotNull
-    private CompilerConfiguration createConfiguration(
+    private static CompilerConfiguration createConfiguration(
             @Nullable String stdlib,
             @Nullable String[] classpath,
             @Nullable String[] externalAnnotationsPath,
@@ -114,8 +104,6 @@ public class BytecodeCompiler {
 
         K2JVMCompiler.putAdvancedOptions(configuration, arguments);
 
-        // lets register any compiler plugins
-        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, getCompilerPlugins());
         return configuration;
     }
 
@@ -141,13 +129,12 @@ public class BytecodeCompiler {
     /**
      * {@code KotlinToJVMBytecodeCompiler#compileBunchOfSources} wrapper.
      * @param src            compilation source (directory or file)
-     * @param destination    compilation destination jar
+     * @param destination    compilation destination (directory or jar)
      * @param includeRuntime whether Kotlin runtime library is included in destination jar
      * @param stdlib         "kotlin-runtime.jar" path
-     * @param classpath      compilation classpath, can be <code>null</code> or empty
      * @param args           additional command line arguments to Kotlin compiler
      */
-    public void compileSources(
+    public static void compileSources(
             @NotNull String[] src,
             @NotNull String destination,
             boolean includeRuntime,
@@ -183,61 +170,7 @@ public class BytecodeCompiler {
         }
     }
 
-    /**
-     * {@code KotlinToJVMBytecodeCompiler#compileModules} wrapper.
-     * @param module         compilation module file
-     * @param jar            compilation destination jar
-     * @param includeRuntime whether Kotlin runtime library is included in destination jar
-     * @param stdlib         "kotlin-runtime.jar" path
-     * @param classpath      compilation classpath, can be <code>null</code> or empty
-     * @param args           additional command line arguments to Kotlin compiler
-     */
-    public void compileModule(
-            @NotNull String module,
-            @NotNull String jar,
-            boolean includeRuntime,
-            @Nullable String stdlib,
-            @Nullable String[] classpath,
-            @Nullable String[] externalAnnotationsPath,
-            @NotNull List<String> args
-    ) {
-        try {
-            ModuleScriptData moduleScriptData =
-                    loadModuleDescriptions(getKotlinPathsForAntTask(), module, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
-            List<Module> modules = moduleScriptData.getModules();
-            List<String> sourcesRoots = new ArrayList<String>();
-            for (Module m : modules) {
-                sourcesRoots.addAll(m.getSourceFiles());
-            }
-            CompilerConfiguration configuration = createConfiguration(stdlib, classpath, externalAnnotationsPath,
-                                                                      ArrayUtil.toStringArray(sourcesRoots), args);
-            File directory = new File(module).getParentFile();
-            boolean success = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules, directory, new File(jar), includeRuntime);
-            if (!success) {
-                throw new CompileEnvironmentException(errorMessage(new String[]{module}, false));
-            }
-        }
-        catch (BuildException e) {
-            throw e;
-        }
-        catch (CompileEnvironmentException e) {
-            throw e;
-        }
-        catch (Exception e) {
-            throw new CompileEnvironmentException(errorMessage(new String[]{module}, true), e);
-        }
-    }
-
-    public List<CompilerPlugin> getCompilerPlugins() {
-        return compilerPlugins;
-    }
-
-    public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
-        this.compilerPlugins = compilerPlugins;
-    }
-
     private static KotlinPaths getKotlinPathsForAntTask() {
         return new KotlinPathsFromHomeDir(PathUtil.getJarPathForClass(BytecodeCompiler.class).getParentFile().getParentFile());
     }
-
 }
