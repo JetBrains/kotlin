@@ -62,6 +62,12 @@ public class JsInliner extends JsVisitorWithContextImpl {
                 protected JsStatement getEmptyStatement() {
                     return getFunctionContext().getEmpty();
                 }
+
+                @Override
+                public void shiftCurrentStatementForward() {
+                    super.shiftCurrentStatementForward();
+                    lastStatementWasShifted = true;
+                }
             };
         }
 
@@ -106,6 +112,36 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private final IdentityHashMap<JsName, JsFunction> functions;
     private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
 
+    /**
+     * A statement can contain more, than one inlineable sub-expressions.
+     * When inline call is expanded, current statement is shifted forward,
+     * but still has same statement context with same index on stack.
+     *
+     * The shifting is intentional, because there could be function literals,
+     * that need to be inlined, after expansion.
+     *
+     * After shifting following inline expansion in the same statement could be
+     * incorrect, because wrong statement index is used.
+     *
+     * To prevent this, after every shift this flag is set to true,
+     * so that visitor wont go deeper until statement is visited.
+     *
+     * Example:
+     *  inline fun f(g: () -> Int): Int { val a = g(); return a }
+     *  inline fun Int.abs(): Int = if (this < 0) -this else this
+     *
+     *  val g = { 10 }
+     *  >> val h = f(g).abs()    // last statement context index
+     *
+     *  val g = { 10 }           // after inline
+     *  >> val f$result          // statement index was not changed
+     *  val a = g()
+     *  f$result = a
+     *  val h = f$result.abs()   // current expression still here; incorrect to inline abs(),
+     *                           //  because statement context on stack point to different statement
+     */
+    private boolean lastStatementWasShifted = false;
+
     public static JsProgram process(JsProgram program) {
         IdentityHashMap<JsName, JsFunction> functions = FunctionCollector.collectFunctions(program);
         JsInliner inliner = new JsInliner(functions);
@@ -129,16 +165,16 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     @Override
-    public void endVisit(JsInvocation call, JsContext context) {
-        super.endVisit(call, context);
-
+    public boolean visit(JsInvocation call, JsContext context) {
         if (call == null) {
-            return;
+            return false;
         }
 
         if (shouldInline(call) && canInline(call)) {
             inline(call, context);
         }
+
+        return !lastStatementWasShifted;
     }
 
     private void inline(@NotNull JsInvocation call, @NotNull JsContext context) {
@@ -161,6 +197,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             context.replaceMe(resultExpression);
         }
 
+        /** @see #lastStatementWasShifted */
         statementContext.shiftCurrentStatementForward();
         InsertionPoint<JsStatement> insertionPoint = statementContext.getInsertionPoint();
         if (inlineableBody instanceof JsBlock) {
@@ -168,6 +205,22 @@ public class JsInliner extends JsVisitorWithContextImpl {
             insertionPoint.insertAllAfter(block.getStatements());
         } else {
             insertionPoint.insertAfter(inlineableBody);
+        }
+    }
+
+    /**
+     * Prevents JsInliner from traversing sub-expressions,
+     * when current statement was shifted forward.
+     */
+    @Override
+    protected <T extends JsNode> void doTraverse(T node, JsContext ctx) {
+        if (node instanceof JsStatement) {
+            /** @see #lastStatementWasShifted */
+            lastStatementWasShifted = false;
+        }
+
+        if (!lastStatementWasShifted) {
+            super.doTraverse(node, ctx);
         }
     }
 
