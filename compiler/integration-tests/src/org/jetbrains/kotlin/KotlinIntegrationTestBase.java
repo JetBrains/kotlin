@@ -30,13 +30,11 @@ import com.intellij.util.ArrayUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.Tmpdir;
 import org.junit.ComparisonFailure;
 import org.junit.Rule;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,24 +47,18 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.*;
 
 public abstract class KotlinIntegrationTestBase {
-    protected File testDataDir;
+    protected static final File INTEGRATION_TEST_DATA_BASE_DIR =
+            new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "testData");
 
     @Rule
     public final Tmpdir tmpdir = new Tmpdir();
 
-    @Rule
-    public TestRule watchman = new TestWatcher() {
-        @Override
-        protected void starting(Description description) {
-            File baseTestDataDir =
-                    new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "testData");
-            testDataDir = new File(baseTestDataDir, description.getMethodName());
-        }
-    };
-
     static {
         System.setProperty("java.awt.headless", "true");
     }
+
+    @NotNull
+    protected abstract File getTestDataDir();
 
     protected int runCompiler(String logName, String... arguments) throws Exception {
         File lib = getCompilerLib();
@@ -86,7 +78,7 @@ public abstract class KotlinIntegrationTestBase {
 
     protected int runJava(String logName, String... arguments) throws Exception {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setWorkDirectory(testDataDir);
+        commandLine.setWorkDirectory(getTestDataDir());
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 
@@ -118,7 +110,7 @@ public abstract class KotlinIntegrationTestBase {
     }
 
     protected String normalizeOutput(String content) {
-        content = normalizePath(content, testDataDir, "[TestData]");
+        content = normalizePath(content, getTestDataDir(), "[TestData]");
         content = normalizePath(content, tmpdir.getTmpDir(), "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
         content = StringUtil.convertLineSeparators(content);
@@ -126,8 +118,8 @@ public abstract class KotlinIntegrationTestBase {
     }
 
     protected void check(String baseName, String content) throws IOException {
-        File actualFile = new File(testDataDir, baseName + ".actual");
-        File expectedFile = new File(testDataDir, baseName + ".expected");
+        File actualFile = new File(getTestDataDir(), baseName + ".actual");
+        File expectedFile = new File(getTestDataDir(), baseName + ".expected");
 
         String normalizedContent = normalizeOutput(content);
 

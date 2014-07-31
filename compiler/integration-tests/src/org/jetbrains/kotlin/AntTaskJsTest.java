@@ -22,7 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +34,15 @@ import static org.junit.Assert.assertTrue;
 
 public class AntTaskJsTest extends AntTaskBaseTest {
     private static final String JS_OUT_FILE = "out.js";
+
+    @Rule
+    public final TestName name = new TestName();
+
+    @NotNull
+    @Override
+    protected File getTestDataDir() {
+        return new File(new File(ANT_TASK_TEST_DATA_BASE_DIR, "js"), name.getMethodName());
+    }
 
     private void doJsAntTest() throws Exception {
         doAntTest(SUCCESSFUL);
@@ -45,8 +56,8 @@ public class AntTaskJsTest extends AntTaskBaseTest {
         doJsAntTest();
         File outputFile = getOutputFileByName(JS_OUT_FILE);
 
-        File prefixFile = prefix != null ? new File(testDataDir, prefix) : null;
-        File postfixFile = postfix != null ? new File(testDataDir, postfix) : null;
+        File prefixFile = prefix != null ? new File(getTestDataDir(), prefix) : null;
+        File postfixFile = postfix != null ? new File(getTestDataDir(), postfix) : null;
 
         checkFilePrefixPostfix(outputFile, prefixFile, postfixFile);
     }
@@ -62,57 +73,57 @@ public class AntTaskJsTest extends AntTaskBaseTest {
     }
 
     @Test
-    public void k2jsSimple() throws Exception {
+    public void simple() throws Exception {
         doJsAntTest();
     }
 
     @Test
-    public void k2jsWithMain() throws Exception {
+    public void simpleWithMain() throws Exception {
         doJsAntTest();
     }
 
     @Test
-    public void k2jsWithMainFQArgs() throws Exception {
+    public void simpleWithMainFQArgs() throws Exception {
         doJsAntTest();
     }
 
     @Test
-    public void k2jsWithMainVarargs() throws Exception {
+    public void simpleWithVarargMain() throws Exception {
         doJsAntTest();
     }
 
     @Test
-    public void k2jsManySources() throws Exception {
+    public void manySources() throws Exception {
         doJsAntTest();
     }
 
     @Test
-    public void k2jsWithoutSrcParam() throws Exception {
+    public void noSrcParam() throws Exception {
         doAntTest(FAILED);
     }
 
     @Test
-    public void k2jsWithoutOutputParam() throws Exception {
+    public void noOutputParam() throws Exception {
         doAntTest(FAILED);
     }
 
     @Test
-    public void k2jsWithPrefix() throws Exception {
+    public void outputPrefix() throws Exception {
         doJsAntTestForPostfixPrefix("prefix", null);
     }
 
     @Test
-    public void k2jsWithPostfix() throws Exception {
+    public void outputPostfix() throws Exception {
         doJsAntTestForPostfixPrefix(null, "postfix");
     }
 
     @Test
-    public void k2jsWithPrefixAndPostfix() throws Exception {
+    public void bothPrefixAndPostfix() throws Exception {
         doJsAntTestForPostfixPrefix("prefix", "postfix");
     }
 
     @Test
-    public void k2jsWithSourcemap() throws Exception {
+    public void sourcemap() throws Exception {
         doJsAntTest();
 
         File sourcemap = getOutputFileByName(JS_OUT_FILE + ".map");

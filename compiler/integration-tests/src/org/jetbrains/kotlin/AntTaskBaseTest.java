@@ -24,9 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public abstract class AntTaskBaseTest extends KotlinIntegrationTestBase {
+    protected static final File ANT_TASK_TEST_DATA_BASE_DIR = new File(INTEGRATION_TEST_DATA_BASE_DIR, "ant");
+
     protected static final int SUCCESSFUL = 0;
     protected static final int FAILED = 1;
 
@@ -43,7 +45,7 @@ public abstract class AntTaskBaseTest extends KotlinIntegrationTestBase {
         String[] basicArgs = {
                 "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
                 "-Dkotlin.lib=" + getCompilerLib(),
-                "-Dtest.data=" + testDataDir,
+                "-Dtest.data=" + getTestDataDir(),
                 "-Dtemp=" + tmpdir.getTmpDir(),
                 "-f", scriptName
         };

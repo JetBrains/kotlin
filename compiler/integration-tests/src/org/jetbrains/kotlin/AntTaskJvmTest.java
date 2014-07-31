@@ -16,12 +16,24 @@
 
 package org.jetbrains.kotlin;
 
+import org.jetbrains.annotations.NotNull;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import java.io.File;
 
 public class AntTaskJvmTest extends AntTaskBaseTest {
     private static final String JVM_OUT_FILE = "hello.jar";
+
+    @Rule
+    public final TestName name = new TestName();
+
+    @NotNull
+    @Override
+    protected File getTestDataDir() {
+        return new File(new File(ANT_TASK_TEST_DATA_BASE_DIR, "jvm"), name.getMethodName());
+    }
 
     private void doJvmAntTest(String... extraJavaArgs) throws Exception {
         doAntTest(SUCCESSFUL, extraJavaArgs);
@@ -40,17 +52,17 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     }
 
     @Test
-    public void antTaskJvm() throws Exception {
+    public void helloWorld() throws Exception {
         doJvmAntTest();
     }
 
     @Test
-    public void antAdditionalArguments() throws Exception {
+    public void additionalArguments() throws Exception {
         doJvmAntTest();
     }
 
     @Test
-    public void antWrongArguments() throws Exception {
+    public void wrongArguments() throws Exception {
         doAntTest(FAILED);
     }
 
@@ -60,7 +72,7 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     }
 
     @Test
-    public void antTaskJvmManyRoots() throws Exception {
+    public void manySourceRoots() throws Exception {
         doJvmAntTest();
     }
 

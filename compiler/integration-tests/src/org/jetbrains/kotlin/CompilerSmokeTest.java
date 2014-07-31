@@ -16,15 +16,27 @@
 
 package org.jetbrains.kotlin;
 
+import org.jetbrains.annotations.NotNull;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 
 public class CompilerSmokeTest extends KotlinIntegrationTestBase {
+    @Rule
+    public final TestName name = new TestName();
+
+    @NotNull
+    @Override
+    protected File getTestDataDir() {
+        return new File(new File(INTEGRATION_TEST_DATA_BASE_DIR, "smoke"), name.getMethodName());
+    }
+
     @Test
-    public void compileAndRunHelloApp() throws Exception {
+    public void helloApp() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-d", jar));
@@ -32,7 +44,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     }
 
     @Test
-    public void compileAndRunHelloAppFQMain() throws Exception {
+    public void helloAppFQMain() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-d", jar));
@@ -40,7 +52,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     }
 
     @Test
-    public void compileAndRunHelloAppVarargMain() throws Exception {
+    public void helloAppVarargMain() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-d", jar));
