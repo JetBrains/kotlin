@@ -20,15 +20,11 @@ import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.actionSystem.DataContext
-import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlParser
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.PsiReferenceExpression
-import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 
-public class AndroidGotoDeclarationHandler: GotoDeclarationHandler {
+public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
         if (sourceElement is LeafPsiElement) {
             val parser = ServiceManager.getService(sourceElement.getProject(), javaClass<AndroidUIXmlParser>())
@@ -37,7 +33,8 @@ public class AndroidGotoDeclarationHandler: GotoDeclarationHandler {
                 return array(psiElement)
             }
             else return null
-        } else return null
+        }
+        else return null
     }
 
     override fun getActionText(context: DataContext?): String? {
