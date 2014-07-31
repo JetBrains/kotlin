@@ -34,6 +34,7 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
     }
 
     private fun setupElementCache() {
+        idToXmlAttributeCache.clear()
         for (file in getLayoutXmlFiles()) {
             if (file is XmlFile) {
                 file.accept(object : XmlElementVisitor() {
@@ -41,11 +42,10 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
                         element.acceptChildren(this)
                     }
                     override fun visitXmlTag(tag: XmlTag?) {
-                        val idPrefix = "@+id/"
                         val attribute = tag?.getAttribute("android:id")
                         val s = attribute?.getValue()
-                        if (attribute != null && (s?.startsWith(idPrefix) ?: false)) {
-                            idToXmlAttributeCache[s!!.replace(idPrefix, "")] = attribute
+                        if (attribute != null && s != null && isResourceId(s)) {
+                            idToXmlAttributeCache[idToName(s)] = attribute
                         }
                         tag?.acceptChildren(this)
                     }
@@ -55,7 +55,13 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
 
     }
     override fun idToXmlAttribute(id: String): PsiElement? {
-        return idToXmlAttributeCache[id]
+        val element = idToXmlAttributeCache[id]
+        // element not in cache - files might have changed
+        if (element == null) {
+            setupElementCache()
+            return idToXmlAttributeCache[id]
+        }
+        return element
     }
     override fun renameXmlAttr(elem: PsiElement, newName: String) {
         val xmlAttr = elem as XmlAttribute
