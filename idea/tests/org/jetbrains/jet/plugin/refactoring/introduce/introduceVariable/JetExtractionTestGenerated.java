@@ -173,6 +173,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
         
+        @TestMetadata("OccurrencesInStringTemplate.kt")
+        public void testOccurrencesInStringTemplate() throws Exception {
+            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/OccurrencesInStringTemplate.kt");
+        }
+        
         @TestMetadata("OneExplicitReceiver.kt")
         public void testOneExplicitReceiver() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/OneExplicitReceiver.kt");
@@ -207,6 +212,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         public void testTwoExplicitReceivers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/TwoExplicitReceivers.kt");
             doIntroduceVariableTest(fileName);
+        }
+        
+        @TestMetadata("UnresolvedOccurrences.kt")
+        public void testUnresolvedOccurrences() throws Exception {
+            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/UnresolvedOccurrences.kt");
         }
         
         @TestMetadata("WhenAddBlock.kt")
