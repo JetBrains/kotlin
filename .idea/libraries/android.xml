@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="android">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/android.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/" />
+    </SOURCES>
+  </library>
+</component>
