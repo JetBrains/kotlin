@@ -16,17 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.android
 
-import com.intellij.openapi.vfs.VirtualFileManager
 import java.util.ArrayList
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import java.io.ByteArrayInputStream
-import org.xml.sax.InputSource
-import javax.xml.parsers.SAXParser
-import javax.xml.parsers.SAXParserFactory
 import com.intellij.psi.PsiElement
 
-class CliAndroidUIXmlParser(val project: Project, override val searchPath: String?): AndroidUIXmlParser() {
+class CliAndroidUIXmlParser(val project: Project, override val searchPath: String?) : AndroidUIXmlParser() {
 
     override var androidAppPackage: String = ""
 
@@ -42,7 +37,8 @@ class CliAndroidUIXmlParser(val project: Project, override val searchPath: Strin
         try {
             saxParser.parse(file.getVirtualFile()?.getInputStream()!!, handler)
             return produceKotlinProperties(KotlinStringWriter(), ids).toString()
-        } catch (e: Throwable) {
+        }
+        catch (e: Throwable) {
             LOG.error(e)
             return ""
         }

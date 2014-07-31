@@ -18,10 +18,7 @@ package org.jetbrains.jet.plugin.android
 
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlParser
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFileManager
 import java.util.ArrayList
-import com.intellij.openapi.vfs.VirtualFileAdapter
-import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.resolve.android.AndroidWidget
 import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
@@ -30,9 +27,8 @@ import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.PsiElement
 import java.util.HashMap
-import com.intellij.psi.xml.XmlAttribute
 
-class IDEAndroidUIXmlParser(val project: Project): AndroidUIXmlParser() {
+class IDEAndroidUIXmlParser(val project: Project) : AndroidUIXmlParser() {
     override val searchPath: String? = project.getBasePath() + "/res/layout/"
     override var androidAppPackage: String = ""
 
@@ -74,7 +70,7 @@ class IDEAndroidUIXmlParser(val project: Project): AndroidUIXmlParser() {
 
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
-        file.accept(AndroidXmlVisitor({ id, wClass -> ids.add(AndroidWidget(id, wClass))}))
+        file.accept(AndroidXmlVisitor({ id, wClass -> ids.add(AndroidWidget(id, wClass)) }))
         return produceKotlinProperties(KotlinStringWriter(), ids).toString()
     }
 
@@ -89,7 +85,7 @@ class IDEAndroidUIXmlParser(val project: Project): AndroidUIXmlParser() {
                         val idPrefix = "@+id/"
                         val attribute = tag?.getAttribute("android:id")
                         if (attribute != null && attribute.getValue() == idPrefix + oldName) {
-                            allRenames[XmlAttributeValueWrapper(attribute.getValueElement()!!)] = idPrefix+newName
+                            allRenames[XmlAttributeValueWrapper(attribute.getValueElement()!!)] = idPrefix + newName
                         }
                         tag?.acceptChildren(this)
                     }

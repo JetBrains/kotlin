@@ -16,13 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.android
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiElement
 
 trait AndroidResource
 
-class AndroidID(val rawID: String): AndroidResource {
+class AndroidID(val rawID: String) : AndroidResource {
 
     override fun equals(other: Any?): Boolean {
         return other is AndroidID && this.rawID == other.rawID
@@ -35,20 +34,11 @@ class AndroidID(val rawID: String): AndroidResource {
     }
 }
 
-class AndroidWidget(val id: String, val className: String): AndroidResource
+class AndroidWidget(val id: String, val className: String) : AndroidResource
 
-class AndroidManifest(val _package: String): AndroidResource
-
-//fun isAndroidSyntheticFile(f: VirtualFile?): Boolean {
-//    if (f?.getName() == AndroidConst.SYNTHETIC_FILENAME) {
-//        val userData = f?.getUserData(AndroidConst.ANDROID_SYNTHETIC);
-//        return (userData != null && userData.equals("OK"))
-//    }
-//    return false
-//}
+class AndroidManifest(val _package: String) : AndroidResource
 
 fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
-//    return isAndroidSyntheticFile(f?.getVirtualFile())
     if (f?.getName() == AndroidConst.SYNTHETIC_FILENAME) {
         val userData = f?.getUserData(AndroidConst.ANDROID_SYNTHETIC);
         return (userData != null && userData.equals("OK"))

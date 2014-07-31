@@ -62,7 +62,8 @@ class KotlinStringWriter : KotlinWriter {
             }
             body.decIndent()
             body.writeln("}")
-        } else {
+        }
+        else {
             body.writeNoIndent("=")
             body.writeNoIndent(getterBody.join("").replace("return", ""))
             body.newLine()

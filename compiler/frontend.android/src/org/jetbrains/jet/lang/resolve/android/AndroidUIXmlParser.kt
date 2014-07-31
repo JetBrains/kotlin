@@ -33,7 +33,6 @@ import com.intellij.openapi.project.Project
 import java.util.concurrent.ConcurrentLinkedQueue
 import com.intellij.openapi.util.Key
 import com.intellij.testFramework.LightVirtualFile
-import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiManager
 import java.io.FileInputStream
 import org.xml.sax.helpers.DefaultHandler
@@ -44,20 +43,17 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import java.util.Queue
 import com.intellij.psi.PsiFile
-import org.xml.sax.InputSource
-import java.io.ByteArrayInputStream
-import com.intellij.openapi.diagnostic.Log
-import org.xml.sax.SAXException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 
 abstract class AndroidUIXmlParser {
 
-    inner class NoUIXMLsFound: Exception("No android UI xmls found in $searchPath")
-    class NoAndroidManifestFound: Exception("No android manifest file found in project root")
+    inner class NoUIXMLsFound : Exception("No android UI xmls found in $searchPath")
+    class NoAndroidManifestFound : Exception("No android manifest file found in project root")
     class ManifestParsingFailed
 
-    enum class CacheAction { HIT; MISS }
+    enum class CacheAction { HIT; MISS
+    }
 
     val androidImports = arrayListOf("android.app.Activity",
                                      "android.view.View",
@@ -105,11 +101,13 @@ abstract class AndroidUIXmlParser {
                 psiFile.putUserData(ANDROID_USER_PACKAGE, androidAppPackage)
                 lastCachedPsi = psiFile
                 psiFile
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 invalidateCaches()
                 null
             }
-        } else lastCachedPsi
+        }
+        else lastCachedPsi
     }
 
     private fun isAndroidUIXml(file: File): Boolean {
@@ -128,7 +126,8 @@ abstract class AndroidUIXmlParser {
             if (!path.exists()) continue;
             if (path.isFile() && isAndroidUIXml(path)) {
                 res.add(path)
-            } else if (path.isDirectory()) {
+            }
+            else if (path.isDirectory()) {
                 res.addAll(searchForUIXml(path.listFiles()?.toArrayList()))
             }
         }
@@ -190,7 +189,7 @@ abstract class AndroidUIXmlParser {
         val fileManager = VirtualFileManager.getInstance()
         val watchDir = fileManager.findFileByUrl("file://" + searchPath)
         val psiManager = PsiManager.getInstance(project)
-        return watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) } ?.mapNotNull { it } ?: ArrayList(0)
+        return watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) }?.mapNotNull { it } ?: ArrayList(0)
     }
 
     protected fun populateQueue(project: Project) {
@@ -210,11 +209,13 @@ abstract class AndroidUIXmlParser {
                             _package = attributes.toMap()["package"] ?: ""
                     }
                 })
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 throw e
             }
             return AndroidManifest(_package)
-        } catch (e: Exception) {
+        }
+        catch (e: Exception) {
             throw NoAndroidManifestFound()
         }
     }
@@ -223,9 +224,9 @@ abstract class AndroidUIXmlParser {
         for (id in ids) {
             val body = arrayListOf("return findViewById(0) as ${id.className}")
             kw.writeImmutableExtensionProperty(receiver = "Activity",
-                                      name = id.id,
-                                      retType = id.className,
-                                      getterBody = body )
+                                               name = id.id,
+                                               retType = id.className,
+                                               getterBody = body)
         }
         return kw.output()
     }

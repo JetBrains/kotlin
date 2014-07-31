@@ -30,13 +30,9 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -384,25 +380,14 @@ public class XmlAttributeValueWrapper implements XmlAttributeValue, PsiNamedElem
 
     @Override
     public String getName() {
-        String value = myWrappee.getValue();
         return ((NavigationItem) myWrappee).getName();
     }
 
     @Override
     @Nullable
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        //if (AndroidResourceUtil.isIdDeclaration(myWrappee)) {
-            XmlAttribute attribute = (XmlAttribute) myWrappee.getParent();
-            attribute.setValue(name);
-        //}
-        //else {
-        //    // then it is a value resource
-        //    XmlTag tag = PsiTreeUtil.getParentOfType(myWrappee, XmlTag.class);
-        //    DomElement domElement = DomManager.getDomManager(getProject()).getDomElement(tag);
-        //    assert domElement instanceof ResourceElement;
-        //    ResourceElement resElement = (ResourceElement) domElement;
-        //    resElement.getName().setValue(name);
-        //}
+        XmlAttribute attribute = (XmlAttribute) myWrappee.getParent();
+        attribute.setValue(name);
         return null;
     }
 
