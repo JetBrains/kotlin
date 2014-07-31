@@ -91,11 +91,6 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
         for (propertyMethod in propertyMethods) {
             addRenameElements(propertyMethod, jetProperty.getName(), newName, allRenames, scope)
         }
-
-        if (isAndroidSyntheticElement(element)) {
-            val parser = ServiceManager.getService(element?.getProject()!!, javaClass<AndroidUIXmlParser>())
-            parser?.renameId(jetProperty.getName(), newName, allRenames)
-        }
     }
 
     private enum class UsageKind {

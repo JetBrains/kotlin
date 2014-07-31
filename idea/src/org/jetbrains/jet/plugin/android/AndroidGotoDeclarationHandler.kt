@@ -21,14 +21,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlParser
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
         if (sourceElement is LeafPsiElement) {
-            val parser = ServiceManager.getService(sourceElement.getProject(), javaClass<AndroidUIXmlParser>())
-            val psiElement = parser?.idToXmlAttribute(sourceElement.getText())
+            val parser = ServiceManager.getService(sourceElement.getProject(), javaClass<AndroidUIXmlProcessor>())
+            val psiElement = parser?.resourceManager?.idToXmlAttribute(sourceElement.getText())
             if (psiElement != null) {
                 return array(psiElement)
             }
