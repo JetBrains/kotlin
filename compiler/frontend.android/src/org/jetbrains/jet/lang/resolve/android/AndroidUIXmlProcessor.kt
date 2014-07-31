@@ -17,6 +17,9 @@
 package org.jetbrains.jet.lang.resolve.android
 
 import java.util.ArrayList
+import java.util.HashMap
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.io.File
 import javax.xml.parsers.SAXParserFactory
 import java.io.File
 import java.io.FileInputStream
@@ -44,9 +47,8 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl
 import java.util.Queue
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElement
 
-abstract class AndroidUIXmlParser {
+abstract class AndroidUIXmlProcessor(val project: Project) {
 
     inner class NoUIXMLsFound : Exception("No android UI xmls found in $searchPath")
     class NoAndroidManifestFound : Exception("No android manifest file found in project root")
@@ -85,12 +87,10 @@ abstract class AndroidUIXmlParser {
         return renderString()
     }
 
-    protected fun getXmlLayoutFiles(): Collection<PsiFile> = fileCache.keySet()
-
-    public abstract fun idToXmlAttribute(id: String): PsiElement?
+    public open val resourceManager: AndroidResourceManager = AndroidResourceManagerBase(project, searchPath)
 
     public fun parseToPsi(project: Project): JetFile? {
-        populateQueue(project)
+        populateQueue()
         val cacheState = doParse()
         if (cacheState == null) return null
         return if (cacheState == CacheAction.MISS || lastCachedPsi == null) {
@@ -108,30 +108,6 @@ abstract class AndroidUIXmlParser {
             }
         }
         else lastCachedPsi
-    }
-
-    private fun isAndroidUIXml(file: File): Boolean {
-        return file.extension == "xml"
-    }
-
-
-    private fun searchForUIXml(path: String): Collection<File> {
-        return searchForUIXml(arrayListOf(File(path)))
-    }
-
-    private fun searchForUIXml(paths: Collection<File>?): Collection<File> {
-        if (paths == null) return ArrayList(0)
-        val res = ArrayList<File>()
-        for (path in paths) {
-            if (!path.exists()) continue;
-            if (path.isFile() && isAndroidUIXml(path)) {
-                res.add(path)
-            }
-            else if (path.isDirectory()) {
-                res.addAll(searchForUIXml(path.listFiles()?.toArrayList()))
-            }
-        }
-        return res
     }
 
     private fun writeImports(kw: KotlinStringWriter): KotlinWriter {
@@ -185,15 +161,8 @@ abstract class AndroidUIXmlParser {
         lastCachedPsi = null
     }
 
-    protected fun getXmlLayouts(project: Project): Collection<PsiFile> {
-        val fileManager = VirtualFileManager.getInstance()
-        val watchDir = fileManager.findFileByUrl("file://" + searchPath)
-        val psiManager = PsiManager.getInstance(project)
-        return watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) }?.mapNotNull { it } ?: ArrayList(0)
-    }
-
-    protected fun populateQueue(project: Project) {
-        filesToProcess.addAll(getXmlLayouts(project))
+    protected fun populateQueue() {
+        filesToProcess.addAll(resourceManager.getLayoutXmlFiles())
     }
 
     protected abstract fun lazySetup()
@@ -230,6 +199,4 @@ abstract class AndroidUIXmlParser {
         }
         return kw.output()
     }
-
-    abstract fun renameId(oldName: String?, newName: String?, allRenames: MutableMap<PsiElement, String>)
 }
