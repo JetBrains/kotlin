@@ -52,24 +52,8 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         val processor = ServiceManager.getService(jetProperty.getProject(), javaClass<AndroidUIXmlProcessor>())
         val resourceManager = processor!!.resourceManager
         val attr = resourceManager.idToXmlAttribute(oldName) as XmlAttribute
-        for (file in resourceManager.getLayoutXmlFiles()) {
-            if (file is XmlFile) {
-                file.accept(object : XmlElementVisitor() {
-                    override fun visitElement(element: PsiElement) {
-                        element.acceptChildren(this)
-                    }
-                    override fun visitXmlTag(tag: XmlTag?) {
-                        val idPrefix = "@+id/"
-                        val attribute = tag?.getAttribute("android:id")
-                        if (attribute != null && attribute.getValue() == idPrefix + oldName) {
-                            allRenames[XmlAttributeValueWrapper(attribute.getValueElement()!!)] = idPrefix + newName
-                        }
-                        tag?.acceptChildren(this)
-                    }
-                })
-            }
-        }
-        val name = AndroidResourceUtil.getResourceNameByReferenceText(newName!!)
+        allRenames[XmlAttributeValueWrapper(attr.getValueElement()!!)] = resourceManager.nameToId(newName!!)
+        val name = AndroidResourceUtil.getResourceNameByReferenceText(newName)
         for (resField in AndroidResourceUtil.findIdFields(attr)) {
             allRenames.put(resField, AndroidResourceUtil.getFieldNameByResourceName(name!!))
         }
