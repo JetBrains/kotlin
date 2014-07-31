@@ -40,8 +40,7 @@ class CliAndroidUIXmlParser(val project: Project, override val searchPath: Strin
         val ids: MutableCollection<AndroidWidget> = ArrayList()
         val handler = AndroidXmlHandler({ id, wClass -> ids.add(AndroidWidget(id, wClass)) })
         try {
-            val source = InputSource(ByteArrayInputStream(file.getText()!!.getBytes("utf-8")))
-            saxParser.parse(source, handler)
+            saxParser.parse(file.getVirtualFile()?.getInputStream()!!, handler)
             return produceKotlinProperties(KotlinStringWriter(), ids).toString()
         } catch (e: Throwable) {
             LOG.error(e)
