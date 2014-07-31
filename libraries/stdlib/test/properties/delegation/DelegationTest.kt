@@ -19,10 +19,6 @@ class DelegationTest(): DelegationTestBase() {
         doTest(TestNotNullVar("a", "b"))
     }
 
-    fun testObservablePropertyInChangeSupport() {
-        doTest(TestObservablePropertyInChangeSupport())
-    }
-
     fun testObservableProperty() {
         doTest(TestObservableProperty())
     }
@@ -45,29 +41,6 @@ public class TestNotNullVar<T>(val a1: String, val b1: T): WithBox {
     }
 }
 
-class TestObservablePropertyInChangeSupport: WithBox, ChangeSupport() {
-
-    var b by property(init = 2)
-    var c by property(3)
-
-    override fun box(): String {
-        var result = false
-        addChangeListener("b", object: ChangeListener {
-            public override fun onPropertyChange(event: ChangeEvent) {
-                result = true
-            }
-        })
-        addChangeListener("c", object: ChangeListener {
-            public override fun onPropertyChange(event: ChangeEvent) {
-                result = false
-            }
-        })
-        b = 4
-        if (b != 4) return "fail: b != 4"
-        if (!result) return "fail: result should be true"
-        return "OK"
-    }
-}
 
 class TestObservableProperty: WithBox {
     var result = false

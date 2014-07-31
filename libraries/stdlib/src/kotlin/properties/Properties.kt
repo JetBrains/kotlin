@@ -1,110 +1,43 @@
 package kotlin.properties
 
-import java.util.HashMap
-import java.util.ArrayList
+import java.beans.PropertyChangeSupport
+import java.beans.PropertyChangeEvent
+import java.beans.PropertyChangeListener
 
-public class ChangeEvent(
-        public val source: Any,
-        public val name: String,
-        public val oldValue: Any?,
-        public val newValue: Any?
-) {
-    override fun toString(): String = "ChangeEvent($name, $oldValue, $newValue)"
+val PropertyChangeEvent.source: Any
+    get() = getSource()!!
+
+val PropertyChangeEvent.oldValue: Any?
+    get() = getOldValue()
+
+val PropertyChangeEvent.newValue: Any?
+    get() = getNewValue()
+
+val PropertyChangeEvent.name: String?
+    get() = getPropertyName()
+
+fun PropertyChangeSupport.property<T>(initialValue: T): ReadWriteProperty<Any?, T> {
+    return Delegates.observable(initialValue) { desc, oldValue, newValue ->
+        firePropertyChange(desc.name, oldValue, newValue)
+    }
 }
 
-public trait ChangeListener {
-    public fun onPropertyChange(event: ChangeEvent): Unit
-}
-
-/**
- * Represents an object where properties can be listened to and notified on
- * updates for easier binding to user interfaces, undo/redo command stacks and
- * change tracking mechanisms for persistence or distributed change notifications.
- */
-public abstract class ChangeSupport {
-    private var allListeners: MutableList<ChangeListener>? = null
-    private var nameListeners: MutableMap<String, MutableList<ChangeListener>>? = null
-
-
-    public fun addChangeListener(listener: ChangeListener) {
-        if (allListeners == null) {
-            allListeners = ArrayList<ChangeListener>()
-        }
-        allListeners?.add(listener)
-    }
-
-    public fun addChangeListener(name: String, listener: ChangeListener) {
-        if (nameListeners == null) {
-            nameListeners = HashMap<String, MutableList<ChangeListener>>()
-        }
-        var listeners = nameListeners?.get(name)
-        if (listeners == null) {
-            listeners = arrayList<ChangeListener>()
-            nameListeners?.put(name, listeners!!)
-        }
-        listeners?.add(listener)
-    }
-
-    protected fun <T> changeProperty(name: String, oldValue: T?, newValue: T?): Unit {
-        if (oldValue != newValue) {
-            firePropertyChanged(ChangeEvent(this, name, oldValue, newValue))
-        }
-    }
-
-    protected fun firePropertyChanged(event: ChangeEvent): Unit {
-        if (nameListeners != null) {
-            val listeners = nameListeners?.get(event.name)
-            if (listeners != null) {
-                for (listener in listeners) {
-                    listener.onPropertyChange(event)
-                }
-            }
-        }
-        if (allListeners != null) {
-            for (listener in allListeners!!) {
-                listener.onPropertyChange(event)
-            }
-        }
-    }
+trait PropertyChangeFeatures {
+    protected val pcs: PropertyChangeSupport
 
     protected fun property<T>(init: T): ReadWriteProperty<Any?, T> {
-        return Delegates.observable(init) { desc, oldValue, newValue -> changeProperty(desc.name, oldValue, newValue) }
-    }
-
-    public fun onPropertyChange(fn: (ChangeEvent) -> Unit) {
-        // TODO
-        //addChangeListener(DelegateChangeListener(fn))
-    }
-
-    public fun onPropertyChange(name: String, fn: (ChangeEvent) -> Unit) {
-        // TODO
-        //addChangeListener(name, DelegateChangeListener(fn))
-    }
-}
-
-/*
-TODO this seems to generate a compiler barf!
-see http://youtrack.jetbrains.com/issue/KT-1362
-
-    protected fun createChangeListener(fn: (ChangeEvent) -> Unit): ChangeListener {
-        return DelegateChangeListener(fn)
-    }
-
-    protected fun createChangeListener(fn: (ChangeEvent) -> Unit): ChangeListener {
-        return ChangeListener {
-            public override fun onPropertyChange(event: ChangeEvent): Unit {
-                fn(event)
-            }
+        return Delegates.observable(init) { desc, oldValue, newValue ->
+            pcs.firePropertyChange(desc.name, oldValue, newValue)
         }
     }
 
+    public fun addPropertyChangeListener(listener: PropertyChangeListener): Unit = pcs.addPropertyChangeListener(listener)
+    public fun addPropertyChangeListener(propertyName: String, listener: PropertyChangeListener): Unit = pcs.addPropertyChangeListener(propertyName, listener)
+    public fun addPropertyChangeListener(f: (PropertyChangeEvent) -> Unit): Unit = pcs.addPropertyChangeListener(f)
+    public fun addPropertyChangeListener(propertyName: String, f: (PropertyChangeEvent) -> Unit): Unit = pcs.addPropertyChangeListener(propertyName, f)
+
+    public fun removePropertyChangeListener(listener: PropertyChangeListener): Unit = pcs.removePropertyChangeListener(listener)
+    public fun removePropertyChangeListener(propertyName: String, listener: PropertyChangeListener): Unit = pcs.removePropertyChangeListener(propertyName, listener)
+    public fun removePropertyChangeListener(f: (PropertyChangeEvent) -> Unit): Unit = pcs.removePropertyChangeListener(f)
+    public fun removePropertyChangeListener(propertyName: String, f: (PropertyChangeEvent) -> Unit): Unit = pcs.removePropertyChangeListener(propertyName, f)
 }
-
-
-class DelegateChangeListener(val f: (ChangeEvent) -> Unit) : ChangeListener {
-    public override fun onPropertyChange(event: ChangeEvent): Unit {
-        f(event)
-    }
-}
-
-

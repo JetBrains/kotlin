@@ -1,51 +1,65 @@
 package test.properties
 
-import kotlin.*
+import org.junit.Test as test
+import java.beans.PropertyChangeListener
+import java.beans.PropertyChangeEvent
 import kotlin.properties.*
-import kotlin.util.*
-import kotlin.test.*
-import java.util.*
-import junit.framework.TestCase
+import java.util.ArrayList
+import java.beans.PropertyChangeSupport
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class Customer() : ChangeSupport() {
-    // TODO the setter code should be generated
-    // via KT-1299
-    var name: String? = null
-    set(value) {
-        changeProperty("name", $name, value)
-        $name = value
-    }
-
-    var city: String? = null
-    set(value) {
-        changeProperty("city", $city, value)
-        $city = value
-    }
-
-    override fun toString() = "Customer($name, $city)"
+private class SampleBean() {
+    private val pcs = PropertyChangeSupport(this)
+    var prop: String by pcs.property("")
 }
 
-class MyChangeListener() : ChangeListener {
-    val events = ArrayList<ChangeEvent>()
+class SupportedBean() : PropertyChangeFeatures {
+    public override val pcs = PropertyChangeSupport(this) // can't be anything other than public, see KT-3029
+    var prop: String by pcs.property("")
+}
 
-    override fun onPropertyChange(event: ChangeEvent): Unit {
-        println("Property changed: $event")
-        events.add(event)
+private class RecordingListener : PropertyChangeListener {
+    val events = ArrayList<PropertyChangeEvent>()
+
+    override fun propertyChange(evt: PropertyChangeEvent) {
+        events.add(evt)
     }
 }
 
-class PropertiesTest() : TestCase() {
+class PropertyChangeFeaturesTest() {
 
-    fun testModel() {
-        val c = Customer()
-        c.name = "James"
-        c.city = "Mells"
+    test fun initialValueShouldBeCorrect() {
+        val subject = SampleBean()
 
-        val listener = MyChangeListener()
-        c.addChangeListener(listener)
-        c.name = "Andrey"
-        println("Customer $c and raised change events ${listener.events}")
+        assertEquals("", subject.prop)
+    }
 
-        assertEquals(1, listener.events.size(), "Should have received a change event ${listener.events}")
+    test fun changingValueShouldwork() {
+        val subject = SampleBean()
+
+        // when: value is changed
+        subject.prop = "newValue"
+
+        assertEquals("newValue", subject.prop)
+    }
+}
+
+class PropertySupportTest {
+
+    test fun eventShouldBeFired() {
+        val subject = SupportedBean()
+        val listener =  RecordingListener()
+        subject.addPropertyChangeListener(listener)
+
+        // when: name is changed
+        subject.prop = "new name"
+
+        // then: the correct event is fired
+        assertEquals(1, listener.events.size)
+        val evt = listener.events[0]
+        assertEquals("", evt.oldValue)
+        assertEquals("new name", evt.newValue)
+        assertTrue(evt.source == subject)
     }
 }
