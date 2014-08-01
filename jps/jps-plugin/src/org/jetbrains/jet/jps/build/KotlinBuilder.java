@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import gnu.trove.THashSet;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -180,9 +181,11 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                         NO_LOCATION);
             }
 
-            List<File> filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder);
-            filesToCompile.removeAll(allCompiledFiles);
-            allCompiledFiles.addAll(filesToCompile);
+            MultiMap<ModuleBuildTarget, File> filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder);
+            for (ModuleBuildTarget target : filesToCompile.keySet()) {
+                filesToCompile.getModifiable(target).removeAll(allCompiledFiles);
+            }
+            allCompiledFiles.addAll(filesToCompile.values());
 
             Set<ModuleBuildTarget> processedTargetsWithRemoved = getProcessedTargetsWithRemovedFilesContainer(context);
 
