@@ -207,9 +207,6 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             processFunctionLiteralArguments();
             reportUnmappedParameters();
             checkReceiverArgument();
-
-            assert (candidateCall.getThisObject().exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null))
-                    : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
         }
 
         private void processFunctionLiteralArguments() {

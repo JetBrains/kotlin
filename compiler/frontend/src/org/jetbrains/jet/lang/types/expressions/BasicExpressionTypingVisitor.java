@@ -591,16 +591,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return null;
         }
 
-        ReceiverValue receiver = new TransientReceiver(lhsType);
-        TemporaryTraceAndCache temporaryWithReceiver = TemporaryTraceAndCache.create(
-                context, "trace to resolve callable reference with receiver", reference);
-        CallableDescriptor descriptor = resolveCallableNotCheckingArguments(
-                reference, receiver, context.replaceTraceAndCache(temporaryWithReceiver), result);
-        if (result[0]) {
-            temporaryWithReceiver.commit();
-            return descriptor;
-        }
-
         JetScope staticScope = getStaticNestedClassesScope((ClassDescriptor) classifier);
         TemporaryTraceAndCache temporaryForStatic = TemporaryTraceAndCache.create(
                 context, "trace to resolve callable reference in static scope", reference);
@@ -609,6 +599,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (result[0]) {
             temporaryForStatic.commit();
             return possibleStaticNestedClassConstructor;
+        }
+
+        ReceiverValue receiver = new TransientReceiver(lhsType);
+        TemporaryTraceAndCache temporaryWithReceiver = TemporaryTraceAndCache.create(
+                context, "trace to resolve callable reference with receiver", reference);
+        CallableDescriptor descriptor = resolveCallableNotCheckingArguments(
+                reference, receiver, context.replaceTraceAndCache(temporaryWithReceiver), result);
+        if (result[0]) {
+            temporaryWithReceiver.commit();
+            return descriptor;
         }
 
         return null;

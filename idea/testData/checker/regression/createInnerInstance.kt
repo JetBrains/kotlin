@@ -6,5 +6,5 @@ object A {
 
 fun test<T>(a: T) {
   val c = (a as A)
-  c.<error descr="[FUNCTION_EXPECTED] Expression 'B' of type '[Package-type B]' cannot be invoked as a function. The function invoke() is not found"><error>B</error></error>()
+    c.<error descr="[NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE] Nested class 'B' accessed via instance reference">B</error>()
 }

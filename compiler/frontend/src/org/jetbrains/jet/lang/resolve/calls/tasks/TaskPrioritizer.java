@@ -275,12 +275,6 @@ public class TaskPrioritizer {
             @NotNull Call call
     ) {
         for (D descriptor : descriptors) {
-            if (descriptor instanceof ConstructorDescriptor && DescriptorUtils.isStaticNestedClass(descriptor.getContainingDeclaration())
-                    || descriptor instanceof FakeCallableDescriptorForObject) {
-                // We don't want static nested class constructor or class object / object (as callable)
-                // to be resolved with expectedThisObject
-                continue;
-            }
             ResolutionCandidate<D> candidate = ResolutionCandidate.create(call, descriptor);
             candidate.setThisObject(thisObject);
             candidate.setReceiverArgument(receiverParameter);

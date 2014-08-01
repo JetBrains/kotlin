@@ -20,10 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
@@ -128,6 +125,11 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     @Override
     public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {
         trace.report(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS.on(call.getCallElement()));
+    }
+
+    @Override
+    public void nestedClassAccessViaInstanceReference(@NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor) {
+        trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(reference, classDescriptor));
     }
 
     @Override

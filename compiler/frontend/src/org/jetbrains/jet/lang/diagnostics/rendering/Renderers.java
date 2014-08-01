@@ -112,7 +112,14 @@ public class Renderers {
                 return "Class" + name;
             }
             return "Object" + name;
+        }
+    };
 
+    public static final Renderer<ClassDescriptor> RENDER_CLASS_OR_OBJECT_NAME = new Renderer<ClassDescriptor>() {
+        @NotNull
+        @Override
+        public String render(@NotNull ClassDescriptor classifier) {
+            return RenderingPackage.renderKindWithName(classifier);
         }
     };
 

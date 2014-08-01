@@ -1,0 +1,2 @@
+<!-- nestedClassAcessedViaInstanceReference4 -->
+Nested object 'NestedObj' accessed via instance reference

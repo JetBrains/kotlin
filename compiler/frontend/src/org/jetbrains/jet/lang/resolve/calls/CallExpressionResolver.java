@@ -298,6 +298,7 @@ public class CallExpressionResolver {
         JetType selectorReturnType = selectorReturnTypeInfo.getType();
 
         resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, expression, context);
+        checkNestedClassAccess(expression, context);
 
         //TODO move further
         if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
@@ -337,5 +338,25 @@ public class CallExpressionResolver {
                 calleeExpression instanceof JetReferenceExpression
                 ? context.trace.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpression) : null;
         ReceiversPackage.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, selectorDescriptor);
+    }
+
+    private static void checkNestedClassAccess(
+            @NotNull JetQualifiedExpression expression,
+            @NotNull ExpressionTypingContext context
+    ) {
+        JetExpression selectorExpression = expression.getSelectorExpression();
+        if (selectorExpression == null) return;
+
+        // A.B - if B is a nested class accessed by outer class, 'A' and 'A.B' were marked as qualifiers
+        // a.B - if B is a nested class accessed by instance reference, 'a.B' was marked as a qualifier, but 'a' was not (it's an expression)
+
+        QualifierReceiver expressionQualifier = context.trace.get(BindingContext.QUALIFIER_RECEIVER, expression);
+        QualifierReceiver receiverQualifier = context.trace.get(BindingContext.QUALIFIER_RECEIVER, expression.getReceiverExpression());
+
+        if (receiverQualifier == null && expressionQualifier != null) {
+            assert expressionQualifier.getClassifier() instanceof ClassDescriptor :
+                    "Only class can (package cannot) be accessed by instance reference: " + expressionQualifier;
+            context.trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(selectorExpression, (ClassDescriptor)expressionQualifier.getClassifier()));
+        }
     }
 }

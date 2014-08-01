@@ -4944,6 +4944,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/inner/modality.kt");
             }
             
+            @TestMetadata("nestedClassAccessedViaInstanceReference.kt")
+            public void testNestedClassAccessedViaInstanceReference() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/nestedClassAccessedViaInstanceReference.kt");
+            }
+            
             @TestMetadata("nestedClassExtendsOuter.kt")
             public void testNestedClassExtendsOuter() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inner/nestedClassExtendsOuter.kt");
@@ -5894,6 +5899,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         public static class Objects extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInObjects() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/objects"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("invokeOnInnerObject.kt")
+            public void testInvokeOnInnerObject() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/objects/invokeOnInnerObject.kt");
             }
             
             @TestMetadata("kt2240.kt")

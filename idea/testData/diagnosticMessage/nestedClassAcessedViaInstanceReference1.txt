@@ -1,0 +1,2 @@
+<!-- nestedClassAcessedViaInstanceReference1 -->
+Nested class 'Nested' accessed via instance reference

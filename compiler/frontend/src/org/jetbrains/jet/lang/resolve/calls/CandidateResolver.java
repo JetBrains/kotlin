@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
+import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -115,6 +116,9 @@ public class CandidateResolver {
                 }
             }
         }
+        if (!checkThisObject(context)) {
+            candidateCall.addStatus(OTHER_ERROR);
+        }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
         if (jetTypeArguments.isEmpty()) {
@@ -165,6 +169,31 @@ public class CandidateResolver {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
             candidateCall.addStatus(OTHER_ERROR);
         }
+    }
+
+    private static boolean checkThisObject(@NotNull CallCandidateResolutionContext<?> context) {
+        MutableResolvedCall<? extends CallableDescriptor> candidateCall = context.candidateCall;
+        CallableDescriptor candidateDescriptor = candidateCall.getCandidateDescriptor();
+        ReceiverValue thisObject = candidateCall.getThisObject();
+        if (thisObject.exists()) {
+            ClassDescriptor nestedClass = null;
+            if (candidateDescriptor instanceof ConstructorDescriptor
+                && DescriptorUtils.isStaticNestedClass(candidateDescriptor.getContainingDeclaration())) {
+                nestedClass = (ClassDescriptor) candidateDescriptor.getContainingDeclaration();
+            }
+            else if (candidateDescriptor instanceof FakeCallableDescriptorForObject) {
+                nestedClass = ((FakeCallableDescriptorForObject) candidateDescriptor).getReferencedDescriptor();
+            }
+            if (nestedClass != null) {
+                context.tracing.nestedClassAccessViaInstanceReference(context.trace, nestedClass);
+                return false;
+            }
+        }
+
+        assert (thisObject.exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null))
+                : "Shouldn't happen because of TaskPrioritizer: " + candidateDescriptor;
+
+        return true;
     }
 
     private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {

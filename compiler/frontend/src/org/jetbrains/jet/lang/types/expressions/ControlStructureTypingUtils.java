@@ -455,6 +455,13 @@ public class ControlStructureTypingUtils {
         }
 
         @Override
+        public void nestedClassAccessViaInstanceReference(
+                @NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor
+        ) {
+            throwError();
+        }
+
+        @Override
         public void unsafeCall(
                 @NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke
         ) {
