@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
@@ -36,6 +37,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.descriptors.ClassKind.CLASS_OBJECT;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
@@ -234,15 +236,14 @@ public final class StaticContext {
                     return scope.declareFreshName(getSuggestedName(descriptor));
                 }
             };
-            Rule<JsName> constructorHasTheSameNameAsTheClass = new Rule<JsName>() {
+            Rule<JsName> constructorOrClassObjectHasTheSameNameAsTheClass = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof ConstructorDescriptor)) {
-                        return null;
+                    if (descriptor instanceof ConstructorDescriptor || (DescriptorUtils.isClassObject(descriptor))) {
+                        //noinspection ConstantConditions
+                        return getNameForDescriptor(descriptor.getContainingDeclaration());
                     }
-                    ClassDescriptor containingClass = getContainingClass(descriptor);
-                    assert containingClass != null : "Can't have constructor without a class";
-                    return getNameForDescriptor(containingClass);
+                    return null;
                 }
             };
 
@@ -324,7 +325,7 @@ public final class StaticContext {
                 }
             };
             addRule(namesForStandardClasses);
-            addRule(constructorHasTheSameNameAsTheClass);
+            addRule(constructorOrClassObjectHasTheSameNameAsTheClass);
             addRule(propertyOrPropertyAccessor);
             addRule(predefinedObjectsHasUnobfuscatableNames);
             addRule(overridingDescriptorsReferToOriginalName);
@@ -469,15 +470,14 @@ public final class StaticContext {
                     return element.getContainingFile().getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
                 }
             };
-            Rule<JsNameRef> constructorHaveTheSameQualifierAsTheClass = new Rule<JsNameRef>() {
+            Rule<JsNameRef> constructorOrClassObjectHasTheSameQualifierAsTheClass = new Rule<JsNameRef>() {
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof ConstructorDescriptor)) {
-                        return null;
+                    if (descriptor instanceof ConstructorDescriptor || DescriptorUtils.isClassObject(descriptor)) {
+                        //noinspection ConstantConditions
+                        return getQualifierForDescriptor(descriptor.getContainingDeclaration());
                     }
-                    ClassDescriptor containingClass = getContainingClass(descriptor);
-                    assert containingClass != null : "Can't have constructor without a class";
-                    return getQualifierForDescriptor(containingClass);
+                    return null;
                 }
             };
             Rule<JsNameRef> libraryObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
@@ -504,7 +504,7 @@ public final class StaticContext {
             };
 
             addRule(libraryObjectsHaveKotlinQualifier);
-            addRule(constructorHaveTheSameQualifierAsTheClass);
+            addRule(constructorOrClassObjectHasTheSameQualifierAsTheClass);
             addRule(standardObjectsHaveKotlinQualifier);
             addRule(packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier);
             addRule(nativeObjectsHaveNativePartOfFullQualifier);

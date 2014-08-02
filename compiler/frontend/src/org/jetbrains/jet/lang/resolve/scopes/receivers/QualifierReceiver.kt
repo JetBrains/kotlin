@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext
 import org.jetbrains.jet.lang.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
+import org.jetbrains.jet.lang.resolve.descriptorUtil.getClassObjectReferenceTarget
 
 public class QualifierReceiver(
         val expression: JetSimpleNameExpression,
@@ -148,6 +149,13 @@ private fun QualifierReceiver.resolveReferenceTarget(selector: DeclarationDescri
     if (packageView != null && (containingDeclaration is PackageFragmentDescriptorImpl || containingDeclaration is PackageViewDescriptor)
             && getFqName(packageView) == getFqName(containingDeclaration)) {
         return packageView
+    }
+
+    if (classifier != null && containingDeclaration is ClassDescriptor && classifier == containingDeclaration) {
+        return classifier
+    }
+    if (classifier is ClassDescriptor && classifier.getClassObjectDescriptor() != null) {
+        return classifier.getClassObjectReferenceTarget()
     }
 
     return descriptor

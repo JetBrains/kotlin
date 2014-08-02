@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource;
+import static org.jetbrains.jet.lang.resolve.descriptorUtil.DescriptorUtilPackage.getClassObjectReferenceTarget;
 
 @SuppressWarnings("unchecked")
 public class CallableDescriptorCollectors<D extends CallableDescriptor> implements Iterable<CallableDescriptorCollector<D>> {

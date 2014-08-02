@@ -1698,10 +1698,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        //if (descriptor instanceof VariableAsFunctionDescriptor) {
-        //    descriptor = ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
-        //}
-
         assert descriptor != null : "Couldn't find descriptor for '" + expression.getText() + "'";
         descriptor = descriptor.getOriginal();
 
@@ -1738,7 +1734,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+            if (classDescriptor.getKind() == ClassKind.OBJECT || classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
                 return StackValue.singleton(classDescriptor, typeMapper);
             }
             if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {

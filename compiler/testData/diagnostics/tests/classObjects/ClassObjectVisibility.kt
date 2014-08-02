@@ -3,6 +3,7 @@ package foo
 fun test() {
   A.d
   A.<!INVISIBLE_MEMBER!>f<!>
+  <!INVISIBLE_MEMBER!>CCC<!>
   <!INVISIBLE_MEMBER!>CCC<!>.<!INVISIBLE_MEMBER!>classObjectVar<!>
 }
 

@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.cfg.Label
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.utils.DFS
@@ -61,8 +60,7 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.lang.psi.psiUtil.isFunctionLiteralOutsideParentheses
-import org.jetbrains.jet.plugin.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
+import org.jetbrains.jet.plugin.imports.importableFqNameSafe
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -476,8 +474,7 @@ private fun ExtractionData.inferParametersInfo(
                     info.typeParameters, info.nonDenotableTypes, false
             )) continue
 
-            val replacingDescriptor = (originalDescriptor as? ConstructorDescriptor)?.getContainingDeclaration() ?: originalDescriptor
-            info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(replacingDescriptor))
+            info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.importableFqNameSafe)
         }
         else {
             val extractThis = hasThisReceiver || thisExpr != null
