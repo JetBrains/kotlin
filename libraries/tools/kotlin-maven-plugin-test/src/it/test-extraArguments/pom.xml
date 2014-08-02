@@ -11,7 +11,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>test-inlineDisabled</artifactId>
+    <artifactId>test-extraArguments</artifactId>
 
     <dependencies>
         <dependency>
@@ -69,7 +69,12 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <inline>false</inline>
+                    <args>
+                        <arg>-Xno-inline</arg>
+                        <arg>-Xno-optimize</arg>
+                        <arg>-Xno-call-assertions</arg>
+                        <arg>-Xno-param-assertions</arg>
+                    </args>
                 </configuration>
             </plugin>
         </plugins>

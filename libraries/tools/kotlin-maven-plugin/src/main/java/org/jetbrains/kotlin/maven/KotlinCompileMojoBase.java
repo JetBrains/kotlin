@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.maven;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
+import com.sampullara.cli.Args;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -28,7 +30,6 @@ import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
@@ -145,18 +146,11 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
     public String testModule;
 
     /**
-     * Switch method inlining on/off: possible values are "on" and "off".
+     * Additional command line arguments for Kotlin compiler.
      *
      * @parameter
      */
-    public String inline;
-
-    /**
-     * Switch method optimization on/off: possible values are "on" and "off".
-     *
-     * @parameter
-     */
-    public String optimize;
+    public List<String> args;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -313,15 +307,12 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         arguments.noJdkAnnotations = true;
         arguments.annotations = getFullAnnotationsPath(log, annotationPaths);
         log.info("Using kotlin annotations from " + arguments.annotations);
-        arguments.noInline = !CompilerArgumentsUtil.optionToBooleanFlag(inline, true);
-        arguments.noOptimize = !CompilerArgumentsUtil.optionToBooleanFlag(optimize, true);
 
-        if (!CompilerArgumentsUtil.checkOption(inline)) {
-            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", inline));
+        try {
+            Args.parse(arguments, ArrayUtil.toStringArray(args));
         }
-
-        if (!CompilerArgumentsUtil.checkOption(optimize)) {
-            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", optimize));
+        catch (IllegalArgumentException e) {
+            throw new MojoExecutionException(e.getMessage());
         }
 
         if (arguments.noInline) {
