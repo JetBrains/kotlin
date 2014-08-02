@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.maven;
 
-import com.google.common.io.Files;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -65,7 +64,7 @@ public class JSSourceJarMojo extends AbstractMojo {
             }
         }
         if (definitionSourceDir != null) {
-            if (!librarySourceDir.exists()) {
+            if (!definitionSourceDir.exists()) {
                 getLog().warn("Definition directory does not exist: " + definitionSourceDir);
             } else {
                 try {

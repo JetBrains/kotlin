@@ -40,7 +40,6 @@ public class KotlinTestCompileMojo extends KotlinCompileMojoBase {
      */
     private boolean skip;
 
-
     // TODO it would be nice to avoid using 2 injected fields for sources
     // but I've not figured out how to have a defaulted parameter value
     // which is also customisable inside an <execution> in a maven pom.xml
@@ -76,6 +75,7 @@ public class KotlinTestCompileMojo extends KotlinCompileMojoBase {
      */
     private List<String> defaultSourceDir;
 
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
             getLog().info("Test compilation is skipped");

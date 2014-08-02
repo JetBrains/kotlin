@@ -47,8 +47,6 @@ import java.util.zip.ZipFile;
 import static com.intellij.openapi.util.text.StringUtil.join;
 
 public abstract class KotlinCompileMojoBase extends AbstractMojo {
-
-
     // TODO it would be nice to avoid using 2 injected fields for sources
     // but I've not figured out how to have a defaulted parameter value
     // which is also customisable inside an <execution> in a maven pom.xml
@@ -182,10 +180,10 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             }
         }
 
-        final CommonCompilerArguments arguments = createCompilerArguments();
+        CommonCompilerArguments arguments = createCompilerArguments();
         configureCompilerArguments(arguments);
 
-        final CLICompiler compiler = createCompiler();
+        CLICompiler compiler = createCompiler();
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
         final Log log = getLog();
@@ -209,14 +207,14 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             }
         };
 
-        final ExitCode exitCode = executeCompiler(compiler, arguments, messageCollector);
+        ExitCode exitCode = executeCompiler(compiler, arguments, messageCollector);
 
         switch (exitCode) {
             case COMPILATION_ERROR:
                 throw new MojoExecutionException("Compilation error. See log for more details");
-
             case INTERNAL_ERROR:
                 throw new MojoExecutionException("Internal compiler error. See log for more details");
+            default:
         }
     }
 
@@ -280,7 +278,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         // don't include runtime, it should be in maven dependencies
         arguments.noStdlib = true;
 
-        final ArrayList<String> classpathList = new ArrayList<String>();
+        ArrayList<String> classpathList = new ArrayList<String>();
 
         if (module != null) {
             log.info("Compiling Kotlin module " + module);
@@ -361,20 +359,20 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         return join(list, File.pathSeparator);
     }
 
-    protected File getJdkAnnotations() {
-        final ClassLoader classLoader = getClass().getClassLoader();
+    @NotNull
+    private static File getJdkAnnotations() {
+        ClassLoader classLoader = KotlinCompileMojoBase.class.getClassLoader();
         if (!(classLoader instanceof URLClassLoader)) {
-            throw new RuntimeException("Kotlin plugin`s classloader is not URLClassLoader");
+            throw new RuntimeException("Kotlin plugin`s class loader is not URLClassLoader");
         }
 
-        final URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
-        for (URL url : urlClassLoader.getURLs()) {
-            final String path = url.getPath();
+        for (URL url : ((URLClassLoader) classLoader).getURLs()) {
+            String path = url.getPath();
             if (StringUtil.isEmpty(path)) {
                 continue;
             }
 
-            final File file = new File(path);
+            File file = new File(path);
             if (file.getName().startsWith("kotlin-jdk-annotations")) {
                 return file;
             }
@@ -383,12 +381,12 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         throw new RuntimeException("Could not get jdk annotations from Kotlin plugin`s classpath");
     }
 
-    protected List<String> scanAnnotations(Log log) {
-        final List<String> annotations = new ArrayList<String>();
+    private List<String> scanAnnotations(Log log) {
+        List<String> annotations = new ArrayList<String>();
 
-        final Set<Artifact> artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact artifact : artifacts) {
-            final File file = artifact.getFile();
+            File file = artifact.getFile();
             if (containsAnnotations(file, log)) {
                 log.info("Discovered kotlin annotations in: " + file);
                 try {
@@ -403,14 +401,14 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         return annotations;
     }
 
-    protected boolean containsAnnotations(File file, Log log) {
+    private static boolean containsAnnotations(File file, Log log) {
         log.debug("Scanning for kotlin annotations in " + file);
 
         ZipFile zipFile = null;
         try {
             zipFile = new ZipFile(file);
 
-            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 String name = entries.nextElement().getName();
                 if (name.endsWith("/annotations.xml")) {

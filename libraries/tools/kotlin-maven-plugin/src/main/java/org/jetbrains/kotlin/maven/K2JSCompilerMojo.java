@@ -18,18 +18,19 @@ package org.jetbrains.kotlin.maven;
 
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
+import com.intellij.openapi.util.io.FileUtil;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
-import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.k2js.config.MetaInfServices;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -81,7 +82,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         super.execute();
-        if (appendLibraryJS != null && appendLibraryJS.booleanValue()) {
+        if (appendLibraryJS != null && appendLibraryJS) {
             try {
                 Charset charset = Charset.defaultCharset();
                 File file = new File(outputFile);
@@ -97,7 +98,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
         }
-        if (copyLibraryJS != null && copyLibraryJS.booleanValue()) {
+        if (copyLibraryJS != null && copyLibraryJS) {
             getLog().info("Copying kotlin JS library to " + outputKotlinJSDir);
 
             copyJsLibraryFile(KOTLIN_JS_MAPS);
@@ -107,7 +108,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
         }
     }
 
-    protected void appendFile(String jsLib, StringBuilder builder) throws MojoExecutionException {
+    private static void appendFile(String jsLib, StringBuilder builder) throws MojoExecutionException {
         // lets copy the kotlin library into the output directory
         try {
             final InputStream inputStream = MetaInfServices.loadClasspathResource(jsLib);
