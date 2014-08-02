@@ -579,7 +579,7 @@
               <arg line="@{src}"/>
               <arg value="-d"/>
               <arg value="@{output}"/>
-              <arg value="-noStdlib"/>
+              <arg value="-no-stdlib"/>
               <arg value="-classpath"/>
               <arg value="@{classpath}"/>
             </java>

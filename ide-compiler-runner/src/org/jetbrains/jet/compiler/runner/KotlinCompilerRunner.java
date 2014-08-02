@@ -105,7 +105,7 @@ public class KotlinCompilerRunner {
     ) {
         try {
             messageCollector.report(CompilerMessageSeverity.INFO,
-                                    "Using kotlinHome=" + environment.getKotlinPaths().getHomePath(),
+                                    "Using kotlin-home = " + environment.getKotlinPaths().getHomePath(),
                                     CompilerMessageLocation.NO_LOCATION);
 
             Object rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, arguments, environment,

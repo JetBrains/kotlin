@@ -19,10 +19,6 @@ package org.jetbrains.jet.cli.common.arguments;
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Command line arguments for K2JVMCompiler
- */
-@SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "d", description = "Destination for generated class files")
     @ValueDescription("<directory|jar>")
@@ -36,16 +32,16 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String annotations;
 
-    @Argument(value = "includeRuntime", description = "Include Kotlin runtime in to resulting .jar")
+    @Argument(value = "include-runtime", description = "Include Kotlin runtime in to resulting .jar")
     public boolean includeRuntime;
 
-    @Argument(value = "noJdk", description = "Don't include Java runtime into classpath")
+    @Argument(value = "no-jdk", description = "Don't include Java runtime into classpath")
     public boolean noJdk;
 
-    @Argument(value = "noStdlib", description = "Don't include Kotlin runtime into classpath")
+    @Argument(value = "no-stdlib", description = "Don't include Kotlin runtime into classpath")
     public boolean noStdlib;
 
-    @Argument(value = "noJdkAnnotations", description = "Don't include JDK external annotations into classpath")
+    @Argument(value = "no-jdk-annotations", description = "Don't include JDK external annotations into classpath")
     public boolean noJdkAnnotations;
 
     @Argument(value = "module", description = "Path to the module file to compile")
@@ -55,7 +51,7 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "script", description = "Evaluate the script file")
     public boolean script;
 
-    @Argument(value = "kotlinHome", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
+    @Argument(value = "kotlin-home", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
     @ValueDescription("<path>")
     public String kotlinHome;
 

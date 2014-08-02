@@ -32,13 +32,12 @@ import static org.jetbrains.k2js.test.utils.TranslationUtils.createJetFileList;
 import static org.jetbrains.k2js.test.utils.TranslationUtils.getConfig;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class SourcemapTest extends SingleFileTranslationTest {
-
+public final class SourceMapTest extends SingleFileTranslationTest {
     @NotNull
     private final String filename;
 
     @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-    public SourcemapTest(@NotNull String filename) {
+    public SourceMapTest(@NotNull String filename) {
         super("sourcemap/");
         this.filename = filename;
     }
@@ -74,7 +73,7 @@ public final class SourcemapTest extends SingleFileTranslationTest {
                     @NotNull
                     @Override
                     public Test createTest(@NotNull String filename) {
-                        SourcemapTest examplesTest = new SourcemapTest(filename);
+                        SourceMapTest examplesTest = new SourceMapTest(filename);
                         examplesTest.setName(filename);
                         return examplesTest;
                     }

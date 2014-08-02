@@ -23,20 +23,17 @@ import org.jetbrains.annotations.Nullable;
 import static org.jetbrains.jet.cli.common.arguments.K2JsArgumentConstants.CALL;
 import static org.jetbrains.jet.cli.common.arguments.K2JsArgumentConstants.NO_CALL;
 
-/**
- * NOTE: for now K2JSCompiler supports only minimal amount of parameters required to launch it from the plugin.
- */
 public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "output", description = "Output file path")
     @ValueDescription("<path>")
     public String outputFile;
 
-    @Argument(value = "libraryFiles", description = "Path to zipped library sources or kotlin files separated by commas")
+    @Argument(value = "library-files", description = "Path to zipped library sources or kotlin files separated by commas")
     @ValueDescription("<path[,]>")
     public String[] libraryFiles;
 
-    @Argument(value = "sourcemap", description = "Generate SourceMap")
-    public boolean sourcemap;
+    @Argument(value = "source-map", description = "Generate source map")
+    public boolean sourceMap;
 
     @Argument(value = "target", description = "Generate JS files for specific ECMA version (only ECMA 5 is supported)")
     @ValueDescription("<version>")
@@ -47,11 +44,11 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("{" + CALL + "," + NO_CALL + "}")
     public String main;
 
-    @Argument(value = "outputPrefix", description = "Path to file which will be added to the beginning of output file")
+    @Argument(value = "output-prefix", description = "Path to file which will be added to the beginning of output file")
     @ValueDescription("<path>")
     public String outputPrefix;
 
-    @Argument(value = "outputPostfix", description = "Path to file which will be added to the end of output file")
+    @Argument(value = "output-postfix", description = "Path to file which will be added to the end of output file")
     @ValueDescription("<path>")
     public String outputPostfix;
 

@@ -90,7 +90,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, isGenerateNoWarnings()) ||
                ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
-               ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.sourcemap) ||
+               ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.sourceMap) ||
                isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
                isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix);
     }
@@ -99,7 +99,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void apply() throws ConfigurationException {
         setGenerateNoWarnings(generateNoWarningsCheckBox.isSelected());
         compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
-        k2jsCompilerArguments.sourcemap = generateSourceMapsCheckBox.isSelected();
+        k2jsCompilerArguments.sourceMap = generateSourceMapsCheckBox.isSelected();
         k2jsCompilerArguments.outputPrefix = StringUtil.nullize(outputPrefixFile.getText(), true);
         k2jsCompilerArguments.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
     }
@@ -108,7 +108,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void reset() {
         generateNoWarningsCheckBox.setSelected(isGenerateNoWarnings());
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
-        generateSourceMapsCheckBox.setSelected(k2jsCompilerArguments.sourcemap);
+        generateSourceMapsCheckBox.setSelected(k2jsCompilerArguments.sourceMap);
         outputPrefixFile.setText(k2jsCompilerArguments.outputPrefix);
         outputPostfixFile.setText(k2jsCompilerArguments.outputPostfix);
     }
