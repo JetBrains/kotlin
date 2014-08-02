@@ -7,10 +7,10 @@ where possible options include:
   -main {call,noCall}        Whether a main function should be called; default 'call' (main function will be auto detected)
   -output-prefix <path>      Path to file which will be added to the beginning of output file
   -output-postfix <path>     Path to file which will be added to the end of output file
+  -nowarn                    Generate no warnings
   -tags                      Demarcate each compilation message (error, warning, etc) with an open and close tag
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
   -help (-h)                 Print a synopsis of standard options
-  -suppress warnings         Suppress all compiler warnings
   -X                         Print a synopsis of advanced options
 OK

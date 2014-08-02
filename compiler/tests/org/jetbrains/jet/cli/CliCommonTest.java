@@ -52,12 +52,7 @@ public class CliCommonTest extends CliBaseTest {
     }
 
     @Test
-    public void suppressAllWarningsLowercase() throws Exception {
-        executeCompilerCompareOutputJVM();
-    }
-
-    @Test
-    public void suppressAllWarningsMixedCase() throws Exception {
+    public void suppressAllWarningsJvm() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 

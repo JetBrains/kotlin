@@ -10,10 +10,10 @@ where possible options include:
   -module <path>             Path to the module file to compile
   -script                    Evaluate the script file
   -kotlin-home <path>        Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
+  -nowarn                    Generate no warnings
   -tags                      Demarcate each compilation message (error, warning, etc) with an open and close tag
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
   -help (-h)                 Print a synopsis of standard options
-  -suppress warnings         Suppress all compiler warnings
   -X                         Print a synopsis of advanced options
 OK

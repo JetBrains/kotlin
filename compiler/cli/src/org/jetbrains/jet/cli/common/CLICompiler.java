@@ -109,7 +109,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
         MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
 
-        if (arguments.suppressAllWarnings()) {
+        if (arguments.suppressWarnings) {
             collector = new FilteringMessageCollector(collector, Predicates.equalTo(CompilerMessageSeverity.WARNING));
         }
 

@@ -91,7 +91,7 @@ public class ForTestCompileRuntime {
                 "-d", destDir.getPath(),
                 "-no-stdlib",
                 "-no-jdk-annotations",
-                "-suppress", "warnings",
+                "-nowarn",
                 "-annotations", JetTestUtils.getJdkAnnotationsJar().getAbsolutePath(),
                 "-classpath", classPath
         );

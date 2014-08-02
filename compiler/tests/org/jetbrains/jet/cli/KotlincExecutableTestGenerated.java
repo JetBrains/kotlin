@@ -89,14 +89,9 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest("compiler/testData/cli/jvm/simple.args");
         }
         
-        @TestMetadata("suppressAllWarningsLowercase.args")
-        public void testSuppressAllWarningsLowercase() throws Exception {
-            doJvmTest("compiler/testData/cli/jvm/suppressAllWarningsLowercase.args");
-        }
-        
-        @TestMetadata("suppressAllWarningsMixedCase.args")
-        public void testSuppressAllWarningsMixedCase() throws Exception {
-            doJvmTest("compiler/testData/cli/jvm/suppressAllWarningsMixedCase.args");
+        @TestMetadata("suppressAllWarningsJvm.args")
+        public void testSuppressAllWarningsJvm() throws Exception {
+            doJvmTest("compiler/testData/cli/jvm/suppressAllWarningsJvm.args");
         }
         
         @TestMetadata("wrongAbiVersion.args")
