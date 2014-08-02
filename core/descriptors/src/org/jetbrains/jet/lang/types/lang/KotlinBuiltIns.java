@@ -724,7 +724,6 @@ public class KotlinBuiltIns {
     }
 
     public boolean isFunctionType(@NotNull JetType type) {
-        if (type instanceof PackageType) return false;
         if (isExactFunctionType(type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
@@ -735,7 +734,6 @@ public class KotlinBuiltIns {
     }
 
     public boolean isExtensionFunctionType(@NotNull JetType type) {
-        if (type instanceof PackageType) return false;
         if (isExactExtensionFunctionType(type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
@@ -833,21 +831,19 @@ public class KotlinBuiltIns {
     }
 
     public boolean isNothingOrNullableNothing(@NotNull JetType type) {
-        return !(type instanceof PackageType)
-               && type.getConstructor() == getNothing().getTypeConstructor();
+        return type.getConstructor() == getNothing().getTypeConstructor();
     }
 
     public boolean isAnyOrNullableAny(@NotNull JetType type) {
-        return !(type instanceof PackageType) &&
-               type.getConstructor() == getAny().getTypeConstructor();
+        return type.getConstructor() == getAny().getTypeConstructor();
     }
 
     public boolean isUnit(@NotNull JetType type) {
-        return !(type instanceof PackageType) && type.equals(getUnitType());
+        return type.equals(getUnitType());
     }
 
     public boolean isString(@Nullable JetType type) {
-        return !(type instanceof PackageType) && getStringType().equals(type);
+        return getStringType().equals(type);
     }
 
     public boolean isCloneable(@NotNull ClassDescriptor descriptor) {

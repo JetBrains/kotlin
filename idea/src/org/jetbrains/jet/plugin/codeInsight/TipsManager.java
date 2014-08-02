@@ -35,9 +35,9 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
@@ -58,32 +58,32 @@ public final class TipsManager {
         if (receiverExpression != null && inPositionForCompletionWithReceiver) {
             // Process as call expression
             JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
+            QualifierReceiver qualifierReceiver = context.get(BindingContext.QUALIFIER_RECEIVER, receiverExpression);
+            if (qualifierReceiver != null && resolutionScope != null) {
+                return includeExternalCallableExtensions(
+                        excludePrivateDescriptors(qualifierReceiver.getScope().getAllDescriptors()),
+                        resolutionScope, qualifierReceiver);
+            }
+
             JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
-
             if (expressionType != null && resolutionScope != null && !expressionType.isError()) {
-                if (!(expressionType instanceof PackageType)) {
-                    ExpressionReceiver receiverValue = new ExpressionReceiver(receiverExpression, expressionType);
-                    Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
+                ExpressionReceiver receiverValue = new ExpressionReceiver(receiverExpression, expressionType);
+                Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
 
-                    DataFlowInfo info = context.get(BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW, expression);
-                    if (info == null) {
-                        info = DataFlowInfo.EMPTY;
-                    }
-
-                    List<JetType> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiverValue, context, info);
-
-                    for (JetType variant : variantsForExplicitReceiver) {
-                        descriptors.addAll(includeExternalCallableExtensions(
-                                excludePrivateDescriptors(variant.getMemberScope().getAllDescriptors()),
-                                resolutionScope, receiverValue));
-                    }
-
-                    return descriptors;
+                DataFlowInfo info = context.get(BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW, expression);
+                if (info == null) {
+                    info = DataFlowInfo.EMPTY;
                 }
 
-                return includeExternalCallableExtensions(
-                        excludePrivateDescriptors(expressionType.getMemberScope().getAllDescriptors()),
-                        resolutionScope, new ExpressionReceiver(receiverExpression, expressionType));
+                List<JetType> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiverValue, context, info);
+
+                for (JetType variant : variantsForExplicitReceiver) {
+                    descriptors.addAll(includeExternalCallableExtensions(
+                            excludePrivateDescriptors(variant.getMemberScope().getAllDescriptors()),
+                            resolutionScope, receiverValue));
+                }
+
+                return descriptors;
             }
             return Collections.emptyList();
         }
@@ -197,11 +197,9 @@ public final class TipsManager {
             @NotNull final ReceiverValue receiverValue
     ) {
         // It's impossible to add extension function for package
-        JetType receiverType = receiverValue.getType();
-        if (receiverType instanceof PackageType) {
+        if (receiverValue instanceof QualifierReceiver) {
             return new HashSet<DeclarationDescriptor>(descriptors);
         }
-
         Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
 
         descriptorsSet.addAll(

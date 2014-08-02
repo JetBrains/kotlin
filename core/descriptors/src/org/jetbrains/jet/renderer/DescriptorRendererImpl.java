@@ -279,9 +279,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             }
             return "???";
         }
-        if (type instanceof PackageType) {
-            return type.toString();
-        }
         if (type instanceof LazyType && debugMode) {
             return type.toString();
         }

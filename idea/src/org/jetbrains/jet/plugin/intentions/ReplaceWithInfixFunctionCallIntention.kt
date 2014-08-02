@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.JetValueArgument
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.types.PackageType
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.codeInsight.hint.HintManager
@@ -91,15 +90,13 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
         val functionLiteralArguments = element.getFunctionLiteralArguments()
         val bindingContext = AnalyzerFacadeWithCache.getContextForElement(parent)
         val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver]
-        when {
-            receiverType == null -> {
-                intentionFailed(editor, "resolution.failed")
-                return
-            }
-            receiverType is PackageType -> {
+        if (receiverType == null) {
+            if (bindingContext[BindingContext.QUALIFIER_RECEIVER, receiver] != null) {
                 intentionFailed(editor, "package.call")
                 return
             }
+            intentionFailed(editor, "resolution.failed")
+            return
         }
 
         rightHandTextStringBuilder.append(

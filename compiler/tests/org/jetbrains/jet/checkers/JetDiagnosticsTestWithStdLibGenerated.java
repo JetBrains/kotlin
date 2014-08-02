@@ -129,6 +129,11 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/ambiguityTopLevelVsTopLevel.kt");
             }
             
+            @TestMetadata("callableRefrenceOnNestedObject.kt")
+            public void testCallableRefrenceOnNestedObject() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/callableRefrenceOnNestedObject.kt");
+            }
+            
             @TestMetadata("constructorFromClass.kt")
             public void testConstructorFromClass() throws Exception {
                 doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/constructorFromClass.kt");

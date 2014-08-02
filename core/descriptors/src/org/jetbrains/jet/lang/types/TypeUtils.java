@@ -519,7 +519,6 @@ public class TypeUtils {
     ) {
         if (type == null) return false;
         if (isSpecialType.invoke(type)) return true;
-        if (type instanceof PackageType) return false;
         for (TypeProjection projection : type.getArguments()) {
             if (containsSpecialType(projection.getType(), isSpecialType)) return true;
         }

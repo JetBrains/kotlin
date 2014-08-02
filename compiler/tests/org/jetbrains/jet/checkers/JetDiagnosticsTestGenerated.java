@@ -3882,6 +3882,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/funcitonTypes.kt");
                 }
                 
+                @TestMetadata("incompleteEnumReference.kt")
+                public void testIncompleteEnumReference() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/incompleteEnumReference.kt");
+                }
+                
                 @TestMetadata("incompleteVal.kt")
                 public void testIncompleteVal() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/incompleteVal.kt");
@@ -6971,6 +6976,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         public static class Resolve extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInResolve() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("ambiguityOnPropertiesWithTheSamePackageName.kt")
+            public void testAmbiguityOnPropertiesWithTheSamePackageName() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/resolve/ambiguityOnPropertiesWithTheSamePackageName.kt");
             }
             
             @TestMetadata("incompleteConstructorInvocation.kt")

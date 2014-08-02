@@ -351,7 +351,6 @@ public class ErrorUtils {
 
     public static boolean containsErrorType(@Nullable JetType type) {
         if (type == null) return false;
-        if (type instanceof PackageType) return false;
         if (type.isError()) return true;
         for (TypeProjection projection : type.getArguments()) {
             if (containsErrorType(projection.getType())) return true;

@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls.tasks;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -32,14 +31,13 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -84,25 +82,22 @@ public class TaskPrioritizer {
             @NotNull TracingStrategy tracing,
             @NotNull CallableDescriptorCollectors<D> callableDescriptorCollectors
     ) {
-        List<Pair<JetScope, ReceiverValue>> variants = new ArrayList<Pair<JetScope, ReceiverValue>>(2);
-
         ReceiverValue explicitReceiver = context.call.getExplicitReceiver();
-        if (explicitReceiver.exists() && explicitReceiver.getType() instanceof PackageType) {
-            JetType receiverType = explicitReceiver.getType();
-            variants.add(Pair.create(receiverType.getMemberScope(), NO_RECEIVER));
-            ReceiverValue value = ((PackageType) receiverType).getReceiverValue();
-            if (value.exists()) {
-                variants.add(Pair.create(context.scope, value));
+        ResolutionTaskHolder<D, F> result =
+                new ResolutionTaskHolder<D, F>(context, new MyPriorityProvider<D>(context), tracing);
+        TaskPrioritizerContext<D, F> taskPrioritizerContext =
+                new TaskPrioritizerContext<D, F>(name, result, context, context.scope, callableDescriptorCollectors);
+
+        if (explicitReceiver instanceof QualifierReceiver) {
+            QualifierReceiver qualifierReceiver = (QualifierReceiver) explicitReceiver;
+            doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(qualifierReceiver.getNestedClassesAndPackageMembersScope()));
+            ReceiverValue classObjectReceiver = qualifierReceiver.getClassObjectReceiver();
+            if (classObjectReceiver.exists()) {
+                doComputeTasks(classObjectReceiver, taskPrioritizerContext);
             }
         }
         else {
-            variants.add(Pair.create(context.scope, explicitReceiver));
-        }
-
-        ResolutionTaskHolder<D, F> result =
-                new ResolutionTaskHolder<D, F>(context, new MyPriorityProvider<D>(context), tracing);
-        for (Pair<JetScope, ReceiverValue> pair : variants) {
-            doComputeTasks(pair.second, new TaskPrioritizerContext<D, F>(name, result, context, pair.first, callableDescriptorCollectors));
+            doComputeTasks(explicitReceiver, taskPrioritizerContext);
         }
 
         return result.getTasks();
@@ -400,6 +395,10 @@ public class TaskPrioritizer {
             this.context = context;
             this.scope = scope;
             this.callableDescriptorCollectors = callableDescriptorCollectors;
+        }
+
+        private TaskPrioritizerContext<D, F> replaceScope(JetScope newScope) {
+            return new TaskPrioritizerContext<D, F>(name, result, context, newScope, callableDescriptorCollectors);
         }
     }
 }

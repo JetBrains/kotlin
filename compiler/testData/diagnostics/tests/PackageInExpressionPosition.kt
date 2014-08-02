@@ -13,7 +13,7 @@ val xssss = <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>foo<!>
 val f = { <!NO_CLASS_OBJECT!>System<!> }
 
 fun main(args : Array<String>) {
-    <!EXPRESSION_EXPECTED_PACKAGE_FOUND, VARIABLE_EXPECTED!>java<!> = null
+    <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>java<!> = null
     <!NO_CLASS_OBJECT!>System<!> = null
     <!NO_CLASS_OBJECT!>System<!>!!
     java.lang.<!NO_CLASS_OBJECT!>System<!> = null

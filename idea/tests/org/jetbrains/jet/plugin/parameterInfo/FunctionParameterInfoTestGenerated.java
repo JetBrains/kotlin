@@ -38,6 +38,11 @@ public class FunctionParameterInfoTestGenerated extends AbstractFunctionParamete
         doTest("idea/testData/parameterInfo/functionParameterInfo/Deprecated.kt");
     }
     
+    @TestMetadata("ExtensionOnClassObject.kt")
+    public void testExtensionOnClassObject() throws Exception {
+        doTest("idea/testData/parameterInfo/functionParameterInfo/ExtensionOnClassObject.kt");
+    }
+    
     @TestMetadata("InheritedFunctions.kt")
     public void testInheritedFunctions() throws Exception {
         doTest("idea/testData/parameterInfo/functionParameterInfo/InheritedFunctions.kt");

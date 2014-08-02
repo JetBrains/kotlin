@@ -231,11 +231,6 @@ public class ExpressionTypingUtils {
     ) {
         JetType type = receiverArgument.getType();
 
-        if (type instanceof PackageType) {
-            // This fake class ruins standard algorithms
-            return false;
-        }
-
         if (checkReceiverResolution(receiverArgument, type, callableDescriptor)) return true;
         if (type.isNullable()) {
             JetType notNullableType = TypeUtils.makeNotNullable(type);

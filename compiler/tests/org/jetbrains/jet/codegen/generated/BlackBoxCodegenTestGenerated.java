@@ -685,6 +685,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/classes/classObject.kt");
         }
         
+        @TestMetadata("classObjectAsExtensionReceiver.kt")
+        public void testClassObjectAsExtensionReceiver() throws Exception {
+            doTest("compiler/testData/codegen/box/classes/classObjectAsExtensionReceiver.kt");
+        }
+        
         @TestMetadata("classObjectAsStaticInitializer.kt")
         public void testClassObjectAsStaticInitializer() throws Exception {
             doTest("compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
