@@ -24,17 +24,18 @@ class CliAndroidUIXmlProcessor(project: Project, override val searchPath: String
 
     override var androidAppPackage: String = ""
 
+    override val resourceManager: AndroidResourceManagerBase = AndroidResourceManagerBase(project, searchPath)
 
     override fun lazySetup() {
         populateQueue()
-        androidAppPackage = readManifest()._package
+        androidAppPackage = resourceManager.readManifest()._package
     }
 
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
         val handler = AndroidXmlHandler({ id, wClass -> ids.add(AndroidWidget(id, wClass)) })
         try {
-            saxParser.parse(file.getVirtualFile()?.getInputStream()!!, handler)
+            resourceManager.saxParser.parse(file.getVirtualFile()?.getInputStream()!!, handler)
             return produceKotlinProperties(KotlinStringWriter(), ids).toString()
         }
         catch (e: Throwable) {
