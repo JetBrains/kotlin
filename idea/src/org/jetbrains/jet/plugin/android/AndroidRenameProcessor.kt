@@ -27,9 +27,6 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.xml.XmlAttributeValue
 import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper
 import org.jetbrains.android.util.AndroidResourceUtil
-import com.intellij.psi.xml.XmlFile
-import com.intellij.psi.XmlElementVisitor
-import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlAttribute
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {

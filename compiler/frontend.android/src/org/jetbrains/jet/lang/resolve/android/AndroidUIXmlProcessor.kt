@@ -16,26 +16,19 @@
 
 package org.jetbrains.jet.lang.resolve.android
 
-import org.jetbrains.jet.lang.psi.JetFile
 import java.util.HashMap
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.io.File
-import javax.xml.parsers.SAXParserFactory
-import javax.xml.parsers.SAXParser
-import com.intellij.openapi.project.Project
-import com.intellij.testFramework.LightVirtualFile
-import com.intellij.psi.PsiManager
-import java.io.FileInputStream
-import org.xml.sax.helpers.DefaultHandler
-import org.xml.sax.Attributes
-import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
 import java.util.Queue
-import com.intellij.psi.PsiFile
+import java.util.concurrent.ConcurrentLinkedQueue
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.testFramework.LightVirtualFile
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
 
 abstract class AndroidUIXmlProcessor(val project: Project) {
 
-    inner class NoUIXMLsFound : Exception("No android UI xmls found in $searchPath")
     class NoAndroidManifestFound : Exception("No android manifest file found in project root")
     class ManifestParsingFailed
 
@@ -48,14 +41,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
 
     protected abstract val searchPath: String?
     protected abstract val androidAppPackage: String
-
-    protected val saxParser: SAXParser = initSAX()
-
-    protected fun initSAX(): SAXParser {
-        val saxFactory = SAXParserFactory.newInstance()
-        saxFactory?.setNamespaceAware(true)
-        return saxFactory!!.newSAXParser()
-    }
 
     private val fileCache = HashMap<PsiFile, String>()
     private var lastCachedPsi: JetFile? = null
@@ -151,28 +136,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
     }
 
     protected abstract fun lazySetup()
-
-    protected fun readManifest(): AndroidManifest {
-        try {
-            val manifestXml = File(searchPath!!).getParentFile()!!.getParentFile()!!.listFiles { it.name == "AndroidManifest.xml" }!!.first()
-            var _package: String = ""
-            try {
-                saxParser.parse(FileInputStream(manifestXml), object : DefaultHandler() {
-                    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-                        if (localName == "manifest")
-                            _package = attributes.toMap()["package"] ?: ""
-                    }
-                })
-            }
-            catch (e: Exception) {
-                throw e
-            }
-            return AndroidManifest(_package)
-        }
-        catch (e: Exception) {
-            throw NoAndroidManifestFound()
-        }
-    }
 
     protected fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
         for (id in ids) {
