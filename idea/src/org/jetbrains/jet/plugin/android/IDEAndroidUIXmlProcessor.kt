@@ -32,7 +32,7 @@ class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project
 
     override protected fun lazySetup() {
         if (listenerSetUp) return
-        androidAppPackage = readManifest()._package
+        androidAppPackage = resourceManager.readManifest()._package
         populateQueue()
         listenerSetUp = true
     }

@@ -50,7 +50,6 @@ import com.intellij.openapi.diagnostic.Logger
 
 abstract class AndroidUIXmlProcessor(val project: Project) {
 
-    inner class NoUIXMLsFound : Exception("No android UI xmls found in $searchPath")
     class NoAndroidManifestFound : Exception("No android manifest file found in project root")
     class ManifestParsingFailed
 
@@ -63,14 +62,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
 
     protected abstract val searchPath: String?
     protected abstract val androidAppPackage: String
-
-    protected val saxParser: SAXParser = initSAX()
-
-    protected fun initSAX(): SAXParser {
-        val saxFactory = SAXParserFactory.newInstance()
-        saxFactory?.setNamespaceAware(true)
-        return saxFactory!!.newSAXParser()
-    }
 
     private val fileCache = HashMap<PsiFile, String>()
     private var lastCachedPsi: JetFile? = null
@@ -166,28 +157,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
     }
 
     protected abstract fun lazySetup()
-
-    protected fun readManifest(): AndroidManifest {
-        try {
-            val manifestXml = File(searchPath!!).getParentFile()!!.getParentFile()!!.listFiles { it.name == "AndroidManifest.xml" }!!.first()
-            var _package: String = ""
-            try {
-                saxParser.parse(FileInputStream(manifestXml), object : DefaultHandler() {
-                    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-                        if (localName == "manifest")
-                            _package = attributes.toMap()["package"] ?: ""
-                    }
-                })
-            }
-            catch (e: Exception) {
-                throw e
-            }
-            return AndroidManifest(_package)
-        }
-        catch (e: Exception) {
-            throw NoAndroidManifestFound()
-        }
-    }
 
     protected fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
         for (id in ids) {

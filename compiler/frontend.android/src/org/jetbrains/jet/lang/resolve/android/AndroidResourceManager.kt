@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 
 abstract class AndroidResourceManager(val project: Project, val searchPath: String?) {
     private val idPrefix = "@+id/"
+
     abstract fun getLayoutXmlFiles(): Collection<PsiFile>
     abstract fun idToXmlAttribute(id: String): PsiElement?
     abstract fun renameXmlAttr(elem: PsiElement, newName: String)
@@ -29,4 +30,8 @@ abstract class AndroidResourceManager(val project: Project, val searchPath: Stri
     public fun nameToId(name: String): String = idPrefix + name
     public fun idToName(id: String): String = id.replace(idPrefix, "")
     public fun isResourceId(str: String?): Boolean = str?.startsWith(idPrefix) ?: false
+
+    abstract fun readManifest(): AndroidManifest
+
+    inner class NoUIXMLsFound : Exception("No android UI xmls found in $searchPath")
 }
