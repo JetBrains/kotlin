@@ -59,7 +59,14 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
 
     private fun renameAttributeValue(attribute: XmlAttributeValue, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         val element1 = LazyValueResourceElementWrapper.computeLazyElement(attribute);
+        val processor = ServiceManager.getService(attribute.getProject(), javaClass<AndroidUIXmlProcessor>())
         if (element1 == null) return
-        val id = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue()!!)
+        val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue()!!)
+        val newPropName = processor!!.resourceManager.idToName(newName!!)
+        val props = processor.lastCachedPsi?.findChildrenByClass(javaClass<JetProperty>())
+        val matchedProps = props?.filter { it.getName() == oldPropName } ?: arrayListOf()
+        for (prop in matchedProps) {
+            allRenames[prop] = newPropName
+        }
     }
 }
