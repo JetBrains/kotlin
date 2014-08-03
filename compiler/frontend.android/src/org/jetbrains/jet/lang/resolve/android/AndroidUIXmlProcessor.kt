@@ -43,7 +43,7 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
     protected abstract val androidAppPackage: String
 
     private val fileCache = HashMap<PsiFile, String>()
-    private var lastCachedPsi: JetFile? = null
+    var lastCachedPsi: JetFile? = null
     protected val fileModificationTime: HashMap<PsiFile, Long> = HashMap()
 
     protected val filesToProcess: Queue<PsiFile> = ConcurrentLinkedQueue()
