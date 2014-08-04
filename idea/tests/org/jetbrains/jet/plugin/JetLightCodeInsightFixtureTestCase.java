@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.actions.internal.KotlinInternalModeToggleAction;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -47,6 +48,7 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
         VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        KotlinInternalModeToggleAction.OBJECT$.setEnabled(true);
     }
 
     @Override

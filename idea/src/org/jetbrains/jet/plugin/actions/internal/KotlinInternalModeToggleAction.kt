@@ -25,17 +25,21 @@ public class KotlinInternalModeToggleAction: ToggleAction("Kotlin Internal Mode"
     public class object {
         val INTERNAL_MODE_PROPERTY = "kotlin.internal.mode.enabled"
 
-        public fun isEnabled(): Boolean {
+        public var enabled: Boolean
+        get() {
             return PropertiesComponent.getInstance()!!.getBoolean(INTERNAL_MODE_PROPERTY, false)
+        }
+        set(value) {
+            PropertiesComponent.getInstance()!!.setValue(INTERNAL_MODE_PROPERTY, value.toString())
         }
     }
 
     override fun isSelected(e: AnActionEvent?): Boolean {
-        return isEnabled()
+        return enabled
     }
 
     override fun setSelected(e: AnActionEvent?, state: Boolean) {
-        PropertiesComponent.getInstance()!!.setValue(INTERNAL_MODE_PROPERTY, "$state")
+        enabled = state
 
         DaemonCodeAnalyzer.getInstance(e!!.getProject())!!.settingsChanged()
     }

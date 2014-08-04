@@ -264,7 +264,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
         @NotNull
         private static String getMessage(@NotNull Diagnostic diagnostic) {
             String message = IdeErrorMessages.RENDERER.render(diagnostic);
-            if (KotlinInternalModeToggleAction.OBJECT$.isEnabled() || ApplicationManager.getApplication().isUnitTestMode()) {
+            if (KotlinInternalModeToggleAction.OBJECT$.getEnabled() || ApplicationManager.getApplication().isUnitTestMode()) {
                 String factoryName = diagnostic.getFactory().getName();
                 if (message.startsWith("<html>")) {
                     message = String.format("<html>[%s] %s", factoryName, message.substring("<html>".length()));
@@ -281,7 +281,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
         @NotNull
         private static String getDefaultMessage(@NotNull Diagnostic diagnostic) {
             String message = DefaultErrorMessages.RENDERER.render(diagnostic);
-            if (KotlinInternalModeToggleAction.OBJECT$.isEnabled() || ApplicationManager.getApplication().isUnitTestMode()) {
+            if (KotlinInternalModeToggleAction.OBJECT$.getEnabled() || ApplicationManager.getApplication().isUnitTestMode()) {
                 return String.format("[%s] %s", diagnostic.getFactory().getName(), message);
             }
             return message;

@@ -37,7 +37,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 public class DebugInfoAnnotator implements Annotator {
 
     public static boolean isDebugInfoEnabled() {
-        return KotlinInternalModeToggleAction.OBJECT$.isEnabled();
+        return KotlinInternalModeToggleAction.OBJECT$.getEnabled();
     }
 
     @Override
