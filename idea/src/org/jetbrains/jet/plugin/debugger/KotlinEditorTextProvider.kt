@@ -24,7 +24,6 @@ import com.intellij.openapi.util.Pair
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import org.jetbrains.jet.plugin.JetFileType
-import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetElement
@@ -33,9 +32,11 @@ import org.jetbrains.jet.lang.psi.JetThisExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetOperationExpression
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import org.jetbrains.jet.lang.psi.JetSuperExpression
 import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.jet.lang.psi.JetUserType
+import org.jetbrains.jet.lang.psi.JetImportDirective
+import org.jetbrains.jet.lang.psi.JetPackageDirective
 
 class KotlinEditorTextProvider : EditorTextProvider {
     override fun getEditorText(elementAtCaret: PsiElement): TextWithImports? {
@@ -51,6 +52,10 @@ class KotlinEditorTextProvider : EditorTextProvider {
 
     class object {
         fun findExpressionInner(element: PsiElement): JetExpression? {
+            if (PsiTreeUtil.getParentOfType(element, javaClass<JetUserType>(), javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) != null) {
+                return null
+            }
+
             val jetElement = PsiTreeUtil.getParentOfType(element, javaClass<JetElement>())
             if (jetElement == null) return null
 
@@ -84,13 +89,12 @@ class KotlinEditorTextProvider : EditorTextProvider {
                 else -> null
             }
 
-            if (newExpression is JetExpression) return newExpression
-
-            if (jetElement is JetSimpleNameExpression) {
-                return jetElement
+            return when {
+                newExpression is JetExpression -> newExpression
+                jetElement is JetSimpleNameExpression -> jetElement
+                else -> null
             }
 
-            return null
         }
     }
 }
