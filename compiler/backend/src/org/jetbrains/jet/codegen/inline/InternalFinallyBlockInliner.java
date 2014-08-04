@@ -24,9 +24,7 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.AsmUtil;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.tree.*;
 
 import java.util.*;
@@ -79,9 +77,12 @@ public class InternalFinallyBlockInliner {
         //sortTryCatchBlocks();/*TODO maybe remove*/
         mapLabelsToTryCatchBlocks();
 
-        MaxCalcNode tempCalcNode = new MaxCalcNode(inlineFun.desc, (inlineFun.access & Opcodes.ACC_STATIC) != 0);
+        MaxLocalsCalculator tempCalcNode = new MaxLocalsCalculator(
+                InlineCodegenUtil.API,
+                inlineFun.access, inlineFun.desc, null
+        );
         inlineFun.accept(tempCalcNode);
-        return tempCalcNode.getMaxLocal();
+        return tempCalcNode.getMaxLocals();
     }
 
     private void processInlineFunFinallyBlocks() {
