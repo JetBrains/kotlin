@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> implements MultiRangeReference {
+public class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> implements MultiRangeReference {
 
     public JetInvokeFunctionReference(@NotNull JetCallExpression expression) {
         super(expression);
