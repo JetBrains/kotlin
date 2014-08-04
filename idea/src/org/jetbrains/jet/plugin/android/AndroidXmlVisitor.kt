@@ -20,8 +20,9 @@ import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlAttribute
 
-class AndroidXmlVisitor(val elementCallback: (String, String) -> Unit) : XmlElementVisitor() {
+class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
 
     override fun visitElement(element: PsiElement) {
         element.acceptChildren(this)
@@ -35,7 +36,7 @@ class AndroidXmlVisitor(val elementCallback: (String, String) -> Unit) : XmlElem
         val idPrefix = "@+id/"
         val attribute = tag?.getAttribute("android:id")
         if (attribute != null && attribute.getValue() != null) {
-            elementCallback(attribute.getValue()!!.replace(idPrefix, ""), tag!!.getLocalName())
+            elementCallback(attribute.getValue()!!.replace(idPrefix, ""), tag!!.getLocalName(), attribute)
         }
         tag?.acceptChildren(this)
     }

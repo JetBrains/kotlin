@@ -78,6 +78,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         for (prop in matchedProps) {
             allRenames[prop] = newPropName
         }
+        processor.resourceManager.renameProperty(oldPropName!!, newPropName)
     }
 
     private fun renameLightClassField(field: LightElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {

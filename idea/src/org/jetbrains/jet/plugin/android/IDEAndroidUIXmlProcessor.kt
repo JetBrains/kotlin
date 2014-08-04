@@ -22,13 +22,12 @@ import java.util.ArrayList
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.resolve.android.AndroidWidget
 import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
-import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
 
 class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project) {
     override val searchPath: String? = project.getBasePath() + "/res/layout/"
     override var androidAppPackage: String = ""
 
-    override val resourceManager: AndroidResourceManager = IDEAndroidResourceManager(project, searchPath)
+    override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(project, searchPath)
 
     override protected fun lazySetup() {
         if (listenerSetUp) return
@@ -39,7 +38,11 @@ class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project
 
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
-        file.accept(AndroidXmlVisitor({ id, wClass -> ids.add(AndroidWidget(id, wClass)) }))
+        resourceManager.resetAttributeCache()
+        file.accept(AndroidXmlVisitor { id, wClass, valueElement ->
+            ids.add(AndroidWidget(id, wClass))
+            resourceManager.addMapping(id, valueElement)
+        })
         return produceKotlinProperties(KotlinStringWriter(), ids).toString()
     }
 }

@@ -23,10 +23,14 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.PsiReferenceExpression
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
+        // FIXME: find a way to filter out more bad sourceElements before they hit idToXmlAttribute() resulting in cache rebuild
         if (sourceElement is LeafPsiElement) {
+            val refExp = PsiTreeUtil.getParentOfType(sourceElement, javaClass<PsiReferenceExpression>())
             val parser = ServiceManager.getService(sourceElement.getProject(), javaClass<AndroidUIXmlProcessor>())
             val psiElement = parser?.resourceManager?.idToXmlAttribute(sourceElement.getText())
             if (psiElement != null) {
