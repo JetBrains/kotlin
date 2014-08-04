@@ -21,53 +21,30 @@ import org.jetbrains.jet.lang.resolve.android.AndroidResourceManagerBase
 import com.intellij.psi.PsiElement
 import java.util.HashMap
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlFile
-import com.intellij.psi.XmlElementVisitor
-import com.intellij.psi.xml.XmlTag
 
 public class IDEAndroidResourceManager(project: Project, searchPath: String?) : AndroidResourceManagerBase(project, searchPath) {
 
     private val idToXmlAttributeCache = HashMap<String, PsiElement>()
 
-            ;{
-        setupElementCache()
+    public fun addMapping(name: String, attr: XmlAttribute) {
+        idToXmlAttributeCache[name] = attr
     }
 
-    private fun setupElementCache() {
+    public fun resetAttributeCache() {
         idToXmlAttributeCache.clear()
-        for (file in getLayoutXmlFiles()) {
-            if (file is XmlFile) {
-                file.accept(object : XmlElementVisitor() {
-                    override fun visitElement(element: PsiElement) {
-                        element.acceptChildren(this)
-                    }
-                    override fun visitXmlTag(tag: XmlTag?) {
-                        val attribute = tag?.getAttribute("android:id")
-                        val s = attribute?.getValue()
-                        if (attribute != null && s != null && isResourceId(s)) {
-                            idToXmlAttributeCache[idToName(s)] = attribute
-                        }
-                        tag?.acceptChildren(this)
-                    }
-                })
-            }
-        }
-
     }
+
     override fun idToXmlAttribute(id: String): PsiElement? {
         val element = idToXmlAttributeCache[id]
-        // element not in cache - files might have changed
-        if (element == null) {
-            setupElementCache()
-            return idToXmlAttributeCache[id]
-        }
         return element
     }
+
     override fun renameXmlAttr(elem: PsiElement, newName: String) {
         val xmlAttr = elem as XmlAttribute
         idToXmlAttributeCache.remove(xmlAttr.getName())
         idToXmlAttributeCache[newName] = xmlAttr
     }
+
     override fun renameProperty(oldName: String, newName: String) {
         val oldElem = idToXmlAttributeCache[oldName]
         idToXmlAttributeCache.remove(oldName)
