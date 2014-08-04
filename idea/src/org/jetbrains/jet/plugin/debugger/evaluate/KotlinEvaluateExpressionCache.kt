@@ -30,8 +30,6 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
@@ -40,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.codegen.AsmUtil
 import org.apache.log4j.Logger
+import org.jetbrains.jet.plugin.refactoring.runReadAction
 
 class KotlinEvaluateExpressionCache(val project: Project) {
 
@@ -101,7 +100,7 @@ class KotlinEvaluateExpressionCache(val project: Project) {
         val platformClasses = JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmName)
         if (platformClasses.notEmpty) return platformClasses.first()
 
-        return ApplicationManager.getApplication()?.runReadAction<ClassDescriptor> {
+        return runReadAction {
             val classes = JavaPsiFacade.getInstance(project).findClasses(jvmName.asString(), GlobalSearchScope.allScope(project))
             if (classes.isEmpty()) null else JavaResolveExtension[project].resolveClass(JavaClassImpl(classes.first()))
         }

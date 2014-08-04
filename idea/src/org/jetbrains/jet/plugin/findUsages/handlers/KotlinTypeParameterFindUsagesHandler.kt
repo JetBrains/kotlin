@@ -19,22 +19,16 @@ package org.jetbrains.jet.plugin.findUsages.handlers
 import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinTypeParameterFindUsagesDialog
 import org.jetbrains.jet.plugin.search.usagesSearch.DefaultSearchHelper
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearch
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchRequest
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.jet.plugin.findUsages.toSearchTarget
 import org.jetbrains.jet.plugin.search.usagesSearch.search
+import org.jetbrains.jet.plugin.refactoring.runReadAction
 
 public class KotlinTypeParameterFindUsagesHandler(
         element: JetNamedDeclaration,
@@ -49,7 +43,7 @@ public class KotlinTypeParameterFindUsagesHandler(
     }
 
     protected override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
-        return ApplicationManager.getApplication()!!.runReadAction<Boolean> {
+        return runReadAction {
             val target = options.toSearchTarget(element as JetNamedDeclaration, true)
             val request = DefaultSearchHelper<JetNamedDeclaration>().newRequest(target)
             request.search().all {ref -> KotlinFindUsagesHandler.processUsage(processor, ref)}

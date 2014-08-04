@@ -43,6 +43,7 @@ import com.intellij.openapi.module.Module
 import java.io.File
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.jet.plugin.search.allScope
+import org.jetbrains.jet.plugin.refactoring.runWriteAction
 
 class RunConfigurationTest: CodeInsightTestCase() {
     override fun getProject() = myProject!!
@@ -61,9 +62,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
     fun testDependencyModuleClasspath() {
         val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), getProject().getBaseDir()!!).src
 
-        val moduleWithDependencyDir = ApplicationManager.getApplication()!!.runWriteAction(Computable<VirtualFile> {
-            getProject().getBaseDir()!!.createChildDirectory(this, "moduleWithDependency")
-        })!!
+        val moduleWithDependencyDir = runWriteAction { getProject().getBaseDir()!!.createChildDirectory(this, "moduleWithDependency") }!!
 
         val moduleWithDependency = createModule("moduleWithDependency")
         ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, getTestProjectJdk())
@@ -101,7 +100,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
             PsiTestUtil.addSourceRoot(getModule(), testDir, true)
         }
 
-        val (srcOutDir, testOutDir) = ApplicationManager.getApplication()!!.runWriteAction(Computable<Pair<VirtualFile, VirtualFile>> {
+        val (srcOutDir, testOutDir) = runWriteAction {
             val outDir = outputParentDir.createChildDirectory(this, "out")
             val srcOutDir = outDir.createChildDirectory(this, "production")
             val testOutDir = outDir.createChildDirectory(this, "test")
@@ -110,7 +109,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
             PsiTestUtil.setCompilerOutputPath(configModule, testOutDir.getUrl(), true)
 
             Pair(srcOutDir, testOutDir)
-        })!!
+        }!!
 
         PsiDocumentManager.getInstance(getProject()).commitAllDocuments()
 

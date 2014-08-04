@@ -58,23 +58,22 @@ import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKo
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.search.allScope
+import org.jetbrains.jet.plugin.refactoring.runWriteAction
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
         fun extractCaretOffset(doc: Document): Int {
-            return ApplicationManager.getApplication()!!.runWriteAction(
-                    Computable<Int> {
-                        val text = StringBuilder(doc.getText())
-                        val offset = text.indexOf("<caret>")
+            return runWriteAction {
+                val text = StringBuilder(doc.getText())
+                val offset = text.indexOf("<caret>")
 
-                        if (offset >= 0) {
-                            text.delete(offset, offset + "<caret>".length)
-                            doc.setText(text.toString())
-                        }
+                if (offset >= 0) {
+                    text.delete(offset, offset + "<caret>".length)
+                    doc.setText(text.toString())
+                }
 
-                        offset
-                    }
-            )!!
+                offset
+            }!!
         }
 
         val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject

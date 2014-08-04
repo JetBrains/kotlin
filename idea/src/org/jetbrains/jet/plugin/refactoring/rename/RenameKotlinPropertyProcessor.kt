@@ -23,8 +23,6 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.asJava.LightClassUtil
 import com.intellij.psi.search.searches.OverridingMethodsSearch
-import com.intellij.openapi.util.Computable
-import org.jetbrains.jet.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.SyntheticElement
 import com.intellij.refactoring.util.RefactoringUtil
@@ -36,15 +34,14 @@ import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.openapi.ui.Messages
-import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.asJava.namedUnwrappedElement
 import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.plugin.refactoring.runReadAction
 
 public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element.namedUnwrappedElement is JetProperty
@@ -86,9 +83,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
         val jetProperty = element?.namedUnwrappedElement as? JetProperty
         if (jetProperty == null) throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
 
-        val propertyMethods = ApplicationManager.getApplication()!!.runReadAction(Computable<PropertyAccessorsPsiMethods> {
-            LightClassUtil.getLightClassPropertyMethods(jetProperty)
-        })!!
+        val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(jetProperty) }!!
 
         for (propertyMethod in propertyMethods) {
             addRenameElements(propertyMethod, jetProperty.getName(), newName, allRenames, scope)

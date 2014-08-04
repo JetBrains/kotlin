@@ -21,8 +21,6 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.plugin.refactoring.createTempCopy
@@ -39,6 +37,7 @@ import org.jetbrains.jet.lang.psi.JetImportList
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
+import org.jetbrains.jet.plugin.refactoring.runReadAction
 
 fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
@@ -64,46 +63,46 @@ fun getFunctionForExtractedFragment(
         }.joinToString(", ")
     }
 
-    return ApplicationManager.getApplication()?.runReadAction(object: Computable<JetNamedFunction> {
-        override fun compute(): JetNamedFunction? {
-            checkForSyntacticErrors(codeFragment)
+    fun generateFunction(): JetNamedFunction? {
+        checkForSyntacticErrors(codeFragment)
 
-            val originalFile = breakpointFile as JetFile
+        val originalFile = breakpointFile as JetFile
 
-            val lineStart = CodeInsightUtils.getStartLineOffset(originalFile, breakpointLine)
-            if (lineStart == null) return null
+        val lineStart = CodeInsightUtils.getStartLineOffset(originalFile, breakpointLine)
+        if (lineStart == null) return null
 
-            val tmpFile = originalFile.createTempCopy { it }
-            tmpFile.skipVisibilityCheck = true
+        val tmpFile = originalFile.createTempCopy { it }
+        tmpFile.skipVisibilityCheck = true
 
-            val elementAtOffset = tmpFile.findElementAt(lineStart)
-            if (elementAtOffset == null) return null
+        val elementAtOffset = tmpFile.findElementAt(lineStart)
+        if (elementAtOffset == null) return null
 
-            val contextElement: PsiElement = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
+        val contextElement: PsiElement = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
 
-            addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
+        addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
 
-            val newDebugExpression = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
-            if (newDebugExpression == null) return null
+        val newDebugExpression = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
+        if (newDebugExpression == null) return null
 
-            val targetSibling = tmpFile.getDeclarations().firstOrNull()
-            if (targetSibling == null) return null
+        val targetSibling = tmpFile.getDeclarations().firstOrNull()
+        if (targetSibling == null) return null
 
-            val analysisResult = ExtractionData(
-                    tmpFile, Collections.singletonList(newDebugExpression), targetSibling, ExtractionOptions(false)
-            ).performAnalysis()
-            if (analysisResult.status != Status.SUCCESS) {
-                throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
-            }
-
-            val validationResult = analysisResult.descriptor!!.validate()
-            if (!validationResult.conflicts.isEmpty()) {
-                throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet()?.map { it.getText() }?.makeString(",")}")
-            }
-
-            return validationResult.descriptor.generateFunction(true)
+        val analysisResult = ExtractionData(
+                tmpFile, Collections.singletonList(newDebugExpression), targetSibling, ExtractionOptions(false)
+        ).performAnalysis()
+        if (analysisResult.status != Status.SUCCESS) {
+            throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
         }
-    })
+
+        val validationResult = analysisResult.descriptor!!.validate()
+        if (!validationResult.conflicts.isEmpty()) {
+            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet()?.map { it.getText() }?.makeString(",")}")
+        }
+
+        return validationResult.descriptor.generateFunction(true)
+    }
+
+    return runReadAction { generateFunction() }
 }
 
 private fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
