@@ -78,7 +78,7 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
         }
 
         val packageName = file.getPackageDirective()?.getFqName()?.asString()
-        if (packageName != null) {
+        if (packageName != null && packageName.isNotEmpty()) {
             codeFragment.addImportsFromString("import $packageName.*")
         }
         return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment as JetCodeFragment, position))
