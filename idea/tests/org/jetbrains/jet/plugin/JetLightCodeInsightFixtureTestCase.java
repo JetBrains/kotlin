@@ -43,16 +43,21 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
+    private boolean kotlinInternalModeOriginalValue;
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
         VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+
+        kotlinInternalModeOriginalValue = KotlinInternalModeToggleAction.OBJECT$.getEnabled();
         KotlinInternalModeToggleAction.OBJECT$.setEnabled(true);
     }
 
     @Override
     protected void tearDown() throws Exception {
+        KotlinInternalModeToggleAction.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
         VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
