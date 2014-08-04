@@ -122,32 +122,26 @@ public class JetCompletionContributor : CompletionContributor() {
             return
         }
 
-        val jetReference = getJetReference(parameters)
-        if (jetReference != null) {
-            try {
-                result.restartCompletionWhenNothingMatches()
+        try {
+            result.restartCompletionWhenNothingMatches()
 
-                val configuration = CompletionSessionConfiguration(parameters)
-                if (parameters.getCompletionType() == CompletionType.BASIC) {
-                    val somethingAdded = BasicCompletionSession(configuration, parameters, result, jetReference).complete()
-                    if (!somethingAdded && parameters.getInvocationCount() < 2) {
-                        // Rerun completion if nothing was found
-                        val newConfiguration = CompletionSessionConfiguration(completeNonImportedDeclarations = true, completeNonAccessibleDeclarations = parameters.getInvocationCount() > 0)
-                        BasicCompletionSession(newConfiguration, parameters, result, jetReference).complete()
-                    }
-                }
-                else {
-                    SmartCompletionSession(configuration, parameters, result, jetReference).complete()
+            val configuration = CompletionSessionConfiguration(parameters)
+            if (parameters.getCompletionType() == CompletionType.BASIC) {
+                val somethingAdded = BasicCompletionSession(configuration, parameters, result).complete()
+                if (!somethingAdded && parameters.getInvocationCount() < 2) {
+                    // Rerun completion if nothing was found
+                    val newConfiguration = CompletionSessionConfiguration(completeNonImportedDeclarations = true, completeNonAccessibleDeclarations = parameters.getInvocationCount() > 0)
+                    BasicCompletionSession(newConfiguration, parameters, result).complete()
                 }
             }
-            catch (e: ProcessCanceledException) {
-                throw rethrowWithCancelIndicator(e)
+            else {
+                SmartCompletionSession(configuration, parameters, result).complete()
             }
         }
+        catch (e: ProcessCanceledException) {
+            throw rethrowWithCancelIndicator(e)
+        }
     }
-
-    private fun getJetReference(parameters: CompletionParameters): JetSimpleNameReference?
-            = parameters.getPosition().getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
 
     private fun isAtEndOfLine(offset: Int, document: Document): Boolean {
         var i = offset
