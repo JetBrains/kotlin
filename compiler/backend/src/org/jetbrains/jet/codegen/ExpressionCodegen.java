@@ -2849,34 +2849,46 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue genCmpWithZero(JetExpression exp, Type expType, IElementType opToken) {
-        v.iconst(1);
         gen(exp, expType);
-        Label ok = new Label();
+        Label trueLabel = new Label();
+        Label afterLabel = new Label();
         if (JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
-            v.ifeq(ok);
+            v.ifeq(trueLabel);
         }
         else {
-            v.ifne(ok);
+            v.ifne(trueLabel);
         }
-        v.pop();
+
         v.iconst(0);
-        v.mark(ok);
+        v.goTo(afterLabel);
+
+        v.mark(trueLabel);
+        v.iconst(1);
+
+        v.mark(afterLabel);
+
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
     private StackValue genCmpWithNull(JetExpression exp, Type expType, IElementType opToken) {
-        v.iconst(1);
         gen(exp, boxType(expType));
-        Label ok = new Label();
+        Label trueLabel = new Label();
+        Label afterLabel = new Label();
         if (JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
-            v.ifnull(ok);
+            v.ifnull(trueLabel);
         }
         else {
-            v.ifnonnull(ok);
+            v.ifnonnull(trueLabel);
         }
-        v.pop();
+
         v.iconst(0);
-        v.mark(ok);
+        v.goTo(afterLabel);
+
+        v.mark(trueLabel);
+        v.iconst(1);
+
+        v.mark(afterLabel);
+
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
