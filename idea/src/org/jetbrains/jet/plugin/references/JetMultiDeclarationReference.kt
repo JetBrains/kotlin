@@ -24,8 +24,7 @@ import com.intellij.openapi.util.TextRange
 class JetMultiDeclarationReference(element: JetMultiDeclaration) : JetMultiReference<JetMultiDeclaration>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         return expression.getEntries().map { entry ->
-            //TODO: remove getOriginal
-            context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)?.getCandidateDescriptor()?.getOriginal()
+            context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)?.getCandidateDescriptor()
         }.filterNotNull()
     }
 

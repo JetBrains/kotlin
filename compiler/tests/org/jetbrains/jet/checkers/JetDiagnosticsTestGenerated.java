@@ -1777,8 +1777,14 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/dataClasses/componentNamedComponent1.kt");
             }
             
+            @TestMetadata("conflictingCopyOverloads.kt")
+            public void testConflictingCopyOverloads() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataClasses/conflictingCopyOverloads.kt");
+            }
+            
             @TestMetadata("conflictingOverloads.kt")
-            public void testConflictingOverloads() throws Exception {
+            public void
+            testConflictingOverloads() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataClasses/conflictingOverloads.kt");
             }
             

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -169,7 +170,7 @@ public class OverloadResolver {
                 }
 
                 OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(member, member2);
-                if (!overloadable.isSuccess()) {
+                if (!overloadable.isSuccess() && member.getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED) {
                     JetDeclaration jetDeclaration = (JetDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
                     if (jetDeclaration != null) {
                         redeclarations.add(Pair.create(jetDeclaration, member));

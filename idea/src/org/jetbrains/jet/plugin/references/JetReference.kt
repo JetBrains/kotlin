@@ -115,12 +115,14 @@ abstract class AbstractJetReference<T : JetElement>(element: T)
     private fun resolveToPsiElements(targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
         val result = HashSet<PsiElement>()
         val project = expression.getProject()
-        result.addAll(DescriptorToSourceUtils.descriptorToDeclarations(targetDescriptor))
-        result.addAll(DescriptorToDeclarationUtil.findDecompiledAndBuiltInDeclarations(project, targetDescriptor))
+        // todo: remove getOriginal()
+        val originalDescriptor = targetDescriptor.getOriginal()
+        result.addAll(DescriptorToSourceUtils.descriptorToDeclarations(originalDescriptor))
+        result.addAll(DescriptorToDeclarationUtil.findDecompiledAndBuiltInDeclarations(project, originalDescriptor))
 
-        if (targetDescriptor is PackageViewDescriptor) {
+        if (originalDescriptor is PackageViewDescriptor) {
             val psiFacade = JavaPsiFacade.getInstance(project)
-            val fqName = (targetDescriptor as PackageViewDescriptor).getFqName().asString()
+            val fqName = (originalDescriptor as PackageViewDescriptor).getFqName().asString()
             ContainerUtil.addIfNotNull(result, psiFacade.findPackage(fqName))
             ContainerUtil.addIfNotNull(result, psiFacade.findClass(fqName, project.allScope()))
         }

@@ -390,7 +390,7 @@ public class DescriptorResolver {
                 Annotations.EMPTY,
                 Name.identifier(functionName),
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
-                SourceElement.NO_SOURCE
+                parameter.getSource()
         );
 
         functionDescriptor.initialize(

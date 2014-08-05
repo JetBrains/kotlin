@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import kotlin.Function0;
 import kotlin.Function1;
@@ -43,6 +44,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
@@ -63,6 +65,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -75,7 +78,6 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.DelegationToTraitImpl;
@@ -821,7 +823,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         @Override
         public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter) {
-            functionCodegen.generateMethod(OtherOrigin(myClass, function), typeMapper.mapSignature(function), function, new FunctionGenerationStrategy() {
+            PsiElement originalElement = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
+            functionCodegen.generateMethod(OtherOrigin(originalElement, function), typeMapper.mapSignature(function), function, new FunctionGenerationStrategy() {
                 @Override
                 public void generateBody(
                         @NotNull MethodVisitor mv,

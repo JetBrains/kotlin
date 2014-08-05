@@ -62,6 +62,10 @@ public final class JvmAbi {
         return isDelegated ? propertyName.asString() + DELEGATED_PROPERTY_NAME_SUFFIX : propertyName.asString();
     }
 
+    public static boolean isAccessorName(String name) {
+        return name.startsWith(JvmAbi.GETTER_PREFIX) || name.startsWith(JvmAbi.SETTER_PREFIX);
+    }
+
     private JvmAbi() {
     }
 }
