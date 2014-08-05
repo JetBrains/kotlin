@@ -16,13 +16,7 @@
 
 package org.jetbrains.jet.plugin.completion
 
-import com.intellij.codeInsight.completion.CompletionContributor
-import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.patterns.PlatformPatterns
 import org.jetbrains.jet.lang.psi.JetValueArgument
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.util.ProcessingContext
-import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionParameters
 import org.jetbrains.jet.lexer.JetTokens
 import com.intellij.psi.util.PsiTreeUtil
@@ -31,13 +25,11 @@ import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.JetIcons
-import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.psi.filters.AndFilter
 import org.jetbrains.jet.lang.psi.JetValueArgumentName
 import com.intellij.psi.filters.position.ParentElementFilter
@@ -46,8 +38,8 @@ import com.intellij.psi.filters.ClassFilter
 import org.jetbrains.jet.plugin.util.FirstChildInParentFilter
 import org.jetbrains.jet.lang.psi.psiUtil.getCallNameExpression
 
-public class KotlinNamedParametersContributor : CompletionContributor() {
-    private val InNamedParameterFilter = AndFilter(
+object NamedParametersCompletion {
+    private val positionFilter = AndFilter(
             LeafElementFilter(JetTokens.IDENTIFIER),
             OrFilter(
                     AndFilter(
@@ -56,25 +48,16 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
                     ),
                     ParentElementFilter(ClassFilter(javaClass<JetValueArgumentName>()), 2)
             )
-    );
+    )
 
-    {
-        extend(CompletionType.BASIC,
-               PlatformPatterns.psiElement().and(FilterPattern(InNamedParameterFilter)),
-               object : CompletionProvider<CompletionParameters>() {
-                   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-                       doParamsCompletion(parameters, result)
-                   }
-               })
-    }
+    public fun complete(parameters: CompletionParameters, collector: LookupElementsCollector) {
+        val position = parameters.getPosition()
+        if (!positionFilter.isAcceptable(position, position)) return
 
-    private fun doParamsCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
-        val valueArgument = PsiTreeUtil.getParentOfType(parameters.getPosition(), javaClass<JetValueArgument>())!!
+        val valueArgument = PsiTreeUtil.getParentOfType(position, javaClass<JetValueArgument>())!!
 
         val callElement = PsiTreeUtil.getParentOfType(valueArgument, javaClass<JetCallElement>()) ?: return
         val callSimpleName = callElement.getCallNameExpression() ?: return
-
-        val kotlinResultSet = result.addKotlinSorting(parameters)
 
         val callReference = callSimpleName.getReference() as JetReference
 
@@ -87,7 +70,7 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
 
             for (parameter in funDescriptor.getValueParameters()) {
                 val name = parameter.getName().asString()
-                if (result.getPrefixMatcher().prefixMatches(name) && name !in usedArguments) {
+                if (name !in usedArguments) {
                     val lookupElement = LookupElementBuilder.create("$name")
                             .withPresentableText("$name = ")
                             .withTailText("${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
@@ -96,7 +79,7 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
                             .assignPriority(ItemPriority.NAMED_PARAMETER)
                     lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_EQ, true);
 
-                    kotlinResultSet.addElement(lookupElement)
+                    collector.addElement(lookupElement)
                 }
             }
         }

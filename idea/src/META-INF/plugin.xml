@@ -233,11 +233,6 @@
                             order="after JetCompletionContributor"
                             implementationClass="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor"/>
 
-    <completion.contributor language="jet"
-                            id="KotlinNamedParametersContributor"
-                            order="after JetLiveTemplateCompletionContributor"
-                            implementationClass="org.jetbrains.jet.plugin.completion.KotlinNamedParametersContributor"/>
-
     <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.UnfocusedNameIdentifier"/>
     <completion.confidence language="jet"
                            implementationClass="org.jetbrains.jet.plugin.completion.confidence.UnfocusedPossibleFunctionParameter"/>

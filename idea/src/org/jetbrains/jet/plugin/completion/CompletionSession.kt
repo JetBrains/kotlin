@@ -105,6 +105,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         KeywordCompletion().complete(parameters, collector)
+
+        NamedParametersCompletion.complete(parameters, collector)
     }
 
     private fun addNonImported() {
