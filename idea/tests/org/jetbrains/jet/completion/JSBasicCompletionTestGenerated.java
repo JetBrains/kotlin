@@ -334,6 +334,16 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest("idea/testData/completion/basic/common/NamedObject.kt");
         }
         
+        @TestMetadata("NestedClassNameForExtension.kt")
+        public void testNestedClassNameForExtension() throws Exception {
+            doTest("idea/testData/completion/basic/common/NestedClassNameForExtension.kt");
+        }
+        
+        @TestMetadata("NestedClassNameForExtension2.kt")
+        public void testNestedClassNameForExtension2() throws Exception {
+            doTest("idea/testData/completion/basic/common/NestedClassNameForExtension2.kt");
+        }
+        
         @TestMetadata("NoClassNameDuplication.kt")
         public void testNoClassNameDuplication() throws Exception {
             doTest("idea/testData/completion/basic/common/NoClassNameDuplication.kt");

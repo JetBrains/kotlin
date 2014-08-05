@@ -27,19 +27,20 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 
 import com.intellij.patterns.PsiJavaPatterns.elementType
 import com.intellij.patterns.PsiJavaPatterns.psiElement
-import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.jet.lang.psi.JetTypeReference
 
 public class JetCompletionContributor : CompletionContributor() {
 
     private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(psiElement().withText(""), psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)))
 
-    private val EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER: String = "KotlinExtensionDummy.fake() {}" // A way to add reference into file at completion place
-    private val EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement().afterLeaf(JetTokens.FUN_KEYWORD.toString(), JetTokens.VAL_KEYWORD.toString(), JetTokens.VAR_KEYWORD.toString())
+    private val EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER = "KotlinExtensionDummy.fake() {}" // A way to add reference into file at completion place
+    private val EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN = psiElement().afterLeaf(JetTokens.FUN_KEYWORD.toString(), JetTokens.VAL_KEYWORD.toString(), JetTokens.VAR_KEYWORD.toString())
 
     ;{
         val provider = object : CompletionProvider<CompletionParameters>() {
@@ -57,12 +58,15 @@ public class JetCompletionContributor : CompletionContributor() {
 
         val offset = context.getStartOffset()
         val tokenBefore = psiFile.findElementAt(Math.max(0, offset - 1))
+
         val dummyIdentifier = when {
             context.getCompletionType() == CompletionType.SMART -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
 
             PackageDirectiveCompletion.ACTIVATION_PATTERN.accepts(tokenBefore) -> PackageDirectiveCompletion.DUMMY_IDENTIFIER
 
             EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(tokenBefore) -> EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER
+
+            tokenBefore != null && isExtensionReceiverAfterDot(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "."
 
             else -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
         }
@@ -100,6 +104,25 @@ public class JetCompletionContributor : CompletionContributor() {
                 }
             }
         }
+    }
+
+    private val declarationKeywords = setOf(JetTokens.FUN_KEYWORD, JetTokens.VAL_KEYWORD, JetTokens.VAR_KEYWORD)
+
+    private fun isExtensionReceiverAfterDot(tokenBefore: PsiElement): Boolean {
+        var prev = tokenBefore.getPrevSibling()
+        if (tokenBefore.getNode()!!.getElementType() != JetTokens.DOT) {
+            if (prev == null || prev!!.getNode()!!.getElementType() != JetTokens.DOT) return false
+            prev = prev!!.getPrevSibling()
+        }
+
+        while (prev != null) {
+            if (prev!!.getNode()!!.getElementType() in declarationKeywords) {
+                return true
+            }
+            if (prev !is PsiComment && prev !is PsiWhiteSpace && prev !is JetTypeReference) return false
+            prev = prev!!.getPrevSibling()
+        }
+        return false
     }
 
     private fun performCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
