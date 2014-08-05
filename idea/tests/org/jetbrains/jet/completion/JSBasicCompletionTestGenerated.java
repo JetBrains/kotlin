@@ -553,6 +553,16 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest("idea/testData/completion/basic/common/namedParameters/NoParamsFromUnapplicableOverload.kt");
             }
             
+            @TestMetadata("NotOnlyNamedParameters.kt")
+            public void testNotOnlyNamedParameters() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/NotOnlyNamedParameters.kt");
+            }
+            
+            @TestMetadata("OnlyNamedParameters.kt")
+            public void testOnlyNamedParameters() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/OnlyNamedParameters.kt");
+            }
+            
             @TestMetadata("WithParameterExpression.kt")
             public void testWithParameterExpression() throws Exception {
                 doTest("idea/testData/completion/basic/common/namedParameters/WithParameterExpression.kt");

@@ -87,26 +87,28 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun collectElements() {
-        if (jetReference != null && !isOnlyKeywordCompletion()) {
-            if (shouldRunOnlyTypeCompletion()) {
-                if (configuration.completeNonImportedDeclarations) {
-                    TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
+        if (!NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
+            if (jetReference != null && !isOnlyKeywordCompletion()) {
+                if (shouldRunOnlyTypeCompletion()) {
+                    if (configuration.completeNonImportedDeclarations) {
+                        TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
+                    }
+                    else {
+                        addReferenceVariants { isPartOfTypeDeclaration(it) }
+                        JavaCompletionContributor.advertiseSecondCompletion(position.getProject(), resultSet)
+                    }
                 }
                 else {
-                    addReferenceVariants { isPartOfTypeDeclaration(it) }
-                    JavaCompletionContributor.advertiseSecondCompletion(position.getProject(), resultSet)
+                    addReferenceVariants { true }
+
+                    addNonImported()
                 }
             }
-            else {
-                addReferenceVariants { true }
 
-                addNonImported()
-            }
+            KeywordCompletion().complete(parameters, collector)
         }
 
-        KeywordCompletion().complete(parameters, collector)
-
-        NamedParametersCompletion.complete(parameters, collector)
+        NamedParametersCompletion.complete(position, collector)
     }
 
     private fun addNonImported() {

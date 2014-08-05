@@ -37,6 +37,7 @@ import com.intellij.psi.filters.OrFilter
 import com.intellij.psi.filters.ClassFilter
 import org.jetbrains.jet.plugin.util.FirstChildInParentFilter
 import org.jetbrains.jet.lang.psi.psiUtil.getCallNameExpression
+import com.intellij.psi.PsiElement
 
 object NamedParametersCompletion {
     private val positionFilter = AndFilter(
@@ -50,8 +51,22 @@ object NamedParametersCompletion {
             )
     )
 
-    public fun complete(parameters: CompletionParameters, collector: LookupElementsCollector) {
-        val position = parameters.getPosition()
+    public fun isOnlyNamedParameterExpected(position: PsiElement): Boolean {
+        if (!positionFilter.isAcceptable(position, position)) return false
+
+        val thisArgument = PsiTreeUtil.getParentOfType(position, javaClass<JetValueArgument>())!!
+
+        val callElement = PsiTreeUtil.getParentOfType(thisArgument, javaClass<JetCallElement>()) ?: return false
+
+        for (argument in callElement.getValueArguments()) {
+            if (argument.isNamed()) return true
+            if (argument == thisArgument) break
+        }
+
+        return false
+    }
+
+    public fun complete(position: PsiElement, collector: LookupElementsCollector) {
         if (!positionFilter.isAcceptable(position, position)) return
 
         val valueArgument = PsiTreeUtil.getParentOfType(position, javaClass<JetValueArgument>())!!
