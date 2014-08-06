@@ -2,7 +2,7 @@ Invalid argument: -wrong-argument
 Usage: kotlinc-jvm <options> <source files>
 where possible options include:
   -d <directory|jar>         Destination for generated class files
-  -classpath <path>          Paths where to find user class files
+  -classpath (-cp) <path>    Paths where to find user class files
   -annotations <path>        Paths to external annotations
   -include-runtime           Include Kotlin runtime in to resulting .jar
   -no-jdk                    Don't include Java runtime into classpath
