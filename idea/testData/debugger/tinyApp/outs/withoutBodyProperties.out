@@ -1,0 +1,21 @@
+LineBreakpoint created at withoutBodyProperties.kt:8
+LineBreakpoint created at withoutBodyProperties.kt:13
+LineBreakpoint created at withoutBodyProperties.kt:18
+LineBreakpoint created at withoutBodyProperties.kt:29
+LineBreakpoint created at withoutBodyProperties.kt:36
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! withoutBodyProperties.WithoutBodyPropertiesPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+withoutBodyProperties.kt:7
+Compile bytecode for 1 + 1
+withoutBodyProperties.kt:12
+Compile bytecode for 1 + 2
+withoutBodyProperties.kt:17
+Compile bytecode for 1 + 3
+withoutBodyProperties.kt:28
+Compile bytecode for i
+withoutBodyProperties.kt:28
+withoutBodyProperties.kt:35
+Compile bytecode for 1 + 4
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

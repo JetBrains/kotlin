@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.plugin.debugger.evaluate
 
-import org.jetbrains.jet.lang.psi.JetCodeFragment
 import com.intellij.psi.PsiFile
-import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 import org.jetbrains.jet.lang.psi.JetFile
@@ -33,11 +31,13 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Statu
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import org.jetbrains.jet.plugin.refactoring.extractFunction.validate
 import org.jetbrains.jet.plugin.refactoring.extractFunction.generateFunction
-import org.jetbrains.jet.lang.psi.JetImportList
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
 import org.jetbrains.jet.plugin.refactoring.runReadAction
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiModificationTrackerImpl
+import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments
+import com.intellij.psi.util.PsiTreeUtil
 
 fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
@@ -122,19 +122,65 @@ private fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
 }
 
 private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contextElement: PsiElement): JetExpression? {
-    val parent = contextElement.getParent()
-    if (parent == null) return null
-
     val psiFactory = JetPsiFactory(codeFragment)
-    parent.addBefore(psiFactory.createNewLine(), contextElement)
+
+    val elementBefore = when {
+        contextElement is JetProperty && !contextElement.isLocal() -> {
+            wrapInRunFun(contextElement.getDelegateExpressionOrInitializer()!!)
+        }
+        contextElement is JetDeclarationWithBody && !contextElement.hasBlockBody()-> {
+            wrapInRunFun(contextElement.getBodyExpression()!!)
+        }
+        contextElement is JetDeclarationWithBody && contextElement.hasBlockBody()-> {
+            val block = contextElement.getBodyExpression() as JetBlockExpression
+            block.getStatements().first ?: block.getLastChild()
+        }
+        contextElement is JetWhenEntry -> {
+            val entryExpression = contextElement.getExpression()
+            if (entryExpression is JetBlockExpression) {
+                entryExpression.getStatements().first ?: entryExpression.getLastChild()
+            }
+            else {
+                wrapInRunFun(entryExpression!!)
+            }
+        }
+        else -> {
+            contextElement
+        }
+    }
+
+    val parent = elementBefore?.getParent()
+    if (parent == null || elementBefore == null) return null
+
+    parent.addBefore(psiFactory.createNewLine(), elementBefore)
 
     val debugExpression = codeFragment.getContentElement()
     if (debugExpression == null) return null
 
-    val newDebugExpression = parent.addBefore(debugExpression, contextElement)
+    val newDebugExpression = parent.addBefore(debugExpression, elementBefore)
     if (newDebugExpression == null) return null
 
-    parent.addBefore(psiFactory.createNewLine(), contextElement)
+    parent.addBefore(psiFactory.createNewLine(), elementBefore)
 
     return newDebugExpression as JetExpression
+}
+
+private fun createRunFunction(body: JetExpression): JetCallExpression {
+    val callExpression = JetPsiFactory(body).createExpression("run { \n${body.getText()} \n}") as JetCallExpression
+    val typeArguments = InsertExplicitTypeArguments.createTypeArguments(callExpression)
+    if (typeArguments?.getArguments()?.isNotEmpty() ?: false) {
+        val calleeExpression = callExpression.getCalleeExpression()
+        callExpression.addAfter(typeArguments!!, calleeExpression)
+    }
+    return callExpression
+}
+
+private fun wrapInRunFun(expression: JetExpression): PsiElement? {
+    val newBody = createRunFunction(expression)
+    val replacedBody = (expression.replace(newBody) as JetCallExpression)
+
+    // Increment modification tracker to clear ResolveCache after changes in function body
+    (PsiManager.getInstance(expression.getProject()).getModificationTracker() as PsiModificationTrackerImpl).incCounter()
+
+    return replacedBody.getFunctionLiteralArguments().first().getFunctionLiteral().getBodyExpression()?.getFirstChild()
 }

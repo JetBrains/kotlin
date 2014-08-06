@@ -161,6 +161,26 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/exceptions.kt");
         }
         
+        @TestMetadata("whenEntry.kt")
+        public void testWhenEntry() throws Exception {
+            doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/whenEntry.kt");
+        }
+        
+        @TestMetadata("withoutBodyFunctions.kt")
+        public void testWithoutBodyFunctions() throws Exception {
+            doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/withoutBodyFunctions.kt");
+        }
+        
+        @TestMetadata("withoutBodyProperties.kt")
+        public void testWithoutBodyProperties() throws Exception {
+            doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/withoutBodyProperties.kt");
+        }
+        
+        @TestMetadata("withoutBodyTypeParameters.kt")
+        public void testWithoutBodyTypeParameters() throws Exception {
+            doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/withoutBodyTypeParameters.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/frame")
