@@ -286,7 +286,7 @@ public class Converter private(val project: Project,
                 .map { method ->
                     val returnType = method.getReturnType()
                     val typeConverted = if (method == annotationMethods.last && returnType is PsiArrayType)
-                        VarArgType(typeConverter.convertType(returnType.getComponentType(), Nullability.NotNull).assignNoPrototype())
+                        VarArgType(typeConverter.convertType(returnType.getComponentType(), Nullability.NotNull))
                     else
                         typeConverter.convertType(returnType, Nullability.NotNull)
                     typeConverted.assignPrototype(method.getReturnTypeElement(), noBlankLinesInheritance)

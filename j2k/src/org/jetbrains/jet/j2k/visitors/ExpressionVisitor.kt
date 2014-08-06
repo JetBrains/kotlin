@@ -281,7 +281,7 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
             }
         }
 
-        return typeArgs.map { typeConverter.convertType(it).assignNoPrototype() }
+        return typeArgs.map { typeConverter.convertType(it) }
     }
 
     override fun visitNewExpression(expression: PsiNewExpression) {

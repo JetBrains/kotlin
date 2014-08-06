@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls.util;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
@@ -64,6 +65,7 @@ public class DelegatingCall implements Call {
 
     @Override
     @NotNull
+    @ReadOnly
     public List<? extends ValueArgument> getValueArguments() {
         return delegate.getValueArguments();
     }
