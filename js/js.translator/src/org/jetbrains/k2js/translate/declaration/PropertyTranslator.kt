@@ -54,6 +54,27 @@ public fun translateAccessors(
     translateAccessors(descriptor, null, result, context)
 }
 
+public fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
+        descriptor: PropertyDescriptor,
+        context: TranslationContext,
+        generateGetter: () -> JsPropertyInitializer,
+        generateSetter: () -> JsPropertyInitializer
+) {
+    val to: MutableList<JsPropertyInitializer>
+    if (!JsDescriptorUtils.isExtension(descriptor)) {
+        to = SmartList<JsPropertyInitializer>()
+        this.add(JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), JsObjectLiteral(to, true)))
+    }
+    else {
+        to = this
+    }
+
+    to.add(generateGetter())
+    if (descriptor.isVar()) {
+        to.add(generateSetter())
+    }
+}
+
 private class PropertyTranslator(
         val descriptor: PropertyDescriptor,
         val declaration: JetProperty?,
@@ -63,19 +84,7 @@ private class PropertyTranslator(
     private val propertyName: String = descriptor.getName().asString()
 
     fun translate(result: MutableList<JsPropertyInitializer>) {
-        val to: MutableList<JsPropertyInitializer>
-        if (!JsDescriptorUtils.isExtension(descriptor)) {
-            to = SmartList<JsPropertyInitializer>()
-            result.add(JsPropertyInitializer(context().getNameForDescriptor(descriptor).makeRef(), JsObjectLiteral(to, true)))
-        }
-        else {
-            to = result
-        }
-
-        to.add(generateGetter())
-        if (descriptor.isVar()) {
-            to.add(generateSetter())
-        }
+        result.addGetterAndSetter(descriptor, context(), { generateGetter() }, { generateSetter() })
     }
 
     private fun generateGetter(): JsPropertyInitializer =
@@ -84,9 +93,9 @@ private class PropertyTranslator(
     private fun generateSetter(): JsPropertyInitializer =
             if (hasCustomSetter()) translateCustomAccessor(getCustomSetterDeclaration()) else generateDefaultSetter()
 
-    private fun hasCustomGetter() = declaration != null && declaration.getGetter() != null && getCustomGetterDeclaration().hasBody()
+    private fun hasCustomGetter() = declaration?.getGetter() != null && getCustomGetterDeclaration().hasBody()
 
-    private fun hasCustomSetter() = declaration != null && declaration.getSetter() != null && getCustomSetterDeclaration().hasBody()
+    private fun hasCustomSetter() = declaration?.getSetter() != null && getCustomSetterDeclaration().hasBody()
 
     private fun getCustomGetterDeclaration(): JetPropertyAccessor =
             declaration?.getGetter() ?:

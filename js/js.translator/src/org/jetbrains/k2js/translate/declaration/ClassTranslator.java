@@ -125,14 +125,16 @@ public final class ClassTranslator extends AbstractTranslator {
         declarationContext = fixContextForClassObjectAccessing(declarationContext);
 
         invocationArguments.add(getSuperclassReferences(declarationContext));
+        DelegationTranslator delegationTranslator = new DelegationTranslator(classDeclaration, context());
         if (!isTrait()) {
-            JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod();
+            JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod(delegationTranslator);
             invocationArguments.add(initializer.getBody().getStatements().isEmpty() ? JsLiteral.NULL : initializer);
         }
 
         translatePropertiesAsConstructorParameters(declarationContext, properties);
         DeclarationBodyVisitor bodyVisitor = new DeclarationBodyVisitor(properties, staticProperties);
         bodyVisitor.traverseContainer(classDeclaration, declarationContext);
+        delegationTranslator.generateDelegated(properties);
         mayBeAddEnumEntry(bodyVisitor.getEnumEntryList(), staticProperties, declarationContext);
 
         if (KotlinBuiltIns.getInstance().isData(descriptor)) {

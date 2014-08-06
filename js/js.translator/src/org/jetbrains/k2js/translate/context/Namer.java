@@ -53,7 +53,7 @@ public final class Namer {
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
-    private static final String DELEGATE_POSTFIX = "$delegate";
+    private static final String DELEGATE = "$delegate";
 
     private static final String SUPER_METHOD_NAME = "baseInitializer";
 
@@ -132,8 +132,13 @@ public final class Namer {
     }
 
     @NotNull
+    public static String getDelegatePrefix() {
+        return DELEGATE;
+    }
+
+    @NotNull
     public static String getDelegateName(@NotNull String propertyName) {
-        return propertyName + DELEGATE_POSTFIX;
+        return propertyName + DELEGATE;
     }
 
     @NotNull

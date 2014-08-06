@@ -1313,14 +1313,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
             if (specifier instanceof JetDelegatorByExpressionSpecifier) {
                 JetExpression expression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
-                PropertyDescriptor propertyDescriptor = getDelegatePropertyIfAny(expression);
+                PropertyDescriptor propertyDescriptor = CodegenUtil.getDelegatePropertyIfAny(expression, descriptor, bindingContext);
 
                 ClassDescriptor superClassDescriptor = getSuperClass(specifier);
 
-                if (propertyDescriptor != null &&
-                    !propertyDescriptor.isVar() &&
-                    Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
-                    // final property with backing field
+                if (CodegenUtil.isFinalPropertyWithBackingField(propertyDescriptor, bindingContext)) {
                     result.addField((JetDelegatorByExpressionSpecifier) specifier, propertyDescriptor);
                 }
                 else {
@@ -1334,12 +1331,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @NotNull
     private ClassDescriptor getSuperClass(@NotNull JetDelegationSpecifier specifier) {
-        JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
-        assert superType != null;
-
-        ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-        assert superClassDescriptor != null;
-        return superClassDescriptor;
+        return CodegenUtil.getSuperClassByDelegationSpecifier(specifier, bindingContext);
     }
 
     private void genCallToDelegatorByExpressionSpecifier(
@@ -1361,26 +1353,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Nullable
     private PropertyDescriptor getDelegatePropertyIfAny(JetExpression expression) {
-        PropertyDescriptor propertyDescriptor = null;
-        if (expression instanceof JetSimpleNameExpression) {
-            ResolvedCall<?> call = CallUtilPackage.getResolvedCall(expression, bindingContext);
-            if (call != null) {
-                CallableDescriptor callResultingDescriptor = call.getResultingDescriptor();
-                if (callResultingDescriptor instanceof ValueParameterDescriptor) {
-                    ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) callResultingDescriptor;
-                    // constructor parameter
-                    if (valueParameterDescriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
-                        // constructor of my class
-                        if (valueParameterDescriptor.getContainingDeclaration().getContainingDeclaration() == descriptor) {
-                            propertyDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameterDescriptor);
-                        }
-                    }
-                }
-
-                // todo: when and if frontend will allow properties defined not as constructor parameters to be used in delegation specifier
-            }
-        }
-        return propertyDescriptor;
+    	return CodegenUtil.getDelegatePropertyIfAny(expression, descriptor, bindingContext);
     }
 
     private void lookupConstructorExpressionsInClosureIfPresent(final ConstructorContext constructorContext) {
@@ -1737,24 +1710,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generateDelegates(ClassDescriptor toClass, DelegationFieldsInfo.Field field) {
-        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-            if (declaration instanceof CallableMemberDescriptor) {
-                CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
-                if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
-                    Set<? extends CallableMemberDescriptor> overriddenDescriptors = callableMemberDescriptor.getOverriddenDescriptors();
-                    for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
-                        if (overriddenDescriptor.getContainingDeclaration() == toClass) {
-                            if (declaration instanceof PropertyDescriptor) {
-                                propertyCodegen
-                                        .genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field.getStackValue());
-                            }
-                            else if (declaration instanceof FunctionDescriptor) {
-                                functionCodegen
-                                        .genDelegate((FunctionDescriptor) declaration, (FunctionDescriptor) overriddenDescriptor, field.getStackValue());
-                            }
-                        }
-                    }
-                }
+        for (Map.Entry<CallableMemberDescriptor, CallableMemberDescriptor> entry : CodegenUtil.getDelegates(descriptor, toClass).entrySet()) {
+            CallableMemberDescriptor callableMemberDescriptor = entry.getKey();
+            CallableMemberDescriptor overriddenDescriptor = entry.getValue();
+            if (callableMemberDescriptor instanceof PropertyDescriptor) {
+                propertyCodegen
+                        .genDelegate((PropertyDescriptor) callableMemberDescriptor, (PropertyDescriptor) overriddenDescriptor, field.getStackValue());
+            }
+            else if (callableMemberDescriptor instanceof FunctionDescriptor) {
+                functionCodegen
+                        .genDelegate((FunctionDescriptor) callableMemberDescriptor, (FunctionDescriptor) overriddenDescriptor, field.getStackValue());
             }
         }
     }
