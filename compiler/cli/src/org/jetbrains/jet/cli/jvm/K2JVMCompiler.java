@@ -44,8 +44,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.Predicates.in;
-import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
-import static org.jetbrains.jet.cli.common.ExitCode.OK;
+import static org.jetbrains.jet.cli.common.ExitCode.*;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
@@ -90,6 +89,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         else if (arguments.module != null) {
         }
         else if (arguments.script) {
+            if (arguments.freeArgs.isEmpty()) {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Specify script source path to evaluate",
+                                        CompilerMessageLocation.NO_LOCATION);
+                return COMPILATION_ERROR;
+            }
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
         }
         else {

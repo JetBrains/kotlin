@@ -109,6 +109,11 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest("compiler/testData/cli/jvm/wrongKotlinSignature.args");
         }
         
+        @TestMetadata("wrongScriptWithNoSource.args")
+        public void testWrongScriptWithNoSource() throws Exception {
+            doJvmTest("compiler/testData/cli/jvm/wrongScriptWithNoSource.args");
+        }
+        
         @TestMetadata("compiler/testData/cli/jvm/wrongAbiVersionLib")
         @InnerTestClasses({})
         public static class WrongAbiVersionLib extends AbstractKotlincExecutableTest {
