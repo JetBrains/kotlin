@@ -96,7 +96,7 @@ fun getFunctionForExtractedFragment(
 
         val validationResult = analysisResult.descriptor!!.validate()
         if (!validationResult.conflicts.isEmpty()) {
-            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet()?.map { it.getText() }?.makeString(",")}")
+            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().map { it.getText() }.joinToString(",")}")
         }
 
         return validationResult.descriptor.generateFunction(true)
