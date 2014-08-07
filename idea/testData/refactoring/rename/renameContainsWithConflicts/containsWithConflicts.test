@@ -1,0 +1,8 @@
+{
+  "type": "KOTLIN_FUNCTION",
+  "classFQN": "A",
+  "oldName": "contains",
+  "newName": "foo",
+  "mainFile": "containsWithConflicts.kt",
+  "hint": "Naming conventions will be violated after rename\nNaming conventions will be violated after rename"
+}

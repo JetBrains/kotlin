@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.refactoring.rename;
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.jet.asJava.LightClassUtil
 import org.jetbrains.jet.lang.psi.JetNamedFunction
@@ -28,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
 import kotlin.properties.Delegates
 import org.jetbrains.jet.plugin.refactoring.runReadAction
 
-public class RenameKotlinFunctionProcessor : RenamePsiElementProcessor() {
+public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance by Delegates.lazy {
         // KT-4250
         // RenamePsiElementProcessor.EP_NAME.findExtension(javaClass<RenameJavaMethodProcessor>())!!

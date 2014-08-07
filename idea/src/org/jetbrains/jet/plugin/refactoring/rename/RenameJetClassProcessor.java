@@ -33,7 +33,7 @@ import org.jetbrains.jet.plugin.JetBundle;
 
 import java.util.Map;
 
-public class RenameJetClassProcessor extends RenamePsiElementProcessor {
+public class RenameJetClassProcessor extends RenameKotlinPsiProcessor {
     @Override
     public boolean canProcessElement(@NotNull PsiElement element) {
         return element instanceof JetClassOrObject || element instanceof KotlinLightClass;

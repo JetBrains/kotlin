@@ -28,6 +28,15 @@ import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.lang.psi.psiUtil.getOutermostNonInterleavingQualifiedElement
 import org.jetbrains.jet.plugin.codeInsight.addToShorteningWaitSet
 import org.jetbrains.jet.plugin.refactoring.getKotlinFqName
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.resolve.DescriptorResolver
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndBranch
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
@@ -35,8 +44,23 @@ public class JetSimpleNameReference(
 
     override fun getRangeInElement(): TextRange = TextRange(0, getElement().getTextLength())
 
+    override fun canRename(): Boolean {
+        if (expression.getParentByTypeAndBranch(javaClass<JetWhenConditionInRange>()) { getOperationReference() } != null) return false
+
+        val elementType = expression.getReferencedNameElementType()
+        if (elementType == JetTokens.PLUSPLUS || elementType == JetTokens.MINUSMINUS) return false
+
+        return true
+    }
+
     public override fun handleElementRename(newElementName: String?): PsiElement? {
-        if (newElementName == null) return null;
+        if (!canRename()) throw IncorrectOperationException()
+        if (newElementName == null) return expression;
+
+        // Do not rename if the reference corresponds to synthesized component function
+        if ((expression.getText() ?: "").startsWith(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX) && resolve() is JetParameter) {
+            return expression
+        }
 
         val psiFactory = JetPsiFactory(expression)
         val element = when (expression.getReferencedNameElementType()) {
@@ -45,7 +69,30 @@ public class JetSimpleNameReference(
             else -> psiFactory.createNameIdentifier(newElementName)
         }
 
-        return expression.getReferencedNameElement().replace(element)
+        var nameElement = expression.getReferencedNameElement()
+
+        val elementType = nameElement.getNode()?.getElementType()
+        val opExpression =
+                PsiTreeUtil.getParentOfType<JetExpression>(expression, javaClass<JetUnaryExpression>(), javaClass<JetBinaryExpression>())
+        if (elementType is JetToken && OperatorConventions.getNameForOperationSymbol(elementType) != null && opExpression != null) {
+            val oldDescriptor = AnalyzerFacadeWithCache.getContextForElement(expression)[BindingContext.REFERENCE_TARGET, expression]
+            val newExpression = OperatorToFunctionIntention.convert(opExpression)
+            newExpression.accept(
+                    object: JetTreeVisitorVoid() {
+                        override fun visitCallExpression(expression: JetCallExpression) {
+                            val callee = expression.getCalleeExpression() as? JetSimpleNameExpression
+                            if (callee != null && AnalyzerFacadeWithCache.getContextForElement(callee)[BindingContext.REFERENCE_TARGET, callee] == oldDescriptor) {
+                                nameElement = callee.getReferencedNameElement()
+                            }
+                            else {
+                                super.visitCallExpression(expression)
+                            }
+                        }
+                    }
+            )
+        }
+
+        return nameElement.replace(element)
     }
 
     public enum class ShorteningMode {

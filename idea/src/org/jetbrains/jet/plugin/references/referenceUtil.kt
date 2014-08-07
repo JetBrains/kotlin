@@ -29,6 +29,12 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import java.util.HashSet
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression
+import org.jetbrains.jet.lang.psi.JetCallExpression
+import com.intellij.psi.util.PsiTreeUtil
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -58,4 +64,12 @@ fun PsiReference.matchesTarget(target: PsiElement): Boolean {
         else ->
             false
     }
+}
+
+fun AbstractJetReference<out JetExpression>.renameImplicitConventionalCall(newName: String?): JetExpression {
+    if (newName == null) return expression
+
+    val expr = OperatorToFunctionIntention.convert(expression) as JetQualifiedExpression
+    val newCallee = (expr.getSelectorExpression() as JetCallExpression).getCalleeExpression()!!.getReference()!!.handleElementRename(newName)
+    return PsiTreeUtil.getParentOfType<JetQualifiedExpression>(newCallee, javaClass<JetQualifiedExpression>()) as JetExpression
 }

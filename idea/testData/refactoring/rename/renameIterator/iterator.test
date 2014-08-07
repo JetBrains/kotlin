@@ -1,0 +1,8 @@
+{
+  "type": "KOTLIN_FUNCTION",
+  "classFQN": "A",
+  "oldName": "iterator",
+  "newName": "foo",
+  "mainFile": "iterator.kt",
+  "hint": "Naming conventions will be violated after rename"
+}

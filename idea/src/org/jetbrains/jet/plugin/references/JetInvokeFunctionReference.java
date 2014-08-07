@@ -19,7 +19,11 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -27,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -97,5 +102,17 @@ public class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpres
     private TextRange getRange(ASTNode node) {
         TextRange textRange = node.getTextRange();
         return textRange.shiftRight(-getExpression().getTextOffset());
+    }
+
+    @Override
+    public boolean canRename() {
+        return true;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Nullable
+    @Override
+    public PsiElement handleElementRename(@Nullable String newElementName) {
+        return ReferencesPackage.renameImplicitConventionalCall(this, newElementName);
     }
 }

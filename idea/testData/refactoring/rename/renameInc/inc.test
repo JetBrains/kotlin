@@ -1,0 +1,8 @@
+{
+  "type": "KOTLIN_FUNCTION",
+  "classFQN": "A",
+  "oldName": "inc",
+  "newName": "foo",
+  "mainFile": "inc.kt",
+  "hint": "Naming conventions will be violated after rename\nNaming conventions will be violated after rename"
+}

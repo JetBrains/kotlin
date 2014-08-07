@@ -1,0 +1,7 @@
+{
+  "type": "KOTLIN_FUNCTION",
+  "classFQN": "A",
+  "oldName": "get",
+  "newName": "foo",
+  "mainFile": "get.kt"
+}
