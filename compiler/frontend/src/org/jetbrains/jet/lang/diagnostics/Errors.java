@@ -605,6 +605,8 @@ public interface Errors {
     // Error sets
     ImmutableSet<? extends DiagnosticFactory<?>> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
             UNRESOLVED_REFERENCE, NAMED_PARAMETER_NOT_FOUND, UNRESOLVED_REFERENCE_WRONG_RECEIVER);
+    ImmutableSet<? extends DiagnosticFactory<?>> INVISIBLE_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
+            INVISIBLE_MEMBER, INVISIBLE_MEMBER_FROM_INLINE, INVISIBLE_REFERENCE, INVISIBLE_SETTER);
     ImmutableSet<? extends DiagnosticFactory<?>> UNUSED_ELEMENT_DIAGNOSTICS = ImmutableSet.of(
             UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE);
     ImmutableSet<? extends DiagnosticFactory<?>> TYPE_INFERENCE_ERRORS = ImmutableSet.of(

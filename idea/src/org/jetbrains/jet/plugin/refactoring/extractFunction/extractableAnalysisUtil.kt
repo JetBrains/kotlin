@@ -721,14 +721,22 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             continue
         }
 
-        diagnostics.firstOrNull { it.getFactory() == Errors.INVISIBLE_MEMBER }?.let {
-            conflicts.putValue(
-                    resolveResult.originalRefExpr,
+        diagnostics.firstOrNull { it.getFactory() in Errors.INVISIBLE_REFERENCE_DIAGNOSTICS }?.let {
+            val message = when (it.getFactory()) {
+                Errors.INVISIBLE_SETTER ->
+                    JetRefactoringBundle.message(
+                            "setter.of.0.will.become.invisible.after.extraction",
+                            RefactoringUIUtil.getDescription(resolveResult.declaration, true)
+                    )
+
+                else ->
                     JetRefactoringBundle.message(
                             "0.will.become.invisible.after.extraction",
                             RefactoringUIUtil.getDescription(resolveResult.declaration, true).capitalize()
                     )
-            )
+            }
+
+            conflicts.putValue(resolveResult.originalRefExpr, message)
         }
     }
 

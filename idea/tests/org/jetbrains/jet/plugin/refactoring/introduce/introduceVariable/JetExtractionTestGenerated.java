@@ -288,9 +288,24 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/noConflictWithInnerFunction.kt");
             }
             
+            @TestMetadata("privateMemberInClassObject.kt")
+            public void testPrivateMemberInClassObject() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateMemberInClassObject.kt");
+            }
+            
             @TestMetadata("privateMemberRef.kt")
             public void testPrivateMemberRef() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateMemberRef.kt");
+            }
+            
+            @TestMetadata("privateNestedClass.kt")
+            public void testPrivateNestedClass() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateNestedClass.kt");
+            }
+            
+            @TestMetadata("privateSetter.kt")
+            public void testPrivateSetter() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateSetter.kt");
             }
             
             @TestMetadata("refInReturn.kt")
