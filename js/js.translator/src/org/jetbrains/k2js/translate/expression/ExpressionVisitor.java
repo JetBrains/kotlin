@@ -359,7 +359,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                 .replaceAll("(?:^`(.*)`$)", "$1");
     }
 
-    private static String getTargetLabel(JetExpressionWithLabel expression, TranslationContext context) {
+    private static JsNameRef getTargetLabel(JetExpressionWithLabel expression, TranslationContext context) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
         if (labelElement == null) {
             return null;
@@ -367,7 +367,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         else {
             JsName name = context.scope().findName(getReferencedName(labelElement));
             assert name != null;
-            return name.getIdent();
+            return name.makeRef();
         }
     }
 

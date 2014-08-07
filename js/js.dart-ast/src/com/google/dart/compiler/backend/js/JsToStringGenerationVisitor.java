@@ -304,10 +304,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     private void continueOrBreakLabel(JsContinue x) {
-        String label = x.getLabel();
-        if (label != null) {
+        JsNameRef label = x.getLabel();
+        if (label != null && label.getIdent() != null) {
             space();
-            p.print(label);
+            p.print(label.getIdent());
         }
     }
 
