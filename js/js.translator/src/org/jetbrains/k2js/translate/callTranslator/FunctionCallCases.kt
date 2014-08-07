@@ -170,13 +170,10 @@ object ConstructorCallCase : FunctionCallCase {
     }
 
     override fun FunctionCallInfo.noReceivers(): JsExpression {
-        if (isNative()) {
-            return JsNew(JsNameRef(functionName), argumentsInfo.getTranslateArguments())
-        }
+        val fqName = context.getQualifiedReference(callableDescriptor)
 
-        val functionRef = context.aliasOrValue(callableDescriptor) {
-            context.getQualifiedReference(it)
-        }
+        val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
+
         return JsNew(functionRef, argumentsInfo.getTranslateArguments())
     }
 }

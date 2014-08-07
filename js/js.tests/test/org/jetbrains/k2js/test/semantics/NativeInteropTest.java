@@ -116,4 +116,8 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     public void testPassTopLevelFunctionFromNative() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testNestedElements() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

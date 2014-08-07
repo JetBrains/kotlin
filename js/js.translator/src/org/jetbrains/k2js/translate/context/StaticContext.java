@@ -32,14 +32,12 @@ import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.getNameForAnnotatedObjectWithOverrides;
-import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isLibraryObject;
+import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMangledName;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName;
@@ -436,6 +434,8 @@ public final class StaticContext {
             Rule<JsNameRef> packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier = new Rule<JsNameRef>() {
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (isNativeObject(descriptor)) return null;
+
                     DeclarationDescriptor containingDescriptor = getContainingDeclaration(descriptor);
                     if (!(containingDescriptor instanceof PackageFragmentDescriptor)) {
                         return null;
@@ -489,10 +489,25 @@ public final class StaticContext {
                     return null;
                 }
             };
+            Rule<JsNameRef> nativeObjectsHaveNativePartOfFullQualifier = new Rule<JsNameRef>() {
+                @Override
+                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (descriptor instanceof ConstructorDescriptor || !isNativeObject(descriptor)) return null;
+
+                    DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+                    if (containingDeclaration != null && isNativeObject(containingDeclaration)) {
+                        return getQualifiedReference(containingDeclaration);
+                    }
+
+                    return null;
+                }
+            };
+
             addRule(libraryObjectsHaveKotlinQualifier);
             addRule(constructorHaveTheSameQualifierAsTheClass);
             addRule(standardObjectsHaveKotlinQualifier);
             addRule(packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier);
+            addRule(nativeObjectsHaveNativePartOfFullQualifier);
         }
     }
 
@@ -508,18 +523,7 @@ public final class StaticContext {
                     return null;
                 }
             };
-            //TODO: hack!  it seems like needed, only for Inheritance from native class
-            Rule<Boolean> nativeObjectsHaveNoQualifiers = new Rule<Boolean>() {
-                @Override
-                public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!AnnotationsUtils.isNativeObject(descriptor)) {
-                        return null;
-                    }
-                    return true;
-                }
-            };
             addRule(propertiesInClassHaveNoQualifiers);
-            addRule(nativeObjectsHaveNoQualifiers);
         }
     }
 }
