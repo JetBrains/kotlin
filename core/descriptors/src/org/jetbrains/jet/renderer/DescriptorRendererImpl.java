@@ -301,9 +301,14 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             }
             return "???";
         }
-        if (type instanceof FlexibleType && debugMode) {
+        if (type instanceof FlexibleType) {
             FlexibleType flexibleType = (FlexibleType) type;
-            return "(" + renderType(flexibleType.getLowerBound()) + ".." + renderType(flexibleType.getUpperBound()) + ")";
+            if (!debugMode) {
+                return renderFlexibleType(flexibleType);
+            }
+            else {
+                return "(" + renderType(flexibleType.getLowerBound()) + ".." + renderType(flexibleType.getUpperBound()) + ")";
+            }
         }
         if (type instanceof LazyType && debugMode) {
             return type.toString();
@@ -315,6 +320,45 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return renderFunctionType(type);
         }
         return renderDefaultType(type);
+    }
+
+    @NotNull
+    private String renderFlexibleType(@NotNull FlexibleType type) {
+        JetType lower = type.getLowerBound();
+        JetType upper = type.getUpperBound();
+
+        String lowerRendered = renderDefaultType(lower);
+        String upperRendered = renderDefaultType(upper);
+
+        if (differsOnlyInNullability(lowerRendered, upperRendered)) {
+            return lowerRendered + "!";
+        }
+
+        String kotlinPrefix = "kotlin.";
+        String mutablePrefix = "Mutable";
+        // e.g. lower = kotlin.MutableList<Foo>, upper = kotlin.List<Foo?>?
+        if (lowerRendered.startsWith(kotlinPrefix + mutablePrefix)) {
+            // List<Foo>
+            String lowerWithoutPrefix = lowerRendered.substring(mutablePrefix.length() + kotlinPrefix.length());
+            if (differsOnlyInNullability(lowerWithoutPrefix, upperRendered.substring(kotlinPrefix.length()))) {
+                return kotlinPrefix + "(" + mutablePrefix + ")" + lowerWithoutPrefix + "!";
+            }
+        }
+        else {
+            String arrayPrefix = "kotlin.Array<";
+            String covariantArrayPrefix = "kotlin.Array<out ";
+            if (lowerRendered.startsWith(arrayPrefix) && upperRendered.startsWith(covariantArrayPrefix)) {
+                String lowerWithoutPrefix = lowerRendered.substring(arrayPrefix.length());
+                if (differsOnlyInNullability(lowerWithoutPrefix, upperRendered.substring(covariantArrayPrefix.length()))) {
+                    return arrayPrefix + "(out) " + lowerWithoutPrefix + "!";
+                }
+            }
+        }
+        return "(" + renderType(lower) + ".." + renderType(upper) + ")";
+    }
+
+    private static boolean differsOnlyInNullability(String lower, String upper) {
+        return lower.equals(upper.replace("?", "")) || upper.endsWith("?") && (lower + "?").equals(upper);
     }
 
     @NotNull
