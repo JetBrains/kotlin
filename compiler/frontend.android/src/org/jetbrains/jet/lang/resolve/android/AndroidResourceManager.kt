@@ -21,17 +21,32 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
 
 abstract class AndroidResourceManager(val project: Project, val searchPath: String?) {
-    private val idPrefix = "@+id/"
+    private val idDeclarationPrefix = "@+id/"
+    private val idUsagePrefix = "@id/"
+    public val androidNamespace: String = "android"
+    public val idAttributeNoNamespace: String = "id"
+    public val idAttribute: String = androidNamespace + ":" + idAttributeNoNamespace
+    public val classAttributeNoNamespace: String = "class"
+    public val classAttribute: String = androidNamespace + ":" + classAttributeNoNamespace
 
     abstract fun getLayoutXmlFiles(): Collection<PsiFile>
     abstract fun idToXmlAttribute(id: String): PsiElement?
     abstract fun renameXmlAttr(elem: PsiElement, newName: String)
     abstract fun renameProperty(oldName: String, newName: String)
-    public fun nameToId(name: String): String = idPrefix + name
-    public fun idToName(id: String): String = id.replace(idPrefix, "")
-    public fun isResourceId(str: String?): Boolean = str?.startsWith(idPrefix) ?: false
+    public fun nameToIdDeclaration(name: String): String = idDeclarationPrefix + name
+    public fun nameToIdUsage(name: String): String = idUsagePrefix + name
+    public fun idToName(id: String?): String {
+        return if (isResourceIdDeclaration(id)) id!!.replace(idDeclarationPrefix, "")
+        else if (isResourceIdUsage(id)) id!!.replace(idUsagePrefix, "")
+        else throw WrongIdFormat(id)
+    }
+    public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(idDeclarationPrefix) ?: false
+    public fun isResourceIdUsage(str: String?): Boolean = str?.startsWith(idUsagePrefix) ?: false
+    public fun isResourceDeclarationOrUsage(id: String?): Boolean = isResourceIdDeclaration(id) || isResourceIdUsage(id)
 
     abstract fun readManifest(): AndroidManifest
 
     inner class NoUIXMLsFound : Exception("No android UI xmls found in $searchPath")
+    inner class WrongIdFormat(id: String?) : Exception("Id \"$id\" has wrong format")
+
 }
