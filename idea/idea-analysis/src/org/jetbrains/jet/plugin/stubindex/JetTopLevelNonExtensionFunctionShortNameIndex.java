@@ -30,6 +30,7 @@ public class JetTopLevelNonExtensionFunctionShortNameIndex extends StringStubInd
 
     private static final JetTopLevelNonExtensionFunctionShortNameIndex ourInstance = new JetTopLevelNonExtensionFunctionShortNameIndex();
 
+    @NotNull
     public static JetTopLevelNonExtensionFunctionShortNameIndex getInstance() {
         return ourInstance;
     }

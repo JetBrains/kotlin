@@ -30,12 +30,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.IncorrectOperationException;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -130,7 +130,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             @NotNull ResolveSessionForBodies resolveSession,
             @NotNull Project project
     ) {
-        JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
+        JetShortNamesCache namesCache = JetShortNamesCache.OBJECT$.getKotlinInstance(project);
 
         Collection<FunctionDescriptor> topLevelFunctions = namesCache.getTopLevelFunctionDescriptorsByName(
                 referenceName, context, resolveSession, searchScope);
@@ -151,11 +151,11 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             @NotNull ResolveSessionForBodies resolveSession,
             @NotNull Project project
     ) {
-        JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
+        JetShortNamesCache namesCache = JetShortNamesCache.OBJECT$.getKotlinInstance(project);
         Collection<DeclarationDescriptor> jetCallableExtensions = namesCache.getJetCallableExtensions(
-                new Condition<String>() {
+                new Function1<String, Boolean>() {
                     @Override
-                    public boolean value(String callableExtensionName) {
+                    public Boolean invoke(String callableExtensionName) {
                         return callableExtensionName.equals(referenceName);
                     }
                 },
@@ -216,17 +216,17 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
 
     private static PsiShortNamesCache getShortNamesCache(@NotNull JetFile jetFile) {
         if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
-            return JetShortNamesCache.getKotlinInstance(jetFile.getProject());
+            return JetShortNamesCache.OBJECT$.getKotlinInstance(jetFile.getProject());
         }
 
         return PsiShortNamesCache.getInstance(jetFile.getProject());
     }
 
     private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull GlobalSearchScope searchScope, @NotNull Project project, @NotNull KotlinCodeAnalyzer resolveSession) {
-        JetShortNamesCache cache = JetShortNamesCache.getKotlinInstance(project);
-        Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Condition<String>() {
+        JetShortNamesCache cache = JetShortNamesCache.OBJECT$.getKotlinInstance(project);
+        Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Function1<String, Boolean>() {
             @Override
-            public boolean value(String s) {
+            public Boolean invoke(String s) {
                 return typeName.equals(s);
             }
         }, resolveSession, searchScope);

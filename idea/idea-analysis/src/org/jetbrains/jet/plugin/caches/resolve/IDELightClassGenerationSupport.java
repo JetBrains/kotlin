@@ -57,6 +57,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     private static final Logger LOG = Logger.getInstance(IDELightClassGenerationSupport.class);
 
+    @NotNull
     public static IDELightClassGenerationSupport getInstanceForIDE(@NotNull Project project) {
         return (IDELightClassGenerationSupport) ServiceManager.getService(project, LightClassGenerationSupport.class);
     }
