@@ -35,10 +35,29 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.*
+import com.intellij.psi.impl.light.LightElement
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
 ) : JetSimpleReference<JetSimpleNameExpression>(jetSimpleNameExpression) {
+
+    override fun isReferenceTo(element: PsiElement?): Boolean {
+       val resolvedElement = resolve()
+       if (resolvedElement == null || element == null) {
+           return false
+       }
+       if (isAndroidSyntheticElement(resolvedElement)) {
+           if (element is ValueResourceElementWrapper) {
+               val resource = element.getValue()!!
+               return (resolvedElement as JetProperty).getName() == resource.substring(resource.indexOf('/')+1)
+           }
+
+       }
+       else if (resolvedElement is LightElement && element is JetProperty) {
+           return resolvedElement.getName() == element.getName()
+       }
+       return super.isReferenceTo(element)
+   }
 
     override fun getRangeInElement(): TextRange = TextRange(0, getElement().getTextLength())
 
@@ -67,7 +86,14 @@ public class JetSimpleNameReference(
         val element = when (expression.getReferencedNameElementType()) {
             JetTokens.FIELD_IDENTIFIER -> psiFactory.createFieldIdentifier(newElementName)
             JetTokens.LABEL_IDENTIFIER -> psiFactory.createClassLabel(newElementName)
-            else -> psiFactory.createNameIdentifier(newElementName)
+            else -> {
+                if (newElementName.startsWith("@+id/")) {
+                    psiFactory.createNameIdentifier(newElementName.substring(newElementName.indexOf('/')+1))
+                }
+                else {
+                    psiFactory.createNameIdentifier(newElementName)
+                }
+            }
         }
 
         var nameElement = expression.getReferencedNameElement()
