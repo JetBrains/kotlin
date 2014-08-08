@@ -99,7 +99,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                     }
                 }
                 else {
-                    addReferenceVariants { true }
+                    addReferenceVariants()
 
                     addNonImported()
                 }
@@ -212,7 +212,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         return configuration.completeNonImportedDeclarations || prefixMatcher.getPrefix().length >= 3
     }
 
-    private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean) {
+    private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean = { true }) {
         val descriptors = TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!)
         collector.addDescriptorElements(descriptors.filter { filterCondition(it) })
     }
