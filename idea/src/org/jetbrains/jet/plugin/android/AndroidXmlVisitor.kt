@@ -21,8 +21,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlAttribute
+import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
 
-class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
+class AndroidXmlVisitor(val resourceManager: AndroidResourceManager, val elementCallback: (String, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
 
     override fun visitElement(element: PsiElement) {
         element.acceptChildren(this)
@@ -33,10 +34,9 @@ class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> U
     }
 
     override fun visitXmlTag(tag: XmlTag?) {
-        val idPrefix = "@+id/"
-        val attribute = tag?.getAttribute("android:id")
+        val attribute = tag?.getAttribute(resourceManager.idAttribute)
         if (attribute != null && attribute.getValue() != null) {
-            elementCallback(attribute.getValue()!!.replace(idPrefix, ""), tag!!.getLocalName(), attribute)
+            elementCallback(resourceManager.idToName(attribute.getValue()), tag!!.getLocalName(), attribute)
         }
         tag?.acceptChildren(this)
     }
