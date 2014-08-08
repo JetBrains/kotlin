@@ -23,14 +23,10 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.PsiReferenceExpression
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.psi.impl.light.LightElement
-import org.jetbrains.android.augment.AndroidInternalRClass
-import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlAttribute
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {

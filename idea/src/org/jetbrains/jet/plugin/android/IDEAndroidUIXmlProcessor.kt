@@ -39,10 +39,10 @@ class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
         resourceManager.resetAttributeCache()
-        file.accept(AndroidXmlVisitor { id, wClass, valueElement ->
+        file.accept(AndroidXmlVisitor(resourceManager, { id, wClass, valueElement ->
             ids.add(AndroidWidget(id, wClass))
             resourceManager.addMapping(id, valueElement)
-        })
+        }))
         return produceKotlinProperties(KotlinStringWriter(), ids).toString()
     }
 }

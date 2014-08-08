@@ -33,7 +33,7 @@ class CliAndroidUIXmlProcessor(project: Project, override val searchPath: String
 
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
-        val handler = AndroidXmlHandler({ id, wClass -> ids.add(AndroidWidget(id, wClass)) })
+        val handler = AndroidXmlHandler(resourceManager, { id, wClass -> ids.add(AndroidWidget(id, wClass)) })
         try {
             resourceManager.saxParser.parse(file.getVirtualFile()?.getInputStream()!!, handler)
             return produceKotlinProperties(KotlinStringWriter(), ids).toString()
