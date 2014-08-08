@@ -91,31 +91,24 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
                 ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this):
                 Arrays.asList(ModuleManager.getInstance(project).getModules());
 
+        List<Module> modulesToConfigure = nonConfiguredModules;
+        String copyLibIntoPath = null;
+
         if (nonConfiguredModules.size() > 1 || showPathPanelForJava) {
-            List<Module> modulesToConfigure;
-            String copyLibIntoPath;
+            CreateJavaLibraryDialogWithModules dialog = new CreateJavaLibraryDialogWithModules(
+                    project, nonConfiguredModules, defaultPath, showPathPanelForJava);
 
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                CreateJavaLibraryDialogWithModules dialog = new CreateJavaLibraryDialogWithModules(
-                        project, nonConfiguredModules, defaultPath, showPathPanelForJava);
                 dialog.show();
                 if (!dialog.isOK()) return;
-                modulesToConfigure = dialog.getModulesToConfigure();
-                copyLibIntoPath = dialog.getCopyIntoPath();
-            }
-            else {
-                modulesToConfigure = nonConfiguredModules;
-                copyLibIntoPath = defaultPath;
             }
 
-            for (Module module : modulesToConfigure) {
-                configureModuleWithLibrary(module, defaultPath, copyLibIntoPath);
-            }
+            modulesToConfigure = dialog.getModulesToConfigure();
+            copyLibIntoPath = dialog.getCopyIntoPath();
         }
-        else {
-            for (Module module : nonConfiguredModules) {
-                configureModuleWithLibrary(module, defaultPath, null);
-            }
+
+        for (Module module : modulesToConfigure) {
+            configureModuleWithLibrary(module, defaultPath, copyLibIntoPath);
         }
     }
 
