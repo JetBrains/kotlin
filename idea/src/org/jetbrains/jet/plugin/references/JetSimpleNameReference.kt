@@ -35,12 +35,37 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndBranch
+import org.jetbrains.jet.lang.resolve.android.isAndroidSyntheticElement
+import org.jetbrains.jet.plugin.android.XmlAttributeValueWrapper
+import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper
+import com.intellij.psi.impl.light.LightElement
+import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
+import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
 ) : JetSimpleReference<JetSimpleNameExpression>(jetSimpleNameExpression) {
+
+    override fun isReferenceTo(element: PsiElement?): Boolean {
+       val resolvedElement = resolve()
+       if (resolvedElement == null || element == null) {
+           return false
+       }
+       if (isAndroidSyntheticElement(resolvedElement)) {
+           if (element is ValueResourceElementWrapper) {
+               val resource = element.getValue()!!
+               return (resolvedElement as JetProperty).getName() == resource.substring(resource.indexOf('/')+1)
+           }
+
+       }
+       else if (resolvedElement is LightElement && element is JetProperty) {
+           return resolvedElement.getName() == element.getName()
+       }
+       return super.isReferenceTo(element)
+   }
 
     override fun getRangeInElement(): TextRange = TextRange(0, getElement().getTextLength())
 
@@ -69,7 +94,14 @@ public class JetSimpleNameReference(
         val element = when (expression.getReferencedNameElementType()) {
             JetTokens.FIELD_IDENTIFIER -> psiFactory.createFieldIdentifier(newElementName)
             JetTokens.LABEL_IDENTIFIER -> psiFactory.createClassLabel(newElementName)
-            else -> psiFactory.createNameIdentifier(newElementName)
+            else -> {
+                if (newElementName.startsWith("@+id/")) {
+                    psiFactory.createNameIdentifier(newElementName.substring(newElementName.indexOf('/')+1))
+                }
+                else {
+                    psiFactory.createNameIdentifier(newElementName)
+                }
+            }
         }
 
         var nameElement = expression.getReferencedNameElement()
