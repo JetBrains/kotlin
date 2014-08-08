@@ -20,12 +20,12 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
@@ -51,6 +51,7 @@ public class QualifiedExpressionResolver {
         EVERYTHING
     }
 
+    @KotlinSignature( "fun analyseImportReference(importDirective: JetImportDirective, scope: JetScope, trace: BindingTrace, module: ModuleDescriptor): Collection<out DeclarationDescriptor>")
     @NotNull
     public Collection<? extends DeclarationDescriptor> analyseImportReference(
             @NotNull JetImportDirective importDirective,

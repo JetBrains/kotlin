@@ -129,8 +129,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         if (shouldRunTopLevelCompletion()) {
             TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
-            addKotlinTopLevelFunctions()
-            addKotlinTopLevelObjects()
+            addKotlinTopLevelDeclarations()
         }
 
         if (shouldRunExtensionsCompletion()) {
@@ -155,15 +154,9 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
     }
 
-    private fun addKotlinTopLevelFunctions() {
-        for (name in shortNamesCache.getAllTopLevelFunctionNames()) {
-            if (prefixMatcher.prefixMatches(name)) {
-                collector.addDescriptorElements(shortNamesCache.getTopLevelFunctionDescriptorsByName(name, jetReference!!.expression, resolveSession, searchScope))
-            }
-        }
-    }
+    private fun addKotlinTopLevelDeclarations() {
+        collector.addDescriptorElements(shortNamesCache.getJetTopLevelCallables({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope))
 
-    private fun addKotlinTopLevelObjects() {
         for (name in shortNamesCache.getAllTopLevelObjectNames()) {
             if (prefixMatcher.prefixMatches(name)) {
                 collector.addDescriptorElements(shortNamesCache.getTopLevelObjectsByName(name, resolveSession, searchScope))

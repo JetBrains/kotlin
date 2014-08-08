@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.caches
 
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Condition
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
@@ -158,7 +157,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
 
     public fun getTopLevelFunctionDescriptorsByName(name: String, context: JetExpression /*TODO: to be dropped*/, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<FunctionDescriptor> {
 
-        val jetScope = resolveSession.resolveToElement(context).get<JetExpression, JetScope>(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
+        val jetScope = resolveSession.resolveToElement(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
 
         val result = hashSetOf<FunctionDescriptor>()
 
@@ -167,16 +166,22 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         val topLevelFunctionFqNames = JetFromJavaDescriptorHelper.getTopLevelFunctionFqNames(project, scope, false)
         for (fqName in topLevelFunctionFqNames) {
             if (fqName.lastSegmentIs(identifier)) {
-                val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
-                val declarationDescriptors = QualifiedExpressionResolver().analyseImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
-                for (declarationDescriptor in declarationDescriptors) {
-                    if (declarationDescriptor is FunctionDescriptor) {
-                        result.add(declarationDescriptor as FunctionDescriptor)
-                    }
-                }
+                findCompiledTopLevelEntities(fqName, context, jetScope, resolveSession).filterIsInstanceTo(result, javaClass<FunctionDescriptor>())
             }
         }
 
+        result.addJetSourceTopLevelFunctions(name, resolveSession, scope)
+
+        return result
+    }
+
+    private fun findCompiledTopLevelEntities(fqName: FqName, context: JetExpression, jetScope: JetScope, resolveSession: ResolveSessionForBodies): Collection<DeclarationDescriptor> {
+        val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
+        return QualifiedExpressionResolver().analyseImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
+    }
+
+    private fun MutableCollection<in FunctionDescriptor>.addJetSourceTopLevelFunctions(name: String, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope) {
+        val identifier = Name.identifier(name)
         val affectedPackages = JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(name, project, scope)
                 .map { it.getContainingFile() }
                 .filterIsInstance(javaClass<JetFile>())
@@ -186,36 +191,54 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         for (affectedPackage in affectedPackages) {
             val packageDescriptor = resolveSession.getModuleDescriptor().getPackage(affectedPackage)
                     ?: error("There's a function in stub index with invalid package: $affectedPackage")
-            result.addAll(packageDescriptor.getMemberScope().getFunctions(identifier))
+            addAll(packageDescriptor.getMemberScope().getFunctions(identifier))
         }
-
-        return result
     }
 
     private fun getJetExtensionFunctionsByName(name: String, scope: GlobalSearchScope): Collection<PsiElement>
             = JetTopLevelExtensionFunctionShortNameIndex.getInstance().get(name, project, scope)
 
     // TODO: Make it work for properties
-    public fun getJetCallableExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression, resolveSession: ResolveSessionForBodies, searchScope: GlobalSearchScope): Collection<DeclarationDescriptor> {
+    public fun getJetTopLevelCallables(nameFilter: (String) -> Boolean, context: JetExpression /*TODO: to be dropped*/, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<DeclarationDescriptor> {
+        val result = ArrayList<DeclarationDescriptor>()
+
+        JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().getAllKeys(project)
+                .stream()
+                .filter(nameFilter)
+                .forEach { result.addJetSourceTopLevelFunctions(it, resolveSession, scope) }
+
+        val jetScope = resolveSession.resolveToElement(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
+        JetFromJavaDescriptorHelper.getTopLevelFunctionFqNames(project, scope, false)
+                .filter { nameFilter(it.shortName().asString()) }
+                .flatMapTo(result) { findCompiledTopLevelEntities(it, context, jetScope, resolveSession) }
+
+        return result
+    }
+
+    // TODO: Make it work for properties
+    public fun getJetCallableExtensions(nameFilter: (String) -> Boolean,
+                                        expression: JetSimpleNameExpression,
+                                        resolveSession: ResolveSessionForBodies,
+                                        scope: GlobalSearchScope): Collection<DeclarationDescriptor> {
         val context = resolveSession.resolveToElement(expression)
         val receiverExpression = expression.getReceiverExpression() ?: return listOf()
         val expressionType = context.get<JetExpression, JetType>(BindingContext.EXPRESSION_TYPE, receiverExpression)
-        val scope = context.get<JetExpression, JetScope>(BindingContext.RESOLUTION_SCOPE, receiverExpression)
+        val jetScope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression)
 
-        if (expressionType == null || scope == null || expressionType.isError()) {
+        if (expressionType == null || jetScope == null || expressionType.isError()) {
             return listOf()
         }
 
-        val functionFQNs = extensionFunctionsFromSourceFqNames(nameFilter, searchScope)
+        val functionFQNs = extensionFunctionsFromSourceFqNames(nameFilter, scope)
 
-        JetFromJavaDescriptorHelper.getTopLevelFunctionFqNames(project, searchScope, true)
+        JetFromJavaDescriptorHelper.getTopLevelFunctionFqNames(project, scope, true)
                 .filterTo(functionFQNs) { nameFilter(it.shortName().asString()) }
 
         // Iterate through the function with attempt to resolve found functions
-        return functionFQNs.flatMap { ExpressionTypingUtils.canFindSuitableCall(it, receiverExpression, expressionType, scope, resolveSession.getModuleDescriptor()) }
+        return functionFQNs.flatMap { ExpressionTypingUtils.canFindSuitableCall(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor()) }
     }
 
-    private fun extensionFunctionsFromSourceFqNames(nameFilter: (String) -> Boolean, searchScope: GlobalSearchScope): HashSet<FqName> {
+    private fun extensionFunctionsFromSourceFqNames(nameFilter: (String) -> Boolean, scope: GlobalSearchScope): HashSet<FqName> {
         val extensionFunctionNames = HashSet(JetTopLevelExtensionFunctionShortNameIndex.getInstance().getAllKeys(project))
 
         val functionFQNs = HashSet<FqName>()
@@ -223,7 +246,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         // Collect all possible extension function qualified names
         for (name in extensionFunctionNames) {
             if (nameFilter(name)) {
-                val extensionFunctions = getJetExtensionFunctionsByName(name, searchScope)
+                val extensionFunctions = getJetExtensionFunctionsByName(name, scope)
 
                 for (extensionFunction in extensionFunctions) {
                     if (extensionFunction is JetNamedFunction) {
@@ -241,21 +264,21 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         return functionFQNs
     }
 
-    public fun getJetClassesDescriptors(acceptedShortNameCondition: (String) -> Boolean, analyzer: KotlinCodeAnalyzer, searchScope: GlobalSearchScope): Collection<ClassDescriptor> {
+    public fun getJetClassesDescriptors(acceptedShortNameCondition: (String) -> Boolean, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {
         val classDescriptors = ArrayList<ClassDescriptor>()
 
         for (fqName in JetFullClassNameIndex.getInstance().getAllKeys(project)) {
             val classFQName = FqName(fqName)
             if (acceptedShortNameCondition(classFQName.shortName().asString())) {
-                classDescriptors.addAll(getJetClassesDescriptorsByFQName(analyzer, classFQName, searchScope))
+                classDescriptors.addAll(getJetClassesDescriptorsByFQName(analyzer, classFQName, scope))
             }
         }
 
         return classDescriptors
     }
 
-    private fun getJetClassesDescriptorsByFQName(analyzer: KotlinCodeAnalyzer, classFQName: FqName, searchScope: GlobalSearchScope): Collection<ClassDescriptor> {
-        val jetClassOrObjects = JetFullClassNameIndex.getInstance().get(classFQName.asString(), project, searchScope)
+    private fun getJetClassesDescriptorsByFQName(analyzer: KotlinCodeAnalyzer, classFQName: FqName, scope: GlobalSearchScope): Collection<ClassDescriptor> {
+        val jetClassOrObjects = JetFullClassNameIndex.getInstance().get(classFQName.asString(), project, scope)
 
         if (jetClassOrObjects.isEmpty()) {
             // This fqn is absent in caches, dead or not in scope
