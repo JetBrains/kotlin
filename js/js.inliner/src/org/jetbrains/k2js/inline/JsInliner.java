@@ -24,6 +24,7 @@ import java.util.IdentityHashMap;
 import java.util.Stack;
 import java.util.List;
 
+import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctionInstances;
 import static org.jetbrains.k2js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 
 public class JsInliner extends JsVisitorWithContextImpl {
@@ -161,6 +162,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     @Override
     public void endVisit(JsFunction function, JsContext context) {
         super.endVisit(function, context);
+        removeUnusedLocalFunctionInstances(function);
         inliningContexts.pop();
     }
 
