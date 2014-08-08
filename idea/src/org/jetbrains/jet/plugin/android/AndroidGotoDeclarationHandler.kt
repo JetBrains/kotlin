@@ -25,20 +25,34 @@ import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiReferenceExpression
+import org.jetbrains.jet.plugin.references.JetSimpleNameReference
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lang.psi.JetProperty
+import com.intellij.psi.impl.light.LightElement
+import org.jetbrains.android.augment.AndroidInternalRClass
+import com.intellij.psi.xml.XmlAttributeValue
+import com.intellij.psi.xml.XmlAttribute
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
-        // FIXME: find a way to filter out more bad sourceElements before they hit idToXmlAttribute() resulting in cache rebuild
-        if (sourceElement is LeafPsiElement) {
-            val refExp = PsiTreeUtil.getParentOfType(sourceElement, javaClass<PsiReferenceExpression>())
-            val parser = ServiceManager.getService(sourceElement.getProject(), javaClass<AndroidUIXmlProcessor>())
-            val psiElement = parser?.resourceManager?.idToXmlAttribute(sourceElement.getText())
-            if (psiElement != null) {
-                return array(psiElement)
+        if (sourceElement is LeafPsiElement && sourceElement.getParent() is JetSimpleNameExpression) {
+            val resolved = JetSimpleNameReference(sourceElement.getParent() as JetSimpleNameExpression).resolve()
+            val name = if (resolved is JetProperty) {
+                resolved.getName()
             }
-            else return null
+            else if (resolved is LightElement && resolved.getParent().toString() == "AndroidRClass") {
+                resolved.getName()
+            }
+            else null
+            if (name != null) {
+                val parser = ServiceManager.getService(sourceElement.getProject(), javaClass<AndroidUIXmlProcessor>())
+                val psiElement = parser?.resourceManager?.idToXmlAttribute(name) as? XmlAttribute
+                if (psiElement != null) {
+                    return array(psiElement.getValueElement()!!)
+                }
+            }
         }
-        else return null
+        return null
     }
 
     override fun getActionText(context: DataContext?): String? {
