@@ -59,8 +59,8 @@ object NamedParametersCompletion {
         val callElement = PsiTreeUtil.getParentOfType(thisArgument, javaClass<JetCallElement>()) ?: return false
 
         for (argument in callElement.getValueArguments()) {
-            if (argument.isNamed()) return true
             if (argument == thisArgument) break
+            if (argument.isNamed()) return true
         }
 
         return false

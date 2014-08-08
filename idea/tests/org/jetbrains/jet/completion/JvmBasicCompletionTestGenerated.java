@@ -565,6 +565,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest("idea/testData/completion/basic/common/namedParameters/NotOnlyNamedParameters.kt");
             }
             
+            @TestMetadata("NotOnlyNamedParameters2.kt")
+            public void testNotOnlyNamedParameters2() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/NotOnlyNamedParameters2.kt");
+            }
+            
             @TestMetadata("OnlyNamedParameters.kt")
             public void testOnlyNamedParameters() throws Exception {
                 doTest("idea/testData/completion/basic/common/namedParameters/OnlyNamedParameters.kt");
