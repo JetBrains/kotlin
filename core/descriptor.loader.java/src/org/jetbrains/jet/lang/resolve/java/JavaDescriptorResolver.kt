@@ -39,10 +39,6 @@ public class JavaDescriptorResolver(public val packageFragmentProvider: LazyJava
     public fun getPackageFragment(javaClass: JavaClass): PackageFragmentDescriptor? {
         return packageFragmentProvider.getPackageFragment(javaClass)
     }
-
-    class object {
-        public val JAVA_ROOT: Name = Name.special("<java_root>")
-    }
 }
 
 public fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDescriptor? {

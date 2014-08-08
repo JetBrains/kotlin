@@ -180,11 +180,6 @@ public class ImportInsertHelper {
     }
 
     public static boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
-        if (importPath.fqnPart().firstSegmentIs(JavaDescriptorResolver.JAVA_ROOT)) {
-            FqName withoutJavaRoot = NamePackage.withoutFirstSegment(importPath.fqnPart());
-            importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder(), importPath.getAlias());
-        }
-
         if (isImportedByDefault(importPath, file)) {
             return false;
         }
