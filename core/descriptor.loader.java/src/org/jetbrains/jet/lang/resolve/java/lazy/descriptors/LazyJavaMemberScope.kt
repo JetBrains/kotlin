@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
+import org.jetbrains.jet.lang.types.lowerIfFlexible
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -124,7 +125,8 @@ public abstract class LazyJavaMemberScope(
         val methodTypeParameters = method.getTypeParameters().map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
         val valueParameters = resolveValueParameters(c, functionDescriptorImpl, method.getValueParameters())
 
-        val returnTypeAttrs = LazyJavaTypeAttributes(c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT) {
+        val annotationMethod = method.getContainingClass().isAnnotationType()
+        val returnTypeAttrs = LazyJavaTypeAttributes(c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT, allowFlexible = !annotationMethod) {
             if (c.hasReadOnlyAnnotation(method) && !c.hasMutableAnnotation(method))
                 TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
             else
@@ -132,9 +134,9 @@ public abstract class LazyJavaMemberScope(
         }
 
         val returnJavaType = method.getReturnType() ?: throw IllegalStateException("Constructor passed as method: $method")
+        // Annotation arguments are never null in Java
         val returnType = c.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs).let {
-            // Annotation arguments are never null in Java
-            if (method.getContainingClass().isAnnotationType()) TypeUtils.makeNotNullable(it) else it
+            if (annotationMethod) TypeUtils.makeNotNullable(it) else it
         }
 
         val (effectiveSignature, superFunctions, signatureErrors) = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters)

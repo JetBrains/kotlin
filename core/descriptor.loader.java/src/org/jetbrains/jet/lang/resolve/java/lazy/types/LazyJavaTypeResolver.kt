@@ -47,7 +47,7 @@ class LazyJavaTypeResolver(
                 assert(jetType != null, "Primitive type is not found: " + canonicalText)
                 return jetType!!
             }
-            is JavaClassifierType -> if (PLATFORM_TYPES && attr.howThisTypeIsUsed != SUPERTYPE)
+            is JavaClassifierType -> if (PLATFORM_TYPES && attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE)
                                          LazyFlexibleJavaClassifierType(javaType, attr)
                                      else LazyJavaClassifierType(javaType, attr)
             is JavaArrayType -> transformArrayType(javaType, attr)
@@ -65,9 +65,9 @@ class LazyJavaTypeResolver(
         val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !isVararg) OUT_VARIANCE else INVARIANT
 
         val howArgumentTypeIsUsed = if (isVararg) MEMBER_SIGNATURE_CONTRAVARIANT else TYPE_ARGUMENT
-        val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed.toAttributes())
+        val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed.toAttributes(attr.allowFlexible))
         val result = KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType)
-        return if (PLATFORM_TYPES)
+        return if (PLATFORM_TYPES && attr.allowFlexible)
                    DelegatingFlexibleType(
                            KotlinBuiltIns.getInstance().getArrayType(INVARIANT, componentType),
                            TypeUtils.makeNullable(
@@ -278,8 +278,10 @@ trait JavaTypeAttributes {
     val howThisTypeIsUsed: TypeUsage
     val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
     val isMarkedNotNull: Boolean
-    open val flexibility: Flexibility
+    val flexibility: Flexibility
         get() = INFLEXIBLE
+    val allowFlexible: Boolean
+        get() = true
 }
 
 fun JavaTypeAttributes.isFlexible() = flexibility != INFLEXIBLE
@@ -294,6 +296,7 @@ class LazyJavaTypeAttributes(
         c: LazyJavaResolverContext,
         val annotationOwner: JavaAnnotationOwner,
         override val howThisTypeIsUsed: TypeUsage,
+        override val allowFlexible: Boolean = true,
         computeHowThisTypeIsUsedAccordingToAnnotations: () -> TypeUsage = {howThisTypeIsUsed}
 ): JavaTypeAttributes {
 
@@ -304,11 +307,12 @@ class LazyJavaTypeAttributes(
     override val isMarkedNotNull: Boolean by c.storageManager.createLazyValue { c.hasNotNullAnnotation(annotationOwner) }
 }
 
-fun TypeUsage.toAttributes() = object : JavaTypeAttributes {
+fun TypeUsage.toAttributes(allowFlexible: Boolean = true) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
     override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
             get() = howThisTypeIsUsed
     override val isMarkedNotNull: Boolean = false
+    override val allowFlexible: Boolean = allowFlexible
 }
 
 fun JavaTypeAttributes.toFlexible(flexibility: Flexibility) =
