@@ -106,7 +106,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
             return;
         }
 
-        String signature = getDefaultSignature(project, (PsiMember) annotatedElement.getOriginalElement());
+        String signature = getDefaultSignature(project, annotatedElement);
 
         final MessageBusConnection busConnection = project.getMessageBus().connect();
         busConnection.subscribe(ExternalAnnotationsManager.TOPIC, new ExternalAnnotationsListener.Adapter() {
