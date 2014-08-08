@@ -26,13 +26,14 @@ import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
 class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project) {
     override val searchPath: String? = project.getBasePath() + "/res/layout/"
     override var androidAppPackage: String = ""
+        get() = resourceManager.readManifest()._package
 
     override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(project, searchPath)
 
     override protected fun lazySetup() {
         if (listenerSetUp) return
-        androidAppPackage = resourceManager.readManifest()._package
-        populateQueue()
+//        androidAppPackage = resourceManager.readManifest()._package
+//        populateQueue()
         listenerSetUp = true
     }
 

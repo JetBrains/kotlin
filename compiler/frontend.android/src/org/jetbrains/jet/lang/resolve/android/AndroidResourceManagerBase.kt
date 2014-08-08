@@ -29,6 +29,7 @@ import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
+import com.intellij.openapi.vfs.VirtualFile
 
 open class AndroidResourceManagerBase(project: Project, searchPath: String?) : AndroidResourceManager(project, searchPath) {
     override fun getLayoutXmlFiles(): Collection<PsiFile> {
@@ -36,6 +37,12 @@ open class AndroidResourceManagerBase(project: Project, searchPath: String?) : A
         val watchDir = fileManager.findFileByUrl("file://" + searchPath)
         val psiManager = PsiManager.getInstance(project)
         return watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) }?.mapNotNull { it } ?: ArrayList(0)
+    }
+
+    protected fun vritualFileToPsi(vf: VirtualFile): PsiFile? {
+        val psiManager = PsiManager.getInstance(project)
+        return psiManager.findFile(vf)
+
     }
 
     override fun idToXmlAttribute(id: String): PsiElement? {
