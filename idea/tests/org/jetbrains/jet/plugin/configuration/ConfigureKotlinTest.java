@@ -21,6 +21,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.PathUtil;
@@ -35,12 +36,32 @@ import static org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurat
 
 public class ConfigureKotlinTest extends PlatformTestCase {
     private static final String BASE_PATH = "idea/testData/configuration/";
-    private static final KotlinJavaModuleConfigurator JAVA_CONFIGURATOR = new KotlinJavaModuleConfigurator();
-    private static final KotlinJsModuleConfigurator JS_CONFIGURATOR = new KotlinJsModuleConfigurator();
+
+    private static final KotlinJavaModuleConfigurator JAVA_CONFIGURATOR = new KotlinJavaModuleConfigurator() {
+        @Override
+        protected String getDefaultPathToJarFile(@NotNull Project project) {
+            return getPathRelativeToTemp("default_jvm_lib");
+        }
+    };
+
+    private static final String TEMP_DIR_MACRO_KEY = "TEMP_TEST_DIR";
+
+    private static final KotlinJsModuleConfigurator JS_CONFIGURATOR = new KotlinJsModuleConfigurator() {
+        @Override
+        protected String getDefaultPathToJarFile(@NotNull Project project) {
+            return getPathRelativeToTemp("default_js_lib");
+        }
+
+        @NotNull
+        @Override
+        protected String getDefaultPathToJsFile(@NotNull Project project) {
+            return getPathRelativeToTemp("default_script");
+        }
+    };
 
     @Override
     protected void tearDown() throws Exception {
-        PathMacros.getInstance().removeMacro("TEMP_TEST_DIR");
+        PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY);
 
         super.tearDown();
     }
@@ -50,7 +71,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
         super.initApplication();
 
         File tempLibDir = FileUtil.createTempDirectory("temp", null);
-        PathMacros.getInstance().setMacro("TEMP_TEST_DIR", tempLibDir.getAbsolutePath());
+        PathMacros.getInstance().setMacro(TEMP_DIR_MACRO_KEY, FileUtilRt.toSystemDependentName(tempLibDir.getAbsolutePath()));
     }
 
     public void testNewLibrary_copyJar() {
@@ -106,9 +127,22 @@ public class ConfigureKotlinTest extends PlatformTestCase {
     public void testLibraryNonDefault_libExistInDefault() throws IOException {
         Module module = getModule();
 
+        // Move fake runtime jar to default library path to pretend library is already configured
+        FileUtil.copy(
+                new File(getProject().getBasePath() + "/lib/kotlin-runtime.jar"),
+                new File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(getProject()) + "/kotlin-runtime.jar"));
+
         assertNotConfigured(module, JAVA_CONFIGURATOR);
         JAVA_CONFIGURATOR.configure(myProject);
         assertProperlyConfigured(module, JAVA_CONFIGURATOR);
+    }
+
+    public void testTwoModulesWithNonDefaultPath_doNotCopyInDefault() throws IOException {
+        doTestConfigureModulesWithNonDefaultSetup(JAVA_CONFIGURATOR);
+    }
+
+    public void testTwoModulesWithJSNonDefaultPath_doNotCopyInDefault() throws IOException {
+        doTestConfigureModulesWithNonDefaultSetup(JS_CONFIGURATOR);
     }
 
     public void testNewLibrary_jarExists_js() {
@@ -143,6 +177,23 @@ public class ConfigureKotlinTest extends PlatformTestCase {
 
     public void testJsLibraryWithoutPaths_doNotCopyJar() {
         doTestOneJsModule(FileState.DO_NOT_COPY, LibraryState.NON_CONFIGURED_LIBRARY);
+    }
+
+    private void doTestConfigureModulesWithNonDefaultSetup(KotlinWithLibraryConfigurator configurator) {
+        assertNoFilesInDefaultPaths(true);
+
+        Module[] modules = getModules();
+        for (Module module : modules) {
+            assertNotConfigured(module, configurator);
+        }
+
+        configurator.configure(myProject);
+
+        assertNoFilesInDefaultPaths(false);
+
+        for (Module module : modules) {
+            assertProperlyConfigured(module, configurator);
+        }
     }
 
     private void doTestOneJavaModule(@NotNull FileState jarState, @NotNull LibraryState libraryState) {
@@ -259,6 +310,15 @@ public class ConfigureKotlinTest extends PlatformTestCase {
     protected void setUpModule() {
     }
 
+    private void assertNoFilesInDefaultPaths(boolean checkJsFiles) {
+        assertDoesntExist(new File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(getProject())));
+        assertDoesntExist(new File(JS_CONFIGURATOR.getDefaultPathToJarFile(getProject())));
+
+        if (checkJsFiles) {
+            assertDoesntExist(new File(JS_CONFIGURATOR.getDefaultPathToJsFile(getProject())));
+        }
+    }
+
     private static void assertNotConfigured(Module module, KotlinWithLibraryConfigurator configurator) {
         assertFalse(
                 String.format("Module %s should not be configured as %s Module", module.getName(), configurator.getPresentableText()),
@@ -281,5 +341,10 @@ public class ConfigureKotlinTest extends PlatformTestCase {
         if (configurator == JS_CONFIGURATOR) return JAVA_CONFIGURATOR;
 
         throw new IllegalArgumentException("Only JS_CONFIGURATOR and JAVA_CONFIGURATOR are supported");
+    }
+
+    private static String getPathRelativeToTemp(String relativePath) {
+        String tempPath = PathMacros.getInstance().getValue(TEMP_DIR_MACRO_KEY);
+        return tempPath + '/' + relativePath;
     }
 }

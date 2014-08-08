@@ -41,6 +41,7 @@ import java.io.File;
 import static org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils.showInfoNotification;
 
 public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConfigurator {
+    public static final String DEFAULT_LIBRARY_DIR = "lib";
 
     @NotNull
     protected abstract String getLibraryName();
@@ -376,8 +377,8 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return !isProjectLibraryPresent(project) && !getFileInDir(getJarName(), defaultPath).exists();
     }
 
-    protected static String getDefaultPathToJarFile(@NotNull Project project) {
-        return FileUIUtils.createRelativePath(project, project.getBaseDir(), "lib");
+    protected String getDefaultPathToJarFile(@NotNull Project project) {
+        return FileUIUtils.createRelativePath(project, project.getBaseDir(), DEFAULT_LIBRARY_DIR);
     }
 
     protected void showError(@NotNull String message) {

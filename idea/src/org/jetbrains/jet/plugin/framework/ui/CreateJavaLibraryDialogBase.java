@@ -73,7 +73,7 @@ public abstract class CreateJavaLibraryDialogBase extends DialogWrapper {
 
     @Nullable
     public String getCopyIntoPath() {
-        return pathPanel.getPath();
+        return chooseLibraryPathPlace.isVisible() ? pathPanel.getPath() : null;
     }
 
     @Nullable

@@ -147,7 +147,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     }
 
     @NotNull
-    private static String getDefaultPathToJsFile(@NotNull Project project) {
+    protected String getDefaultPathToJsFile(@NotNull Project project) {
         return FileUIUtils.createRelativePath(project, project.getBaseDir(), "script");
     }
 

@@ -98,6 +98,7 @@ public abstract class CreateJavaScriptLibraryDialogBase extends DialogWrapper im
     @Override
     @Nullable
     public String getCopyLibraryIntoPath() {
+        if (!copyLibraryPlace.isVisible()) return null;
         return copyLibraryFilePanel.getPath();
     }
 
