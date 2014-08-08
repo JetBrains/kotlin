@@ -54,9 +54,6 @@ import org.jetbrains.jet.plugin.stubindex.*;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
-import static org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper.getTopLevelFunctionFqNames;
-
 /**
  * Will provide both java elements from kotlin context and some declarations special to kotlin.
  * All those declaration are planned to be used in completion.
@@ -151,8 +148,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     /**
      * Get kotlin non-extension top-level function names. Method is allowed to give invalid names - all result should be
      * checked with getTopLevelFunctionDescriptorsByName().
-     *
-     * @return
      */
     @NotNull
     public Collection<String> getAllTopLevelFunctionNames() {
@@ -218,34 +213,28 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     public Collection<FunctionDescriptor> getTopLevelFunctionDescriptorsByName(
             @NotNull String name,
-            @NotNull JetSimpleNameExpression expression,
+            @NotNull JetExpression context /*TODO: to be dropped*/,
             @NotNull ResolveSessionForBodies resolveSession,
-            @NotNull GlobalSearchScope scope
-    ) {
-        // name parameter can differ from expression.getReferenceName() when expression contains completion suffix
-        final Name referenceName = expression.getIdentifier() == null ? JetPsiUtil.getConventionName(expression) : Name.identifier(name);
-        if (referenceName == null || referenceName.toString().isEmpty()) {
-            return Collections.emptyList();
-        }
+            @NotNull GlobalSearchScope scope) {
 
-        BindingContext context = resolveSession.resolveToElement(expression);
-        JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
-
+        JetScope jetScope = resolveSession.resolveToElement(context).get(BindingContext.RESOLUTION_SCOPE, context);
         if (jetScope == null) {
             return Collections.emptyList();
         }
 
         Set<FunctionDescriptor> result = Sets.newHashSet();
 
+        //TODO: this code is temporary and is to be dropped when compiled top level functions are indexed
+        final Name identifier = Name.identifier(name);
         Collection<FqName> topLevelFunctionFqNames =
-                ContainerUtil.filter(getTopLevelFunctionFqNames(project, scope, false), new Condition<FqName>() {
+                ContainerUtil.filter(JetFromJavaDescriptorHelper.getTopLevelFunctionFqNames(project, scope, false), new Condition<FqName>() {
                     @Override
                     public boolean value(FqName fqName) {
-                        return fqName.lastSegmentIs(referenceName);
+                        return fqName.lastSegmentIs(identifier);
                     }
                 });
         for (FqName fqName : topLevelFunctionFqNames) {
-            JetImportDirective importDirective = JetPsiFactory(expression).createImportDirective(new ImportPath(fqName, false));
+            JetImportDirective importDirective = new JetPsiFactory(context.getProject()).createImportDirective(new ImportPath(fqName, false));
             Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver().analyseImportReference(
                     importDirective, jetScope, new BindingTraceContext(), resolveSession.getModuleDescriptor());
             for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
@@ -256,8 +245,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         Set<FqName> affectedPackages = Sets.newHashSet();
-        Collection<JetNamedFunction> jetNamedFunctions =
-                JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(referenceName.asString(), project, scope);
+        Collection<JetNamedFunction> jetNamedFunctions = JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(name, project, scope);
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
             PsiFile containingFile = jetNamedFunction.getContainingFile();
             if (containingFile instanceof JetFile) {
@@ -270,7 +258,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(affectedPackage);
             assert packageDescriptor != null : "There's a function in stub index with invalid package: " + affectedPackage;
             JetScope memberScope = packageDescriptor.getMemberScope();
-            result.addAll(memberScope.getFunctions(referenceName));
+            result.addAll(memberScope.getFunctions(identifier));
         }
 
         return result;
@@ -304,7 +292,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         Set<FqName> functionFQNs = extensionFunctionsFromSourceFqNames(acceptedNameCondition, searchScope);
-        functionFQNs.addAll(ContainerUtil.filter(getTopLevelFunctionFqNames(project, searchScope, true), new Condition<FqName>() {
+        functionFQNs.addAll(ContainerUtil.filter(JetFromJavaDescriptorHelper.getTopLevelFunctionFqNames(project, searchScope, true), new Condition<FqName>() {
             @Override
             public boolean value(FqName fqName) {
                 return acceptedNameCondition.value(fqName.shortName().asString());

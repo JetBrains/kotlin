@@ -34,6 +34,7 @@ import org.jetbrains.jet.plugin.caches.JetShortNamesCache
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
+import com.intellij.openapi.module.ModuleUtilCore
 
 class TypesCompletion(val parameters: CompletionParameters, val resolveSession: ResolveSessionForBodies, val prefixMatcher: PrefixMatcher) {
     fun addAllTypes(result: LookupElementsCollector) {
@@ -41,7 +42,9 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
 
         val project = parameters.getOriginalFile().getProject()
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
-        result.addDescriptorElements(namesCache.getJetClassesDescriptors({ prefixMatcher.prefixMatches(it!!) }, resolveSession, GlobalSearchScope.allScope(project)))
+        val module = ModuleUtilCore.findModuleForPsiElement(parameters.getOriginalFile()) ?: return
+        val searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
+        result.addDescriptorElements(namesCache.getJetClassesDescriptors({ prefixMatcher.prefixMatches(it!!) }, resolveSession, searchScope))
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(result)

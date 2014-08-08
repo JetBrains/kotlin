@@ -27,6 +27,8 @@ import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
@@ -40,6 +42,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
@@ -53,8 +56,8 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil;
 
 import java.util.Collection;
@@ -93,16 +96,19 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             return Collections.emptyList();
         }
 
-        ResolveSessionForBodies resolveSessionForBodies =
-                ResolvePackage.getLazyResolveSession(element);
+        ResolveSessionForBodies resolveSessionForBodies = ResolvePackage.getLazyResolveSession(element);
+
+        Module module = ModuleUtilCore.findModuleForPsiElement(file);
+        if (module == null) return Collections.emptyList();
+        GlobalSearchScope searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
 
         List<FqName> result = Lists.newArrayList();
         if (!isSuppressedTopLevelImportInPosition(element)) {
-            result.addAll(getClassNames(referenceName, (JetFile) file, resolveSessionForBodies));
-            result.addAll(getJetTopLevelFunctions(referenceName, element, resolveSessionForBodies, file.getProject()));
+            result.addAll(getClassNames(referenceName, (JetFile) file, searchScope, resolveSessionForBodies));
+            result.addAll(getJetTopLevelFunctions(referenceName, element, searchScope, resolveSessionForBodies, file.getProject()));
         }
 
-        result.addAll(getJetExtensionFunctions(referenceName, element, resolveSessionForBodies, file.getProject()));
+        result.addAll(getJetExtensionFunctions(referenceName, element, searchScope, resolveSessionForBodies, file.getProject()));
 
         return Collections2.filter(result, new Predicate<FqName>() {
             @Override
@@ -119,14 +125,15 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
 
     private static Collection<FqName> getJetTopLevelFunctions(
             @NotNull String referenceName,
-            @NotNull JetSimpleNameExpression expression,
+            @NotNull JetExpression context,
+            @NotNull GlobalSearchScope searchScope,
             @NotNull ResolveSessionForBodies resolveSession,
             @NotNull Project project
     ) {
         JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
 
         Collection<FunctionDescriptor> topLevelFunctions = namesCache.getTopLevelFunctionDescriptorsByName(
-                referenceName, expression, resolveSession, GlobalSearchScope.allScope(project));
+                referenceName, context, resolveSession, searchScope);
 
         return Sets.newHashSet(Collections2.transform(topLevelFunctions, new Function<DeclarationDescriptor, FqName>() {
             @Override
@@ -140,6 +147,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     private static Collection<FqName> getJetExtensionFunctions(
             @NotNull final String referenceName,
             @NotNull JetSimpleNameExpression expression,
+            @NotNull GlobalSearchScope searchScope,
             @NotNull ResolveSessionForBodies resolveSession,
             @NotNull Project project
     ) {
@@ -153,7 +161,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
                 },
                 expression,
                 resolveSession,
-                GlobalSearchScope.allScope(project));
+                searchScope);
 
         return Sets.newHashSet(Collections2.transform(jetCallableExtensions, new Function<DeclarationDescriptor, FqName>() {
             @Override
@@ -167,24 +175,24 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     /*
      * Searches for possible class names in kotlin context and java facade.
      */
-    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file, @NotNull KotlinCodeAnalyzer analyzer) {
+    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file, @NotNull GlobalSearchScope searchScope, @NotNull KotlinCodeAnalyzer analyzer) {
         Set<FqName> possibleResolveNames = Sets.newHashSet();
 
         if (!ProjectStructureUtil.isJsKotlinModule(file)) {
-            possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
+            possibleResolveNames.addAll(getClassesFromCache(referenceName, searchScope, file));
         }
         else {
-            possibleResolveNames.addAll(getJetClasses(referenceName, file.getProject(), analyzer));
+            possibleResolveNames.addAll(getJetClasses(referenceName, searchScope, file.getProject(), analyzer));
         }
 
         // TODO: Do appropriate sorting
         return Lists.newArrayList(possibleResolveNames);
     }
 
-    private static Collection<FqName> getClassesFromCache(@NotNull String typeName, @NotNull final JetFile file) {
+    private static Collection<FqName> getClassesFromCache(@NotNull String typeName, @NotNull GlobalSearchScope searchScope, @NotNull final JetFile file) {
         PsiShortNamesCache cache = getShortNamesCache(file);
 
-        PsiClass[] classes = cache.getClassesByName(typeName, GlobalSearchScope.allScope(file.getProject()));
+        PsiClass[] classes = cache.getClassesByName(typeName, searchScope);
 
         Collection<PsiClass> accessibleClasses = Collections2.filter(Lists.newArrayList(classes), new Predicate<PsiClass>() {
             @Override
@@ -214,14 +222,14 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
         return PsiShortNamesCache.getInstance(jetFile.getProject());
     }
 
-    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull Project project, @NotNull KotlinCodeAnalyzer resolveSession) {
+    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull GlobalSearchScope searchScope, @NotNull Project project, @NotNull KotlinCodeAnalyzer resolveSession) {
         JetShortNamesCache cache = JetShortNamesCache.getKotlinInstance(project);
         Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Condition<String>() {
             @Override
             public boolean value(String s) {
                 return typeName.equals(s);
             }
-        }, resolveSession, GlobalSearchScope.allScope(project));
+        }, resolveSession, searchScope);
 
         return Collections2.transform(descriptors, new Function<ClassDescriptor, FqName>() {
             @Override
