@@ -3,7 +3,6 @@ package test.kotlin.kdoc
 import java.io.File
 import java.io.IOException
 import org.jetbrains.jet.cli.common.ExitCode
-import org.jetbrains.kotlin.doc.KDocArguments
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.junit.Assert
 import org.junit.Test
@@ -32,30 +31,20 @@ fun File.mkdirsProperly() {
 
 
 class KDocSampleTest {
-
     [Test]
     fun generateKDocForSample() {
         val compiler = KDocCompiler()
-
-        val args = KDocArguments()
-        args.kotlinHome = "../../../dist/kotlinc"
-
-        args.freeArgs = listOf("src/test/sample")
-
-        val outputDir = File("target/apidocs-sample")
-        outputDir.rmrf()
-        outputDir.mkdirsProperly()
 
         val classesOutputDir = File("target/classes-sample")
         classesOutputDir.rmrf()
         classesOutputDir.mkdirsProperly()
 
-        args.destination = classesOutputDir.getPath()
-
-        args.docConfig.docOutputDir = outputDir.getPath()
-        args.docConfig.title = "Sample"
-
-        val exitCode = compiler.exec(System.err, args)
+        val exitCode = compiler.exec(
+                System.err,
+                "-kotlin-home", "../../../dist/kotlinc",
+                "-d", classesOutputDir.getPath(),
+                "src/test/sample"
+        )
         Assert.assertEquals(ExitCode.OK, exitCode)
     }
 }
