@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.impl.JavaConstantExpressionEvaluator;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -42,5 +43,12 @@ public class JavaPropertyInitializerEvaluatorImpl implements JavaPropertyInitial
                     descriptor.getType());
         }
         return null;
+    }
+
+    @Override
+    public boolean isNotNullCompileTimeConstant(@NotNull JavaField field) {
+        // PsiUtil.isCompileTimeConstant returns false for null-initialized fields,
+        // see com.intellij.psi.util.IsConstantExpressionVisitor.visitLiteralExpression()
+        return PsiUtil.isCompileTimeConstant(((JavaFieldImpl) field).getPsi());
     }
 }
