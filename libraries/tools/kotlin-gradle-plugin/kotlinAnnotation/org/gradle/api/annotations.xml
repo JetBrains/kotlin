@@ -8,9 +8,6 @@
         <val name="value" val="&quot;fun apply(p0 : T) : Unit&quot;" />
       </annotation>
     </item>
-    <item name='org.gradle.api.Project org.gradle.api.Project getParent()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name="org.gradle.api.Project org.gradle.api.file.ConfigurableFileCollection files(java.lang.Object...)">
       <annotation name="org.jetbrains.annotations.NotNull" />
     </item>

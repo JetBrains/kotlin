@@ -4,7 +4,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.specs.Spec
 import java.io.File
 import java.net.URL
@@ -79,7 +78,7 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
                 return scriptHandler
             }
             log.debug("not found, switching to parent")
-            curProject = curProject.getParent()
+            curProject = curProject.getParent()!!
         }
         return null
     }
