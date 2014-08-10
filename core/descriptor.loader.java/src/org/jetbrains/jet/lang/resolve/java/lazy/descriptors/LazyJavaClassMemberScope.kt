@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.MethodSignatureData
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver.PLATFORM_TYPES
+import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
