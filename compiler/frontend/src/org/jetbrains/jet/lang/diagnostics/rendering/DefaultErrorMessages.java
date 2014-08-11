@@ -218,6 +218,7 @@ public class DefaultErrorMessages {
         MAP.put(CLASS_OBJECT_NOT_ALLOWED, "A class object is not allowed here");
         MAP.put(DELEGATION_IN_TRAIT, "Traits cannot use delegation");
         MAP.put(DELEGATION_NOT_TO_TRAIT, "Only traits can be delegated to");
+        MAP.put(UNMET_TRAIT_REQUIREMENT, "Super trait ''{0}'' requires subclasses to extend ''{1}''", NAME, NAME);
         MAP.put(NO_CONSTRUCTOR, "This class does not have a constructor");
         MAP.put(NOT_A_CLASS, "Not a class");
         MAP.put(ILLEGAL_ESCAPE_SEQUENCE, "Illegal escape sequence");

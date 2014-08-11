@@ -1,12 +1,11 @@
-trait SimpleClass : java.lang.Object {
-    fun foo() : String = "239 " + toString ()
+trait Trait : java.lang.Object {
+    fun foo(): String = "239 " + toString()
 }
 
-class SimpleClassImpl() : SimpleClass {
-   override fun toString() = "SimpleClassImpl"
+class Impl : Trait, java.lang.Object() {
+    override fun toString() = "Impl"
 }
 
-fun box() : String {
-  val c = SimpleClassImpl()
-  return if("239 SimpleClassImpl" == c.foo()) "OK" else "fail"
+fun box(): String {
+    return if ("239 Impl" == Impl().foo()) "OK" else "Fail"
 }

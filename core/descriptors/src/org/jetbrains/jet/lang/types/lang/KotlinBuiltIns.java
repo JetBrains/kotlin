@@ -822,6 +822,10 @@ public class KotlinBuiltIns {
         return fqNames.any.equals(fqName) || fqNames.nothing.equals(fqName);
     }
 
+    public boolean isAny(@NotNull ClassDescriptor descriptor) {
+        return fqNames.any.equals(DescriptorUtils.getFqName(descriptor));
+    }
+
     public boolean isNothing(@NotNull JetType type) {
         return isNothingOrNullableNothing(type)
                && !type.isNullable();

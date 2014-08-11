@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class, JetDiagnosticsTestGenerated.TailRecursion.class})
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -442,11 +442,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("TraitOverrideObjectMethods.kt")
         public void testTraitOverrideObjectMethods() throws Exception {
             doTest("compiler/testData/diagnostics/tests/TraitOverrideObjectMethods.kt");
-        }
-        
-        @TestMetadata("TraitSupertypeList.kt")
-        public void testTraitSupertypeList() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/TraitSupertypeList.kt");
         }
         
         @TestMetadata("TypeInference.kt")
@@ -7924,6 +7919,69 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/traitWithRequired")
+        public static class TraitWithRequired extends AbstractJetDiagnosticsTest {
+            @TestMetadata("abstractClass.kt")
+            public void testAbstractClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/abstractClass.kt");
+            }
+            
+            public void testAllFilesPresentInTraitWithRequired() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/traitWithRequired"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("anonymousObjectExtendsTraitWithRequired.kt")
+            public void testAnonymousObjectExtendsTraitWithRequired() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/anonymousObjectExtendsTraitWithRequired.kt");
+            }
+            
+            @TestMetadata("differentGenericArguments.kt")
+            public void testDifferentGenericArguments() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/differentGenericArguments.kt");
+            }
+            
+            @TestMetadata("kt3006.kt")
+            public void testKt3006() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/kt3006.kt");
+            }
+            
+            @TestMetadata("manyRequirementsDisallowed.kt")
+            public void testManyRequirementsDisallowed() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/manyRequirementsDisallowed.kt");
+            }
+            
+            @TestMetadata("manyTraitsRequireSameClass.kt")
+            public void testManyTraitsRequireSameClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/manyTraitsRequireSameClass.kt");
+            }
+            
+            @TestMetadata("requirementFulfilledBySubclass.kt")
+            public void testRequirementFulfilledBySubclass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/requirementFulfilledBySubclass.kt");
+            }
+            
+            @TestMetadata("traitExtendsTraitWithRequired.kt")
+            public void testTraitExtendsTraitWithRequired() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/traitExtendsTraitWithRequired.kt");
+            }
+            
+            @TestMetadata("traitRequiresAny.kt")
+            public void testTraitRequiresAny() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/traitRequiresAny.kt");
+            }
+            
+            @TestMetadata("traitSupertypeList.kt")
+            public void testTraitSupertypeList() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/traitSupertypeList.kt");
+            }
+            
+            @TestMetadata("uninheritableTraitDifferentGenericArguments.kt")
+            public void testUninheritableTraitDifferentGenericArguments() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/traitWithRequired/uninheritableTraitDifferentGenericArguments.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/tests/typedefs")
         public static class Typedefs extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInTypedefs() throws Exception {
@@ -8120,6 +8178,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             suite.addTestSuite(Subtyping.class);
             suite.addTest(Suppress.innerSuite());
             suite.addTestSuite(ThisAndSuper.class);
+            suite.addTestSuite(TraitWithRequired.class);
             suite.addTestSuite(Typedefs.class);
             suite.addTestSuite(Unit.class);
             suite.addTestSuite(Varargs.class);

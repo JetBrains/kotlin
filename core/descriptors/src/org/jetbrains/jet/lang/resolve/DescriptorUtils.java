@@ -226,7 +226,7 @@ public class DescriptorUtils {
         return false;
     }
 
-    public static boolean isEnumClass(@NotNull DeclarationDescriptor descriptor) {
+    public static boolean isEnumClass(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.ENUM_CLASS);
     }
 

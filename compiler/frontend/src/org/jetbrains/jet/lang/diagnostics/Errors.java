@@ -165,6 +165,9 @@ public interface Errors {
 
     DiagnosticFactory0<JetDelegatorByExpressionSpecifier> DELEGATION_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory2<PsiNameIdentifierOwner, ClassDescriptor, ClassDescriptor> UNMET_TRAIT_REQUIREMENT =
+            DiagnosticFactory2.create(ERROR, PositioningStrategies.NAMED_ELEMENT);
+
     // Enum-specific
 
     DiagnosticFactory0<JetModifierListOwner> ILLEGAL_ENUM_ANNOTATION = DiagnosticFactory0

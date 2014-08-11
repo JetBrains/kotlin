@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.CallsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -90,6 +91,7 @@ public class DeclarationResolver {
 
         createFunctionsForDataClasses(c);
         importsResolver.processMembersImports(c);
+        CallsPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
         checkRedeclarationsInPackages(c);
         checkRedeclarationsInInnerClassNames(c);
     }
