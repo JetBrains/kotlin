@@ -19,11 +19,17 @@ package org.jetbrains.k2js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 
+import static org.jetbrains.k2js.inline.InlinePackage.aliasArgumentsIfNeeded;
+
 import java.util.*;
 
 class FunctionInlineMutator {
     private JsBlock body;
     private final JsFunction invokedFunction;
+    private final List<JsExpression> arguments;
+    private final List<JsParameter> parameters;
+    private final RenamingContext<JsBlock> renamingContext;
+    private final InsertionPoint<JsStatement> insertionPoint;
 
     public static InlineableResult getInlineableCallReplacement(
             @NotNull JsInvocation call,
@@ -40,9 +46,22 @@ class FunctionInlineMutator {
         FunctionContext functionContext = inliningContext.getFunctionContext();
         invokedFunction = functionContext.getFunctionDefinition(call);
         body = invokedFunction.getBody().deepCopy();
+        arguments = call.getArguments();
+        parameters = invokedFunction.getParameters();
+        renamingContext = inliningContext.getRenamingContext();
+        insertionPoint = inliningContext.getStatementContext().getInsertionPoint();
     }
 
     private void process() {
+        aliasArgumentsIfNeeded(renamingContext, arguments, parameters);
+        renameLocals(renamingContext, invokedFunction);
+        applyRenaming();
+    }
 
+    private void applyRenaming() {
+        RenamingResult<JsBlock> renamingResult = renamingContext.applyRename(body);
+        body = renamingResult.getRenamed();
+        Collection<JsVars> declarations = renamingResult.getDeclarations();
+        insertionPoint.insertAllBefore(declarations);
     }
 }
