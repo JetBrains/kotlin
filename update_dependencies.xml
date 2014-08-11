@@ -1,6 +1,6 @@
 <project name="Update Dependencies" default="update">
-    <property name="jb.buildserver.build.id" value="4479675"/>
-    <property name="public.buildserver.build.id" value="147780"/>
+    <property name="jb.buildserver.build.id" value="4530576"/>
+    <property name="public.buildserver.build.id" value="149643"/>
 
     <condition property="os.tag" value="win.zip">
       <os family="windows" />
@@ -242,6 +242,7 @@
         <sequential>
             <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
             <property name="core" value="ideaSDK/core"/>
+            <property name="core-analysis" value="ideaSDK/core-analysis"/>
             <property name="jps" value="ideaSDK/jps"/>
             <property name="jps-test" value="${jps}/test"/>
 
@@ -256,9 +257,11 @@
                     </delete>
 
                     <mkdir dir="${core}"/>
+                    <mkdir dir="${core-analysis}"/>
                     <mkdir dir="${jps}"/>
                     <mkdir dir="${jps-test}"/>
                     <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
+                    <get src="@{base.url.for.core}/core/intellij-core-analysis.jar" dest="${core-analysis}/intellij-core-analysis.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/guava-17.0.jar" dest="${core}/guava-17.0.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>

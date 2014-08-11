@@ -329,7 +329,6 @@
               </fileset>
               <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
               <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
-              <fileset dir="${basedir}/compiler/cli/" includes="misc/**"/>
 
               <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
@@ -668,6 +667,8 @@
 
             <!-- icons, etc. -->
             <fileset dir="idea/resources"/>
+            <!-- plugin.xml and friends -->
+            <fileset dir="idea/src" includes="META-INF/**"/>
         </jar>
         <sleep seconds="1"/>
         <jar jarfile="${output}/kotlin-for-upsource.jar">
