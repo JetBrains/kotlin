@@ -8,7 +8,6 @@ where possible options include:
   -output-prefix <path>      Path to file which will be added to the beginning of output file
   -output-postfix <path>     Path to file which will be added to the end of output file
   -nowarn                    Generate no warnings
-  -tags                      Demarcate each compilation message (error, warning, etc) with an open and close tag
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
   -help (-h)                 Print a synopsis of standard options

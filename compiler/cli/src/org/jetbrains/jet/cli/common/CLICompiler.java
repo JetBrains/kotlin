@@ -22,6 +22,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
@@ -48,44 +49,34 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
-        A arguments = createArguments();
-        if (!parseArguments(errStream, arguments, args)) {
-            return INTERNAL_ERROR;
-        }
-        return exec(errStream, getMessageRenderer(arguments), arguments);
+        return exec(errStream, MessageRenderer.PLAIN, args);
     }
 
     @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
     @NotNull
     public ExitCode execAndOutputHtml(@NotNull PrintStream errStream, @NotNull String... args) {
-        A arguments = createArguments();
-        if (!parseArguments(errStream, arguments, args)) {
-            return INTERNAL_ERROR;
-        }
-        return exec(errStream, MessageRenderer.TAGS, arguments);
+        return exec(errStream, MessageRenderer.TAGS, args);
     }
 
-    /**
-     * Returns true if the arguments can be parsed correctly
-     */
-    protected boolean parseArguments(@NotNull PrintStream errStream, @NotNull A arguments, @NotNull String[] args) {
+    @Nullable
+    private A parseArguments(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull String[] args) {
         try {
+            A arguments = createArguments();
             arguments.freeArgs = Args.parse(arguments, args);
-            return true;
+            return arguments;
         }
         catch (IllegalArgumentException e) {
             errStream.println(e.getMessage());
             usage(errStream, false);
         }
         catch (Throwable t) {
-            // Always use tags
-            errStream.println(MessageRenderer.TAGS.render(
+            errStream.println(messageRenderer.render(
                     CompilerMessageSeverity.EXCEPTION,
                     OutputMessageUtil.renderException(t),
                     CompilerMessageLocation.NO_LOCATION)
             );
         }
-        return false;
+        return null;
     }
 
     /**
@@ -106,11 +97,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     @NotNull
     protected abstract A createArguments();
 
-    /**
-     * Executes the compiler on the parsed arguments
-     */
     @NotNull
-    public ExitCode exec(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull A arguments) {
+    private ExitCode exec(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull String[] args) {
+        A arguments = parseArguments(errStream, messageRenderer, args);
+        if (arguments == null) {
+            return INTERNAL_ERROR;
+        }
+
         if (arguments.help || arguments.extraHelp) {
             usage(errStream, arguments.extraHelp);
             return OK;
@@ -160,12 +153,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     protected abstract ExitCode doExecute(@NotNull A arguments, @NotNull MessageCollector messageCollector, @NotNull Disposable rootDisposable);
-
-    //TODO: can we make it private?
-    @NotNull
-    protected MessageRenderer getMessageRenderer(@NotNull A arguments) {
-        return arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
-    }
 
     protected void printVersionIfNeeded(
             @NotNull PrintStream errStream,

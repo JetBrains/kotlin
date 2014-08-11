@@ -26,9 +26,6 @@ public abstract class CommonCompilerArguments {
     @Argument(value = "nowarn", description = "Generate no warnings")
     public boolean suppressWarnings;
 
-    @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
-    public boolean tags;
-
     @Argument(value = "verbose", description = "Enable verbose logging output")
     public boolean verbose;
 

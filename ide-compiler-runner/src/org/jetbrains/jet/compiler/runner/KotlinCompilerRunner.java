@@ -131,7 +131,6 @@ public class KotlinCompilerRunner {
     }
 
     private static void setupCommonSettings(CommonCompilerArguments settings) {
-        settings.tags = true;
         settings.verbose = true;
     }
 
