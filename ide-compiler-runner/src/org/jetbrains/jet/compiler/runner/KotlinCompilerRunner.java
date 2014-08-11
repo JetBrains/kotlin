@@ -130,16 +130,7 @@ public class KotlinCompilerRunner {
         return copy;
     }
 
-    private static void setupCommonSettings(CommonCompilerArguments settings) {
-        settings.verbose = true;
-    }
-
-    private static void setupK2JvmArguments(
-            File moduleFile,
-            K2JVMCompilerArguments settings
-    ) {
-        setupCommonSettings(settings);
-
+    private static void setupK2JvmArguments(File moduleFile, K2JVMCompilerArguments settings) {
         settings.module = moduleFile.getAbsolutePath();
         settings.noStdlib = true;
         settings.noJdkAnnotations = true;
@@ -152,8 +143,6 @@ public class KotlinCompilerRunner {
             List<String> libraryFiles,
             K2JSCompilerArguments settings
     ) {
-        setupCommonSettings(settings);
-
         settings.freeArgs = ContainerUtil.map(sourceFiles, new Function<File, String>() {
             @Override
             public String fun(File file) {
