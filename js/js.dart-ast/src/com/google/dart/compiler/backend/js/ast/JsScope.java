@@ -127,7 +127,7 @@ public abstract class JsScope {
         return name;
     }
 
-    protected boolean hasOwnName(@NotNull String name) {
+    public boolean hasOwnName(@NotNull String name) {
         return names.containsKey(name);
     }
 
