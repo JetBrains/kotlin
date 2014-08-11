@@ -20,20 +20,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
 
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.LOGGING;
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.OUTPUT;
-
 public class PrintingMessageCollector implements MessageCollector {
-
     private final boolean verbose;
     private final PrintStream errStream;
     private final MessageRenderer messageRenderer;
 
-    public PrintingMessageCollector(
-            @NotNull PrintStream errStream,
-            @NotNull MessageRenderer messageRenderer,
-            boolean verbose
-    ) {
+    public PrintingMessageCollector(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, boolean verbose) {
         this.verbose = verbose;
         this.errStream = errStream;
         this.messageRenderer = messageRenderer;
@@ -45,8 +37,7 @@ public class PrintingMessageCollector implements MessageCollector {
             @NotNull String message,
             @NotNull CompilerMessageLocation location
     ) {
-        boolean verboseMessage = severity == LOGGING || severity == OUTPUT;
-        if (!verbose && verboseMessage) return;
+        if (!verbose && CompilerMessageSeverity.VERBOSE.contains(severity)) return;
 
         errStream.println(messageRenderer.render(severity, message, location));
     }

@@ -23,8 +23,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class MessageCollectorPlainTextToStream implements MessageCollector {
-    public static final EnumSet<CompilerMessageSeverity> VERBOSE = EnumSet.of(CompilerMessageSeverity.LOGGING, CompilerMessageSeverity.OUTPUT);
-    public static final EnumSet<CompilerMessageSeverity> NON_VERBOSE = EnumSet.complementOf(VERBOSE);
+    public static final EnumSet<CompilerMessageSeverity> NON_VERBOSE = EnumSet.complementOf(CompilerMessageSeverity.VERBOSE);
 
     public static final MessageCollector PLAIN_TEXT_TO_SYSTEM_ERR = new MessageCollectorPlainTextToStream(System.err, NON_VERBOSE);
 
