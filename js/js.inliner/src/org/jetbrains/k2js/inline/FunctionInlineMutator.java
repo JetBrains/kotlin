@@ -17,36 +17,32 @@
 package org.jetbrains.k2js.inline;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 class FunctionInlineMutator {
-    private static final String RESULT_LABEL = "result_inlined";
-
-    private final JsInvocation call;
-    private final JsScope callerScope;
+    private JsBlock body;
     private final JsFunction invokedFunction;
-    private final List<JsStatement> statements = new ArrayList<JsStatement>();
-    private final IdentityHashMap<JsName, JsNameRef> renameMap = new IdentityHashMap<JsName, JsNameRef>();
 
     public static InlineableResult getInlineableCallReplacement(
-            JsInvocation call,
-            JsScope callerScope,
-            JsFunction invokedFunction
+            @NotNull JsInvocation call,
+            @NotNull InliningContext inliningContext
     ) {
-        return (new FunctionInlineMutator(call, callerScope, invokedFunction)).process();
+        FunctionInlineMutator mutator = new FunctionInlineMutator(call, inliningContext);
+        mutator.process();
+
+        JsStatement inlineableBody = mutator.body;
+        return new InlineableResult(inlineableBody, call);
     }
 
-    private FunctionInlineMutator(JsInvocation call, JsScope callerScope, JsFunction invokedFunction) {
-        this.call = call;
-        this.callerScope = callerScope;
-        this.invokedFunction = invokedFunction;
+    private FunctionInlineMutator(@NotNull JsInvocation call, @NotNull InliningContext inliningContext) {
+        FunctionContext functionContext = inliningContext.getFunctionContext();
+        invokedFunction = functionContext.getFunctionDefinition(call);
+        body = invokedFunction.getBody().deepCopy();
     }
 
-    private InlineableResult process() {
-        JsBlock inlinedBody = new JsBlock(statements);
-        JsNameRef result = callerScope.declareName(RESULT_LABEL).makeRef();
-        statements.addAll(invokedFunction.getBody().getStatements());
-        return new InlineableResult(inlinedBody, result);
+    private void process() {
+
     }
 }

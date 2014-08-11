@@ -27,31 +27,79 @@ import static org.jetbrains.k2js.inline.FunctionInlineMutator.getInlineableCallR
 
 public class JsInliner extends JsVisitorWithContextImpl {
 
+    private class JsInliningContext implements InliningContext {
+        private final FunctionContext functionContext;
+
+        JsInliningContext(JsFunction function) {
+            functionContext = new FunctionContext(function, this) {
+                @Nullable
+                @Override
+                protected JsFunction lookUpStaticFunction(@Nullable JsName functionName) {
+                    return functions.get(functionName);
+                }
+            };
+        }
+
+        @NotNull
+        @Override
+        public <T extends JsNode> RenamingContext<T> getRenamingContext() {
+            return new RenamingContext<T>(getFunctionContext().getScope());
+        }
+
+        @NotNull
+        @Override
+        public StatementContext getStatementContext() {
+            return new StatementContext() {
+                @NotNull
+                @Override
+                public JsContext getCurrentStatementContext() {
+                    return getLastStatementLevelContext();
+                }
+
+                @NotNull
+                @Override
+                protected JsStatement getEmptyStatement() {
+                    return getFunctionContext().getEmpty();
+                }
+            };
+        }
+
+        @NotNull
+        @Override
+        public FunctionContext getFunctionContext() {
+            return functionContext;
+        }
+
+        @Override
+        public boolean isResultNeeded(JsInvocation call) {
+            JsStatement currentStatement = getStatementContext().getCurrentStatement();
+            return InvocationUtil.isResultUsed(currentStatement, call);
+        }
+    }
+
     private final IdentityHashMap<JsName, JsFunction> functions;
-    private final Stack<JsScope> scopeStack = new Stack<JsScope>();
-    private final JsProgram program;
+    private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
 
     public static JsProgram process(JsProgram program) {
         IdentityHashMap<JsName, JsFunction> functions = FunctionCollector.collectFunctions(program);
-        JsInliner inliner = new JsInliner(program, functions);
-        return inliner.process();
+        JsInliner inliner = new JsInliner(functions);
+        return inliner.accept(program);
     }
 
-    JsInliner(JsProgram program, IdentityHashMap<JsName, JsFunction> functions) {
-        this.program = program;
+    JsInliner(IdentityHashMap<JsName, JsFunction> functions) {
         this.functions = functions;
     }
 
     @Override
     public boolean visit(JsFunction function, JsContext context) {
-        scopeStack.push(function.getScope());
+        inliningContexts.push(new JsInliningContext(function));
         return super.visit(function, context);
     }
 
     @Override
     public void endVisit(JsFunction function, JsContext context) {
         super.endVisit(function, context);
-        scopeStack.pop();
+        inliningContexts.pop();
     }
 
     @Override
@@ -66,65 +114,52 @@ public class JsInliner extends JsVisitorWithContextImpl {
             inline(call, context);
         }
     }
-    
-    private JsProgram process() {
-        return this.accept(program);
-    }
-
-    private JsScope getCurrentFunctionScope() {
-        assert !scopeStack.isEmpty();
-        return scopeStack.peek();
-    }
 
     private void inline(@NotNull JsInvocation call, @NotNull JsContext context) {
-        JsFunction functionToInline = findDeclaration(call);
-        assert functionToInline != null;
-        JsContext statementLevelContext = getLastStatementLevelContext();
-        assert statementLevelContext != null;
-
-        JsScope currentScope = getCurrentFunctionScope();
-        InlineableResult inlineableResult = getInlineableCallReplacement(call, currentScope, functionToInline);
+        JsInliningContext inliningContext = getInliningContext();
+        FunctionContext functionContext = getFunctionContext();
+        functionContext.declareFunctionConstructorCalls(call.getArguments());
+        InlineableResult inlineableResult = getInlineableCallReplacement(call, inliningContext);
 
         JsStatement inlineableBody = inlineableResult.getInlineableBody();
         JsExpression resultExpression = inlineableResult.getResultExpression();
+        StatementContext statementContext = inliningContext.getStatementContext();
 
-        statementLevelContext.insertAfter(statementLevelContext.getCurrentNode());
-        statementLevelContext.insertAfter(inlineableBody);
-        statementLevelContext.replaceMe(program.getEmptyStatement());
+        /**
+         * Assumes, that resultExpression == null, when result is not needed.
+         * @see FunctionInlineMutator.isResultNeeded()
+         */
+        if (resultExpression == null) {
+            statementContext.removeCurrentStatement();
+        } else {
+            context.replaceMe(resultExpression);
+        }
 
-        context.replaceMe(resultExpression);
+        statementContext.shiftCurrentStatementForward();
+        InsertionPoint<JsStatement> insertionPoint = statementContext.getInsertionPoint();
+        if (inlineableBody instanceof JsBlock) {
+            JsBlock block = (JsBlock) inlineableBody;
+            insertionPoint.insertAllAfter(block.getStatements());
+        } else {
+            insertionPoint.insertAfter(inlineableBody);
+        }
     }
 
-    @Nullable
-    private JsFunction findDeclaration(@NotNull JsInvocation call) {
-        JsName name = getFunctionName(call);
-        if (functions.containsKey(name)) {
-            return functions.get(name);
-        }
+    @NotNull
+    private JsInliningContext getInliningContext() {
+        return inliningContexts.peek();
+    }
 
-        if (name.getStaticRef() != null && name.getStaticRef() instanceof JsFunction) {
-            return (JsFunction) name.getStaticRef();
-        }
-
-        return null;
+    @NotNull FunctionContext getFunctionContext() {
+        return getInliningContext().getFunctionContext();
     }
 
     private boolean canInline(@NotNull JsInvocation call) {
-        return findDeclaration(call) != null;
+        FunctionContext functionContext = getFunctionContext();
+        return functionContext.hasFunctionDefinition(call);
     }
 
     private static boolean shouldInline(@NotNull JsInvocation call) {
         return call.getInlineStrategy().isInline();
-    }
-
-    @NotNull
-    private static JsName getFunctionName(@NotNull JsInvocation call) {
-        JsExpression qualifier = call.getQualifier();
-        assert qualifier instanceof JsNameRef;
-
-        JsName name = ((JsNameRef) qualifier).getName();
-        assert name != null;
-
-        return name;
     }
 }
