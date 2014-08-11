@@ -116,6 +116,7 @@ import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.jet.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
+import org.jetbrains.jet.codegen.AbstractScriptCodegenTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -178,6 +179,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithStdlibCodegenTestGenerated") {
             model("codegen/boxWithStdlib", testMethod = "doTestWithStdlib")
+        }
+
+        testClass(javaClass<AbstractScriptCodegenTest>()) {
+            model("codegen/script", extension = "kts")
         }
 
         testClass(javaClass<AbstractBytecodeTextTest>()) {
