@@ -30,7 +30,9 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.performAnalysis
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import org.jetbrains.jet.plugin.refactoring.extractFunction.validate
-import org.jetbrains.jet.plugin.refactoring.extractFunction.generateFunction
+import org.jetbrains.jet.lang.psi.JetImportList
+import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
 import org.jetbrains.jet.plugin.refactoring.runReadAction
 import com.intellij.psi.PsiManager
@@ -39,6 +41,7 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
+import org.jetbrains.jet.plugin.refactoring.extractFunction.generateDeclaration
 
 fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
@@ -101,8 +104,8 @@ fun getFunctionForExtractedFragment(
         }
 
         return validationResult.descriptor
-                .generateFunction(ExtractionGeneratorOptions(inTempFile = true))
-                .function
+                .generateDeclaration(ExtractionGeneratorOptions(inTempFile = true))
+                .declaration as JetNamedFunction
     }
 
     return runReadAction { generateFunction() }

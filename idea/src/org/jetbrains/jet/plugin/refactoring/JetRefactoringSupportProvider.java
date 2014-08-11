@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureHandler;
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandler;
+import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandlerHelper;
 import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler;
 import org.jetbrains.jet.plugin.refactoring.safeDelete.SafeDeletePackage;
 
@@ -46,7 +47,7 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
 
     @NotNull
     public RefactoringActionHandler getExtractFunctionToScopeHandler() {
-        return new ExtractKotlinFunctionHandler(true);
+        return new ExtractKotlinFunctionHandler(true, ExtractKotlinFunctionHandlerHelper.DEFAULT);
     }
 
     @Override

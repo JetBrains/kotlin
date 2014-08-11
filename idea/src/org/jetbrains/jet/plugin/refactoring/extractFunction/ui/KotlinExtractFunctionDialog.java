@@ -36,6 +36,8 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
@@ -48,6 +50,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     private KotlinFunctionSignatureComponent signaturePreviewField;
     private EditorTextField functionNameField;
     private JLabel functionNameLabel;
+    private JCheckBox propertyCheckBox;
     private KotlinParameterTablePanel parameterTablePanel;
 
     private final Project project;
@@ -106,7 +109,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         setOKActionEnabled(checkNames());
         signaturePreviewField.setText(
-                ExtractFunctionPackage.getFunctionText(currentDescriptor, false, DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
+                ExtractFunctionPackage.getDeclarationText(currentDescriptor, getGeneratorOptions(), false,
+                                                          DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
         );
     }
 
@@ -139,6 +143,18 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                     }
                 }
         );
+
+        propertyCheckBox.setEnabled(ExtractFunctionPackage.canGenerateProperty(originalDescriptor.getDescriptor()));
+        if (propertyCheckBox.isEnabled()) {
+            propertyCheckBox.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(@NotNull ActionEvent e) {
+                            update();
+                        }
+                    }
+            );
+        }
 
         parameterTablePanel = new KotlinParameterTablePanel() {
             @Override
@@ -256,6 +272,6 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     @NotNull
     public ExtractionGeneratorOptions getGeneratorOptions() {
-        return ExtractionGeneratorOptions.DEFAULT;
+        return new ExtractionGeneratorOptions(false, propertyCheckBox.isSelected());
     }
 }

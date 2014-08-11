@@ -67,13 +67,23 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 
-public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boolean = false) : RefactoringActionHandler {
+public open class ExtractKotlinFunctionHandlerHelper {
+    open fun adjustGeneratorOptions(options: ExtractionGeneratorOptions): ExtractionGeneratorOptions = options
+    open fun adjustDescriptor(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor = descriptor
+
+    class object {
+        public val DEFAULT: ExtractKotlinFunctionHandlerHelper = ExtractKotlinFunctionHandlerHelper()
+    }
+}
+
+public class ExtractKotlinFunctionHandler(
+        public val allContainersEnabled: Boolean = false,
+        private val helper: ExtractKotlinFunctionHandlerHelper = ExtractKotlinFunctionHandlerHelper.DEFAULT) : RefactoringActionHandler {
     fun doInvoke(
             editor: Editor,
             file: JetFile,
             elements: List<PsiElement>,
-            targetSibling: PsiElement,
-            preprocessor: ((ExtractableCodeDescriptor) -> Unit)? = null
+            targetSibling: PsiElement
     ) {
         val project = file.getProject()
 
@@ -84,8 +94,9 @@ public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boole
         }
 
         fun doRefactor(descriptor: ExtractableCodeDescriptor, generatorOptions: ExtractionGeneratorOptions) {
-            preprocessor?.invoke(descriptor)
-            project.executeWriteCommand(EXTRACT_FUNCTION) { descriptor.generateFunction(generatorOptions) }
+            val adjustedDescriptor = helper.adjustDescriptor(descriptor)
+            val adjustedGeneratorOptions = helper.adjustGeneratorOptions(generatorOptions)
+            project.executeWriteCommand(EXTRACT_FUNCTION) { adjustedDescriptor.generateDeclaration(adjustedGeneratorOptions) }
         }
 
         fun validateAndRefactor() {

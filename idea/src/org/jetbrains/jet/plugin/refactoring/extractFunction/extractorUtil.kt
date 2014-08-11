@@ -17,39 +17,44 @@
 package org.jetbrains.jet.plugin.refactoring.extractFunction
 
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.psi.JetPsiFactory.FunctionBuilder
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.HashMap
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import java.util.LinkedHashMap
 import org.jetbrains.jet.lang.psi.JetExpression
-import java.util.Collections
-import org.jetbrains.jet.lang.psi.psiUtil.prependElement
-import org.jetbrains.jet.lang.psi.psiUtil.appendElement
-import org.jetbrains.jet.lang.psi.psiUtil.replaced
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
+import org.jetbrains.jet.lang.psi.JetPsiFactory.CallableBuilder
+import org.jetbrains.jet.lang.psi.JetPsiFactory.CallableBuilder.Target
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.jet.lang.psi.JetPsiFactory
+import java.util.LinkedHashMap
+import java.util.Collections
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.lang.psi.psiUtil.isFunctionLiteralOutsideParentheses
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
+import org.jetbrains.jet.lang.psi.psiUtil.prependElement
+import org.jetbrains.jet.lang.psi.psiUtil.appendElement
+import org.jetbrains.jet.lang.psi.psiUtil.replaced
+import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
 
-fun ExtractableCodeDescriptor.getFunctionText(
+fun ExtractableCodeDescriptor.getDeclarationText(
+        options: ExtractionGeneratorOptions = ExtractionGeneratorOptions.DEFAULT,
         withBody: Boolean = true,
         descriptorRenderer: DescriptorRenderer = DescriptorRenderer.FQ_NAMES_IN_TYPES
 ): String {
-    return FunctionBuilder().let { builder ->
+    if (!canGenerateProperty() && options.extractAsProperty) {
+        throw IllegalArgumentException("Can't generate property: ${extractionData.getCodeFragmentText()}")
+    }
+
+    val builderTarget = if (options.extractAsProperty) Target.READ_ONLY_PROPERTY else Target.FUNCTION
+    return CallableBuilder(builderTarget).let { builder ->
         builder.modifier(visibility)
 
         builder.typeParams(typeParameters.map { it.originalDeclaration.getText()!! })
@@ -72,7 +77,7 @@ fun ExtractableCodeDescriptor.getFunctionText(
             builder.blockBody(extractionData.getCodeFragmentText())
         }
 
-        builder.toFunctionText()
+        builder.asString()
     }
 }
 
@@ -95,23 +100,23 @@ fun createNameCounterpartMap(from: JetElement, to: JetElement): Map<JetSimpleNam
     return map
 }
 
-fun ExtractableCodeDescriptor.generateFunction(options: ExtractionGeneratorOptions): ExtractionResult {
+fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOptions): ExtractionResult{
     val psiFactory = JetPsiFactory(extractionData.originalFile)
     val nameByOffset = HashMap<Int, JetElement>()
 
-    fun createFunction(): JetNamedFunction {
+    fun createDeclaration(): JetNamedDeclaration {
         return with(extractionData) {
             if (options.inTempFile) {
-                createTemporaryFunction("${getFunctionText()}\n")
+                createTemporaryDeclaration("${getDeclarationText()}\n")
             }
             else {
-                psiFactory.createFunction(getFunctionText())
+                psiFactory.createDeclaration(getDeclarationText(options))
             }
         }
     }
 
-    fun adjustFunctionBody(function: JetNamedFunction) {
-        val body = function.getBodyExpression() as JetBlockExpression
+    fun adjustDeclarationBody(declaration: JetNamedDeclaration) {
+        val body = declaration.getGeneratedBlockBody()
 
         val exprReplacementMap = HashMap<JetElement, (JetElement) -> JetElement>()
         val originalOffsetByExpr = LinkedHashMap<JetElement, Int>()
@@ -183,28 +188,32 @@ fun ExtractableCodeDescriptor.generateFunction(options: ExtractionGeneratorOptio
 
             is ExpressionEvaluation ->
                 body.getStatements().last?.let {
-                    val newExpr = it.replaced(psiFactory.createReturn(it.getText() ?: throw AssertionError("Return expression shouldn't be empty: code fragment = ${body.getText()}"))).getReturnedExpression()!!
+                    val newExpr = it.replaced(
+                            psiFactory.createReturn(
+                                    it.getText() ?: throw AssertionError("Return expression shouldn't be empty: code fragment = ${body.getText()}")
+                            )
+                    ).getReturnedExpression()!!
                     val counterpartMap = createNameCounterpartMap(it, newExpr)
                     nameByOffset.entrySet().forEach { e -> counterpartMap[e.getValue()]?.let { e.setValue(it) } }
                 }
         }
     }
 
-    fun insertFunction(function: JetNamedFunction): JetNamedFunction {
+    fun insertDeclaration(declaration: JetNamedDeclaration): JetNamedDeclaration {
         return with(extractionData) {
             val targetContainer = targetSibling.getParent()!!
             val emptyLines = psiFactory.createWhiteSpace("\n\n")
             if (insertBefore) {
-                val functionInFile = targetContainer.addBefore(function, targetSibling) as JetNamedFunction
+                val declarationInFile = targetContainer.addBefore(declaration, targetSibling) as JetNamedDeclaration
                 targetContainer.addBefore(emptyLines, targetSibling)
 
-                functionInFile
+                declarationInFile
             }
             else {
-                val functionInFile = targetContainer.addAfter(function, targetSibling) as JetNamedFunction
+                val declarationInFile = targetContainer.addAfter(declaration, targetSibling) as JetNamedDeclaration
                 targetContainer.addAfter(emptyLines, targetSibling)
 
-                functionInFile
+                declarationInFile
             }
         }
     }
@@ -225,9 +234,9 @@ fun ExtractableCodeDescriptor.generateFunction(options: ExtractionGeneratorOptio
         anchor.replace(wrappedCall)
     }
 
-    fun makeCall(function: JetNamedFunction): JetNamedFunction {
+    fun makeCall(declaration: JetNamedDeclaration): JetNamedDeclaration {
         val anchor = extractionData.originalElements.first
-        if (anchor == null) return function
+        if (anchor == null) return declaration
 
         val anchorParent = anchor.getParent()!!
 
@@ -238,9 +247,13 @@ fun ExtractableCodeDescriptor.generateFunction(options: ExtractionGeneratorOptio
             }
         }
 
-        val callText = parameters
-                .map { it.argumentText }
-                .joinToString(separator = ", ", prefix = "${name}(", postfix = ")")
+        val callText = when (declaration) {
+            is JetNamedFunction ->
+                parameters
+                        .map { it.argumentText }
+                        .joinToString(separator = ", ", prefix = "${name}(", postfix = ")")
+            else -> name
+        }
 
         val copiedDeclarations = HashMap<JetDeclaration, JetDeclaration>()
         for (decl in controlFlow.declarationsToCopy) {
@@ -280,17 +293,15 @@ fun ExtractableCodeDescriptor.generateFunction(options: ExtractionGeneratorOptio
         }
         insertCall(anchor, wrappedCall)
 
-        return function
+        return declaration
     }
 
-    val function = createFunction()
-    adjustFunctionBody(function)
+    val declaration = createDeclaration()
+    adjustDeclarationBody(declaration)
 
-    if (options.inTempFile) return ExtractionResult(function, nameByOffset)
+    if (options.inTempFile) return ExtractionResult(declaration, nameByOffset)
 
-    val functionInPlace = makeCall(insertFunction(function))
-    ShortenReferences.process(functionInPlace)
-    return ExtractionResult(functionInPlace, nameByOffset)
+    val declarationInPlace = makeCall(insertDeclaration(declaration))
+    ShortenReferences.process(declarationInPlace)
+    return ExtractionResult(declaration, nameByOffset)
 }
-
-

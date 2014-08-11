@@ -1,0 +1,13 @@
+// EXTRACT_AS_PROPERTY
+
+val n: Int = 1
+
+// SIBLING:
+fun foo(): Int {
+    return i
+}
+
+private val i: Int
+    get() {
+        return n + 1
+    }

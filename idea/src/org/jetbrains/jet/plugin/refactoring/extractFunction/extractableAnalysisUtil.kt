@@ -274,7 +274,7 @@ private fun ExtractionData.analyzeControlFlow(
     return Pair(defaultControlFlow, null)
 }
 
-fun ExtractionData.createTemporaryFunction(functionText: String): JetNamedFunction {
+fun ExtractionData.createTemporaryDeclaration(functionText: String): JetNamedDeclaration {
     val textRange = targetSibling.getTextRange()!!
 
     val insertText: String
@@ -294,11 +294,11 @@ fun ExtractionData.createTemporaryFunction(functionText: String): JetNamedFuncti
     val tmpFile = originalFile.createTempCopy { text ->
         StringBuilder(text).insert(insertPosition, insertText).toString()
     }
-    return tmpFile.findElementAt(lookupPosition)?.getParentByType(javaClass<JetNamedFunction>())!!
+    return tmpFile.findElementAt(lookupPosition)?.getParentByType(javaClass<JetNamedDeclaration>())!!
 }
 
 private fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression =
-        createTemporaryFunction("fun() {\n${getCodeFragmentText()}\n}\n").getBodyExpression() as JetBlockExpression
+        (createTemporaryDeclaration("fun() {\n${getCodeFragmentText()}\n}\n") as JetNamedFunction).getBodyExpression() as JetBlockExpression
 
 private fun JetType.collectReferencedTypes(processTypeArguments: Boolean): List<JetType> {
     if (!processTypeArguments) return Collections.singletonList(this)
@@ -683,12 +683,19 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     )
 }
 
+private fun JetNamedDeclaration.getGeneratedBlockBody() =
+        when (this) {
+            is JetNamedFunction -> getBodyExpression()
+            else -> (this as JetProperty).getGetter()!!.getBodyExpression()
+        } as JetBlockExpression
+
 fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts {
     val conflicts = MultiMap<PsiElement, String>()
 
-    val result = generateFunction(ExtractionGeneratorOptions(inTempFile = true))
+    val result = generateDeclaration(ExtractionGeneratorOptions(inTempFile = true))
 
-    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(result.function.getBodyExpression()!!)
+    val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
+    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(result.declaration.getGeneratedBlockBody())
 
     for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
         if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
@@ -703,7 +710,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
         val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
         val currentTarget =
                 currentDescriptor?.let { DescriptorToDeclarationUtil.getDeclaration(extractionData.project, it) } as? PsiNamedElement
-        if (currentTarget is JetParameter && currentTarget.getParent() == result.function.getValueParameterList()) continue
+        if (currentTarget is JetParameter && currentTarget.getParent() == valueParameterList) continue
         if (currentDescriptor is LocalVariableDescriptor
         && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 
