@@ -1783,8 +1783,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
             
             @TestMetadata("conflictingOverloads.kt")
-            public void
-            testConflictingOverloads() throws Exception {
+            public void testConflictingOverloads() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataClasses/conflictingOverloads.kt");
             }
             
