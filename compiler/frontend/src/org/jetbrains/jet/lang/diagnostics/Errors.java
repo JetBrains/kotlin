@@ -157,7 +157,7 @@ public interface Errors {
             .create(WARNING, ABSTRACT_MODIFIER);
     DiagnosticFactory0<JetModifierListOwner> OPEN_MODIFIER_IN_TRAIT = DiagnosticFactory0
             .create(WARNING, modifierSetPosition(JetTokens.OPEN_KEYWORD));
-    DiagnosticFactory0<PsiElement> TRAIT_CAN_NOT_BE_FINAL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetModifierListOwner> TRAIT_CAN_NOT_BE_FINAL = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
 
     DiagnosticFactory0<PsiElement> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
@@ -204,7 +204,8 @@ public interface Errors {
 
     // Members
 
-    DiagnosticFactory0<PsiElement> PACKAGE_MEMBER_CANNOT_BE_PROTECTED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetModifierListOwner> PACKAGE_MEMBER_CANNOT_BE_PROTECTED =
+            DiagnosticFactory0.create(ERROR, modifierSetPosition(JetTokens.PROTECTED_KEYWORD));
 
     DiagnosticFactory0<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = DiagnosticFactory0.create(ERROR, NAMED_ELEMENT);
 
@@ -594,7 +595,7 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, ClassDescriptor> NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<PsiElement, ClassDescriptor> INACCESSIBLE_OUTER_CLASS_EXPRESSION = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<PsiElement> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetClass> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, NAME_IDENTIFIER);
 
     //Inline and inlinable parameters
     DiagnosticFactory2<JetElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);

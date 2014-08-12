@@ -79,7 +79,7 @@ public class ModifiersChecker {
     public void checkModifiersForDeclaration(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
         JetModifierList modifierList = modifierListOwner.getModifierList();
         checkModalityModifiers(modifierList);
-        checkVisibilityModifiers(modifierList, descriptor);
+        checkVisibilityModifiers(modifierListOwner, descriptor);
         checkInnerModifier(modifierListOwner, descriptor);
         checkPlatformNameApplicability(descriptor);
     }
@@ -106,13 +106,14 @@ public class ModifiersChecker {
                            Lists.newArrayList(ABSTRACT_KEYWORD, OPEN_KEYWORD));
     }
 
-    private void checkVisibilityModifiers(@Nullable JetModifierList modifierList, @NotNull DeclarationDescriptor descriptor) {
+    private void checkVisibilityModifiers(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
+        JetModifierList modifierList = modifierListOwner.getModifierList();
         if (modifierList == null) return;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
             if (modifierList.hasModifier(PROTECTED_KEYWORD)) {
-                trace.report(Errors.PACKAGE_MEMBER_CANNOT_BE_PROTECTED.on(modifierList.getModifierNode(PROTECTED_KEYWORD).getPsi()));
+                trace.report(Errors.PACKAGE_MEMBER_CANNOT_BE_PROTECTED.on(modifierListOwner));
             }
         }
 
@@ -129,10 +130,7 @@ public class ModifiersChecker {
         }
         else {
             if (modifierListOwner instanceof JetClass && !(modifierListOwner instanceof JetEnumEntry) && isIllegalNestedClass(descriptor)) {
-                PsiElement name = ((JetClass) modifierListOwner).getNameIdentifier();
-                if (name != null) {
-                    trace.report(Errors.NESTED_CLASS_NOT_ALLOWED.on(name));
-                }
+                trace.report(Errors.NESTED_CLASS_NOT_ALLOWED.on((JetClass) modifierListOwner));
             }
         }
     }
