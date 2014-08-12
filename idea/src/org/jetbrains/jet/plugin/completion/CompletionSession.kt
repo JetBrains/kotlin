@@ -155,7 +155,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun addKotlinTopLevelDeclarations() {
-        collector.addDescriptorElements(shortNamesCache.getJetTopLevelCallables({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope))
+        collector.addDescriptorElements(shortNamesCache.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope))
 
         for (name in shortNamesCache.getAllTopLevelObjectNames()) {
             if (prefixMatcher.prefixMatches(name)) {
@@ -165,7 +165,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun addKotlinExtensions() {
-        collector.addDescriptorElements(shortNamesCache.getJetCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope))
+        collector.addDescriptorElements(shortNamesCache.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope))
     }
 
     private fun shouldRunOnlyTypeCompletion(): Boolean {

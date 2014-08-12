@@ -44,7 +44,7 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
         val namesCache = JetShortNamesCache.getKotlinInstance(project)
         val module = ModuleUtilCore.findModuleForPsiElement(parameters.getOriginalFile()) ?: return
         val searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
-        result.addDescriptorElements(namesCache.getJetClassesDescriptors({ prefixMatcher.prefixMatches(it) }, resolveSession, searchScope))
+        result.addDescriptorElements(namesCache.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, resolveSession, searchScope))
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(result)

@@ -152,7 +152,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             @NotNull Project project
     ) {
         JetShortNamesCache namesCache = JetShortNamesCache.OBJECT$.getKotlinInstance(project);
-        Collection<DeclarationDescriptor> jetCallableExtensions = namesCache.getJetCallableExtensions(
+        Collection<DeclarationDescriptor> jetCallableExtensions = namesCache.getCallableExtensions(
                 new Function1<String, Boolean>() {
                     @Override
                     public Boolean invoke(String callableExtensionName) {
@@ -224,7 +224,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
 
     private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull GlobalSearchScope searchScope, @NotNull Project project, @NotNull KotlinCodeAnalyzer resolveSession) {
         JetShortNamesCache cache = JetShortNamesCache.OBJECT$.getKotlinInstance(project);
-        Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Function1<String, Boolean>() {
+        Collection<ClassDescriptor> descriptors = cache.getClassDescriptors(new Function1<String, Boolean>() {
             @Override
             public Boolean invoke(String s) {
                 return typeName.equals(s);

@@ -169,18 +169,12 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
             }
         }
 
-        result.addJetSourceTopLevelFunctions(name, resolveSession, scope)
+        result.addSourceTopLevelFunctions(name, resolveSession, scope)
 
         return result
     }
 
-    private fun findTopLevelCallables(fqName: FqName, context: JetExpression, jetScope: JetScope, resolveSession: ResolveSessionForBodies): Collection<DeclarationDescriptor> {
-        val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
-        val allDescriptors = QualifiedExpressionResolver().analyseImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
-        return allDescriptors.filterIsInstance(javaClass<CallableDescriptor>()).filter { it.getReceiverParameter() == null }
-    }
-
-    private fun MutableCollection<in FunctionDescriptor>.addJetSourceTopLevelFunctions(name: String, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope) {
+    private fun MutableCollection<in FunctionDescriptor>.addSourceTopLevelFunctions(name: String, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope) {
         val identifier = Name.identifier(name)
         val affectedPackages = JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(name, project, scope)
                 .map { it.getContainingFile() }
@@ -195,10 +189,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         }
     }
 
-    private fun getJetExtensionFunctionsByName(name: String, scope: GlobalSearchScope): Collection<PsiElement>
-            = JetTopLevelExtensionFunctionShortNameIndex.getInstance().get(name, project, scope)
-
-    public fun getJetTopLevelCallables(nameFilter: (String) -> Boolean, context: JetExpression /*TODO: to be dropped*/, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<DeclarationDescriptor> {
+    public fun getTopLevelCallables(nameFilter: (String) -> Boolean, context: JetExpression /*TODO: to be dropped*/, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
 
         val sourceNames = JetTopLevelFunctionsFqnNameIndex.getInstance().getAllKeys(project).stream() + JetTopLevelPropertiesFqnNameIndex.getInstance().getAllKeys(project).stream()
@@ -212,10 +203,10 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         return result
     }
 
-    public fun getJetCallableExtensions(nameFilter: (String) -> Boolean,
-                                        expression: JetSimpleNameExpression,
-                                        resolveSession: ResolveSessionForBodies,
-                                        scope: GlobalSearchScope): Collection<DeclarationDescriptor> {
+    public fun getCallableExtensions(nameFilter: (String) -> Boolean,
+                                     expression: JetSimpleNameExpression,
+                                     resolveSession: ResolveSessionForBodies,
+                                     scope: GlobalSearchScope): Collection<DeclarationDescriptor> {
         val context = resolveSession.resolveToElement(expression)
         val receiverExpression = expression.getReceiverExpression() ?: return listOf()
         val expressionType = context.get<JetExpression, JetType>(BindingContext.EXPRESSION_TYPE, receiverExpression)
@@ -235,20 +226,15 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
                 .flatMap { ExpressionTypingUtils.canFindSuitableCall(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor()) }
     }
 
-    public fun getJetClassesDescriptors(acceptedShortNameCondition: (String) -> Boolean, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {
-        val classDescriptors = ArrayList<ClassDescriptor>()
-
-        for (fqName in JetFullClassNameIndex.getInstance().getAllKeys(project)) {
-            val classFQName = FqName(fqName)
-            if (acceptedShortNameCondition(classFQName.shortName().asString())) {
-                classDescriptors.addAll(getJetClassesDescriptorsByFQName(analyzer, classFQName, scope))
-            }
-        }
-
-        return classDescriptors
+    public fun getClassDescriptors(nameFilter: (String) -> Boolean, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {
+        return JetFullClassNameIndex.getInstance().getAllKeys(project).stream()
+                .map { FqName(it) }
+                .filter { nameFilter(it.shortName().asString()) }
+                .toList()
+                .flatMap { getClassDescriptorsByFQName(analyzer, it, scope) }
     }
 
-    private fun getJetClassesDescriptorsByFQName(analyzer: KotlinCodeAnalyzer, classFQName: FqName, scope: GlobalSearchScope): Collection<ClassDescriptor> {
+    private fun getClassDescriptorsByFQName(analyzer: KotlinCodeAnalyzer, classFQName: FqName, scope: GlobalSearchScope): Collection<ClassDescriptor> {
         val jetClassOrObjects = JetFullClassNameIndex.getInstance().get(classFQName.asString(), project, scope)
 
         if (jetClassOrObjects.isEmpty()) {
@@ -258,6 +244,12 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
 
         // Note: Can't search with psi element as analyzer could be built over temp files
         return ResolveSessionUtils.getClassDescriptorsByFqName(analyzer, classFQName)
+    }
+
+    private fun findTopLevelCallables(fqName: FqName, context: JetExpression, jetScope: JetScope, resolveSession: ResolveSessionForBodies): Collection<DeclarationDescriptor> {
+        val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
+        val allDescriptors = QualifiedExpressionResolver().analyseImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
+        return allDescriptors.filterIsInstance(javaClass<CallableDescriptor>()).filter { it.getReceiverParameter() == null }
     }
 
     override fun getMethodsByName(NonNls name: String, scope: GlobalSearchScope): Array<PsiMethod>
