@@ -25,13 +25,13 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.plugin.caches.JetShortNamesCache
 import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.codeInsight.TipsManager
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.openapi.module.ModuleUtilCore
+import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -78,7 +78,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     private val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
 
     private val project = position.getProject()
-    private val shortNamesCache = JetShortNamesCache.getKotlinInstance(project)
+    private val indicesHelper = KotlinIndicesHelper(project)
     private val module = ModuleUtilCore.findModuleForPsiElement(parameters.getOriginalFile())
     private val searchScope = if (module != null) GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module) else GlobalSearchScope.EMPTY_SCOPE
 
@@ -156,12 +156,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun addKotlinTopLevelDeclarations() {
         val filter = { (name: String) -> prefixMatcher.prefixMatches(name) }
-        collector.addDescriptorElements(shortNamesCache.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope) +
-                                                shortNamesCache.getTopLevelObjects(filter, resolveSession, searchScope))
+        collector.addDescriptorElements(indicesHelper.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope) +
+                                                indicesHelper.getTopLevelObjects(filter, resolveSession, searchScope))
     }
 
     private fun addKotlinExtensions() {
-        collector.addDescriptorElements(shortNamesCache.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope))
+        collector.addDescriptorElements(indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope))
     }
 
     private fun shouldRunOnlyTypeCompletion(): Boolean {

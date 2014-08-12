@@ -30,21 +30,20 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper
-import org.jetbrains.jet.plugin.caches.JetShortNamesCache
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.openapi.module.ModuleUtilCore
+import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 
 class TypesCompletion(val parameters: CompletionParameters, val resolveSession: ResolveSessionForBodies, val prefixMatcher: PrefixMatcher) {
     fun addAllTypes(result: LookupElementsCollector) {
         result.addDescriptorElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses())
 
         val project = parameters.getOriginalFile().getProject()
-        val namesCache = JetShortNamesCache.getKotlinInstance(project)
         val module = ModuleUtilCore.findModuleForPsiElement(parameters.getOriginalFile()) ?: return
         val searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
-        result.addDescriptorElements(namesCache.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, resolveSession, searchScope))
+        result.addDescriptorElements(KotlinIndicesHelper(project).getClassDescriptors({ prefixMatcher.prefixMatches(it) }, resolveSession, searchScope))
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(result)

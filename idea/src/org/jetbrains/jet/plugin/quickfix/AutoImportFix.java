@@ -55,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
+import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
@@ -130,9 +131,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             @NotNull ResolveSessionForBodies resolveSession,
             @NotNull Project project
     ) {
-        JetShortNamesCache namesCache = JetShortNamesCache.OBJECT$.getKotlinInstance(project);
-
-        Collection<FunctionDescriptor> topLevelFunctions = namesCache.getTopLevelFunctionDescriptorsByName(
+        Collection<FunctionDescriptor> topLevelFunctions = new KotlinIndicesHelper(project).getTopLevelFunctionDescriptorsByName(
                 referenceName, context, resolveSession, searchScope);
 
         return Sets.newHashSet(Collections2.transform(topLevelFunctions, new Function<DeclarationDescriptor, FqName>() {
@@ -151,8 +150,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             @NotNull ResolveSessionForBodies resolveSession,
             @NotNull Project project
     ) {
-        JetShortNamesCache namesCache = JetShortNamesCache.OBJECT$.getKotlinInstance(project);
-        Collection<DeclarationDescriptor> jetCallableExtensions = namesCache.getCallableExtensions(
+        Collection<DeclarationDescriptor> jetCallableExtensions = new KotlinIndicesHelper(project).getCallableExtensions(
                 new Function1<String, Boolean>() {
                     @Override
                     public Boolean invoke(String callableExtensionName) {
@@ -223,8 +221,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     }
 
     private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull GlobalSearchScope searchScope, @NotNull Project project, @NotNull KotlinCodeAnalyzer resolveSession) {
-        JetShortNamesCache cache = JetShortNamesCache.OBJECT$.getKotlinInstance(project);
-        Collection<ClassDescriptor> descriptors = cache.getClassDescriptors(new Function1<String, Boolean>() {
+        Collection<ClassDescriptor> descriptors = new KotlinIndicesHelper(project).getClassDescriptors(new Function1<String, Boolean>() {
             @Override
             public Boolean invoke(String s) {
                 return typeName.equals(s);
