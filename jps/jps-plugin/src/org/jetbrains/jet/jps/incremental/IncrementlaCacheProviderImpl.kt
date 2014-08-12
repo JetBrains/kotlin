@@ -17,11 +17,15 @@
 package org.jetbrains.jet.jps.incremental
 
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider
-import java.io.File
+import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache
+import kotlin.properties.Delegates
 
-public class IncrementalCacheProviderImpl: IncrementalCacheProvider {
-    override fun getIncrementalCache(baseDir: File): IncrementalCache {
-        return IncrementalCacheImpl(baseDir)
+public class IncrementalCacheProviderImpl(caches: Map<ModuleBuildTarget, IncrementalCacheImpl>): IncrementalCacheProvider {
+    private val idToCache = caches.mapKeys { it.key.getId()!! }
+
+    override fun getIncrementalCache(moduleId: String): IncrementalCache {
+        return idToCache[moduleId]!!
     }
 }
+
