@@ -122,21 +122,16 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         destination.addAll(Arrays.asList<String>(*getAllClassNames()))
     }
 
-    /**
-     * Get kotlin non-extension top-level function names. Method is allowed to give invalid names - all result should be
-     * checked with getTopLevelFunctionDescriptorsByName().
-     */
-    public fun getAllTopLevelFunctionNames(): Collection<String> {
-        return (JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().getAllKeys(project)
-                + JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, GlobalSearchScope.allScope(project))).toSet()
+    public fun getTopLevelObjects(nameFilter: (String) -> Boolean, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<ClassDescriptor> {
+        val allObjectNames = JetTopLevelObjectShortNameIndex.getInstance().getAllKeys(project).stream() +
+                JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, GlobalSearchScope.allScope(project)).stream()
+        return allObjectNames
+                .filter(nameFilter)
+                .toSet()
+                .flatMap { getTopLevelObjectsByName(it, resolveSession, scope) }
     }
 
-    public fun getAllTopLevelObjectNames(): Collection<String> {
-        return (JetTopLevelObjectShortNameIndex.getInstance().getAllKeys(project)
-                + JetFromJavaDescriptorHelper.getCompiledClassesForTopLevelObjects(project, GlobalSearchScope.allScope(project)).map { it.getName()!! }).toSet()
-    }
-
-    public fun getTopLevelObjectsByName(name: String, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<ClassDescriptor> {
+    private fun getTopLevelObjectsByName(name: String, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<ClassDescriptor> {
         val result = hashSetOf<ClassDescriptor>()
 
         val topObjects = JetTopLevelObjectShortNameIndex.getInstance().get(name, project, scope)

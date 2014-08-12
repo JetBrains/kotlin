@@ -155,13 +155,9 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun addKotlinTopLevelDeclarations() {
-        collector.addDescriptorElements(shortNamesCache.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope))
-
-        for (name in shortNamesCache.getAllTopLevelObjectNames()) {
-            if (prefixMatcher.prefixMatches(name)) {
-                collector.addDescriptorElements(shortNamesCache.getTopLevelObjectsByName(name, resolveSession, searchScope))
-            }
-        }
+        val filter = { (name: String) -> prefixMatcher.prefixMatches(name) }
+        collector.addDescriptorElements(shortNamesCache.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope) +
+                                                shortNamesCache.getTopLevelObjects(filter, resolveSession, searchScope))
     }
 
     private fun addKotlinExtensions() {
