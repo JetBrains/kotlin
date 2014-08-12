@@ -20,7 +20,6 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.preloading.ClassLoaderFactory;
 import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 
@@ -60,14 +59,14 @@ public class CompilerRunnerUtil {
     @NotNull
     public static ClassLoader getOrCreatePreloader(
             @NotNull KotlinPaths paths,
-            @Nullable ClassLoaderFactory parentFactory,
+            @Nullable ClassLoader parentClassLoader,
             @NotNull MessageCollector messageCollector
     ) {
         ClassLoader answer = ourClassLoaderRef.get();
         if (answer == null) {
             try {
                 int estimatedClassNumber = 4096;
-                answer = ClassPreloadingUtils.preloadClasses(kompilerClasspath(paths, messageCollector), estimatedClassNumber, parentFactory);
+                answer = ClassPreloadingUtils.preloadClasses(kompilerClasspath(paths, messageCollector), estimatedClassNumber, parentClassLoader);
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -120,7 +119,7 @@ public class CompilerRunnerUtil {
             MessageCollector messageCollector, PrintStream out, boolean usePreloader
     ) throws Exception {
         ClassLoader loader = usePreloader
-                             ? getOrCreatePreloader(environment.getKotlinPaths(), environment.getParentFactory(), messageCollector)
+                             ? getOrCreatePreloader(environment.getKotlinPaths(), environment.getParentClassLoader(), messageCollector)
                              : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
 
         Class<?> kompiler = Class.forName(compilerClassName, true, loader);

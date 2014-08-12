@@ -19,7 +19,6 @@ package org.jetbrains.jet.jps.build;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -41,7 +40,6 @@ import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.jps.incremental.*;
-import org.jetbrains.jet.preloading.ClassLoaderFactory;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
@@ -57,10 +55,8 @@ import org.jetbrains.jps.model.module.JpsModule;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URL;
 import java.util.*;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
@@ -132,14 +128,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         IncrementalCacheProviderImpl cacheProvider = new IncrementalCacheProviderImpl(incrementalCaches);
 
         CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(
-                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir, new ClassLoaderFactory() {
-                    @Override
-                    public ClassLoader create(ClassLoader compilerClassLoader) {
-                        return new MyClassLoader(compilerClassLoader);
-                    }
-                },
-                cacheProvider
-        );
+                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir, getClass().getClassLoader(), cacheProvider);
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector);
             return ExitCode.ABORT;
@@ -406,25 +395,5 @@ public class KotlinBuilder extends ModuleLevelBuilder {
     @Override
     public List<String> getCompilableFileExtensions() {
         return COMPILABLE_FILE_EXTENSIONS;
-    }
-
-    private class MyClassLoader extends ClassLoader {
-        private final ClassLoader compilerClassLoader;
-        private final ClassLoader jpsPluginClassLoader = KotlinBuilder.this.getClass().getClassLoader();
-
-        private MyClassLoader(ClassLoader compilerClassLoader) {
-            this.compilerClassLoader = compilerClassLoader;
-        }
-
-        @NotNull
-        @Override
-        public Enumeration<URL> getResources(String name) throws IOException {
-            return jpsPluginClassLoader.getResources(name);
-        }
-
-        @Override
-        public Class<?> loadClass(@NotNull String name) throws ClassNotFoundException {
-            return jpsPluginClassLoader.loadClass(name);
-        }
     }
 }

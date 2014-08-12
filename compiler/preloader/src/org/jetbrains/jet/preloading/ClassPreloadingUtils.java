@@ -48,33 +48,31 @@ public class ClassPreloadingUtils {
      *
      * @param jarFiles jars to load all classes from
      * @param classCountEstimation an estimated number of classes in a the jars
-     * @param parentFactory (nullable) factory for creating parent class loader, passing preloader's as parameter
+     * @param parentClassLoader parent class loader
      * @param handler handler to be notified on class definitions done by this class loader, or null
      * @return a class loader that reads classes from memory
      * @throws IOException on from reading the jar
      */
     public static ClassLoader preloadClasses(
-            Collection<File> jarFiles, int classCountEstimation, ClassLoaderFactory parentFactory, ClassHandler handler
+            Collection<File> jarFiles, int classCountEstimation, ClassLoader parentClassLoader, ClassHandler handler
     ) throws IOException {
         Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
 
-        return createMemoryBasedClassLoader(parentFactory, entries, handler);
+        return createMemoryBasedClassLoader(parentClassLoader, entries, handler);
     }
 
     public static ClassLoader preloadClasses(
-            Collection<File> jarFiles, int classCountEstimation, ClassLoaderFactory parentFactory
+            Collection<File> jarFiles, int classCountEstimation, ClassLoader parentClassLoader
     ) throws IOException {
-        return preloadClasses(jarFiles, classCountEstimation, parentFactory, null);
+        return preloadClasses(jarFiles, classCountEstimation, parentClassLoader, null);
     }
 
     private static ClassLoader createMemoryBasedClassLoader(
-            final ClassLoaderFactory parentFactory,
+            final ClassLoader parent,
             final Map<String, ResourceData> preloadedResources,
             final ClassHandler handler
     ) {
         return new ClassLoader(null) {
-            private final ClassLoader parent = parentFactory == null ? null : parentFactory.create(this);
-
             @Override
             public Class<?> loadClass(String name) throws ClassNotFoundException {
                 // When compiler is invoked from JPS, we should use loaded incremental cache interface from its class loader,

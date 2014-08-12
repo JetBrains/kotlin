@@ -19,7 +19,6 @@ package org.jetbrains.jet.compiler.runner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.preloading.ClassLoaderFactory;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -35,7 +34,7 @@ public final class CompilerEnvironment {
     public static CompilerEnvironment getEnvironmentFor(
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File outputDir,
-            @Nullable ClassLoaderFactory parentFactory,
+            @Nullable ClassLoader parentClassLoader,
             @NotNull Object... serviceImplementations
     ) {
         Map<Class, Object> servicesMap = new HashMap<Class, Object>();
@@ -44,7 +43,7 @@ public final class CompilerEnvironment {
                 servicesMap.put(serviceInterface, serviceImplementation);
             }
         }
-        return new CompilerEnvironment(kotlinPaths, outputDir, parentFactory, servicesMap);
+        return new CompilerEnvironment(kotlinPaths, outputDir, parentClassLoader, servicesMap);
     }
 
     @NotNull
@@ -52,19 +51,19 @@ public final class CompilerEnvironment {
     @Nullable
     private final File output;
     @Nullable
-    private final ClassLoaderFactory parentFactory;
+    private final ClassLoader parentClassLoader;
     @NotNull
     private final Map<Class, Object> services;
 
     private CompilerEnvironment(
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File output,
-            @Nullable ClassLoaderFactory parentFactory,
+            @Nullable ClassLoader parentClassLoader,
             @NotNull Map<Class, Object> services
     ) {
         this.kotlinPaths = kotlinPaths;
         this.output = output;
-        this.parentFactory = parentFactory;
+        this.parentClassLoader = parentClassLoader;
         this.services = services;
     }
 
@@ -84,8 +83,8 @@ public final class CompilerEnvironment {
     }
 
     @Nullable
-    public ClassLoaderFactory getParentFactory() {
-        return parentFactory;
+    public ClassLoader getParentClassLoader() {
+        return parentClassLoader;
     }
 
     public void reportErrorsTo(@NotNull MessageCollector messageCollector) {
