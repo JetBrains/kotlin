@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin.incremental
+package org.jetbrains.jet.lang.resolve.kotlin.incremental.cache
 
 public trait IncrementalCacheProvider {
     public fun getIncrementalCache(moduleId: String): IncrementalCache

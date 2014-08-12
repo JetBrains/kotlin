@@ -34,7 +34,7 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache
 import java.util.HashMap
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.util.containers.MultiMap

@@ -37,6 +37,7 @@ import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.descriptors.serialization.PackageData
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,

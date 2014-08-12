@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin.incremental
+package org.jetbrains.jet.lang.resolve.kotlin.incremental.cache
 
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
@@ -28,21 +28,4 @@ public trait IncrementalCache {
     public fun getPackageData(moduleId: String, fqName: String): ByteArray?
 
     public fun close()
-}
-
-public fun IncrementalCache.getPackagesWithRemovedFiles(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<FqName> {
-    return getRemovedPackageParts(moduleId, compiledSourceFiles).map { it.getFqNameForClassNameWithoutDollars().parent() }
-}
-
-public fun IncrementalCache.getRemovedPackageParts(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<JvmClassName> {
-    val compiledSourceFilesToFqName = HashMap<File, String>()
-    for (sourceFile in compiledSourceFiles) {
-        compiledSourceFilesToFqName[File(sourceFile.getVirtualFile()!!.getPath())] = sourceFile.getPackageFqName().asString()
-    }
-
-    return getRemovedPackageParts(moduleId, compiledSourceFilesToFqName).map { JvmClassName.byInternalName(it) }
-}
-
-public fun IncrementalCache.getPackageData(moduleId: String, fqName: FqName): ByteArray? {
-    return getPackageData(moduleId, fqName.asString())
 }
