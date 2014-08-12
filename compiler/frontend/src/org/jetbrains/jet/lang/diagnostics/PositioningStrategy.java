@@ -55,6 +55,11 @@ public class PositioningStrategy<E extends PsiElement> {
         return Collections.singletonList(range);
     }
 
+    @NotNull
+    protected static List<TextRange> markRange(@NotNull PsiElement from, @NotNull PsiElement to) {
+        return markRange(new TextRange(from.getTextRange().getStartOffset(), to.getTextRange().getEndOffset()));
+    }
+
     protected static boolean hasSyntaxErrors(@NotNull PsiElement psiElement) {
         if (psiElement instanceof PsiErrorElement) return true;
 

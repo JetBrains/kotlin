@@ -48,7 +48,7 @@ public class PositioningStrategies {
                 if (delegationSpecifierList == null) {
                     return markElement(objectKeyword);
                 }
-                return markRange(objectKeyword.getTextRange().union(delegationSpecifierList.getTextRange()));
+                return markRange(objectKeyword, delegationSpecifierList);
             }
             return super.mark(element);
         }
@@ -105,7 +105,7 @@ public class PositioningStrategies {
                 if (parent instanceof JetClassObject) {
                     PsiElement classKeyword = ((JetClassObject) parent).getClassKeywordNode();
                     PsiElement start = classKeyword == null ? objectKeyword : classKeyword;
-                    return markRange(new TextRange(start.getTextRange().getStartOffset(), objectKeyword.getTextRange().getEndOffset()));
+                    return markRange(start, objectKeyword);
                 }
                 return markElement(objectKeyword);
             }
@@ -142,8 +142,7 @@ public class PositioningStrategies {
                 else {
                     endOfSignatureElement = function;
                 }
-                return markRange(new TextRange(
-                        function.getTextRange().getStartOffset(), endOfSignatureElement.getTextRange().getEndOffset()));
+                return markRange(function, endOfSignatureElement);
             }
             else if (element instanceof JetProperty) {
                 JetProperty property = (JetProperty) element;
@@ -159,8 +158,7 @@ public class PositioningStrategies {
                 else {
                     endOfSignatureElement = property;
                 }
-                return markRange(new TextRange(
-                        property.getTextRange().getStartOffset(), endOfSignatureElement.getTextRange().getEndOffset()));
+                return markRange(property, endOfSignatureElement);
             }
             else if (element instanceof JetPropertyAccessor) {
                 JetPropertyAccessor accessor = (JetPropertyAccessor) element;
@@ -172,8 +170,7 @@ public class PositioningStrategies {
                 if (endOfSignatureElement == null) {
                     endOfSignatureElement = accessor.getNamePlaceholder();
                 }
-                return markRange(new TextRange(
-                        accessor.getTextRange().getStartOffset(), endOfSignatureElement.getTextRange().getEndOffset()));
+                return markRange(accessor, endOfSignatureElement);
             }
             else if (element instanceof JetClass) {
                 PsiElement nameAsDeclaration = ((JetClass) element).getNameIdentifier();
@@ -182,10 +179,9 @@ public class PositioningStrategies {
                 }
                 PsiElement primaryConstructorParameterList = ((JetClass) element).getPrimaryConstructorParameterList();
                 if (primaryConstructorParameterList == null) {
-                    return markRange(nameAsDeclaration.getTextRange());
+                    return markElement(nameAsDeclaration);
                 }
-                return markRange(new TextRange(
-                        nameAsDeclaration.getTextRange().getStartOffset(), primaryConstructorParameterList.getTextRange().getEndOffset()));
+                return markRange(nameAsDeclaration, primaryConstructorParameterList);
             }
             else if (element instanceof JetObjectDeclaration) {
                 return NAME_IDENTIFIER.mark((JetObjectDeclaration) element);
@@ -466,7 +462,7 @@ public class PositioningStrategies {
                 else {
                     endElement = element;
                 }
-                return markRange(new TextRange(element.getTextRange().getStartOffset(), endElement.getTextRange().getEndOffset()));
+                return markRange(element, endElement);
             }
             return super.mark(element);
         }
