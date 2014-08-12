@@ -20,10 +20,10 @@ import org.jetbrains.jet.utils.DFS
 import java.util.HashSet
 
 public trait FunctionHandle {
-    val isDeclaration: Boolean
-    val isAbstract: Boolean
+    public val isDeclaration: Boolean
+    public val isAbstract: Boolean
 
-    fun getOverridden(): Iterable<FunctionHandle>
+    public fun getOverridden(): Iterable<FunctionHandle>
 }
 
 public data class Bridge<Signature>(

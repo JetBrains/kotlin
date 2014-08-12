@@ -52,7 +52,7 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
     return null
 }
 
-fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
+public fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
     val pseudocode = value.createdAt?.owner
     if (pseudocode == null) return AllTypes
 

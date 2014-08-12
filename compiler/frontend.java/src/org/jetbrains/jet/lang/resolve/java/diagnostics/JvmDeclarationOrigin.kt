@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind.
 
 public enum class MemberKind { FIELD; METHOD }
 
-public data class RawSignature(val name: String, val desc: String, val kind: MemberKind)
+public data class RawSignature(public val name: String, public val desc: String, public val kind: MemberKind)
 
 public enum class JvmDeclarationOriginKind {
     OTHER
@@ -39,9 +39,9 @@ public enum class JvmDeclarationOriginKind {
 }
 
 public class JvmDeclarationOrigin(
-        val originKind: JvmDeclarationOriginKind,
-        val element: PsiElement?,
-        val descriptor: DeclarationDescriptor?
+        public val originKind: JvmDeclarationOriginKind,
+        public val element: PsiElement?,
+        public val descriptor: DeclarationDescriptor?
 ) {
     class object {
         public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)

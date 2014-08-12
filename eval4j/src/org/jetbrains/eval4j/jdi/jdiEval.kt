@@ -27,7 +27,7 @@ import com.sun.jdi.Method
 val CLASS = Type.getType(javaClass<Class<*>>())
 val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
-class JDIEval(
+public class JDIEval(
         private val vm: jdi.VirtualMachine,
         private val classLoader: jdi.ClassLoaderReference,
         private val thread: jdi.ThreadReference,

@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.InTextDirectivesUtils
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 
-abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
+public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
         myFixture.checkHighlighting(true, false, false)
@@ -50,7 +50,7 @@ abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest(
     }
 }
 
-abstract class AbstractCodeFragmentCompletionTest : AbstractJvmBasicCompletionTest() {
+public abstract class AbstractCodeFragmentCompletionTest : AbstractJvmBasicCompletionTest() {
     override fun setUpFixture(testPath: String) {
         myFixture.configureByCodeFragment(testPath)
     }

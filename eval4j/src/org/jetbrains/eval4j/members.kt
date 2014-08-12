@@ -53,7 +53,7 @@ val MethodDescription.parameterTypes: List<Type>
     get() = Type.getArgumentTypes(desc).toList()
 
 
-class FieldDescription(
+public class FieldDescription(
         ownerInternalName: String,
         name: String,
         desc: String,

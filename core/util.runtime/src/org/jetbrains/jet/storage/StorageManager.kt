@@ -26,13 +26,13 @@ public trait StorageManager {
      * NOTE: if compute() has side-effects the WEAK reference kind is dangerous: the side-effects will be repeated if
      *       the value gets collected and then re-computed
      */
-    fun createMemoizedFunction<K, V: Any>(compute: (K) -> V): MemoizedFunctionToNotNull<K, V>
+    public fun createMemoizedFunction<K, V: Any>(compute: (K) -> V): MemoizedFunctionToNotNull<K, V>
 
-    fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V?): MemoizedFunctionToNullable<K, V>
+    public fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V?): MemoizedFunctionToNullable<K, V>
 
-    fun createLazyValue<T: Any>(computable: () -> T): NotNullLazyValue<T>
+    public fun createLazyValue<T: Any>(computable: () -> T): NotNullLazyValue<T>
 
-    fun createRecursionTolerantLazyValue<T: Any>(computable: () -> T, onRecursiveCall: T): NotNullLazyValue<T>
+    public fun createRecursionTolerantLazyValue<T: Any>(computable: () -> T, onRecursiveCall: T): NotNullLazyValue<T>
 
     /**
      * @param onRecursiveCall is called if the computation calls itself recursively.
@@ -41,17 +41,17 @@ public trait StorageManager {
      *                        otherwise it's executed and its result is returned
      * @param postCompute is called after the value is computed, but before any other thread sees it
      */
-    fun createLazyValueWithPostCompute<T: Any>(computable: () -> T, onRecursiveCall: ((Boolean) -> T)?, postCompute: (T) -> Unit): NotNullLazyValue<T>
+    public fun createLazyValueWithPostCompute<T: Any>(computable: () -> T, onRecursiveCall: ((Boolean) -> T)?, postCompute: (T) -> Unit): NotNullLazyValue<T>
 
-    fun createNullableLazyValue<T: Any>(computable: () -> T?): NullableLazyValue<T>
+    public fun createNullableLazyValue<T: Any>(computable: () -> T?): NullableLazyValue<T>
 
-    fun createRecursionTolerantNullableLazyValue<T: Any>(computable: () -> T?, onRecursiveCall: T?): NullableLazyValue<T>
+    public fun createRecursionTolerantNullableLazyValue<T: Any>(computable: () -> T?, onRecursiveCall: T?): NullableLazyValue<T>
 
     /**
      * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
      * see it in between)
      */
-    fun createNullableLazyValueWithPostCompute<T: Any>(computable: () -> T?, postCompute: (T?) -> Unit): NullableLazyValue<T>
+    public fun createNullableLazyValueWithPostCompute<T: Any>(computable: () -> T?, postCompute: (T?) -> Unit): NullableLazyValue<T>
 
-    fun compute<T>(computable: () -> T): T
+    public fun compute<T>(computable: () -> T): T
 }

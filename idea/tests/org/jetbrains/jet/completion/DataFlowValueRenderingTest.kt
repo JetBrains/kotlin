@@ -30,7 +30,7 @@ import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 
-abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() : String {
         return PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
     }

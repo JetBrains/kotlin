@@ -28,29 +28,29 @@ import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
 import java.util.ArrayList
 import org.jetbrains.eval4j.ExceptionThrown.ExceptionKind
 
-trait InterpreterResult {
+public trait InterpreterResult {
     override fun toString(): String
 }
 
-class ExceptionThrown(val exception: Value, val kind: ExceptionKind): InterpreterResult {
+public class ExceptionThrown(public val exception: Value, public val kind: ExceptionKind): InterpreterResult {
     override fun toString(): String = "Thrown $exception: $kind"
 
-    enum class ExceptionKind {
+    public enum class ExceptionKind {
         FROM_EVALUATED_CODE
         FROM_EVALUATOR
         BROKEN_CODE
     }
 }
 
-data class ValueReturned(val result: Value): InterpreterResult {
+public data class ValueReturned(public val result: Value): InterpreterResult {
     override fun toString(): String = "Returned $result"
 }
 
-class AbnormalTermination(val message: String): InterpreterResult {
+public class AbnormalTermination(public val message: String): InterpreterResult {
     override fun toString(): String = "Terminated abnormally: $message"
 }
 
-trait InterpretationEventHandler {
+public trait InterpretationEventHandler {
 
     class object {
         object NONE : InterpretationEventHandler {
@@ -78,7 +78,7 @@ class ThrownFromEvaluatedCodeException(val exception: Value): RuntimeException()
     override fun toString(): String = "Thrown from evaluated code: $exception"
 }
 
-fun interpreterLoop(
+public fun interpreterLoop(
         m: MethodNode,
         initialState: Frame<Value>,
         eval: Eval,

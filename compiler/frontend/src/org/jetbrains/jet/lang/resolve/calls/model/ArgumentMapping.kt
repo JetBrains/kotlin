@@ -18,15 +18,15 @@ package org.jetbrains.jet.lang.resolve.calls.model
 
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 
-trait ArgumentMapping {
-    fun isError(): Boolean
+public trait ArgumentMapping {
+    public fun isError(): Boolean
 }
 
-object ArgumentUnmapped: ArgumentMapping {
+public object ArgumentUnmapped: ArgumentMapping {
     override fun isError(): Boolean = true
 }
 
-enum class ArgumentMatchStatus(val isError: Boolean = true) {
+public enum class ArgumentMatchStatus(val isError: Boolean = true) {
     SUCCESS : ArgumentMatchStatus(false)
     TYPE_MISMATCH : ArgumentMatchStatus()
     ARGUMENT_HAS_NO_TYPE : ArgumentMatchStatus()
@@ -36,9 +36,9 @@ enum class ArgumentMatchStatus(val isError: Boolean = true) {
     MATCH_MODULO_UNINFERRED_TYPES : ArgumentMatchStatus()
 }
 
-trait ArgumentMatch : ArgumentMapping {
-    val valueParameter: ValueParameterDescriptor
-    val status: ArgumentMatchStatus
+public trait ArgumentMatch : ArgumentMapping {
+    public val valueParameter: ValueParameterDescriptor
+    public val status: ArgumentMatchStatus
 
     override fun isError(): Boolean = status.isError
 }

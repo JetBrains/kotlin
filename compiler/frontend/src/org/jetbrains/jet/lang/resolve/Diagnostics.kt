@@ -22,13 +22,13 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import java.util.Collections
 
 public trait Diagnostics : Iterable<Diagnostic> {
-    fun all(): Collection<Diagnostic>
+    public fun all(): Collection<Diagnostic>
 
-    fun forElement(psiElement: PsiElement): Collection<Diagnostic>
+    public fun forElement(psiElement: PsiElement): Collection<Diagnostic>
 
-    fun isEmpty(): Boolean
+    public fun isEmpty(): Boolean
 
-    fun noSuppression(): Diagnostics
+    public fun noSuppression(): Diagnostics
 
     class object {
 

@@ -28,7 +28,7 @@ import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.openapi.util.Computable
 import org.jetbrains.jet.plugin.refactoring.runReadAction
 
-abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
+public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
 
     protected fun doStepIntoTest(path: String) {
         createDebugProcess(path)

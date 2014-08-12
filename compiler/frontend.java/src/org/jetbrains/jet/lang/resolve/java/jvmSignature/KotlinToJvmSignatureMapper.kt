@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.java.jvmSignature
 
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
-trait KotlinToJvmSignatureMapper {
-    fun mapToJvmMethodSignature(function: FunctionDescriptor): JvmMethodSignature
+public trait KotlinToJvmSignatureMapper {
+    public fun mapToJvmMethodSignature(function: FunctionDescriptor): JvmMethodSignature
 }
 
 fun erasedSignaturesEqualIgnoringReturnTypes(subFunction: JvmMethodSignature, superFunction: JvmMethodSignature): Boolean {
