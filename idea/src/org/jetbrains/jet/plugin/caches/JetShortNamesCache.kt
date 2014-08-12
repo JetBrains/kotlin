@@ -197,7 +197,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
 
         val jetScope = resolveSession.resolveToElement(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
         allFqNames.filter { nameFilter(it.shortName().asString()) }
-                .toList()
+                .toSet()
                 .flatMapTo(result) { findTopLevelCallables(it, context, jetScope, resolveSession) }
 
         return result
@@ -222,7 +222,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         // Iterate through the function with attempt to resolve found functions
         return allFqNames
                 .filter { nameFilter(it.shortName().asString()) }
-                .toList()
+                .toSet()
                 .flatMap { ExpressionTypingUtils.canFindSuitableCall(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor()) }
     }
 
