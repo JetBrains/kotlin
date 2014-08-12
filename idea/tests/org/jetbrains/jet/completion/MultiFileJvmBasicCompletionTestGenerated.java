@@ -98,6 +98,16 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest("idea/testData/completion/basic/multifile/NotImportedExtensionFunction/");
     }
     
+    @TestMetadata("NotImportedExtensionProperty")
+    public void testNotImportedExtensionProperty() throws Exception {
+        doTest("idea/testData/completion/basic/multifile/NotImportedExtensionProperty/");
+    }
+    
+    @TestMetadata("NotImportedFunction")
+    public void testNotImportedFunction() throws Exception {
+        doTest("idea/testData/completion/basic/multifile/NotImportedFunction/");
+    }
+    
     @TestMetadata("NotImportedJavaClass")
     public void testNotImportedJavaClass() throws Exception {
         doTest("idea/testData/completion/basic/multifile/NotImportedJavaClass/");
@@ -106,6 +116,11 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     @TestMetadata("NotImportedObject")
     public void testNotImportedObject() throws Exception {
         doTest("idea/testData/completion/basic/multifile/NotImportedObject/");
+    }
+    
+    @TestMetadata("NotImportedProperty")
+    public void testNotImportedProperty() throws Exception {
+        doTest("idea/testData/completion/basic/multifile/NotImportedProperty/");
     }
     
     @TestMetadata("TopLevelFunction")

@@ -48,9 +48,19 @@ public class JvmWithLibBasicCompletionTestGenerated extends AbstractJvmWithLibBa
         doTest("idea/testData/completion/basic/custom/TopLevelNonImportedExtFun.kt");
     }
     
+    @TestMetadata("TopLevelNonImportedExtProp.kt")
+    public void testTopLevelNonImportedExtProp() throws Exception {
+        doTest("idea/testData/completion/basic/custom/TopLevelNonImportedExtProp.kt");
+    }
+    
     @TestMetadata("TopLevelNonImportedFun.kt")
     public void testTopLevelNonImportedFun() throws Exception {
         doTest("idea/testData/completion/basic/custom/TopLevelNonImportedFun.kt");
+    }
+    
+    @TestMetadata("TopLevelNonImportedProperty.kt")
+    public void testTopLevelNonImportedProperty() throws Exception {
+        doTest("idea/testData/completion/basic/custom/TopLevelNonImportedProperty.kt");
     }
     
 }

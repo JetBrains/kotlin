@@ -48,7 +48,7 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
     }
 
     public fun addDescriptorElements(descriptor: DeclarationDescriptor) {
-        if (!descriptorFilter(descriptor))  return
+        if (!descriptorFilter(descriptor)) return
 
         addElement(DescriptorLookupConverter.createLookupElement(resolveSession, descriptor))
 

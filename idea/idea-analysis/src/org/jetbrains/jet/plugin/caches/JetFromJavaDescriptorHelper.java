@@ -163,7 +163,7 @@ public class JetFromJavaDescriptorHelper {
 
 
     @NotNull
-    public static Collection<FqName> getTopLevelFunctionFqNames(
+    public static Collection<FqName> getTopLevelCallableFqNames(
             @NotNull Project project,
             @NotNull GlobalSearchScope scope,
             boolean shouldBeExtension
