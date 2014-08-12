@@ -16,21 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.incremental
 
-import java.io.File
-import java.util.ServiceLoader
-
 public trait IncrementalCacheProvider {
-    // IncrementalCache should be always closed after using
-    public fun getIncrementalCache(baseDir: File): IncrementalCache
-
-    public class object {
-        public fun getInstance(): IncrementalCacheProvider? {
-            val serviceLoader = ServiceLoader.load(javaClass<IncrementalCacheProvider>(), javaClass<IncrementalCacheProvider>().getClassLoader())
-            val implementations = serviceLoader.toList()
-            if (implementations.size > 1) {
-                throw IllegalStateException("More than one IncrementalCacheProvider: " + implementations)
-            }
-            return implementations.firstOrNull()
-        }
-    }
+    public fun getIncrementalCache(moduleId: String): IncrementalCache
 }

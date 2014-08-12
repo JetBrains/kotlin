@@ -25,6 +25,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.context.ContextPackage;
@@ -43,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService;
@@ -149,7 +151,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             ModuleDescriptorImpl module,
             List<String> moduleIds,
-            IncrementalCache incrementalCache
+            @Nullable IncrementalCacheProvider incrementalCacheProvider
     ) {
         GlobalContext globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
@@ -164,8 +166,10 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         try {
             List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();
 
-            if (incrementalCache != null && moduleIds != null) {
+            if (moduleIds != null && incrementalCacheProvider != null) {
                 for (String moduleId : moduleIds) {
+                    IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
+
                     additionalProviders.add(
                             new IncrementalPackageFragmentProvider(
                                     files, module, globalContext.getStorageManager(), injector.getDeserializationGlobalContextForJava(),

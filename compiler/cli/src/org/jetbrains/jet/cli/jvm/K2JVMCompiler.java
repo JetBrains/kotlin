@@ -35,6 +35,7 @@ import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
@@ -42,6 +43,7 @@ import org.jetbrains.jet.utils.PathUtil;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Predicates.in;
 import static org.jetbrains.jet.cli.common.ExitCode.*;
@@ -57,6 +59,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @NotNull
     protected ExitCode doExecute(
             @NotNull K2JVMCompilerArguments arguments,
+            @NotNull Map<Class, Object> services,
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
@@ -68,6 +71,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                 "Using Kotlin home directory " + paths.getHomePath(), CompilerMessageLocation.NO_LOCATION);
 
         CompilerConfiguration configuration = new CompilerConfiguration();
+
+        IncrementalCacheProvider incrementalCacheProvider = (IncrementalCacheProvider) services.get(IncrementalCacheProvider.class);
+        if (incrementalCacheProvider != null) {
+            configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER, incrementalCacheProvider);
+        }
 
         try {
             configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(paths, arguments));

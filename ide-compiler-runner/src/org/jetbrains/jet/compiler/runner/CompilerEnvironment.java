@@ -24,6 +24,8 @@ import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -33,9 +35,16 @@ public final class CompilerEnvironment {
     public static CompilerEnvironment getEnvironmentFor(
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File outputDir,
-            @Nullable ClassLoaderFactory parentFactory
+            @Nullable ClassLoaderFactory parentFactory,
+            @NotNull Object... serviceImplementations
     ) {
-        return new CompilerEnvironment(kotlinPaths, outputDir, parentFactory);
+        Map<Class, Object> servicesMap = new HashMap<Class, Object>();
+        for (Object serviceImplementation : serviceImplementations) {
+            for (Class<?> serviceInterface : serviceImplementation.getClass().getInterfaces()) {
+                servicesMap.put(serviceInterface, serviceImplementation);
+            }
+        }
+        return new CompilerEnvironment(kotlinPaths, outputDir, parentFactory, servicesMap);
     }
 
     @NotNull
@@ -44,11 +53,19 @@ public final class CompilerEnvironment {
     private final File output;
     @Nullable
     private final ClassLoaderFactory parentFactory;
+    @NotNull
+    private final Map<Class, Object> services;
 
-    private CompilerEnvironment(@NotNull KotlinPaths kotlinPaths, @Nullable File output, @Nullable ClassLoaderFactory parentFactory) {
+    private CompilerEnvironment(
+            @NotNull KotlinPaths kotlinPaths,
+            @Nullable File output,
+            @Nullable ClassLoaderFactory parentFactory,
+            @NotNull Map<Class, Object> services
+    ) {
         this.kotlinPaths = kotlinPaths;
         this.output = output;
         this.parentFactory = parentFactory;
+        this.services = services;
     }
 
     public boolean success() {
@@ -79,5 +96,10 @@ public final class CompilerEnvironment {
             messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.getHomePath() + ". Make sure plugin is properly installed, " +
                                            "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property", NO_LOCATION);
         }
+    }
+
+    @NotNull
+    public Map<Class, Object> getServices() {
+        return services;
     }
 }

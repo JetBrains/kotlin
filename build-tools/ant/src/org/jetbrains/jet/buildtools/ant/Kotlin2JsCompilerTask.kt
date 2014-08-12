@@ -89,7 +89,7 @@ public class Kotlin2JsCompilerTask : Task() {
         log("Compiling ${arguments.freeArgs} => [${arguments.outputFile}]");
 
         val compiler = K2JSCompiler()
-        val exitCode = compiler.exec(MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR, arguments)
+        val exitCode = compiler.exec(MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR, mapOf(), arguments)
 
         if (exitCode != ExitCode.OK) {
             throw BuildException("Compilation finished with exit code $exitCode")

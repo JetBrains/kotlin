@@ -40,10 +40,13 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.util.containers.MultiMap
 import com.intellij.openapi.util.io.FileUtil
 import java.security.MessageDigest
+import org.jetbrains.jps.incremental.storage.StorageOwner
+import org.jetbrains.jps.builders.storage.StorageProvider
+import java.io.IOException
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
-public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
+public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalCache {
     class object {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
@@ -56,10 +59,12 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     private val inlineFunctionsMap = InlineFunctionsMap()
     private val packagePartMap = PackagePartMap()
 
+    private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
+
     public fun saveFileToCache(moduleId: String, sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
         val fileBytes = classFile.readBytes()
         val classNameAndHeader = VirtualFileKotlinClass.readClassNameAndHeader(fileBytes)
-        if (classNameAndHeader == null) return RecompilationDecision.DO_NOTHING
+        if (classNameAndHeader == null) return DO_NOTHING
 
         val (className, header) = classNameAndHeader
         val annotationDataEncoded = header.annotationData
@@ -92,14 +97,14 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         return DO_NOTHING
     }
 
-    public fun clearCacheForRemovedFiles(moduleIdsAndSourceFiles: Collection<Pair<String, File>>, outDirectories: Map<String, File>) {
-        for ((moduleId, sourceFile) in moduleIdsAndSourceFiles) {
-            packagePartMap.remove(moduleId, sourceFile)
+    public fun clearCacheForRemovedFiles(moduleId: String, removedSourceFiles: Collection<File>, outDirectory: File) {
+        for (removedSourceFile in removedSourceFiles) {
+            packagePartMap.remove(moduleId, removedSourceFile)
         }
 
-        inlineFunctionsMap.clearOutdated(outDirectories)
-        constantsMap.clearOutdated(outDirectories)
-        protoMap.clearOutdated(outDirectories)
+        inlineFunctionsMap.clearOutdated(outDirectory)
+        constantsMap.clearOutdated(outDirectory)
+        protoMap.clearOutdated(outDirectory)
     }
 
     public override fun getRemovedPackageParts(moduleId: String, compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
@@ -110,16 +115,55 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         return protoMap[moduleId, JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(FqName(fqName)))]
     }
 
-    public override fun close() {
-        protoMap.close()
-        constantsMap.close()
-        inlineFunctionsMap.close()
-        packagePartMap.close()
+    override fun flush(memoryCachesOnly: Boolean) {
+        maps.forEach { it.flush(memoryCachesOnly) }
     }
 
-    private abstract class ClassFileBasedMap {
-        protected abstract val map: PersistentHashMap<String, *>
+    public override fun clean() {
+        maps.forEach { it.clean() }
+    }
 
+    public override fun close() {
+        maps.forEach { it.close () }
+    }
+
+    private abstract class BasicMap<V> {
+        protected var map: PersistentHashMap<String, V> = createMap()
+
+        protected abstract fun createMap(): PersistentHashMap<String, V>
+
+        public fun clean() {
+            try {
+                map.close()
+            }
+            catch (ignored: IOException) {
+            }
+
+            PersistentHashMap.deleteFilesStartingWith(map.getBaseFile()!!)
+            try {
+                map = createMap()
+            }
+            catch (ignored: IOException) {
+            }
+        }
+
+        public fun flush(memoryCachesOnly: Boolean) {
+            if (memoryCachesOnly) {
+                if (map.isDirty()) {
+                    map.dropMemoryCaches()
+                }
+            }
+            else {
+                map.force()
+            }
+        }
+
+        public fun close() {
+            map.close()
+        }
+    }
+
+    private abstract class ClassFileBasedMap<V>: BasicMap<V>() {
         protected fun getKeyString(moduleId: String, className: JvmClassName): String {
             return moduleId + ":" + className.getInternalName()
         }
@@ -129,17 +173,15 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
             return Pair(key.substring(0, colon), JvmClassName.byInternalName(key.substring(colon + 1)))
         }
 
-        public fun clearOutdated(outDirectories: Map<String, File>) {
+        // TODO may be too expensive, because it traverses all files in out directory
+        public fun clearOutdated(outDirectory: File) {
             val keysToRemove = HashSet<String>()
 
-            map.processKeys { key ->
+            map.processKeysWithExistingMapping { key ->
                 val (moduleId, className) = parseKeyString(key!!)
-                val outDir = outDirectories[moduleId]
-                if (outDir != null) {
-                    val classFile = File(outDir, FileUtil.toSystemDependentName(className.getInternalName()) + ".class")
-                    if (!classFile.exists()) {
-                        keysToRemove.add(key)
-                    }
+                val classFile = File(outDirectory, FileUtil.toSystemDependentName(className.getInternalName()) + ".class")
+                if (!classFile.exists()) {
+                    keysToRemove.add(key)
                 }
 
                 true
@@ -149,14 +191,10 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
                 map.remove(key)
             }
         }
-
-        public fun close() {
-            map.close()
-        }
     }
 
-    private inner class ProtoMap: ClassFileBasedMap() {
-        override val map: PersistentHashMap<String, ByteArray> = PersistentHashMap(
+    private inner class ProtoMap: ClassFileBasedMap<ByteArray>() {
+        override fun createMap(): PersistentHashMap<String, ByteArray> = PersistentHashMap(
                 File(baseDir, PROTO_MAP),
                 EnumeratorStringDescriptor(),
                 ByteArrayExternalizer
@@ -177,8 +215,8 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         }
     }
 
-    private inner class ConstantsMap: ClassFileBasedMap() {
-        override val map: PersistentHashMap<String, Map<String, Any>> = PersistentHashMap(
+    private inner class ConstantsMap: ClassFileBasedMap<Map<String, Any>>() {
+        override fun createMap(): PersistentHashMap<String, Map<String, Any>> = PersistentHashMap(
                 File(baseDir, CONSTANTS_MAP),
                 EnumeratorStringDescriptor(),
                 ConstantsMapExternalizer
@@ -274,8 +312,8 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         }
     }
 
-    private inner class InlineFunctionsMap: ClassFileBasedMap() {
-        override val map: PersistentHashMap<String, Map<String, Long>> = PersistentHashMap(
+    private inner class InlineFunctionsMap: ClassFileBasedMap<Map<String, Long>>() {
+        override fun createMap(): PersistentHashMap<String, Map<String, Long>> = PersistentHashMap(
                 File(baseDir, INLINE_FUNCTIONS),
                 EnumeratorStringDescriptor(),
                 InlineFunctionsMapExternalizer
@@ -357,9 +395,9 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
     }
 
 
-    private inner class PackagePartMap {
+    private inner class PackagePartMap: BasicMap<String>() {
         // Format of serialization to string: <module id> <path separator> <source file path>  -->  <package part JVM internal name>
-        private val map: PersistentHashMap<String, String> = PersistentHashMap(
+        override fun createMap(): PersistentHashMap<String, String> = PersistentHashMap(
                 File(baseDir, PACKAGE_PARTS),
                 EnumeratorStringDescriptor(),
                 EnumeratorStringDescriptor()
@@ -420,10 +458,6 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
 
             return result
         }
-
-        public fun close() {
-            map.close()
-        }
     }
 
     enum class RecompilationDecision {
@@ -434,6 +468,12 @@ public class IncrementalCacheImpl(val baseDir: File): IncrementalCache {
         fun merge(other: RecompilationDecision): RecompilationDecision {
             return if (other.ordinal() > this.ordinal()) other else this
         }
+    }
+}
+
+public object IncrementalCacheStorageProvider : StorageProvider<IncrementalCacheImpl>() {
+    override fun createStorage(targetDataDir: File?): IncrementalCacheImpl {
+        return IncrementalCacheImpl(File(targetDataDir, "kotlin"))
     }
 }
 

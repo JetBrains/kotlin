@@ -77,6 +77,21 @@ public class ClassPreloadingUtils {
 
             @Override
             public Class<?> loadClass(String name) throws ClassNotFoundException {
+                // When compiler is invoked from JPS, we should use loaded incremental cache interface from its class loader,
+                // because implementation is loaded from it, as well
+                if (name.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache")) {
+                    if (parent == null) {
+                        return super.loadClass(name);
+                    }
+
+                    try {
+                        return parent.loadClass(name);
+                    }
+                    catch (ClassNotFoundException e) {
+                        return super.loadClass(name);
+                    }
+                }
+
                 // Look in this class loader and then in the parent one
                 Class<?> aClass = super.loadClass(name);
                 if (aClass == null) {

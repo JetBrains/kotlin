@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.jps.build;
 
+import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.StreamUtil;
@@ -24,7 +25,6 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import gnu.trove.THashSet;
-import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
@@ -40,17 +40,17 @@ import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
-import org.jetbrains.jet.jps.incremental.IncrementalCacheImpl;
+import org.jetbrains.jet.jps.incremental.*;
 import org.jetbrains.jet.preloading.ClassLoaderFactory;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
-import org.jetbrains.jps.builders.BuildTarget;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
 import org.jetbrains.jps.incremental.java.JavaBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
+import org.jetbrains.jps.incremental.storage.BuildDataManager;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.module.JpsModule;
 
@@ -123,13 +123,22 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         File outputDir = representativeTarget.getOutputDir();
 
+        BuildDataManager dataManager = context.getProjectDescriptor().dataManager;
+        Map<ModuleBuildTarget, IncrementalCacheImpl> incrementalCaches = Maps.newHashMap();
+        for (ModuleBuildTarget target : chunk.getTargets()) {
+            incrementalCaches.put(target, dataManager.getStorage(target, IncrementalCacheStorageProvider.INSTANCE$));
+        }
+
+        IncrementalCacheProviderImpl cacheProvider = new IncrementalCacheProviderImpl(incrementalCaches);
+
         CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(
                 PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir, new ClassLoaderFactory() {
                     @Override
                     public ClassLoader create(ClassLoader compilerClassLoader) {
                         return new MyClassLoader(compilerClassLoader);
                     }
-                }
+                },
+                cacheProvider
         );
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector);
@@ -213,7 +222,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         }
 
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
-        Map<File, BuildTarget<?>> sourceToTarget = new HashMap<File, BuildTarget<?>>();
+        Map<File, ModuleBuildTarget> sourceToTarget = new HashMap<File, ModuleBuildTarget>();
         if (chunk.getTargets().size() > 1) {
             for (ModuleBuildTarget target : chunk.getTargets()) {
                 for (File file : KotlinSourceFileCollector.getAllKotlinSourceFiles(target)) {
@@ -222,67 +231,62 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             }
         }
 
-        IncrementalCacheImpl cache = new IncrementalCacheImpl(KotlinBuilderModuleScriptGenerator.getIncrementalCacheDir(context));
+        for (ModuleBuildTarget target : chunk.getTargets()) {
+            String targetId = target.getId();
 
-        try {
-            List<Pair<String, File>> moduleIdsAndSourceFiles = new ArrayList<Pair<String, File>>();
-            Map<String, File> outDirectories = new HashMap<String, File>();
+            List<File> removedFiles = ContainerUtil.map(KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target),
+                                                        new Function<String, File>() {
+                                                            @Override
+                                                            public File fun(String s) {
+                                                                return new File(s);
+                                                            }
+                                                        });
 
-            for (ModuleBuildTarget target : chunk.getTargets()) {
-                String targetId = target.getId();
-                outDirectories.put(targetId, target.getOutputDir());
+            incrementalCaches.get(target).clearCacheForRemovedFiles(targetId, removedFiles, target.getOutputDir());
+        }
 
-                for (String file : KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target)) {
-                    moduleIdsAndSourceFiles.add(new Pair<String, File>(targetId, new File(file)));
-                }
+        IncrementalCacheImpl.RecompilationDecision recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING;
+
+        for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
+            ModuleBuildTarget target = null;
+            Collection<File> sourceFiles = outputItem.getSourceFiles();
+            if (!sourceFiles.isEmpty()) {
+                target = sourceToTarget.get(sourceFiles.iterator().next());
             }
-            cache.clearCacheForRemovedFiles(moduleIdsAndSourceFiles, outDirectories);
 
-            IncrementalCacheImpl.RecompilationDecision recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING;
-
-            for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
-                BuildTarget<?> target = null;
-                Collection<File> sourceFiles = outputItem.getSourceFiles();
-                if (!sourceFiles.isEmpty()) {
-                    target = sourceToTarget.get(sourceFiles.iterator().next());
-                }
-
-                if (target == null) {
-                    target = representativeTarget;
-                }
-
-                File outputFile = outputItem.getOutputFile();
-
-                if (IncrementalCompilation.ENABLED) {
-                    IncrementalCacheImpl.RecompilationDecision newDecision = cache.saveFileToCache(target.getId(), sourceFiles, outputFile);
-                    recompilationDecision = recompilationDecision.merge(newDecision);
-                }
-
-                outputConsumer.registerOutputFile(target, outputFile, paths(sourceFiles));
+            if (target == null) {
+                target = representativeTarget;
             }
+
+            File outputFile = outputItem.getOutputFile();
 
             if (IncrementalCompilation.ENABLED) {
-                if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL) {
-                    allCompiledFiles.clear();
-                    return ExitCode.CHUNK_REBUILD_REQUIRED;
-                }
-                if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.COMPILE_OTHERS) {
-                    // TODO should mark dependencies as dirty, as well
-                    FSOperations.markDirty(context, chunk, new FileFilter() {
-                        @Override
-                        public boolean accept(@NotNull File file) {
-                            return !allCompiledFiles.contains(file);
-                        }
-                    });
-                }
-                return ExitCode.ADDITIONAL_PASS_REQUIRED;
+                IncrementalCacheImpl.RecompilationDecision newDecision =
+                        incrementalCaches.get(target).saveFileToCache(target.getId(), sourceFiles, outputFile);
+                recompilationDecision = recompilationDecision.merge(newDecision);
             }
-            else {
-                return ExitCode.OK;
-            }
+
+            outputConsumer.registerOutputFile(target, outputFile, paths(sourceFiles));
         }
-        finally {
-            cache.close();
+
+        if (IncrementalCompilation.ENABLED) {
+            if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL) {
+                allCompiledFiles.clear();
+                return ExitCode.CHUNK_REBUILD_REQUIRED;
+            }
+            if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.COMPILE_OTHERS) {
+                // TODO should mark dependencies as dirty, as well
+                FSOperations.markDirty(context, chunk, new FileFilter() {
+                    @Override
+                    public boolean accept(@NotNull File file) {
+                        return !allCompiledFiles.contains(file);
+                    }
+                });
+            }
+            return ExitCode.ADDITIONAL_PASS_REQUIRED;
+        }
+        else {
+            return ExitCode.OK;
         }
     }
 
@@ -420,32 +424,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         @Override
         public Class<?> loadClass(@NotNull String name) throws ClassNotFoundException {
-            if (name.startsWith("org.jetbrains.jet.jps.incremental.")) {
-                return loadClassFromBytes(name);
-            }
-            else if (name.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.")) {
-                return compilerClassLoader.loadClass(name);
-            }
-            else {
-                return jpsPluginClassLoader.loadClass(name);
-            }
-        }
-
-        private Class<?> loadClassFromBytes(String name) throws ClassNotFoundException {
-            String classResource = name.replace('.', '/') + ".class";
-            InputStream resource = jpsPluginClassLoader.getResourceAsStream(classResource);
-            if (resource == null) {
-                return null;
-            }
-            byte[] bytes;
-            try {
-                bytes = StreamUtil.loadFromStream(resource);
-            }
-            catch (IOException e) {
-                throw new ClassNotFoundException("Couldn't load class " + name, e);
-            }
-
-            return defineClass(name, bytes, 0, bytes.length);
+            return jpsPluginClassLoader.loadClass(name);
         }
     }
 }

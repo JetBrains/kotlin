@@ -85,7 +85,6 @@ public class JvmResolveUtil {
             lightClassGenerationSupport.setModule(module);
         }
         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, filesToAnalyzeCompletely,
-                                                                    module,
-                                                                    null, null);
+                                                                    module, null, null);
     }
 }

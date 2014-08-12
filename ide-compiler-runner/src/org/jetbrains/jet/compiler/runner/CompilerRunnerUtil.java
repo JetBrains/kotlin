@@ -34,6 +34,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -123,9 +124,9 @@ public class CompilerRunnerUtil {
                              : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
 
         Class<?> kompiler = Class.forName(compilerClassName, true, loader);
-        Method exec = kompiler.getMethod("execAndOutputHtml", PrintStream.class, String[].class);
+        Method exec = kompiler.getMethod("execAndOutputHtml", PrintStream.class, Map.class, String[].class);
 
-        return exec.invoke(kompiler.newInstance(), out, arguments);
+        return exec.invoke(kompiler.newInstance(), out, environment.getServices(), arguments);
     }
 
     public static void outputCompilerMessagesAndHandleExitCode(@NotNull MessageCollector messageCollector,

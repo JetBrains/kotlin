@@ -51,6 +51,7 @@ import org.jetbrains.k2js.facade.MainCallParameters;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.jet.cli.common.ExitCode.OK;
@@ -73,6 +74,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     @Override
     protected ExitCode doExecute(
             @NotNull K2JSCompilerArguments arguments,
+            @NotNull Map<Class, Object> services,
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
