@@ -84,6 +84,11 @@ fun getFunctionForExtractedFragment(
 
         val contextElement: PsiElement = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
 
+        // Don't evaluate smth when breakpoint is on package directive (ex. for package classes)
+        if (contextElement is JetFile) {
+            throw EvaluateExceptionUtil.createEvaluateException("Cannot perform an action at this breakpoint ${breakpointFile.getName()}:${breakpointLine}")
+        }
+
         addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
 
         val newDebugExpression = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
