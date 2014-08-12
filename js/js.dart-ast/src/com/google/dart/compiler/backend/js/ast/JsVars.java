@@ -8,10 +8,7 @@ import com.google.dart.compiler.common.Symbol;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * A JavaScript <code>var</code> statement.
@@ -95,6 +92,14 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
 
     public void add(JsVar var) {
         vars.add(var);
+    }
+
+    public void addAll(Collection<? extends JsVars.JsVar> vars) {
+        this.vars.addAll(vars);
+    }
+
+    public void addAll(JsVars otherVars) {
+        this.vars.addAll(otherVars.vars);
     }
 
     public void addIfHasInitializer(JsVar var) {

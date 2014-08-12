@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -42,8 +43,21 @@ public class CallArgumentTranslator extends AbstractTranslator {
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context
     ) {
-        CallArgumentTranslator argumentTranslator = new CallArgumentTranslator(resolvedCall, receiver, context);
-        return argumentTranslator.translate();
+        return translate(resolvedCall, receiver, context, context.dynamicContext().jsBlock());
+    }
+
+    @NotNull
+    public static ArgumentsInfo translate(
+            @NotNull ResolvedCall<?> resolvedCall,
+            @Nullable JsExpression receiver,
+            @NotNull TranslationContext context,
+            @NotNull JsBlock block
+    ) {
+        TranslationContext innerContext = context.innerBlock(block);
+        CallArgumentTranslator argumentTranslator = new CallArgumentTranslator(resolvedCall, receiver, innerContext);
+        ArgumentsInfo result = argumentTranslator.translate();
+        context.moveVarsFrom(innerContext);
+        return result;
     }
 
     public static class ArgumentsInfo {
@@ -115,10 +129,38 @@ public class CallArgumentTranslator extends AbstractTranslator {
         else {
             list = result;
         }
+        List<TranslationContext> argContexts = new SmartList<TranslationContext>();
+        boolean argumentsShouldBeExtractedToTmpVars = false;
         for (ValueArgument argument : arguments) {
             JetExpression argumentExpression = argument.getArgumentExpression();
             assert argumentExpression != null;
-            list.add(Translation.translateAsExpression(argumentExpression, context));
+            TranslationContext argContext = context.innerBlock();
+            JsExpression argExpression = Translation.translateAsExpression(argumentExpression, argContext);
+            list.add(argExpression);
+            context.moveVarsFrom(argContext);
+            argContexts.add(argContext);
+            argumentsShouldBeExtractedToTmpVars = argumentsShouldBeExtractedToTmpVars || !argContext.currentBlockIsEmpty();
+        }
+        if (argumentsShouldBeExtractedToTmpVars) {
+            extractArgumentsToTmpVars(list, argContexts, context);
+        }
+    }
+
+    private static void extractArgumentsToTmpVars(
+            @NotNull List<JsExpression> argExpressions,
+            @NotNull List<TranslationContext> argContexts,
+            @NotNull TranslationContext context
+    ) {
+        for(int i=0; i<argExpressions.size(); i++) {
+            TranslationContext argContext = argContexts.get(i);
+            JsExpression jsArgExpression = argExpressions.get(i);
+            if (argContext.currentBlockIsEmpty()) {
+                TemporaryVariable temporaryVariable = context.declareTemporary(jsArgExpression);
+                context.addStatementToCurrentBlock(temporaryVariable.assignmentExpression().makeStmt());
+                argExpressions.set(i, temporaryVariable.reference());
+            } else {
+                context.addStatementsToCurrentBlockFrom(argContext);
+            }
         }
     }
 
@@ -163,6 +205,9 @@ public class CallArgumentTranslator extends AbstractTranslator {
             throw new IllegalStateException("Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor());
         }
         List<JsExpression> argsBeforeVararg = null;
+        boolean argumentsShouldBeExtractedToTmpVars = false;
+        List<TranslationContext> argContexts = new SmartList<TranslationContext>();
+
         for (ValueParameterDescriptor parameterDescriptor : valueParameters) {
             ResolvedValueArgument actualArgument = valueArgumentsByIndex.get(parameterDescriptor.getIndex());
 
@@ -177,8 +222,15 @@ public class CallArgumentTranslator extends AbstractTranslator {
                     result = new SmartList<JsExpression>();
                 }
             }
+            TranslationContext argContext = context().innerBlock();
+            translateSingleArgument(actualArgument, result, argContext, !isNativeFunctionCall && !hasSpreadOperator);
+            context().moveVarsFrom(argContext);
+            argContexts.add(argContext);
+            argumentsShouldBeExtractedToTmpVars = argumentsShouldBeExtractedToTmpVars || !argContext.currentBlockIsEmpty();
+        }
 
-            translateSingleArgument(actualArgument, result, context(), !isNativeFunctionCall && !hasSpreadOperator);
+        if (argumentsShouldBeExtractedToTmpVars) {
+            extractArgumentsToTmpVars(result, argContexts, context());
         }
 
         if (isNativeFunctionCall && hasSpreadOperator) {

@@ -68,6 +68,7 @@ public class DefaultArgumentsTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-
-
+    public void testComplexExpressionAsDefaultArgument() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

@@ -45,6 +45,9 @@ public final class LastExpressionMutator {
         if (node instanceof JsIf) {
             return applyToIf((JsIf) node);
         }
+        if (node instanceof JsTry) {
+            return applyToTry((JsTry) node);
+        }
         if (node instanceof JsExpressionStatement) {
             return applyToStatement((JsExpressionStatement) node);
         }
@@ -62,6 +65,15 @@ public final class LastExpressionMutator {
         JsStatement elseStmt = node.getElseStatement();
         if (elseStmt != null) {
             node.setElseStatement(convertToStatement(apply(elseStmt)));
+        }
+        return node;
+    }
+
+    @NotNull
+    private JsNode applyToTry(@NotNull JsTry node) {
+        applyToBlock(node.getTryBlock());
+        for(JsCatch jsCatch: node.getCatches()) {
+            applyToBlock(jsCatch.getBody());
         }
         return node;
     }

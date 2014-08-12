@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,28 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-public final class ForeachTest extends AbstractExpressionTest {
+import org.mozilla.javascript.JavaScriptException;
 
-    public ForeachTest() {
-        super("for/");
+public class IfExpressionTest extends AbstractExpressionTest {
+
+    public IfExpressionTest() {
+        super("if/");
     }
 
-    public void testForIteratesOverArray() throws Exception {
-        fooBoxTest();
+    public void testIfElseAsExpressionWithThrow() throws Exception {
+        try {
+            fooBoxTest();
+            fail();
+        }
+        catch (JavaScriptException e) {
+        }
     }
 
-    public void testForOnEmptyArray() throws Exception {
-        fooBoxTest();
+    public void testIfInsideLambda() throws Exception {
+        checkFooBoxIsOk();
     }
 
-    public void testLabeledFor() throws Exception {
-        fooBoxTest();
-    }
-
-    public void testForWithComplexOneStatement() throws Exception {
+    public void testNestedIf() throws Exception {
         checkFooBoxIsOk();
     }
 }

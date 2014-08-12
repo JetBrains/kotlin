@@ -21,11 +21,15 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 public final class JsAstUtils {
     private static final JsNameRef DEFINE_PROPERTY = new JsNameRef("defineProperty");
@@ -61,13 +65,43 @@ public final class JsAstUtils {
         if (jsNode instanceof JsBlock) {
             return (JsBlock) jsNode;
         }
-        return new JsBlock(convertToStatement(jsNode));
+        JsBlock block = new JsBlock();
+        block.getStatements().add(convertToStatement(jsNode));
+        return block;
     }
 
     @NotNull
-    public static JsExpression convertToExpression(@NotNull JsNode jsNode) {
-        assert jsNode instanceof JsExpression : "Unexpected node of type: " + jsNode.getClass().toString();
-        return (JsExpression) jsNode;
+    public static JsExpression convertToExpression(@NotNull JsNode jsNode, @NotNull TranslationContext context) {
+        return convertToExpression(jsNode, context, context.dynamicContext().jsBlock());
+    }
+
+    @NotNull
+    public static JsExpression convertToExpression(@NotNull JsNode jsNode, @NotNull TranslationContext context, @NotNull JsBlock block) {
+        if (jsNode instanceof  JsExpression) {
+            return (JsExpression) jsNode;
+        }
+        else {
+            assert jsNode instanceof JsStatement : "Unexpected node of type: " + jsNode.getClass().toString();
+            TemporaryVariable result = context.declareTemporary(null);
+            AssignToExpressionMutator saveResultToTemporaryMutator = new AssignToExpressionMutator(result.reference());
+            block.getStatements().add(mutateLastExpression(jsNode, saveResultToTemporaryMutator));
+            return result.reference();
+        }
+    }
+
+    @Nullable
+    public static JsExpression extractExpressionFromStatement(@Nullable JsStatement statement) {
+        return statement instanceof JsExpressionStatement ? ((JsExpressionStatement) statement).getExpression() : null;
+    }
+
+    @NotNull
+    public static JsStatement mergeStatementInBlockIfNeeded(@NotNull JsStatement statement, @NotNull JsBlock block) {
+        if (block.isEmpty()) {
+            return statement;
+        } else {
+            block.getStatements().add(statement);
+            return block;
+        }
     }
 
     @NotNull
