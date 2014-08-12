@@ -19,14 +19,17 @@ package org.jetbrains.k2js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.inline.exception.InlineRecursionException;
 
 import java.util.IdentityHashMap;
+import java.util.Set;
 import java.util.Stack;
 import java.util.List;
 
 import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctionInstances;
 import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctions;
 import static org.jetbrains.k2js.inline.FunctionInlineMutator.getInlineableCallReplacement;
+import static org.jetbrains.k2js.inline.util.UtilPackage.IdentitySet;
 
 public class JsInliner extends JsVisitorWithContextImpl {
 
@@ -113,6 +116,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     private final IdentityHashMap<JsName, JsFunction> functions;
     private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
+    private final Set<JsFunction> processedFunctions = IdentitySet();
+    private final Set<JsFunction> inProcessFunctions = IdentitySet();
 
     /**
      * A statement can contain more, than one inlineable sub-expressions.
@@ -159,6 +164,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
     @Override
     public boolean visit(JsFunction function, JsContext context) {
         inliningContexts.push(new JsInliningContext(function));
+
+        if (inProcessFunctions.contains(function)) throw new InlineRecursionException();
+        inProcessFunctions.add(function);
+
         return super.visit(function, context);
     }
 
@@ -166,6 +175,11 @@ public class JsInliner extends JsVisitorWithContextImpl {
     public void endVisit(JsFunction function, JsContext context) {
         super.endVisit(function, context);
         removeUnusedLocalFunctionInstances(function);
+        processedFunctions.add(function);
+
+        assert inProcessFunctions.contains(function);
+        inProcessFunctions.remove(function);
+
         inliningContexts.pop();
     }
 
@@ -176,6 +190,11 @@ public class JsInliner extends JsVisitorWithContextImpl {
         }
 
         if (shouldInline(call) && canInline(call)) {
+            JsFunction definition = getFunctionContext().getFunctionDefinition(call);
+            if (!processedFunctions.contains(definition)) {
+                accept(definition);
+            }
+
             inline(call, context);
         }
 
