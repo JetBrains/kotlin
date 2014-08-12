@@ -37,7 +37,7 @@ class FunctionInlineMutator {
     private final RenamingContext<JsBlock> renamingContext;
     private final InsertionPoint<JsStatement> insertionPoint;
     private JsBlock body;
-    private JsNameRef resultExpr = null;
+    private JsExpression resultExpr = null;
     private JsLabel breakLabel = null;
 
     public static InlineableResult getInlineableCallReplacement(
@@ -80,9 +80,15 @@ class FunctionInlineMutator {
         replaceThis();
         removeRedundantDefaultInitializers(arguments, parameters, body);
         aliasArgumentsIfNeeded(renamingContext, arguments, parameters);
-        renameLocals(renamingContext, invokedFunction);
-        applyRenaming();
-        replaceReturns();
+        renameLocalNames(renamingContext, invokedFunction);
+
+        if (canBeExpression(body)) {
+            applyRenaming();
+            doDirectInline();
+        } else {
+            replaceReturns();
+            applyRenaming();
+        }
     }
 
     private void replaceThis() {
@@ -121,6 +127,11 @@ class FunctionInlineMutator {
         }
     }
 
+    private void doDirectInline() {
+        resultExpr = asExpression(body);
+        body.getStatements().clear();
+    }
+
     private void doReplaceReturns(int returnCount) {
         JsReturn returnOnTop = ContainerUtil.findInstance(body.getStatements(), JsReturn.class);
         boolean hasReturnOnTopLevel = returnOnTop != null;
@@ -152,5 +163,18 @@ class FunctionInlineMutator {
     @NotNull
     private List<JsParameter> getParameters() {
         return invokedFunction.getParameters();
+    }
+
+    private static boolean canBeExpression(JsBlock body) {
+        List<JsStatement> statements = body.getStatements();
+        return statements.size() == 1 && statements.get(0) instanceof JsReturn;
+    }
+
+    private static JsExpression asExpression(JsBlock body) {
+        assert canBeExpression(body);
+
+        List<JsStatement> statements = body.getStatements();
+        JsReturn returnStatement = (JsReturn) statements.get(0);
+        return returnStatement.getExpression();
     }
 }
