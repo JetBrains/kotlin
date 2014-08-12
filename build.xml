@@ -447,6 +447,10 @@
                         public protected *;
                     }
 
+                    -keep class javax.inject.** {
+                        public protected *;
+                    }
+
                     -keep class org.jetbrains.k2js.** {
                         public protected *;
                     }
