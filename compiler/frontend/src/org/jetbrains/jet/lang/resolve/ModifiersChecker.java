@@ -37,9 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.ILLEGAL_MODIFIER;
-import static org.jetbrains.jet.lang.diagnostics.Errors.ILLEGAL_PLATFORM_NAME;
-import static org.jetbrains.jet.lang.diagnostics.Errors.INAPPLICABLE_ANNOTATION;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class ModifiersChecker {
@@ -121,16 +119,17 @@ public class ModifiersChecker {
     }
 
     private void checkInnerModifier(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
-        JetModifierList modifierList = modifierListOwner.getModifierList();
-
-        if (modifierList != null && modifierList.hasModifier(INNER_KEYWORD)) {
+        if (modifierListOwner.hasModifier(INNER_KEYWORD)) {
             if (isIllegalInner(descriptor)) {
-                checkIllegalInThisContextModifiers(modifierList, Collections.singletonList(INNER_KEYWORD));
+                checkIllegalInThisContextModifiers(modifierListOwner.getModifierList(), Collections.singletonList(INNER_KEYWORD));
             }
+            return;
         }
-        else {
-            if (modifierListOwner instanceof JetClass && !(modifierListOwner instanceof JetEnumEntry) && isIllegalNestedClass(descriptor)) {
-                trace.report(Errors.NESTED_CLASS_NOT_ALLOWED.on((JetClass) modifierListOwner));
+        if (modifierListOwner instanceof JetClass && !(modifierListOwner instanceof JetEnumEntry)) {
+            JetClass aClass = (JetClass) modifierListOwner;
+            boolean localEnumError = aClass.isLocal() && aClass.isEnum();
+            if (!localEnumError && isIllegalNestedClass(descriptor)) {
+                trace.report(NESTED_CLASS_NOT_ALLOWED.on(aClass));
             }
         }
     }

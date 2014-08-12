@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -37,6 +38,7 @@ import java.util.*;
 
 import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isAnonymousObject;
 import static org.jetbrains.k2js.translate.context.Namer.getKotlinBackingFieldName;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
@@ -418,9 +420,11 @@ public final class TranslationUtils {
     public static String getSuggestedNameForInnerDeclaration(TranslationContext context, DeclarationDescriptor descriptor) {
         String suggestedName = "";
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        //noinspection ConstantConditions
         if (containingDeclaration != null &&
             !(containingDeclaration instanceof ClassOrPackageFragmentDescriptor) &&
-            !(containingDeclaration instanceof AnonymousFunctionDescriptor)) {
+            !(containingDeclaration instanceof AnonymousFunctionDescriptor) &&
+            !(containingDeclaration instanceof ConstructorDescriptor && isAnonymousObject(containingDeclaration.getContainingDeclaration()))) {
             suggestedName = context.getNameForDescriptor(containingDeclaration).getIdent();
         }
 

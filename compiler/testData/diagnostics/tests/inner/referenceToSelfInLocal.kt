@@ -11,7 +11,7 @@ fun f() {
         }
     }
 
-    object MyObject {
+    <!LOCAL_OBJECT_NOT_ALLOWED!>object MyObject<!> {
         {
             val <!UNUSED_VARIABLE!>obj<!>: MyObject = MyObject
         }

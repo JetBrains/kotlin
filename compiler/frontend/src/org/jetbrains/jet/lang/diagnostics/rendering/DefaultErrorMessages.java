@@ -216,6 +216,8 @@ public class DefaultErrorMessages {
 
         MAP.put(MANY_CLASS_OBJECTS, "Only one class object is allowed per class");
         MAP.put(CLASS_OBJECT_NOT_ALLOWED, "A class object is not allowed here");
+        MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
+        MAP.put(LOCAL_ENUM_NOT_ALLOWED, "Enum class ''{0}'' cannot be local", NAME);
         MAP.put(DELEGATION_IN_TRAIT, "Traits cannot use delegation");
         MAP.put(DELEGATION_NOT_TO_TRAIT, "Only traits can be delegated to");
         MAP.put(UNMET_TRAIT_REQUIREMENT, "Super trait ''{0}'' requires subclasses to extend ''{1}''", NAME, NAME);

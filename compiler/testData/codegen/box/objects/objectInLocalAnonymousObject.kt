@@ -1,5 +1,3 @@
-package foo
-
 fun box(): String {
     var boo = "OK"
     var foo = object {
@@ -10,4 +8,3 @@ fun box(): String {
 
     return foo.bar.baz
 }
-

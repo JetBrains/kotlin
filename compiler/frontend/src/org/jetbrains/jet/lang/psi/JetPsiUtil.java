@@ -835,6 +835,7 @@ public class JetPsiUtil {
                 JetBlockExpression.class, JetClassInitializer.class, JetProperty.class, JetFunction.class, JetParameter.class
         );
         if (container == null) return null;
+        if (container.getParent() instanceof JetScript) return null;
 
         return (container instanceof JetClassInitializer) ? ((JetClassInitializer) container).getBody() : container;
     }

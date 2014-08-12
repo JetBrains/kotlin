@@ -1,7 +1,7 @@
 fun box(): String {
-    object K {
+    val k = object {
         val ok = "OK"
     }
 
-    return K.ok
+    return k.ok
 }

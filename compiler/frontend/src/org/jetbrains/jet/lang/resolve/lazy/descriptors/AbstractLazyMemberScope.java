@@ -181,7 +181,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                            trace,
                            // this relies on the assumption that a lazily resolved declaration is not a local one,
                            // thus doesn't have a surrounding data flow
-                           DataFlowInfo.EMPTY);
+                           DataFlowInfo.EMPTY
+                    );
             result.add(propertyDescriptor);
             AnnotationResolver.resolveAnnotationsArguments(propertyDescriptor, trace);
         }

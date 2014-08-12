@@ -289,8 +289,11 @@ public class DescriptorUtils {
     @NotNull
     public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         ClassKind classKind = classDescriptor.getKind();
-        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || isAnonymousObject(classDescriptor)) {
+        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton()) {
             return Visibilities.PRIVATE;
+        }
+        if (isAnonymousObject(classDescriptor)) {
+            return Visibilities.INTERNAL;
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.TRAIT || classKind == ClassKind.ANNOTATION_CLASS;
         return Visibilities.PUBLIC;

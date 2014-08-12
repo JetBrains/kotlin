@@ -70,15 +70,15 @@ public fun ImportPath.isImported(alreadyImported: ImportPath): Boolean {
 
 public fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = imports.any { isImported(it) }
 
+// Check that it is javaName(\.javaName)* or an empty string
+private enum class State {
+    BEGINNING
+    MIDDLE
+    AFTER_DOT
+}
+
 public fun isValidJavaFqName(qualifiedName: String?): Boolean {
     if (qualifiedName == null) return false
-
-    // Check that it is javaName(\.javaName)* or an empty string
-    enum class State {
-        BEGINNING
-        MIDDLE
-        AFTER_DOT
-    }
 
     var state = State.BEGINNING
 

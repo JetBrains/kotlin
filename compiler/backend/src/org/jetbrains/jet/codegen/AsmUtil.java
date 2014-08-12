@@ -291,23 +291,19 @@ public class AsmUtil {
         if (isEnumEntry(memberDescriptor)) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
+        if (memberDescriptor instanceof ConstructorDescriptor && isAnonymousObject(memberDescriptor.getContainingDeclaration())) {
+            return NO_FLAG_PACKAGE_PRIVATE;
+        }
         if (memberVisibility != Visibilities.PRIVATE) {
             return null;
         }
         // the following code is only for PRIVATE visibility of member
         if (memberDescriptor instanceof ConstructorDescriptor) {
-            if (isAnonymousObject(containingDeclaration)) {
-                return NO_FLAG_PACKAGE_PRIVATE;
-            }
-
             ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
-            if (kind == ClassKind.OBJECT) {
+            if (kind == ClassKind.OBJECT || kind == ClassKind.ENUM_ENTRY) {
                 return NO_FLAG_PACKAGE_PRIVATE;
             }
-            else if (kind == ClassKind.ENUM_ENTRY) {
-                return NO_FLAG_PACKAGE_PRIVATE;
-            }
-            else if (kind == ClassKind.ENUM_CLASS) {
+            if (kind == ClassKind.ENUM_CLASS) {
                 //TODO: should be ACC_PRIVATE
                 // see http://youtrack.jetbrains.com/issue/KT-2680
                 return ACC_PROTECTED;

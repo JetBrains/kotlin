@@ -2114,11 +2114,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/enum/entrywithinner.kt");
         }
         
-        @TestMetadata("inFunction.kt")
-        public void testInFunction() throws Exception {
-            doTest("compiler/testData/codegen/box/enum/inFunction.kt");
-        }
-        
         @TestMetadata("inPackage.kt")
         public void testInPackage() throws Exception {
             doTest("compiler/testData/codegen/box/enum/inPackage.kt");
@@ -2147,11 +2142,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt2350.kt")
         public void testKt2350() throws Exception {
             doTest("compiler/testData/codegen/box/enum/kt2350.kt");
-        }
-        
-        @TestMetadata("kt2673.kt")
-        public void testKt2673() throws Exception {
-            doTest("compiler/testData/codegen/box/enum/kt2673.kt");
         }
         
         @TestMetadata("name.kt")
@@ -3336,11 +3326,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/localClasses/anonymousObjectInParameterInitializer.kt");
         }
         
-        @TestMetadata("enum.kt")
-        public void testEnum() throws Exception {
-            doTest("compiler/testData/codegen/box/localClasses/enum.kt");
-        }
-        
         @TestMetadata("inExtensionFunction.kt")
         public void testInExtensionFunction() throws Exception {
             doTest("compiler/testData/codegen/box/localClasses/inExtensionFunction.kt");
@@ -4057,6 +4042,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("nestedObjectWithSuperclass.kt")
         public void testNestedObjectWithSuperclass() throws Exception {
             doTest("compiler/testData/codegen/box/objects/nestedObjectWithSuperclass.kt");
+        }
+        
+        @TestMetadata("objectInLocalAnonymousObject.kt")
+        public void testObjectInLocalAnonymousObject() throws Exception {
+            doTest("compiler/testData/codegen/box/objects/objectInLocalAnonymousObject.kt");
         }
         
         @TestMetadata("objectLiteral.kt")

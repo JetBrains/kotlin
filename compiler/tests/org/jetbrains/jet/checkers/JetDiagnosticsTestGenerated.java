@@ -3194,6 +3194,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/enum/kt2834.kt");
             }
             
+            @TestMetadata("localEnums.kt")
+            public void testLocalEnums() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/localEnums.kt");
+            }
+            
             @TestMetadata("starImportNestedClassAndEntries.kt")
             public void testStarImportNestedClassAndEntries() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/enum/starImportNestedClassAndEntries.kt");
@@ -5919,6 +5924,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("localObjectInsideObject.kt")
             public void testLocalObjectInsideObject() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/objects/localObjectInsideObject.kt");
+            }
+            
+            @TestMetadata("localObjects.kt")
+            public void testLocalObjects() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/objects/localObjects.kt");
             }
             
             @TestMetadata("objectLiteralExpressionTypeMismatch.kt")
