@@ -21,21 +21,21 @@ open class MyClass() : MyTrait, MyAbstractClass() {
 
 class MyChildClass() : MyClass() {}
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass<!> : MyTrait, MyAbstractClass() {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass<!> : MyTrait, MyAbstractClass() {}
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass2<!>() : MyTrait, MyAbstractClass() {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass2<!>() : MyTrait, MyAbstractClass() {
     override fun foo() {}
     override val pr : Unit = Unit
     override val prr : Unit = Unit
 }
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass3<!>() : MyTrait, MyAbstractClass() {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass3<!>() : MyTrait, MyAbstractClass() {
     override fun bar() {}
     override val pr : Unit = Unit
     override val prr : Unit = Unit
 }
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass4<!>() : MyTrait, MyAbstractClass() {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass4<!>() : MyTrait, MyAbstractClass() {
     <!VIRTUAL_MEMBER_HIDDEN!>fun foo()<!> {}
     <!VIRTUAL_MEMBER_HIDDEN, MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val pr : Unit<!>
     <!NOTHING_TO_OVERRIDE!>override<!> fun other() {}

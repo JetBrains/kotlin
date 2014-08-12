@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.tree.TokenSet;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
@@ -97,6 +98,20 @@ public class PositioningStrategies {
         public List<TextRange> mark(@NotNull PsiNameIdentifierOwner element) {
             PsiElement nameIdentifier = element.getNameIdentifier();
             if (nameIdentifier != null) {
+                if (element instanceof JetClassOrObject) {
+                    ASTNode startNode = null;
+                    if (((JetClassOrObject) element).hasModifier(JetTokens.ENUM_KEYWORD)) {
+                        //noinspection ConstantConditions
+                        startNode = ((JetClassOrObject) element).getModifierList().getModifier(JetTokens.ENUM_KEYWORD).getNode();
+                    }
+                    if (startNode == null) {
+                        startNode = element.getNode().findChildByType(TokenSet.create(JetTokens.CLASS_KEYWORD, JetTokens.OBJECT_KEYWORD));
+                    }
+                    if (startNode == null) {
+                        startNode = element.getNode();
+                    }
+                    return markRange(startNode.getPsi(), nameIdentifier);
+                }
                 return markElement(nameIdentifier);
             }
             if (element instanceof JetObjectDeclaration) {

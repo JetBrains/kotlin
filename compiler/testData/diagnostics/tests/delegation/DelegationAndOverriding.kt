@@ -5,11 +5,11 @@ trait T {
     val v : Int
 }
 
-open class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>Br<!>(t : T) : T {
+open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Br<!>(t : T) : T {
 
 }
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>Br3<!>(t : T) : Br(t) {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Br3<!>(t : T) : Br(t) {
 
 }
 
@@ -25,7 +25,7 @@ trait G<T> {
     fun foo(t : T) : T
 }
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>GC<!>() : G<Int> {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class GC<!>() : G<Int> {
 
 }
 

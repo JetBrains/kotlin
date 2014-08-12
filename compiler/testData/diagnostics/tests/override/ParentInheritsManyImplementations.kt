@@ -8,7 +8,7 @@ trait B {
     fun foo() = 2
 }
 
-open class <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>C<!> : A, B {}
+open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B {}
 
 trait E {
     fun foo(): Int

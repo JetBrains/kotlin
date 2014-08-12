@@ -14,6 +14,6 @@ trait TwoImpl : Two {
   public override fun foo() = 2
 }
 
-class <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>Test1<!>() : TwoImpl, OneImpl {}
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Test1<!>() : TwoImpl, OneImpl {}
 class Test2(a : One) : One by a, Two {}
-class <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>Test3<!>(a : One, b : Two) : Two by b, One by a {}
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Test3<!>(a : One, b : Two) : Two by b, One by a {}

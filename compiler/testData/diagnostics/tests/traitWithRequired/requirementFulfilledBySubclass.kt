@@ -4,5 +4,5 @@ trait Trait : RequiredBase
 
 open class RequiredDerived : RequiredBase()
 
-class <!UNMET_TRAIT_REQUIREMENT!>A<!> : Trait
+<!UNMET_TRAIT_REQUIREMENT!>class A<!> : Trait
 class B : Trait, RequiredDerived()

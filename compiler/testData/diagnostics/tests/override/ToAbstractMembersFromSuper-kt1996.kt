@@ -8,4 +8,4 @@ trait Bar {
     fun foo(): Unit
 }
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>Baz<!> : Foo, Bar
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Baz<!> : Foo, Bar

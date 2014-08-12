@@ -2,5 +2,5 @@ abstract class A {
     abstract val i: Int
 }
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>B<!>() : A() {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class B<!>() : A() {
 }
