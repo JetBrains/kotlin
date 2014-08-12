@@ -221,12 +221,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     }
 
     private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull GlobalSearchScope searchScope, @NotNull Project project, @NotNull KotlinCodeAnalyzer resolveSession) {
-        Collection<ClassDescriptor> descriptors = new KotlinIndicesHelper(project).getClassDescriptors(new Function1<String, Boolean>() {
-            @Override
-            public Boolean invoke(String s) {
-                return typeName.equals(s);
-            }
-        }, resolveSession, searchScope);
+        Collection<ClassDescriptor> descriptors = new KotlinIndicesHelper(project).getClassDescriptorsByName(typeName, resolveSession, searchScope);
 
         return Collections2.transform(descriptors, new Function<ClassDescriptor, FqName>() {
             @Override

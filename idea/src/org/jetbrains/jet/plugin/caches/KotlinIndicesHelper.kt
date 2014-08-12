@@ -49,7 +49,7 @@ import com.intellij.openapi.project.Project
 public class KotlinIndicesHelper(private val project: Project) {
     public fun getTopLevelObjects(nameFilter: (String) -> Boolean, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<ClassDescriptor> {
         val allObjectNames = JetTopLevelObjectShortNameIndex.getInstance().getAllKeys(project).stream() +
-                JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, GlobalSearchScope.allScope(project)).stream()
+                JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, scope).stream()
         return allObjectNames
                 .filter(nameFilter)
                 .toSet()
@@ -65,7 +65,7 @@ public class KotlinIndicesHelper(private val project: Project) {
             result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, ResolveSessionUtils.SINGLETON_FILTER))
         }
 
-        for (psiClass in JetFromJavaDescriptorHelper.getCompiledClassesForTopLevelObjects(project, GlobalSearchScope.allScope(project))) {
+        for (psiClass in JetFromJavaDescriptorHelper.getCompiledClassesForTopLevelObjects(project, scope)) {
             val qualifiedName = psiClass.getQualifiedName()
             if (qualifiedName != null) {
                 result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, FqName(qualifiedName), ResolveSessionUtils.SINGLETON_FILTER))
@@ -170,5 +170,9 @@ public class KotlinIndicesHelper(private val project: Project) {
         val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
         val allDescriptors = QualifiedExpressionResolver().analyseImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
         return allDescriptors.filterIsInstance(javaClass<CallableDescriptor>()).filter { it.getReceiverParameter() == null }
+    }
+
+    public fun getClassDescriptorsByName(name: String, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {
+        return JetShortNamesCache.getKotlinInstance(project).getClassesByName(name, scope).flatMap { ResolveSessionUtils.getClassDescriptorsByFqName(analyzer, FqName(it.getQualifiedName()!!)) }
     }
 }
