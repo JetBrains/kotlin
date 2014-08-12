@@ -2,5 +2,5 @@ package test
 
 public open class FieldOfArrayType {
     public constructor FieldOfArrayType()
-    public final var files: kotlin.Array<java.io.File>?
+    public final var files: kotlin.Array<(out) java.io.File!>!
 }

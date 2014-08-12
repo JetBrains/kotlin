@@ -2,5 +2,5 @@ package test
 
 public open class MissingUpperBound {
     public constructor MissingUpperBound()
-    public open fun </*0*/ A : java.lang.Runnable?> foo(): kotlin.String? where A : kotlin.Cloneable?
+    public open fun </*0*/ A : java.lang.Runnable!> foo(): kotlin.String! where A : kotlin.Cloneable!
 }

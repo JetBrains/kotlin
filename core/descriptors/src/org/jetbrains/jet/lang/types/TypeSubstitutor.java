@@ -155,7 +155,7 @@ public class TypeSubstitutor {
         // The type is within the substitution range, i.e. T or T?
         JetType type = originalProjection.getType();
         Variance originalProjectionKind = originalProjection.getProjectionKind();
-        if (type instanceof FlexibleType) {
+        if (type instanceof FlexibleType && !TypesPackage.isCustomTypeVariable(type)) {
             FlexibleType flexibleType = (FlexibleType) type;
             TypeProjection substitutedLower =
                     unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, flexibleType.getLowerBound()), recursionDepth + 1);
@@ -185,10 +185,17 @@ public class TypeSubstitutor {
                     //noinspection ConstantConditions
                     return TypeUtils.makeStarProjection(typeParameter);
                 case NO_CONFLICT:
-                    boolean resultingIsNullable = type.isNullable() || replacement.getType().isNullable();
-                    JetType substitutedType = TypeUtils.makeNullableAsSpecified(replacement.getType(), resultingIsNullable);
-                    Variance resultingProjectionKind = combine(originalProjectionKind, replacement.getProjectionKind());
+                    JetType substitutedType;
+                    if (TypesPackage.isCustomTypeVariable(type)) {
+                        CustomTypeVariable typeVariable = (CustomTypeVariable) type;
+                        substitutedType = typeVariable.substitutionResult(replacement.getType());
+                    }
+                    else {
+                        boolean resultingIsNullable = type.isNullable() || replacement.getType().isNullable();
+                        substitutedType = TypeUtils.makeNullableAsSpecified(replacement.getType(), resultingIsNullable);
+                    }
 
+                    Variance resultingProjectionKind = combine(originalProjectionKind, replacement.getProjectionKind());
                     return new TypeProjectionImpl(resultingProjectionKind, substitutedType);
                 default:
                     throw new IllegalStateException();

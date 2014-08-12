@@ -2,5 +2,5 @@ package test
 
 public open class NotVarargReplacedWithVararg {
     public constructor NotVarargReplacedWithVararg()
-    public open fun foo(/*0*/ p0: kotlin.String?): kotlin.Unit
+    public open fun foo(/*0*/ p0: kotlin.String!): kotlin.Unit
 }

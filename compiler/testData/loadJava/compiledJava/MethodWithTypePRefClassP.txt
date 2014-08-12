@@ -2,5 +2,5 @@ package test
 
 public open class MethodWithTypePRefClassP</*0*/ P> {
     public constructor MethodWithTypePRefClassP</*0*/ P>()
-    public final fun </*0*/ Q : P> f(): kotlin.Unit
+    public final fun </*0*/ Q : P!> f(): kotlin.Unit
 }

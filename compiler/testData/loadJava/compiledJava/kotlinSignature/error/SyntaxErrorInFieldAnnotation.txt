@@ -2,5 +2,5 @@ package test
 
 public open class SyntaxErrorInFieldAnnotation {
     public constructor SyntaxErrorInFieldAnnotation()
-    public final var foo: kotlin.String?
+    public final var foo: kotlin.String!
 }

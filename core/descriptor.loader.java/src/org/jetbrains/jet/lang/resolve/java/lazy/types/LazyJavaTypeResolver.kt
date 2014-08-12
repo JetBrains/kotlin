@@ -45,7 +45,7 @@ class LazyJavaTypeResolver(
                 val canonicalText = javaType.getCanonicalText()
                 val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass(canonicalText)
                 assert(jetType != null, "Primitive type is not found: " + canonicalText)
-                return jetType!!
+                jetType!!
             }
             is JavaClassifierType -> if (PLATFORM_TYPES && attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE)
                                          LazyFlexibleJavaClassifierType(javaType, attr)
@@ -271,7 +271,20 @@ class LazyJavaTypeResolver(
     ) : DelegatingFlexibleType(
             LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_LOWER_BOUND)),
             LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_UPPER_BOUND))
-    )
+    ), CustomTypeVariable {
+
+        override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
+                                                && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor
+
+        override val typeParameterDescriptor: TypeParameterDescriptor? = if (isTypeVariable) lowerBound.getConstructor().getDeclarationDescriptor() as TypeParameterDescriptor else null
+
+        override fun substitutionResult(replacement: JetType): JetType {
+            return if (replacement.isFlexible()) replacement
+                   else DelegatingFlexibleType(TypeUtils.makeNotNullable(replacement), TypeUtils.makeNullable(replacement))
+        }
+    }
+
+    private class JavaTypeVariable()
 }
 
 trait JavaTypeAttributes {

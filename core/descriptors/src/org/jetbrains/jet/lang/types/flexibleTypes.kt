@@ -30,6 +30,11 @@ public open class DelegatingFlexibleType(
         override val upperBound: JetType
 ) : DelegatingType(), FlexibleType {
 
+    {
+        assert (!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
+        assert (!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
+    }
+
     override fun getDelegate() = lowerBound
 
     override fun toString() = "('$lowerBound'..'$upperBound')"

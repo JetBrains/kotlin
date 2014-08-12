@@ -2,5 +2,5 @@ package test
 
 public open class WrongValueParametersCount {
     public constructor WrongValueParametersCount()
-    public open fun foo(): kotlin.Int?
+    public open fun foo(): kotlin.Int!
 }

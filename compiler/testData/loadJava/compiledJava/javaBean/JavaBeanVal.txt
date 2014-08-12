@@ -2,5 +2,5 @@ package test
 
 public open class JavaBeanVal {
     public constructor JavaBeanVal()
-    public open fun getColor(): kotlin.String?
+    public open fun getColor(): kotlin.String!
 }
