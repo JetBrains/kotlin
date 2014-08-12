@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
@@ -233,11 +232,8 @@ public class AnnotationGenTest extends CodegenTestCase {
         Class[] interfaces = aClass.getInterfaces();
         assertEquals(0, aClass.getDeclaredMethods().length);
         assertTrue(aClass.isAnnotation());
-        assertEquals(2, interfaces.length);
-        assertEquals(
-                Sets.newHashSet("java.lang.annotation.Annotation", "kotlin.jvm.internal.KObject"),
-                Sets.newHashSet(interfaces[0].getName(), interfaces[1].getName())
-        );
+        assertEquals(1, interfaces.length);
+        assertEquals("java.lang.annotation.Annotation", interfaces[0].getName());
     }
 
     public void testAnnotationClassWithStringProperty()

@@ -65,7 +65,6 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -369,7 +368,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
-        if (!explicitKObject) {
+        if (!explicitKObject && !isInterface(descriptor)) {
             Type kObject = asmTypeByFqNameWithoutInnerClasses(JvmAbi.K_OBJECT);
             sw.writeInterface();
             sw.writeClassBegin(kObject);
