@@ -133,25 +133,6 @@ public class TopDownAnalyzer {
 //        c.enableDebugOutput();
         c.debug("Enter");
 
-        if (c.getTopDownAnalysisParameters().isLazy()) {
-            ResolveSession resolveSession = new InjectorForLazyResolve(
-                    project,
-                    new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO
-                    (ModuleDescriptorImpl) moduleDescriptor, // TODO
-                    new FileBasedDeclarationProviderFactory(c.getStorageManager(), getFiles(declarations)),
-                    trace,
-                    additionalCheckerProvider
-            ).getResolveSession();
-
-            lazyTopDownAnalyzer.setKotlinCodeAnalyzer(resolveSession);
-
-            lazyTopDownAnalyzer.analyzeDeclarations(
-                    c.getTopDownAnalysisParameters(),
-                    declarations
-            );
-            return;
-        }
-
         typeHierarchyResolver.process(c, outerScope, owner, declarations);
         declarationResolver.process(c);
         overrideResolver.process(c);
@@ -275,14 +256,42 @@ public class TopDownAnalyzer {
             @NotNull Collection<JetFile> files,
             @NotNull List<PackageFragmentProvider> additionalProviders
     ) {
-        CompositePackageFragmentProvider provider =
-                new CompositePackageFragmentProvider(KotlinPackage.plus(Arrays.asList(packageFragmentProvider), additionalProviders));
-        ((ModuleDescriptorImpl) moduleDescriptor).initialize(provider);
-
-        // dummy builder is used because "root" is module descriptor,
-        // packages added to module explicitly in
         TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
-        doProcess(c, JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor), new PackageLikeBuilderDummy(), files);
+
+        if (c.getTopDownAnalysisParameters().isLazy()) {
+            ResolveSession resolveSession = new InjectorForLazyResolve(
+                    project,
+                    new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO
+                    (ModuleDescriptorImpl) moduleDescriptor, // TODO
+                    new FileBasedDeclarationProviderFactory(c.getStorageManager(), files),
+                    trace,
+                    additionalCheckerProvider
+            ).getResolveSession();
+
+            CompositePackageFragmentProvider provider =
+                    new CompositePackageFragmentProvider(KotlinPackage.plus(Arrays.asList(resolveSession.getPackageFragmentProvider()), additionalProviders));
+
+            ((ModuleDescriptorImpl) moduleDescriptor).initialize(provider);
+
+            lazyTopDownAnalyzer.setKotlinCodeAnalyzer(resolveSession);
+
+            lazyTopDownAnalyzer.analyzeDeclarations(
+                    c.getTopDownAnalysisParameters(),
+                    files
+            );
+            return c;
+        }
+        else {
+            CompositePackageFragmentProvider provider =
+                    new CompositePackageFragmentProvider(KotlinPackage.plus(Arrays.asList(packageFragmentProvider), additionalProviders));
+
+            ((ModuleDescriptorImpl) moduleDescriptor).initialize(provider);
+
+            // dummy builder is used because "root" is module descriptor,
+            // packages added to module explicitly in
+            doProcess(c, JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor), new PackageLikeBuilderDummy(), files);
+        }
+
         return c;
     }
 
