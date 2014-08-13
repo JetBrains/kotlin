@@ -1,11 +1,27 @@
 <component name="libraryTable">
   <library name="android">
+    <ANNOTATIONS>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/android.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/jps/android-jps-plugin.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/android-common.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/rt/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/gen" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/common/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/common/testSrc" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/testSrc" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/ultimate/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/guiTestSrc" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/jps-plugin/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/jps-plugin/testSrc" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/android-gradle-jps/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/android-src.zip!/android-gradle-jps/testSrc" />
     </SOURCES>
   </library>
 </component>
