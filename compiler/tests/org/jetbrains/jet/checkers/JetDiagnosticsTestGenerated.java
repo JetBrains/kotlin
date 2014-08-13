@@ -3109,6 +3109,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/enum/enumInheritance.kt");
             }
             
+            @TestMetadata("enumIsAssignableToBuiltInEnum.kt")
+            public void testEnumIsAssignableToBuiltInEnum() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/enumIsAssignableToBuiltInEnum.kt");
+            }
+            
             @TestMetadata("enumModifier.kt")
             public void testEnumModifier() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/enum/enumModifier.kt");
