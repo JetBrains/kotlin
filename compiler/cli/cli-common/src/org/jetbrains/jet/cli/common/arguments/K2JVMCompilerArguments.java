@@ -73,6 +73,10 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String androidRes;
 
+    @Argument(value = "androidManifest", description = "Android manifest file")
+    @ValueDescription("<path>")
+    public String androidManifest;
+
     @Override
     @NotNull
     public String executableScriptFileName() {

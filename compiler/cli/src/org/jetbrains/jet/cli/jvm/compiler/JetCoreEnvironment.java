@@ -209,8 +209,9 @@ public class JetCoreEnvironment {
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(
                 configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
-        String s = configuration.get(JVMConfigurationKeys.ANDROID_RES_PATH);
-        project.registerService(AndroidUIXmlProcessor.class, new CliAndroidUIXmlProcessor(project, s));
+        String androidResPath = configuration.get(JVMConfigurationKeys.ANDROID_RES_PATH);
+        String androidManifest = configuration.get(JVMConfigurationKeys.ANDROID_MANIFEST);
+        project.registerService(AndroidUIXmlProcessor.class, new CliAndroidUIXmlProcessor(project, androidResPath, androidManifest));
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
     }
 

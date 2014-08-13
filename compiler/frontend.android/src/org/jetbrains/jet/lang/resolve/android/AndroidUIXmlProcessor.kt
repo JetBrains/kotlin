@@ -52,12 +52,13 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
     protected val LOG: Logger = Logger.getInstance(this.javaClass)
 
     public fun parseToString(): String? {
+        populateQueue()
         val cacheState = doParse()
         if (cacheState == null) return null
         return renderString()
     }
 
-    public open val resourceManager: AndroidResourceManager = AndroidResourceManagerBase(project, searchPath)
+    public abstract val resourceManager: AndroidResourceManager
 
     public fun parseToPsi(project: Project): JetFile? {
         populateQueue()

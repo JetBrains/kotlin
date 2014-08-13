@@ -91,6 +91,10 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             configuration.put(JVMConfigurationKeys.ANDROID_RES_PATH, arguments.androidRes);
         }
 
+        if (arguments.androidManifest != null) {
+            configuration.put(JVMConfigurationKeys.ANDROID_MANIFEST, arguments.androidManifest);
+        }
+
         if (!arguments.script &&
             arguments.module == null &&
             arguments.freeArgs.isEmpty() &&
