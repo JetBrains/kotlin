@@ -69,6 +69,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile("idea/testData/quickfix/autoImports/extensionFunctionImport.before.Main.kt");
         }
         
+        @TestMetadata("extensionPropertyImport.before.Main.kt")
+        public void testExtensionPropertyImport() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/extensionPropertyImport.before.Main.kt");
+        }
+        
         @TestMetadata("functionImport.before.Main.kt")
         public void testFunctionImport() throws Exception {
             doTestWithExtraFile("idea/testData/quickfix/autoImports/functionImport.before.Main.kt");

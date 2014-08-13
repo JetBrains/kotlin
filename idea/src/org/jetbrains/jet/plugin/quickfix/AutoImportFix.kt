@@ -115,7 +115,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             result.addAll(getTopLevelFunctions(referenceName, element, searchScope, resolveSession, file.getProject()))
         }
 
-        result.addAll(getExtensionFunctions(referenceName, element, searchScope, resolveSession, file.getProject()))
+        result.addAll(getExtensions(referenceName, element, searchScope, resolveSession, file.getProject()))
 
         return result.filter { ImportInsertHelper.needImport(ImportPath(it, false), file) }
     }
@@ -125,7 +125,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             .map { DescriptorUtils.getFqNameSafe(it) }
             .toSet()
 
-    private fun getExtensionFunctions(name: String, expression: JetSimpleNameExpression, searchScope: GlobalSearchScope, resolveSession: ResolveSessionForBodies, project: Project): Collection<FqName>
+    private fun getExtensions(name: String, expression: JetSimpleNameExpression, searchScope: GlobalSearchScope, resolveSession: ResolveSessionForBodies, project: Project): Collection<FqName>
             = KotlinIndicesHelper(project).getCallableExtensions({ it == name }, expression, resolveSession, searchScope)
             .map { DescriptorUtils.getFqNameSafe(it) }
             .toSet()
