@@ -30,7 +30,6 @@ import org.junit.Assert
 
 private val START_PATTERN = Pattern.compile(">>>( *)(.*)$")
 private val INCOMPLETE_PATTERN = Pattern.compile("\\.\\.\\.( *)(.*)$")
-private val SUBSTRING_PATTERN = Pattern.compile("substring: (.*)")
 
 private val INCOMPLETE_LINE_MESSAGE = "incomplete line"
 
@@ -39,12 +38,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
         System.setProperty("java.awt.headless", "true")
     }
 
-    private enum class MatchType {
-        EQUALS
-        SUBSTRING
-    }
-
-    private data class OneLine(val code: String, val expected: String, val matchType: MatchType)
+    private data class OneLine(val code: String, val expected: String)
 
     private fun loadLines(file: File): List<OneLine> {
         val lines = ArrayDeque(file.readLines())
@@ -63,16 +57,9 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
             if (lines.isNotEmpty()) {
                 val nextLine = lines.peek()!!
 
-                val substringMatcher = SUBSTRING_PATTERN.matcher(nextLine)
-                if (substringMatcher.matches()) {
-                    result.add(OneLine(code, substringMatcher.group(1)!!, MatchType.SUBSTRING))
-                    lines.poll()
-                    continue
-                }
-
                 val incompleteMatcher = INCOMPLETE_PATTERN.matcher(nextLine)
                 if (incompleteMatcher.matches()) {
-                    result.add(OneLine(code, INCOMPLETE_LINE_MESSAGE, MatchType.EQUALS))
+                    result.add(OneLine(code, INCOMPLETE_LINE_MESSAGE))
                     continue
                 }
             }
@@ -82,7 +69,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
                 value.appendln(lines.poll()!!)
             }
 
-            result.add(OneLine(code, value.toString(), MatchType.EQUALS))
+            result.add(OneLine(code, value.toString()))
         }
 
         return result
@@ -92,26 +79,19 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
         val repl = ReplInterpreter(getTestRootDisposable()!!, configuration)
 
-        for ((code, expected, matchType) in loadLines(File(path))) {
-            val expectedString = StringUtil.convertLineSeparators(expected).replaceFirst("\n$", "")
-
+        for ((code, expected) in loadLines(File(path))) {
             val lineResult = repl.eval(code)
             val actual = when (lineResult.getType()) {
                 ReplInterpreter.LineResultType.SUCCESS -> lineResult.getValue()?.toString() ?: ""
                 ReplInterpreter.LineResultType.ERROR -> lineResult.getErrorText()
                 ReplInterpreter.LineResultType.INCOMPLETE -> INCOMPLETE_LINE_MESSAGE
             }
-            val actualString = StringUtil.convertLineSeparators(actual).replaceFirst("\n$", "")
 
-            when (matchType) {
-                MatchType.EQUALS -> {
-                    Assert.assertEquals("After evaluation of: $code", expectedString, actualString)
-                }
-                MatchType.SUBSTRING -> {
-                    Assert.assertTrue("Evaluated result must contain substring: $expectedString, actual: $actualString, line: $code",
-                                      expectedString in actualString)
-                }
-            }
+            Assert.assertEquals(
+                    "After evaluation of: $code",
+                    StringUtil.convertLineSeparators(expected).replaceFirst("\n$", ""),
+                    StringUtil.convertLineSeparators(actual).replaceFirst("\n$", "")
+            )
         }
     }
 }

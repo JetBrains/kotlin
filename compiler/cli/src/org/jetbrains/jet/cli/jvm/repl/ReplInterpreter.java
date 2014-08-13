@@ -276,7 +276,7 @@ public class ReplInterpreter {
                 scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
             }
             catch (Throwable e) {
-                return LineResult.error(Throwables.getStackTraceAsString(e.getCause()));
+                return LineResult.error(renderStackTrace(e.getCause()));
             }
             Field rvField = scriptClass.getDeclaredField("rv");
             rvField.setAccessible(true);
@@ -293,6 +293,27 @@ public class ReplInterpreter {
             writer.flush();
             throw UtilsPackage.rethrow(e);
         }
+    }
+
+    @NotNull
+    private static String renderStackTrace(@NotNull Throwable cause) {
+        StackTraceElement[] oldTrace = cause.getStackTrace();
+        List<StackTraceElement> newTrace = new ArrayList<StackTraceElement>();
+        boolean skip = true;
+        for (int i = oldTrace.length - 1; i >= 0; i--) {
+            StackTraceElement element = oldTrace[i];
+            // All our code happens in the script constructor, and no reflection/native code happens in constructors.
+            // So we ignore everything in the stack trace until the first constructor
+            if (element.getMethodName().equals("<init>")) {
+                skip = false;
+            }
+            if (!skip) {
+                newTrace.add(element);
+            }
+        }
+        Collections.reverse(newTrace);
+        cause.setStackTrace(newTrace.toArray(new StackTraceElement[newTrace.size()]));
+        return Throwables.getStackTraceAsString(cause);
     }
 
     @Nullable
