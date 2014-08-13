@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.quickfix
 
-import com.google.common.collect.Lists
 import com.intellij.codeInsight.daemon.impl.ShowAutoImportPass
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.intention.HighPriorityAction
@@ -47,7 +46,7 @@ import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil
 import java.util.ArrayList
-import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -102,71 +101,48 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
                 referenceName = conventionName.asString()
             }
         }
-
         if (referenceName.isEmpty()) return listOf()
 
-        val resolveSessionForBodies = element.getLazyResolveSession()
+        val resolveSession = element.getLazyResolveSession()
 
         val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return listOf()
         val searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
 
         val result = ArrayList<FqName>()
-        if (!isSuppressedTopLevelImportInPosition(element)) {
-            result.addAll(getClassNames(referenceName, file, searchScope, resolveSessionForBodies))
-            result.addAll(getJetTopLevelFunctions(referenceName, element, searchScope, resolveSessionForBodies, file.getProject()))
+
+        if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
+            result.addAll(getClassNames(referenceName, file, searchScope))
+            result.addAll(getTopLevelFunctions(referenceName, element, searchScope, resolveSession, file.getProject()))
         }
 
-        result.addAll(getJetExtensionFunctions(referenceName, element, searchScope, resolveSessionForBodies, file.getProject()))
+        result.addAll(getExtensionFunctions(referenceName, element, searchScope, resolveSession, file.getProject()))
 
         return result.filter { ImportInsertHelper.needImport(ImportPath(it, false), file) }
     }
 
-    private fun isSuppressedTopLevelImportInPosition(element: JetSimpleNameExpression)
-            = element.isImportDirectiveExpression() || JetPsiUtil.isSelectorInQualified(element)
-
-    private fun getJetTopLevelFunctions(referenceName: String, context: JetExpression, searchScope: GlobalSearchScope, resolveSession: ResolveSessionForBodies, project: Project): Collection<FqName>
-            = KotlinIndicesHelper(project).getTopLevelFunctionDescriptorsByName(referenceName, context, resolveSession, searchScope)
+    private fun getTopLevelFunctions(name: String, context: JetExpression, searchScope: GlobalSearchScope, resolveSession: ResolveSessionForBodies, project: Project): Collection<FqName>
+            = KotlinIndicesHelper(project).getTopLevelFunctionDescriptorsByName(name, context, resolveSession, searchScope)
             .map { DescriptorUtils.getFqNameSafe(it) }
             .toSet()
 
-    private fun getJetExtensionFunctions(referenceName: String, expression: JetSimpleNameExpression, searchScope: GlobalSearchScope, resolveSession: ResolveSessionForBodies, project: Project): Collection<FqName>
-            = KotlinIndicesHelper(project).getCallableExtensions({ it == referenceName}, expression, resolveSession, searchScope)
+    private fun getExtensionFunctions(name: String, expression: JetSimpleNameExpression, searchScope: GlobalSearchScope, resolveSession: ResolveSessionForBodies, project: Project): Collection<FqName>
+            = KotlinIndicesHelper(project).getCallableExtensions({ it == name }, expression, resolveSession, searchScope)
             .map { DescriptorUtils.getFqNameSafe(it) }
             .toSet()
 
-    /*
-     * Searches for possible class names in kotlin context and java facade.
-     */
-    private fun getClassNames(referenceName: String, file: JetFile, searchScope: GlobalSearchScope, analyzer: KotlinCodeAnalyzer): Collection<FqName> {
-        val possibleResolveNames = if (!ProjectStructureUtil.isJsKotlinModule(file)) {
-            getClassesFromCache(referenceName, searchScope, file)
-        }
-        else {
-            getJetClasses(referenceName, searchScope, file.getProject(), analyzer)
-        }
-
-        // TODO: Do appropriate sorting
-        return Lists.newArrayList<FqName>(possibleResolveNames)
-    }
-
-    private fun getClassesFromCache(typeName: String, searchScope: GlobalSearchScope, file: JetFile): Collection<FqName>
-            = getShortNamesCache(file).getClassesByName(typeName, searchScope)
+    private fun getClassNames(name: String, file: JetFile, searchScope: GlobalSearchScope): Collection<FqName>
+            = getShortNamesCache(file).getClassesByName(name, searchScope)
             .filter { JetPsiHeuristicsUtil.isAccessible(it, file) }
             .map { FqName(it.getQualifiedName()!!) }
             .toSet()
 
     private fun getShortNamesCache(jetFile: JetFile): PsiShortNamesCache {
-        if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
-            return JetShortNamesCache.getKotlinInstance(jetFile.getProject())
-        }
-
-        return PsiShortNamesCache.getInstance(jetFile.getProject())
+        // if we are in JS module, do not include non-kotlin classes
+        return if (ProjectStructureUtil.isJsKotlinModule(jetFile))
+            JetShortNamesCache.getKotlinInstance(jetFile.getProject())
+        else
+            PsiShortNamesCache.getInstance(jetFile.getProject())
     }
-
-    private fun getJetClasses(typeName: String, searchScope: GlobalSearchScope, project: Project, resolveSession: KotlinCodeAnalyzer): Collection<FqName>
-            = KotlinIndicesHelper(project).getClassDescriptorsByName(typeName, resolveSession, searchScope)
-            .map { DescriptorUtils.getFqNameSafe(it) }
-            .toSet()
 
     class object {
         public fun createFactory(): JetSingleIntentionActionFactory {

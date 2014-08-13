@@ -26,22 +26,7 @@ import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.jet.asJava.JavaElementFinder
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.psi.psiUtil.*
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.stubindex.*
 
 import java.util.*
@@ -53,15 +38,10 @@ import com.intellij.util.containers
  */
 public class JetShortNamesCache(private val project: Project) : PsiShortNamesCache() {
     class object {
-        public fun getKotlinInstance(project: Project): JetShortNamesCache {
-            val extensions = Extensions.getArea(project).getExtensionPoint<PsiShortNamesCache>(PsiShortNamesCache.EP_NAME).getExtensions()
-            for (extension in extensions) {
-                if (extension is JetShortNamesCache) {
-                    return extension as JetShortNamesCache
-                }
-            }
-            throw IllegalStateException(javaClass<JetShortNamesCache>().getSimpleName() + " is not found for project " + project)
-        }
+        public fun getKotlinInstance(project: Project): JetShortNamesCache
+                = Extensions.getArea(project).getExtensionPoint<PsiShortNamesCache>(PsiShortNamesCache.EP_NAME).getExtensions()
+                .filterIsInstance(javaClass<JetShortNamesCache>())
+                .first()
     }
 
     /**

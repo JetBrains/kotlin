@@ -171,8 +171,4 @@ public class KotlinIndicesHelper(private val project: Project) {
         val allDescriptors = QualifiedExpressionResolver().analyseImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
         return allDescriptors.filterIsInstance(javaClass<CallableDescriptor>()).filter { it.getReceiverParameter() == null }
     }
-
-    public fun getClassDescriptorsByName(name: String, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {
-        return JetShortNamesCache.getKotlinInstance(project).getClassesByName(name, scope).flatMap { ResolveSessionUtils.getClassDescriptorsByFqName(analyzer, FqName(it.getQualifiedName()!!)) }
-    }
 }
