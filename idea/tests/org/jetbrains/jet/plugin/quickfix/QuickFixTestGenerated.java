@@ -308,6 +308,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/autoImports/beforeCheckNoStackOverflowInImportInnerClassInCurrentFile.kt");
         }
         
+        @TestMetadata("beforeLibraryPropertyRuntime.kt")
+        public void testLibraryPropertyRuntime() throws Exception {
+            doTest("idea/testData/quickfix/autoImports/beforeLibraryPropertyRuntime.kt");
+        }
+        
         @TestMetadata("beforeLibraryTopLevelFunctionImportRuntime.kt")
         public void testLibraryTopLevelFunctionImportRuntime() throws Exception {
             doTest("idea/testData/quickfix/autoImports/beforeLibraryTopLevelFunctionImportRuntime.kt");

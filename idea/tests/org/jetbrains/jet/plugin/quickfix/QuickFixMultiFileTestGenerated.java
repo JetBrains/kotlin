@@ -154,6 +154,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile("idea/testData/quickfix/autoImports/postfixOperator.before.Main.kt");
         }
         
+        @TestMetadata("propertyImport.before.Main.kt")
+        public void testPropertyImport() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/propertyImport.before.Main.kt");
+        }
+        
         @TestMetadata("timesAssign.before.Main.kt")
         public void testTimesAssign() throws Exception {
             doTestWithExtraFile("idea/testData/quickfix/autoImports/timesAssign.before.Main.kt");

@@ -123,9 +123,19 @@ public class StubIndexServiceImpl implements StubIndexService {
 
     @Override
     public void indexProperty(PsiJetPropertyStub stub, IndexSink sink) {
-        String propertyName = stub.getName();
-        if (propertyName != null) {
-            sink.occurrence(JetPropertyShortNameIndex.getInstance().getKey(), propertyName);
+        String name = stub.getName();
+        if (name != null) {
+            if (stub.isTopLevel()) {
+                // Collection only top level functions as only they are expected in completion without explicit import
+                if (!stub.hasReceiverTypeRef()) {
+                    sink.occurrence(JetTopLevelNonExtensionPropertyShortNameIndex.getInstance().getKey(), name);
+                }
+                else {
+                    sink.occurrence(JetTopLevelExtensionPropertyShortNameIndex.getInstance().getKey(), name);
+                }
+            }
+
+            sink.occurrence(JetPropertyShortNameIndex.getInstance().getKey(), name);
         }
         // can have special fq name in case of syntactically incorrect function with no name
         if (stub.isTopLevel()) {
