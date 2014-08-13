@@ -19,11 +19,14 @@ package org.jetbrains.k2js.test;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.config.TestConfig;
@@ -119,9 +122,15 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             @NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull TestConfigFactory configFactory
     ) throws Exception {
+        Project project = getProject();
+        List<String> allFiles = withAdditionalFiles(files);
+        List<JetFile> jetFiles = TranslationUtils.createJetFileList(project, allFiles, null);
+
         for (EcmaVersion version : ecmaVersions) {
-            translateFiles(getProject(), withAdditionalFiles(files), getOutputFilePath(testName, version), mainCallParameters,
-                           version, configFactory);
+            Config config = TranslationUtils.getConfig(project, version, configFactory);
+            File outputFile = new File(getOutputFilePath(testName, version));
+
+            translateFiles(jetFiles, outputFile, mainCallParameters, config);
         }
     }
 
@@ -135,14 +144,13 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     protected void translateFiles(
-            @NotNull Project project,
-            @NotNull List<String> files,
-            @NotNull String outputFile,
+            @NotNull List<JetFile> jetFiles,
+            @NotNull File outputFile,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull EcmaVersion version,
-            @NotNull TestConfigFactory configFactory
+            @NotNull Config config
     ) throws Exception {
-        TranslationUtils.translateFiles(project, mainCallParameters, files, outputFile, version, configFactory);
+        //noinspection unchecked
+        TranslationUtils.translateFiles(mainCallParameters, jetFiles, outputFile, null, null, config, Consumer.EMPTY_CONSUMER);
     }
 
     @NotNull
@@ -235,5 +243,4 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     protected String expected(@NotNull String testName) {
         return getExpectedPath() + testName + ".out";
     }
-
 }

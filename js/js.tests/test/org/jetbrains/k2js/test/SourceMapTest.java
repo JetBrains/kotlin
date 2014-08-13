@@ -16,20 +16,11 @@
 
 package org.jetbrains.k2js.test;
 
-import com.intellij.openapi.project.Project;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.config.TestConfig;
 import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
-import org.jetbrains.k2js.test.utils.TranslationUtils;
-
-import java.util.List;
-
-import static org.jetbrains.k2js.test.utils.TranslationUtils.createJetFileList;
-import static org.jetbrains.k2js.test.utils.TranslationUtils.getConfig;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class SourceMapTest extends SingleFileTranslationTest {
@@ -40,20 +31,6 @@ public final class SourceMapTest extends SingleFileTranslationTest {
     public SourceMapTest(@NotNull String filename) {
         super("sourcemap/");
         this.filename = filename;
-    }
-
-    @Override
-    protected void translateFiles(
-            @NotNull Project project,
-            @NotNull List<String> files,
-            @NotNull String outputFile,
-            @NotNull MainCallParameters mainCallParameters,
-            @NotNull EcmaVersion version,
-            @NotNull TestConfigFactory configFactory
-    ) throws Exception {
-        TranslationUtils.translateFiles(mainCallParameters, createJetFileList(project, files, null),
-                                        outputFile, null, null,
-                                        getConfig(project, version, configFactory));
     }
 
     @NotNull

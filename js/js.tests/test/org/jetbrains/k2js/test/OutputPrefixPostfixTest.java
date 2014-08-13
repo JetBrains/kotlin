@@ -16,23 +16,20 @@
 
 package org.jetbrains.k2js.test;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.Consumer;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
-import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
 import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
 import java.util.List;
-
-import static org.jetbrains.k2js.test.utils.TranslationUtils.createJetFileList;
-import static org.jetbrains.k2js.test.utils.TranslationUtils.getConfig;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
@@ -56,16 +53,13 @@ public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
 
     @Override
     protected void translateFiles(
-            @NotNull Project project,
-            @NotNull List<String> files,
-            @NotNull String outputFile,
+            @NotNull List<JetFile> jetFiles,
+            @NotNull File outputFile,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull EcmaVersion version,
-            @NotNull TestConfigFactory configFactory
+            @NotNull Config config
     ) throws Exception {
-        TranslationUtils.translateFiles(mainCallParameters, createJetFileList(project, files, null),
-                                        outputFile, outputPrefixFile, outputPostfixFile,
-                                        getConfig(project, version, configFactory));
+        //noinspection unchecked
+        TranslationUtils.translateFiles(mainCallParameters, jetFiles, outputFile, outputPrefixFile, outputPostfixFile, config, Consumer.EMPTY_CONSUMER);
     }
 
     @Override

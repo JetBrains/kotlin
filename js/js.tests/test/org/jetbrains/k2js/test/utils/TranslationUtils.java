@@ -18,9 +18,12 @@ package org.jetbrains.k2js.test.utils;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.google.dart.compiler.backend.js.ast.JsNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFileCollection;
@@ -100,29 +103,37 @@ public final class TranslationUtils {
     }
 
     public static void translateFiles(
-            @NotNull Project project,
-            @NotNull MainCallParameters mainCallParameters,
-            @NotNull List<String> inputFiles,
-            @NotNull String outputFile,
-            @NotNull EcmaVersion version,
-            @NotNull TestConfigFactory configFactory
-    ) throws Exception {
-        List<JetFile> jetFiles = createJetFileList(project, inputFiles, null);
-        Config config = getConfig(project, version, configFactory);
-        translateFiles(mainCallParameters, jetFiles, outputFile, null, null, config);
-    }
-
-    public static void translateFiles(
             @NotNull MainCallParameters mainCall,
             @NotNull List<JetFile> files,
-            @NotNull String outputPath,
+            @NotNull File outputFile,
+            @Nullable File outputPrefixFile,
+            @Nullable File outputPostfixFile,
+            @NotNull Config config,
+            @NotNull Consumer<JsNode> astConsumer
+    ) throws TranslationException, IOException {
+        OutputFileCollection outputFiles =
+                translateWithMainCallParameters(mainCall, files, outputFile, outputPrefixFile, outputPostfixFile, config, astConsumer);
+        OutputUtilsPackage.writeAllTo(outputFiles, outputFile.getParentFile());
+    }
+
+    public static JsNode translateFilesAndGetAst(
+            @NotNull MainCallParameters mainCall,
+            @NotNull List<JetFile> files,
+            @NotNull File outputFile,
             @Nullable File outputPrefixFile,
             @Nullable File outputPostfixFile,
             @NotNull Config config
     ) throws TranslationException, IOException {
-        File outputFile = new File(outputPath);
-        OutputFileCollection outputFiles = translateWithMainCallParameters(mainCall, files, outputFile, outputPrefixFile, outputPostfixFile, config);
-        OutputUtilsPackage.writeAllTo(outputFiles, outputFile.getParentFile());
+        final Ref<JsNode> ref = new Ref<JsNode>();
+
+        translateFiles(mainCall, files, outputFile, outputPrefixFile, outputPostfixFile, config, new Consumer<JsNode>() {
+            @Override
+            public void consume(JsNode node) {
+                ref.set(node);
+            }
+        });
+
+        return ref.get();
     }
 
     @NotNull
