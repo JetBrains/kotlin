@@ -28,11 +28,11 @@ import java.util.List;
 public abstract class JetSingleIntentionActionFactory implements JetIntentionActionsFactory {
 
     @Nullable
-    public abstract IntentionAction createAction(Diagnostic diagnostic);
+    public abstract IntentionAction createAction(@NotNull Diagnostic diagnostic);
 
     @NotNull
     @Override
-    public final List<IntentionAction> createActions(Diagnostic diagnostic) {
+    public final List<IntentionAction> createActions(@NotNull Diagnostic diagnostic) {
         List<IntentionAction> intentionActionList = new LinkedList<IntentionAction>();
 
         if (diagnostic.getPsiElement().getContainingFile() instanceof JetCodeFragment && !isApplicableForCodeFragment()) {

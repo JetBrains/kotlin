@@ -152,7 +152,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetDeclaration declaration = QuickFixUtil.getParentElementOfType(diagnostic, JetDeclaration.class);
                 assert declaration != null;
                 return new MakeOverriddenMemberOpenFix(declaration);

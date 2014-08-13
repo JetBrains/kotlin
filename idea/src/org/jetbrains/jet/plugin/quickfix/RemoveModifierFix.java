@@ -123,7 +123,7 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
+            public JetIntentionAction<JetModifierListOwner> createAction(@NotNull Diagnostic diagnostic) {
                 JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, JetModifierListOwner.class);
                 if (modifierListOwner == null) return null;
                 PsiElement psiElement = diagnostic.getPsiElement();
