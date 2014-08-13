@@ -41,7 +41,13 @@ public final class RhinoUtils {
     private static final Set<String> IGNORED_JSHINT_WARNINGS = Sets.newHashSet();
     
     private static final NativeObject JSHINT_OPTIONS = new NativeObject();
-    
+
+    public static final String OPTIMIZATION_LEVEL_TEST_VARIABLE = "rhinoOptimizationLevel";
+
+    public static final int OPTIMIZATION_OFF = -1;
+
+    public static final int OPTIMIZATION_DEFAULT = 0;
+
     @NotNull
     private static final Map<EcmaVersion, ScriptableObject> versionToScope = ContainerUtil.newHashMap();
 
@@ -127,6 +133,11 @@ public final class RhinoUtils {
             @NotNull EcmaVersion ecmaVersion,
             @NotNull List<String> jsLibraries) throws Exception {
         Context context = createContext(ecmaVersion);
+
+        if (variables != null) {
+            context.setOptimizationLevel(getOptimizationLevel(variables));
+        }
+
         try {
             ScriptableObject scope = getScope(ecmaVersion, context, jsLibraries);
             putGlobalVariablesIntoScope(scope, variables);
@@ -267,5 +278,15 @@ public final class RhinoUtils {
             return ((Number) obj).intValue();
         }
         return -1;
+    }
+
+    private static int getOptimizationLevel(@NotNull Map<String, Object> testVariables) {
+        Object optimizationLevel = testVariables.get(OPTIMIZATION_LEVEL_TEST_VARIABLE);
+
+        if (optimizationLevel instanceof Integer) {
+            return (Integer) optimizationLevel;
+        }
+
+        return OPTIMIZATION_DEFAULT;
     }
 }

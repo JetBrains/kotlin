@@ -26,11 +26,9 @@ import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
 import org.jetbrains.k2js.test.config.JsUnitTestReporter;
 import org.jetbrains.k2js.test.config.TestConfigWithUnitTests;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
+import org.jetbrains.k2js.test.rhino.RhinoUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.k2js.test.utils.LibraryFilePathsUtil.getAdditionalLibraryFiles;
 
@@ -103,6 +101,9 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
 
     @Override
     protected Map<String, Object> getRhinoTestVariables() throws Exception {
-        return Collections.<String, Object>singletonMap("jsTestReporter", JS_UNIT_TEST_REPORTER);
+        Map<String, Object> testVariables = new HashMap<String, Object>();
+        testVariables.put(RhinoUtils.OPTIMIZATION_LEVEL_TEST_VARIABLE, RhinoUtils.OPTIMIZATION_OFF);
+        testVariables.put("jsTestReporter", JS_UNIT_TEST_REPORTER);
+        return testVariables;
     }
 }
