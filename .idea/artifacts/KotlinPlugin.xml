@@ -30,6 +30,7 @@
               <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/src/kotlin" />
             </element>
             <element id="module-output" name="eval4j" />
+            <element id="module-output" name="idea-analysis" />
           </element>
           <element id="library" level="project" name="javax.inject" />
           <element id="directory" name="jps">
