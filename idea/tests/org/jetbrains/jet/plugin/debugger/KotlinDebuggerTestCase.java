@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -42,8 +43,10 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,6 +56,11 @@ import java.util.List;
 public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     protected static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
     private static boolean IS_TINY_APP_COMPILED = false;
+
+    private static File CUSTOM_LIBRARY_JAR;
+    private final File CUSTOM_LIBRARY_SOURCES = new File(getTestAppPath() + "/customLibrary");
+
+    private final ProjectDescriptorWithStdlibSources projectDescriptor = ProjectDescriptorWithStdlibSources.INSTANCE;
 
     @Override
     protected OutputChecker initOutputChecker() {
@@ -78,18 +86,30 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
                     public void run() {
                         ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
 
-                        NewLibraryEditor editor = new NewLibraryEditor();
-                        editor.setName(JavaRuntimeLibraryDescription.LIBRARY_NAME);
-                        editor.addRoot(VfsUtil.getUrlForLibraryRoot(ForTestCompileRuntime.runtimeJarForTests()), OrderRootType.CLASSES);
+                        projectDescriptor.configureModule(getModule(), model, null);
 
-                        ConfigLibraryUtil.addLibrary(editor, model);
+                        VirtualFile customLibrarySources = VfsUtil.findFileByIoFile(CUSTOM_LIBRARY_SOURCES, false);
+                        assert customLibrarySources != null : "VirtualFile for customLibrary sources should be found";
+                        model.getContentEntries()[0].addExcludeFolder(customLibrarySources);
+
+                        configureCustomLibrary(model);
 
                         model.commit();
                     }
                 });
             }
         });
+    }
 
+    private static void configureCustomLibrary(@NotNull ModifiableRootModel model) {
+        NewLibraryEditor customLibEditor = new NewLibraryEditor();
+        customLibEditor.setName("CustomLibrary");
+
+        String customLibraryRoot = VfsUtil.getUrlForLibraryRoot(CUSTOM_LIBRARY_JAR);
+        customLibEditor.addRoot(customLibraryRoot, OrderRootType.CLASSES);
+        customLibEditor.addRoot(customLibraryRoot + "/src", OrderRootType.SOURCES);
+
+        ConfigLibraryUtil.addLibrary(customLibEditor, model);
     }
 
     @Override
@@ -98,20 +118,22 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         super.tearDown();
     }
 
+    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @Override
     protected void ensureCompiledAppExists() throws Exception {
         if (!IS_TINY_APP_COMPILED) {
             String modulePath = getTestAppPath();
 
+            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), true);
+
             String outputDir = modulePath + File.separator + "classes";
             String sourcesDir = modulePath + File.separator + "src";
 
-            MockLibraryUtil.compileKotlin(sourcesDir, new File(outputDir));
+            MockLibraryUtil.compileKotlin(sourcesDir, new File(outputDir), CUSTOM_LIBRARY_JAR.getPath());
 
             List<String> options = Arrays.asList("-d", outputDir);
             JetTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
 
-            //noinspection AssignmentToStaticFieldFromInstanceMethod
             IS_TINY_APP_COMPILED = true;
         }
     }
@@ -142,13 +164,18 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
         @Override
         protected String replaceAdditionalInOutput(String str) {
-            return super.replaceAdditionalInOutput(str.replace(ForTestCompileRuntime.runtimeJarForTests().getPath(), "!KOTLIN_RUNTIME!"));
+            return super.replaceAdditionalInOutput(
+                    str.replace(ForTestCompileRuntime.runtimeJarForTests().getPath(), "!KOTLIN_RUNTIME!")
+                            .replace(CUSTOM_LIBRARY_JAR.getPath(), "!CUSTOM_LIBRARY!")
+            );
         }
     }
 
     @Override
     protected String getAppClassesPath() {
-        return super.getAppClassesPath() + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests().getPath();
+        return super.getAppClassesPath() + File.pathSeparator +
+                    ForTestCompileRuntime.runtimeJarForTests().getPath() + File.pathSeparator +
+                    CUSTOM_LIBRARY_JAR.getPath();
     }
 
     @Override
