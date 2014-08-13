@@ -656,31 +656,57 @@
     </target>
 
     <target name="kotlin-for-upsource" depends="dist">
-        <jar jarfile="${output}/kotlin-for-upsource0.jar">
-            <fileset dir="${output}/classes/compiler"/>
-            <fileset dir="${output}/classes/runtime"/>
-            <fileset dir="${output}/builtins">
-                <include name="kotlin/**"/>
-                <exclude name="kotlin/internal/**"/>
-            </fileset>
-            <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
-            <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
+      <cleandir dir="${output}/classes/idea-analysis"/>
 
-            <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-            <fileset dir="${output}/classes/stdlib"/>
+      <javac2 destdir="${output}/classes/idea-analysis" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" source="${java.target}" target="${java.target}">
+        <withKotlin externalannotations="${external.annotations.path}"/>
+        <src >
+          <dirset dir="${basedir}/idea/idea-analysis">
+            <include name="src"/>
+          </dirset>
+        </src>
+        <classpath>
+          <fileset dir="${idea.sdk}" includes="core/*.jar"/>
+          <fileset dir="${idea.sdk}" includes="core-analysis/*.jar"/>
+          <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
 
-            <!-- icons, etc. -->
-            <fileset dir="idea/resources"/>
-            <!-- plugin.xml and friends -->
-            <fileset dir="idea/src" includes="META-INF/**"/>
-        </jar>
-        <sleep seconds="1"/>
-        <jar jarfile="${output}/kotlin-for-upsource.jar">
-            <zipfileset src="${output}/kotlin-for-upsource0.jar">
-                <exclude name="javax/**/*.java"/>
-            </zipfileset>
-        </jar>
-        <delete file="${output}/kotlin-for-upsource0.jar"/>
+          <fileset dir="${basedir}/lib" includes="**/*.jar"/>
+          <fileset dir="${dependencies.dir}" includes="jline.jar"/>
+          <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
+          <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
+          <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
+          <pathelement location="${output}/classes/runtime"/>
+          <pathelement location="${output}/classes/compiler"/>
+          <pathelement location="${output}/classes/stdlib"/>
+        </classpath>
+      </javac2>
+
+      <jar jarfile="${output}/kotlin-for-upsource0.jar">
+        <fileset dir="${output}/classes/idea-analysis"/>
+        <fileset dir="${output}/classes/compiler"/>
+        <fileset dir="${output}/classes/runtime"/>
+        <fileset dir="${output}/builtins">
+          <include name="kotlin/**"/>
+          <exclude name="kotlin/internal/**"/>
+        </fileset>
+        <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
+        <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
+
+        <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
+        <fileset dir="${output}/classes/stdlib"/>
+
+        <!-- icons, etc. -->
+        <fileset dir="idea/resources"/>
+        <!-- plugin.xml and friends -->
+        <fileset dir="idea/src" includes="META-INF/**"/>
+      </jar>
+      <sleep seconds="1"/>
+      <jar jarfile="${output}/kotlin-for-upsource.jar">
+        <zipfileset src="${output}/kotlin-for-upsource0.jar">
+          <exclude name="javax/**/*.java"/>
+        </zipfileset>
+      </jar>
+      <delete file="${output}/kotlin-for-upsource0.jar"/>
     </target>
 
     <target name="build-artifacts" depends="zip,kotlin-for-upsource"/>

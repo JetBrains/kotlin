@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 import java.io.File;
 
@@ -286,7 +287,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
     @NotNull
     private static DependencyScope getDependencyScope(@NotNull Module module) {
-        if (ConfigureKotlinInProjectUtils.hasKotlinFilesOnlyInTests(module)) {
+        if (ProjectStructureUtil.hasKotlinFilesOnlyInTests(module)) {
             return DependencyScope.TEST;
         }
         return DependencyScope.COMPILE;

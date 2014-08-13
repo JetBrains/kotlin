@@ -54,14 +54,6 @@ public class ConfigureKotlinInProjectUtils {
         return false;
     }
 
-    public static boolean hasKotlinFilesInSources(@NotNull Module module) {
-        return FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, module.getModuleScope(false));
-    }
-
-    public static boolean hasKotlinFilesOnlyInTests(@NotNull Module module) {
-        return !hasKotlinFilesInSources(module) && FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, module.getModuleScope(true));
-    }
-
     public static Collection<Module> getModulesWithKotlinFiles(@NotNull Project project) {
         if (project.isDisposed()) {
             return Collections.emptyList();

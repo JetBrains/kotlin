@@ -18,29 +18,15 @@ package org.jetbrains.jet.plugin.actions.internal
 
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 
 public class KotlinInternalModeToggleAction: ToggleAction("Kotlin Internal Mode", "Show debug highlighting", null) {
-    public class object {
-        val INTERNAL_MODE_PROPERTY = "kotlin.internal.mode.enabled"
-
-        public var enabled: Boolean
-            get() = PropertiesComponent.getInstance()!!.getBoolean(
-                    INTERNAL_MODE_PROPERTY,
-                    System.getProperty(INTERNAL_MODE_PROPERTY) == "true"
-            )
-            set(value) {
-                PropertiesComponent.getInstance()!!.setValue(INTERNAL_MODE_PROPERTY, value.toString())
-            }
-    }
-
     override fun isSelected(e: AnActionEvent?): Boolean {
-        return enabled
+        return KotlinInternalMode.enabled
     }
 
     override fun setSelected(e: AnActionEvent?, state: Boolean) {
-        enabled = state
+        KotlinInternalMode.enabled = state
 
         DaemonCodeAnalyzer.getInstance(e!!.getProject())!!.settingsChanged()
     }

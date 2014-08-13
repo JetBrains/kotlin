@@ -18,11 +18,8 @@ package org.jetbrains.jet.plugin.framework;
 
 import com.intellij.framework.library.LibraryVersionProperties;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.JarVersionDetectionUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
-import com.intellij.openapi.vfs.JarFile;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +27,6 @@ import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,44 +48,18 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
     @Nullable
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
-        VirtualFile stdJar = getRuntimeJar(classesRoots);
-        if (stdJar != null) {
-            try {
-                JarFile zipFile = JarFileSystem.getInstance().getJarFile(stdJar);
-                String version = JarVersionDetectionUtil.detectJarVersion(zipFile);
-                return new LibraryVersionProperties(version);
-            }
-            catch (IOException e) {
-                return null;
-            }
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public static VirtualFile getRuntimeJar(@NotNull List<VirtualFile> classesRoots) {
-        return getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_JAR);
+        String version = JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots);
+        return version == null ? null : new LibraryVersionProperties(version);
     }
 
     @Nullable
     public static VirtualFile getRuntimeSrcJar(@NotNull List<VirtualFile> classesRoots) {
-        return getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR);
-    }
-
-    private static VirtualFile getJarFile(@NotNull List<VirtualFile> classesRoots, @NotNull String jarName) {
-        for (VirtualFile root : classesRoots) {
-            if (root.getName().equals(jarName)) {
-                return root;
-            }
-        }
-
-        return null;
+        return JavaRuntimeDetectionUtil.getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR);
     }
 
     @Nullable
     public static VirtualFile getRuntimeJar(@NotNull Library library) {
-        return getRuntimeJar(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
+        return JavaRuntimeDetectionUtil.getRuntimeJar(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
     }
 
     @Nullable

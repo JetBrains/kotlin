@@ -41,6 +41,7 @@
     <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="eval4j" />
+    <orderEntry type="module" module-name="idea-analysis" exported="" />
   </component>
 </module>
 

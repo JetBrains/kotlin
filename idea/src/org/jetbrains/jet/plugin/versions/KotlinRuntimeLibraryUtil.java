@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.versions;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -33,9 +32,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -43,9 +39,6 @@ import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
@@ -146,28 +139,6 @@ public class KotlinRuntimeLibraryUtil {
                                             return jarFileName.equals(file.getName());
                                         }
                                     });
-    }
-
-    @Nullable
-    public static PsiClass getKotlinRuntimeMarkerClass(@NotNull GlobalSearchScope scope) {
-        FqName kotlinPackageFqName = FqName.topLevel(Name.identifier("kotlin"));
-        String kotlinPackageClassFqName = PackageClassUtils.getPackageClassFqName(kotlinPackageFqName).asString();
-
-        ImmutableList<String> candidateClassNames = ImmutableList.of(
-                kotlinPackageClassFqName,
-                "kotlin.Unit",
-                // For older versions
-                "kotlin.namespace",
-                "jet.Unit"
-        );
-
-        for (String className : candidateClassNames) {
-            PsiClass psiClass = JavaPsiFacade.getInstance(scope.getProject()).findClass(className, scope);
-            if (psiClass != null) {
-                return psiClass;
-            }
-        }
-        return null;
     }
 
     public static void updateLibraries(

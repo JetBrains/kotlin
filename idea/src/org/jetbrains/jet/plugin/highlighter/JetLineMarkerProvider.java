@@ -61,9 +61,10 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
+import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -369,8 +370,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
         if (elements.isEmpty() ||
             DumbService.getInstance(elements.get(0).getProject()).isDumb() ||
-            !JetPluginUtil.isInSource(elements.get(0)) ||
-            JetPluginUtil.isKtFileInGradleProjectInWrongFolder(elements.get(0))) {
+            !ProjectRootsUtil.isInSource(elements.get(0)) ||
+            JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(elements.get(0))) {
             return;
         }
 

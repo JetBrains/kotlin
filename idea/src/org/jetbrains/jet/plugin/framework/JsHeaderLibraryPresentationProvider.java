@@ -19,12 +19,9 @@ package org.jetbrains.jet.plugin.framework;
 import com.intellij.framework.library.LibraryVersionProperties;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetIcons;
 
 import javax.swing.*;
@@ -50,27 +47,6 @@ public class JsHeaderLibraryPresentationProvider extends LibraryPresentationProv
     @Nullable
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
-        if (JavaRuntimePresentationProvider.getInstance().detect(classesRoots) != null) {
-            // Prevent clashing with java runtime
-            return null;
-        }
-
-        for (VirtualFile file : classesRoots) {
-            CommonProcessors.FindFirstProcessor<VirtualFile> findKTProcessor = new CommonProcessors.FindFirstProcessor<VirtualFile>() {
-                @Override
-                protected boolean accept(VirtualFile file) {
-                    String extension = file.getExtension();
-                    return extension != null && extension.equals(JetFileType.INSTANCE.getDefaultExtension());
-                }
-            };
-
-            VfsUtil.processFilesRecursively(file, findKTProcessor);
-
-            if (findKTProcessor.isFound()) {
-                return new LibraryVersionProperties(null);
-            }
-        }
-
-        return null;
+        return JsHeaderLibraryDetectionUtil.isJsHeaderLibraryDetected(classesRoots) ? new LibraryVersionProperties(null) : null;
     }
 }

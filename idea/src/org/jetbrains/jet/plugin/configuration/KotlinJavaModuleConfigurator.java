@@ -29,7 +29,7 @@ import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaLibraryDialogWithModules;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
-import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
+import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryCoreUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -175,7 +175,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         }
 
         LibraryScope scope = new LibraryScope(project, library);
-        return KotlinRuntimeLibraryUtil.getKotlinRuntimeMarkerClass(scope) != null;
+        return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(scope) != null;
     }
 
     KotlinJavaModuleConfigurator() {

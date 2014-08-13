@@ -124,6 +124,9 @@
     <applicationService serviceInterface="org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache"
                         serviceImplementation="org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache"/>
 
+    <applicationService serviceInterface="org.jetbrains.jet.plugin.configuration.JetModuleTypeManager"
+                        serviceImplementation="org.jetbrains.jet.plugin.JetModuleTypeManagerImpl"/>
+
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"/>
 
@@ -271,7 +274,7 @@
     <liveTemplateMacro implementation="org.jetbrains.jet.plugin.liveTemplates.macro.JetSuggestVariableNameMacro"/>
     <liveTemplateOptionalProcessor implementation="org.jetbrains.jet.plugin.liveTemplates.KotlinShortenFQNamesProcessor"/>
 
-    <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetPsiChecker"/>
+    <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetPsiCheckerAndHighlightingUpdater"/>
     <highlightRangeExtension implementation="org.jetbrains.jet.plugin.highlighter.JetPsiChecker"/>
 
     <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.DebugInfoAnnotator"/>

@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.quickfix.QuickFixRegistrar;
 import org.jetbrains.jet.utils.PathUtil;
 
 public class PluginBundledRegistrar implements ApplicationComponent {
@@ -33,6 +34,7 @@ public class PluginBundledRegistrar implements ApplicationComponent {
     @Override
     public void initComponent() {
         registerPathVariable();
+        QuickFixRegistrar.registerQuickFixes();
     }
 
     private static void registerPathVariable() {

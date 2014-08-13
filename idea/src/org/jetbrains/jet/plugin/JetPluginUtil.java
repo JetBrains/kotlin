@@ -16,39 +16,17 @@
 
 package org.jetbrains.jet.plugin;
 
-import com.intellij.facet.Facet;
-import com.intellij.facet.FacetManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager;
+import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
 
 public class JetPluginUtil {
-    public static boolean isInSource(@NotNull PsiElement element) {
-        return isInSource(element, true);
-    }
-
-    public static boolean isInSource(@NotNull PsiElement element, boolean includeLibrarySources) {
-        PsiFile containingFile = element.getContainingFile();
-        if (containingFile == null) {
-            return false;
-        }
-        VirtualFile virtualFile = containingFile.getVirtualFile();
-        if (virtualFile == null) {
-            return false;
-        }
-        ProjectFileIndex index = ProjectFileIndex.SERVICE.getInstance(element.getProject());
-        return includeLibrarySources ? index.isInSource(virtualFile) : index.isInSourceContent(virtualFile);
-    }
 
     @NotNull
     public static String getPluginVersion() {
@@ -58,45 +36,19 @@ public class JetPluginUtil {
     }
 
     public static boolean isKtFileInGradleProjectInWrongFolder(@NotNull PsiElement element) {
-        PsiFile containingFile = element.getContainingFile();
-        if (containingFile == null) {
-            return false;
-        }
-        VirtualFile virtualFile = containingFile.getVirtualFile();
-        if (virtualFile == null) {
-            return false;
-        }
-        return isKtFileInGradleProjectInWrongFolder(virtualFile, element.getProject());
+        return JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(element);
     }
 
     public static boolean isKtFileInGradleProjectInWrongFolder(@NotNull VirtualFile virtualFile, @NotNull Project project) {
-        Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
-        if (module == null) return false;
-
-        if (!isAndroidGradleModule(module) && !isGradleModule(module)) {
-            return false;
-        }
-
-        VirtualFile sourceRootForFile = ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(virtualFile);
-        if (sourceRootForFile != null) {
-            return !sourceRootForFile.getName().equals("kotlin");
-        }
-        return false;
+        return JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(virtualFile, project);
     }
 
     public static boolean isAndroidGradleModule(@NotNull Module module) {
-        // We don't want to depend on the Android-Gradle plugin
-        // See com.android.tools.idea.gradle.util.Projects.isGradleProject()
-        for (Facet facet : FacetManager.getInstance(module).getAllFacets()) {
-            if (facet.getName().equals("Android-Gradle")) {
-                return true;
-            }
-        }
-        return false;
+        return JetModuleTypeManager.getInstance().isAndroidGradleModule(module);
     }
 
     public static boolean isGradleModule(@NotNull Module module) {
-        return ModuleTypeCacheManager.OBJECT$.geInstance(module.getProject()).isGradleModule(module);
+        return JetModuleTypeManager.getInstance().isGradleModule(module);
     }
 
     public static boolean isMavenModule(@NotNull Module module) {

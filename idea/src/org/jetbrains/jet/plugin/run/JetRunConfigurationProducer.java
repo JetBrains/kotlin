@@ -33,8 +33,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
+import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
@@ -67,7 +67,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         }
 
         JetFile file = getStartClassFile(location);
-        if (file == null || !JetPluginUtil.isInSource(file, true)) {
+        if (file == null || !ProjectRootsUtil.isInSource(file, true)) {
             return null;
         }
 

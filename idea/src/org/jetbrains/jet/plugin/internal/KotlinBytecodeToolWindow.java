@@ -45,7 +45,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.InfinitePeriodicalTask;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
@@ -79,7 +79,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             }
 
             JetFile file = location.getJetFile();
-            if (file == null || !JetPluginUtil.isInSource(file, false)) {
+            if (file == null || !ProjectRootsUtil.isInSource(file, false)) {
                 return null;
             }
 

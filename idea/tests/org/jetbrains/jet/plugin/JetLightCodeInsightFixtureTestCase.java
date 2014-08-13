@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.actions.internal.KotlinInternalModeToggleAction;
+import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -51,13 +51,13 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
         VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
 
-        kotlinInternalModeOriginalValue = KotlinInternalModeToggleAction.OBJECT$.getEnabled();
-        KotlinInternalModeToggleAction.OBJECT$.setEnabled(true);
+        kotlinInternalModeOriginalValue = KotlinInternalMode.OBJECT$.getEnabled();
+        KotlinInternalMode.OBJECT$.setEnabled(true);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        KotlinInternalModeToggleAction.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
+        KotlinInternalMode.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
         VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();

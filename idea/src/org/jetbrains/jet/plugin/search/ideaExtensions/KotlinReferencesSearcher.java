@@ -29,7 +29,8 @@ import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
-import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
 import org.jetbrains.jet.plugin.search.usagesSearch.*;
 
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
@@ -58,7 +59,9 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         PsiElement element = queryParameters.getElementToSearch();
 
         final PsiNamedElement unwrappedElement = AsJavaPackage.getNamedUnwrappedElement(element);
-        if (unwrappedElement == null || JetPluginUtil.isKtFileInGradleProjectInWrongFolder(unwrappedElement)) return;
+        if (unwrappedElement == null
+            || !ProjectRootsUtil.isInSource(unwrappedElement)
+            || JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(unwrappedElement)) return;
 
         ApplicationManager.getApplication().runReadAction(
                 new Runnable() {
@@ -80,8 +83,6 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                     }
                 }
         );
-
-        if (!JetPluginUtil.isInSource(unwrappedElement)) return;
 
         searchLightElements(queryParameters, element);
     }

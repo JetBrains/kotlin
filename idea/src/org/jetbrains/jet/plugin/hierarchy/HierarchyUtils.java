@@ -25,9 +25,13 @@ import com.intellij.psi.*;
 import com.intellij.util.ArrayUtil;
 import kotlin.Function1;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.ProjectRootsUtil;
 
 public class HierarchyUtils {
     public static final Function1<PsiElement, Boolean> IS_CALL_HIERARCHY_ELEMENT = new Function1<PsiElement, Boolean>() {
@@ -57,7 +61,7 @@ public class HierarchyUtils {
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
             if (file == null) return null;
 
-            if (!JetPluginUtil.isInSource(file)) return null;
+            if (!ProjectRootsUtil.isInSource(file)) return null;
             if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file)) return null;
 
             return TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted());
