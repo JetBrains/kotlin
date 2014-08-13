@@ -21,7 +21,7 @@ import kotlin.InlineOption.ONLY_LOCAL_RETURN
 Retention(RetentionPolicy.SOURCE)
 public annotation class throws(public vararg val exceptionClasses: Class<out Throwable>)
 
-[Intrinsic("kotlin.javaClass.property")] public val <T> T.javaClass : Class<T>
+[Intrinsic("kotlin.javaClass.property")] public val <T: Any> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
 
 [Intrinsic("kotlin.javaClass.function")] public fun <reified T> javaClass(): Class<T> = null as Class<T>
