@@ -36,6 +36,7 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
 
     public fun flushToResultSet(resultSet: CompletionResultSet) {
         resultSet.addAllElements(elements)
+        elements.clear()
     }
 
     public val isEmpty: Boolean

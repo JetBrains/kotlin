@@ -75,7 +75,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
-    private val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
+    private val collector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
+    private var anythingAdded = false
 
     private val project = position.getProject()
     private val indicesHelper = KotlinIndicesHelper(project)
@@ -85,16 +86,10 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     public fun complete(): Boolean {
         assert(parameters.getCompletionType() == CompletionType.BASIC)
 
-        collectElements()
-
-        collector.flushToResultSet(resultSet)
-
-        return !collector.isEmpty
-    }
-
-    private fun collectElements() {
         if (!NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
-            if (jetReference != null && !isOnlyKeywordCompletion()) {
+            val completeReference = jetReference != null && !isOnlyKeywordCompletion()
+
+            if (completeReference) {
                 if (shouldRunOnlyTypeCompletion()) {
                     if (configuration.completeNonImportedDeclarations) {
                         TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
@@ -106,15 +101,27 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 }
                 else {
                     addReferenceVariants()
-
-                    addNonImported()
                 }
             }
 
             KeywordCompletion().complete(parameters, collector)
+
+            if (completeReference && !shouldRunOnlyTypeCompletion()) {
+                addNonImported()
+            }
         }
 
         NamedParametersCompletion.complete(position, collector)
+
+        flushToResultSet()
+        return anythingAdded
+    }
+
+    private fun flushToResultSet() {
+        if (!collector.isEmpty) {
+            anythingAdded = true
+        }
+        collector.flushToResultSet(resultSet)
     }
 
     private fun addNonImported() {
@@ -126,6 +133,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
             if (PsiTreeUtil.getParentOfType(jetReference!!.expression, javaClass<JetDotQualifiedExpression>()) == null) return
         }
+
+        flushToResultSet()
 
         if (shouldRunTopLevelCompletion()) {
             TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
