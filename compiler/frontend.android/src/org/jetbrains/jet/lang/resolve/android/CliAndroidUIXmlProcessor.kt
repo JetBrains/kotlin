@@ -20,11 +20,11 @@ import java.util.ArrayList
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 
-class CliAndroidUIXmlProcessor(project: Project, override val searchPath: String?) : AndroidUIXmlProcessor(project) {
+class CliAndroidUIXmlProcessor(project: Project, override val searchPath: String?, val manifestPath: String?) : AndroidUIXmlProcessor(project) {
 
     override var androidAppPackage: String = ""
 
-    override val resourceManager: AndroidResourceManagerBase = AndroidResourceManagerBase(project, searchPath)
+    override val resourceManager = CliAndroidResourceManager(project, searchPath, manifestPath)
 
     override fun lazySetup() {
         populateQueue()

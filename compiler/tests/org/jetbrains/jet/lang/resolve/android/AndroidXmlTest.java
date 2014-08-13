@@ -36,12 +36,14 @@ import java.util.*;
 
 public class AndroidXmlTest extends TestCaseWithTmpdir {
 
-    private final File singleFileDir = new File(getTestDataPath() + "/converter/singleFile/res/layout/");
+    private static final String singleFilePrefix = getTestDataPath() + "/converter/singleFile/";
+    public static final String singleFileManifestPath = singleFilePrefix + "AndroidManifest.xml";
+    private final File singleFileDir = new File(singleFilePrefix + "res/layout/");
     private final File fakeActivitySrc = new File(getTestDataPath() + "/fakeHelpers/Activity.kt");
     private final File fakeViewSrc = new File(getTestDataPath() + "/fakeHelpers/View.kt");
     private final File fakeWidgetsSrc = new File(getTestDataPath() + "/fakeHelpers/Widgets.kt");
-    private final File fakeMyActivitySrc = new File(getTestDataPath() + "/converter/singleFile/MyActivity.kt");
-    private final String singleFileResPath = getTestDataPath() + "/converter/singleFile/res/layout/";
+    private final File fakeMyActivitySrc = new File(singleFilePrefix + "MyActivity.kt");
+    private final String singleFileResPath = singleFilePrefix + "res/layout/";
 
     @Override
     public void setUp() throws Exception {
@@ -83,6 +85,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL,
                                                                                          TestJdkKind.MOCK_JDK);
         configuration.put(JVMConfigurationKeys.ANDROID_RES_PATH, resPath);
+        configuration.put(JVMConfigurationKeys.ANDROID_MANIFEST, singleFileManifestPath);
         return JetCoreEnvironment.createForTests(getTestRootDisposable(),
                                                                                   configuration);
     }
@@ -106,7 +109,9 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
 
     public void testConverterOneFile() throws Exception {
         JetCoreEnvironment jetCoreEnvironment = getEnvironment(singleFileResPath);
-        AndroidUIXmlProcessor parser = new CliAndroidUIXmlProcessor(jetCoreEnvironment.getProject(), singleFileDir.getAbsolutePath());
+        AndroidUIXmlProcessor parser = new CliAndroidUIXmlProcessor(jetCoreEnvironment.getProject(),
+                                                                    singleFileDir.getAbsolutePath(),
+                                                                    singleFileManifestPath);
 
         String actual = parser.parseToString();
         String expected = loadOrCreate(new File(getTestDataPath() + "/converter/singleFile/layout.kt"), actual);
