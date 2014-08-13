@@ -26,9 +26,6 @@ import java.util.Collection;
 import java.util.List;
 
 class FunctionInlineMutator {
-    private static final String BREAK_LABEL = "break_inlined";
-    private static final String RESULT_LABEL = "result_inlined";
-    private static final String THIS_ALIAS = "self";
 
     private final JsInvocation call;
     private final InliningContext inliningContext;
@@ -102,7 +99,7 @@ class FunctionInlineMutator {
         }
 
         if (needToAlias(thisReplacement)) {
-            JsName thisName = renamingContext.getFreshName(THIS_ALIAS);
+            JsName thisName = renamingContext.getFreshName(getThisAlias());
             renamingContext.newVar(thisName, thisReplacement);
             thisReplacement = thisName.makeRef();
         }
@@ -163,6 +160,34 @@ class FunctionInlineMutator {
     @NotNull
     private List<JsParameter> getParameters() {
         return invokedFunction.getParameters();
+    }
+
+    @NotNull
+    private String getResultLabel() {
+        return getLabelPrefix() + "result";
+    }
+
+    @NotNull
+    private String getBreakLabel() {
+        return getLabelPrefix() + "break";
+    }
+
+    @SuppressWarnings("MethodMayBeStatic")
+    @NotNull
+    private String getThisAlias() {
+        return "$this";
+    }
+
+    @NotNull
+    String getLabelPrefix() {
+        String ident = getSimpleIdent(call);
+        String labelPrefix = ident != null ? ident : "inline$";
+
+        if (labelPrefix.endsWith("$")) {
+            return labelPrefix;
+        }
+
+        return labelPrefix + "$";
     }
 
     private static boolean canBeExpression(JsBlock body) {
