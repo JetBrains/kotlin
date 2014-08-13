@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.debugger.evaluate
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.plugin.refactoring.createTempCopy
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
@@ -30,18 +29,15 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.performAnalysis
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import org.jetbrains.jet.plugin.refactoring.extractFunction.validate
-import org.jetbrains.jet.lang.psi.JetImportList
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
 import org.jetbrains.jet.plugin.refactoring.runReadAction
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.generateDeclaration
+import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
 
 fun getFunctionForExtractedFragment(
@@ -51,6 +47,14 @@ fun getFunctionForExtractedFragment(
 ): JetNamedFunction? {
 
     fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult): String {
+        if (KotlinInternalMode.enabled) {
+            logger.error("Couldn't extract function for debugger:\n" +
+                                 "FILE NAME: ${breakpointFile.getName()}\n" +
+                                 "BREAKPOINT LINE: ${breakpointLine}\n" +
+                                 "CODE FRAGMENT:\n${codeFragment.getText()}\n" +
+                                 "ERRORS:\n${analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")}\n" +
+                                 "FILE TEXT: \n${breakpointFile.getText()}\n")
+        }
         return analysisResult.messages.map { errorMessage ->
             val message = when(errorMessage) {
                 ErrorMessage.NO_EXPRESSION -> "Cannot perform an action without an expression"
