@@ -32,12 +32,14 @@ import org.jetbrains.jet.plugin.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.plugin.completion.handlers.BaseDeclarationInsertHandler
 
 public object DescriptorLookupConverter {
     public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, declaration: PsiElement?): LookupElement {
-        var element = LookupElementBuilder.create(DeclarationLookupObject(descriptor, analyzer, declaration), descriptor.getName().asString())
+        val name = descriptor.getName().asString()
+        var element = LookupElementBuilder.create(DeclarationLookupObject(descriptor, analyzer, declaration), name)
 
-        var presentableText = descriptor.getName().asString()
+        var presentableText = name
         var typeText = ""
         var tailText = ""
 
@@ -75,7 +77,7 @@ public object DescriptorLookupConverter {
         return element
     }
 
-    public fun getDefaultInsertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement>? {
+    public fun getDefaultInsertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
         return when (descriptor) {
             is FunctionDescriptor -> {
                 val parameters = descriptor.getValueParameters()
@@ -100,7 +102,7 @@ public object DescriptorLookupConverter {
 
             is ClassDescriptor -> JetClassInsertHandler
 
-            else -> null
+            else -> BaseDeclarationInsertHandler()
         }
     }
 

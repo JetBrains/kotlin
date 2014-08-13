@@ -22,6 +22,10 @@ import com.intellij.codeInsight.lookup.AutoCompletionPolicy
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.codeInsight.completion.CompletionService
 import com.intellij.codeInsight.completion.CompletionProgressIndicator
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 
 enum class ItemPriority {
     DEFAULT
@@ -54,3 +58,18 @@ fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanc
 
     return exception
 }
+
+fun qualifiedNameForSourceCode(descriptor: ClassDescriptor): String? {
+    val name = descriptor.getName()
+    if (name.isSpecial()) return null
+    val nameString = DescriptorRenderer.SOURCE_CODE.renderName(name)
+    val parent = descriptor.getContainingDeclaration()
+    val qualifier = when (parent) {
+        is ClassDescriptor -> qualifiedNameForSourceCode(parent)
+        is PackageViewDescriptor -> DescriptorRenderer.SOURCE_CODE.renderFqName(parent.getFqName())
+        is PackageFragmentDescriptor -> DescriptorRenderer.SOURCE_CODE.renderFqName(parent.fqName)
+        else -> null
+    }
+    return if (qualifier != null && qualifier != "") qualifier + "." + nameString else nameString
+}
+

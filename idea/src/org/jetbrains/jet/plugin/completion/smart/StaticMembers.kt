@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 
 // adds java static members, enum members and members from class object
 class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
@@ -117,7 +118,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
         val lookupElement = createLookupElement(memberDescriptor, resolveSession)
         val qualifierPresentation = classDescriptor.getName().asString()
         val lookupString = qualifierPresentation + "." + lookupElement.getLookupString()
-        val qualifierText = DescriptorUtils.getFqName(classDescriptor).asString() //TODO: escape keywords
+        val qualifierText = qualifiedNameForSourceCode(classDescriptor)
 
         return object: LookupElementDecorator<LookupElement>(lookupElement) {
             override fun getLookupString() = lookupString
@@ -141,7 +142,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             }
 
             override fun handleInsert(context: InsertionContext) {
-                var text = qualifierText + "." + memberDescriptor.getName().asString() //TODO: escape
+                var text = qualifierText + "." + DescriptorRenderer.SOURCE_CODE.renderName(memberDescriptor.getName())
 
                 context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
                 context.setTailOffset(context.getStartOffset() + text.length)

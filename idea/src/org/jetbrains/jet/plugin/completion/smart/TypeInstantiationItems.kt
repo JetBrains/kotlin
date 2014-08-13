@@ -22,14 +22,12 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertHandler
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.completion.InsertionContext
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import org.jetbrains.jet.plugin.completion.*
@@ -37,6 +35,7 @@ import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
@@ -71,7 +70,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
         var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
 
         val insertHandler: InsertHandler<LookupElement>
-        val typeText = DescriptorUtils.getFqName(classifier).toString() + DescriptorRenderer.SOURCE_CODE.renderTypeArguments(typeArgs)
+        val typeText = qualifiedNameForSourceCode(classifier) + DescriptorRenderer.SOURCE_CODE.renderTypeArguments(typeArgs)
         if (isAbstract) {
             val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
             itemText += constructorParenthesis
@@ -97,7 +96,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
                     (if (visibleConstructors.size == 0)
                         JetFunctionInsertHandler.NO_PARAMETERS_HANDLER
                     else if (visibleConstructors.size == 1)
-                        DescriptorLookupConverter.getDefaultInsertHandler(visibleConstructors.single())!!
+                        DescriptorLookupConverter.getDefaultInsertHandler(visibleConstructors.single())
                     else
                         JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER) as JetFunctionInsertHandler
             insertHandler = object : InsertHandler<LookupElement> {

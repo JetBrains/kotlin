@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.completion
 
 import org.jetbrains.jet.lang.psi.JetValueArgument
-import com.intellij.codeInsight.completion.CompletionParameters
 import org.jetbrains.jet.lexer.JetTokens
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetCallElement
@@ -27,7 +26,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.JetIcons
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.psi.filters.AndFilter
@@ -38,6 +36,7 @@ import com.intellij.psi.filters.ClassFilter
 import org.jetbrains.jet.plugin.util.FirstChildInParentFilter
 import org.jetbrains.jet.lang.psi.psiUtil.getCallNameExpression
 import com.intellij.psi.PsiElement
+import org.jetbrains.jet.plugin.completion.handlers.BaseDeclarationInsertHandler
 
 object NamedParametersCompletion {
     private val positionFilter = AndFilter(
@@ -86,7 +85,7 @@ object NamedParametersCompletion {
             for (parameter in funDescriptor.getValueParameters()) {
                 val name = parameter.getName().asString()
                 if (name !in usedArguments) {
-                    val lookupElement = LookupElementBuilder.create("$name")
+                    val lookupElement = LookupElementBuilder.create(parameter, name)
                             .withPresentableText("$name = ")
                             .withTailText("${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
                             .withIcon(JetIcons.PARAMETER)
@@ -100,7 +99,7 @@ object NamedParametersCompletion {
         }
     }
 
-    private object NamedParameterInsertHandler : InsertHandler<LookupElement> {
+    private object NamedParameterInsertHandler : BaseDeclarationInsertHandler() {
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
             val ch = context.getCompletionChar()
             if (ch == '=' || ch == ' ') {

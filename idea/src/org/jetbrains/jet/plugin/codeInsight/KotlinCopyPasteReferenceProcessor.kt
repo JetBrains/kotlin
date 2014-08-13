@@ -61,6 +61,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.plugin.imports.*
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.utils.*
+import org.jetbrains.jet.renderer.DescriptorRenderer
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData>() {
@@ -322,9 +323,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
 
         fun lengthenReference(expression: JetElement, fqName: FqName) {
             assert(canLengthenReferenceExpression(expression, fqName))
-            val project = expression.getProject()
             val parent = expression.getParent()
-            val prefixToInsert = fqName.parent().asString()
+            val prefixToInsert = DescriptorRenderer.SOURCE_CODE.renderFqName(fqName.parent())
             val psiFactory = JetPsiFactory(expression)
             if (parent is JetCallExpression) {
                 val text = "$prefixToInsert.${parent.getText()}"
@@ -337,7 +337,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
                 typeReference!!.replace(psiFactory.createType("$prefixToInsert.${typeReference.getText()}"))
             }
             else {
-                expression.replace(createQualifiedExpression(psiFactory, fqName.asString()))
+                expression.replace(createQualifiedExpression(psiFactory, DescriptorRenderer.SOURCE_CODE.renderFqName(fqName)))
             }
         }
 

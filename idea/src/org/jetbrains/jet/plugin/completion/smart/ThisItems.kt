@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
@@ -65,12 +62,14 @@ class ThisItems(val bindingContext: BindingContext) {
     }
 
     private fun thisQualifierName(receiver: ReceiverParameterDescriptor): String? {
-        val descriptor: DeclarationDescriptor = receiver.getContainingDeclaration()
-        val name: Name = descriptor.getName()
-        if (!name.isSpecial()) return name.asString()
+        val descriptor = receiver.getContainingDeclaration()
+        val name = descriptor.getName()
+        if (!name.isSpecial()) {
+            return DescriptorRenderer.SOURCE_CODE.renderName(name)
+        }
 
         val psiElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
-        val expression: JetExpression? = when (psiElement) {
+        val expression = when (psiElement) {
             is JetFunctionLiteral -> psiElement.getParent() as? JetFunctionLiteralExpression
             is JetObjectDeclaration -> psiElement.getParent() as? JetObjectLiteralExpression
             else -> null

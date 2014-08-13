@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.completion.handlers
 
-import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.psi.PsiDocumentManager
@@ -45,7 +44,7 @@ public enum class CaretPosition {
 
 public data class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
-public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : InsertHandler<LookupElement> {
+public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : BaseDeclarationInsertHandler() {
     {
         if (caretPosition == CaretPosition.AFTER_BRACKETS && lambdaInfo != null) {
             throw IllegalArgumentException("CaretPosition.AFTER_BRACKETS with lambdaInfo != null combination is not supported")
@@ -53,6 +52,8 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
     }
 
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        super.handleInsert(context, item)
+
         PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
         if (context.getCompletionChar() == '(') {
             context.setAddCompletionChar(false)

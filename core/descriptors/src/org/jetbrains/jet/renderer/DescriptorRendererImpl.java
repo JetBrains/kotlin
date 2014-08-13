@@ -198,8 +198,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     /* NAMES RENDERING */
+    @Override
     @NotNull
-    private String renderName(@NotNull Name identifier) {
+    public String renderName(@NotNull Name identifier) {
         String asString = identifier.toString();
         return escape(KeywordStringsGenerated.KEYWORDS.contains(asString) ? '`' + asString + '`' : asString);
     }
@@ -219,8 +220,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
+    @Override
     @NotNull
-    private String renderFqName(@NotNull FqNameBase fqName) {
+    public String renderFqName(@NotNull FqNameBase fqName) {
         return renderFqName(fqName.pathSegments());
     }
 
