@@ -160,7 +160,6 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
                 if (file is JetFile && o is DeclarationLookupObject) {
                     val descriptor = o.descriptor as? SimpleFunctionDescriptor
                     if (descriptor != null) {
-
                         if (PsiTreeUtil.getParentOfType(element, javaClass<JetQualifiedExpression>()) != null &&
                                 descriptor.getReceiverParameter() == null) {
                             return@runReadAction

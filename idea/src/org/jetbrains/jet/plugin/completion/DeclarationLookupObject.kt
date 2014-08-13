@@ -25,13 +25,13 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
  * Stores information about resolved descriptor and position of that descriptor.
  * Position will be used for sorting
  */
-public class DeclarationLookupObject(public val descriptor: DeclarationDescriptor?, private val analyzer: KotlinCodeAnalyzer, public val psiElement: PsiElement?) {
+public class DeclarationLookupObject(public val descriptor: DeclarationDescriptor, private val analyzer: KotlinCodeAnalyzer, public val psiElement: PsiElement?) {
     override fun toString(): String {
         return super.toString() + " " + descriptor
     }
 
     override fun hashCode(): Int {
-        return if (descriptor != null) descriptor!!.hashCode() else 0
+        return descriptor.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {

@@ -85,12 +85,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
 private object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
         val o = element.getObject()
-        if (o is DeclarationLookupObject) {
-            val descriptor = o.descriptor
-            if (descriptor != null && KotlinBuiltIns.getInstance().isDeprecated(descriptor)) return 1
-        }
-
-        return 0
+        return if (o is DeclarationLookupObject && KotlinBuiltIns.getInstance().isDeprecated(o.descriptor)) 1 else 0
     }
 }
 
@@ -120,17 +115,14 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
                 return Weight.thisFile
             }
 
-            val descriptor = o.descriptor
-            if (descriptor != null) {
-                val fqName = DescriptorUtils.getFqName(descriptor).toString()
-                // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
-                if (isValidJavaFqName(fqName)) {
-                    val importPath = ImportPath(fqName)
-                    return when {
-                        ImportInsertHelper.needImport(importPath, file) -> Weight.notImported
-                        ImportInsertHelper.isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
-                        else -> Weight.imported
-                    }
+            val fqName = DescriptorUtils.getFqName(o.descriptor).toString()
+            // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
+            if (isValidJavaFqName(fqName)) {
+                val importPath = ImportPath(fqName)
+                return when {
+                    ImportInsertHelper.needImport(importPath, file) -> Weight.notImported
+                    ImportInsertHelper.isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
+                    else -> Weight.imported
                 }
             }
         }
