@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.constants;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
@@ -26,13 +25,14 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class IntegerValueTypeConstructor implements TypeConstructor {
     private final long value;
-    private final Collection<JetType> supertypes = Lists.newArrayList();
+    private final Collection<JetType> supertypes = new ArrayList<JetType>(4);
 
     public IntegerValueTypeConstructor(long value) {
         // order of types matters

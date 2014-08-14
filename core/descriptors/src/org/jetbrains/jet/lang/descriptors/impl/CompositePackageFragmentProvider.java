@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -38,10 +38,11 @@ public class CompositePackageFragmentProvider implements PackageFragmentProvider
     @NotNull
     @Override
     public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-        List<PackageFragmentDescriptor> result = Lists.newArrayList();
+        ArrayList<PackageFragmentDescriptor> result = new ArrayList<PackageFragmentDescriptor>();
         for (PackageFragmentProvider provider : providers) {
             result.addAll(provider.getPackageFragments(fqName));
         }
+        result.trimToSize();
         return result;
     }
 

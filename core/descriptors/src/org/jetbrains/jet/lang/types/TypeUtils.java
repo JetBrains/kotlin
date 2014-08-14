@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import kotlin.Function1;
@@ -139,7 +138,7 @@ public class TypeUtils {
     }
 
     public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
-        return intersect(JetTypeChecker.DEFAULT, Sets.newLinkedHashSet(Lists.newArrayList(typeA, typeB))) == null;
+        return intersect(JetTypeChecker.DEFAULT, Sets.newLinkedHashSet(Arrays.asList(typeA, typeB))) == null;
     }
 
     @Nullable
@@ -156,7 +155,7 @@ public class TypeUtils {
         //   made nullable is they all were nullable
         boolean allNullable = true;
         boolean nothingTypePresent = false;
-        List<JetType> nullabilityStripped = Lists.newArrayList();
+        List<JetType> nullabilityStripped = new ArrayList<JetType>(types.size());
         for (JetType type : types) {
             nothingTypePresent |= KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type);
             allNullable &= type.isNullable();
@@ -168,7 +167,7 @@ public class TypeUtils {
         }
 
         // Now we remove types that have subtypes in the list
-        List<JetType> resultingTypes = Lists.newArrayList();
+        List<JetType> resultingTypes = new ArrayList<JetType>();
         outer:
         for (JetType type : nullabilityStripped) {
             if (!canHaveSubtypes(typeChecker, type)) {
@@ -372,21 +371,18 @@ public class TypeUtils {
         return result;
     }
 
-    private static void collectImmediateSupertypes(@NotNull JetType type, @NotNull Collection<JetType> result) {
+    @NotNull
+    public static List<JetType> getImmediateSupertypes(@NotNull JetType type) {
         boolean isNullable = type.isNullable();
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
-        for (JetType supertype : type.getConstructor().getSupertypes()) {
+        Collection<JetType> originalSupertypes = type.getConstructor().getSupertypes();
+        List<JetType> result = new ArrayList<JetType>(originalSupertypes.size());
+        for (JetType supertype : originalSupertypes) {
             JetType substitutedType = substitutor.substitute(supertype, Variance.INVARIANT);
             if (substitutedType != null) {
                 result.add(makeNullableIfNeeded(substitutedType, isNullable));
             }
         }
-    }
-
-    @NotNull
-    public static List<JetType> getImmediateSupertypes(@NotNull JetType type) {
-        List<JetType> result = Lists.newArrayList();
-        collectImmediateSupertypes(type, result);
         return result;
     }
 
@@ -617,8 +613,9 @@ public class TypeUtils {
                     @Override
                     public Iterable<JetType> getNeighbors(JetType current) {
                         TypeSubstitutor substitutor = TypeSubstitutor.create(current);
-                        List<JetType> result = Lists.newArrayList();
-                        for (JetType supertype : current.getConstructor().getSupertypes()) {
+                        Collection<JetType> supertypes = current.getConstructor().getSupertypes();
+                        List<JetType> result = new ArrayList<JetType>(supertypes.size());
+                        for (JetType supertype : supertypes) {
                             if (visited.contains(supertype.getConstructor())) {
                                 continue;
                             }

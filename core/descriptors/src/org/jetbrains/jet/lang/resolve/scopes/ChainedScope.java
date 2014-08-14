@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -24,7 +23,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.scopes.JetScopeSelectorUtil.*;
 
@@ -73,10 +75,12 @@ public class ChainedScope implements JetScope {
     @Override
     public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
         if (implicitReceiverHierarchy == null) {
-            implicitReceiverHierarchy = Lists.newArrayList();
+            ArrayList<ReceiverParameterDescriptor> result = new ArrayList<ReceiverParameterDescriptor>();
             for (JetScope jetScope : scopeChain) {
-                implicitReceiverHierarchy.addAll(jetScope.getImplicitReceiversHierarchy());
+                result.addAll(jetScope.getImplicitReceiversHierarchy());
             }
+            result.trimToSize();
+            implicitReceiverHierarchy = result;
         }
         return implicitReceiverHierarchy;
     }

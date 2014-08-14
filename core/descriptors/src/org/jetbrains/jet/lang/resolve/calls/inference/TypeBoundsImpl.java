@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
@@ -28,10 +27,7 @@ import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND;
 
@@ -191,7 +187,8 @@ public class TypeBoundsImpl implements TypeBounds {
 
         if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
             JetType superTypeOfAllLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(
-                    Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
+                    Arrays.asList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds)
+            );
             if (tryPossibleAnswer(superTypeOfAllLowerBounds)) {
                 return Collections.singleton(superTypeOfAllLowerBounds);
             }

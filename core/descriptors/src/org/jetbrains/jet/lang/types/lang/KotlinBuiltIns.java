@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.lang;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -783,13 +782,14 @@ public class KotlinBuiltIns {
     @NotNull
     public List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
         assert isFunctionOrExtensionFunctionType(type);
-        List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
         List<TypeProjection> parameterTypes = getParameterTypeProjectionsFromFunctionType(type);
+        List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(parameterTypes.size());
         for (int i = 0; i < parameterTypes.size(); i++) {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
                     functionDescriptor, null, i, Annotations.EMPTY,
-                    Name.identifier("p" + (i + 1)), parameterType.getType(), false, null, SourceElement.NO_SOURCE);
+                    Name.identifier("p" + (i + 1)), parameterType.getType(), false, null, SourceElement.NO_SOURCE
+            );
             valueParameters.add(valueParameterDescriptor);
         }
         return valueParameters;
@@ -808,7 +808,7 @@ public class KotlinBuiltIns {
         List<TypeProjection> arguments = type.getArguments();
         int first = isExtensionFunctionType(type) ? 1 : 0;
         int last = arguments.size() - 2;
-        List<TypeProjection> parameterTypes = Lists.newArrayList();
+        List<TypeProjection> parameterTypes = new ArrayList<TypeProjection>(last - first + 1);
         for (int i = first; i <= last; i++) {
             parameterTypes.add(arguments.get(i));
         }

@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -75,7 +75,7 @@ public class ConstraintPosition {
     }
 
     public static ConstraintPosition getCompoundConstraintPosition(ConstraintPosition... positions) {
-        return new CompoundConstraintPosition(Lists.newArrayList(positions));
+        return new CompoundConstraintPosition(Arrays.asList(positions));
     }
 
     private final String debugName;

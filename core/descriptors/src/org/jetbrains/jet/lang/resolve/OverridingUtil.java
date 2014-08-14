@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
@@ -268,7 +267,7 @@ public class OverridingUtil {
             @NotNull ClassDescriptor current,
             @NotNull DescriptorSink sink
     ) {
-        Collection<CallableMemberDescriptor> bound = Lists.newArrayList();
+        Collection<CallableMemberDescriptor> bound = new ArrayList<CallableMemberDescriptor>(descriptorsFromSuper.size());
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
             OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent).getResult();
 
@@ -392,7 +391,7 @@ public class OverridingUtil {
             @NotNull Queue<CallableMemberDescriptor> extractFrom,
             @NotNull DescriptorSink sink
     ) {
-        Collection<CallableMemberDescriptor> overridable = Lists.newArrayList();
+        Collection<CallableMemberDescriptor> overridable = new ArrayList<CallableMemberDescriptor>();
         overridable.add(overrider);
         for (Iterator<CallableMemberDescriptor> iterator = extractFrom.iterator(); iterator.hasNext(); ) {
             CallableMemberDescriptor candidate = iterator.next();

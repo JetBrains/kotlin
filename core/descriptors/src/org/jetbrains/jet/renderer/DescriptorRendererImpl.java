@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.renderer;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -248,7 +247,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return klass.getTypeConstructor().toString();
         }
         if (shortNames) {
-            List<Name> qualifiedNameElements = Lists.newArrayList();
+            List<Name> qualifiedNameElements = new ArrayList<Name>();
 
             // for nested classes qualified name should be used
             DeclarationDescriptor current = klass;
@@ -415,8 +414,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     @NotNull
     private List<String> renderAndSortAnnotationArguments(@NotNull AnnotationDescriptor descriptor) {
-        List<String> resultList = Lists.newArrayList();
-        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : descriptor.getAllValueArguments().entrySet()) {
+        Set<Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>>> valueArguments = descriptor.getAllValueArguments().entrySet();
+        List<String> resultList = new ArrayList<String>(valueArguments.size());
+        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : valueArguments) {
             CompileTimeConstant<?> value = entry.getValue();
             String typeSuffix = ": " + renderType(value.getType(KotlinBuiltIns.getInstance()));
             resultList.add(entry.getKey().getName().asString() + " = " + renderConstant(value) + typeSuffix);
@@ -665,7 +665,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderWhereSuffix(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull StringBuilder builder) {
         if (withoutTypeParameters) return;
 
-        List<String> upperBoundStrings = Lists.newArrayList();
+        List<String> upperBoundStrings = new ArrayList<String>(0);
 
         for (TypeParameterDescriptor typeParameter : typeParameters) {
             if (typeParameter.getUpperBounds().size() > 1) {

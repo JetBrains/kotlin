@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import kotlin.Function1;
@@ -31,7 +30,7 @@ import org.jetbrains.jet.lang.types.checker.TypingConstraints;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.UtilsPackage;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -444,7 +443,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             TypeBoundsImpl typeBounds = entry.getValue();
             for (JetType declaredUpperBound : typeParameterDescriptor.getUpperBounds()) {
                 //todo order matters here
-                Collection<Bound> bounds = Lists.newArrayList(typeBounds.getBounds());
+                Collection<Bound> bounds = new ArrayList<Bound>(typeBounds.getBounds());
                 for (Bound bound : bounds) {
                     if (bound.kind == LOWER_BOUND || bound.kind == EXACT_BOUND) {
                         ConstraintPosition position = ConstraintPosition.getCompoundConstraintPosition(
@@ -514,10 +513,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         List<TypeProjection> typeArguments = functionType.getArguments();
         assert !typeArguments.isEmpty();
 
-        List<JetType> arguments = Lists.newArrayList();
         // excluding the last type argument of the function type, which is the return type
         int index = 0;
         int lastIndex = typeArguments.size() - 1;
+        List<JetType> arguments = new ArrayList<JetType>(lastIndex);
         for (TypeProjection typeArgument : typeArguments) {
             if (index < lastIndex) {
                 arguments.add(typeArgument.getType());

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +30,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -102,7 +102,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     ) {
         setOutType(outType);
 
-        this.typeParameters = Lists.newArrayList(typeParameters);
+        this.typeParameters = new ArrayList<TypeParameterDescriptor>(typeParameters);
 
         this.receiverParameter = receiverParameter;
         this.expectedThisObject = expectedThisObject;
@@ -182,14 +182,14 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     @Override
     @NotNull
     public List<PropertyAccessorDescriptor> getAccessors() {
-        List<PropertyAccessorDescriptor> r = Lists.newArrayListWithCapacity(2);
+        List<PropertyAccessorDescriptor> result = new ArrayList<PropertyAccessorDescriptor>(2);
         if (getter != null) {
-            r.add(getter);
+            result.add(getter);
         }
         if (setter != null) {
-            r.add(setter);
+            result.add(setter);
         }
-        return r;
+        return result;
     }
 
     @Override
@@ -212,8 +212,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     ) {
         PropertyDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, newModality, newVisibility, original, kind);
 
-        List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
-        TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
+        List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
+        List<TypeParameterDescriptor> substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
+        TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
+                originalTypeParameters, originalSubstitutor, substitutedDescriptor, substitutedTypeParameters
+        );
 
         JetType originalOutType = getType();
         JetType outType = substitutor.substitute(originalOutType, Variance.OUT_VARIANCE);

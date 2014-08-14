@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.name;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.UtilsPackage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class FqName extends FqNameBase {
@@ -116,7 +116,7 @@ public final class FqName extends FqNameBase {
 
     @NotNull
     public List<FqName> path() {
-        final List<FqName> path = Lists.newArrayList();
+        final List<FqName> path = new ArrayList<FqName>();
         path.add(ROOT);
         fqName.walk(new FqNameUnsafe.WalkCallback() {
             @Override

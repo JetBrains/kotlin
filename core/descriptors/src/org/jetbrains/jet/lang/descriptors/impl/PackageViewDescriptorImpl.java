@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -26,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl implements PackageViewDescriptor {
@@ -42,7 +42,7 @@ public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl impleme
         this.module = module;
         this.fqName = fqName;
 
-        List<JetScope> scopes = Lists.newArrayList();
+        List<JetScope> scopes = new ArrayList<JetScope>(fragments.size() + 1);
         assert !fragments.isEmpty() : fqName + " in " + module;
         for (PackageFragmentDescriptor fragment : fragments) {
             scopes.add(fragment.getMemberScope());

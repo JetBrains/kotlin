@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,9 +192,10 @@ public class TypeSubstitutor {
         }
     }
 
-    private List<TypeProjection> substituteTypeArguments(List<TypeParameterDescriptor> typeParameters, List<TypeProjection> typeArguments, int recursionDepth)
-            throws SubstitutionException {
-        List<TypeProjection> substitutedArguments = Lists.newArrayList();
+    private List<TypeProjection> substituteTypeArguments(
+            List<TypeParameterDescriptor> typeParameters, List<TypeProjection> typeArguments, int recursionDepth
+    ) throws SubstitutionException {
+        List<TypeProjection> substitutedArguments = new ArrayList<TypeProjection>(typeParameters.size());
         for (int i = 0; i < typeParameters.size(); i++) {
             TypeParameterDescriptor typeParameter = typeParameters.get(i);
             TypeProjection typeArgument = typeArguments.get(i);
