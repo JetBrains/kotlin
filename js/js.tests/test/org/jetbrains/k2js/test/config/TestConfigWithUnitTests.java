@@ -45,7 +45,7 @@ public class TestConfigWithUnitTests extends TestConfig {
             @NotNull List<JetFile> files,
             @NotNull BindingContext libraryContext,
             @NotNull ModuleDescriptor module) {
-        super(project, version, files, libraryContext, module, false);
+        super(project, version, files, libraryContext, module, false, true);
     }
 
     @Override

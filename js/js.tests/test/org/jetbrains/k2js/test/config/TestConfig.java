@@ -36,7 +36,7 @@ public class TestConfig extends Config {
                 @NotNull List<JetFile> files,
                 @NotNull BindingContext libraryContext,
                 @NotNull ModuleDescriptor module) {
-            return new TestConfig(project, version, files, libraryContext, module, false);
+            return new TestConfig(project, version, files, libraryContext, module, false, true);
         }
     };
 
@@ -47,7 +47,7 @@ public class TestConfig extends Config {
                 @NotNull List<JetFile> files,
                 @NotNull BindingContext libraryContext,
                 @NotNull ModuleDescriptor module) {
-            return new TestConfig(project, version, files, libraryContext, module, true);
+            return new TestConfig(project, version, files, libraryContext, module, true, true);
         }
     };
 
@@ -58,9 +58,16 @@ public class TestConfig extends Config {
     @NotNull
     private final ModuleDescriptor libraryModule;
 
-    public TestConfig(@NotNull Project project, @NotNull EcmaVersion version,
-            @NotNull List<JetFile> files, @NotNull BindingContext libraryContext, @NotNull ModuleDescriptor module, boolean sourcemap) {
-        super(project, REWRITABLE_MODULE_NAME, version, sourcemap);
+    public TestConfig(
+            @NotNull Project project,
+            @NotNull EcmaVersion version,
+            @NotNull List<JetFile> files,
+            @NotNull BindingContext libraryContext,
+            @NotNull ModuleDescriptor module,
+            boolean sourcemap,
+            boolean inlineEnabled
+    ) {
+        super(project, REWRITABLE_MODULE_NAME, version, sourcemap, inlineEnabled);
         jsLibFiles = files;
         this.libraryContext = libraryContext;
         libraryModule = module;

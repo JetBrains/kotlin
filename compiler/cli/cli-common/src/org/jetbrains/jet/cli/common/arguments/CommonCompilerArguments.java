@@ -38,6 +38,9 @@ public abstract class CommonCompilerArguments {
     @Argument(value = "X", description = "Print a synopsis of advanced options")
     public boolean extraHelp;
 
+    @Argument(value = "Xno-inline", description = "Disable method inlining")
+    public boolean noInline;
+
     public List<String> freeArgs = new SmartList<String>();
 
     @NotNull

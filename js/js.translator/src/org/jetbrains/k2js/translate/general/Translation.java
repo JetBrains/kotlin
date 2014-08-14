@@ -169,7 +169,7 @@ public final class Translation {
             throws TranslationException {
         try {
             JsProgram program = doGenerateAst(bindingContext, files, mainCallParameters, moduleDescriptor, config);
-            return JsInliner.process(program);
+            return config.isInlineEnabled() ? JsInliner.process(program) : program;
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -184,7 +184,7 @@ public final class Translation {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config) throws MainFunctionNotFoundException {
-        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config.getTarget(), moduleDescriptor);
+        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config, moduleDescriptor);
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
 

@@ -53,6 +53,8 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     }
 
     public static boolean shouldBeInlined(@NotNull JetCallExpression expression, @NotNull TranslationContext context) {
+        if (!context.getConfig().isInlineEnabled()) return false;
+
         ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context.bindingContext());
         assert resolvedCall != null;
 

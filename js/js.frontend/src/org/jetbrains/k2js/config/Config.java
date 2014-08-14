@@ -36,10 +36,11 @@ public abstract class Config {
     //NOTE: a hacky solution to be able to rerun code samples with lib loaded only once: used by tests and web demo
     @NotNull
     public static final String REWRITABLE_MODULE_NAME = "JS_TESTS";
+    private boolean inlineEnabled;
 
     @NotNull
     public static Config getEmptyConfig(@NotNull Project project, @NotNull EcmaVersion ecmaVersion) {
-        return new Config(project, "main", ecmaVersion) {
+        return new Config(project, "main", ecmaVersion, false, true) {
             @NotNull
             @Override
             protected List<JetFile> generateLibFiles() {
@@ -161,19 +162,26 @@ public abstract class Config {
 
     private final boolean sourcemap;
 
-    public Config(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion) {
-        this(project, moduleId, ecmaVersion, false);
-    }
-
-    public Config(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion, boolean sourcemap) {
+    public Config(
+            @NotNull Project project,
+            @NotNull String moduleId,
+            @NotNull EcmaVersion ecmaVersion,
+            boolean sourcemap,
+            boolean inlineEnabled
+    ) {
         this.project = project;
         this.target = ecmaVersion;
         this.moduleId = moduleId;
         this.sourcemap = sourcemap;
+        this.inlineEnabled = inlineEnabled;
     }
 
     public boolean isSourcemap() {
         return sourcemap;
+    }
+
+    public boolean isInlineEnabled() {
+        return inlineEnabled;
     }
 
     @NotNull
