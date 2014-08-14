@@ -22,7 +22,6 @@ import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetCodeFragment;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -341,7 +340,6 @@ public class LazyImportScope implements JetScope, LazyEntity {
         return "LazyImportScope: " + debugName;
     }
 
-    @TestOnly
     @Override
     public void printScopeStructure(@NotNull Printer p) {
         p.println(getClass().getSimpleName(), ": ", debugName, " {");

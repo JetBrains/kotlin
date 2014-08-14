@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -427,7 +426,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return declaredDescriptorsAccessibleBySimpleName.values();
     }
 
-    @TestOnly
     @Override
     protected void printAdditionalScopeStructure(@NotNull Printer p) {
         p.println("allDescriptorsDone = ", allDescriptorsDone);

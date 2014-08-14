@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
@@ -121,7 +120,6 @@ public class ChainedScope implements JetScope {
         return debugName;
     }
 
-    @TestOnly
     @Override
     public void printScopeStructure(@NotNull Printer p) {
         p.println(getClass().getSimpleName(), ": ", debugName, " {");
