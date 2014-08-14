@@ -104,6 +104,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         doTest(fileName);
     }
     
+    @TestMetadata("NoOverridingMarkerOnDefaultTraitImpl.kt")
+    public void testNoOverridingMarkerOnDefaultTraitImpl() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/NoOverridingMarkerOnDefaultTraitImpl.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("Overloads.kt")
     public void testOverloads() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/Overloads.kt");
@@ -119,6 +125,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
     @TestMetadata("OverrideIconForOverloadMethodBug.kt")
     public void testOverrideIconForOverloadMethodBug() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/OverrideIconForOverloadMethodBug.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("OverridingTooltipOnDefaultTraitImpl.kt")
+    public void testOverridingTooltipOnDefaultTraitImpl() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/OverridingTooltipOnDefaultTraitImpl.kt");
         doTest(fileName);
     }
     

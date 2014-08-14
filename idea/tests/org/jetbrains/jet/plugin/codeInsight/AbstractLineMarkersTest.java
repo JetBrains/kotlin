@@ -75,7 +75,7 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
             }
             catch (AssertionError error) {
                 try {
-                    String actualTextWithTestData = HighlightTestDataUtil.insertInfoTags(markers, false, myFixture.getFile().getText());
+                    String actualTextWithTestData = HighlightTestDataUtil.insertInfoTags(markers, true, myFixture.getFile().getText());
                     JetTestUtils.assertEqualsToFile(new File(getTestDataPath(), fileName()), actualTextWithTestData);
                 }
                 catch (FileComparisonFailure failure) {

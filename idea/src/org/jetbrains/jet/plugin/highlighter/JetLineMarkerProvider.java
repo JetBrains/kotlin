@@ -477,12 +477,14 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                 public boolean process(Pair<PsiMethod, PsiMethod> pair) {
                     ProgressManager.checkCanceled();
 
-                    PsiMethod superMethod = pair.getFirst();
+                    if (!(pair.getSecond() instanceof KotlinLightMethodFromTrait)) {
+                        PsiMethod superMethod = pair.getFirst();
 
-                    T declaration = mappingToJava.get(superMethod);
-                    if (declaration != null) {
-                        mappingToJava.remove(superMethod);
-                        overridden.add(declaration);
+                        T declaration = mappingToJava.get(superMethod);
+                        if (declaration != null) {
+                            mappingToJava.remove(superMethod);
+                            overridden.add(declaration);
+                        }
                     }
 
                     return !mappingToJava.isEmpty();
