@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.types;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -253,10 +252,11 @@ public class TypeSubstitutor {
         try {
             return o.toString();
         }
-        catch (ProcessCanceledException e) {
-            throw e;
-        }
         catch (Throwable e) {
+            if (e.getClass().getName().equals("com.intellij.openapi.progress.ProcessCanceledException")) {
+                //noinspection ConstantConditions
+                throw (RuntimeException) e;
+            }
             return "[Exception while computing toString(): " + e + "]";
         }
     }
