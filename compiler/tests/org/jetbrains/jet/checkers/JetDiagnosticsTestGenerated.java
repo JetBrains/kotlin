@@ -7048,6 +7048,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/resolve/resolveWithoutGenerics.kt");
             }
             
+            @TestMetadata("wrongNumberOfTypeArguments.kt")
+            public void testWrongNumberOfTypeArguments() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/resolve/wrongNumberOfTypeArguments.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/invoke")
             @InnerTestClasses({Invoke.Errors.class})
             public static class Invoke extends AbstractJetDiagnosticsTest {

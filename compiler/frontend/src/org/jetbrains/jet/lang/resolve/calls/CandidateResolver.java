@@ -142,22 +142,25 @@ public class CandidateResolver {
                         projection.getTypeReference(), context.scope, context.trace, ErrorUtils.createErrorType("Star projection in a call")));
             }
             int expectedTypeArgumentCount = candidate.getTypeParameters().size();
-            if (expectedTypeArgumentCount == jetTypeArguments.size()) {
-
-                checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, context.trace);
-
-                Map<TypeConstructor, TypeProjection>
-                        substitutionContext = FunctionDescriptorUtil
-                        .createSubstitutionContext((FunctionDescriptor) candidate, typeArguments);
-                TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
-                candidateCall.setResultingSubstitutor(substitutor);
-
-                candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
+            for (int index = jetTypeArguments.size(); index < expectedTypeArgumentCount; index++) {
+                typeArguments.add(ErrorUtils.createErrorType(
+                        "Explicit type argument expected for " + candidate.getTypeParameters().get(index).getName()));
             }
-            else {
+            Map<TypeConstructor, TypeProjection> substitutionContext =
+                    FunctionDescriptorUtil.createSubstitutionContext((FunctionDescriptor) candidate, typeArguments);
+            TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
+
+            if (expectedTypeArgumentCount != jetTypeArguments.size()) {
                 candidateCall.addStatus(OTHER_ERROR);
                 context.tracing.wrongNumberOfTypeArguments(context.trace, expectedTypeArgumentCount);
             }
+            else {
+                checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, substitutor, context.trace);
+            }
+
+            candidateCall.setResultingSubstitutor(substitutor);
+
+            candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
         }
 
         task.performAdvancedChecks(candidate, context.trace, context.tracing);
@@ -648,17 +651,11 @@ public class CandidateResolver {
             @NotNull List<JetTypeProjection> jetTypeArguments,
             @NotNull List<JetType> typeArguments,
             @NotNull CallableDescriptor functionDescriptor,
-            @NotNull BindingTrace trace) {
-        Map<TypeConstructor, TypeProjection> context = Maps.newHashMap();
-
-        List<TypeParameterDescriptor> typeParameters = functionDescriptor.getOriginal().getTypeParameters();
-        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
-            TypeParameterDescriptor typeParameter = typeParameters.get(i);
-            JetType typeArgument = typeArguments.get(i);
-            context.put(typeParameter.getTypeConstructor(), new TypeProjectionImpl(typeArgument));
-        }
-        TypeSubstitutor substitutor = TypeSubstitutor.create(context);
-        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+            @NotNull TypeSubstitutor substitutor,
+            @NotNull BindingTrace trace
+    ) {
+        List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
+        for (int i = 0; i < typeParameters.size(); i++) {
             TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
             JetType typeArgument = typeArguments.get(i);
             JetTypeReference typeReference = jetTypeArguments.get(i).getTypeReference();
