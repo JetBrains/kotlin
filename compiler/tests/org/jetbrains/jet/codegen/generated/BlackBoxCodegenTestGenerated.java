@@ -1887,6 +1887,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
     public static class DelegatedProperty extends AbstractBlackBoxCodegenTest {
+        @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
+        public void testAccessTopLevelDelegatedPropertyInClinit() throws Exception {
+            doTest("compiler/testData/codegen/box/delegatedProperty/accessTopLevelDelegatedPropertyInClinit.kt");
+        }
+        
         public void testAllFilesPresentInDelegatedProperty() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), true);
         }
