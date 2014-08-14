@@ -27,4 +27,12 @@ public class JsProgramFragment extends SourceInfoAwareJsNode {
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(globalBlock);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            v.accept(globalBlock);
+        }
+        v.endVisit(this, ctx);
+    }
 }

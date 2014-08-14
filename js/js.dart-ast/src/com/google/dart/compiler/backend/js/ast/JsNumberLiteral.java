@@ -22,6 +22,12 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
         public String toString() {
             return String.valueOf(value);
         }
+
+        @Override
+        public void traverse(JsVisitorWithContext v, JsContext ctx) {
+            v.visit(this, ctx);
+            v.endVisit(this, ctx);
+        }
     }
 
     public static final class JsIntLiteral extends JsNumberLiteral {
@@ -38,6 +44,12 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
 
         public String toString() {
             return String.valueOf(value);
+        }
+
+        @Override
+        public void traverse(JsVisitorWithContext v, JsContext ctx) {
+            v.visit(this, ctx);
+            v.endVisit(this, ctx);
         }
     }
 }

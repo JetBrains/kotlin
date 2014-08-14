@@ -34,4 +34,13 @@ public final class JsNew extends JsExpressionImpl.JsExpressionHasArguments {
         visitor.accept(constructorExpression);
         visitor.acceptList(arguments);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            constructorExpression = v.accept(constructorExpression);
+            v.acceptList(arguments);
+        }
+        v.endVisit(this, ctx);
+    }
 }

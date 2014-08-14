@@ -17,4 +17,12 @@ public final class JsPostfixOperation extends JsUnaryOperation {
   public void accept(JsVisitor v) {
     v.visitPostfixOperation(this);
   }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            super.traverse(v, ctx);
+        }
+        v.endVisit(this, ctx);
+    }
 }

@@ -31,4 +31,12 @@ public class JsThrow extends SourceInfoAwareJsNode implements JsStatement {
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(expression);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            expression = v.accept(expression);
+        }
+        v.endVisit(this, ctx);
+    }
 }

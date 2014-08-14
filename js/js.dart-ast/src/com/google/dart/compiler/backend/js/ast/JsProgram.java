@@ -129,4 +129,14 @@ public final class JsProgram extends SourceInfoAwareJsNode {
             visitor.accept(fragment);
         }
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            for (JsProgramFragment fragment : fragments) {
+                v.accept(fragment);
+            }
+        }
+        v.endVisit(this, ctx);
+    }
 }

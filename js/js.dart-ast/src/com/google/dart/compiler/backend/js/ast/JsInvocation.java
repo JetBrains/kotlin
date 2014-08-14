@@ -8,7 +8,6 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArguments {
@@ -59,5 +58,14 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(qualifier);
         visitor.acceptList(arguments);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            qualifier = v.accept(qualifier);
+            v.acceptList(arguments);
+        }
+        v.endVisit(this, ctx);
     }
 }

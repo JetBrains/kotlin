@@ -12,4 +12,10 @@ public class JsEmpty extends SourceInfoAwareJsNode implements JsStatement {
     public void accept(JsVisitor v) {
         v.visitEmpty(this);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        v.visit(this, ctx);
+        v.endVisit(this, ctx);
+    }
 }

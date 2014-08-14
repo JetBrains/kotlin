@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * The context in which a JsNode visitation occurs. This represents the set of
  * possible operations a JsVisitor subclass can perform on the currently visited
@@ -23,4 +25,7 @@ public interface JsContext {
   void removeMe();
 
   void replaceMe(JsNode node);
+
+  @Nullable
+  JsNode getCurrentNode();
 }

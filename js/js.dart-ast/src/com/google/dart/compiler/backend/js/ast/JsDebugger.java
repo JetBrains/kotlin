@@ -20,4 +20,10 @@ public class JsDebugger extends SourceInfoAwareJsNode implements JsStatement {
     public void acceptChildren(JsVisitor visitor) {
 
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        v.visit(this, ctx);
+        v.endVisit(this, ctx);
+    }
 }

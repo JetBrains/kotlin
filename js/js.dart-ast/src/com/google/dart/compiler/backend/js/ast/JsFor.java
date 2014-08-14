@@ -95,4 +95,27 @@ public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
         }
         visitor.accept(body);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            assert (!(initExpression != null && initVars != null));
+
+            if (initExpression != null) {
+                initExpression = v.accept(initExpression);
+            } else if (initVars != null) {
+                initVars = v.accept(initVars);
+            }
+
+            if (condition != null) {
+                condition = v.accept(condition);
+            }
+
+            if (incrementExpression != null) {
+                incrementExpression = v.accept(incrementExpression);
+            }
+            body = v.acceptStatement(body);
+        }
+        v.endVisit(this, ctx);
+    }
 }

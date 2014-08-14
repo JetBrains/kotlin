@@ -46,4 +46,13 @@ public final class JsArrayAccess extends JsExpressionImpl {
         visitor.accept(arrayExpression);
         visitor.accept(indexExpression);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            arrayExpression = v.accept(arrayExpression);
+            indexExpression = v.accept(indexExpression);
+        }
+        v.endVisit(this, ctx);
+    }
 }

@@ -45,4 +45,13 @@ public class JsWhile extends SourceInfoAwareJsNode implements JsStatement {
         visitor.accept(condition);
         visitor.accept(body);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            condition = v.accept(condition);
+            body = v.acceptStatement(body);
+        }
+        v.endVisit(this, ctx);
+    }
 }

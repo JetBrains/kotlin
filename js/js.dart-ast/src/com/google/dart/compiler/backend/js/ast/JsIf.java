@@ -63,4 +63,16 @@ public final class JsIf extends SourceInfoAwareJsNode implements JsStatement {
             visitor.accept(elseStatement);
         }
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            ifExpression = v.accept(ifExpression);
+            thenStatement = v.acceptStatement(thenStatement);
+            if (elseStatement != null) {
+                elseStatement = v.acceptStatement(elseStatement);
+            }
+        }
+        v.endVisit(this, ctx);
+    }
 }

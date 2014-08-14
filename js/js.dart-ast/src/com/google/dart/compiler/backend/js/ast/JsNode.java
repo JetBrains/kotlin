@@ -27,4 +27,12 @@ public interface JsNode {
     void setSource(Object info);
 
     JsNode source(Object info);
+
+    /**
+     * Causes this object to have the visitor visit itself and its children.
+     *
+     * @param visitor the visitor that should traverse this node
+     * @param ctx the context of an existing traversal
+     */
+    void traverse(JsVisitorWithContext visitor, JsContext ctx);
 }

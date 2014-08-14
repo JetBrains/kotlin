@@ -12,4 +12,10 @@ public final class JsNullLiteral extends JsLiteral.JsValueLiteral {
     public void accept(JsVisitor v) {
         v.visitNull(this);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        v.visit(this, ctx);
+        v.endVisit(this, ctx);
+    }
 }

@@ -26,24 +26,36 @@ public abstract class JsLiteral extends JsExpressionImpl {
         public void accept(JsVisitor v) {
             v.visitThis(this);
         }
+
+        @Override
+        public void traverse(JsVisitorWithContext v, JsContext ctx) {
+            v.visit(this, ctx);
+            v.endVisit(this, ctx);
+        }
     }
 
     public static final class JsBooleanLiteral extends JsValueLiteral {
-      private final boolean value;
+        private final boolean value;
 
-      // Should be interned by JsProgram
-      private JsBooleanLiteral(boolean value) {
+        // Should be interned by JsProgram
+        private JsBooleanLiteral(boolean value) {
         this.value = value;
       }
 
-      public boolean getValue() {
+        public boolean getValue() {
         return value;
       }
 
-      @Override
-      public void accept(JsVisitor v) {
+        @Override
+        public void accept(JsVisitor v) {
         v.visitBoolean(this);
       }
+
+        @Override
+        public void traverse(JsVisitorWithContext v, JsContext ctx) {
+            v.visit(this, ctx);
+            v.endVisit(this, ctx);
+        }
     }
 
     /**

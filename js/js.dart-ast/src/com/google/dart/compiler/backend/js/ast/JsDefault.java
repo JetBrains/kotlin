@@ -12,4 +12,12 @@ public final class JsDefault extends JsSwitchMember {
     public void accept(JsVisitor v) {
         v.visitDefault(this);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            v.acceptStatementList(statements);
+        }
+        v.endVisit(this, ctx);
+    }
 }

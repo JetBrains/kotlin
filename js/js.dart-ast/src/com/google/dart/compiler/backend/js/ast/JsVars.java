@@ -88,6 +88,16 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
                 visitor.accept(initExpression);
             }
         }
+
+        @Override
+        public void traverse(JsVisitorWithContext v, JsContext ctx) {
+            if (v.visit(this, ctx)) {
+                if (initExpression != null) {
+                    initExpression = v.accept(initExpression);
+                }
+            }
+            v.endVisit(this, ctx);
+        }
     }
 
     public void add(JsVar var) {
@@ -125,5 +135,13 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
     @Override
     public void acceptChildren(JsVisitor visitor) {
         visitor.acceptWithInsertRemove(vars);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            v.acceptList(vars);
+        }
+        v.endVisit(this, ctx);
     }
 }

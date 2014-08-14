@@ -32,4 +32,13 @@ public final class JsCase extends JsSwitchMember {
         visitor.accept(caseExpression);
         super.acceptChildren(visitor);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            caseExpression = v.accept(caseExpression);
+            v.acceptStatementList(statements);
+        }
+        v.endVisit(this, ctx);
+    }
 }

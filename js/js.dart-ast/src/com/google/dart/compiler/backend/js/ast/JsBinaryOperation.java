@@ -48,4 +48,17 @@ public final class JsBinaryOperation extends JsExpressionImpl {
         }
         visitor.accept(arg2);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            if (op.isAssignment()) {
+                arg1 = v.acceptLvalue(arg1);
+            } else {
+                arg1 = v.accept(arg1);
+            }
+            arg2 = v.accept(arg2);
+        }
+        v.endVisit(this, ctx);
+    }
 }

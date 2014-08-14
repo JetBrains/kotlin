@@ -17,4 +17,12 @@ public final class JsPrefixOperation extends JsUnaryOperation {
     public void accept(JsVisitor v) {
         v.visitPrefixOperation(this);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            super.traverse(v, ctx);
+        }
+        v.endVisit(this, ctx);
+    }
 }

@@ -44,4 +44,13 @@ public class JsPropertyInitializer extends SourceInfoAwareJsNode {
         visitor.accept(labelExpr);
         visitor.accept(valueExpr);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            labelExpr = v.accept(labelExpr);
+            valueExpr = v.accept(valueExpr);
+        }
+        v.endVisit(this, ctx);
+    }
 }

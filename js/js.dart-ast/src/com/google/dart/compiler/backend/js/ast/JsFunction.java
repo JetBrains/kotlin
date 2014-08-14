@@ -76,7 +76,16 @@ public final class JsFunction extends JsLiteral implements HasName {
 
     @Override
     public void acceptChildren(JsVisitor visitor) {
-        visitor.acceptWithInsertRemove(params);
+        visitor.acceptWithInsertRemove(getParameters());
         visitor.accept(body);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            v.acceptList(getParameters());
+            body = v.accept(body);
+        }
+        v.endVisit(this, ctx);
     }
 }

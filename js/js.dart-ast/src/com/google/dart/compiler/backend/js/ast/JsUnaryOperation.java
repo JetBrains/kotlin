@@ -43,4 +43,17 @@ public abstract class JsUnaryOperation extends JsExpressionImpl {
             visitor.accept(arg);
         }
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (op.isModifying()) {
+      /*
+       * The delete operator is practically like an assignment of undefined, so for practical
+       * purposes we're treating it as an lvalue.
+       */
+            arg = v.acceptLvalue(arg);
+        } else {
+            arg = v.accept(arg);
+        }
+    }
 }

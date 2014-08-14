@@ -7,8 +7,6 @@ package com.google.dart.compiler.backend.js.ast;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,5 +53,13 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     @Override
     public void acceptChildren(JsVisitor visitor) {
         visitor.acceptWithInsertRemove(statements);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            v.acceptStatementList(statements);
+        }
+        v.endVisit(this, ctx);
     }
 }

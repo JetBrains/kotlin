@@ -36,4 +36,14 @@ public final class JsReturn extends SourceInfoAwareJsNode implements JsStatement
             visitor.accept(expression);
         }
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            if (expression != null) {
+                expression = v.accept(expression);
+            }
+        }
+        v.endVisit(this, ctx);
+    }
 }

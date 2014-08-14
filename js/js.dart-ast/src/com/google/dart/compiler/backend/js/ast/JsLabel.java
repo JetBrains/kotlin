@@ -50,4 +50,12 @@ public class JsLabel extends SourceInfoAwareJsNode implements JsStatement, HasNa
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(statement);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            statement = v.acceptStatement(statement);
+        }
+        v.endVisit(this, ctx);
+    }
 }

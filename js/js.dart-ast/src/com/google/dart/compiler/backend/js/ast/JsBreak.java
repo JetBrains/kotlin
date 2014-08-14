@@ -20,4 +20,10 @@ public final class JsBreak extends JsContinue {
     public void accept(JsVisitor v) {
         v.visitBreak(this);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        v.visit(this, ctx);
+        v.endVisit(this, ctx);
+    }
 }

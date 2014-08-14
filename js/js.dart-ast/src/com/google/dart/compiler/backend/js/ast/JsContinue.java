@@ -26,4 +26,10 @@ public class JsContinue extends SourceInfoAwareJsNode implements JsStatement {
     public void accept(JsVisitor v) {
         v.visitContinue(this);
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        v.visit(this, ctx);
+        v.endVisit(this, ctx);
+    }
 }
