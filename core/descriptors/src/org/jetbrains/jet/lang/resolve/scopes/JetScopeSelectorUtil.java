@@ -16,15 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 public class JetScopeSelectorUtil {
     private JetScopeSelectorUtil() {
@@ -47,7 +44,7 @@ public class JetScopeSelectorUtil {
 
     @NotNull
     public static <D extends DeclarationDescriptor> Collection<D> collect(Collection<JetScope> scopes, ScopeByNameMultiSelector<D> selector, Name name) {
-        Set<D> descriptors = Sets.newHashSet();
+        Set<D> descriptors = new HashSet<D>();
 
         for (JetScope scope : scopes) {
             descriptors.addAll(selector.get(scope, name));
@@ -58,7 +55,7 @@ public class JetScopeSelectorUtil {
 
     @NotNull
     public static <D extends DeclarationDescriptor> Collection<D> collect(Collection<JetScope> scopes, ScopeDescriptorSelector<D> selector) {
-        Set<D> descriptors = Sets.newHashSet();
+        Set<D> descriptors = new HashSet<D>();
 
         for (JetScope scope : scopes) {
             descriptors.addAll(selector.get(scope));
@@ -146,8 +143,7 @@ public class JetScopeSelectorUtil {
     ) {
         if (scopes.length == 0) return Collections.emptySet();
 
-        Set<D> descriptors = Sets.newLinkedHashSet();
-
+        Set<D> descriptors = new LinkedHashSet<D>();
         for (JetScope jetScope : scopes) {
             descriptors.addAll(descriptorsSelector.get(jetScope, name));
         }

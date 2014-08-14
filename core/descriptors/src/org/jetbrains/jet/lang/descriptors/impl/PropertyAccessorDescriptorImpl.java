@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -25,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -144,7 +144,8 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     @NotNull
     protected Set<PropertyAccessorDescriptor> getOverriddenDescriptors(boolean isGetter) {
         Set<? extends PropertyDescriptor> overriddenProperties = getCorrespondingProperty().getOverriddenDescriptors();
-        Set<PropertyAccessorDescriptor> overriddenAccessors = Sets.newLinkedHashSet(); // LinkedHashSet for determinism
+        // LinkedHashSet for determinism
+        Set<PropertyAccessorDescriptor> overriddenAccessors = new LinkedHashSet<PropertyAccessorDescriptor>();
         for (PropertyDescriptor overriddenProperty : overriddenProperties) {
             PropertyAccessorDescriptor accessorDescriptor = isGetter ? overriddenProperty.getGetter() : overriddenProperty.getSetter();
             if (accessorDescriptor != null) {

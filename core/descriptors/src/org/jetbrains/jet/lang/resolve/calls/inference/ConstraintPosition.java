@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.collect.Maps;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ConstraintPosition {
@@ -31,8 +31,8 @@ public class ConstraintPosition {
     public static final ConstraintPosition FROM_COMPLETER = new ConstraintPosition("FROM_COMPLETER", true);
     public static final ConstraintPosition SPECIAL = new ConstraintPosition("SPECIAL", true);
 
-    private static final Map<Integer, ConstraintPosition> valueParameterPositions = Maps.newHashMap();
-    private static final Map<Integer, ConstraintPosition> typeBoundPositions = Maps.newHashMap();
+    private static final Map<Integer, ConstraintPosition> valueParameterPositions = new HashMap<Integer, ConstraintPosition>();
+    private static final Map<Integer, ConstraintPosition> typeBoundPositions = new HashMap<Integer, ConstraintPosition>();
 
     public static ConstraintPosition getValueParameterPosition(int index) {
         ConstraintPosition position = valueParameterPositions.get(index);

@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -30,10 +28,7 @@ import org.jetbrains.jet.lang.types.checker.TypingConstraints;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.UtilsPackage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE;
@@ -47,8 +42,9 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         SUB_TYPE, EQUAL
     }
 
-    private final Map<TypeParameterDescriptor, TypeBoundsImpl> typeParameterBounds = Maps.newLinkedHashMap();
-    private final Set<ConstraintPosition> errorConstraintPositions = Sets.newHashSet();
+    private final Map<TypeParameterDescriptor, TypeBoundsImpl> typeParameterBounds =
+            new LinkedHashMap<TypeParameterDescriptor, TypeBoundsImpl>();
+    private final Set<ConstraintPosition> errorConstraintPositions = new HashSet<ConstraintPosition>();
     private boolean hasErrorInConstrainingTypes;
 
     private final ConstraintSystemStatus constraintSystemStatus = new ConstraintSystemStatus() {
@@ -123,7 +119,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @NotNull Map<TypeParameterDescriptor, TypeBoundsImpl> typeParameterBounds,
             @NotNull Function1<TypeParameterDescriptor, TypeProjection> getDefaultTypeProjection
     ) {
-        Map<TypeParameterDescriptor, TypeProjection> substitutionContext = Maps.newHashMap();
+        Map<TypeParameterDescriptor, TypeProjection> substitutionContext =
+                UtilsPackage.newHashMapWithExpectedSize(typeParameterBounds.size());
         for (Map.Entry<TypeParameterDescriptor, TypeBoundsImpl> entry : typeParameterBounds.entrySet()) {
             TypeParameterDescriptor typeParameter = entry.getKey();
             TypeBounds typeBounds = entry.getValue();
@@ -221,12 +218,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @NotNull
-    public ConstraintSystem filterConstraintsOut(@NotNull ConstraintPosition... excludePositions) {
-        final Set<ConstraintPosition> positions = Sets.newHashSet(excludePositions);
+    public ConstraintSystem filterConstraintsOut(@NotNull final ConstraintPosition excludePosition) {
         return filterConstraints(new Function1<ConstraintPosition, Boolean>() {
             @Override
             public Boolean invoke(ConstraintPosition constraintPosition) {
-                return !positions.contains(constraintPosition);
+                return !excludePosition.equals(constraintPosition);
             }
         });
     }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.renderer;
 
-import com.google.common.collect.Sets;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -114,7 +113,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.debugMode = debugMode;
         this.textFormat = textFormat;
         this.includePropertyConstant = includePropertyConstant;
-        this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
+        this.excludedAnnotationClasses = new HashSet<FqName>(excludedAnnotationClasses);
         this.prettyFunctionTypes = prettyFunctionTypes;
         this.uninferredTypeParameterAsName = uninferredTypeParameterAsName;
         this.includeSynthesizedParameterNames = includeSynthesizedParameterNames;

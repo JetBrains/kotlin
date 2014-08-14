@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import kotlin.Unit;
@@ -36,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.DFS;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -138,7 +137,7 @@ public class TypeUtils {
     }
 
     public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
-        return intersect(JetTypeChecker.DEFAULT, Sets.newLinkedHashSet(Arrays.asList(typeA, typeB))) == null;
+        return intersect(JetTypeChecker.DEFAULT, new LinkedHashSet<JetType>(Arrays.asList(typeA, typeB))) == null;
     }
 
     @Nullable
@@ -237,7 +236,7 @@ public class TypeUtils {
 
         private static boolean unify(JetType withParameters, JetType expected) {
             // T -> how T is used
-            final Map<TypeParameterDescriptor, Variance> parameters = Maps.newHashMap();
+            final Map<TypeParameterDescriptor, Variance> parameters = new HashMap<TypeParameterDescriptor, Variance>();
             Function1<TypeParameterUsage, Unit> processor = new Function1<TypeParameterUsage, Unit>() {
                 @Override
                 public Unit invoke(TypeParameterUsage parameterUsage) {
@@ -469,7 +468,7 @@ public class TypeUtils {
             throw new IllegalArgumentException("type parameter counts do not match: " + clazz + ", " + projections);
         }
 
-        Map<TypeConstructor, TypeProjection> substitutions = Maps.newHashMap();
+        Map<TypeConstructor, TypeProjection> substitutions = UtilsPackage.newHashMapWithExpectedSize(clazzTypeParameters.size());
 
         for (int i = 0; i < clazzTypeParameters.size(); ++i) {
             TypeConstructor typeConstructor = clazzTypeParameters.get(i).getTypeConstructor();
@@ -547,7 +546,7 @@ public class TypeUtils {
 
     @NotNull
     private static Set<JetType> getIntersectionOfSupertypes(@NotNull Collection<JetType> types) {
-        Set<JetType> upperBounds = Sets.newHashSet();
+        Set<JetType> upperBounds = new HashSet<JetType>();
         for (JetType type : types) {
             Collection<JetType> supertypes = type.getConstructor().getSupertypes();
             if (upperBounds.isEmpty()) {
@@ -654,7 +653,7 @@ public class TypeUtils {
     }
 
     public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
-        final Set<TypeConstructor> constructors = Sets.newHashSet();
+        final Set<TypeConstructor> constructors = UtilsPackage.newHashSetWithExpectedSize(typeParameterDescriptors.size());
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
             constructors.add(typeParameterDescriptor.getTypeConstructor());
         }

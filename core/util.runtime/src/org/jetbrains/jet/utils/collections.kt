@@ -18,6 +18,8 @@ package org.jetbrains.jet.utils
 
 import java.util.LinkedHashMap
 import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
 
 public fun <K, V> Stream<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     val map = LinkedHashMap<K, V>()
@@ -83,4 +85,12 @@ public fun <T: Any> emptyOrSingletonList(item: T?): List<T> = if (item == null) 
 
 public fun <T: Any> MutableCollection<T>.addIfNotNull(t: T?) {
     if (t != null) add(t)
+}
+
+public fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> {
+    return HashMap(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
+}
+
+public fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> {
+    return HashSet(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
 }

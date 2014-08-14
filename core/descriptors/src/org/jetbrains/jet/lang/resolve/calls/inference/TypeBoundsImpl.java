@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.collect.Sets;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -34,7 +33,7 @@ import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKin
 public class TypeBoundsImpl implements TypeBounds {
     private final TypeParameterDescriptor typeVariable;
     private final Variance varianceOfPosition;
-    private final Set<Bound> bounds = Sets.newLinkedHashSet();
+    private final Set<Bound> bounds = new LinkedHashSet<Bound>();
 
     private Collection<JetType> resultValues;
 
@@ -88,7 +87,7 @@ public class TypeBoundsImpl implements TypeBounds {
             @NotNull BoundKind kind,
             @Nullable Collection<JetType> errorValues
     ) {
-        Set<JetType> result = Sets.newLinkedHashSet();
+        Set<JetType> result = new LinkedHashSet<JetType>();
         for (Bound bound : bounds) {
             if (bound.kind == kind) {
                 if (!ErrorUtils.containsErrorType(bound.type)) {
@@ -142,7 +141,7 @@ public class TypeBoundsImpl implements TypeBounds {
 
     @NotNull
     private Collection<JetType> computeValues() {
-        Set<JetType> values = Sets.newLinkedHashSet();
+        Set<JetType> values = new LinkedHashSet<JetType>();
         if (bounds.isEmpty()) {
             return Collections.emptyList();
         }

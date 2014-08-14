@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.Sets;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -250,7 +249,7 @@ public class OverridingUtil {
             @NotNull ClassDescriptor current,
             @NotNull DescriptorSink sink
     ) {
-        Collection<CallableMemberDescriptor> notOverridden = Sets.newLinkedHashSet(membersFromSupertypes);
+        Collection<CallableMemberDescriptor> notOverridden = new LinkedHashSet<CallableMemberDescriptor>(membersFromSupertypes);
 
         for (CallableMemberDescriptor fromCurrent : membersFromCurrent) {
             Collection<CallableMemberDescriptor> bound =

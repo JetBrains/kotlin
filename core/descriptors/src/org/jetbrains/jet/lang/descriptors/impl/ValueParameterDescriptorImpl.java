@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -26,17 +25,16 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
     private Boolean hasDefaultValue;
     private final boolean declaresDefaultValue;
-
     private final JetType varargElementType;
     private final int index;
     private final ValueParameterDescriptor original;
-
-    private final Set<ValueParameterDescriptor> overriddenDescriptors = Sets.newLinkedHashSet(); // Linked is essential
+    private final Set<ValueParameterDescriptor> overriddenDescriptors = new LinkedHashSet<ValueParameterDescriptor>(); // Linked is essential
     private boolean overriddenDescriptorsLocked = false;
     private final Set<? extends ValueParameterDescriptor> readOnlyOverriddenDescriptors = Collections.unmodifiableSet(overriddenDescriptors);
 

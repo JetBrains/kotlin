@@ -16,17 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.scopes.JetScopeSelectorUtil.*;
 
@@ -106,7 +102,7 @@ public class ChainedScope implements JetScope {
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
-            allDescriptors = Sets.newHashSet();
+            allDescriptors = new HashSet<DeclarationDescriptor>();
             for (JetScope scope : scopeChain) {
                 allDescriptors.addAll(scope.getAllDescriptors());
             }
