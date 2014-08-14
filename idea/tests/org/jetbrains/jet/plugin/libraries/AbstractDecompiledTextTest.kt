@@ -34,8 +34,7 @@ public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureT
     public fun doTest(path: String) {
         val classFile = NavigateToDecompiledLibraryTest.getClassFile("test", getTestName(false), myModule!!)
         val clsFileForClassFile = PsiManager.getInstance(getProject()!!).findFile(classFile)
-        assertNotNull(clsFileForClassFile)
-        assertTrue("Expecting java class file, was: " + clsFileForClassFile.javaClass, clsFileForClassFile is ClsFileImpl)
+        assertTrue("Expecting java class file, was: " + clsFileForClassFile!!.javaClass, clsFileForClassFile is ClsFileImpl)
         val decompiledPsiFile = (clsFileForClassFile as ClsFileImpl).getDecompiledPsiFile()
         assertNotNull(decompiledPsiFile)
         assertSameLinesWithFile(path.substring(0, path.length - 1) + ".expected.kt", decompiledPsiFile!!.getText())

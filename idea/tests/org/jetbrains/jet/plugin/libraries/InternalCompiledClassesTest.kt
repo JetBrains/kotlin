@@ -59,7 +59,7 @@ public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() 
     fun testTraitImplClassIsVisibleAsJavaClass() {
         val project = getProject()!!
         doTest("trait impl", isSyntheticClassOfKind(TRAIT_IMPL)) {
-            val psiFile = PsiManager.getInstance(project).findFile(this)
+            val psiFile = PsiManager.getInstance(project).findFile(this)!!
             Assert.assertTrue("Should not be kotlin file",
                               psiFile !is JetClsFile)
             Assert.assertTrue("Should be java file, was ${psiFile.javaClass.getSimpleName()}",
