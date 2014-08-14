@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.resolve.name;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.List;
 
@@ -26,8 +26,7 @@ public final class FqName extends FqNameBase {
 
     @NotNull
     public static FqName fromSegments(@NotNull List<String> names) {
-        String fqName = StringUtil.join(names, ".");
-        return new FqName(fqName);
+        return new FqName(UtilsPackage.join(names, "."));
     }
 
     public static final FqName ROOT = new FqName("");

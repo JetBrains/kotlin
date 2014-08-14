@@ -18,7 +18,6 @@ package org.jetbrains.jet.renderer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -408,7 +408,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         StringBuilder sb = new StringBuilder();
         sb.append(renderType(annotation.getType()));
         if (verbose) {
-            sb.append("(").append(StringUtil.join(renderAndSortAnnotationArguments(annotation), ", ")).append(")");
+            sb.append("(").append(UtilsPackage.join(renderAndSortAnnotationArguments(annotation), ", ")).append(")");
         }
         return sb.toString();
     }
@@ -436,15 +436,15 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
                     @Override
                     public String visitArrayValue(ArrayValue value, Void data) {
-                        List<CompileTimeConstant<?>> elements = value.getValue();
-                        if (elements.isEmpty()) return "{}";
-                        List<String> renderedElements = KotlinPackage.map(elements, new Function1<CompileTimeConstant<?>, String>() {
-                            @Override
-                            public String invoke(CompileTimeConstant<?> constant) {
-                                return renderConstant(constant);
-                            }
-                        });
-                        return "{" + StringUtil.join(renderedElements, ", ") + "}";
+                        List<String> renderedElements =
+                                KotlinPackage.map(value.getValue(),
+                                                  new Function1<CompileTimeConstant<?>, String>() {
+                                                      @Override
+                                                      public String invoke(CompileTimeConstant<?> constant) {
+                                                          return renderConstant(constant);
+                                                      }
+                                                  });
+                        return "{" + UtilsPackage.join(renderedElements, ", ") + "}";
                     }
 
                     @Override
@@ -681,7 +681,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
         if (!upperBoundStrings.isEmpty()) {
             builder.append(" ").append(renderKeyword("where")).append(" ");
-            builder.append(StringUtil.join(upperBoundStrings, ", "));
+            builder.append(UtilsPackage.join(upperBoundStrings, ", "));
         }
     }
 
