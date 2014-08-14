@@ -211,8 +211,15 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderClassObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
         if (renderClassObjectName) {
-            if (!startFromName) renderSpaceIfNeeded(builder);
-            builder.append("<class object>");
+            if (startFromName) {
+                builder.append("class object");
+            }
+            renderSpaceIfNeeded(builder);
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (containingDeclaration != null) {
+                builder.append("of ");
+                builder.append(renderName(containingDeclaration.getName()));
+            }
         }
         if (verbose) {
             if (!startFromName) renderSpaceIfNeeded(builder);
