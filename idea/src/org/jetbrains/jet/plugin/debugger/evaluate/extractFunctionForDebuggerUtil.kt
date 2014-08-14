@@ -42,6 +42,7 @@ import org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.generateDeclaration
+import org.jetbrains.jet.lang.psi.psiUtil.replaced
 
 fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
@@ -171,19 +172,19 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
     return newDebugExpression as JetExpression
 }
 
-private fun createRunFunction(body: JetExpression): JetCallExpression {
-    val callExpression = JetPsiFactory(body).createExpression("run { \n${body.getText()} \n}") as JetCallExpression
-    val typeArguments = InsertExplicitTypeArguments.createTypeArguments(callExpression)
+private fun replaceByRunFunction(expression: JetExpression): JetCallExpression {
+    val callExpression = JetPsiFactory(expression).createExpression("run { \n${expression.getText()} \n}") as JetCallExpression
+    val replaced = expression.replaced(callExpression)
+    val typeArguments = InsertExplicitTypeArguments.createTypeArguments(replaced)
     if (typeArguments?.getArguments()?.isNotEmpty() ?: false) {
-        val calleeExpression = callExpression.getCalleeExpression()
-        callExpression.addAfter(typeArguments!!, calleeExpression)
+        val calleeExpression = replaced.getCalleeExpression()
+        replaced.addAfter(typeArguments!!, calleeExpression)
     }
-    return callExpression
+    return replaced
 }
 
 private fun wrapInRunFun(expression: JetExpression): PsiElement? {
-    val newBody = createRunFunction(expression)
-    val replacedBody = (expression.replace(newBody) as JetCallExpression)
+    val replacedBody = replaceByRunFunction(expression)
 
     // Increment modification tracker to clear ResolveCache after changes in function body
     (PsiManager.getInstance(expression.getProject()).getModificationTracker() as PsiModificationTrackerImpl).incCounter()
