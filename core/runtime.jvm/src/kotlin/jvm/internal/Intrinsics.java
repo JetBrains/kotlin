@@ -55,19 +55,23 @@ public class Intrinsics {
 
     public static void checkParameterIsNotNull(Object value, String paramName) {
         if (value == null) {
-            StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-
-            // #0 is Thread.getStackTrace(), #1 is Intrinsics.checkParameterIsNotNull, #2 is our caller
-            StackTraceElement caller = stackTraceElements[2];
-            String className = caller.getClassName();
-            String methodName = caller.getMethodName();
-
-            IllegalArgumentException exception =
-                    new IllegalArgumentException("Parameter specified as non-null is null: " +
-                                                 "method " + className + "." + methodName +
-                                                 ", parameter " + paramName);
-            throw sanitizeStackTrace(exception);
+            throwParameterIsNullException(paramName);
         }
+    }
+
+    private static void throwParameterIsNullException(String paramName) {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+
+        // #0 is Thread.getStackTrace(), #1 is Intrinsics.checkParameterIsNotNull, #2 is our caller
+        StackTraceElement caller = stackTraceElements[2];
+        String className = caller.getClassName();
+        String methodName = caller.getMethodName();
+
+        IllegalArgumentException exception =
+                new IllegalArgumentException("Parameter specified as non-null is null: " +
+                                             "method " + className + "." + methodName +
+                                             ", parameter " + paramName);
+        throw sanitizeStackTrace(exception);
     }
 
     public static int compare(long thisVal, long anotherVal) {
@@ -87,7 +91,7 @@ public class Intrinsics {
     }
 
     private static final Set<String> METHOD_NAMES_TO_SKIP = new HashSet<String>(Arrays.asList(
-            "throwNpe", "checkReturnedValueIsNotNull", "checkFieldIsNotNull", "checkParameterIsNotNull"
+            "throwNpe", "checkReturnedValueIsNotNull", "checkFieldIsNotNull", "checkParameterIsNotNull", "throwParameterIsNullException"
     ));
 
     public static <T extends Throwable> T sanitizeStackTrace(T throwable) {
