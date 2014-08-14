@@ -19,7 +19,8 @@ package org.jetbrains.jet.renderer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -435,17 +436,15 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
                     @Override
                     public String visitArrayValue(ArrayValue value, Void data) {
-                        return "{" +
-                               StringUtil.join(
-                                value.getValue(),
-                                new Function<CompileTimeConstant<?>, String>() {
-                                    @Override
-                                    public String fun(CompileTimeConstant<?> constant) {
-                                        return renderConstant(constant);
-                                    }
-                                },
-                                ", ") +
-                               "}";
+                        List<CompileTimeConstant<?>> elements = value.getValue();
+                        if (elements.isEmpty()) return "{}";
+                        List<String> renderedElements = KotlinPackage.map(elements, new Function1<CompileTimeConstant<?>, String>() {
+                            @Override
+                            public String invoke(CompileTimeConstant<?> constant) {
+                                return renderConstant(constant);
+                            }
+                        });
+                        return "{" + StringUtil.join(renderedElements, ", ") + "}";
                     }
 
                     @Override

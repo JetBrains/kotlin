@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicate;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -328,9 +328,9 @@ public class DescriptorUtils {
     @NotNull
     public static JetScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
         JetScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
-        return new FilteringScope(innerClassesScope, new Predicate<DeclarationDescriptor>() {
+        return new FilteringScope(innerClassesScope, new Function1<DeclarationDescriptor, Boolean>() {
             @Override
-            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+            public Boolean invoke(DeclarationDescriptor descriptor) {
                 return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
             }
         });

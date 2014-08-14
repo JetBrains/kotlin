@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -70,12 +70,11 @@ public interface Importer {
                 @NotNull DeclarationDescriptor descriptor,
                 @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
         ) {
-            final Collection<ClassDescriptor> kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(
-                    descriptor);
+            final Collection<ClassDescriptor> kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(descriptor);
             if (kotlinAnalogsForClassesInside.isEmpty()) return scope;
-            return new FilteringScope(scope, new Predicate<DeclarationDescriptor>() {
+            return new FilteringScope(scope, new Function1<DeclarationDescriptor, Boolean>() {
                 @Override
-                public boolean apply(DeclarationDescriptor descriptor) {
+                public Boolean invoke(DeclarationDescriptor descriptor) {
                     for (ClassDescriptor kotlinAnalog : kotlinAnalogsForClassesInside) {
                         if (kotlinAnalog.getName().equals(descriptor.getName())) {
                             return false;

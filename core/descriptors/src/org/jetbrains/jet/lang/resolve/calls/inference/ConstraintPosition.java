@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.util.Condition;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -65,9 +65,9 @@ public class ConstraintPosition {
         }
 
         private static boolean hasConstraint(@NotNull Collection<ConstraintPosition> positions, final boolean strong) {
-            return ContainerUtil.exists(positions, new Condition<ConstraintPosition>() {
+            return KotlinPackage.any(positions, new Function1<ConstraintPosition, Boolean>() {
                 @Override
-                public boolean value(ConstraintPosition constraintPosition) {
+                public Boolean invoke(ConstraintPosition constraintPosition) {
                     return constraintPosition.isStrong() == strong;
                 }
             });

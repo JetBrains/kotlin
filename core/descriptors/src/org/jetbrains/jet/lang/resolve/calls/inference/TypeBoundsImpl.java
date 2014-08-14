@@ -18,8 +18,9 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -113,12 +114,12 @@ public class TypeBoundsImpl implements TypeBounds {
     }
 
     @NotNull
-    public TypeBoundsImpl filter(@NotNull final Condition<ConstraintPosition> condition) {
+    public TypeBoundsImpl filter(@NotNull final Function1<ConstraintPosition, Boolean> condition) {
         TypeBoundsImpl result = new TypeBoundsImpl(typeVariable, varianceOfPosition);
-        result.bounds.addAll(ContainerUtil.filter(bounds, new Condition<Bound>() {
+        result.bounds.addAll(KotlinPackage.filter(bounds, new Function1<Bound, Boolean>() {
             @Override
-            public boolean value(Bound bound) {
-                return condition.value(bound.position);
+            public Boolean invoke(Bound bound) {
+                return condition.invoke(bound.position);
             }
         }));
         return result;
@@ -149,9 +150,9 @@ public class TypeBoundsImpl implements TypeBounds {
         if (bounds.isEmpty()) {
             return Collections.emptyList();
         }
-        boolean hasStrongBound = ContainerUtil.exists(bounds, new Condition<Bound>() {
+        boolean hasStrongBound = KotlinPackage.any(bounds, new Function1<Bound, Boolean>() {
             @Override
-            public boolean value(Bound bound) {
+            public Boolean invoke(Bound bound) {
                 return bound.position.isStrong();
             }
         });

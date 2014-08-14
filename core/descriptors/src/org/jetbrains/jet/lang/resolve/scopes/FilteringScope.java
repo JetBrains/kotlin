@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -29,10 +29,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class FilteringScope implements JetScope {
-    @NotNull private final JetScope workerScope;
-    @NotNull private final Predicate<DeclarationDescriptor> predicate;
+    private final JetScope workerScope;
+    private final Function1<DeclarationDescriptor, Boolean> predicate;
 
-    public FilteringScope(@NotNull JetScope workerScope, @NotNull Predicate<DeclarationDescriptor> predicate) {
+    public FilteringScope(@NotNull JetScope workerScope, @NotNull Function1<DeclarationDescriptor, Boolean> predicate) {
         this.workerScope = workerScope;
         this.predicate = predicate;
     }
@@ -40,7 +40,7 @@ public class FilteringScope implements JetScope {
     @NotNull
     @Override
     public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        return Collections2.filter(workerScope.getFunctions(name), predicate);
+        return KotlinPackage.filter(workerScope.getFunctions(name), predicate);
     }
 
     @NotNull
@@ -51,7 +51,7 @@ public class FilteringScope implements JetScope {
 
     @Nullable
     private <D extends DeclarationDescriptor> D filterDescriptor(@Nullable D descriptor) {
-        return descriptor != null && predicate.apply(descriptor) ? descriptor : null;
+        return descriptor != null && predicate.invoke(descriptor) ? descriptor : null;
     }
 
     @Nullable
@@ -68,7 +68,7 @@ public class FilteringScope implements JetScope {
     @NotNull
     @Override
     public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
-        return Collections2.filter(workerScope.getProperties(name), predicate);
+        return KotlinPackage.filter(workerScope.getProperties(name), predicate);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class FilteringScope implements JetScope {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return Collections2.filter(workerScope.getAllDescriptors(), predicate);
+        return KotlinPackage.filter(workerScope.getAllDescriptors(), predicate);
     }
 
     @NotNull
@@ -91,13 +91,13 @@ public class FilteringScope implements JetScope {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull Name labelName) {
-        return Collections2.filter(workerScope.getDeclarationsByLabel(labelName), predicate);
+        return KotlinPackage.filter(workerScope.getDeclarationsByLabel(labelName), predicate);
     }
 
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
-        return Collections2.filter(workerScope.getOwnDeclaredDescriptors(), predicate);
+        return KotlinPackage.filter(workerScope.getOwnDeclaredDescriptors(), predicate);
     }
 
     @TestOnly

@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.util.Processor;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -241,16 +239,16 @@ public class TypeUtils {
         private static boolean unify(JetType withParameters, JetType expected) {
             // T -> how T is used
             final Map<TypeParameterDescriptor, Variance> parameters = Maps.newHashMap();
-            Processor<TypeParameterUsage> processor = new Processor<TypeParameterUsage>() {
+            Function1<TypeParameterUsage, Unit> processor = new Function1<TypeParameterUsage, Unit>() {
                 @Override
-                public boolean process(TypeParameterUsage parameterUsage) {
+                public Unit invoke(TypeParameterUsage parameterUsage) {
                     Variance howTheTypeIsUsedBefore = parameters.get(parameterUsage.typeParameterDescriptor);
                     if (howTheTypeIsUsedBefore == null) {
                         howTheTypeIsUsedBefore = Variance.INVARIANT;
                     }
                     parameters.put(parameterUsage.typeParameterDescriptor,
                                    parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
-                    return true;
+                    return Unit.INSTANCE$;
                 }
             };
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
@@ -262,10 +260,10 @@ public class TypeUtils {
             return constraintSystem.getStatus().isSuccessful();
         }
 
-        private static void processAllTypeParameters(JetType type, Variance howThiTypeIsUsed, Processor<TypeParameterUsage> result) {
+        private static void processAllTypeParameters(JetType type, Variance howThisTypeIsUsed, Function1<TypeParameterUsage, Unit> result) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof TypeParameterDescriptor) {
-                result.process(new TypeParameterUsage((TypeParameterDescriptor)descriptor, howThiTypeIsUsed));
+                result.invoke(new TypeParameterUsage((TypeParameterDescriptor) descriptor, howThisTypeIsUsed));
             }
             for (TypeProjection projection : type.getArguments()) {
                 processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
@@ -490,14 +488,15 @@ public class TypeUtils {
     }
 
     public static boolean dependsOnTypeParameters(@NotNull JetType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
-        return dependsOnTypeConstructors(type, Collections2
-                .transform(typeParameters, new Function<TypeParameterDescriptor, TypeConstructor>() {
+        return dependsOnTypeConstructors(type, KotlinPackage.map(
+                typeParameters,
+                new Function1<TypeParameterDescriptor, TypeConstructor>() {
                     @Override
-                    public TypeConstructor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
-                        assert typeParameterDescriptor != null;
+                    public TypeConstructor invoke(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
                         return typeParameterDescriptor.getTypeConstructor();
                     }
-                }));
+                }
+        ));
     }
 
     public static boolean dependsOnTypeConstructors(@NotNull JetType type, @NotNull Collection<TypeConstructor> typeParameterConstructors) {
