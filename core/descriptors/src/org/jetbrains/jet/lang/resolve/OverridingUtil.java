@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import kotlin.Unit;
@@ -40,10 +39,10 @@ import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilit
 public class OverridingUtil {
 
     private static final List<ExternalOverridabilityCondition> EXTERNAL_CONDITIONS =
-            ContainerUtil.collect(ServiceLoader.load(
+            KotlinPackage.toList(ServiceLoader.load(
                     ExternalOverridabilityCondition.class,
-                    ExternalOverridabilityCondition.class.getClassLoader()).iterator()
-            );
+                    ExternalOverridabilityCondition.class.getClassLoader()
+            ));
 
     public static final OverridingUtil DEFAULT = new OverridingUtil(new JetTypeChecker.TypeConstructorEquality() {
         @Override

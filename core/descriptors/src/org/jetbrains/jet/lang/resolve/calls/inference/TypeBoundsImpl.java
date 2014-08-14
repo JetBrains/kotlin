@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -172,7 +172,7 @@ public class TypeBoundsImpl implements TypeBounds {
         if (tryPossibleAnswer(superTypeOfLowerBounds)) {
             return Collections.singleton(superTypeOfLowerBounds);
         }
-        ContainerUtil.addIfNotNull(superTypeOfLowerBounds, values);
+        UtilsPackage.addIfNotNull(values, superTypeOfLowerBounds);
 
         //todo
         //fun <T> foo(t: T, consumer: Consumer<T>): T
@@ -182,7 +182,7 @@ public class TypeBoundsImpl implements TypeBounds {
         if (tryPossibleAnswer(superTypeOfNumberLowerBounds)) {
             return Collections.singleton(superTypeOfNumberLowerBounds);
         }
-        ContainerUtil.addIfNotNull(superTypeOfNumberLowerBounds, values);
+        UtilsPackage.addIfNotNull(values, superTypeOfNumberLowerBounds);
 
         if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
             JetType superTypeOfAllLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(
