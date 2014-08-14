@@ -16,18 +16,19 @@
 
 package org.jetbrains.jet.renderer;
 
-import com.google.common.collect.ImmutableSet;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Set;
 
 public class DescriptorRendererBuilder {
     private boolean shortNames = false;
     private boolean withDefinedIn = true;
-    private Set<DescriptorRenderer.Modifier> modifiers = ImmutableSet.copyOf(DescriptorRenderer.Modifier.values());
+    private Set<DescriptorRenderer.Modifier> modifiers = EnumSet.allOf(DescriptorRenderer.Modifier.class);
     private boolean startFromName = false;
     private boolean debugMode = false;
     private boolean classWithPrimaryConstructor = false;
@@ -77,7 +78,7 @@ public class DescriptorRendererBuilder {
 
     @NotNull
     public DescriptorRendererBuilder setModifiers(DescriptorRenderer.Modifier... modifiers) {
-        return setModifiers(ImmutableSet.copyOf(modifiers));
+        return setModifiers(KotlinPackage.setOf(modifiers));
     }
 
     @NotNull

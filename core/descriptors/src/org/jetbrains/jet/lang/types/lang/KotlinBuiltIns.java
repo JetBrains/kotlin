@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.types.lang;
 
-import com.google.common.collect.ImmutableSet;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,7 +94,7 @@ public class KotlinBuiltIns {
     private final ModuleDescriptorImpl builtInsModule;
     private final BuiltinsPackageFragment builtinsPackageFragment;
 
-    private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
+    private final Set<ClassDescriptor> nonPhysicalClasses;
 
     private final Map<PrimitiveType, JetType> primitiveTypeToNullableJetType;
     private final Map<PrimitiveType, JetType> primitiveTypeToArrayJetType;
@@ -117,6 +116,8 @@ public class KotlinBuiltIns {
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
         jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
+
+        nonPhysicalClasses = new HashSet<ClassDescriptor>();
     }
 
     private void doInitialize() {
@@ -124,7 +125,7 @@ public class KotlinBuiltIns {
             makePrimitive(primitive);
         }
 
-        nonPhysicalClasses = computeNonPhysicalClasses();
+        computeNonPhysicalClasses();
     }
 
     private void makePrimitive(@NotNull PrimitiveType primitiveType) {
@@ -143,9 +144,8 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe cloneable = fqName("Cloneable");
         public final FqNameUnsafe suppress = fqName("suppress");
 
-        public final ImmutableSet<FqNameUnsafe> functionClasses = computeIndexedFqNames("Function", FUNCTION_TRAIT_COUNT);
-        public final ImmutableSet<FqNameUnsafe> extensionFunctionClasses =
-                computeIndexedFqNames("ExtensionFunction", FUNCTION_TRAIT_COUNT);
+        public final Set<FqNameUnsafe> functionClasses = computeIndexedFqNames("Function", FUNCTION_TRAIT_COUNT);
+        public final Set<FqNameUnsafe> extensionFunctionClasses = computeIndexedFqNames("ExtensionFunction", FUNCTION_TRAIT_COUNT);
 
         @NotNull
         private static FqNameUnsafe fqName(@NotNull String simpleName) {
@@ -153,12 +153,12 @@ public class KotlinBuiltIns {
         }
 
         @NotNull
-        private static ImmutableSet<FqNameUnsafe> computeIndexedFqNames(@NotNull String prefix, int count) {
-            ImmutableSet.Builder<FqNameUnsafe> builder = ImmutableSet.builder();
+        private static Set<FqNameUnsafe> computeIndexedFqNames(@NotNull String prefix, int count) {
+            Set<FqNameUnsafe> result = new HashSet<FqNameUnsafe>();
             for (int i = 0; i < count; i++) {
-                builder.add(fqName(prefix + i));
+                result.add(fqName(prefix + i));
             }
-            return builder.build();
+            return result;
         }
     }
 
@@ -260,7 +260,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public Set<DeclarationDescriptor> getIntegralRanges() {
-        return ImmutableSet.<DeclarationDescriptor>of(
+        return KotlinPackage.<DeclarationDescriptor>setOf(
                 getBuiltInClassByName("ByteRange"),
                 getBuiltInClassByName("ShortRange"),
                 getBuiltInClassByName("CharRange"),
@@ -454,13 +454,11 @@ public class KotlinBuiltIns {
      */
     @NotNull
     public Set<ClassDescriptor> getNonPhysicalClasses() {
-        return nonPhysicalClasses;
+        return Collections.unmodifiableSet(nonPhysicalClasses);
     }
 
-    @NotNull
-    private ImmutableSet<ClassDescriptor> computeNonPhysicalClasses() {
-        ImmutableSet.Builder<ClassDescriptor> nonPhysical = ImmutableSet.builder();
-        nonPhysical.add(
+    private void computeNonPhysicalClasses() {
+        nonPhysicalClasses.addAll(Arrays.asList(
                 getAny(),
                 getNothing(),
 
@@ -492,14 +490,12 @@ public class KotlinBuiltIns {
                 getComparable(),
                 getEnum(),
                 getArray()
-        );
+        ));
 
         for (PrimitiveType primitiveType : values()) {
-            nonPhysical.add(getPrimitiveClassDescriptor(primitiveType));
-            nonPhysical.add(getPrimitiveArrayClassDescriptor(primitiveType));
+            nonPhysicalClasses.add(getPrimitiveClassDescriptor(primitiveType));
+            nonPhysicalClasses.add(getPrimitiveArrayClassDescriptor(primitiveType));
         }
-
-        return nonPhysical.build();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -761,7 +757,7 @@ public class KotlinBuiltIns {
         return isTypeConstructorFqNameInSet(type, fqNames.extensionFunctionClasses);
     }
 
-    private static boolean isTypeConstructorFqNameInSet(@NotNull JetType type, @NotNull ImmutableSet<FqNameUnsafe> classes) {
+    private static boolean isTypeConstructorFqNameInSet(@NotNull JetType type, @NotNull Set<FqNameUnsafe> classes) {
         ClassifierDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
 
         if (declarationDescriptor == null) return false;
