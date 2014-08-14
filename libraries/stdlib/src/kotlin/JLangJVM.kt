@@ -24,7 +24,7 @@ public annotation class throws(public vararg val exceptionClasses: Class<out Thr
 [Intrinsic("kotlin.javaClass.property")] public val <T: Any> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
 
-[Intrinsic("kotlin.javaClass.function")] public fun <reified T> javaClass(): Class<T> = null as Class<T>
+[Intrinsic("kotlin.javaClass.function")] public fun <reified T: Any> javaClass(): Class<T> = null as Class<T>
 
 public inline fun <R> synchronized(lock: Any, [inlineOptions(ONLY_LOCAL_RETURN)] block: () -> R): R {
     monitorEnter(lock)
