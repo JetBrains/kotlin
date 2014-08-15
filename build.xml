@@ -699,18 +699,48 @@
             <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
             <fileset dir="${output}/classes/stdlib"/>
 
-            <!-- icons, etc. -->
-            <fileset dir="idea/resources"/>
-            <!-- plugin.xml and friends -->
-            <fileset dir="idea/src" includes="META-INF/**"/>
-        </jar>
-        <sleep seconds="1"/>
-        <jar jarfile="${output}/kotlin-for-upsource.jar">
-            <zipfileset src="${output}/kotlin-for-upsource0.jar">
-                <exclude name="javax/**/*.java"/>
-            </zipfileset>
-        </jar>
-        <delete file="${output}/kotlin-for-upsource0.jar"/>
+        <!-- icons, etc. -->
+        <fileset dir="idea/resources"/>
+        <!-- plugin.xml and friends -->
+        <fileset dir="idea/src" includes="META-INF/**"/>
+      </jar>
+      <sleep seconds="1"/>
+      <jar jarfile="${output}/kotlin-for-upsource.jar">
+        <zipfileset src="${output}/kotlin-for-upsource0.jar">
+          <exclude name="javax/**/*.java"/>
+        </zipfileset>
+      </jar>
+      <delete file="${output}/kotlin-for-upsource0.jar"/>
+
+       <!--sources-->
+      <jar jarfile="${output}/kotlin-for-upsource-sources.jar">
+        <fileset dir="compiler/frontend/src"/>
+        <fileset dir="core/descriptors/src"/>
+        <fileset dir="core/descriptor.loader.java/src"/>
+        <fileset dir="core/serialization/src"/>
+        <fileset dir="core/serialization.java/src"/>
+        <fileset dir="compiler/frontend.java/src"/>
+        <fileset dir="compiler/backend-common/src"/>
+        <fileset dir="compiler/backend/src"/>
+        <fileset dir="compiler/cli/src"/>
+        <fileset dir="j2k/src"/>
+        <fileset dir="compiler/util/src"/>
+        <fileset dir="core/util.runtime/src"/>
+        <fileset dir="compiler/jet.as.java.psi/src"/>
+        <fileset dir="compiler/builtins-serializer"/>
+        <fileset dir="js/js.dart-ast/src"/>
+        <fileset dir="js/js.translator/src"/>
+        <fileset dir="js/js.frontend/src"/>
+        <fileset dir="idea/idea-analysis/src"/>
+
+        <manifest>
+          <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+          <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+          <attribute name="Implementation-Version" value="${build.number}"/>
+        </manifest>
+      </jar>
+
     </target>
 
     <target name="build-artifacts" depends="zip,kotlin-for-upsource"/>
