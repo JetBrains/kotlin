@@ -1,0 +1,14 @@
+package test
+
+public trait AddNullabilitySameGenericType1 {
+
+    public trait Sub : test.AddNullabilitySameGenericType1.Super {
+        public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
+        public abstract override /*1*/ fun foo(): kotlin.MutableList<kotlin.String>
+    }
+
+    public trait Super {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(): kotlin.MutableList<kotlin.String>
+    }
+}

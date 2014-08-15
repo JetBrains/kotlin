@@ -28,25 +28,14 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class DescriptorValidator {
 
-    public static void validate(DeclarationDescriptor... descriptors) {
-        validate(ValidationVisitor.FORBID_ERROR_TYPES, Arrays.asList(descriptors));
-    }
-
-    public static void validate(@NotNull ValidationVisitor validationStrategy, DeclarationDescriptor... descriptors) {
-        validate(validationStrategy, Arrays.asList(descriptors));
-    }
-
-    public static void validate(@NotNull ValidationVisitor validator, @NotNull Collection<DeclarationDescriptor> descriptors) {
+    public static void validate(@NotNull ValidationVisitor validationStrategy, DeclarationDescriptor descriptor) {
         DiagnosticCollectorForTests collector = new DiagnosticCollectorForTests();
-        for (DeclarationDescriptor descriptor : descriptors) {
-            validate(validator, descriptor, collector);
-        }
+        validate(validationStrategy, descriptor, collector);
         collector.done();
     }
 

@@ -1,4 +1,6 @@
 package test
 
 internal val fromImported: kotlin.Int = 1
+    internal fun <get-fromImported>(): kotlin.Int
 internal val normal: kotlin.Int = 1
+    internal fun <get-normal>(): kotlin.Int

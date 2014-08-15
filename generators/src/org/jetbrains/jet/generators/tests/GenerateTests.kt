@@ -209,7 +209,6 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractLoadJavaTest>()) {
             model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
             model("loadJava/compiledJavaAndKotlin", extension = "txt", testMethod = "doTestCompiledJavaAndKotlin")
-            model("loadJava/compiledJavaCompareWithKotlin", extension = "java", testMethod = "doTestCompiledJavaCompareWithKotlin")
             model("loadJava/compiledJavaIncludeObjectMethods", extension = "java", testMethod = "doTestCompiledJavaIncludeObjectMethods")
             model("loadJava/compiledKotlin", testMethod = "doTestCompiledKotlin")
             model("loadJava/compiledKotlinWithStdlib", testMethod = "doTestCompiledKotlinWithStdlib")
@@ -235,9 +234,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractLazyResolveRecursiveComparingTest>()) {
-            model("loadJava/compiledKotlin", testMethod = "doTestCheckingPrimaryConstructorsAndAccessors")
-            model("loadJava/compiledJavaCompareWithKotlin", testMethod = "doTestNotCheckingPrimaryConstructors")
-            model("lazyResolve/recursiveComparator", testMethod = "doTestCheckingPrimaryConstructors")
+            model("loadJava/compiledKotlin")
+            model("lazyResolve/recursiveComparator")
         }
 
         testClass(javaClass<AbstractModuleXmlParserTest>()) {
@@ -292,7 +290,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractAdditionalLazyResolveDescriptorRendererTest>()) {
-            model("resolve/additionalLazyResolve", testMethod = "doTest")
+            model("resolve/additionalLazyResolve")
         }
 
         testClass(javaClass<AbstractJetPsiMatcherTest>()) {
@@ -388,11 +386,11 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractJoinLinesTest>()) {
-            model("joinLines", testMethod = "doTest")
+            model("joinLines")
         }
 
         testClass(javaClass<AbstractIntentionTest>()) {
-            model("intentions", testMethod = "doTest")
+            model("intentions")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
@@ -595,8 +593,7 @@ fun main(args: Array<String>) {
 
     testGroup("idea/tests", "compiler/testData") {
         testClass(javaClass<AbstractLazyResolveByStubTest>()) {
-            model("loadJava/compiledKotlin", testMethod = "doTestCheckingPrimaryConstructorsAndAccessors")
-            model("loadJava/compiledJavaCompareWithKotlin", testMethod = "doTestNotCheckingPrimaryConstructors")
+            model("loadJava/compiledKotlin")
         }
     }
 

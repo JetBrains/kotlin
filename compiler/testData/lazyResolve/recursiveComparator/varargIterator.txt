@@ -3,4 +3,5 @@ package test
 internal final class CompositeIterator</*0*/ T> {
     /*primary*/ public constructor CompositeIterator</*0*/ T>(/*0*/ vararg iterators: java.util.Iterator<T> /*kotlin.Array<java.util.Iterator<T>>*/)
     internal final val iteratorsIter: kotlin.Iterator<java.util.Iterator<T>>
+        internal final fun <get-iteratorsIter>(): kotlin.Iterator<java.util.Iterator<T>>
 }
