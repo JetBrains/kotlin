@@ -3,20 +3,20 @@
     <property name="public.buildserver.build.id" value="149643"/>
 
     <condition property="os.tag" value="win.zip">
-      <os family="windows" />
+        <os family="windows"/>
     </condition>
 
     <condition property="os.tag" value="mac.zip">
-      <os family="mac" />
+        <os family="mac"/>
     </condition>
 
     <condition property="os.tag" value="tar.gz">
-      <and>
-        <os family="unix" />
-        <not>
-          <os family="mac"/>
-        </not>
-      </and>
+        <and>
+            <os family="unix"/>
+            <not>
+                <os family="mac"/>
+            </not>
+        </and>
     </condition>
 
     <property name="idea.build.number" value="138.SNAPSHOT"/>
@@ -30,29 +30,25 @@
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
         <execute_update
             base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
-            build.zip="${idea.archive.name}"
-        />
+            build.zip="${idea.archive.name}"/>
     </target>
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
         <execute_update
             base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
-            build.zip="${idea.archive.name}"
-        />
+            build.zip="${idea.archive.name}"/>
     </target>
 
     <target name="jb_update_continuous_local" depends="fetch-third-party,fetch-annotations">
         <execute_update
             base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform13_IdeaTrunk_Installers/${continuous.idea.version}"
-            build.zip="ideaIC-{build.number}.win.zip"
-        />
+            build.zip="ideaIC-{build.number}.win.zip"/>
     </target>
 
     <target name="jb_update_continuous" depends="fetch-third-party,fetch-annotations">
         <execute_update
             base.url="file:///${basedir}/idea_artifacts"
-            build.zip="${idea.archive.name}"
-        />
+            build.zip="${idea.archive.name}"/>
     </target>
 
     <macrodef name="get-maven-library">
@@ -72,8 +68,7 @@
             <if>
                 <istrue value="@{bin}"/>
                 <then>
-                    <get src="@{server}/@{path}.jar"
-                         dest="@{download}/@{jar.name.base}.jar" usetimestamp="true"/>
+                    <get src="@{server}/@{path}.jar" dest="@{download}/@{jar.name.base}.jar" usetimestamp="true"/>
                     <copy file="@{download}/@{jar.name.base}.jar" tofile="@{dependencies}/@{target.jar.name.base}.jar" overwrite="true"/>
                 </then>
             </if>
@@ -81,28 +76,28 @@
             <if>
                 <istrue value="@{src}"/>
                 <then>
-                    <get src="@{server}/@{path}-sources.jar"
-                         dest="@{download}/@{jar.name.base}-sources.jar" usetimestamp="true"/>
-                    <copy file="@{download}/@{jar.name.base}-sources.jar" tofile="@{dependencies}/@{target.jar.name.base}-sources.jar" overwrite="true"/>
+                    <get src="@{server}/@{path}-sources.jar" dest="@{download}/@{jar.name.base}-sources.jar" usetimestamp="true"/>
+                    <copy file="@{download}/@{jar.name.base}-sources.jar" tofile="@{dependencies}/@{target.jar.name.base}-sources.jar"
+                          overwrite="true"/>
                 </then>
             </if>
         </sequential>
     </macrodef>
 
     <macrodef name="get-ant-library">
-      <attribute name="version"/>
-      <attribute name="folderName"/>
-      <sequential>
-        <get src="http://archive.apache.org/dist/ant/binaries/apache-ant-@{version}-bin.tar.gz"
-             dest="dependencies/download/apache-ant-@{version}-bin.tar.gz" usetimestamp="true"/>
+        <attribute name="version"/>
+        <attribute name="folderName"/>
+        <sequential>
+            <get src="http://archive.apache.org/dist/ant/binaries/apache-ant-@{version}-bin.tar.gz"
+                 dest="dependencies/download/apache-ant-@{version}-bin.tar.gz" usetimestamp="true"/>
 
-        <get src="http://archive.apache.org/dist/ant/source/apache-ant-@{version}-src.zip"
-             dest="dependencies/apache-ant-@{version}-src.zip" usetimestamp="true"/>
+            <get src="http://archive.apache.org/dist/ant/source/apache-ant-@{version}-src.zip"
+                 dest="dependencies/apache-ant-@{version}-src.zip" usetimestamp="true"/>
 
-        <delete dir="dependencies/@{folderName}" failonerror="false"/>
-        <untar src="dependencies/download/apache-ant-@{version}-bin.tar.gz" dest="dependencies" compression="gzip"/>
-        <move file="dependencies/apache-ant-@{version}" tofile="dependencies/@{folderName}"/>
-      </sequential>
+            <delete dir="dependencies/@{folderName}" failonerror="false"/>
+            <untar src="dependencies/download/apache-ant-@{version}-bin.tar.gz" dest="dependencies" compression="gzip"/>
+            <move file="dependencies/apache-ant-@{version}" tofile="dependencies/@{folderName}"/>
+        </sequential>
     </macrodef>
 
     <target name="fetch-third-party">
@@ -147,9 +142,9 @@
         <!-- jflex 1.4 -->
         <mkdir dir="dependencies/jflex"/>
         <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/jflex-1.4/lib/JFlex.jar"
-             dest="dependencies/jflex/JFlex.jar" usetimestamp="true" />
+             dest="dependencies/jflex/JFlex.jar" usetimestamp="true"/>
         <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
-             dest="dependencies/jflex/idea-flex.skeleton" usetimestamp="true" />
+             dest="dependencies/jflex/idea-flex.skeleton" usetimestamp="true"/>
 
         <!-- jline -->
         <get-maven-library prefix="jline" lib="jline" version="2.9" target.jar.name.base="jline"/>
@@ -164,7 +159,7 @@
 
         <!-- ASM -->
         <get src="https://raw.github.com/JetBrains/intellij-community/master/lib/src/asm5-src.zip"
-             dest="dependencies/asm5-src.zip" />
+             dest="dependencies/asm5-src.zip"/>
         <!-- <get-asm-sources-and-rename-packages asm.version="5.0.1"/> -->
 
         <!-- Junit Sources -->
@@ -194,10 +189,10 @@
         <get src="http://dl-ssl.google.com/android/repository/android-19_r02.zip"
              dest="dependencies/download/android-sdk.zip" usetimestamp="true"/>
         <unzip src="dependencies/download/android-sdk.zip" dest="dependencies">
-          <patternset>
-            <include name="**/android.jar"/>
-          </patternset>
-          <mapper type="flatten"/>
+            <patternset>
+                <include name="**/android.jar"/>
+            </patternset>
+            <mapper type="flatten"/>
         </unzip>
 
         <!-- Bootstrap compiler -->
@@ -219,7 +214,7 @@
     </target>
 
     <macrodef name="get-asm-sources-and-rename-packages">
-        <attribute name="asm.version" />
+        <attribute name="asm.version"/>
         <sequential>
             <!-- Download ASM sources -->
             <get-maven-library prefix="org/ow2/asm" lib="asm-debug-all" version="@{asm.version}" bin="false"/>
@@ -239,7 +234,7 @@
             </replaceregexp>
 
             <move file="dependencies/download/asm-src/org/objectweb/asm"
-                    tofile="dependencies/download/asm-src/org/jetbrains/org/objectweb/asm"/>
+                  tofile="dependencies/download/asm-src/org/jetbrains/org/objectweb/asm"/>
 
             <zip destfile="dependencies/jetbrains-asm-all-@{asm.version}-src.zip" basedir="dependencies/download/asm-src"/>
         </sequential>
@@ -272,7 +267,8 @@
                     <mkdir dir="${jps}"/>
                     <mkdir dir="${jps-test}"/>
                     <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
-                    <get src="@{base.url.for.core}/core/intellij-core-analysis.jar" dest="${core-analysis}/intellij-core-analysis.jar" usetimestamp="true"/>
+                    <get src="@{base.url.for.core}/core/intellij-core-analysis.jar" dest="${core-analysis}/intellij-core-analysis.jar"
+                         usetimestamp="true"/>
                     <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/guava-17.0.jar" dest="${core}/guava-17.0.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
@@ -281,30 +277,31 @@
 
                     <get src="@{base.url}/jps/standalone-jps-IC-${idea.build.number}.zip"
                          dest="dependencies/download/standalone-jps.zip"
-                         usetimestamp="true" />
+                         usetimestamp="true"/>
 
-                    <property name="jps.extracted.dir" value="dependencies/download/standalone-jps" />
-                    <unzip src="dependencies/download/standalone-jps.zip" dest="${jps.extracted.dir}" />
+                    <property name="jps.extracted.dir" value="dependencies/download/standalone-jps"/>
+                    <unzip src="dependencies/download/standalone-jps.zip" dest="${jps.extracted.dir}"/>
 
                     <copy todir="${jps}" flatten="true">
-                      <resources>
-                        <file file="${jps.extracted.dir}/groovy-jps-plugin.jar" />
-                        <file file="${jps.extracted.dir}/groovy_rt.jar" />
-                        <file file="${jps.extracted.dir}/jdom.jar" />
-                        <file file="${jps.extracted.dir}/jgoodies-forms.jar" />
-                        <file file="${jps.extracted.dir}/jna.jar" />
-                        <file file="${jps.extracted.dir}/jps-builders.jar" />
-                        <file file="${jps.extracted.dir}/jps-model.jar" />
-                        <file file="${jps.extracted.dir}/log4j.jar" />
-                        <file file="${jps.extracted.dir}/nanoxml-2.2.3.jar" />
-                        <file file="${jps.extracted.dir}/protobuf-2.5.0.jar" />
-                        <file file="${jps.extracted.dir}/trove4j.jar" />
-                        <file file="${jps.extracted.dir}/ui-designer-jps-plugin.jar" />
-                        <file file="${jps.extracted.dir}/util.jar" />
-                      </resources>
+                        <resources>
+                            <file file="${jps.extracted.dir}/groovy-jps-plugin.jar"/>
+                            <file file="${jps.extracted.dir}/groovy_rt.jar"/>
+                            <file file="${jps.extracted.dir}/jdom.jar"/>
+                            <file file="${jps.extracted.dir}/jgoodies-forms.jar"/>
+                            <file file="${jps.extracted.dir}/jna.jar"/>
+                            <file file="${jps.extracted.dir}/jps-builders.jar"/>
+                            <file file="${jps.extracted.dir}/jps-model.jar"/>
+                            <file file="${jps.extracted.dir}/log4j.jar"/>
+                            <file file="${jps.extracted.dir}/nanoxml-2.2.3.jar"/>
+                            <file file="${jps.extracted.dir}/protobuf-2.5.0.jar"/>
+                            <file file="${jps.extracted.dir}/trove4j.jar"/>
+                            <file file="${jps.extracted.dir}/ui-designer-jps-plugin.jar"/>
+                            <file file="${jps.extracted.dir}/util.jar"/>
+                        </resources>
                     </copy>
 
-                    <get src="@{base.url}/jps/jps-build-test-IC-${idea.build.number}.jar" dest="${jps-test}/jps-build-test.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/jps-build-test-IC-${idea.build.number}.jar" dest="${jps-test}/jps-build-test.jar"
+                         usetimestamp="true"/>
 
                     <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
 
@@ -357,7 +354,7 @@
             <copy file="ideaSDK/lib/log4j.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xstream-1.4.3.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
-            <copy file="ideaSDK/lib/jsr166e.jar" todir="${core}" />
+            <copy file="ideaSDK/lib/jsr166e.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/asm-all.jar" todir="${core}"/>
 
             <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
@@ -373,117 +370,120 @@
     </macrodef>
 
     <target name="fetch-annotations">
-      <mkdir dir="dependencies/annotations"/>
-      <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-jdk-annotations.jar"
-           dest="dependencies/annotations/kotlin-jdk-annotations.jar" usetimestamp="true"/>
-      <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-android-sdk-annotations.jar"
-           dest="dependencies/annotations/kotlin-android-sdk-annotations.jar" usetimestamp="true"/>
+        <mkdir dir="dependencies/annotations"/>
+        <get
+            src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-jdk-annotations.jar"
+            dest="dependencies/annotations/kotlin-jdk-annotations.jar" usetimestamp="true"/>
+        <get
+            src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-android-sdk-annotations.jar"
+            dest="dependencies/annotations/kotlin-android-sdk-annotations.jar" usetimestamp="true"/>
     </target>
 
     <target name="get_android_studio">
-      <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
-      <condition property="android.os.tag" value="windows">
-        <os family="windows" />
-      </condition>
+        <condition property="android.os.tag" value="windows">
+            <os family="windows"/>
+        </condition>
 
-      <condition property="android.os.tag" value="mac">
-        <os family="mac" />
-      </condition>
-
-      <condition property="android.os.tag" value="linux">
-        <and>
-          <os family="unix" />
-          <not>
+        <condition property="android.os.tag" value="mac">
             <os family="mac"/>
-          </not>
-        </and>
-      </condition>
+        </condition>
 
-      <if>
-        <not>
-          <and>
-            <isset property="android.version"/>
-            <isset property="android.build.version"/>
-          </and>
-        </not>
-        <then>
-          <loadresource property="android.version">
-            <url url="http://tools.android.com/download/studio/canary/latest"/>
-            <filterchain>
-              <tokenfilter>
-                <filetokenizer/>
-                <replaceregex
-                    pattern="^(.*)http://dl\.google\.com/dl/android/studio/ide-zips/([\d\.]+)/android-studio-ide(.*)$"
-                    replace="\2" flags="s"/>
-              </tokenfilter>
-            </filterchain>
-          </loadresource>
-          <loadresource property="android.build.version">
-            <url url="http://tools.android.com/download/studio/canary/latest"/>
-            <filterchain>
-              <tokenfilter>
-                <filetokenizer/>
-                <replaceregex
-                    pattern="^(.*)http://dl\.google\.com/dl/android/studio/ide-zips/[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
-                    replace="\2" flags="s"/>
-              </tokenfilter>
-            </filterchain>
-          </loadresource>
-        </then>
-      </if>
+        <condition property="android.os.tag" value="linux">
+            <and>
+                <os family="unix"/>
+                <not>
+                    <os family="mac"/>
+                </not>
+            </and>
+        </condition>
 
-      <echo message="Download android studio: ${android.version} ${android.build.version}" />
+        <if>
+            <not>
+                <and>
+                    <isset property="android.version"/>
+                    <isset property="android.build.version"/>
+                </and>
+            </not>
+            <then>
+                <loadresource property="android.version">
+                    <url url="http://tools.android.com/download/studio/canary/latest"/>
+                    <filterchain>
+                        <tokenfilter>
+                            <filetokenizer/>
+                            <replaceregex
+                                pattern="^(.*)http://dl\.google\.com/dl/android/studio/ide-zips/([\d\.]+)/android-studio-ide(.*)$"
+                                replace="\2" flags="s"/>
+                        </tokenfilter>
+                    </filterchain>
+                </loadresource>
+                <loadresource property="android.build.version">
+                    <url url="http://tools.android.com/download/studio/canary/latest"/>
+                    <filterchain>
+                        <tokenfilter>
+                            <filetokenizer/>
+                            <replaceregex
+                                pattern="^(.*)http://dl\.google\.com/dl/android/studio/ide-zips/[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
+                                replace="\2" flags="s"/>
+                        </tokenfilter>
+                    </filterchain>
+                </loadresource>
+            </then>
+        </if>
 
-      <property name="android.file.name" value="android-studio-ide-${android.build.version}-${android.os.tag}.zip" />
-      <property name="android.studio.url" value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>
-      <property name="android.destination.dir" value="android-studio/sdk" />
+        <echo message="Download android studio: ${android.version} ${android.build.version}"/>
 
-      <mkdir dir="dependencies/download"/>
+        <property name="android.file.name" value="android-studio-ide-${android.build.version}-${android.os.tag}.zip"/>
+        <property name="android.studio.url"
+                  value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>
+        <property name="android.destination.dir" value="android-studio/sdk"/>
 
-      <get src="${android.studio.url}" dest="dependencies/download" usetimestamp="true"/>
+        <mkdir dir="dependencies/download"/>
 
-      <delete dir="${android.destination.dir}" failonerror="false" includeemptydirs="true">
-        <exclude name="config/**"/>
-        <exclude name="system/**"/>
-      </delete>
+        <get src="${android.studio.url}" dest="dependencies/download" usetimestamp="true"/>
 
-      <unzip src="dependencies/download/${android.file.name}" dest="${android.destination.dir}">
-        <cutdirsmapper dirs="1"/>
-      </unzip>
+        <delete dir="${android.destination.dir}" failonerror="false" includeemptydirs="true">
+            <exclude name="config/**"/>
+            <exclude name="system/**"/>
+        </delete>
 
-      <if>
-        <matches pattern=".+windows\.zip" string="${android.file.name}"/>
-          <then>
-          </then>
-        <elseif>
-          <matches pattern=".+mac\.zip" string="${android.file.name}"/>
-          <then>
-            <exec executable="chmod">
-              <arg value="a+x"/>
-              <arg path="${android.destination.dir}/bin/fsnotifier"/>
-              <arg path="${android.destination.dir}/bin/inspect.sh"/>
-              <arg path="${android.destination.dir}/bin/printenv.py"/>
-              <arg path="${android.destination.dir}/bin/update_studio.sh"/>
-            </exec>
-          </then>
-        </elseif>
-        <elseif>
-          <matches pattern=".+linux\.zip" string="${android.file.name}"/>
-          <then>
-            <exec executable="chmod">
-              <arg value="a+x"/>
-              <arg path="${android.destination.dir}/bin/fsnotifier"/>
-              <arg path="${android.destination.dir}/bin/fsnotifier64"/>
-              <arg path="${android.destination.dir}/bin/inspect.sh"/>
-              <arg path="${android.destination.dir}/bin/studio.sh"/>
-              <arg path="${android.destination.dir}/bin/update_studio.sh"/>
-            </exec>
-          </then>
-        </elseif>
-        <else>
-          <fail message="File name '${android.file.name}' wasn't matched"/>
-        </else>
-      </if>
+        <unzip src="dependencies/download/${android.file.name}" dest="${android.destination.dir}">
+            <cutdirsmapper dirs="1"/>
+        </unzip>
+
+        <if>
+            <matches pattern=".+windows\.zip" string="${android.file.name}"/>
+            <then>
+            </then>
+            <elseif>
+                <matches pattern=".+mac\.zip" string="${android.file.name}"/>
+                <then>
+                    <exec executable="chmod">
+                        <arg value="a+x"/>
+                        <arg path="${android.destination.dir}/bin/fsnotifier"/>
+                        <arg path="${android.destination.dir}/bin/inspect.sh"/>
+                        <arg path="${android.destination.dir}/bin/printenv.py"/>
+                        <arg path="${android.destination.dir}/bin/update_studio.sh"/>
+                    </exec>
+                </then>
+            </elseif>
+            <elseif>
+                <matches pattern=".+linux\.zip" string="${android.file.name}"/>
+                <then>
+                    <exec executable="chmod">
+                        <arg value="a+x"/>
+                        <arg path="${android.destination.dir}/bin/fsnotifier"/>
+                        <arg path="${android.destination.dir}/bin/fsnotifier64"/>
+                        <arg path="${android.destination.dir}/bin/inspect.sh"/>
+                        <arg path="${android.destination.dir}/bin/studio.sh"/>
+                        <arg path="${android.destination.dir}/bin/update_studio.sh"/>
+                    </exec>
+                </then>
+            </elseif>
+            <else>
+                <fail message="File name '${android.file.name}' wasn't matched"/>
+            </else>
+        </if>
     </target>
 </project>
