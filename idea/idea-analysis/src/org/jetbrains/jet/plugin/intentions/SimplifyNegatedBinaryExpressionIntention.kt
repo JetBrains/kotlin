@@ -17,19 +17,18 @@
 package org.jetbrains.jet.plugin.intentions
 
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
+import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import com.intellij.openapi.editor.Editor
+import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.jet.lexer.JetSingleValueToken
 import org.jetbrains.jet.lang.psi.JetOperationExpression
 import org.jetbrains.jet.lang.psi.JetIsExpression
-import org.jetbrains.jet.lexer.JetToken
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import com.intellij.openapi.editor.Editor
+import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lexer.JetSingleValueToken
 import org.jetbrains.jet.plugin.JetBundle
-
+import org.jetbrains.jet.lang.psi.JetPsiFactory
 
 public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingIntention<JetPrefixExpression>("simplify.negated.binary.expression", javaClass()) {
 

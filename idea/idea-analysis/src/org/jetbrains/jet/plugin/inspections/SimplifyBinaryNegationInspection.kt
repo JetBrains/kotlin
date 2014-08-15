@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.inspections
 
-import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.plugin.intentions.SimplifyNegatedBinaryExpressionIntention
+import org.jetbrains.jet.lang.psi.JetPrefixExpression
 
 public class SimplifyBinaryNegationInspection : IntentionBasedInspection<JetPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
