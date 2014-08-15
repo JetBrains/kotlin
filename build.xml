@@ -608,7 +608,7 @@
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.and.stdlib}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
@@ -627,7 +627,7 @@
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.runtime.and.stdlib.sources}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.sources}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>

@@ -43,7 +43,7 @@ public class LibraryUtils {
             try {
                 Properties properties = new Properties();
                 properties.load(manifestProperties);
-                jvmStdLib = properties.getProperty("manifest.impl.title.kotlin.jvm.runtime.and.stdlib");
+                jvmStdLib = properties.getProperty("manifest.impl.title.kotlin.jvm.runtime");
                 jsStdLib = properties.getProperty("manifest.impl.title.kotlin.javascript.stdlib");
             }
             catch (IOException e) {
