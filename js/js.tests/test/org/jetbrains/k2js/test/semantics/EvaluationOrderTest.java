@@ -100,4 +100,16 @@ public class EvaluationOrderTest extends AbstractExpressionTest {
     public void testWhenWithComplexConditions() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testElvisWithBreakContinueReturn() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testAndAndWithBreakContinueReturn() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testOrOrWithBreakContinueReturn() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
