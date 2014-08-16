@@ -2,7 +2,7 @@ OUT:
 Buildfile: [TestData]/build.xml
 
 build:
-  [kotlinc] Compiling [[TestData]/root1, [TestData]/root2] => [[Temp]/hello.jar]
+[kotlin2js] Compiling [[TestData]/hello.kt] => [[Temp]/out.js]
 
 BUILD SUCCESSFUL
 Total time: [time]

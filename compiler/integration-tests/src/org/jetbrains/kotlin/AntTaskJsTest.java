@@ -98,6 +98,12 @@ public class AntTaskJsTest extends AntTaskBaseTest {
     }
 
     @Test
+    public void additionalArguments() throws Exception {
+        doJsAntTest();
+    }
+
+
+    @Test
     public void noSrcParam() throws Exception {
         doAntTest(FAILED);
     }

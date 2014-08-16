@@ -1,4 +1,7 @@
 <root>
+  <item name='org.apache.tools.ant.types.Path java.lang.String[] list()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='org.apache.tools.ant.types.Path org.apache.tools.ant.types.Path createPath()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
