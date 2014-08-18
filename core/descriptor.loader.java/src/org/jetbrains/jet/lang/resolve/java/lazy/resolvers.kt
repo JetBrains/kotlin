@@ -75,12 +75,6 @@ fun LazyJavaResolverContext.lookupBinaryClass(javaClass: JavaClass): ClassDescri
 }
 
 fun LazyJavaResolverContext.findClassInJava(fqName: FqName): JavaClassLookupResult {
-    // TODO: this should be governed by module separation logic
-    // Do not look for JavaClasses for Kotlin binaries & built-ins
-    if (DescriptorResolverUtils.getKotlinBuiltinClassDescriptor(fqName) != null) {
-        return JavaClassLookupResult()
-    }
-
     val kotlinClass = kotlinClassFinder.findKotlinClass(fqName)
     val binaryClassResult = resolveBinaryClass(kotlinClass)
     if (binaryClassResult != null) return binaryClassResult

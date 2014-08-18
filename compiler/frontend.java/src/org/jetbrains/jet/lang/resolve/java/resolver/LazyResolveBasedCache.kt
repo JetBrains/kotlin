@@ -24,16 +24,9 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.types.TypeProjection
 import javax.inject.Inject
-import java.util.Collections
 import kotlin.properties.Delegates
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
-import com.google.common.base.Predicates
-import org.jetbrains.jet.lang.descriptors.impl.PackageViewDescriptorImpl
 import org.jetbrains.jet.lang.resolve.name.tail
 import org.jetbrains.jet.lang.resolve.name.each
 
@@ -60,10 +53,6 @@ public class LazyResolveBasedCache() : JavaResolverCache {
                     packageFragmentDescriptor.getMemberScope(),
                     fqName.tail(packageFragmentDescriptor.fqName))
         }
-    }
-
-    override fun getClass(javaClass: JavaClass): ClassDescriptor? {
-        return traceBasedCache.getClass(javaClass) ?: null
     }
 
     override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {
