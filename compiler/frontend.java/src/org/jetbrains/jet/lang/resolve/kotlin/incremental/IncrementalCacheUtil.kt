@@ -23,19 +23,19 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import java.util.HashMap
 import java.io.File
 
-public fun IncrementalCache.getPackagesWithRemovedFiles(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<FqName> {
-    return getRemovedPackageParts(moduleId, compiledSourceFiles).map { it.getFqNameForClassNameWithoutDollars().parent() }
+public fun IncrementalCache.getPackagesWithRemovedFiles(compiledSourceFiles: Collection<JetFile>): Collection<FqName> {
+    return getRemovedPackageParts(compiledSourceFiles).map { it.getFqNameForClassNameWithoutDollars().parent() }
 }
 
-public fun IncrementalCache.getRemovedPackageParts(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<JvmClassName> {
+public fun IncrementalCache.getRemovedPackageParts(compiledSourceFiles: Collection<JetFile>): Collection<JvmClassName> {
     val compiledSourceFilesToFqName = HashMap<File, String>()
     for (sourceFile in compiledSourceFiles) {
         compiledSourceFilesToFqName[File(sourceFile.getVirtualFile()!!.getPath())] = sourceFile.getPackageFqName().asString()
     }
 
-    return getRemovedPackageParts(moduleId, compiledSourceFilesToFqName).map { JvmClassName.byInternalName(it) }
+    return getRemovedPackageParts(compiledSourceFilesToFqName).map { JvmClassName.byInternalName(it) }
 }
 
-public fun IncrementalCache.getPackageData(moduleId: String, fqName: FqName): ByteArray? {
-    return getPackageData(moduleId, fqName.asString())
+public fun IncrementalCache.getPackageData(fqName: FqName): ByteArray? {
+    return getPackageData(fqName.asString())
 }

@@ -333,8 +333,7 @@ public class KotlinToJVMBytecodeCompiler {
         }
         else {
             IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
-            packagesWithRemovedFiles = IncrementalPackage.getPackagesWithRemovedFiles(
-                    incrementalCache, moduleId, environment.getSourceFiles());
+            packagesWithRemovedFiles = IncrementalPackage.getPackagesWithRemovedFiles(incrementalCache, environment.getSourceFiles());
         }
         BindingTraceContext diagnosticHolder = new BindingTraceContext();
         GenerationState generationState = new GenerationState(

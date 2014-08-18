@@ -221,17 +221,8 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         }
 
         for (ModuleBuildTarget target : chunk.getTargets()) {
-            String targetId = target.getId();
-
-            List<File> removedFiles = ContainerUtil.map(KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target),
-                                                        new Function<String, File>() {
-                                                            @Override
-                                                            public File fun(String s) {
-                                                                return new File(s);
-                                                            }
-                                                        });
-
-            incrementalCaches.get(target).clearCacheForRemovedFiles(targetId, removedFiles, target.getOutputDir());
+            incrementalCaches.get(target).clearCacheForRemovedFiles(
+                    KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target), target.getOutputDir());
         }
 
         IncrementalCacheImpl.RecompilationDecision recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING;
@@ -250,8 +241,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             File outputFile = outputItem.getOutputFile();
 
             if (IncrementalCompilation.ENABLED) {
-                IncrementalCacheImpl.RecompilationDecision newDecision =
-                        incrementalCaches.get(target).saveFileToCache(target.getId(), sourceFiles, outputFile);
+                IncrementalCacheImpl.RecompilationDecision newDecision = incrementalCaches.get(target).saveFileToCache(sourceFiles, outputFile);
                 recompilationDecision = recompilationDecision.merge(newDecision);
             }
 
