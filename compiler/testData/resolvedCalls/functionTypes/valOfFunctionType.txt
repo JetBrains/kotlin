@@ -9,7 +9,7 @@ fun test(a: A) {
 
 Resolved call:
 
-Resulting descriptor: val foo: (Int) -> Int
+Resulting descriptor: val foo: (Int) -> Int defined in A
 
 Explicit receiver kind = THIS_OBJECT
 This object = a {A}

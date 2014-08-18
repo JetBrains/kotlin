@@ -11,8 +11,8 @@ fun bar(f: Foo, i: Int) {
 
 Resolved call:
 
-Resulting descriptor: fun Int.invoke(): Unit
+Resulting descriptor: fun Int.invoke(): Unit defined in Foo
 
 Explicit receiver kind = THIS_OBJECT
 This object = f {Foo}
-Receiver argument = IntExt{fun Int.<anonymous>(): Unit}
+Receiver argument = IntExt{fun Int.<anonymous>(): Unit defined in bar}

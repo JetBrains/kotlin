@@ -7,7 +7,7 @@ fun test() = <caret>A(1)
 
 Resolved call:
 
-Resulting descriptor: object A
+Resulting descriptor: object A defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER

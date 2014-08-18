@@ -7,7 +7,7 @@ fun test() = A<caret>(1)
 
 Resolved call:
 
-Resulting descriptor: fun invoke(i: Int): Int
+Resulting descriptor: fun invoke(i: Int): Int defined in A
 
 Explicit receiver kind = THIS_OBJECT
 This object = A {A}

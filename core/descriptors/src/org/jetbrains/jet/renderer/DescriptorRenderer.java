@@ -53,7 +53,6 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
             .setModifiers().build();
 
     DescriptorRenderer COMPACT_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
-            .setWithDefinedIn(false)
             .setModifiers()
             .setShortNames(true)
             .setIncludeSynthesizedParameterNames(false).build();

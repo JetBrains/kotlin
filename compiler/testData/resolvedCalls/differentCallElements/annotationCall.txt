@@ -5,7 +5,7 @@ annotation class MyA(val i: Int)
 
 Resolved call:
 
-Resulting descriptor: constructor MyA(i: Int)
+Resulting descriptor: constructor MyA(i: Int) defined in MyA
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER

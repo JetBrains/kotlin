@@ -6,7 +6,7 @@ fun test() {
 
 Resolved call:
 
-Resulting descriptor: val EMPTY: IntRange
+Resulting descriptor: val EMPTY: IntRange defined in kotlin.IntRange.<class-object-for-IntRange>
 
 Explicit receiver kind = THIS_OBJECT
 This object = IntRange {<class-object-for-IntRange>}

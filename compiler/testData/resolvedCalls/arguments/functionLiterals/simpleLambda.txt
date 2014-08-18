@@ -7,7 +7,7 @@ fun test() {
 
 Resolved call:
 
-Resulting descriptor: fun foo(f: (Int) -> String): Unit
+Resulting descriptor: fun foo(f: (Int) -> String): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER
