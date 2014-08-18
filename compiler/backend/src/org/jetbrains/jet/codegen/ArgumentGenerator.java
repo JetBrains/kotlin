@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ArgumentGenerator {
@@ -29,16 +30,23 @@ public abstract class ArgumentGenerator {
      * @return a bit mask of default arguments which should be passed as the last argument to $default method, if there were any default
      * arguments, or 0 if there were none
      */
-    public int generate(@NotNull List<ResolvedValueArgument> valueArguments) {
+    public List<Integer> generate(@NotNull List<ResolvedValueArgument> valueArguments) {
+        List<Integer> masks = new ArrayList<Integer>();
+        boolean maskIsNeeded = false;
         int mask = 0;
         int n = valueArguments.size();
         for (int i = 0; i < n; i++) {
+            if (i != 0 && i % Integer.SIZE == 0) {
+                masks.add(mask);
+                mask = 0;
+            }
             ResolvedValueArgument argument = valueArguments.get(i);
             if (argument instanceof ExpressionValueArgument) {
                 generateExpression(i, (ExpressionValueArgument) argument);
             }
             else if (argument instanceof DefaultValueArgument) {
-                mask |= 1 << i;
+                maskIsNeeded = true;
+                mask |= 1 << (i % Integer.SIZE);
                 generateDefault(i, (DefaultValueArgument) argument);
             }
             else if (argument instanceof VarargValueArgument) {
@@ -48,8 +56,11 @@ public abstract class ArgumentGenerator {
                 generateOther(i, argument);
             }
         }
-
-        return mask;
+        masks.add(mask);
+        if (!maskIsNeeded) {
+            masks = null;
+        }
+        return masks;
     }
 
     protected void generateExpression(int i, @NotNull ExpressionValueArgument argument) {

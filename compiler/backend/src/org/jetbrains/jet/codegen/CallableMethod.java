@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
@@ -135,7 +136,7 @@ public class CallableMethod implements Callable {
 
         Method method = getAsmMethod();
 
-        String desc = method.getDescriptor().replace(")", "I)");
+        String desc = JetTypeMapper.getDefaultDescriptor(method.getDescriptor());
         if ("<init>".equals(method.getName())) {
             v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc, false);
         }

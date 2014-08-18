@@ -1776,6 +1776,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/defaultArguments/constructor/kt3060.kt");
             }
             
+            @TestMetadata("manyArgs.kt")
+            public void testManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/manyArgs.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
@@ -1839,6 +1844,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionInObject.kt");
             }
             
+            @TestMetadata("extentionFunctionManyArgs.kt")
+            public void testExtentionFunctionManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionManyArgs.kt");
+            }
+            
             @TestMetadata("extentionFunctionWithOneDefArg.kt")
             public void testExtentionFunctionWithOneDefArg() throws Exception {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionWithOneDefArg.kt");
@@ -1864,9 +1874,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunctionDoubleTwoArgs.kt");
             }
             
+            @TestMetadata("innerExtentionFunctionManyArgs.kt")
+            public void testInnerExtentionFunctionManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunctionManyArgs.kt");
+            }
+            
+            @TestMetadata("memberFunctionManyArgs.kt")
+            public void testMemberFunctionManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/memberFunctionManyArgs.kt");
+            }
+            
             @TestMetadata("mixingNamedAndPositioned.kt")
             public void testMixingNamedAndPositioned() throws Exception {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/mixingNamedAndPositioned.kt");
+            }
+            
+            @TestMetadata("topLevelManyArgs.kt")
+            public void testTopLevelManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/topLevelManyArgs.kt");
             }
             
             @TestMetadata("trait.kt")

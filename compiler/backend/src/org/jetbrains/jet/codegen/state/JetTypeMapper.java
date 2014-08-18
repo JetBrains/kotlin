@@ -614,10 +614,22 @@ public class JetTypeMapper {
     }
 
     @NotNull
+    public static String getDefaultDescriptor(@NotNull String descriptor) {
+        // read Type.getArgumentsAndReturnSizes documentation for explanations
+        int argumentsSize = (Type.getArgumentsAndReturnSizes(descriptor) >> 2) - 1;
+        int maskArgumentsCont = argumentsSize / Integer.SIZE + (argumentsSize % Integer.SIZE == 0 ? 0 : 1);
+        String maskArguments = "I";
+        for (int i = 1; i < maskArgumentsCont; i++) {
+            maskArguments += 'I';
+        }
+        return descriptor.replace(")", maskArguments + ")");
+    }
+
+    @NotNull
     public Method mapDefaultMethod(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind, @NotNull CodegenContext<?> context) {
         Method jvmSignature = mapSignature(functionDescriptor, kind).getAsmMethod();
         Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
-        String descriptor = jvmSignature.getDescriptor().replace(")", "I)");
+        String descriptor = getDefaultDescriptor(jvmSignature.getDescriptor());
         boolean isConstructor = "<init>".equals(jvmSignature.getName());
         if (!isStatic(kind) && !isConstructor) {
             descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());
