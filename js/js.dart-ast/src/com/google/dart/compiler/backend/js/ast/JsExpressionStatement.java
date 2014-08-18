@@ -5,12 +5,14 @@
 package com.google.dart.compiler.backend.js.ast;
 
 public final class JsExpressionStatement extends AbstractNode implements JsStatement {
+    @NotNull
     private JsExpression expression;
 
-    public JsExpressionStatement(JsExpression expression) {
+    public JsExpressionStatement(@NotNull JsExpression expression) {
         this.expression = expression;
     }
 
+    @NotNull
     public JsExpression getExpression() {
         return expression;
     }
