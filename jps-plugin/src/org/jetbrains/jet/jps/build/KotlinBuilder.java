@@ -140,6 +140,8 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         JpsProject project = representativeTarget.getModule().getProject();
         CommonCompilerArguments commonArguments = JpsKotlinCompilerSettings.getCommonCompilerArguments(project);
+        commonArguments.verbose = true; // Make compiler report source to output files mapping
+
         CompilerSettings compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project);
 
         final Set<File> allCompiledFiles = getAllCompiledFilesContainer(context);
