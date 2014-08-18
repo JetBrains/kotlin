@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="intellij-core-analysis">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core-analysis/intellij-core-analysis.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
