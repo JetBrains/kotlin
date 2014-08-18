@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.state;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -614,10 +615,22 @@ public class JetTypeMapper {
     }
 
     @NotNull
+    public static String getDefaultDescriptor(@NotNull Method method, boolean isExtension) {
+        String descriptor = method.getDescriptor();
+        int argumentsCount = (Type.getArgumentsAndReturnSizes(descriptor) >> 2) - 1;
+        if (isExtension) {
+            argumentsCount--;
+        }
+        int maskArgumentsCount = (argumentsCount + Integer.SIZE - 1) / Integer.SIZE;
+        String maskArguments = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount);
+        return descriptor.replace(")", maskArguments + ")");
+    }
+
+    @NotNull
     public Method mapDefaultMethod(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind, @NotNull CodegenContext<?> context) {
         Method jvmSignature = mapSignature(functionDescriptor, kind).getAsmMethod();
         Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
-        String descriptor = jvmSignature.getDescriptor().replace(")", "I)");
+        String descriptor = getDefaultDescriptor(jvmSignature, functionDescriptor.getReceiverParameter() != null);
         boolean isConstructor = "<init>".equals(jvmSignature.getName());
         if (!isStatic(kind) && !isConstructor) {
             descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());

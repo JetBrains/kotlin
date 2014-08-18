@@ -1814,6 +1814,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/contains.kt");
             }
             
+            @TestMetadata("extensionFunctionManyArgs.kt")
+            public void testExtensionFunctionManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/extensionFunctionManyArgs.kt");
+            }
+            
             @TestMetadata("extentionFunction.kt")
             public void testExtentionFunction() throws Exception {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunction.kt");
@@ -1864,9 +1869,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunctionDoubleTwoArgs.kt");
             }
             
+            @TestMetadata("innerExtentionFunctionManyArgs.kt")
+            public void testInnerExtentionFunctionManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunctionManyArgs.kt");
+            }
+            
+            @TestMetadata("memberFunctionManyArgs.kt")
+            public void testMemberFunctionManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/memberFunctionManyArgs.kt");
+            }
+            
             @TestMetadata("mixingNamedAndPositioned.kt")
             public void testMixingNamedAndPositioned() throws Exception {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/mixingNamedAndPositioned.kt");
+            }
+            
+            @TestMetadata("topLevelManyArgs.kt")
+            public void testTopLevelManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/topLevelManyArgs.kt");
             }
             
             @TestMetadata("trait.kt")

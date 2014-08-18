@@ -22,23 +22,33 @@ import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class ArgumentGenerator {
     /**
-     * @return a bit mask of default arguments which should be passed as the last argument to $default method, if there were any default
-     * arguments, or 0 if there were none
+     * @return a {@code List} of bit masks of default arguments that should be passed as last arguments to $default method, if there were
+     * any default arguments, or an empty {@code List} if there were none
      */
-    public int generate(@NotNull List<ResolvedValueArgument> valueArguments) {
+    @NotNull
+    public List<Integer> generate(@NotNull List<ResolvedValueArgument> valueArguments) {
+        List<Integer> masks = new ArrayList<Integer>(1);
+        boolean maskIsNeeded = false;
         int mask = 0;
         int n = valueArguments.size();
         for (int i = 0; i < n; i++) {
+            if (i != 0 && i % Integer.SIZE == 0) {
+                masks.add(mask);
+                mask = 0;
+            }
             ResolvedValueArgument argument = valueArguments.get(i);
             if (argument instanceof ExpressionValueArgument) {
                 generateExpression(i, (ExpressionValueArgument) argument);
             }
             else if (argument instanceof DefaultValueArgument) {
-                mask |= 1 << i;
+                maskIsNeeded = true;
+                mask |= 1 << (i % Integer.SIZE);
                 generateDefault(i, (DefaultValueArgument) argument);
             }
             else if (argument instanceof VarargValueArgument) {
@@ -49,7 +59,12 @@ public abstract class ArgumentGenerator {
             }
         }
 
-        return mask;
+        if (!maskIsNeeded) {
+            return Collections.emptyList();
+        }
+
+        masks.add(mask);
+        return masks;
     }
 
     protected void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
