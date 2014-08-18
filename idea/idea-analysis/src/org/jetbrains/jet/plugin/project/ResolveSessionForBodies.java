@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.project;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
@@ -38,7 +37,7 @@ import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 
-public class ResolveSessionForBodies implements KotlinCodeAnalyzer, ModificationTracker {
+public class ResolveSessionForBodies implements KotlinCodeAnalyzer {
     private final Object createdForObject;
     private final ResolveSession resolveSession;
     private final ResolveElementCache resolveElementCache;
@@ -95,13 +94,9 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer, Modification
     }
 
     @Override
-    public long getModificationCount() {
-        return resolveSession.getExceptionTracker().getModificationCount();
-    }
-
-    @Override
     public String toString() {
-        return "ResolveSessionForBodies: " + getModificationCount() + " " + createdForObject + " " + createdForObject.hashCode();
+        return "ResolveSessionForBodies: " + resolveSession.getExceptionTracker().getModificationCount()
+               + " " + createdForObject + " " + createdForObject.hashCode();
     }
 
     @Override
