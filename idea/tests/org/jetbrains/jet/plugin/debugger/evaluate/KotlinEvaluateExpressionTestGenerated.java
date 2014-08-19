@@ -143,6 +143,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
     }
     
     @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints")
+    @InnerTestClasses({MultipleBreakpoints.Library.class})
     public static class MultipleBreakpoints extends AbstractKotlinEvaluateExpressionTest {
         public void testAllFilesPresentInMultipleBreakpoints() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -178,6 +179,40 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/withoutBodyTypeParameters.kt");
         }
         
+        @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library")
+        public static class Library extends AbstractKotlinEvaluateExpressionTest {
+            public void testAllFilesPresentInLibrary() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("customLibClassName.kt")
+            public void testCustomLibClassName() throws Exception {
+                doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library/customLibClassName.kt");
+            }
+            
+            @TestMetadata("stdlibDelegatedProperty.kt")
+            public void testStdlibDelegatedProperty() throws Exception {
+                doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library/stdlibDelegatedProperty.kt");
+            }
+            
+            @TestMetadata("stdlibRange.kt")
+            public void testStdlibRange() throws Exception {
+                doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library/stdlibRange.kt");
+            }
+            
+            @TestMetadata("stdlibSlice.kt")
+            public void testStdlibSlice() throws Exception {
+                doMultipleBreakpointsTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library/stdlibSlice.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("MultipleBreakpoints");
+            suite.addTestSuite(MultipleBreakpoints.class);
+            suite.addTestSuite(Library.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/frame")
@@ -261,7 +296,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
     public static Test suite() {
         TestSuite suite = new TestSuite("KotlinEvaluateExpressionTestGenerated");
         suite.addTestSuite(SingleBreakpoint.class);
-        suite.addTestSuite(MultipleBreakpoints.class);
+        suite.addTest(MultipleBreakpoints.innerSuite());
         suite.addTestSuite(Frame.class);
         return suite;
     }

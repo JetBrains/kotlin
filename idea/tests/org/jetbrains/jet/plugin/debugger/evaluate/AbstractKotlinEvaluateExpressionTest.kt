@@ -53,7 +53,11 @@ import com.intellij.debugger.ui.impl.watch.ThisDescriptorImpl
 import com.intellij.debugger.ui.tree.FieldDescriptor
 import com.intellij.debugger.ui.impl.watch.NodeDescriptorImpl
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
+import com.intellij.psi.search.FilenameIndex
+import com.intellij.psi.PsiManager
+import com.intellij.debugger.DebuggerManagerEx
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.openapi.application.ModalityState
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestCase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -86,6 +90,8 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
     fun doSingleBreakpointTest(path: String) {
         val file = File(path)
         val fileText = FileUtil.loadFile(file, true)
+
+        createAdditionalBreakpoints(fileText)
 
         val shouldPrintFrame = InTextDirectivesUtils.isDirectiveDefined(fileText, "// PRINT_FRAME")
 
@@ -127,9 +133,14 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
     }
 
     fun doMultipleBreakpointsTest(path: String) {
-        val expressions = loadTestDirectivesPairs(FileUtil.loadFile(File(path), true), "// EXPRESSION: ", "// RESULT: ")
+        val file = File(path)
+        val fileText = FileUtil.loadFile(file, true)
+
+        createAdditionalBreakpoints(fileText)
 
         createDebugProcess(path)
+
+        val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 
         val exceptions = linkedMapOf<String, Throwable>()
         for ((expression, expected) in expressions) {
@@ -148,6 +159,42 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
         checkExceptions(exceptions)
 
         finish()
+    }
+
+    private fun createAdditionalBreakpoints(fileText: String) {
+        val breakpoints = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// ADDITIONAL_BREAKPOINT: ")
+        for (breakpoint in breakpoints) {
+            val position = breakpoint.split(".kt:")
+            assert(position.size == 2, "Couldn't parse position from test directive: directive = ${breakpoint}")
+            createBreakpoint(position[0], position[1])
+        }
+    }
+
+    private fun createBreakpoint(fileName: String, lineMarker: String) {
+        val project = getProject()!!
+        val sourceFiles = FilenameIndex.getAllFilesByExt(project, "kt").filter {
+            it.getName().contains(fileName) &&
+                    it.contentsToByteArray().toString("UTF-8").contains(lineMarker)
+        }
+
+        assert(sourceFiles.size() == 1, "One source file should be found: name = $fileName, sourceFiles = $sourceFiles")
+
+        val runnable = Runnable() {
+            val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFiles.first())!!
+
+            val breakpointManager = DebuggerManagerEx.getInstanceEx(project)?.getBreakpointManager()!!
+            val document = PsiDocumentManager.getInstance(project).getDocument(psiSourceFile)!!
+
+            val index = psiSourceFile.getText()!!.indexOf(lineMarker)
+            val lineNumber = document.getLineNumber(index) + 1
+
+            val breakpoint = breakpointManager.addLineBreakpoint(document, lineNumber)
+            if (breakpoint != null) {
+                println("LineBreakpoint created at " + psiSourceFile.getName() + ":" + lineNumber, ProcessOutputTypes.SYSTEM);
+            }
+        }
+
+        DebuggerInvocationUtil.invokeAndWait(project, runnable, ModalityState.defaultModalityState())
     }
 
     private fun SuspendContextImpl.printFrame() {
