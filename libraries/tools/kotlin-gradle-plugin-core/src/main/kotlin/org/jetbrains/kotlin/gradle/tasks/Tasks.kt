@@ -46,6 +46,41 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
 
+    public var resPath: String = ""
+    public var manifestPath: String = ""
+
+    // override setSource to track source directory sets
+    override fun setSource(source: Any?) {
+        srcDirsSources.clear()
+        if (source is SourceDirectorySet) {
+            srcDirsSources.add(source)
+        }
+        super.setSource(source)
+    }
+
+    // override source to track source directory sets
+    override fun source(vararg sources: Any?): SourceTask? {
+        for (source in sources) {
+            if (source is SourceDirectorySet) {
+                srcDirsSources.add(source)
+            }
+        }
+        return super.source(sources)
+    }
+
+    fun findSrcDirRoot(file: File): File? {
+        val absPath = file.getAbsolutePath()
+        for (source in srcDirsSources) {
+            for (root in source.getSrcDirs()) {
+                val rootAbsPath = root.getAbsolutePath()
+                if (FilenameUtils.directoryContains(rootAbsPath, absPath)) {
+                    return root
+                }
+            }
+        }
+        return null
+    }
+
     [TaskAction]
     override fun compile() {
         getLogger().debug("Starting ${javaClass} task")
@@ -75,7 +110,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         args.noInline = kotlinOptions.noInline
     }
 
-
     private fun callCompiler(args: T) {
         val messageCollector = GradleMessageCollector(getLogger())
         getLogger().debug("Calling compiler")
@@ -97,6 +131,9 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     val srcDirsSources = HashSet<SourceDirectorySet>()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
+        args.androidRes = resPath
+        args.androidManifest = manifestPath
+
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
             val existingClasspathEntries = getClasspath().filter({ it != null && it.exists() })
             val effectiveClassPath = (getJavaSourceRoots() + existingClasspathEntries).makeString(File.pathSeparator)
