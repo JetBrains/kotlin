@@ -36,8 +36,8 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
     private KotlinModuleXmlBuilderFactory() {}
 
     @Override
-    public KotlinModuleDescriptionBuilder create(String incrementalCacheDir) {
-        return new Builder(incrementalCacheDir);
+    public KotlinModuleDescriptionBuilder create() {
+        return new Builder();
     }
 
     @Override
@@ -50,13 +50,8 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
         private final Printer p = new Printer(xml);
         private boolean done = false;
 
-        public Builder(String incrementalCacheDir) {
-            if (incrementalCacheDir == null) {
-                openTag(p, MODULES);
-            }
-            else {
-                openTag(p, MODULES + " " + INCREMENTAL_CACHE + "=\"" + getEscapedPath(new File(incrementalCacheDir)) + "\"");
-            }
+        public Builder() {
+            openTag(p, MODULES);
         }
 
         @Override

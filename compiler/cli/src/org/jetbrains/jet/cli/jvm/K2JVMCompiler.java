@@ -139,9 +139,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
                 ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(
                         paths, arguments.module, sanitizedCollector);
-                if (moduleScript.getIncrementalCacheDir() != null) {
-                    configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR, new File(moduleScript.getIncrementalCacheDir()));
-                }
 
                 if (outputDir != null) {
                     messageCollector.report(CompilerMessageSeverity.WARNING,

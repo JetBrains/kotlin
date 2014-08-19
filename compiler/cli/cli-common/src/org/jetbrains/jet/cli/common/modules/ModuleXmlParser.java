@@ -43,7 +43,6 @@ public class ModuleXmlParser {
     public static final String MODULE = "module";
     public static final String NAME = "name";
     public static final String OUTPUT_DIR = "outputDir";
-    public static final String INCREMENTAL_CACHE = "incrementalCache";
     public static final String SOURCES = "sources";
     public static final String PATH = "path";
     public static final String CLASSPATH = "classpath";
@@ -70,7 +69,6 @@ public class ModuleXmlParser {
     }
 
     private final MessageCollector messageCollector;
-    private String incrementalCacheDir;
     private final List<Module> modules = new SmartList<Module>();
     private DefaultHandler currentState;
 
@@ -93,7 +91,7 @@ public class ModuleXmlParser {
                     return currentState;
                 }
             });
-            return new ModuleScriptData(modules, incrementalCacheDir);
+            return new ModuleScriptData(modules);
         }
         catch (ParserConfigurationException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
@@ -114,7 +112,6 @@ public class ModuleXmlParser {
                 throw createError(qName);
             }
 
-            incrementalCacheDir = attributes.getValue(INCREMENTAL_CACHE);
             setCurrentState(insideModules);
         }
     };

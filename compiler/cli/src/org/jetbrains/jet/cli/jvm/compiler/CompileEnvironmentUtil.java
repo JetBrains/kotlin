@@ -133,7 +133,7 @@ public class CompileEnvironmentUtil {
         if (modules.isEmpty()) {
             throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
         }
-        return new ModuleScriptData(modules, null);
+        return new ModuleScriptData(modules);
     }
 
     private static List<Module> runDefineModules(KotlinPaths paths, ClassFileFactory factory) {

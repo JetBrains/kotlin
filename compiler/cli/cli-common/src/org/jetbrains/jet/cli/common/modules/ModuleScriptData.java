@@ -24,10 +24,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ModuleScriptData {
-    public static final ModuleScriptData EMPTY = new ModuleScriptData(Collections.<Module>emptyList(), null);
+    public static final ModuleScriptData EMPTY = new ModuleScriptData(Collections.<Module>emptyList());
 
-    @Nullable
-    private final String incrementalCacheDir;
     @NotNull
     private final List<Module> modules;
 
@@ -36,13 +34,7 @@ public class ModuleScriptData {
         return modules;
     }
 
-    @Nullable
-    public String getIncrementalCacheDir() {
-        return incrementalCacheDir;
-    }
-
-    public ModuleScriptData(@NotNull List<Module> modules, @Nullable String incrementalCacheDir) {
-        this.incrementalCacheDir = incrementalCacheDir;
+    public ModuleScriptData(@NotNull List<Module> modules) {
         this.modules = modules;
     }
 }

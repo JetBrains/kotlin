@@ -41,9 +41,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
             CompilerConfigurationKey.create("disable optimization");
 
-    public static final CompilerConfigurationKey<File> INCREMENTAL_CACHE_BASE_DIR =
-            CompilerConfigurationKey.create("incremental cache base dir");
-
     public static final CompilerConfigurationKey<IncrementalCacheProvider> INCREMENTAL_CACHE_PROVIDER =
             CompilerConfigurationKey.create("incremental cache provider");
 

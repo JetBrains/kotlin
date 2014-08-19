@@ -56,11 +56,6 @@ public class ModuleXmlParserTestGenerated extends AbstractModuleXmlParserTest {
         doTest("compiler/testData/modules.xml/emptyModule.xml");
     }
     
-    @TestMetadata("incrementalCacheDir.xml")
-    public void testIncrementalCacheDir() throws Exception {
-        doTest("compiler/testData/modules.xml/incrementalCacheDir.xml");
-    }
-    
     @TestMetadata("manyTimes.xml")
     public void testManyTimes() throws Exception {
         doTest("compiler/testData/modules.xml/manyTimes.xml");
