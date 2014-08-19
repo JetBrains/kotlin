@@ -7,6 +7,14 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/android.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/jps/android-jps-plugin.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/android-common.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/jps/android-gradle-jps.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/manifest-merger.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/builder-model-0.12.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/commons-compress-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/layoutlib-api.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/common.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/sdklib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/resources_en.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

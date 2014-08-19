@@ -22,13 +22,20 @@ import java.util.ArrayList
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.resolve.android.AndroidWidget
 import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
+import com.intellij.openapi.application.Application
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.lang.resolve.android.CliAndroidResourceManager
+import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
 
 class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project) {
-    override val searchPath: String? = project.getBasePath() + "/res/layout/"
+    override val searchPath: String? = if (ApplicationManager.getApplication()!!.isUnitTestMode()) project.getUserData(TestConst.TESTDATA_PATH) + "res/layout/"
+        else project.getBasePath() + "/res/layout/"
     override var androidAppPackage: String = ""
         get() = resourceManager.readManifest()._package
 
-    override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(project, searchPath)
+    override val resourceManager: AndroidResourceManager = if (ApplicationManager.getApplication()!!.isUnitTestMode())
+        CliAndroidResourceManager(project, searchPath, searchPath + "AndroidManifest.xml")
+        else IDEAndroidResourceManager(project, searchPath)
 
     override protected fun lazySetup() {
         if (listenerSetUp) return
@@ -39,10 +46,10 @@ class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project
 
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
-        resourceManager.resetAttributeCache()
+        if (!ApplicationManager.getApplication()!!.isUnitTestMode()) (resourceManager as IDEAndroidResourceManager).resetAttributeCache()
         file.accept(AndroidXmlVisitor(resourceManager, { id, wClass, valueElement ->
             ids.add(AndroidWidget(id, wClass))
-            resourceManager.addMapping(id, valueElement)
+            if (!ApplicationManager.getApplication()!!.isUnitTestMode()) (resourceManager as IDEAndroidResourceManager).addMapping(id, valueElement)
         }))
         return produceKotlinProperties(KotlinStringWriter(), ids).toString()
     }
