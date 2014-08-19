@@ -674,16 +674,20 @@
                 <fileset dir="${idea.sdk}" includes="core-analysis/*.jar"/>
                 <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
 
-                <fileset dir="${basedir}/lib" includes="**/*.jar"/>
-                <fileset dir="${dependencies.dir}" includes="jline.jar"/>
-                <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
-                <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
-                <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
-                <pathelement location="${output}/classes/runtime"/>
-                <pathelement location="${output}/classes/compiler"/>
-                <pathelement location="${output}/classes/stdlib"/>
-            </classpath>
-        </javac2>
+          <fileset dir="${basedir}/lib" includes="**/*.jar"/>
+          <fileset dir="${dependencies.dir}" includes="jline.jar"/>
+          <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
+          <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
+          <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
+          <pathelement location="${output}/classes/runtime"/>
+          <pathelement location="${output}/classes/compiler"/>
+          <pathelement location="${output}/classes/stdlib"/>
+        </classpath>
+      </javac2>
+      <!--copy resources-->
+      <copy todir="${output}/classes/idea-analysis">
+        <fileset dir="${basedir}/idea/idea-analysis/src" excludes="**/*.java, **/*.kt"/>
+      </copy>
 
         <jar jarfile="${output}/kotlin-for-upsource0.jar">
             <fileset dir="${output}/classes/idea-analysis"/>
@@ -696,8 +700,9 @@
             <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
             <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
 
-            <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-            <fileset dir="${output}/classes/stdlib"/>
+        <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
+        <zipgroupfileset dir="${kotlin-home}/lib" includes="kotlin-runtime-sources.jar"/>   <!--Library.kt-->
+        <fileset dir="${output}/classes/stdlib"/>
 
         <!-- icons, etc. -->
         <fileset dir="idea/resources"/>
