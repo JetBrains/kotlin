@@ -50,35 +50,38 @@ public class ClassPreloadingUtils {
      * @param classCountEstimation an estimated number of classes in a the jars
      * @param parentClassLoader parent class loader
      * @param handler handler to be notified on class definitions done by this class loader, or null
+     * @param classesToLoadByParent condition to load some classes via parent class loader
      * @return a class loader that reads classes from memory
      * @throws IOException on from reading the jar
      */
     public static ClassLoader preloadClasses(
-            Collection<File> jarFiles, int classCountEstimation, ClassLoader parentClassLoader, ClassHandler handler
+            Collection<File> jarFiles,
+            int classCountEstimation,
+            ClassLoader parentClassLoader,
+            ClassCondition classesToLoadByParent,
+            ClassHandler handler
     ) throws IOException {
         Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
 
-        return createMemoryBasedClassLoader(parentClassLoader, entries, handler);
+        return createMemoryBasedClassLoader(parentClassLoader, entries, handler, classesToLoadByParent);
     }
 
     public static ClassLoader preloadClasses(
-            Collection<File> jarFiles, int classCountEstimation, ClassLoader parentClassLoader
+            Collection<File> jarFiles, int classCountEstimation, ClassLoader parentClassLoader, ClassCondition classesToLoadByParent
     ) throws IOException {
-        return preloadClasses(jarFiles, classCountEstimation, parentClassLoader, null);
+        return preloadClasses(jarFiles, classCountEstimation, parentClassLoader, classesToLoadByParent, null);
     }
 
     private static ClassLoader createMemoryBasedClassLoader(
             final ClassLoader parent,
             final Map<String, ResourceData> preloadedResources,
-            final ClassHandler handler
+            final ClassHandler handler,
+            final ClassCondition classesToLoadByParent
     ) {
         return new ClassLoader(null) {
             @Override
             public Class<?> loadClass(String name) throws ClassNotFoundException {
-                // When compiler is invoked from JPS, we should use loaded incremental cache interface from its class loader,
-                // because implementation is loaded from it, as well
-                if (name.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.") ||
-                    name.equals("org.jetbrains.jet.config.CompilerServices")) {
+                if (classesToLoadByParent != null && classesToLoadByParent.accept(name)) {
                     if (parent == null) {
                         return super.loadClass(name);
                     }

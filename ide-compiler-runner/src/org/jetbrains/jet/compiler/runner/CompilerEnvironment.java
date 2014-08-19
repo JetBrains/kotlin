@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.config.CompilerServices;
+import org.jetbrains.jet.preloading.ClassCondition;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -34,9 +35,10 @@ public final class CompilerEnvironment {
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File outputDir,
             @Nullable ClassLoader parentClassLoader,
+            @NotNull ClassCondition classesToLoadByParent,
             @NotNull CompilerServices compilerServices
     ) {
-        return new CompilerEnvironment(kotlinPaths, outputDir, parentClassLoader, compilerServices);
+        return new CompilerEnvironment(kotlinPaths, outputDir, parentClassLoader, classesToLoadByParent, compilerServices);
     }
 
     @NotNull
@@ -45,6 +47,8 @@ public final class CompilerEnvironment {
     private final File output;
     @Nullable
     private final ClassLoader parentClassLoader;
+    @Nullable
+    private final ClassCondition classesToLoadByParent;
     @NotNull
     private final CompilerServices services;
 
@@ -52,11 +56,13 @@ public final class CompilerEnvironment {
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File output,
             @Nullable ClassLoader parentClassLoader,
+            @NotNull ClassCondition classesToLoadByParent,
             @NotNull CompilerServices services
     ) {
         this.kotlinPaths = kotlinPaths;
         this.output = output;
         this.parentClassLoader = parentClassLoader;
+        this.classesToLoadByParent = classesToLoadByParent;
         this.services = services;
     }
 
@@ -78,6 +84,11 @@ public final class CompilerEnvironment {
     @Nullable
     public ClassLoader getParentClassLoader() {
         return parentClassLoader;
+    }
+
+    @Nullable
+    public ClassCondition getClassesToLoadByParent() {
+        return classesToLoadByParent;
     }
 
     public void reportErrorsTo(@NotNull MessageCollector messageCollector) {

@@ -42,6 +42,7 @@ import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.jps.incremental.*;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
+import org.jetbrains.jet.preloading.ClassCondition;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
@@ -132,7 +133,13 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 .build();
 
         CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(
-                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir, getClass().getClassLoader(), compilerServices);
+                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir, getClass().getClassLoader(), new ClassCondition() {
+                    @Override
+                    public boolean accept(String className) {
+                        return className.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.") ||
+                               className.equals("org.jetbrains.jet.config.CompilerServices");
+                    }
+                }, compilerServices);
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector);
             return ExitCode.ABORT;

@@ -20,7 +20,7 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.config.CompilerServices;
+import org.jetbrains.jet.preloading.ClassCondition;
 import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 
@@ -60,13 +60,14 @@ public class CompilerRunnerUtil {
     public static ClassLoader getOrCreatePreloader(
             @NotNull KotlinPaths paths,
             @Nullable ClassLoader parentClassLoader,
+            @Nullable ClassCondition classToLoadByParent,
             @NotNull MessageCollector messageCollector
     ) {
         ClassLoader answer = ourClassLoaderRef.get();
         if (answer == null) {
             try {
                 int estimatedClassNumber = 4096;
-                answer = ClassPreloadingUtils.preloadClasses(kompilerClasspath(paths, messageCollector), estimatedClassNumber, parentClassLoader);
+                answer = ClassPreloadingUtils.preloadClasses(kompilerClasspath(paths, messageCollector), estimatedClassNumber, parentClassLoader, classToLoadByParent);
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -119,7 +120,8 @@ public class CompilerRunnerUtil {
             MessageCollector messageCollector, PrintStream out, boolean usePreloader
     ) throws Exception {
         ClassLoader loader = usePreloader
-                             ? getOrCreatePreloader(environment.getKotlinPaths(), environment.getParentClassLoader(), messageCollector)
+                             ? getOrCreatePreloader(environment.getKotlinPaths(), environment.getParentClassLoader(),
+                                                    environment.getClassesToLoadByParent(), messageCollector)
                              : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
 
         Class<?> kompiler = Class.forName(compilerClassName, true, loader);
