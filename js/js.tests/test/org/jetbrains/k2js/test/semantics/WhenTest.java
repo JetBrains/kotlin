@@ -108,4 +108,8 @@ public final class WhenTest extends AbstractExpressionTest {
     public void testWhenWithOneStmWhen() throws Exception {
         fooBoxTest();
     }
+
+    public void testIfInWhenDanglingElseIssue() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
