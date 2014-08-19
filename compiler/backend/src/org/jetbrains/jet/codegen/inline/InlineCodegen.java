@@ -55,6 +55,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.addInlineMarker;
 
 public class InlineCodegen implements CallGenerator {
     private final GenerationState state;
@@ -204,6 +205,8 @@ public class InlineCodegen implements CallGenerator {
         //through generation captured parameters will be added to invocationParamBuilder
         putClosureParametersOnStack();
 
+        addInlineMarker(codegen.v, true);
+
         Parameters parameters = invocationParamBuilder.buildParameters();
 
         InliningContext info = new RootInliningContext(expressionMap,
@@ -242,6 +245,9 @@ public class InlineCodegen implements CallGenerator {
         generateAndInsertFinallyBlocks(adapter, infos);
 
         adapter.accept(new InliningInstructionAdapter(codegen.v));
+
+        addInlineMarker(codegen.v, false);
+
         return result;
     }
 

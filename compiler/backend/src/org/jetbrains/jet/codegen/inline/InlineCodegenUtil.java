@@ -72,6 +72,9 @@ public class InlineCodegenUtil {
     public static final String NON_LOCAL_RETURN = "$$$$$NON_LOCAL_RETURN$$$$$";
 
     public static final String ROOT_LABEL = "$$$$$ROOT$$$$$";
+    public static final String INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker";
+    public static final String INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall";
+    public static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";
 
     @Nullable
     public static MethodNode getMethodNode(
@@ -376,5 +379,14 @@ public class InlineCodegenUtil {
         public String getLabelNameIfExists(@NotNull Label l) {
             return labelNames == null ? null : labelNames.get(l);
         }
+    }
+
+    public static void addInlineMarker(
+            @NotNull InstructionAdapter v,
+            boolean isStartNotEnd
+    ) {
+        v.visitMethodInsn(Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
+                          (isStartNotEnd ? INLINE_MARKER_BEFORE_METHOD_NAME : INLINE_MARKER_AFTER_METHOD_NAME),
+                          "()V", false);
     }
 }
