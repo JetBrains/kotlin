@@ -1125,7 +1125,7 @@ public class DescriptorResolver {
         }
 
         boolean definedInClass = DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class) != null;
-        boolean isLocal = descriptor.getContainingDeclaration() instanceof CallableDescriptor;
+        boolean isLocal = DescriptorUtils.isLocal(descriptor);
         Visibility visibility = descriptor.getVisibility();
         boolean transformNeeded = !isLocal && !visibility.isPublicAPI()
                                   && !(definedInClass && Visibilities.PRIVATE.equals(visibility));

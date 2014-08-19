@@ -5916,6 +5916,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/objects/kt5527.kt");
             }
             
+            @TestMetadata("localObjectInsideObject.kt")
+            public void testLocalObjectInsideObject() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/objects/localObjectInsideObject.kt");
+            }
+            
             @TestMetadata("objectLiteralExpressionTypeMismatch.kt")
             public void testObjectLiteralExpressionTypeMismatch() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/objects/objectLiteralExpressionTypeMismatch.kt");
