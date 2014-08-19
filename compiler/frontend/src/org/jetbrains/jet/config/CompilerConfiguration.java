@@ -111,6 +111,11 @@ public class CompilerConfiguration {
         }
     }
 
+    @Override
+    public String toString() {
+        return map.toString();
+    }
+
     private static <T> void checkForNullElements(Collection<T> values) {
         int index = 0;
         for (T value : values) {
