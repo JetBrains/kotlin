@@ -82,7 +82,7 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
 
     private fun writeImports(kw: KotlinStringWriter): KotlinWriter {
         kw.writePackage(androidAppPackage)
-        if (ApplicationManager.getApplication()?.isUnitTestMode() ?: false) return kw
+//        if (ApplicationManager.getApplication()?.isUnitTestMode() ?: false) return kw
         for (elem in androidImports)
             kw.writeImport(elem)
         kw.writeEmptyLine()

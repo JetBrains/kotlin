@@ -212,6 +212,9 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
                 kotlinTask.setClasspath(javaTask.getClasspath())
                 kotlinTask.setDependsOn(javaTask.getDependsOn())
 
+                kotlinTask.resPath = File(variant.getMergeResources()?.getOutputDir()!!.canonicalPath + "/layout").canonicalPath
+                kotlinTask.manifestPath = variant.getProcessResources().getManifestFile()!!.canonicalPath
+
                 val javaSourceList = ArrayList<Any?>()
 
                 if (variant is TestVariant) {
