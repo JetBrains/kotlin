@@ -40,13 +40,14 @@ import com.intellij.psi.PsiManager
 import java.io.FileInputStream
 import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
-import org.jetbrains.kotlin.resolve.android.AndroidConst.*
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import java.util.Queue
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
+import com.intellij.openapi.application.ApplicationManager
 
 abstract class AndroidUIXmlProcessor(val project: Project) {
 
@@ -73,7 +74,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
     protected val LOG: Logger = Logger.getInstance(this.javaClass)
 
     public fun parseToString(): String? {
-        populateQueue()
         val cacheState = doParse()
         if (cacheState == null) return null
         return renderString()
@@ -82,7 +82,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
     public abstract val resourceManager: AndroidResourceManager
 
     public fun parseToPsi(project: Project): JetFile? {
-        populateQueue()
         val cacheState = doParse()
         if (cacheState == null) return null
         return if (cacheState == CacheAction.MISS || lastCachedPsi == null) {
@@ -104,6 +103,7 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
 
     private fun writeImports(kw: KotlinStringWriter): KotlinWriter {
         kw.writePackage(androidAppPackage)
+        if (ApplicationManager.getApplication()?.isUnitTestMode() ?: false) return kw
         for (elem in androidImports)
             kw.writeImport(elem)
         kw.writeEmptyLine()
@@ -130,6 +130,7 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
     private fun doParse(): CacheAction? {
         if (searchPath == null || searchPath == "") return null
         lazySetup()
+        populateQueue()
         var overallCacheMiss = false
         var file = filesToProcess.poll()
         while (file != null) {
