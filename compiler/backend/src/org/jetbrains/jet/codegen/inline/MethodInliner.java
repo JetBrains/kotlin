@@ -196,6 +196,7 @@ public class MethodInliner {
                     int valueParamShift = getNextLocalIndex();//NB: don't inline cause it changes
                     putStackValuesIntoLocals(info.getInvokeParamsWithoutCaptured(), valueParamShift, this, desc);
 
+                    addInlineMarker(this, true);
                     Parameters lambdaParameters = info.addAllParameters(nodeRemapper);
 
                     InlinedLambdaRemapper newCapturedRemapper =
@@ -217,6 +218,7 @@ public class MethodInliner {
                     Method delegate = typeMapper.mapSignature(info.getFunctionDescriptor()).getAsmMethod();
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
                     setLambdaInlining(false);
+                    addInlineMarker(this, false);
                 }
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     assert invocation != null : "<init> call not corresponds to new call" + owner + " " + name;
