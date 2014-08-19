@@ -27,12 +27,19 @@ import org.jetbrains.jps.android.AndroidJpsUtil
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.jet.lang.resolve.android.AndroidManifest
 import com.intellij.openapi.module.ModuleManager
+import java.util.ArrayList
 
 public class IDEAndroidResourceManager(project: Project, searchPath: String?) : AndroidResourceManagerBase(project, searchPath) {
 
+    class NoAndroidFacetException: Exception("No android facet found in project")
+
     override fun getLayoutXmlFiles(): Collection<PsiFile> {
-        val facet = getAndroidFacet()
-        return facet.getAllResourceDirectories() flatMap { it.findChild("layout")?.getChildren()!! map {vritualFileToPsi(it)!!}}
+        try {
+            val facet = getAndroidFacet()
+            return facet.getAllResourceDirectories() flatMap { it.findChild("layout")?.getChildren()!! map { vritualFileToPsi(it)!! } }
+        } catch (e: NoAndroidFacetException) {
+            return ArrayList(0)
+        }
     }
 
     private fun getAndroidFacet(): AndroidFacet {
@@ -40,7 +47,7 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
             val facet = AndroidFacet.getInstance(module)
             if (facet != null) return facet
         }
-        throw Exception("No android facet found in project")
+        throw NoAndroidFacetException()
     }
 
     override fun readManifest(): AndroidManifest {
