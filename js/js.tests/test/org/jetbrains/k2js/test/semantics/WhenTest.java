@@ -16,13 +16,12 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.mozilla.javascript.JavaScriptException;
 
-public final class PatternMatchingTest extends SingleFileTranslationTest {
+public final class WhenTest extends AbstractExpressionTest {
 
-    public PatternMatchingTest() {
-        super("patternMatching/");
+    public WhenTest() {
+        super("when/");
     }
 
     public void testWhenType() throws Exception {
