@@ -19,6 +19,7 @@ package org.jetbrains.jet.renderer;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -346,25 +347,42 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         String kotlinPrefix = "kotlin.";
         String mutablePrefix = "Mutable";
-        // e.g. lower = kotlin.MutableList<Foo>, upper = kotlin.List<Foo?>?
-        if (lowerRendered.startsWith(kotlinPrefix + mutablePrefix)) {
-            // List<Foo>
-            String lowerWithoutPrefix = lowerRendered.substring(mutablePrefix.length() + kotlinPrefix.length());
-            if (differsOnlyInNullability(lowerWithoutPrefix, upperRendered.substring(kotlinPrefix.length()))) {
-                return kotlinPrefix + "(" + mutablePrefix + ")" + lowerWithoutPrefix + "!";
-            }
-        }
-        else {
-            String arrayPrefix = "kotlin.Array<";
-            String covariantArrayPrefix = "kotlin.Array<out ";
-            if (lowerRendered.startsWith(arrayPrefix) && upperRendered.startsWith(covariantArrayPrefix)) {
-                String lowerWithoutPrefix = lowerRendered.substring(arrayPrefix.length());
-                if (differsOnlyInNullability(lowerWithoutPrefix, upperRendered.substring(covariantArrayPrefix.length()))) {
-                    return arrayPrefix + "(out) " + lowerWithoutPrefix + "!";
-                }
-            }
-        }
+        // java.util.List<Foo> -> (Mutable)List<Foo!>!
+        String simpleCollection = replacePrefixes(
+                lowerRendered, kotlinPrefix + mutablePrefix, upperRendered, kotlinPrefix, kotlinPrefix + "(" + mutablePrefix + ")"
+        );
+        if (simpleCollection != null) return simpleCollection;
+        // java.util.Map.Entry<Foo, Bar> -> (Mutable)Map.(Mutable)Entry<Foo!, Bar!>!
+        String mutableEntry = replacePrefixes(
+                lowerRendered, kotlinPrefix + "MutableMap.MutableEntry", upperRendered, kotlinPrefix + "Map.Entry",
+                kotlinPrefix + "(Mutable)Map.(Mutable)Entry"
+        );
+        if (mutableEntry != null) return mutableEntry;
+
+        // Foo[] -> Array<(out) Foo!>!
+        String array = replacePrefixes(
+                lowerRendered, kotlinPrefix + "Array<", upperRendered, kotlinPrefix + "Array<out ",
+                kotlinPrefix + "Array<(out) "
+        );
+        if (array != null) return array;
         return "(" + renderType(lower) + ".." + renderType(upper) + ")";
+    }
+
+    @Nullable
+    private static String replacePrefixes(
+            @NotNull String lowerRendered,
+            @NotNull String lowerPrefix,
+            @NotNull String upperRendered,
+            @NotNull String upperPrefix,
+            @NotNull String foldedPrefix
+    ) {
+        if (lowerRendered.startsWith(lowerPrefix) && upperRendered.startsWith(upperPrefix)) {
+            String lowerWithoutPrefix = lowerRendered.substring(lowerPrefix.length());
+            if (differsOnlyInNullability(lowerWithoutPrefix, upperRendered.substring(upperPrefix.length()))) {
+                return foldedPrefix + lowerWithoutPrefix + "!";
+            }
+        }
+        return null;
     }
 
     private static boolean differsOnlyInNullability(String lower, String upper) {
