@@ -18,12 +18,10 @@ package org.jetbrains.jet.plugin.stubindex;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.util.Processor;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -60,17 +58,11 @@ public final class PackageIndexUtil {
 
     @NotNull
     public static Collection<JetFile> findFilesWithExactPackage(
-            @NotNull final FqName packageFqName,
+            @NotNull FqName packageFqName,
             @NotNull GlobalSearchScope searchScope,
             @NotNull Project project
     ) {
-        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope);
-        return ContainerUtil.filter(files, new Condition<JetFile>() {
-            @Override
-            public boolean value(JetFile file) {
-                return packageFqName.equals(file.getPackageFqName());
-            }
-        });
+        return JetExactPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope);
     }
 
     public static boolean packageExists(
