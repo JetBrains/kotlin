@@ -179,7 +179,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @Override
     public boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope) {
-        return !JetAllPackagesIndex.getInstance().get(fqName.asString(), project, kotlinSources(scope, project)).isEmpty();
+        return PackageIndexUtil.packageExists(fqName, kotlinSources(scope, project), project);
     }
 
     @NotNull
