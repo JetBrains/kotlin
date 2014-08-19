@@ -20,6 +20,7 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.config.CompilerServices;
 import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 
@@ -33,7 +34,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -123,7 +123,10 @@ public class CompilerRunnerUtil {
                              : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
 
         Class<?> kompiler = Class.forName(compilerClassName, true, loader);
-        Method exec = kompiler.getMethod("execAndOutputHtml", PrintStream.class, Map.class, String[].class);
+        Method exec = kompiler.getMethod(
+                "execAndOutputHtml",
+                PrintStream.class,
+                Class.forName("org.jetbrains.jet.config.CompilerServices", true, loader), String[].class);
 
         return exec.invoke(kompiler.newInstance(), out, environment.getServices(), arguments);
     }

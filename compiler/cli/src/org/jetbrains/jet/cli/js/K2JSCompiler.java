@@ -42,6 +42,7 @@ import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.config.CompilerServices;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
@@ -51,7 +52,6 @@ import org.jetbrains.k2js.facade.MainCallParameters;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.jet.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.jet.cli.common.ExitCode.OK;
@@ -74,7 +74,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     @Override
     protected ExitCode doExecute(
             @NotNull K2JSCompilerArguments arguments,
-            @NotNull Map<Class, Object> services,
+            @NotNull CompilerServices services,
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {

@@ -19,12 +19,11 @@ package org.jetbrains.jet.compiler.runner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.config.CompilerServices;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -35,15 +34,9 @@ public final class CompilerEnvironment {
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File outputDir,
             @Nullable ClassLoader parentClassLoader,
-            @NotNull Object... serviceImplementations
+            @NotNull CompilerServices compilerServices
     ) {
-        Map<Class, Object> servicesMap = new HashMap<Class, Object>();
-        for (Object serviceImplementation : serviceImplementations) {
-            for (Class<?> serviceInterface : serviceImplementation.getClass().getInterfaces()) {
-                servicesMap.put(serviceInterface, serviceImplementation);
-            }
-        }
-        return new CompilerEnvironment(kotlinPaths, outputDir, parentClassLoader, servicesMap);
+        return new CompilerEnvironment(kotlinPaths, outputDir, parentClassLoader, compilerServices);
     }
 
     @NotNull
@@ -53,13 +46,13 @@ public final class CompilerEnvironment {
     @Nullable
     private final ClassLoader parentClassLoader;
     @NotNull
-    private final Map<Class, Object> services;
+    private final CompilerServices services;
 
     private CompilerEnvironment(
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File output,
             @Nullable ClassLoader parentClassLoader,
-            @NotNull Map<Class, Object> services
+            @NotNull CompilerServices services
     ) {
         this.kotlinPaths = kotlinPaths;
         this.output = output;
@@ -98,7 +91,7 @@ public final class CompilerEnvironment {
     }
 
     @NotNull
-    public Map<Class, Object> getServices() {
+    public CompilerServices getServices() {
         return services;
     }
 }

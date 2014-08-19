@@ -37,9 +37,11 @@ import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
+import org.jetbrains.jet.config.CompilerServices;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.jps.incremental.*;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
@@ -125,10 +127,12 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             incrementalCaches.put(target, dataManager.getStorage(target, IncrementalCacheStorageProvider.INSTANCE$));
         }
 
-        IncrementalCacheProviderImpl cacheProvider = new IncrementalCacheProviderImpl(incrementalCaches);
+        CompilerServices compilerServices = new CompilerServices.Builder()
+                .register(IncrementalCacheProvider.class, new IncrementalCacheProviderImpl(incrementalCaches))
+                .build();
 
         CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(
-                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir, getClass().getClassLoader(), cacheProvider);
+                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir, getClass().getClassLoader(), compilerServices);
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector);
             return ExitCode.ABORT;
