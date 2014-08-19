@@ -15,4 +15,6 @@ fun foo() {
     val f = {
         <!LOCAL_ENUM_NOT_ALLOWED!>enum class E<!> {}
     }
+
+    enum class<!SYNTAX!><!> {}
 }
