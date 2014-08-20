@@ -32,10 +32,13 @@ done;
 KOTLIN_HOME=`dirname "$SOURCE"`
 KOTLIN_HOME=`cd "$KOTLIN_HOME"; pwd -P`
 KOTLIN_HOME=`cd "$KOTLIN_HOME"/..; pwd`
+PATH_SEPARATOR=":"
 
-# Remove spaces from KOTLIN_HOME on windows
 if $cygwin; then
+    # Remove spaces from KOTLIN_HOME on windows
     KOTLIN_HOME=`cygpath --windows --short-name "$KOTLIN_HOME"`
+
+    PATH_SEPARATOR=";"
 fi
 
 [ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M -noverify"
@@ -82,4 +85,6 @@ CPSELECT="-cp "
   $JAVA_OPTS \
   "${java_args[@]}" \
   ${CPSELECT}"${KOTLIN_HOME}/lib/kotlin-preloader.jar" \
-  org.jetbrains.jet.preloading.Preloader "${KOTLIN_HOME}/lib/kotlin-compiler.jar:${KOTLIN_HOME}/lib/kotlin-runtime.jar" org.jetbrains.jet.cli.jvm.K2JVMCompiler 4096 notime "$@"
+  org.jetbrains.jet.preloading.Preloader \
+  "${KOTLIN_HOME}/lib/kotlin-compiler.jar${PATH_SEPARATOR}${KOTLIN_HOME}/lib/kotlin-runtime.jar" \
+  org.jetbrains.jet.cli.jvm.K2JVMCompiler 4096 notime "$@"
