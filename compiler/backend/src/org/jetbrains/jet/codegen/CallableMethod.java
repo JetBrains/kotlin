@@ -135,8 +135,7 @@ public class CallableMethod implements Callable {
         }
 
         Method method = getAsmMethod();
-
-        String desc = JetTypeMapper.getDefaultDescriptor(method);
+        String desc = JetTypeMapper.getDefaultDescriptor(this);
         if ("<init>".equals(method.getName())) {
             v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc, false);
         }

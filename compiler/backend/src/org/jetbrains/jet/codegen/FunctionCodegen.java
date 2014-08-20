@@ -536,7 +536,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         for (int m : masks) {
             v.iconst(m);
         }
-        String desc = JetTypeMapper.getDefaultDescriptor(method.getAsmMethod());
+        String desc = JetTypeMapper.getDefaultDescriptor(method);
         v.invokespecial(methodOwner.getInternalName(), "<init>", desc, false);
         v.areturn(Type.VOID_TYPE);
         endVisit(mv, "default constructor for " + methodOwner.getInternalName(), null);
