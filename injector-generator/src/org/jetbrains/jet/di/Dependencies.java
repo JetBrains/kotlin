@@ -123,25 +123,31 @@ public class Dependencies {
     }
 
     private void initializeByConstructorCall(Field field, ImmutableStack<Field> neededFor) {
-        Expression initialization = field.getInitialization();
-        DiType type = ((InstantiateType) initialization).getType();
+        //noinspection RedundantCast
+        DiType type = ((InstantiateType) field.getInitialization()).getType();
 
-        if (type.getClazz().isInterface()) {
-            throw new IllegalArgumentException("cannot instantiate interface: " + type.getClazz().getName() + " needed for " + neededFor);
+        Class<?> clazz = type.getClazz();
+        if (clazz.isInterface()) {
+            throw new IllegalArgumentException("cannot instantiate interface: " + clazz.getName() + " needed for " + neededFor);
         }
-        if (Modifier.isAbstract(type.getClazz().getModifiers())) {
-            throw new IllegalArgumentException("cannot instantiate abstract class: " + type.getClazz().getName() + " needed for " + neededFor);
+        if (Modifier.isAbstract(clazz.getModifiers())) {
+            throw new IllegalArgumentException("cannot instantiate abstract class: " + clazz.getName() + " needed for " + neededFor);
         }
 
         // Note: projections are not computed here
 
+        if (isKotlinSingletonObject(clazz)) {
+            field.setInitialization(new ObjectInstanceFieldAccess(clazz));
+            return;
+        }
+
         // Look for constructor
-        Constructor<?>[] constructors = type.getClazz().getConstructors();
+        Constructor<?>[] constructors = clazz.getConstructors();
         if (constructors.length == 0 || !Modifier.isPublic(constructors[0].getModifiers())) {
-            throw new IllegalArgumentException("No constructor: " + type.getClazz().getName() + " needed for " + neededFor);
+            throw new IllegalArgumentException("No constructor: " + clazz.getName() + " needed for " + neededFor);
         }
         if (constructors.length > 1) {
-            throw new IllegalArgumentException("Too many constructors in " + type.getClazz().getName() + " needed for " + neededFor);
+            throw new IllegalArgumentException("Too many constructors in " + clazz.getName() + " needed for " + neededFor);
         }
         Constructor<?> constructor = constructors[0];
 
@@ -159,6 +165,16 @@ public class Dependencies {
         }
 
         field.setInitialization(dependency);
+    }
+
+    private static boolean isKotlinSingletonObject(Class<?> clazz) {
+        try {
+            clazz.getDeclaredField("INSTANCE$");
+            return true;
+        }
+        catch (NoSuchFieldException e) {
+            return false;
+        }
     }
 
     public Collection<Field> satisfyDependencies() {
