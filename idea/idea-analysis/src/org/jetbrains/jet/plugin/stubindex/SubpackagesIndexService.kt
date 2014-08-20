@@ -53,6 +53,12 @@ public class SubpackagesIndexService(private val project: Project) {
             }
         }
 
+        public fun hasSubpackages(fqName: FqName, scope: GlobalSearchScope): Boolean {
+            return fqNameByPrefix[fqName].any { packageWithFilesFqName ->
+                PackageIndexUtil.containsAny(packageWithFilesFqName, scope, project, JetExactPackagesIndex.getInstance().getKey())
+            }
+        }
+
         public fun getSubpackages(fqName: FqName, scope: GlobalSearchScope): Collection<FqName> {
             val possibleFilesFqNames = fqNameByPrefix[fqName]
             val existingSubPackagesShortNames = HashSet<Name>()

@@ -20,18 +20,22 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
+import org.jetbrains.jet.plugin.stubindex.JetExactPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class PluginJetFilesProvider  {
 
     @NotNull
     public static Collection<JetFile> allFilesInProject(@NotNull Project project) {
-        return JetAllPackagesIndex.getInstance().get(FqName.ROOT.asString(), project,
-                                                     JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project), project));
+        Collection<JetFile> result = new ArrayList<JetFile>();
+        GlobalSearchScope scope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project), project);
+        for (String packageWithFiles : JetExactPackagesIndex.getInstance().getAllKeys(project)) {
+            result.addAll(JetExactPackagesIndex.getInstance().get(packageWithFiles, project, scope));
+        }
+        return result;
     }
 
     private PluginJetFilesProvider() {

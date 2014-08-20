@@ -52,7 +52,8 @@ public final class PackageIndexUtil {
             @NotNull GlobalSearchScope searchScope,
             @NotNull Project project
     ) {
-        return containsAny(packageFqName, searchScope, project, JetAllPackagesIndex.getInstance().getKey());
+        return containsAny(packageFqName, searchScope, project, JetExactPackagesIndex.getInstance().getKey())
+                || SubpackagesIndexService.OBJECT$.getInstance(project).hasSubpackages(packageFqName, searchScope);
     }
 
     public static boolean containsAny(
