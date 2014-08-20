@@ -615,7 +615,6 @@ public class JetTypeMapper {
 
     @NotNull
     public static String getDefaultDescriptor(@NotNull String descriptor) {
-        // read Type.getArgumentsAndReturnSizes documentation for explanations
         int argumentsSize = (Type.getArgumentsAndReturnSizes(descriptor) >> 2) - 1;
         int maskArgumentsCont = argumentsSize / Integer.SIZE + (argumentsSize % Integer.SIZE == 0 ? 0 : 1);
         String maskArguments = "I";
