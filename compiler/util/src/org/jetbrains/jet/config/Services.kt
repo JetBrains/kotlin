@@ -18,13 +18,18 @@ package org.jetbrains.jet.config
 
 import java.util.HashMap
 
-public class CompilerServices private(private val map: Map<Class<*>, Any>) {
+public class Services private(private val map: Map<Class<*>, Any>) {
+    class object {
+        public val EMPTY: Services = Builder().build()
+    }
 
     public fun <T> get(interfaceClass: Class<T>): T {
+        [suppress("UNCHECKED_CAST")]
         return map.get(interfaceClass) as T
     }
 
     public class Builder {
+
         private val map = HashMap<Class<*>, Any>()
 
         public fun <T> register(interfaceClass: Class<T>, implementation: T): Builder {
@@ -32,13 +37,8 @@ public class CompilerServices private(private val map: Map<Class<*>, Any>) {
             return this
         }
 
-        public fun build(): CompilerServices {
-            return CompilerServices(map)
+        public fun build(): Services {
+            return Services(map)
         }
-    }
-
-    public class object {
-        public val empty: CompilerServices
-            get() = Builder().build()
     }
 }

@@ -42,7 +42,7 @@ import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.config.CompilerServices;
+import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
@@ -74,7 +74,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     @Override
     protected ExitCode doExecute(
             @NotNull K2JSCompilerArguments arguments,
-            @NotNull CompilerServices services,
+            @NotNull Services services,
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {

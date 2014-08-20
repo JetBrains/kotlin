@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.doc.KDocConfig
 import java.util.concurrent.Callable
 import org.gradle.api.Project
-import org.jetbrains.jet.config.CompilerServices
+import org.jetbrains.jet.config.Services
 
 public open class KotlinCompile(): AbstractCompile() {
 
@@ -123,7 +123,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
         val messageCollector = GradleMessageCollector(getLogger())
         getLogger().debug("Calling compiler")
-        val exitCode = compiler.exec(messageCollector, CompilerServices.empty, args)
+        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
 
         when (exitCode) {
             ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")

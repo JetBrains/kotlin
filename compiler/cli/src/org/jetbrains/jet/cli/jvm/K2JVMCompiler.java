@@ -34,7 +34,7 @@ import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.config.CompilerServices;
+import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -59,7 +59,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @NotNull
     protected ExitCode doExecute(
             @NotNull K2JVMCompilerArguments arguments,
-            @NotNull CompilerServices services,
+            @NotNull Services services,
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {

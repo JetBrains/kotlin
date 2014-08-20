@@ -35,7 +35,7 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
-import org.jetbrains.jet.config.CompilerServices;
+import org.jetbrains.jet.config.Services;
 
 import java.io.File;
 import java.io.IOException;
@@ -260,7 +260,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             @NotNull CommonCompilerArguments arguments,
             @NotNull MessageCollector messageCollector
     ) {
-        return compiler.exec(messageCollector, CompilerServices.OBJECT$.getEmpty(), arguments);
+        return compiler.exec(messageCollector, Services.EMPTY, arguments);
     }
 
     /**

@@ -27,12 +27,10 @@ import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.config.CompilerServices;
+import org.jetbrains.jet.config.Services;
 
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
 
@@ -51,12 +49,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
-        return exec(errStream, new CompilerServices.Builder().build(), MessageRenderer.PLAIN_WITH_RELATIVE_PATH, args);
+        return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_WITH_RELATIVE_PATH, args);
     }
 
     @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
     @NotNull
-    public ExitCode execAndOutputHtml(@NotNull PrintStream errStream, @NotNull CompilerServices services, @NotNull String... args) {
+    public ExitCode execAndOutputHtml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
         return exec(errStream, services, MessageRenderer.TAGS, args);
     }
 
@@ -102,7 +100,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     @NotNull
     private ExitCode exec(
             @NotNull PrintStream errStream,
-            @NotNull CompilerServices services,
+            @NotNull Services services,
             @NotNull MessageRenderer messageRenderer,
             @NotNull String[] args
     ) {
@@ -135,7 +133,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     }
 
     @NotNull
-    public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull CompilerServices services, @NotNull A arguments) {
+    public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
         try {
             Disposable rootDisposable = Disposer.newDisposable();
@@ -161,7 +159,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     @NotNull
     protected abstract ExitCode doExecute(
             @NotNull A arguments,
-            @NotNull CompilerServices services,
+            @NotNull Services services,
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     );

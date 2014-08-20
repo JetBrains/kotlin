@@ -19,7 +19,7 @@ package org.jetbrains.jet.compiler.runner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.config.CompilerServices;
+import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.preloading.ClassCondition;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
@@ -36,7 +36,7 @@ public final class CompilerEnvironment {
             @Nullable File outputDir,
             @Nullable ClassLoader parentClassLoader,
             @NotNull ClassCondition classesToLoadByParent,
-            @NotNull CompilerServices compilerServices
+            @NotNull Services compilerServices
     ) {
         return new CompilerEnvironment(kotlinPaths, outputDir, parentClassLoader, classesToLoadByParent, compilerServices);
     }
@@ -47,17 +47,17 @@ public final class CompilerEnvironment {
     private final File output;
     @Nullable
     private final ClassLoader parentClassLoader;
-    @Nullable
+    @NotNull
     private final ClassCondition classesToLoadByParent;
     @NotNull
-    private final CompilerServices services;
+    private final Services services;
 
     private CompilerEnvironment(
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File output,
             @Nullable ClassLoader parentClassLoader,
             @NotNull ClassCondition classesToLoadByParent,
-            @NotNull CompilerServices services
+            @NotNull Services services
     ) {
         this.kotlinPaths = kotlinPaths;
         this.output = output;
@@ -86,7 +86,7 @@ public final class CompilerEnvironment {
         return parentClassLoader;
     }
 
-    @Nullable
+    @NotNull
     public ClassCondition getClassesToLoadByParent() {
         return classesToLoadByParent;
     }
@@ -102,7 +102,7 @@ public final class CompilerEnvironment {
     }
 
     @NotNull
-    public CompilerServices getServices() {
+    public Services getServices() {
         return services;
     }
 }
