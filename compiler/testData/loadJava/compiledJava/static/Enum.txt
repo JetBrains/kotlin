@@ -4,56 +4,56 @@ public final enum class Enum : kotlin.Enum<test.Enum> {
     private constructor Enum()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     public class object <class-object-for-Enum> {
         private constructor <class-object-for-Enum>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Enum
         public final /*synthesized*/ fun values(): kotlin.Array<test.Enum>
     }
-    
+
     public enum entry A : test.Enum {
         private constructor A()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-A> : test.Enum.A {
             private constructor <class-object-for-A>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
+
     public enum entry B : test.Enum {
         private constructor B()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-B> : test.Enum.B {
             private constructor <class-object-for-B>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
+
     public enum entry C : test.Enum {
         private constructor C()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-C> : test.Enum.C {
             private constructor <class-object-for-C>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
-    public open inner class Inner : java.lang.Object {
+
+    public open inner class Inner {
         public constructor Inner()
         public/*package*/ open fun bar(): kotlin.Unit
         public/*package*/ open fun valueOf(/*0*/ p0: kotlin.String?): kotlin.Unit
     }
-    
-    public open class Nested : java.lang.Object {
+
+    public open class Nested {
         public constructor Nested()
         public/*package*/ open fun foo(): kotlin.Unit
         public/*package*/ open fun values(): kotlin.Unit

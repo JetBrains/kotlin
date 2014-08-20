@@ -17,6 +17,6 @@ fun f3(s: Number?) {
 
 fun f4(s: Int?) {
     var u = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (s!! == 42)<!>;
-    if (u == Unit.VALUE) u = if (s == 239);
+    if (u == Unit) u = if (s == 239);
     return u
 }

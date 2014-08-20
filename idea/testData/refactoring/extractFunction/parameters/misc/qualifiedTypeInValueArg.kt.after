@@ -15,7 +15,7 @@ class MyClass {
     }
 }
 
-fun unit() {
+private fun unit() {
     val a: Any = MyClass.P.Q()
     val t = MyClass.P.R<MyClass.P.Q>(a as MyClass.P.Q)
 }

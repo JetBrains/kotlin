@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
@@ -93,6 +92,8 @@ public interface JetScope {
     @ReadOnly
     Collection<DeclarationDescriptor> getOwnDeclaredDescriptors();
 
-    @TestOnly
+    /**
+     * Is supposed to be used in tests and debug only
+     */
     void printScopeStructure(@NotNull Printer p);
 }

@@ -6,9 +6,9 @@ class Dup {
 
 class A() {
   fun foo() : Unit {
-    this@A
+    <warning>this@A</warning>
     this<error>@a</error>
-    this
+    <warning>this</warning>
   }
 
   val x = this@A.foo()

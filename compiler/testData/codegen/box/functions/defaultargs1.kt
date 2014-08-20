@@ -1,4 +1,4 @@
-fun <T> T.toPrefixedString(prefix: String = "", suffix: String="") = prefix + (this as java.lang.Object).toString() + suffix
+fun <T> T.toPrefixedString(prefix: String = "", suffix: String="") = prefix + this.toString() + suffix
 
 fun box() : String {
     if("mama".toPrefixedString(suffix="321", prefix="papa") != "papamama321") return "fail"

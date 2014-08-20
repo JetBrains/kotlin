@@ -70,12 +70,11 @@ import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.lang.resolve.name.COMPONENT_FUNCTION_PATTERN
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
 private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
-private val COMPONENT_FUNCTION_PATTERN = Pattern.compile("^component(\\d+)$")
-
 
 /**
  * Represents a single choice for a type (e.g. parameter type or return type).

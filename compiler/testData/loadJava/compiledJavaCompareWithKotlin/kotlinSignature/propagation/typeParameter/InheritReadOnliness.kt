@@ -1,8 +1,8 @@
 package test
 
-public trait InheritReadOnliness: Object {
+public trait InheritReadOnliness {
 
-    public trait Super: Object {
+    public trait Super {
         public fun <A: List<String>> foo(a: A)
     }
 

@@ -11,11 +11,11 @@ L0:
   2 mark({ s. })
     mark(s.)
     r(s) -> <v1>
-    magic[UNSUPPORTED_OPERATION](s.|<v1>) -> <v2>
+    magic[UNSUPPORTED_ELEMENT](s.|<v1>) -> <v2>
 L1:
-  1 <END>                                            NEXT:[<SINK>]
+  1 <END>                                          NEXT:[<SINK>]
 error:
-    <ERROR>                                          PREV:[]
+    <ERROR>                                        PREV:[]
 sink:
-    <SINK>                                           PREV:[<ERROR>, <END>]
+    <SINK>                                         PREV:[<ERROR>, <END>]
 =====================

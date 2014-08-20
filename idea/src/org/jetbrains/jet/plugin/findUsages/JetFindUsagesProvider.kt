@@ -21,20 +21,13 @@ import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lexer.JetLexer
-import com.intellij.lang.cacheBuilder.DefaultWordsScanner
-import org.jetbrains.jet.lexer.JetTokens
-import com.intellij.psi.tree.TokenSet
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
 
 public class JetFindUsagesProvider : FindUsagesProvider {
-    class JetWordsScanner : DefaultWordsScanner(JetLexer(), TokenSet.create(JetTokens.IDENTIFIER), JetTokens.COMMENTS, JetTokens.STRINGS)
-
     public override fun canFindUsagesFor(psiElement: PsiElement): Boolean =
             psiElement is JetNamedDeclaration
 
     public override fun getWordsScanner(): WordsScanner =
-            JetWordsScanner()
+            KotlinWordsScanner()
 
     public override fun getHelpId(psiElement: PsiElement): String? = null
 

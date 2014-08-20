@@ -51,6 +51,19 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             val parameterDefaults: List<PsiExpression>?)
 
     private fun choosePrimaryConstructor(): PsiMethod? {
+        val toTargetConstructorMap = buildToTargetConstructorMap()
+
+        val candidates = constructors.filter { it !in toTargetConstructorMap }
+        if (candidates.size != 1) return null // there should be only one constructor which does not call other constructor
+        val primary = candidates.single()
+        if (toTargetConstructorMap.values().any() { it.constructor != primary }) return null // all other constructors call our candidate (directly or indirectly)
+
+        dropConstructorsForDefaultValues(primary, toTargetConstructorMap)
+
+        return primary
+    }
+
+    private fun buildToTargetConstructorMap(): Map<PsiMethod, TargetConstructorInfo> {
         val toTargetConstructorMap = HashMap<PsiMethod, TargetConstructorInfo>()
         for (constructor in constructors) {
             val firstStatement = constructor.getBody()?.getStatements()?.firstOrNull()
@@ -85,15 +98,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
                 }
             }
         }
-
-        val candidates = constructors.filter { it !in toTargetConstructorMap }
-        if (candidates.size != 1) return null // there should be only one constructor which does not call other constructor
-        val primary = candidates.single()
-        if (toTargetConstructorMap.values().any() { it.constructor != primary }) return null // all other constructors call our candidate (directly or indirectly)
-
-        dropConstructorsForDefaultValues(primary, toTargetConstructorMap)
-
-        return primary
+        return toTargetConstructorMap
     }
 
     private fun calcTargetParameterDefaults(constructor: PsiMethod, target: PsiMethod, targetCall: PsiMethodCallExpression): List<PsiExpression>? {
@@ -116,12 +121,10 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
     }
 
     private fun dropConstructorsForDefaultValues(primary: PsiMethod, toTargetConstructorMap: Map<PsiMethod, TargetConstructorInfo>) {
-        //TODO: should we drop when annotations exist?
-
         val dropCandidates = toTargetConstructorMap
                 .filter { it.value.parameterDefaults != null }
                 .map { it.key }
-                .filter { it.accessModifier() == primary.accessModifier() }
+                .filter { it.accessModifier() == primary.accessModifier() && it.getModifierList().getAnnotations().isEmpty() /* do not drop constructors with annotations */ }
                 .sortBy { -it.getParameterList().getParametersCount() } // we will try to drop them starting from ones with more parameters
         val primaryParamCount = primary.getParameterList().getParametersCount()
         @DropCandidatesLoop
@@ -180,8 +183,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             var body = postProcessBody(bodyConverter.convertBlock(constructor.getBody()))
             val containingClass = constructor.getContainingClass()
             val typeParameterList = converter.convertTypeParameterList(containingClass?.getTypeParameterList())
-            val factoryFunctionType = ClassType(containingClass?.declarationIdentifier() ?: Identifier.Empty,
-                                                typeParameterList.parameters,
+            val factoryFunctionType = ClassType(ReferenceElement(containingClass?.declarationIdentifier() ?: Identifier.Empty, typeParameterList.parameters).assignNoPrototype(),
                                                 Nullability.NotNull,
                                                 converter.settings).assignNoPrototype()
             return FactoryFunction(constructor.declarationIdentifier(), annotations, correctFactoryFunctionAccess(modifiers),
@@ -198,13 +200,14 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         val body = primaryConstructor.getBody()
 
         val parameterUsageReplacementMap = HashMap<String, String>()
+        val correctedTypeConverter = converter.withSpecialContext(psiClass).typeConverter /* to correct nested class references */
         val block = if (body != null) {
             val statementsToRemove = HashSet<PsiStatement>()
             for (parameter in params) {
                 val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, primaryConstructor) ?: continue
 
-                val fieldType = typeConverter.convertVariableType(field)
-                val parameterType = typeConverter.convertVariableType(parameter)
+                val fieldType = correctedTypeConverter.convertVariableType(field)
+                val parameterType = correctedTypeConverter.convertVariableType(parameter)
                 // types can be different only in nullability
                 val `type` = if (fieldType == parameterType) {
                     fieldType
@@ -241,6 +244,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values
         val correctedConverter = converter.withExpressionVisitor { ReplacingExpressionVisitor(this, parameterUsageReplacementMap, it) }
+                                          .withSpecialContext(psiClass) /* to correct nested class references */
 
         val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
@@ -256,7 +260,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             else
                 null
             if (!parameterToField.containsKey(parameter)) {
-                converter.convertParameter(parameter, defaultValue = defaultValue)
+                correctedConverter.convertParameter(parameter, defaultValue = defaultValue)
             }
             else {
                 val (field, `type`) = parameterToField[parameter]!!
@@ -307,7 +311,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             return generateArtificialPrimaryConstructor(classBody)
         }
         else {
-            val updatedFunctions = replaceConstructorCallsInFactoryFunctions(classBody.factoryFunctions)
+            val updatedFunctions = processFactoryFunctionsWithConstructorCall(classBody.factoryFunctions)
             return ClassBody(classBody.primaryConstructorSignature, classBody.members, classBody.classObjectMembers, updatedFunctions, classBody.lBrace, classBody.rBrace)
         }
     }
@@ -320,7 +324,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         for (function in classBody.factoryFunctions) {
             val body = function.body!!
             // 2 cases: secondary constructor either calls another constructor or does not call any
-            val newStatements = replaceConstructorCallInFactoryFunction(body) ?:
+            val newStatements = processFactoryFunctionWithConstructorCall(body) ?:
                     insertCallToArtificialPrimary(body, fieldsToInitialize)
             val newBody = Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
             updatedFactoryFunctions.add(function.withBody(newBody))
@@ -335,15 +339,15 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         //TODO: we can generate it private when secondary constructors are supported by Kotlin
         //val modifiers = Modifiers(listOf(Modifier.PRIVATE)).assignNoPrototype()
         val parameterList = ParameterList(parameters).assignNoPrototype()
-        val constructorSignature = PrimaryConstructorSignature(modifiers, parameterList).assignNoPrototype()
+        val constructorSignature = PrimaryConstructorSignature(Annotations.Empty, modifiers, parameterList).assignNoPrototype()
         val updatedMembers = classBody.members.filter { !fieldsToInitialize.contains(it) }
         return ClassBody(constructorSignature, updatedMembers, classBody.classObjectMembers, updatedFactoryFunctions, classBody.lBrace, classBody.rBrace)
     }
 
-    private fun replaceConstructorCallsInFactoryFunctions(functions: List<FactoryFunction>): List<FactoryFunction> {
+    private fun processFactoryFunctionsWithConstructorCall(functions: List<FactoryFunction>): List<FactoryFunction> {
         return functions.map { function ->
             val body = function.body!!
-            val statements = replaceConstructorCallInFactoryFunction(body)
+            val statements = processFactoryFunctionWithConstructorCall(body)
             if (statements != null) {
                 function.withBody(Block(statements, body.lBrace, body.rBrace).assignPrototypesFrom(body))
             }
@@ -353,7 +357,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
         }
     }
 
-    private fun replaceConstructorCallInFactoryFunction(body: Block): List<Statement>? {
+    private fun processFactoryFunctionWithConstructorCall(body: Block): List<Statement>? {
         val statements = ArrayList(body.statements)
 
         // searching for other constructor call in form "this(...)"

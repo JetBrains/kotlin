@@ -7,7 +7,5 @@ fun box(): String {
 
     if (Unit != Unit) return "Fail Unit != Unit"
 
-    if (a.VALUE != Unit.VALUE) return "Fail a.VALUE != Unit.VALUE"
-
     return "OK"
 }

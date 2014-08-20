@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 trait A
 abstract class B
 annotation class C

@@ -81,8 +81,7 @@ import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCallWithAssert;
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
@@ -667,7 +666,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         // The result is stored to local variable
         protected void generateRangeOrProgressionProperty(Type loopRangeType, String getterName, Type elementType, int varToStore) {
             Type boxedType = boxType(elementType);
-            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + boxedType.getDescriptor());
+            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + boxedType.getDescriptor(), false);
             StackValue.coerce(boxedType, elementType, v);
             v.store(varToStore, elementType);
         }
@@ -1028,7 +1027,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             Type methodParamType = asmElementType.getSort() == Type.LONG ? Type.LONG_TYPE : Type.INT_TYPE;
             v.invokestatic("kotlin/internal/InternalPackage", "getProgressionFinalElement",
-                           Type.getMethodDescriptor(methodParamType, methodParamType, methodParamType, methodParamType));
+                           Type.getMethodDescriptor(methodParamType, methodParamType, methodParamType, methodParamType), false);
 
             finalVar = createLoopTempVariable(asmElementType);
             v.store(finalVar, asmElementType);
@@ -1266,7 +1265,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     genInvokeAppendMethod(v, JAVA_STRING_TYPE);
                 }
             }
-            v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
+            v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
             return StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE);
         }
     }
@@ -1364,7 +1363,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             argumentGenerator.generate(valueArguments);
         }
 
-        v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor());
+        v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor(), false);
         return StackValue.onStack(type);
     }
 
@@ -1480,7 +1479,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (sharedVarType != null) {
             v.anew(sharedVarType);
             v.dup();
-            v.invokespecial(sharedVarType.getInternalName(), "<init>", "()V");
+            v.invokespecial(sharedVarType.getInternalName(), "<init>", "()V", false);
             v.store(index, OBJECT_TYPE);
         }
 
@@ -1750,7 +1749,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (descriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-            v.invokevirtual("jet/TypeInfo", "getClassObject", "()Ljava/lang/Object;");
+            v.invokevirtual("jet/TypeInfo", "getClassObject", "()Ljava/lang/Object;", false);
             JetType type = typeParameterDescriptor.getClassObjectType();
             assert type != null;
             v.checkcast(asmType(type));
@@ -2032,7 +2031,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         v.goTo(afterAll);
 
         v.mark(ifNonNull);
-        v.invokespecial(asmType.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType));
+        v.invokespecial(asmType.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType), false);
 
         v.mark(afterAll);
         return StackValue.onStack(asmType);
@@ -2380,24 +2379,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 String owner = "kotlin/jvm/internal/SpreadBuilder";
                 v.anew(Type.getObjectType(owner));
                 v.dup();
-                v.invokespecial(owner, "<init>", "()V");
+                v.invokespecial(owner, "<init>", "()V", false);
                 for (int i = 0; i != size; ++i) {
                     v.dup();
                     ValueArgument argument = arguments.get(i);
                     if (argument.getSpreadElement() != null) {
                         gen(argument.getArgumentExpression(), OBJECT_TYPE);
-                        v.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V");
+                        v.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V", false);
                     }
                     else {
                         gen(argument.getArgumentExpression(), elementType);
-                        v.invokevirtual(owner, "add", "(Ljava/lang/Object;)Z");
+                        v.invokevirtual(owner, "add", "(Ljava/lang/Object;)Z", false);
                         v.pop();
                     }
                 }
                 v.dup();
-                v.invokevirtual(owner, "size", "()I");
+                v.invokevirtual(owner, "size", "()I", false);
                 v.newarray(elementType);
-                v.invokevirtual(owner, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;");
+                v.invokevirtual(owner, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", false);
                 v.checkcast(type);
             }
         }
@@ -2443,7 +2442,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return generateTopLevelPropertyReference(descriptor);
             }
             else if (containingDeclaration instanceof ClassDescriptor) {
-                return generateMemberPropertyReference(descriptor);
+                return generateMemberPropertyReference(descriptor, (ClassDescriptor) containingDeclaration);
+            }
+            else if (containingDeclaration instanceof ScriptDescriptor) {
+                return generateMemberPropertyReference(descriptor, ((ScriptDescriptor) containingDeclaration).getClassDescriptor());
             }
             else {
                 throw new UnsupportedOperationException("Unsupported callable reference container: " + containingDeclaration);
@@ -2486,8 +2488,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue generateMemberPropertyReference(@NotNull VariableDescriptor descriptor) {
-        ClassDescriptor containingClass = (ClassDescriptor) descriptor.getContainingDeclaration();
+    private StackValue generateMemberPropertyReference(@NotNull VariableDescriptor descriptor, @NotNull ClassDescriptor containingClass) {
         Type classAsmType = typeMapper.mapClass(containingClass);
 
         if (containingClass instanceof JavaClassDescriptor) {
@@ -2850,34 +2851,46 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue genCmpWithZero(JetExpression exp, Type expType, IElementType opToken) {
-        v.iconst(1);
         gen(exp, expType);
-        Label ok = new Label();
+        Label trueLabel = new Label();
+        Label afterLabel = new Label();
         if (JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
-            v.ifeq(ok);
+            v.ifeq(trueLabel);
         }
         else {
-            v.ifne(ok);
+            v.ifne(trueLabel);
         }
-        v.pop();
+
         v.iconst(0);
-        v.mark(ok);
+        v.goTo(afterLabel);
+
+        v.mark(trueLabel);
+        v.iconst(1);
+
+        v.mark(afterLabel);
+
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
     private StackValue genCmpWithNull(JetExpression exp, Type expType, IElementType opToken) {
-        v.iconst(1);
         gen(exp, boxType(expType));
-        Label ok = new Label();
+        Label trueLabel = new Label();
+        Label afterLabel = new Label();
         if (JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
-            v.ifnull(ok);
+            v.ifnull(trueLabel);
         }
         else {
-            v.ifnonnull(ok);
+            v.ifnonnull(trueLabel);
         }
-        v.pop();
+
         v.iconst(0);
-        v.mark(ok);
+        v.goTo(afterLabel);
+
+        v.mark(trueLabel);
+        v.iconst(1);
+
+        v.mark(afterLabel);
+
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
@@ -3080,7 +3093,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.dup();
             Label ok = new Label();
             v.ifnonnull(ok);
-            v.invokestatic("kotlin/jvm/internal/Intrinsics", "throwNpe", "()V");
+            v.invokestatic("kotlin/jvm/internal/Intrinsics", "throwNpe", "()V", false);
             v.mark(ok);
             return StackValue.onStack(base.type);
         }
@@ -3315,7 +3328,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         for (ValueArgument va : expression.getValueArguments()) {
             args.add(va.getArgumentExpression());
         }
-        args.addAll(expression.getFunctionLiteralArguments());
 
         boolean isArray = KotlinBuiltIns.getInstance().isArray(arrayType);
         if (!isArray && args.size() != 1) {
@@ -3354,7 +3366,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             v.dup2();
             v.load(indexIndex, Type.INT_TYPE);
-            v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
+            v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
             v.invokeinterface(FUNCTION1_TYPE.getInternalName(), "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
             v.load(indexIndex, Type.INT_TYPE);
             v.iinc(indexIndex, 1);
@@ -3841,10 +3853,10 @@ The "returned" value of try expression with no finally is either the last expres
         v.dup();
         if (message != null) {
             v.visitLdcInsn(message);
-            v.invokespecial(className, "<init>", "(Ljava/lang/String;)V");
+            v.invokespecial(className, "<init>", "(Ljava/lang/String;)V", false);
         }
         else {
-            v.invokespecial(className, "<init>", "()V");
+            v.invokespecial(className, "<init>", "()V", false);
         }
         v.athrow();
     }

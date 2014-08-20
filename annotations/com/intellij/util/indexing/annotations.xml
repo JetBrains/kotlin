@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.util.indexing.FileBasedIndex com.intellij.util.indexing.FileBasedIndex getInstance()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

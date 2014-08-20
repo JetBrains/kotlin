@@ -24,23 +24,24 @@ L0:
     jf(L2|<v5>)                                                             NEXT:[read (Unit), r(sum) -> <v6>]
     r(sum) -> <v6>
     ret(*|<v6>) L1                                                          NEXT:[<END>]
--   jmp(L3)                                                                 NEXT:[r(x) -> <v7>]                                                            PREV:[]
+-   jmp(L3)                                                                 NEXT:[merge(if (x == 0.toLong()) return sum|!<v7>) -> <v8>]                    PREV:[]
 L2:
     read (Unit)                                                             PREV:[jf(L2|<v5>)]
 L3:
-    r(x) -> <v7>
-    r(1) -> <v8>
+    merge(if (x == 0.toLong()) return sum|!<v7>) -> <v8>
+    r(x) -> <v9>
+    r(1) -> <v10>
     mark(x - 1)
-    call(x - 1, minus|<v7>, <v8>) -> <v9>
-    r(sum) -> <v10>
-    r(x) -> <v11>
+    call(x - 1, minus|<v9>, <v10>) -> <v11>
+    r(sum) -> <v12>
+    r(x) -> <v13>
     mark(sum + x)
-    call(sum + x, plus|<v10>, <v11>) -> <v12>
+    call(sum + x, plus|<v12>, <v13>) -> <v14>
     mark(sum(x - 1, sum + x))
-    call(sum(x - 1, sum + x), sum|<v9>, <v12>) -> <v13>
-    ret(*|<v13>) L1
+    call(sum(x - 1, sum + x), sum|<v11>, <v14>) -> <v15>
+    ret(*|<v15>) L1
 L1:
-  1 <END>                                                                   NEXT:[<SINK>]                                                                  PREV:[ret(*|<v6>) L1, ret(*|<v13>) L1]
+  1 <END>                                                                   NEXT:[<SINK>]                                                                  PREV:[ret(*|<v6>) L1, ret(*|<v15>) L1]
 error:
     <ERROR>                                                                 PREV:[]
 sink:

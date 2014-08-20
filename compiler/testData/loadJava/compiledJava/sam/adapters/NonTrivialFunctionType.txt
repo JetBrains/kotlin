@@ -1,6 +1,6 @@
 package test
 
-public open class NonTrivialFunctionType : java.lang.Object {
+public open class NonTrivialFunctionType {
     public constructor NonTrivialFunctionType()
     public final /*synthesized*/ fun foo(/*0*/ p0: ((java.io.File, kotlin.String) -> kotlin.Boolean)?): kotlin.Unit
     public final /*synthesized*/ fun foo(/*0*/ p0: ((kotlin.String, kotlin.String) -> kotlin.Int)?): kotlin.Unit

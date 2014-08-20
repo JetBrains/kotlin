@@ -1,6 +1,4 @@
 >>> val x = 1
-null
 >>> fun add1(y: Int) = x + y
-null
 >>> add1(999999)
 1000000

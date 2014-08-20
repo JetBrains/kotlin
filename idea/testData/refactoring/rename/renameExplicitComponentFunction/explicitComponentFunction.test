@@ -1,0 +1,8 @@
+{
+  "type": "KOTLIN_FUNCTION",
+  "classFQN": "A",
+  "oldName": "component1",
+  "newName": "foo",
+  "mainFile": "explicitComponentFunction.kt",
+  "hint": "Naming conventions will be violated after rename"
+}

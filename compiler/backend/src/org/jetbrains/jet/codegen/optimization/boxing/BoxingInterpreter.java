@@ -221,12 +221,12 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
 
         if (v instanceof BoxedBasicValue) {
             onMergeFail((BoxedBasicValue) v);
-            v = new BasicValue(v.getType());
+            return MIXED_VALUE;
         }
 
         if (w instanceof BoxedBasicValue) {
             onMergeFail((BoxedBasicValue) w);
-            w = new BasicValue(w.getType());
+            return MIXED_VALUE;
         }
 
         return super.merge(v, w);

@@ -50,7 +50,8 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
     override fun isContextAccepted(contextElement: PsiElement?): Boolean {
         if (contextElement is PsiCodeBlock) {
-            return isContextAccepted(contextElement.getContext())
+            // PsiCodeBlock -> DummyHolder -> originalElement
+            return isContextAccepted(contextElement.getContext()?.getContext())
         }
         return contextElement?.getLanguage() == JetFileType.INSTANCE.getLanguage()
     }
@@ -64,7 +65,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             if (elementAt == null) return null
 
             if (elementAt is PsiCodeBlock) {
-                return getContextElement(elementAt.getContext())
+                return getContextElement(elementAt.getContext()?.getContext())
             }
 
             val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(elementAt.getContainingFile()!!, elementAt.getTextOffset(), javaClass<JetExpression>(), false)

@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 fun <T> T.mustBe(t : T) {
-    <!UNUSED_EXPRESSION!>"$this must be$<!SYNTAX!>as<!>$t"<!>
+    "$this must be$<!SYNTAX!>as<!>$t"
 }

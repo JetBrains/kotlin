@@ -60,7 +60,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new PsiJetClassStubImpl(
                 getStubType(isEnumEntry), parentStub, StringRef.fromString(fqName != null ? fqName.asString() : null),
-                StringRef.fromString(psi.getName()), Utils.instance$.wrapStrings(superNames), psi.isTrait(), isEnumEntry,
+                StringRef.fromString(psi.getName()), Utils.INSTANCE$.wrapStrings(superNames), psi.isTrait(), isEnumEntry,
                 psi.isLocal(), psi.isTopLevel());
     }
 

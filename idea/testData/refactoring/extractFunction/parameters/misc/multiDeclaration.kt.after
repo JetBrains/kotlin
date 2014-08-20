@@ -6,7 +6,7 @@ fun main(args: Array<String>) {
     unit(a)
 }
 
-fun unit(a: Int) {
+private fun unit(a: Int) {
     a
 }
 

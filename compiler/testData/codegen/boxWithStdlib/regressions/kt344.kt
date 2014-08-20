@@ -27,7 +27,7 @@ fun t1() : Boolean {
         x = x + "45" + y
         x = x.substring(3)
         x += "aaa"
-        Unit.VALUE
+        Unit
     }
     foo()
 
@@ -43,7 +43,7 @@ fun t2() : Boolean {
         x = x + 5 + y
         x += 5
         x++
-        Unit.VALUE
+        Unit
     }
     foo()
     x -= 55
@@ -55,7 +55,7 @@ fun t3() : Boolean {
     var x = true
     val foo = {
         x = false
-        Unit.VALUE
+        Unit
     }
     foo()
     return !x
@@ -67,7 +67,7 @@ fun t4() : Boolean {
     val foo = {
         x = x + 200.toFloat() + y
         x += 18
-        Unit.VALUE
+        Unit
     }
     foo()
     System.out?.println(x)
@@ -80,7 +80,7 @@ fun t5() : Boolean {
     val foo = {
         x = x + 200.toDouble() + y
         x -= 22
-        Unit.VALUE
+        Unit
     }
     foo()
     System.out?.println(x)
@@ -92,9 +92,9 @@ fun t6() : Boolean {
     val y = x + 22
     val foo = {
         x = (x + 20.toByte() + y).toByte()
-        x += 2
+        x = (x + 2).toByte()
         x--
-        Unit.VALUE
+        Unit
     }
     foo()
     System.out?.println(x)
@@ -105,7 +105,7 @@ fun t7() : Boolean {
     var x : Char = 'a'
     val foo = {
         x = 'b'
-        Unit.VALUE
+        Unit
     }
     foo()
     System.out?.println(x)
@@ -117,10 +117,10 @@ fun t8() : Boolean {
     val foo = {
         val bar = {
             x = 30.toShort()
-            Unit.VALUE
+            Unit
         }
         bar()
-        Unit.VALUE
+        Unit
     }
     foo()
     return x == 30.toShort()

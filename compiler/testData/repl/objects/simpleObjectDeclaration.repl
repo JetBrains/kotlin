@@ -1,0 +1,5 @@
+>>> object Life {
+...     fun meaning() = 42
+... }
+>>> Life.meaning()
+42

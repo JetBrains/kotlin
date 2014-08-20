@@ -6,7 +6,7 @@ fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>}
-fun unitUnitReturn() : Unit {return Unit.VALUE}
+fun unitUnitReturn() : Unit {return Unit}
 fun test1() : Any = {<!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return<!>}
 fun test2() : Any = @a {<!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@a 1<!>}
 fun test3() : Any { <!RETURN_TYPE_MISMATCH!>return<!> }
@@ -27,7 +27,7 @@ fun foo(<!UNUSED_PARAMETER!>expr<!>: StringBuilder): Int {
 }
 
 
-fun unitShort() : Unit = Unit.VALUE
+fun unitShort() : Unit = Unit
 fun unitShortConv() : Unit = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 fun unitShortNull() : Unit = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
@@ -44,10 +44,10 @@ fun intFunctionLiteral(): Int = <!TYPE_MISMATCH!>{ 10 }<!>
 fun blockReturnUnitMismatch() : Int {<!RETURN_TYPE_MISMATCH!>return<!>}
 fun blockReturnValueTypeMismatch() : Int {return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>3.4<!>}
 fun blockReturnValueTypeMatch() : Int {return 1}
-fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>Unit.VALUE<!>}
+fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>Unit<!>}
 
 fun blockAndAndMismatch() : Int {
-  true && false
+  <!UNUSED_EXPRESSION!>true && false<!>
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockAndAndMismatch1() : Int {
   return <!TYPE_MISMATCH!>true && false<!>
@@ -57,7 +57,7 @@ fun blockAndAndMismatch2() : Int {
 }
 
 fun blockAndAndMismatch3() : Int {
-  true || false
+  <!UNUSED_EXPRESSION!>true || false<!>
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockAndAndMismatch4() : Int {
   return <!TYPE_MISMATCH!>true || false<!>
@@ -91,18 +91,18 @@ fun blockReturnValueTypeMatch6() : Int {
 }
 fun blockReturnValueTypeMatch7() : Int {
   if (1 > 2)
-    1.0
-  else 2.0
+    <!UNUSED_EXPRESSION!>1.0<!>
+  else <!UNUSED_EXPRESSION!>2.0<!>
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch8() : Int {
   if (1 > 2)
-    1.0
-  else 2.0
+    <!UNUSED_EXPRESSION!>1.0<!>
+  else <!UNUSED_EXPRESSION!>2.0<!>
   return 1
 }
 fun blockReturnValueTypeMatch9() : Int {
   if (1 > 2)
-    1.0
+    <!UNUSED_EXPRESSION!>1.0<!>
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch10() : Int {
   return <!TYPE_MISMATCH!>if (1 > 2)
@@ -110,7 +110,7 @@ fun blockReturnValueTypeMatch10() : Int {
 }
 fun blockReturnValueTypeMatch11() : Int {
   if (1 > 2)
-  else 1.0
+  else <!UNUSED_EXPRESSION!>1.0<!>
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch12() : Int {
   if (1 > 2)

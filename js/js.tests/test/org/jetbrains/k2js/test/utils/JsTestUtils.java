@@ -17,10 +17,13 @@
 package org.jetbrains.k2js.test.utils;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -60,5 +63,32 @@ public final class JsTestUtils {
             fullFilePaths.add(dirName + "/" + fileName);
         }
         return fullFilePaths;
+    }
+
+    @NotNull
+    public static List<String> kotlinFilesInDirectory(@NotNull String directory) {
+        File dir = new File(directory);
+
+        if (!dir.isDirectory()) {
+            return ContainerUtil.emptyList();
+        }
+
+        File[] kotlinFiles = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(@NotNull File dir, @NotNull String name) {
+                return name.endsWith(".kt");
+            }
+        });
+
+        if (kotlinFiles == null) {
+            return ContainerUtil.emptyList();
+        }
+
+        return ContainerUtil.map2List(kotlinFiles, new Function<File, String>() {
+            @Override
+            public String fun(File kotlinFile) {
+                return kotlinFile.getAbsolutePath();
+            }
+        });
     }
 }

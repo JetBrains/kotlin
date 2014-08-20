@@ -1,4 +1,4 @@
 package test
 
-public trait RecursiveRawUpperBound</*0*/ T : test.RecursiveRawUpperBound<out kotlin.Any?>?> : java.lang.Object {
+public trait RecursiveRawUpperBound</*0*/ T : test.RecursiveRawUpperBound<out kotlin.Any?>?> {
 }

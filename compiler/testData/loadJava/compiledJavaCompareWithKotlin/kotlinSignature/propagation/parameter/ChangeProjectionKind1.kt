@@ -1,8 +1,8 @@
 package test
 
-public trait ChangeProjectionKind1: Object {
+public trait ChangeProjectionKind1 {
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(p: MutableList<in String>)
 
         public fun dummy() // to avoid loading as SAM interface

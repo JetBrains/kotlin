@@ -37,7 +37,7 @@ public class DescriptorFactory {
         public DefaultConstructorDescriptor(@NotNull ClassDescriptor containingClass, @NotNull SourceElement source) {
             super(containingClass, null, Annotations.EMPTY, true, Kind.DECLARATION, source);
             initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
-                       getDefaultConstructorVisibility(containingClass), true);
+                       getDefaultConstructorVisibility(containingClass));
         }
     }
 

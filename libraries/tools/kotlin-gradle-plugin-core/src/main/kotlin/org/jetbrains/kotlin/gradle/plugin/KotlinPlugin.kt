@@ -125,7 +125,7 @@ open class KotlinPlugin [Inject] (val scriptHandler: ScriptHandler): Plugin<Proj
 
 open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plugin<Project> {
 
-    val log = Logging.getLogger(getClass())
+    val log = Logging.getLogger(this.javaClass)
 
     public override fun apply(p0: Project) {
 

@@ -19,24 +19,12 @@ package org.jetbrains.jet.cli.common.arguments;
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Command line arguments for K2JVMCompiler
- */
-@SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "d", description = "Destination for generated class files")
     @ValueDescription("<directory|jar>")
     public String destination;
 
-    @Argument(value = "jar", description = "Resulting .jar file path")
-    @ValueDescription("<path>")
-    public String jar;
-
-    @Argument(value = "output", description = "Output directory path for .class files")
-    @ValueDescription("<path>")
-    public String outputDir;
-
-    @Argument(value = "classpath", description = "Paths where to find user class files")
+    @Argument(value = "classpath", alias = "cp", description = "Paths where to find user class files")
     @ValueDescription("<path>")
     public String classpath;
 
@@ -44,23 +32,17 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String annotations;
 
-    @Argument(value = "includeRuntime", description = "Include Kotlin runtime in to resulting .jar")
+    @Argument(value = "include-runtime", description = "Include Kotlin runtime in to resulting .jar")
     public boolean includeRuntime;
 
-    @Argument(value = "noJdk", description = "Don't include Java runtime into classpath")
+    @Argument(value = "no-jdk", description = "Don't include Java runtime into classpath")
     public boolean noJdk;
 
-    @Argument(value = "noStdlib", description = "Don't include Kotlin runtime into classpath")
+    @Argument(value = "no-stdlib", description = "Don't include Kotlin runtime into classpath")
     public boolean noStdlib;
 
-    @Argument(value = "noJdkAnnotations", description = "Don't include JDK external annotations into classpath")
+    @Argument(value = "no-jdk-annotations", description = "Don't include JDK external annotations into classpath")
     public boolean noJdkAnnotations;
-
-    @Argument(value = "notNullAssertions", description = "Generate not-null assertion after each invocation of method returning not-null")
-    public boolean notNullAssertions;
-
-    @Argument(value = "notNullParamAssertions", description = "Generate not-null assertions on parameters of methods accessible from Java")
-    public boolean notNullParamAssertions;
 
     @Argument(value = "module", description = "Path to the module file to compile")
     @ValueDescription("<path>")
@@ -69,17 +51,23 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "script", description = "Evaluate the script file")
     public boolean script;
 
-    @Argument(value = "kotlinHome", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
+    @Argument(value = "kotlin-home", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
     @ValueDescription("<path>")
     public String kotlinHome;
 
-    @Argument(value = "inline", description = "Inlining mode (default is on)")
-    @ValueDescription("{on,off}")
-    public String inline;
+    // Advanced options
 
-    @Argument(value = "optimize", description = "Optimization mode (default is on)")
-    @ValueDescription("{on,off}")
-    public String optimize;
+    @Argument(value = "Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
+    public boolean noCallAssertions;
+
+    @Argument(value = "Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
+    public boolean noParamAssertions;
+
+    @Argument(value = "Xno-inline", description = "Disable method inlining")
+    public boolean noInline;
+
+    @Argument(value = "Xno-optimize", description = "Disable optimizations")
+    public boolean noOptimize;
 
     @Override
     @NotNull

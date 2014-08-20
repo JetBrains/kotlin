@@ -1,13 +1,13 @@
 package test
 
-public trait StringConcatenationInParam : java.lang.Object {
-    
+public trait StringConcatenationInParam {
+
     public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.String)
         public abstract fun value(): kotlin.String
     }
-    
-    test.StringConcatenationInParam.Anno(value = "hello": kotlin.String) public open class Class : java.lang.Object {
+
+    test.StringConcatenationInParam.Anno(value = "hello": kotlin.String) public open class Class {
         public constructor Class()
     }
 }

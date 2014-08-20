@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.declaration.propertyTranslator.PropertyTranslatorPackage;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
@@ -114,7 +115,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @Override
     public Void visitProperty(@NotNull JetProperty expression, TranslationContext context) {
         PropertyDescriptor propertyDescriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), expression);
-        PropertyTranslator.translateAccessors(propertyDescriptor, expression, result, context);
+        PropertyTranslatorPackage.translateAccessors(propertyDescriptor, expression, result, context);
         return null;
     }
 

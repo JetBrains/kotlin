@@ -1,0 +1,12 @@
+open class A {}
+
+class B: <caret>A() {}
+
+
+Resolved call:
+
+Resulting descriptor: constructor A()
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER

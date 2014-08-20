@@ -32,6 +32,26 @@ import org.jetbrains.jet.completion.AbstractJvmSmartCompletionTest;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/smart")
 public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionTest {
+    @TestMetadata("AfterAs.kt")
+    public void testAfterAs() throws Exception {
+        doTest("idea/testData/completion/smart/AfterAs.kt");
+    }
+    
+    @TestMetadata("AfterAs2.kt")
+    public void testAfterAs2() throws Exception {
+        doTest("idea/testData/completion/smart/AfterAs2.kt");
+    }
+    
+    @TestMetadata("AfterAs3.kt")
+    public void testAfterAs3() throws Exception {
+        doTest("idea/testData/completion/smart/AfterAs3.kt");
+    }
+    
+    @TestMetadata("AfterExclSign.kt")
+    public void testAfterExclSign() throws Exception {
+        doTest("idea/testData/completion/smart/AfterExclSign.kt");
+    }
+    
     public void testAllFilesPresentInSmart() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/completion/smart"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -231,6 +251,21 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/IfValueInBlock2.kt");
     }
     
+    @TestMetadata("ImplicitlyTypedFunBody.kt")
+    public void testImplicitlyTypedFunBody() throws Exception {
+        doTest("idea/testData/completion/smart/ImplicitlyTypedFunBody.kt");
+    }
+    
+    @TestMetadata("ImplicitlyTypedValInitializer1.kt")
+    public void testImplicitlyTypedValInitializer1() throws Exception {
+        doTest("idea/testData/completion/smart/ImplicitlyTypedValInitializer1.kt");
+    }
+    
+    @TestMetadata("ImplicitlyTypedValInitializer2.kt")
+    public void testImplicitlyTypedValInitializer2() throws Exception {
+        doTest("idea/testData/completion/smart/ImplicitlyTypedValInitializer2.kt");
+    }
+    
     @TestMetadata("InElvisOperator1.kt")
     public void testInElvisOperator1() throws Exception {
         doTest("idea/testData/completion/smart/InElvisOperator1.kt");
@@ -381,6 +416,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/NullableThis.kt");
     }
     
+    @TestMetadata("ObjectsFromType.kt")
+    public void testObjectsFromType() throws Exception {
+        doTest("idea/testData/completion/smart/ObjectsFromType.kt");
+    }
+    
     @TestMetadata("OverloadedConstructorArgument.kt")
     public void testOverloadedConstructorArgument() throws Exception {
         doTest("idea/testData/completion/smart/OverloadedConstructorArgument.kt");
@@ -514,6 +554,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("WhenEntryValue8.kt")
     public void testWhenEntryValue8() throws Exception {
         doTest("idea/testData/completion/smart/WhenEntryValue8.kt");
+    }
+    
+    @TestMetadata("WhenEntryValue9.kt")
+    public void testWhenEntryValue9() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue9.kt");
     }
     
     @TestMetadata("WhenWithNoSubjectEntryValue1.kt")

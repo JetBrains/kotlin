@@ -91,6 +91,8 @@
         <module>tools/kdoc-maven-plugin</module>
 
         <module>stdlib</module>
+        <module>stdlib/validator</module>
+
         <module>kunit</module>
         <module>kotlin-jdbc</module>
         <module>kotlin-swing</module>

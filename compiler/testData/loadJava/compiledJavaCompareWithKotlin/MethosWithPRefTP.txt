@@ -1,6 +1,6 @@
 package test
 
-public final class MethosWithPRefTP : java.lang.Object {
+public final class MethosWithPRefTP {
     public constructor MethosWithPRefTP()
     public final fun </*0*/ P> f(/*0*/ p0: P?): kotlin.Unit
 }

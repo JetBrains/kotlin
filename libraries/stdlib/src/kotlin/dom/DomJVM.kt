@@ -20,121 +20,121 @@ import org.w3c.dom.*
 import org.xml.sax.InputSource
 
 // JavaScript style properties - TODO could auto-generate these
-val Node.nodeName: String
-get() = getNodeName() ?: ""
+public val Node.nodeName: String
+    get() = getNodeName() ?: ""
 
-val Node.nodeValue: String
-get() = getNodeValue() ?: ""
+public val Node.nodeValue: String
+    get() = getNodeValue() ?: ""
 
-val Node.nodeType: Short
-get() = getNodeType()
+public val Node.nodeType: Short
+    get() = getNodeType()
 
-val Node.parentNode: Node?
-get() = getParentNode()
+public val Node.parentNode: Node?
+    get() = getParentNode()
 
-val Node.childNodes: NodeList
-get() = getChildNodes()!!
+public val Node.childNodes: NodeList
+    get() = getChildNodes()!!
 
-val Node.firstChild: Node?
-get() = getFirstChild()
+public val Node.firstChild: Node?
+    get() = getFirstChild()
 
-val Node.lastChild: Node?
-get() = getLastChild()
+public val Node.lastChild: Node?
+    get() = getLastChild()
 
-val Node.nextSibling: Node?
-get() = getNextSibling()
+public val Node.nextSibling: Node?
+    get() = getNextSibling()
 
-val Node.previousSibling: Node?
-get() = getPreviousSibling()
+public val Node.previousSibling: Node?
+    get() = getPreviousSibling()
 
-val Node.attributes: NamedNodeMap?
-get() = getAttributes()
+public val Node.attributes: NamedNodeMap?
+    get() = getAttributes()
 
-val Node.ownerDocument: Document?
-get() = getOwnerDocument()
+public val Node.ownerDocument: Document?
+    get() = getOwnerDocument()
 
-val Document.documentElement: Element?
-get() = this.getDocumentElement()
+public val Document.documentElement: Element?
+    get() = this.getDocumentElement()
 
-val Node.namespaceURI: String
-get() = getNamespaceURI() ?: ""
+public val Node.namespaceURI: String
+    get() = getNamespaceURI() ?: ""
 
-val Node.prefix: String
-get() = getPrefix() ?: ""
+public val Node.prefix: String
+    get() = getPrefix() ?: ""
 
-val Node.localName: String
-get() = getLocalName() ?: ""
+public val Node.localName: String
+    get() = getLocalName() ?: ""
 
-val Node.baseURI: String
-get() = getBaseURI() ?: ""
+public val Node.baseURI: String
+    get() = getBaseURI() ?: ""
 
-var Node.textContent: String
-get() = getTextContent() ?: ""
-set(value) {
-    setTextContent(value)
-}
+public var Node.textContent: String
+    get() = getTextContent() ?: ""
+    set(value) {
+        setTextContent(value)
+    }
 
-val DOMStringList.length: Int
-get() = this.getLength()
+public val DOMStringList.length: Int
+    get() = this.getLength()
 
-val NameList.length: Int
-get() = this.getLength()
+public val NameList.length: Int
+    get() = this.getLength()
 
-val DOMImplementationList.length: Int
-get() = this.getLength()
+public val DOMImplementationList.length: Int
+    get() = this.getLength()
 
-val NodeList.length: Int
-get() = this.getLength()
+public val NodeList.length: Int
+    get() = this.getLength()
 
-val CharacterData.length: Int
-get() = this.getLength()
+public val CharacterData.length: Int
+    get() = this.getLength()
 
-val NamedNodeMap.length: Int
-get() = this.getLength()
+public val NamedNodeMap.length: Int
+    get() = this.getLength()
 
 
 /**
  * Returns the HTML representation of the node
  */
 public val Node.outerHTML: String
-get() = toXmlString()
+    get() = toXmlString()
 
 /**
  * Returns the HTML representation of the node
  */
 public val Node.innerHTML: String
-get() = childNodes.outerHTML
+    get() = childNodes.outerHTML
 
 /**
  * Returns the HTML representation of the nodes
  */
 public val NodeList.outerHTML: String
-get() = toList().map { it.innerHTML }.join("")
+    get() = toList().map { it.innerHTML }.join("")
 
 /** Returns an [[Iterator]] of all the next [[Element]] siblings */
-fun Node.nextElements(): List<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
+public fun Node.nextElements(): List<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
 /** Returns an [[Iterator]] of all the previous [[Element]] siblings */
-fun Node.previousElements(): List<Element> = previousSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
+public fun Node.previousElements(): List<Element> = previousSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
 
-var Element.classSet : MutableSet<String>
-get() {
-    val answer = LinkedHashSet<String>()
-    val array = this.classes.split("""\s""")
-    for (s in array) {
-        if (s.size > 0) {
-            answer.add(s)
+public var Element.classSet: MutableSet<String>
+    get() {
+        val answer = LinkedHashSet<String>()
+        val array = this.classes.split("""\s""")
+        for (s in array) {
+            if (s.size > 0) {
+                answer.add(s)
+            }
         }
+        return answer
     }
-    return answer
-}
-set(value) {
-    this.classes = value.join(" ")
-}
+    set(value) {
+        this.classes = value.join(" ")
+    }
 
 /** Adds the given CSS class to this element's 'class' attribute */
-fun Element.addClass(cssClass: String): Boolean {
+public fun Element.addClass(cssClass: String): Boolean {
     val classSet = this.classSet
     val answer = classSet.add(cssClass)
     if (answer) {
@@ -144,7 +144,7 @@ fun Element.addClass(cssClass: String): Boolean {
 }
 
 /** Removes the given CSS class to this element's 'class' attribute */
-fun Element.removeClass(cssClass: String): Boolean {
+public fun Element.removeClass(cssClass: String): Boolean {
     val classSet = this.classSet
     val answer = classSet.remove(cssClass)
     if (answer) {
@@ -152,7 +152,6 @@ fun Element.removeClass(cssClass: String): Boolean {
     }
     return answer
 }
-
 
 
 /** Creates a new document with the given document builder*/

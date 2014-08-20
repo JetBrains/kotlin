@@ -1,6 +1,4 @@
 >>> fun foo(s: String) = "string"
-null
 >>> fun foo(a: Any) = "any"
-null
 >>> foo("a")
 any

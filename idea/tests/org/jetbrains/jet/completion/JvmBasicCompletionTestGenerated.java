@@ -334,6 +334,16 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest("idea/testData/completion/basic/common/NamedObject.kt");
         }
         
+        @TestMetadata("NestedClassNameForExtension.kt")
+        public void testNestedClassNameForExtension() throws Exception {
+            doTest("idea/testData/completion/basic/common/NestedClassNameForExtension.kt");
+        }
+        
+        @TestMetadata("NestedClassNameForExtension2.kt")
+        public void testNestedClassNameForExtension2() throws Exception {
+            doTest("idea/testData/completion/basic/common/NestedClassNameForExtension2.kt");
+        }
+        
         @TestMetadata("NoClassNameDuplication.kt")
         public void testNoClassNameDuplication() throws Exception {
             doTest("idea/testData/completion/basic/common/NoClassNameDuplication.kt");
@@ -367,6 +377,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("NoObjectInTypePosition.kt")
         public void testNoObjectInTypePosition() throws Exception {
             doTest("idea/testData/completion/basic/common/NoObjectInTypePosition.kt");
+        }
+        
+        @TestMetadata("NoSecondPressCompletionInAutoPopup.kt")
+        public void testNoSecondPressCompletionInAutoPopup() throws Exception {
+            doTest("idea/testData/completion/basic/common/NoSecondPressCompletionInAutoPopup.kt");
         }
         
         @TestMetadata("NoTopLevelCompletionInQualifiedUserTypes.kt")
@@ -546,6 +561,16 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("NoParamsFromUnapplicableOverload.kt")
             public void testNoParamsFromUnapplicableOverload() throws Exception {
                 doTest("idea/testData/completion/basic/common/namedParameters/NoParamsFromUnapplicableOverload.kt");
+            }
+            
+            @TestMetadata("NotOnlyNamedParameters.kt")
+            public void testNotOnlyNamedParameters() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/NotOnlyNamedParameters.kt");
+            }
+            
+            @TestMetadata("OnlyNamedParameters.kt")
+            public void testOnlyNamedParameters() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/OnlyNamedParameters.kt");
             }
             
             @TestMetadata("WithParameterExpression.kt")

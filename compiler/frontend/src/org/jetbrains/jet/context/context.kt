@@ -20,24 +20,24 @@ import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.storage.ExceptionTracker
 import org.jetbrains.jet.storage.LockBasedStorageManager
 
-trait GlobalContext {
-    val storageManager: StorageManager
-    val exceptionTracker: ExceptionTracker
+public trait GlobalContext {
+    public val storageManager: StorageManager
+    public val exceptionTracker: ExceptionTracker
 }
 
-open class SimpleGlobalContext(
+public open class SimpleGlobalContext(
         override val storageManager: StorageManager,
         override val exceptionTracker: ExceptionTracker
 ) : GlobalContext
 
-open class GlobalContextImpl(
+public open class GlobalContextImpl(
         storageManager: LockBasedStorageManager,
         exceptionTracker: ExceptionTracker
 ) : SimpleGlobalContext(storageManager, exceptionTracker) {
     override val storageManager: LockBasedStorageManager = super.storageManager as LockBasedStorageManager
 }
 
-fun GlobalContext(): GlobalContextImpl {
+public fun GlobalContext(): GlobalContextImpl {
     val tracker = ExceptionTracker()
     return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
 }

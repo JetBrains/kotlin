@@ -11,7 +11,7 @@ fun foo(a: Int): Int {
     return b
 }
 
-fun i(a: Int, b: Int): Int {
+private fun i(a: Int, b: Int): Int {
     var b1 = b
     if (a > 0) {
         b1 = b1 + 1

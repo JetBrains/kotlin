@@ -32,6 +32,26 @@ import org.jetbrains.jet.completion.handlers.AbstractSmartCompletionHandlerTest;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/handlers/smart")
 public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletionHandlerTest {
+    @TestMetadata("AfterAs.kt")
+    public void testAfterAs() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/AfterAs.kt");
+    }
+    
+    @TestMetadata("AfterAs2.kt")
+    public void testAfterAs2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/AfterAs2.kt");
+    }
+    
+    @TestMetadata("AfterAs3.kt")
+    public void testAfterAs3() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/AfterAs3.kt");
+    }
+    
+    @TestMetadata("AfterSafeAs.kt")
+    public void testAfterSafeAs() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/AfterSafeAs.kt");
+    }
+    
     public void testAllFilesPresentInSmart() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/completion/handlers/smart"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -54,6 +74,21 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("AnonymousObjectInsertsImport.kt")
     public void testAnonymousObjectInsertsImport() throws Exception {
         doTest("idea/testData/completion/handlers/smart/AnonymousObjectInsertsImport.kt");
+    }
+    
+    @TestMetadata("AutoCompleteAfterAs1.kt")
+    public void testAutoCompleteAfterAs1() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/AutoCompleteAfterAs1.kt");
+    }
+    
+    @TestMetadata("AutoCompleteAfterAs2.kt")
+    public void testAutoCompleteAfterAs2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/AutoCompleteAfterAs2.kt");
+    }
+    
+    @TestMetadata("AutoCompleteAfterAs3.kt")
+    public void testAutoCompleteAfterAs3() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/AutoCompleteAfterAs3.kt");
     }
     
     @TestMetadata("ClassObjectMethod1.kt")
@@ -89,6 +124,16 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("Comma1.kt")
     public void testComma1() throws Exception {
         doTest("idea/testData/completion/handlers/smart/Comma1.kt");
+    }
+    
+    @TestMetadata("Comma10.kt")
+    public void testComma10() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma10.kt");
+    }
+    
+    @TestMetadata("Comma11.kt")
+    public void testComma11() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma11.kt");
     }
     
     @TestMetadata("Comma2.kt")
@@ -129,6 +174,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("Comma9.kt")
     public void testComma9() throws Exception {
         doTest("idea/testData/completion/handlers/smart/Comma9.kt");
+    }
+    
+    @TestMetadata("CommaInSuperConstructorCall.kt")
+    public void testCommaInSuperConstructorCall() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/CommaInSuperConstructorCall.kt");
     }
     
     @TestMetadata("Constructor.kt")
@@ -329,6 +379,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("NullableValueKeepOldArguments.kt")
     public void testNullableValueKeepOldArguments() throws Exception {
         doTest("idea/testData/completion/handlers/smart/NullableValueKeepOldArguments.kt");
+    }
+    
+    @TestMetadata("ObjectFromType.kt")
+    public void testObjectFromType() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/ObjectFromType.kt");
     }
     
     @TestMetadata("SAMExpected1.kt")

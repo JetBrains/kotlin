@@ -1,6 +1,6 @@
 package test
 
-public open class MethodWithTypeParameters : java.lang.Object {
+public open class MethodWithTypeParameters {
     public constructor MethodWithTypeParameters()
-    public open fun </*0*/ A, /*1*/ B : java.lang.Runnable> foo(/*0*/ a: A, /*1*/ b: kotlin.List<B>, /*2*/ c: kotlin.MutableList<in kotlin.String?>): kotlin.Unit where B : kotlin.List<java.lang.Cloneable>
+    public open fun </*0*/ A, /*1*/ B : java.lang.Runnable> foo(/*0*/ a: A, /*1*/ b: kotlin.List<B>, /*2*/ c: kotlin.MutableList<in kotlin.String?>): kotlin.Unit where B : kotlin.List<kotlin.Cloneable>
 }

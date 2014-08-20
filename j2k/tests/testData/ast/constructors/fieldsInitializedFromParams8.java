@@ -1,4 +1,3 @@
-//file
 class Base {
     Base(Object o, int l){}
 }

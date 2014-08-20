@@ -48,6 +48,8 @@ import org.jetbrains.jet.getNullableString
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
 
 private enum class RenameType {
     JAVA_CLASS
@@ -90,8 +92,10 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
                 Assert.fail("""Hint "$hintDirective" was expected""")
             }
         }
-        catch (hintException : CommonRefactoringUtil.RefactoringErrorHintException) {
-            val hintExceptionUnquoted = StringUtil.unquoteString(hintException.getMessage()!!)
+        catch (e : Exception) {
+            if (e !is RefactoringErrorHintException && e !is ConflictsInTestsException) throw e
+
+            val hintExceptionUnquoted = StringUtil.unquoteString(e.getMessage()!!)
             if (hintDirective != null) {
                 Assert.assertEquals(hintDirective, hintExceptionUnquoted)
             }

@@ -1,6 +1,6 @@
 package test
 
-public open class WrongFieldName : java.lang.Object {
+public open class WrongFieldName {
     public constructor WrongFieldName()
     public final var foo: kotlin.String?
 }

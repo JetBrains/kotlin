@@ -6,6 +6,8 @@ class A {
     val x: Int
 }
 ---------------------
-    <v0>: A     NEW: magic[IMPLICIT_RECEIVER](x) -> <v0>
-1   <v1>: Int   NEW: r(1) -> <v1>
+            <v0>: A     NEW: magic[IMPLICIT_RECEIVER](x) -> <v0>
+1           <v1>: Int   NEW: r(1) -> <v1>                       
+x = 1       !<v2>: *                                            
+{ x = 1 }   !<v2>: *    COPY                                    
 =====================

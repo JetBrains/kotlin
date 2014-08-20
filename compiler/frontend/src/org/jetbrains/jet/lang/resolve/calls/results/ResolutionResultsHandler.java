@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
@@ -102,7 +102,7 @@ public class ResolutionResultsHandler {
             // This check is needed for the following case:
             //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
             if (task.checkArguments == CheckValueArgumentsMode.DISABLED ||
-                    !BindingContextUtilPackage.hasUnresolvedArguments(task.call, task.trace.getBindingContext())) {
+                    !CallUtilPackage.hasUnresolvedArguments(task.call, task.trace.getBindingContext())) {
                 if (allCandidatesIncomplete) {
                     task.tracing.cannotCompleteResolve(task.trace, results.getResultingCalls());
                 }

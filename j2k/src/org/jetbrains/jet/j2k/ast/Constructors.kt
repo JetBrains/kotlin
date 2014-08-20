@@ -37,17 +37,23 @@ class PrimaryConstructor(annotations: Annotations,
     public fun signature(): PrimaryConstructorSignature {
         val noBody = block.isEmpty
         val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = noBody, commentsInside = noBody)
-        return PrimaryConstructorSignature(modifiers, parameterList).assignPrototypesFrom(this, inheritance)
+        return PrimaryConstructorSignature(annotations, modifiers, parameterList).assignPrototypesFrom(this, inheritance)
     }
 }
 
-class PrimaryConstructorSignature(val modifiers: Modifiers, val parameterList: ParameterList) : Element() {
+class PrimaryConstructorSignature(val annotations: Annotations, val modifiers: Modifiers, val parameterList: ParameterList) : Element() {
     override fun generateCode(builder: CodeBuilder) {
         val accessModifier = modifiers.filter { it in ACCESS_MODIFIERS && it != Modifier.PUBLIC }
-        if (accessModifier.isEmpty && parameterList.parameters.isEmpty()) return
+        if (accessModifier.isEmpty && annotations.isEmpty && parameterList.parameters.isEmpty()) return
+
+        if (!annotations.isEmpty) {
+            builder append " " append annotations.withBrackets()
+        }
+
         if (!accessModifier.isEmpty) {
             builder append " " append accessModifier
         }
+
         builder append "(" append parameterList append ")"
     }
 }

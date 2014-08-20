@@ -2,7 +2,7 @@
   <configuration default="false" name="IDEA (No ProcessCanceledException)" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
-    <option name="VM_PARAMETERS" value="-Xmx800m -XX:ReservedCodeCacheSize=64m -XX:MaxPermSize=250m -XX:+HeapDumpOnOutOfMemoryError -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Dsun.io.useCanonCaches=false -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin -Didea.ProcessCanceledException=disabled" />
+    <option name="VM_PARAMETERS" value="-Xmx800m -XX:ReservedCodeCacheSize=64m -XX:MaxPermSize=250m -XX:+HeapDumpOnOutOfMemoryError -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Dsun.io.useCanonCaches=false -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin -Didea.ProcessCanceledException=disabled -Dkotlin.internal.mode.enabled=true" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/ideaSDK/bin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />

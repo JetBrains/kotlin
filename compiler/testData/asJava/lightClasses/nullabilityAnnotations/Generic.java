@@ -1,4 +1,4 @@
-public interface Generic <N, NN> extends kotlin.jvm.internal.KObject {
+public interface Generic <N, NN> {
     N a(@jet.runtime.typeinfo.JetValueParameter(name = "n") N n);
 
     @org.jetbrains.annotations.NotNull

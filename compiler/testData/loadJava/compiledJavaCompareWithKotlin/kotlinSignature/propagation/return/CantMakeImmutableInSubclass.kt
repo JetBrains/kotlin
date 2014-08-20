@@ -1,8 +1,8 @@
 package test
 
-public trait CantMakeImmutableInSubclass: Object {
+public trait CantMakeImmutableInSubclass {
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(): MutableCollection<String>
 
         public fun dummy() // to avoid loading as SAM interface

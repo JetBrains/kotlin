@@ -1,12 +1,12 @@
 package test
 
-public trait InheritNullability : java.lang.Object {
-    
+public trait InheritNullability {
+
     public trait Sub : test.InheritNullability.Super {
         public abstract override /*1*/ fun </*0*/ B : kotlin.CharSequence> foo(/*0*/ a: B): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun </*0*/ A : kotlin.CharSequence> foo(/*0*/ a: A): kotlin.Unit
     }
 }

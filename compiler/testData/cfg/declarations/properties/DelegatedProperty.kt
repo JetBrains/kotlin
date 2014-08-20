@@ -1,5 +1,5 @@
 class Delegate {
-    fun get(_this: Any, p: PropertyMetadata): Int = 0
+    fun get(_this: Nothing?, p: PropertyMetadata): Int = 0
 }
 
 val a = Delegate()

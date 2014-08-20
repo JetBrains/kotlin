@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.Lists;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -26,7 +24,9 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.jet.utils.UtilsPackage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -53,9 +53,10 @@ public class SubpackagesScope extends JetScopeImpl {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        List<DeclarationDescriptor> result = Lists.newArrayList();
-        for (FqName subFqName : packageView.getModule().getPackageFragmentProvider().getSubPackagesOf(packageView.getFqName())) {
-            ContainerUtil.addIfNotNull(result, getPackage(subFqName.shortName()));
+        Collection<FqName> subFqNames = packageView.getModule().getPackageFragmentProvider().getSubPackagesOf(packageView.getFqName());
+        List<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>(subFqNames.size());
+        for (FqName subFqName : subFqNames) {
+            UtilsPackage.addIfNotNull(result, getPackage(subFqName.shortName()));
         }
         return result;
     }

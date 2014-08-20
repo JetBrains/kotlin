@@ -41,13 +41,13 @@ public abstract class AbstractMultiFileHighlightingTest extends KotlinCompletion
     public void doTest(@NotNull String filePath) throws Exception {
         configureByFile(new File(filePath).getName(), "");
         boolean shouldFail = getName().contains("UnspecifiedType");
-        AstAccessControl.instance$.testWithControlledAccessToAst(
+        AstAccessControl.INSTANCE$.testWithControlledAccessToAst(
                 shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(),
                 new Function0<Unit>() {
                     @Override
                     public Unit invoke() {
                         checkHighlighting(myEditor, true, false);
-                        return Unit.VALUE;
+                        return Unit.INSTANCE$;
                     }
                 }
         );

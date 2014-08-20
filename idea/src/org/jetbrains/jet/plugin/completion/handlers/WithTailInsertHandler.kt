@@ -22,7 +22,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.lookup.Lookup
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
-import org.jetbrains.jet.plugin.completion.smart.KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY
+import org.jetbrains.jet.plugin.completion.KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY
 import com.intellij.openapi.util.TextRange
 
 class WithTailInsertHandler(val tailText: String,

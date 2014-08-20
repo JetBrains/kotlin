@@ -1,4 +1,3 @@
-//file
 class A {
     private int v;
 

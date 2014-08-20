@@ -4,7 +4,7 @@ fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <error>1</error>}
-fun unitUnitReturn() : Unit {return Unit.VALUE}
+fun unitUnitReturn() : Unit {return Unit}
 fun test1() : Any = { <error>return</error> }
 fun test2() : Any = @a {<error>return@a 1</error>}
 fun test3() : Any { <error>return</error> }
@@ -22,7 +22,7 @@ fun foo(<warning>expr</warning>: StringBuilder): Int {
 }
 
 
-fun unitShort() : Unit = Unit.VALUE
+fun unitShort() : Unit = Unit
 fun unitShortConv() : Unit = <error>1</error>
 fun unitShortNull() : Unit = <error>null</error>
 
@@ -39,10 +39,10 @@ fun intFunctionLiteral(): Int = <error>{ 10 }</error>
 fun blockReturnUnitMismatch() : Int {<error>return</error>}
 fun blockReturnValueTypeMismatch() : Int {return <error>3.4</error>}
 fun blockReturnValueTypeMatch() : Int {return 1}
-fun blockReturnValueTypeMismatchUnit() : Int {return <error>Unit.VALUE</error>}
+fun blockReturnValueTypeMismatchUnit() : Int {return <error>Unit</error>}
 
 fun blockAndAndMismatch() : Int {
-  true && false
+  <warning>true && false</warning>
 <error>}</error>
 fun blockAndAndMismatch1() : Int {
   return <error>true && false</error>
@@ -52,7 +52,7 @@ fun blockAndAndMismatch2() : Int {
 }
 
 fun blockAndAndMismatch3() : Int {
-  true || false
+  <warning>true || false</warning>
 <error>}</error>
 fun blockAndAndMismatch4() : Int {
   return <error>true || false</error>
@@ -86,18 +86,18 @@ fun blockReturnValueTypeMatch6() : Int {
 }
 fun blockReturnValueTypeMatch7() : Int {
   if (1 > 2)
-    1.0
-  else 2.0
+    <warning>1.0</warning>
+  else <warning>2.0</warning>
 <error>}</error>
 fun blockReturnValueTypeMatch8() : Int {
   if (1 > 2)
-    1.0
-  else 2.0
+    <warning>1.0</warning>
+  else <warning>2.0</warning>
   return 1
 }
 fun blockReturnValueTypeMatch9() : Int {
   if (1 > 2)
-    1.0
+    <warning>1.0</warning>
 <error>}</error>
 fun blockReturnValueTypeMatch10() : Int {
   return <error>if (1 > 2)
@@ -105,7 +105,7 @@ fun blockReturnValueTypeMatch10() : Int {
 }
 fun blockReturnValueTypeMatch11() : Int {
   if (1 > 2)
-  else 1.0
+  else <warning>1.0</warning>
 <error>}</error>
 fun blockReturnValueTypeMatch12() : Int {
   if (1 > 2)

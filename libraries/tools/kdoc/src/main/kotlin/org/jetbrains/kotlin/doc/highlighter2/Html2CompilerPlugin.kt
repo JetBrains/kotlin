@@ -26,11 +26,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
     private val srcOutputRoot = File(docOutputRoot, names.htmlSourceDirName)
 
     private val sourceDirs: List<File> =
-        compilerArguments
-                .src
-                .orEmpty()
-                .split(File.pathSeparatorChar)
-                .map { path -> File(path).getCanonicalFile() }
+        compilerArguments.freeArgs.orEmpty().map { path -> File(path).getCanonicalFile() }
 
     private val sourceDirPaths: List<String> = sourceDirs.map { d -> d.getPath() }
 
@@ -52,10 +48,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
         val css = javaClass<Html2CompilerPlugin>().getClassLoader()!!.getResourceAsStream(
                 "org/jetbrains/kotlin/doc/highlighter2/hightlight.css")!!
 
-        File(srcOutputRoot, "highlight.css").write { outputStream ->
-            css.copyTo(outputStream)
-            Unit.VALUE
-        }
+        File(srcOutputRoot, "highlight.css").write { outputStream -> css.copyTo(outputStream) }
 
         for (sourceInfo in model.sourcesInfo) {
             processFile(sourceInfo)
@@ -111,7 +104,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
                                                 elementType.toString()
                                         }
                                         // TODO
-                                        else -> psi.getClass().getName()
+                                        else -> psi.javaClass.getName()
                                     }
 
                                     for (t in splitPsi(psiFile)) {

@@ -8,38 +8,38 @@ public fun module(name: String, outputDir: String, callback: ModuleBuilder.() ->
     AllModules.get()?.add(builder)
 }
 
-class SourcesBuilder(val parent: ModuleBuilder) {
+public class SourcesBuilder(private val parent: ModuleBuilder) {
     public fun plusAssign(pattern: String) {
         parent.addSourceFiles(pattern)
     }
 }
 
-class ClasspathBuilder(val parent: ModuleBuilder) {
+public class ClasspathBuilder(private val parent: ModuleBuilder) {
     public fun plusAssign(name: String) {
         parent.addClasspathEntry(name)
     }
 }
 
-class AnnotationsPathBuilder(val parent: ModuleBuilder) {
+public class AnnotationsPathBuilder(private val parent: ModuleBuilder) {
     public fun plusAssign(name: String) {
         parent.addAnnotationsPathEntry(name)
     }
 }
 
-open class ModuleBuilder(val name: String, val outputDir: String): Module {
+public open class ModuleBuilder(private val name: String, private val outputDir: String) : Module {
     // http://youtrack.jetbrains.net/issue/KT-904
     private val sourceFiles0 = ArrayList<String>()
     private val classpathRoots0 = ArrayList<String>()
     private val annotationsRoots0 = ArrayList<String>()
 
-    val sources: SourcesBuilder
-      get() = SourcesBuilder(this)
+    public val sources: SourcesBuilder
+        get() = SourcesBuilder(this)
 
-    val classpath: ClasspathBuilder
-      get() = ClasspathBuilder(this)
+    public val classpath: ClasspathBuilder
+        get() = ClasspathBuilder(this)
 
-    val annotationsPath: AnnotationsPathBuilder
-      get() = AnnotationsPathBuilder(this)
+    public val annotationsPath: AnnotationsPathBuilder
+        get() = AnnotationsPathBuilder(this)
 
     public fun addSourceFiles(pattern: String) {
         sourceFiles0.add(pattern)

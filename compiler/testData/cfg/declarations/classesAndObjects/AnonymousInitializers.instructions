@@ -27,9 +27,9 @@ L0:
     w($i|<v1>, <v2>)
   1 v(val j: Int get() = 20)
   2 mark({ $i = 13 })
-    magic[IMPLICIT_RECEIVER]($i) -> <v3>
-    r(13) -> <v4>
-    w($i|<v3>, <v4>)
+    magic[IMPLICIT_RECEIVER]($i) -> <v4>
+    r(13) -> <v5>
+    w($i|<v4>, <v5>)
 L1:
   1 <END>                                   NEXT:[<SINK>]
 error:

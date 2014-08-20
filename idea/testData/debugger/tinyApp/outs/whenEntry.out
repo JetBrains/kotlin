@@ -1,0 +1,14 @@
+LineBreakpoint created at whenEntry.kt:10
+LineBreakpoint created at whenEntry.kt:18
+LineBreakpoint created at whenEntry.kt:26
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! whenEntry.WhenEntryPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+whenEntry.kt:9
+Compile bytecode for a
+whenEntry.kt:17
+Compile bytecode for a
+whenEntry.kt:25
+Compile bytecode for a
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

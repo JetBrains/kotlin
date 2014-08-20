@@ -43,6 +43,21 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/annotations"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("annotationInterface1.java")
+        public void testAnnotationInterface1() throws Exception {
+            doTest("j2k/tests/testData/ast/annotations/annotationInterface1.java");
+        }
+        
+        @TestMetadata("annotationInterface2.java")
+        public void testAnnotationInterface2() throws Exception {
+            doTest("j2k/tests/testData/ast/annotations/annotationInterface2.java");
+        }
+        
+        @TestMetadata("annotationInterface3.java")
+        public void testAnnotationInterface3() throws Exception {
+            doTest("j2k/tests/testData/ast/annotations/annotationInterface3.java");
+        }
+        
         @TestMetadata("annotationUsages.java")
         public void testAnnotationUsages() throws Exception {
             doTest("j2k/tests/testData/ast/annotations/annotationUsages.java");
@@ -737,6 +752,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/classExpression/objectClass.java");
         }
         
+        @TestMetadata("primitivesAndArrays.java")
+        public void testPrimitivesAndArrays() throws Exception {
+            doTest("j2k/tests/testData/ast/classExpression/primitivesAndArrays.java");
+        }
+        
         @TestMetadata("stringClass.java")
         public void testStringClass() throws Exception {
             doTest("j2k/tests/testData/ast/classExpression/stringClass.java");
@@ -811,9 +831,19 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/constructors"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("artificialPrimary.java")
+        public void testArtificialPrimary() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/artificialPrimary.java");
+        }
+        
         @TestMetadata("chain.java")
         public void testChain() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/chain.java");
+        }
+        
+        @TestMetadata("constructorAnnotations.java")
+        public void testConstructorAnnotations() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/constructorAnnotations.java");
         }
         
         @TestMetadata("customerBuilder.java")
@@ -879,6 +909,31 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("methodCallInFactoryFun.java")
         public void testMethodCallInFactoryFun() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/methodCallInFactoryFun.java");
+        }
+        
+        @TestMetadata("nestedClassNameInParameterDefaults.java")
+        public void testNestedClassNameInParameterDefaults() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInParameterDefaults.java");
+        }
+        
+        @TestMetadata("nestedClassNameInParameterDefaults2.java")
+        public void testNestedClassNameInParameterDefaults2() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInParameterDefaults2.java");
+        }
+        
+        @TestMetadata("nestedClassNameInParameterDefaults3.java")
+        public void testNestedClassNameInParameterDefaults3() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInParameterDefaults3.java");
+        }
+        
+        @TestMetadata("nestedClassNameInParameterDefaults4.java")
+        public void testNestedClassNameInParameterDefaults4() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInParameterDefaults4.java");
+        }
+        
+        @TestMetadata("nestedClassNameInSuperParameters.java")
+        public void testNestedClassNameInSuperParameters() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/nestedClassNameInSuperParameters.java");
         }
         
         @TestMetadata("noPrimary.java")
@@ -1214,6 +1269,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/field/varWithoutInit.java");
         }
         
+        @TestMetadata("volatileTransientAndStrictFp.java")
+        public void testVolatileTransientAndStrictFp() throws Exception {
+            doTest("j2k/tests/testData/ast/field/volatileTransientAndStrictFp.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/for")
@@ -1511,6 +1571,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/function/public.java");
         }
         
+        @TestMetadata("synchronizedMethod.java")
+        public void testSynchronizedMethod() throws Exception {
+            doTest("j2k/tests/testData/ast/function/synchronizedMethod.java");
+        }
+        
         @TestMetadata("throws.java")
         public void testThrows() throws Exception {
             doTest("j2k/tests/testData/ast/function/throws.java");
@@ -1712,6 +1777,16 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/issues/kt-1074.java");
         }
         
+        @TestMetadata("kt-5294.java")
+        public void testKt_5294() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/kt-5294.java");
+        }
+        
+        @TestMetadata("kt-5400.java")
+        public void testKt_5400() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/kt-5400.java");
+        }
+        
         @TestMetadata("kt-543.java")
         public void testKt_543() throws Exception {
             doTest("j2k/tests/testData/ast/issues/kt-543.java");
@@ -1755,6 +1830,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("kt-794-mixed.java")
         public void testKt_794_mixed() throws Exception {
             doTest("j2k/tests/testData/ast/issues/kt-794-mixed.java");
+        }
+        
+        @TestMetadata("kt-807.java")
+        public void testKt_807() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/kt-807.java");
         }
         
         @TestMetadata("kt-809.java")
@@ -1830,6 +1910,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("kt-893.java")
         public void testKt_893() throws Exception {
             doTest("j2k/tests/testData/ast/issues/kt-893.java");
+        }
+        
+        @TestMetadata("kt-899.java")
+        public void testKt_899() throws Exception {
+            doTest("j2k/tests/testData/ast/issues/kt-899.java");
         }
         
         @TestMetadata("kt-963.java")
@@ -2070,6 +2155,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/methodCallExpression/genericMethod.java");
         }
         
+        @TestMetadata("getClass.java")
+        public void testGetClass() throws Exception {
+            doTest("j2k/tests/testData/ast/methodCallExpression/getClass.java");
+        }
+        
         @TestMetadata("simpleCall.java")
         public void testSimpleCall() throws Exception {
             doTest("j2k/tests/testData/ast/methodCallExpression/simpleCall.java");
@@ -2292,6 +2382,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("MethodReturnsNullInAnonymousClass.java")
         public void testMethodReturnsNullInAnonymousClass() throws Exception {
             doTest("j2k/tests/testData/ast/nullability/MethodReturnsNullInAnonymousClass.java");
+        }
+        
+        @TestMetadata("MethodReturnsNullInLocalClass.java")
+        public void testMethodReturnsNullInLocalClass() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodReturnsNullInLocalClass.java");
         }
         
         @TestMetadata("MethodReturnsTernaryNull.java")
@@ -2686,6 +2781,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/switch/emptySwitch.java");
         }
         
+        @TestMetadata("enumConstants.java")
+        public void testEnumConstants() throws Exception {
+            doTest("j2k/tests/testData/ast/switch/enumConstants.java");
+        }
+        
         @TestMetadata("fallDown.java")
         public void testFallDown() throws Exception {
             doTest("j2k/tests/testData/ast/switch/fallDown.java");
@@ -2862,6 +2962,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("commonCaseForTryStatement.java")
         public void testCommonCaseForTryStatement() throws Exception {
             doTest("j2k/tests/testData/ast/tryStatement/commonCaseForTryStatement.java");
+        }
+        
+        @TestMetadata("disjunctionType.java")
+        public void testDisjunctionType() throws Exception {
+            doTest("j2k/tests/testData/ast/tryStatement/disjunctionType.java");
         }
         
         @TestMetadata("emptyTryWithTwoCatchesWithEmptyFinally.java")
@@ -3043,9 +3148,24 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/typeParameters/methodDoubleParametrizationWithTwoBounds.java");
         }
         
+        @TestMetadata("needTypeArgs.java")
+        public void testNeedTypeArgs() throws Exception {
+            doTest("j2k/tests/testData/ast/typeParameters/needTypeArgs.java");
+        }
+        
+        @TestMetadata("rawTypeCast.java")
+        public void testRawTypeCast() throws Exception {
+            doTest("j2k/tests/testData/ast/typeParameters/rawTypeCast.java");
+        }
+        
         @TestMetadata("traitDoubleParametrizationWithTwoBoundsWithExtending.java")
         public void testTraitDoubleParametrizationWithTwoBoundsWithExtending() throws Exception {
             doTest("j2k/tests/testData/ast/typeParameters/traitDoubleParametrizationWithTwoBoundsWithExtending.java");
+        }
+        
+        @TestMetadata("typeFromOtherFile.java")
+        public void testTypeFromOtherFile() throws Exception {
+            doTest("j2k/tests/testData/ast/typeParameters/typeFromOtherFile.java");
         }
         
         @TestMetadata("where.java")

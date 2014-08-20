@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.psi.JetThrowExpression
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isNullExpression
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 
 public class ConvertIfWithThrowToAssertIntention :
         JetSelfTargetingIntention<JetIfExpression>("convert.if.with.throw.to.assert", javaClass()) {

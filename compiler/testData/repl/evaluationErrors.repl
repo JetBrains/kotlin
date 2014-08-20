@@ -1,6 +1,11 @@
 >>> throw Exception("hi there")
-substring: Exception: hi there
+java.lang.Exception: hi there
+	at Line1.<init>(Unknown Source)
 >>> fun foo() = 2
-null
 >>> foo()
 2
+>>> fun bar() = throw AssertionError()
+>>> bar()
+java.lang.AssertionError
+	at Line4.bar(Unknown Source)
+	at Line5.<init>(Unknown Source)

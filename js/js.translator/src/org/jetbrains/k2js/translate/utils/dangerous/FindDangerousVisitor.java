@@ -18,10 +18,9 @@ package org.jetbrains.k2js.translate.utils.dangerous;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.reference.InlinedCallExpressionTranslator;
-
-import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
 
 public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
 
@@ -63,12 +62,9 @@ public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
 
     @Override
     public Void visitBlockExpression(@NotNull JetBlockExpression expression, DangerousData data) {
-        if (isStatement(context.bindingContext(), expression)) {
-            return null;
-        }
-        else {
-            return super.visitBlockExpression(expression, data);
-        }
+        return BindingContextUtilPackage.isUsedAsStatement(expression, context.bindingContext())
+               ? null
+               : super.visitBlockExpression(expression, data);
     }
 
     @Override
@@ -85,7 +81,7 @@ public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
         if (data.exists()) {
             return true;
         }
-        if (!isStatement(context.bindingContext(), expression)) {
+        if (!BindingContextUtilPackage.isUsedAsStatement(expression, context.bindingContext())) {
             data.setDangerousNode(expression);
             return true;
         }

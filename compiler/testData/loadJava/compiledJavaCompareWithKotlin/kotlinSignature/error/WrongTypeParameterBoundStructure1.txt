@@ -1,6 +1,6 @@
 package test
 
-public open class WrongTypeParameterBoundStructure1 : java.lang.Object {
+public open class WrongTypeParameterBoundStructure1 {
     public constructor WrongTypeParameterBoundStructure1()
-    public open fun </*0*/ A, /*1*/ B : java.lang.Runnable?> foo(/*0*/ p0: A?, /*1*/ p1: kotlin.List<B>?): kotlin.Unit where B : kotlin.List<java.lang.Cloneable>?
+    public open fun </*0*/ A, /*1*/ B : java.lang.Runnable?> foo(/*0*/ p0: A?, /*1*/ p1: kotlin.List<B>?): kotlin.Unit where B : kotlin.List<kotlin.Cloneable>?
 }

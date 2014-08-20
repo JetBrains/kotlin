@@ -17,6 +17,8 @@ fun <T, R> with(receiver: T, f: T.() -> R) : R = receiver.f()
 
 Resolved call:
 
+Resulting descriptor: fun B.foo(): Unit
+
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = A
-Receiver argument = B
+This object = AExt{fun A.<anonymous>(): Unit}
+Receiver argument = BExt{fun B.<anonymous>(): Unit}

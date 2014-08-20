@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.types;
 
-
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -32,7 +30,7 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
 
     public IntersectionTypeConstructor(Annotations annotations, Collection<JetType> typesToIntersect) {
         super(annotations);
-        this.intersectedTypes = Sets.newLinkedHashSet(typesToIntersect);
+        this.intersectedTypes = new LinkedHashSet<JetType>(typesToIntersect);
         this.hashCode = intersectedTypes.hashCode();
     }
 

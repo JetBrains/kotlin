@@ -13,15 +13,15 @@ import java.lang.IndexOutOfBoundsException
 private fun emptyElementList(): List<Element> = Collections.emptyList<Element>()
 private fun emptyNodeList(): List<Node> = Collections.emptyList<Node>()
 
-var Node.text : String
-get() {
-    return textContent
-}
-set(value) {
-    textContent = value
-}
+public var Node.text: String
+    get() {
+        return textContent
+    }
+    set(value) {
+        textContent = value
+    }
 
-var Element.childrenText: String
+public var Element.childrenText: String
     get() {
         val buffer = StringBuilder()
         val nodeList = this.childNodes
@@ -49,77 +49,77 @@ var Element.childrenText: String
         element.addText(value)
     }
 
-var Element.id : String
-get() = this.getAttribute("id")?: ""
-set(value) {
-    this.setAttribute("id", value)
-    this.setIdAttribute("id", true)
-}
+public var Element.id: String
+    get() = this.getAttribute("id") ?: ""
+    set(value) {
+        this.setAttribute("id", value)
+        this.setIdAttribute("id", true)
+    }
 
-var Element.style : String
-get() = this.getAttribute("style")?: ""
-set(value) {
-    this.setAttribute("style", value)
-}
+public var Element.style: String
+    get() = this.getAttribute("style") ?: ""
+    set(value) {
+        this.setAttribute("style", value)
+    }
 
-var Element.classes : String
-get() = this.getAttribute("class")?: ""
-set(value) {
-    this.setAttribute("class", value)
-}
+public var Element.classes: String
+    get() = this.getAttribute("class") ?: ""
+    set(value) {
+        this.setAttribute("class", value)
+    }
 
 /** Returns true if the element has the given CSS class style in its 'class' attribute */
-fun Element.hasClass(cssClass: String): Boolean {
+public fun Element.hasClass(cssClass: String): Boolean {
     val c = this.classes
     return c.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
 }
 
 
 /** Returns the children of the element as a list */
-fun Element?.children(): List<Node> {
+public fun Element?.children(): List<Node> {
     return this?.childNodes.toList()
 }
 
 /** Returns the child elements of this element */
-fun Element?.childElements(): List<Element> {
+public fun Element?.childElements(): List<Element> {
     return children().filter<Node>{ it.nodeType == Node.ELEMENT_NODE }.map { it as Element }
 }
 
 /** Returns the child elements of this element with the given name */
-fun Element?.childElements(name: String): List<Element> {
+public fun Element?.childElements(name: String): List<Element> {
     return children().filter<Node>{ it.nodeType == Node.ELEMENT_NODE && it.nodeName == name }.map { it as Element }
 }
 
 /** The descendent elements of this document */
-val Document?.elements : List<Element>
-get() = this?.getElementsByTagName("*").toElementList()
+public val Document?.elements: List<Element>
+    get() = this?.getElementsByTagName("*").toElementList()
 
 /** The descendant elements of this elements */
-val Element?.elements : List<Element>
-get() = this?.getElementsByTagName("*").toElementList()
+public val Element?.elements: List<Element>
+    get() = this?.getElementsByTagName("*").toElementList()
 
 
 /** Returns all the descendant elements given the local element name */
-fun Element?.elements(localName: String): List<Element> {
+public fun Element?.elements(localName: String): List<Element> {
     return this?.getElementsByTagName(localName).toElementList()
 }
 
 /** Returns all the descendant elements given the local element name */
-fun Document?.elements(localName: String): List<Element> {
+public fun Document?.elements(localName: String): List<Element> {
     return this?.getElementsByTagName(localName).toElementList()
 }
 
 /** Returns all the descendant elements given the namespace URI and local element name */
-fun Element?.elements(namespaceUri: String, localName: String): List<Element> {
+public fun Element?.elements(namespaceUri: String, localName: String): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
 
 /** Returns all the descendant elements given the namespace URI and local element name */
-fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
+public fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
 
-fun NodeList?.toList(): List<Node> {
+public fun NodeList?.toList(): List<Node> {
     return if (this == null) {
         // TODO the following is easier to convert to JS
         emptyNodeList()
@@ -129,7 +129,7 @@ fun NodeList?.toList(): List<Node> {
     }
 }
 
-fun NodeList?.toElementList(): List<Element> {
+public fun NodeList?.toElementList(): List<Element> {
     return if (this == null) {
         // TODO the following is easier to convert to JS
         //emptyElementList()
@@ -141,7 +141,7 @@ fun NodeList?.toElementList(): List<Element> {
 }
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-fun Document?.get(selector: String): List<Element> {
+public fun Document?.get(selector: String): List<Element> {
     val root = this?.documentElement
     return if (root != null) {
         if (selector == "*") {
@@ -165,7 +165,7 @@ fun Document?.get(selector: String): List<Element> {
 }
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-fun Element.get(selector: String): List<Element> {
+public fun Element.get(selector: String): List<Element> {
     return if (selector == "*") {
         elements
     } else if (selector.startsWith(".")) {
@@ -216,7 +216,7 @@ fun Element.removeClass(varargs cssClasses: Array<String>): Boolean {
 }
 */
 
-class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
+private class NodeListAsList(private val nodeList: NodeList) : AbstractList<Node>() {
     override fun get(index: Int): Node {
         val node = nodeList.item(index)
         if (node == null) {
@@ -229,7 +229,7 @@ class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
     override fun size(): Int = nodeList.length
 }
 
-class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
+private class ElementListAsList(private val nodeList: NodeList) : AbstractList<Element>() {
     override fun get(index: Int): Element {
         val node = nodeList.item(index)
         if (node == null) {
@@ -246,7 +246,7 @@ class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
 }
 
 /** Removes all the children from this node */
-fun Node.clear(): Unit {
+public fun Node.clear(): Unit {
     while (true) {
         val child = firstChild
         if (child == null) {
@@ -258,9 +258,9 @@ fun Node.clear(): Unit {
 }
 
 /** Returns an [[Iterator]] over the next siblings of this node */
-fun Node.nextSiblings() : Iterable<Node> = NextSiblings(this)
+public fun Node.nextSiblings(): Iterable<Node> = NextSiblings(this)
 
-class NextSiblings(var node: Node) : Iterable<Node> {
+private class NextSiblings(private var node: Node) : Iterable<Node> {
     override fun iterator(): Iterator<Node> = object : AbstractIterator<Node>() {
         override fun computeNext(): Unit {
             val nextValue = node.nextSibling
@@ -275,9 +275,9 @@ class NextSiblings(var node: Node) : Iterable<Node> {
 }
 
 /** Returns an [[Iterator]] over the next siblings of this node */
-fun Node.previousSiblings() : Iterable<Node> = PreviousSiblings(this)
+public fun Node.previousSiblings(): Iterable<Node> = PreviousSiblings(this)
 
-class PreviousSiblings(var node: Node) : Iterable<Node> {
+private class PreviousSiblings(private var node: Node) : Iterable<Node> {
     override fun iterator(): Iterator<Node> = object : AbstractIterator<Node>() {
         override fun computeNext(): Unit {
             val nextValue = node.previousSibling
@@ -292,38 +292,39 @@ class PreviousSiblings(var node: Node) : Iterable<Node> {
 }
 
 /** Returns true if this node is a Text node or a CDATA node */
-fun Node.isText(): Boolean {
+public fun Node.isText(): Boolean {
     val nt = nodeType
     return nt == Node.TEXT_NODE || nt == Node.CDATA_SECTION_NODE
 }
 
 /** Returns the attribute value or empty string if its not present */
-fun Element.attribute(name: String): String {
+public fun Element.attribute(name: String): String {
     return this.getAttribute(name) ?: ""
 }
 
-val NodeList?.head : Node?
-get() = if (this != null && this.length > 0) this.item(0) else null
+public val NodeList?.head: Node?
+    get() = if (this != null && this.length > 0) this.item(0) else null
 
-val NodeList?.first : Node?
-get() = this.head
+public val NodeList?.first: Node?
+    get() = this.head
 
-val NodeList?.tail : Node?
-get() {
-    if (this == null) {
-        return null
-    } else {
-        val s = this.length
-        return if (s > 0) this.item(s - 1) else null
+public val NodeList?.tail: Node?
+    get() {
+        if (this == null) {
+            return null
+        }
+        else {
+            val s = this.length
+            return if (s > 0) this.item(s - 1) else null
+        }
     }
-}
 
-val NodeList?.last : Node?
-get() = this.tail
+public val NodeList?.last: Node?
+    get() = this.tail
 
 
 /** Converts the node list to an XML String */
-fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
+public fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
     return if (this == null)
         "" else {
         nodesToXmlString(this.toList(), xmlDeclaration)
@@ -343,16 +344,16 @@ public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = fal
 
 // Syntax sugar
 
-fun Node.plus(child: Node?): Node {
+public fun Node.plus(child: Node?): Node {
     if (child != null) {
         this.appendChild(child)
     }
     return this
 }
 
-fun Element.plus(text: String?): Element = this.addText(text)
+public fun Element.plus(text: String?): Element = this.addText(text)
 
-fun Element.plusAssign(text: String?): Element = this.addText(text)
+public fun Element.plusAssign(text: String?): Element = this.addText(text)
 
 
 // Builder
@@ -360,7 +361,7 @@ fun Element.plusAssign(text: String?): Element = this.addText(text)
 /**
  * Creates a new element which can be configured via a function
  */
-fun Document.createElement(name: String, init: Element.()-> Unit): Element {
+public fun Document.createElement(name: String, init: Element.() -> Unit): Element {
     val elem = this.createElement(name)!!
     elem.init()
     return elem
@@ -369,14 +370,14 @@ fun Document.createElement(name: String, init: Element.()-> Unit): Element {
 /**
  * Creates a new element to an element which has an owner Document which can be configured via a function
  */
-fun Element.createElement(name: String, doc: Document? = null, init: Element.()-> Unit): Element {
+public fun Element.createElement(name: String, doc: Document? = null, init: Element.() -> Unit): Element {
     val elem = ownerDocument(doc).createElement(name)!!
     elem.init()
     return elem
 }
 
 /** Returns the owner document of the element or uses the provided document */
-fun Node.ownerDocument(doc: Document? = null): Document {
+public fun Node.ownerDocument(doc: Document? = null): Document {
     val answer = if (this.nodeType == Node.DOCUMENT_NODE) this as Document
     else if (doc == null) this.ownerDocument
     else doc
@@ -391,7 +392,7 @@ fun Node.ownerDocument(doc: Document? = null): Document {
 /**
 Adds a newly created element which can be configured via a function
 */
-fun Document.addElement(name: String, init: Element.()-> Unit): Element {
+public fun Document.addElement(name: String, init: Element.() -> Unit): Element {
     val child = createElement(name, init)
     this.appendChild(child)
     return child
@@ -400,7 +401,7 @@ fun Document.addElement(name: String, init: Element.()-> Unit): Element {
 /**
 Adds a newly created element to an element which has an owner Document which can be configured via a function
 */
-fun Element.addElement(name: String, doc: Document? = null, init: Element.()-> Unit): Element {
+public fun Element.addElement(name: String, doc: Document? = null, init: Element.() -> Unit): Element {
     val child = createElement(name, doc, init)
     this.appendChild(child)
     return child
@@ -409,7 +410,7 @@ fun Element.addElement(name: String, doc: Document? = null, init: Element.()-> U
 /**
 Adds a newly created text node to an element which either already has an owner Document or one must be provided as a parameter
 */
-fun Element.addText(text: String?, doc: Document? = null): Element {
+public fun Element.addText(text: String?, doc: Document? = null): Element {
     if (text != null) {
         val child = this.ownerDocument(doc).createTextNode(text)!!
         this.appendChild(child)

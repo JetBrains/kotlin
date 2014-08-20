@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -42,15 +43,21 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
+    private boolean kotlinInternalModeOriginalValue;
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
         VirtualDirectoryImpl.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+
+        kotlinInternalModeOriginalValue = KotlinInternalMode.OBJECT$.getEnabled();
+        KotlinInternalMode.OBJECT$.setEnabled(true);
     }
 
     @Override
     protected void tearDown() throws Exception {
+        KotlinInternalMode.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
         VirtualDirectoryImpl.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
@@ -83,6 +90,9 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
                 }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
                     return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+                }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SOURCES")) {
+                    return ProjectDescriptorWithStdlibSources.INSTANCE;
                 }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
                     return JetStdJSProjectDescriptor.INSTANCE;

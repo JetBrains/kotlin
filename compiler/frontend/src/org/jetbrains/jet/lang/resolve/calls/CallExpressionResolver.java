@@ -83,7 +83,7 @@ public class CallExpressionResolver {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
                 JetType result = getExtendedClassObjectType(expression, classObjectType, classifier, context);
                 checkClassObjectVisibility(classifier, expression, context);
-                return DataFlowUtils.checkType(result, expression, context);
+                return result;
             }
         }
         JetType[] result = new JetType[1];
@@ -467,7 +467,7 @@ public class CallExpressionResolver {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
 
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
+        CompileTimeConstant<?> value = ConstantExpressionEvaluator.OBJECT$.evaluate(expression, context.trace, context.expectedType);
         if (value instanceof IntegerValueConstant && ((IntegerValueConstant) value).isPure()) {
             return BasicExpressionTypingVisitor.createCompileTimeConstantTypeInfo(value, expression, context);
         }

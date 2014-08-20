@@ -1,7 +1,6 @@
 // "Suppress 'UNUSED_EXPRESSION' for statement " "true"
 
 fun foo() {
+    val a = 1
     a
 }
-
-val a = 1

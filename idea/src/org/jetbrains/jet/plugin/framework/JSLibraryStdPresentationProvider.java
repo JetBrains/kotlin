@@ -18,11 +18,8 @@ package org.jetbrains.jet.plugin.framework;
 
 import com.intellij.framework.library.LibraryVersionProperties;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.JarVersionDetectionUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
-import com.intellij.openapi.vfs.JarFile;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +27,6 @@ import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.List;
 
 public class JSLibraryStdPresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
@@ -51,27 +47,8 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
     @Nullable
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
-        if (JavaRuntimePresentationProvider.getInstance().detect(classesRoots) != null) {
-            // Prevent clashing with java runtime, in case when library collects all roots.
-            return null;
-        }
-
-        for (VirtualFile root : classesRoots) {
-            if (root.getName().equals(PathUtil.JS_LIB_JAR_NAME)) {
-                assert JsHeaderLibraryPresentationProvider.getInstance().detect(classesRoots) != null : "StdLib should also be detected as headers library";
-
-                try {
-                    JarFile zipFile = JarFileSystem.getInstance().getJarFile(root);
-                    String version = JarVersionDetectionUtil.detectJarVersion(zipFile);
-                    return new LibraryVersionProperties(version);
-                }
-                catch (IOException e) {
-                    return null;
-                }
-            }
-        }
-
-        return null;
+        String version = JsLibraryStdDetectionUtil.getJsLibraryStdVersion(classesRoots);
+        return version == null ? null : new LibraryVersionProperties(version);
     }
 
     /**

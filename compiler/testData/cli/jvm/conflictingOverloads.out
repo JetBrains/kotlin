@@ -1,3 +1,3 @@
-ERROR: $TESTDATA_DIR$/conflictingOverloads.kt: (1, 1) 'internal fun a(): kotlin.List<kotlin.Int>' is already defined in root package
-ERROR: $TESTDATA_DIR$/conflictingOverloads.kt: (2, 1) 'internal fun a(): kotlin.List<kotlin.String>' is already defined in root package
+ERROR: compiler/testData/cli/jvm/conflictingOverloads.kt: (1, 1) 'internal fun a(): kotlin.List<kotlin.Int>' is already defined in root package
+ERROR: compiler/testData/cli/jvm/conflictingOverloads.kt: (2, 1) 'internal fun a(): kotlin.List<kotlin.String>' is already defined in root package
 COMPILATION_ERROR

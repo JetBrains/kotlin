@@ -28,7 +28,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -37,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 import java.util.Set;
@@ -53,12 +53,11 @@ public class LazyResolveTestUtil {
                 globalContext.getStorageManager(), globalContext.getExceptionTracker(), Predicates.<PsiFile>alwaysTrue(), false, false);
         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
         BindingTrace sharedTrace = support.getTrace();
-        ModuleDescriptorImpl sharedModule = support.getModule();
+        ModuleDescriptorImpl sharedModule = support.newModule();
 
         InjectorForTopDownAnalyzerForJvm injector =
                 new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, sharedModule);
-        sharedModule.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
-        injector.getTopDownAnalyzer().analyzeFiles(params, files);
+        injector.getTopDownAnalyzer().analyzeFiles(params, files, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
         return injector.getModuleDescriptor();
     }
 

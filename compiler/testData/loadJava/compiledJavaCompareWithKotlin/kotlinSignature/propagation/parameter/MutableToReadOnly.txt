@@ -1,13 +1,13 @@
 package test
 
-public trait MutableToReadOnly : java.lang.Object {
-    
+public trait MutableToReadOnly {
+
     public trait Sub : test.MutableToReadOnly.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(/*0*/ p: kotlin.MutableList<kotlin.String>): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(/*0*/ p: kotlin.MutableList<kotlin.String>): kotlin.Unit
     }

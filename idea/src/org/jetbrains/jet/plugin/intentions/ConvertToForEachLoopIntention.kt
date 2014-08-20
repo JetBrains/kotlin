@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 
 public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpression>("convert.to.for.each.loop.intention", javaClass()) {
     private fun getFunctionLiteralArgument(element: JetExpression): JetFunctionLiteralExpression? {
@@ -42,16 +42,14 @@ public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpres
                             else -> null
                         }
                     }
+                    else -> null
                 }
             }
             is JetBinaryExpression -> element.getRight()
             else -> null
         }
 
-        return when (argument) {
-            is JetFunctionLiteralExpression -> argument
-            else -> null
-        }
+        return argument as? JetFunctionLiteralExpression
     }
 
     override fun isApplicableTo(element: JetExpression): Boolean {
@@ -65,7 +63,7 @@ public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpres
                     val selector = element.getSelectorExpression()
 
                     when (selector) {
-                        is JetCallExpression -> (selector.getValueArguments().size() + selector.getFunctionLiteralArguments().size()) == 1
+                        is JetCallExpression -> selector.getValueArguments().size() == 1
                         else -> false
                     }
                 }

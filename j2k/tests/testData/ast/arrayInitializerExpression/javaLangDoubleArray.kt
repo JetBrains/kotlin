@@ -1,1 +1,1 @@
-val a = array<Double>(1.0, 2.0, 3.0)
+val a = array(1.0, 2.0, 3.0)

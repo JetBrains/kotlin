@@ -25,11 +25,13 @@ fun foo(b: B) : Int {
     return o.foo()
 }
 ---------------------
-                     <v0>: B                    NEW: magic[FAKE_INITIALIZER](b: B) -> <v0>     
-b                    <v1>: {<: A}               NEW: r(b) -> <v1>                              
-A by b               <v2>: *                    NEW: magic[VALUE_CONSUMER](A by b|<v1>) -> <v2>
-object : A by b {}   <v3>: <no name provided>   NEW: r(object : A by b {}) -> <v3>             
-o                    <v4>: {<: A}               NEW: r(o) -> <v4>                              
-foo()                <v5>: Int                  NEW: call(foo(), foo|<v4>) -> <v5>             
-o.foo()              <v5>: Int                  COPY                                           
+                                                <v0>: B                    NEW: magic[FAKE_INITIALIZER](b: B) -> <v0>     
+                                                <v2>: *                    NEW: magic[VALUE_CONSUMER](A by b|<v1>) -> <v2>
+b                                               <v1>: {<: A}               NEW: r(b) -> <v1>                              
+object : A by b {}                              <v3>: <no name provided>   NEW: r(object : A by b {}) -> <v3>             
+o                                               <v4>: {<: A}               NEW: r(o) -> <v4>                              
+foo()                                           <v5>: Int                  NEW: call(foo(), foo|<v4>) -> <v5>             
+o.foo()                                         <v5>: Int                  COPY                                           
+return o.foo()                                  !<v6>: *                                                                  
+{ val o = object : A by b {} return o.foo() }   !<v6>: *                   COPY                                           
 =====================

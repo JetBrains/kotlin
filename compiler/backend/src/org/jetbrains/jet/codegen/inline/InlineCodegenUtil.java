@@ -59,7 +59,6 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 public class InlineCodegenUtil {
     public static final int API = Opcodes.ASM5;
     public static final String INVOKE = "invoke";
-    public static final boolean DEFAULT_INLINE_FLAG = true;
 
     public static final String CAPTURED_FIELD_PREFIX = "$";
 
@@ -121,13 +120,13 @@ public class InlineCodegenUtil {
 
     @Nullable
     public static VirtualFile findVirtualFileWithHeader(@NotNull Project project, @NotNull FqName containerFqName) {
-        VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
+        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
         return fileFinder.findVirtualFileWithHeader(containerFqName);
     }
 
     @Nullable
     public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalName) {
-        VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
+        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
         return fileFinder.findVirtualFile(internalName);
     }
 

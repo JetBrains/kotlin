@@ -3,14 +3,14 @@ class D {
 }
 
 object P {
-    val u = Unit.VALUE
+    val u = Unit
     val v by D()
-    var w = Unit.VALUE
+    var w = Unit
 }
 
 fun box(): String {
     if (P.u != P.v) return "Fail uv"
-    P.w = Unit.VALUE
+    P.w = Unit
     if (P.w != P.u) return "Fail w"
     return "OK"
 }

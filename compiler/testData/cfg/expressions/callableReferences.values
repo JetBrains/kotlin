@@ -1,0 +1,10 @@
+== bar ==
+fun bar(): Int = 1
+---------------------
+1   <v0>: Int   NEW: r(1) -> <v0>
+=====================
+== foo ==
+fun foo(): Any = ::bar
+---------------------
+::bar   <v0>: {<: Any}   NEW: magic[CALLABLE_REFERENCE](::bar) -> <v0>
+=====================

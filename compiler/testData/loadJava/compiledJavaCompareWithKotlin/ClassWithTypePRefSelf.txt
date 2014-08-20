@@ -1,5 +1,5 @@
 package test
 
-public final class ClassWithTypePRefSelf</*0*/ P : kotlin.Enum<P>?> : java.lang.Object {
+public final class ClassWithTypePRefSelf</*0*/ P : kotlin.Enum<P>?> {
     public constructor ClassWithTypePRefSelf</*0*/ P : kotlin.Enum<P>?>()
 }

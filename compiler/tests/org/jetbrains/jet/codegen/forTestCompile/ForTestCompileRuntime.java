@@ -89,9 +89,9 @@ public class ForTestCompileRuntime {
     ) {
         List<String> args = KotlinPackage.arrayListOf(
                 "-d", destDir.getPath(),
-                "-noStdlib",
-                "-noJdkAnnotations",
-                "-suppress", "warnings",
+                "-no-stdlib",
+                "-no-jdk-annotations",
+                "-nowarn",
                 "-annotations", JetTestUtils.getJdkAnnotationsJar().getAbsolutePath(),
                 "-classpath", classPath
         );

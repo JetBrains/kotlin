@@ -1,12 +1,12 @@
 package test
 
-public trait TwoBounds : java.lang.Object {
-    
+public trait TwoBounds {
+
     public trait Sub : test.TwoBounds.Super {
-        public abstract override /*1*/ fun </*0*/ B : kotlin.CharSequence> foo(/*0*/ a: B): kotlin.Unit where B : java.lang.Cloneable
+        public abstract override /*1*/ fun </*0*/ B : kotlin.CharSequence> foo(/*0*/ a: B): kotlin.Unit where B : kotlin.Cloneable
     }
-    
-    public trait Super : java.lang.Object {
-        public abstract fun </*0*/ A : kotlin.CharSequence> foo(/*0*/ a: A): kotlin.Unit where A : java.lang.Cloneable
+
+    public trait Super {
+        public abstract fun </*0*/ A : kotlin.CharSequence> foo(/*0*/ a: A): kotlin.Unit where A : kotlin.Cloneable
     }
 }

@@ -29,6 +29,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
@@ -36,8 +37,8 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -92,10 +93,12 @@ public final class LoadDescriptorUtil {
         );
         JetCoreEnvironment jetCoreEnvironment = JetCoreEnvironment.createForTests(disposable, configuration);
         BindingTraceContext trace = new BindingTraceContext();
-        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(jetCoreEnvironment.getProject(), trace);
-        injector.getModule().addFragmentProvider(DependencyKind.BUILT_INS,
-                                                 KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
-        PackageViewDescriptor packageView = injector.getModule().getPackage(TEST_PACKAGE_FQNAME);
+        InjectorForJavaDescriptorResolver injector =
+                InjectorForJavaDescriptorResolverUtil.create(jetCoreEnvironment.getProject(), trace, true);
+        ModuleDescriptorImpl module = injector.getModule();
+
+        CliLightClassGenerationSupport.getInstanceForCli(jetCoreEnvironment.getProject()).setModule(module);
+        PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null;
 
         return Pair.create(packageView, trace.getBindingContext());

@@ -95,10 +95,6 @@ public final class BindingUtils {
         return (JsDescriptorUtils.findAncestorClass(superclassDescriptors) != null);
     }
 
-    public static boolean isStatement(@NotNull BindingContext context, @NotNull JetExpression expression) {
-        return BindingContextUtils.getNotNull(context, BindingContext.STATEMENT, expression);
-    }
-
     @NotNull
     public static JetType getTypeByReference(@NotNull BindingContext context,
             @NotNull JetTypeReference typeReference) {

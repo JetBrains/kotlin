@@ -36,6 +36,51 @@ public class RenameTestGenerated extends AbstractRenameTest {
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"));
     }
     
+    @TestMetadata("renameCompareTo/compareTo.test")
+    public void testRenameCompareTo_CompareTo() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameCompareTo/compareTo.test");
+    }
+    
+    @TestMetadata("renameContains/contains.test")
+    public void testRenameContains_Contains() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameContains/contains.test");
+    }
+    
+    @TestMetadata("renameContainsWithConflicts/containsWithConflicts.test")
+    public void testRenameContainsWithConflicts_ContainsWithConflicts() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameContainsWithConflicts/containsWithConflicts.test");
+    }
+    
+    @TestMetadata("renameEquals/equals.test")
+    public void testRenameEquals_Equals() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameEquals/equals.test");
+    }
+    
+    @TestMetadata("renameExplicitComponentFunction/explicitComponentFunction.test")
+    public void testRenameExplicitComponentFunction_ExplicitComponentFunction() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameExplicitComponentFunction/explicitComponentFunction.test");
+    }
+    
+    @TestMetadata("renameGet/get.test")
+    public void testRenameGet_Get() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameGet/get.test");
+    }
+    
+    @TestMetadata("renameInc/inc.test")
+    public void testRenameInc_Inc() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameInc/inc.test");
+    }
+    
+    @TestMetadata("renameInvoke/invoke.test")
+    public void testRenameInvoke_Invoke() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameInvoke/invoke.test");
+    }
+    
+    @TestMetadata("renameIterator/iterator.test")
+    public void testRenameIterator_Iterator() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameIterator/iterator.test");
+    }
+    
     @TestMetadata("renameJavaClass/renameJavaClass.test")
     public void testRenameJavaClass_RenameJavaClass() throws Exception {
         doTest("idea/testData/refactoring/rename/renameJavaClass/renameJavaClass.test");
@@ -159,6 +204,31 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameKotlinVarProperty/renameOverriden.test")
     public void testRenameKotlinVarProperty_RenameOverriden() throws Exception {
         doTest("idea/testData/refactoring/rename/renameKotlinVarProperty/renameOverriden.test");
+    }
+    
+    @TestMetadata("renamePlus/plus.test")
+    public void testRenamePlus_Plus() throws Exception {
+        doTest("idea/testData/refactoring/rename/renamePlus/plus.test");
+    }
+    
+    @TestMetadata("renamePlusAssign/plusAssign.test")
+    public void testRenamePlusAssign_PlusAssign() throws Exception {
+        doTest("idea/testData/refactoring/rename/renamePlusAssign/plusAssign.test");
+    }
+    
+    @TestMetadata("renameSet/set.test")
+    public void testRenameSet_Set() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameSet/set.test");
+    }
+    
+    @TestMetadata("renameSynthesizedComponentFunction/synthesizedComponentFunction.test")
+    public void testRenameSynthesizedComponentFunction_SynthesizedComponentFunction() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameSynthesizedComponentFunction/synthesizedComponentFunction.test");
+    }
+    
+    @TestMetadata("renameUnaryMinus/unaryMinus.test")
+    public void testRenameUnaryMinus_UnaryMinus() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameUnaryMinus/unaryMinus.test");
     }
     
 }

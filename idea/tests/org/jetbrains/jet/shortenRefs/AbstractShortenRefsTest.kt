@@ -28,7 +28,7 @@ import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.codeInsight.CodeInsightSettings
 import org.jetbrains.jet.InTextDirectivesUtils
 
-abstract class AbstractShortenRefsTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractShortenRefsTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestCaseBuilder.getHomeDirectory()
     override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 

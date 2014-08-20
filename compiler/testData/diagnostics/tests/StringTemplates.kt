@@ -12,11 +12,11 @@ fun demo() {
     <!UNUSED_EXPRESSION!>"$.$.asdf$\t"<!>
     <!UNUSED_EXPRESSION!>"asd\$"<!>
     <!UNUSED_EXPRESSION!>"asd$a<!ILLEGAL_ESCAPE!>\x<!>"<!>
-    <!UNUSED_EXPRESSION!>"asd$a$asd$ $<!UNRESOLVED_REFERENCE!>xxx<!>"<!>
-    <!UNUSED_EXPRESSION!>"fosdfasdo${1 + bar + 100}}sdsdfgdsfsdf"<!>
-    <!UNUSED_EXPRESSION!>"foo${bar + map {foo}}sdfsdf"<!>
-    <!UNUSED_EXPRESSION!>"foo${bar + map { "foo" }}sdfsdf"<!>
-    <!UNUSED_EXPRESSION!>"foo${bar + map {
-      "foo$sdf${ buzz{}}" }}sdfsdf"<!>
+    "asd$a$asd$ $<!UNRESOLVED_REFERENCE!>xxx<!>"
+    "fosdfasdo${1 + bar + 100}}sdsdfgdsfsdf"
+    "foo${bar + map {foo}}sdfsdf"
+    "foo${bar + map { "foo" }}sdfsdf"
+    "foo${bar + map {
+      "foo$sdf${ buzz{}}" }}sdfsdf"
     <!UNUSED_EXPRESSION!>"a<!ILLEGAL_ESCAPE!>\u<!> <!ILLEGAL_ESCAPE!>\u<!>0 <!ILLEGAL_ESCAPE!>\u<!>00 <!ILLEGAL_ESCAPE!>\u<!>000 \u0000 \u0AaA <!ILLEGAL_ESCAPE!>\u<!>0AAz.length( ) + \u0022b"<!>
 }

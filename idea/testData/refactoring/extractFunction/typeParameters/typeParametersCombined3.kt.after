@@ -9,7 +9,7 @@ class A<T: Data>(val t: T) {
             return i(v)
         }
 
-        fun <V : Data> i(v: V): Int {
+        private fun <V : Data> i(v: V): Int {
             return t.x + u.x + v.x
         }
     }

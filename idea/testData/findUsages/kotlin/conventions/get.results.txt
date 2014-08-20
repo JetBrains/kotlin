@@ -1,0 +1,2 @@
+Function call (9: 10) B(1).get(2)
+Implicit 'get' (10: 5) B(1)[2]

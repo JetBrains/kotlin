@@ -9,7 +9,7 @@ fun foo() {
     println(a + b + c)
 }
 
-fun i(): Int {
+private fun i(): Int {
     val a: Int
     val b = 10
     val c: Int

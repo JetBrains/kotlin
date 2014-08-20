@@ -41,8 +41,8 @@ import org.jetbrains.jet.plugin.util.makeNotNullable
 class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
         val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.`type`.makeNotNullable() }
-        for ((jetType, types) in expectedInfosGrouped) {
-            val tail = mergeTails(types.map { it.tail })
+        for ((jetType, infos) in expectedInfosGrouped) {
+            val tail = mergeTails(infos.map { it.tail })
             addToCollection(collection, jetType, tail)
         }
     }
@@ -51,7 +51,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
         if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(jetType)) return // do not show "object: ..." for function types
 
         val classifier = jetType.getConstructor().getDeclarationDescriptor()
-        if (!(classifier is ClassDescriptor)) return
+        if (classifier !is ClassDescriptor) return
 
         val isAbstract = classifier.getModality() == Modality.ABSTRACT
         val allConstructors = classifier.getConstructors()

@@ -33,7 +33,7 @@ import org.jetbrains.jet.cli.AbstractKotlincExecutableTest;
 @InnerTestClasses({KotlincExecutableTestGenerated.Jvm.class, KotlincExecutableTestGenerated.Js.class})
 public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTest {
     @TestMetadata("compiler/testData/cli/jvm")
-    @InnerTestClasses({Jvm.Inline.class, Jvm.WrongAbiVersionLib.class})
+    @InnerTestClasses({Jvm.WrongAbiVersionLib.class})
     public static class Jvm extends AbstractKotlincExecutableTest {
         public void testAllFilesPresentInJvm() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), true);
@@ -52,6 +52,11 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         @TestMetadata("diagnosticsOrder.args")
         public void testDiagnosticsOrder() throws Exception {
             doJvmTest("compiler/testData/cli/jvm/diagnosticsOrder.args");
+        }
+        
+        @TestMetadata("extraHelp.args")
+        public void testExtraHelp() throws Exception {
+            doJvmTest("compiler/testData/cli/jvm/extraHelp.args");
         }
         
         @TestMetadata("help.args")
@@ -84,14 +89,9 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest("compiler/testData/cli/jvm/simple.args");
         }
         
-        @TestMetadata("suppressAllWarningsLowercase.args")
-        public void testSuppressAllWarningsLowercase() throws Exception {
-            doJvmTest("compiler/testData/cli/jvm/suppressAllWarningsLowercase.args");
-        }
-        
-        @TestMetadata("suppressAllWarningsMixedCase.args")
-        public void testSuppressAllWarningsMixedCase() throws Exception {
-            doJvmTest("compiler/testData/cli/jvm/suppressAllWarningsMixedCase.args");
+        @TestMetadata("suppressAllWarningsJvm.args")
+        public void testSuppressAllWarningsJvm() throws Exception {
+            doJvmTest("compiler/testData/cli/jvm/suppressAllWarningsJvm.args");
         }
         
         @TestMetadata("wrongAbiVersion.args")
@@ -109,27 +109,9 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest("compiler/testData/cli/jvm/wrongKotlinSignature.args");
         }
         
-        @TestMetadata("compiler/testData/cli/jvm/inline")
-        public static class Inline extends AbstractKotlincExecutableTest {
-            public void testAllFilesPresentInInline() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cli/jvm/inline"), Pattern.compile("^(.+)\\.args$"), true);
-            }
-            
-            @TestMetadata("off.args")
-            public void testOff() throws Exception {
-                doJvmTest("compiler/testData/cli/jvm/inline/off.args");
-            }
-            
-            @TestMetadata("on.args")
-            public void testOn() throws Exception {
-                doJvmTest("compiler/testData/cli/jvm/inline/on.args");
-            }
-            
-            @TestMetadata("wrong.args")
-            public void testWrong() throws Exception {
-                doJvmTest("compiler/testData/cli/jvm/inline/wrong.args");
-            }
-            
+        @TestMetadata("wrongScriptWithNoSource.args")
+        public void testWrongScriptWithNoSource() throws Exception {
+            doJvmTest("compiler/testData/cli/jvm/wrongScriptWithNoSource.args");
         }
         
         @TestMetadata("compiler/testData/cli/jvm/wrongAbiVersionLib")
@@ -149,7 +131,6 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Jvm");
             suite.addTestSuite(Jvm.class);
-            suite.addTestSuite(Inline.class);
             suite.addTest(WrongAbiVersionLib.innerSuite());
             return suite;
         }
@@ -159,6 +140,11 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
     public static class Js extends AbstractKotlincExecutableTest {
         public void testAllFilesPresentInJs() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), true);
+        }
+        
+        @TestMetadata("jsExtraHelp.args")
+        public void testJsExtraHelp() throws Exception {
+            doJsTest("compiler/testData/cli/js/jsExtraHelp.args");
         }
         
         @TestMetadata("jsHelp.args")

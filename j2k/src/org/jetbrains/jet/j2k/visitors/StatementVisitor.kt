@@ -19,12 +19,8 @@ package org.jetbrains.jet.j2k.visitors
 import com.intellij.psi.*
 import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.*
-import org.jetbrains.jet.j2k.countWriteAccesses
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.hasWriteAccesses
 import org.jetbrains.jet.j2k.isInSingleLine
-import com.intellij.psi.tree.IElementType
-import org.jetbrains.jet.j2k.singleOrNull2
 
 open class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     public var result: Statement = Statement.Empty
@@ -77,7 +73,13 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
     }
 
     override fun visitDeclarationStatement(statement: PsiDeclarationStatement) {
-        result = DeclarationStatement(statement.getDeclaredElements().map { converter.convertElement(it) })
+        result = DeclarationStatement(statement.getDeclaredElements().map {
+            when (it) {
+                is PsiLocalVariable -> converter.convertLocalVariable(it)
+                is PsiClass -> converter.convertClass(it)
+                else -> Element.Empty //what else can be here?
+            }
+        })
     }
 
     override fun visitDoWhileStatement(statement: PsiDoWhileStatement) {
@@ -86,7 +88,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
             converter.convertExpression(condition, condition.getType())
         else
             converter.convertExpression(condition)
-        result = DoWhileStatement(expression, convertStatementOrBlock(statement.getBody()), statement.isInSingleLine())
+        result = DoWhileStatement(expression, converter.convertStatementOrBlock(statement.getBody()), statement.isInSingleLine())
     }
 
     override fun visitExpressionStatement(statement: PsiExpressionStatement) {
@@ -98,124 +100,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
     }
 
     override fun visitForStatement(statement: PsiForStatement) {
-        val initialization = statement.getInitialization()
-        val update = statement.getUpdate()
-        val condition = statement.getCondition()
-        val body = statement.getBody()
-
-        if (initialization is PsiDeclarationStatement) {
-            val loopVar = initialization.getDeclaredElements().singleOrNull2() as? PsiLocalVariable
-            if (loopVar != null
-                    && !loopVar.hasWriteAccesses(body)
-                    && !loopVar.hasWriteAccesses(condition)
-                    && condition is PsiBinaryExpression) {
-                val operationTokenType = condition.getOperationTokenType()
-                val lowerBound = condition.getLOperand()
-                val upperBound = condition.getROperand()
-                if ((operationTokenType == JavaTokenType.LT || operationTokenType == JavaTokenType.LE) &&
-                        lowerBound is PsiReferenceExpression &&
-                        lowerBound.resolve() == loopVar &&
-                        upperBound != null) {
-                    val start = loopVar.getInitializer()
-                    if (start != null &&
-                            (update as? PsiExpressionStatement)?.getExpression()?.isVariablePlusPlus(loopVar) ?: false) {
-                        val range = forIterationRange(start, upperBound, operationTokenType).assignNoPrototype()
-                        val explicitType = if (converter.settings.specifyLocalVariableTypeByDefault) PrimitiveType(Identifier("Int").assignNoPrototype()).assignNoPrototype() else null
-                        result = ForeachStatement(loopVar.declarationIdentifier(), explicitType, range, convertStatementOrBlock(body), statement.isInSingleLine())
-                        return
-                    }
-                }
-            }
-        }
-
-        val initializationConverted = converter.convertStatement(initialization)
-        val updateConverted = converter.convertStatement(update)
-
-        val whileBody = if (updateConverted.isEmpty) {
-            convertStatementOrBlock(body)
-        }
-        else if (body is PsiBlockStatement) {
-            val nameConflict = initialization is PsiDeclarationStatement && initialization.getDeclaredElements().any { loopVar ->
-                loopVar is PsiNamedElement && body.getCodeBlock().getStatements().any { statement ->
-                    statement is PsiDeclarationStatement && statement.getDeclaredElements().any {
-                        it is PsiNamedElement && it.getName() == loopVar.getName()
-                    }
-                }
-            }
-
-            if (nameConflict) {
-                val statements = listOf(converter.convertStatement(body), updateConverted)
-                Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
-            }
-            else {
-                val block = converter.convertBlock(body.getCodeBlock(), true)
-                Block(block.statements + listOf(updateConverted), block.lBrace, block.rBrace, true).assignPrototypesFrom(block)
-            }
-        }
-        else {
-            val statements = listOf(converter.convertStatement(body), updateConverted)
-            Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
-        }
-        val whileStatement = WhileStatement(
-                if (condition != null) converter.convertExpression(condition) else LiteralExpression("true").assignNoPrototype(),
-                whileBody,
-                statement.isInSingleLine()).assignNoPrototype()
-
-        if (initializationConverted.isEmpty) {
-            result = whileStatement
-        }
-        else {
-            val statements = listOf(initializationConverted, whileStatement)
-            val block = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
-            result = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
-        }
-    }
-
-    private fun PsiElement.isVariablePlusPlus(variable: PsiVariable): Boolean {
-        //TODO: simplify code when KT-5453 fixed
-        val pair = when (this) {
-            is PsiPostfixExpression -> getOperationTokenType() to getOperand()
-            is PsiPrefixExpression -> getOperationTokenType() to getOperand()
-            else -> return false
-        }
-        return pair.first == JavaTokenType.PLUSPLUS && (pair.second as? PsiReferenceExpression)?.resolve() == variable
-    }
-
-    private fun forIterationRange(start: PsiExpression, upperBound: PsiExpression, comparisonTokenType: IElementType): Expression {
-        if (start is PsiLiteralExpression
-                && start.getValue() == 0
-                && comparisonTokenType == JavaTokenType.LT) {
-            // check if it's iteration through list indices
-            if (upperBound is PsiMethodCallExpression && upperBound.getArgumentList().getExpressions().isEmpty()) {
-                val methodExpr = upperBound.getMethodExpression()
-                if (methodExpr is PsiReferenceExpression && methodExpr.getReferenceName() == "size") {
-                    val qualifier = methodExpr.getQualifierExpression()
-                    if (qualifier is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */) {
-                        val listType = PsiElementFactory.SERVICE.getInstance(converter.project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_LIST)
-                        val qualifierType = qualifier.getType()
-                        if (qualifierType != null && listType.isAssignableFrom(qualifierType)) {
-                            return QualifiedExpression(converter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
-                        }
-                    }
-                }
-            }
-
-            // check if it's iteration through array indices
-            if (upperBound is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */
-                    && upperBound.getReferenceName() == "length") {
-                val qualifier = upperBound.getQualifierExpression()
-                if (qualifier is PsiReferenceExpression && qualifier.getType() is PsiArrayType) {
-                    return QualifiedExpression(converter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
-                }
-            }
-        }
-
-        val end = converter.convertExpression(upperBound)
-        val endExpression = if (comparisonTokenType == JavaTokenType.LT)
-            BinaryExpression(end, LiteralExpression("1").assignNoPrototype(), "-").assignNoPrototype()
-        else
-            end
-        return RangeExpression(converter.convertExpression(start), endExpression)
+        result = ForConverter(statement, converter).execute()
     }
 
     override fun visitForeachStatement(statement: PsiForeachStatement) {
@@ -225,7 +110,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         result = ForeachStatement(iterationParameter.declarationIdentifier(),
                                   if (converter.settings.specifyLocalVariableTypeByDefault) converter.typeConverter.convertVariableType(iterationParameter) else null,
                                   iterator,
-                                  convertStatementOrBlock(statement.getBody()),
+                                  converter.convertStatementOrBlock(statement.getBody()),
                                   statement.isInSingleLine())
     }
 
@@ -233,8 +118,8 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         val condition = statement.getCondition()
         val expression = converter.convertExpression(condition, PsiType.BOOLEAN)
         result = IfStatement(expression,
-                             convertStatementOrBlock(statement.getThenBranch()),
-                             convertStatementOrBlock(statement.getElseBranch()),
+                             converter.convertStatementOrBlock(statement.getThenBranch()),
+                             converter.convertStatementOrBlock(statement.getElseBranch()),
                              statement.isInSingleLine())
     }
 
@@ -265,14 +150,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
 
     override fun visitTryStatement(tryStatement: PsiTryStatement) {
         val tryBlock = tryStatement.getTryBlock()
-        val catchesConverted = run {
-            val catchBlocks = tryStatement.getCatchBlocks()
-            val catchBlockParameters = tryStatement.getCatchBlockParameters()
-            catchBlocks.indices.map {
-                CatchStatement(converter.convertParameter(catchBlockParameters[it], Nullability.NotNull),
-                               converter.convertBlock(catchBlocks[it])).assignNoPrototype()
-            }
-        }
+        val catchesConverted = convertCatches(tryStatement)
         val finallyConverted = converter.convertBlock(tryStatement.getFinallyBlock())
 
         val resourceList = tryStatement.getResourceList()
@@ -285,6 +163,29 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         }
 
         result = TryStatement(converter.convertBlock(tryBlock), catchesConverted, finallyConverted)
+    }
+
+    private fun convertCatches(tryStatement: PsiTryStatement): List<CatchStatement> {
+        val catches = ArrayList<CatchStatement>()
+        for ((block, parameter) in tryStatement.getCatchBlocks().zip(tryStatement.getCatchBlockParameters())) {
+            val blockConverted = converter.convertBlock(block)
+            val annotations = converter.convertAnnotations(parameter)
+            val parameterType = parameter.getType()
+            val types = if (parameterType is PsiDisjunctionType)
+                parameterType.getDisjunctions()
+            else
+                listOf(parameterType)
+            for (t in types) {
+                var convertedType = converter.typeConverter.convertType(t, Nullability.NotNull)
+                val convertedParameter = Parameter(parameter.declarationIdentifier(),
+                                                   convertedType,
+                                                   Parameter.VarValModifier.None,
+                                                   annotations,
+                                                   Modifiers.Empty).assignPrototype(parameter)
+                catches.add(CatchStatement(convertedParameter, blockConverted).assignNoPrototype())
+            }
+        }
+        return catches
     }
 
     private fun convertTryWithResources(tryBlock: PsiCodeBlock?, resourceVariables: List<PsiResourceVariable>, catchesConverted: List<CatchStatement>, finallyConverted: Block): Statement {
@@ -328,7 +229,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
             converter.convertExpression(condition, condition!!.getType())
         else
             converter.convertExpression(condition)
-        result = WhileStatement(expression, convertStatementOrBlock(statement.getBody()), statement.isInSingleLine())
+        result = WhileStatement(expression, converter.convertStatementOrBlock(statement.getBody()), statement.isInSingleLine())
     }
 
     override fun visitReturnStatement(statement: PsiReturnStatement) {
@@ -344,11 +245,12 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
     override fun visitEmptyStatement(statement: PsiEmptyStatement) {
         result = Statement.Empty
     }
-
-    private fun convertStatementOrBlock(statement: PsiStatement?): Statement {
-        return if (statement is PsiBlockStatement)
-            converter.convertBlock(statement.getCodeBlock())
-        else
-            converter.convertStatement(statement)
-    }
 }
+
+fun Converter.convertStatementOrBlock(statement: PsiStatement?): Statement {
+    return if (statement is PsiBlockStatement)
+        convertBlock(statement.getCodeBlock())
+    else
+        convertStatement(statement)
+}
+

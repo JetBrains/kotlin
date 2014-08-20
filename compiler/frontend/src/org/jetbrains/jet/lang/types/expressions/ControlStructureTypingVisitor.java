@@ -265,7 +265,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             else {
                 facade.getTypeInfo(body, context.replaceScope(context.scope));
             }
-            context.trace.report(UNUSED_FUNCTION_LITERAL.on(function));
         }
         else if (body != null) {
             WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");

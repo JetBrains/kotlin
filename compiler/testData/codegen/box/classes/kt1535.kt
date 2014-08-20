@@ -1,6 +1,6 @@
-class Works() : Function0<Object> {
-    public override fun invoke():Object {
-      return "Works" as Object
+class Works() : Function0<Any> {
+    public override fun invoke():Any {
+      return "Works" as Any
     }
 }
 class Broken() : Function0<String> {
@@ -10,7 +10,7 @@ class Broken() : Function0<String> {
 }
 
 fun box(): String {
-  val works1: ()->Object = Works();
+  val works1: ()->Any = Works();
   works1()
 
   val broken1: ()->String = Broken();

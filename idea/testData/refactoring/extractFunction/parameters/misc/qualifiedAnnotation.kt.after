@@ -7,7 +7,7 @@ class MyClass {
     public annotation class P
 }
 
-fun unit() {
+private fun unit() {
     [MyClass.P] val t: Int = 1
     t
 }

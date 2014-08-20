@@ -13,13 +13,14 @@ fun foo() {
     "after"
 }
 ---------------------
-                                                                                              <v2>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: Exception) -> <v2>
-"before"                                                                                      <v0>: *                NEW: r("before") -> <v0>
-foo()                                                                                         <v1>: *                NEW: call(foo(), foo) -> <v1>
-{ foo() }                                                                                     <v1>: *                COPY
-e                                                                                             <v3>: {<: Exception}   NEW: r(e) -> <v3>
-1                                                                                             <v4>: Int              NEW: r(1) -> <v4>
-try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }                        <v1>: *                COPY
-"after"                                                                                       <v5>: *                NEW: r("after") -> <v5>
-{ "before" try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 } "after" }   <v5>: *                COPY
+                                                                                              <v2>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: Exception) -> <v2>                                                    
+"before"                                                                                      <v0>: *                NEW: r("before") -> <v0>                                                                              
+foo()                                                                                         <v1>: *                NEW: call(foo(), foo) -> <v1>                                                                         
+{ foo() }                                                                                     <v1>: *                COPY                                                                                                  
+e                                                                                             <v3>: {<: Exception}   NEW: r(e) -> <v3>                                                                                     
+{ val a = e }                                                                                 !<v5>: *                                                                                                                     
+1                                                                                             <v4>: Int              NEW: r(1) -> <v4>                                                                                     
+try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }                        <v6>: *                NEW: merge(try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }|<v1>, !<v5>) -> <v6>
+"after"                                                                                       <v7>: *                NEW: r("after") -> <v7>                                                                               
+{ "before" try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 } "after" }   <v7>: *                COPY                                                                                                  
 =====================

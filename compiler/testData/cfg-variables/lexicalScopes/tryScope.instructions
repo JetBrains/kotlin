@@ -49,8 +49,9 @@ L5 [skipFinallyToErrorBlock]:
     v(val a = 1)                                                                                         INIT: in: {} out: {a=D}
     r(1) -> <v4>                                                                                         INIT: in: {a=D} out: {a=D}
     w(a|<v4>)                                                                                            INIT: in: {a=D} out: {a=ID}
-  2 mark("after")                                                                                        INIT: in: {} out: {}
-    r("after") -> <v5>
+  2 merge(try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }|<v1>, !<v5>) -> <v6>    INIT: in: {} out: {}
+    mark("after")
+    r("after") -> <v7>
 L1:
   1 <END>
 error:

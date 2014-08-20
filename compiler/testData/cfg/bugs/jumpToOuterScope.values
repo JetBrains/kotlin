@@ -7,15 +7,19 @@ fun foo(c: Collection<Int>) {
     }
 }
 ---------------------
-                <v0>: {<: Collection<Int>}   NEW: magic[FAKE_INITIALIZER](c: Collection<Int>) -> <v0>
-                <v2>: Int                    NEW: magic[LOOP_RANGE_ITERATION](c|<v1>) -> <v2>        
-c               <v1>: {<: Iterable<Int>}     NEW: r(c) -> <v1>                                       
-{ break }       <v3>: *                      NEW: r({ break }) -> <v3>                               
-{ { break } }   <v3>: *                      COPY                                                    
+                                 <v0>: {<: Collection<Int>}   NEW: magic[FAKE_INITIALIZER](c: Collection<Int>) -> <v0>
+                                 <v2>: Int                    NEW: magic[LOOP_RANGE_ITERATION](c|<v1>) -> <v2>        
+c                                <v1>: {<: Iterable<Int>}     NEW: r(c) -> <v1>                                       
+{ break }                        <v3>: *                      NEW: r({ break }) -> <v3>                               
+{ { break } }                    <v3>: *                      COPY                                                    
+for (e in c) { { break } }       !<v4>: *                                                                             
+{ for (e in c) { { break } } }   !<v4>: *                     COPY                                                    
 =====================
 == anonymous_0 ==
 {
             break
         }
 ---------------------
+break   !<v0>: *       
+break   !<v0>: *   COPY
 =====================

@@ -1,6 +1,6 @@
 package test
 
-public open class NotNullField : java.lang.Object {
+public open class NotNullField {
     public constructor NotNullField()
     public final var hi: kotlin.String
 }

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ConverterSettings;
 import org.jetbrains.jet.j2k.FilesConversionScope;
+import org.jetbrains.jet.plugin.j2k.J2kPostProcessor;
 
 import java.util.List;
 
@@ -52,7 +53,10 @@ public class JavaToKotlinAction extends AnAction {
             return;
         }
 
-        final Converter converter = Converter.object$.create(project, ConverterSettings.defaultSettings, new FilesConversionScope(selectedJavaFiles));
+        final Converter converter = Converter.OBJECT$.create(project,
+                                                             ConverterSettings.defaultSettings,
+                                                             new FilesConversionScope(selectedJavaFiles),
+                                                             J2kPostProcessor.INSTANCE$);
         CommandProcessor.getInstance().executeCommand(
                 project,
                 new Runnable() {

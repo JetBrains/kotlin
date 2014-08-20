@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveRecursiveComparing
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
+import org.jetbrains.jet.repl.AbstractReplInterpreterTest
 import org.jetbrains.jet.cfg.AbstractControlFlowTest
 import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
@@ -116,6 +117,7 @@ import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.jet.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
+import org.jetbrains.jet.codegen.AbstractScriptCodegenTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -178,6 +180,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithStdlibCodegenTestGenerated") {
             model("codegen/boxWithStdlib", testMethod = "doTestWithStdlib")
+        }
+
+        testClass(javaClass<AbstractScriptCodegenTest>()) {
+            model("codegen/script", extension = "kts")
         }
 
         testClass(javaClass<AbstractBytecodeTextTest>()) {
@@ -245,6 +251,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractKotlincExecutableTest>()) {
             model("cli/jvm", extension = "args", testMethod = "doJvmTest")
             model("cli/js", extension = "args", testMethod = "doJsTest")
+        }
+
+        testClass(javaClass<AbstractReplInterpreterTest>()) {
+            model("repl", extension = "repl")
         }
 
         testClass(javaClass<AbstractControlFlowTest>()) {

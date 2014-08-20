@@ -34,7 +34,7 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import kotlin.properties.Delegates
 import org.jetbrains.jet.InTextDirectivesUtils
 
-abstract class AbstractSmartCompletionHandlerTest() : CompletionHandlerTestBase() {
+public abstract class AbstractSmartCompletionHandlerTest() : CompletionHandlerTestBase() {
     private val INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:"
     private val LOOKUP_STRING_PREFIX = "ELEMENT:"
     private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"

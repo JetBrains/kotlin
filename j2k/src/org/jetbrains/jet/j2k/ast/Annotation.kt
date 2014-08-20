@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>, val brackets: Boolean) : Element() {
+class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>, val brackets: Boolean, val newLineAfter: Boolean) : Element() {
     private fun CodeBuilder.surroundWithBrackets(action: () -> Unit) {
         if (brackets) append("[")
         action()
@@ -28,41 +28,45 @@ class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Exp
     override fun generateCode(builder: CodeBuilder) {
         if (arguments.isEmpty()) {
             builder.surroundWithBrackets { builder.append(name) }
-            return
         }
+        else {
+            builder.surroundWithBrackets {
+                builder.append(name)
+                        .append("(")
+                        .append(arguments.map {
+                            {
+                                if (it.first != null) {
+                                    builder append it.first!! append " = " append it.second
+                                }
+                                else {
+                                    builder append it.second
+                                }
+                            }
+                        }, ", ")
+                        .append(")")
+            }
+        }
+    }
 
-        builder.surroundWithBrackets {
-            builder.append(name)
-                    .append("(")
-                    .append(arguments.map {
-                        {
-                            if (it.first != null) {
-                                builder append it.first!! append " = " append it.second
-                            }
-                            else {
-                                builder append it.second
-                            }
-                        }
-                    }, ", ")
-                    .append(")")
-        }
+    override fun postGenerateCode(builder: CodeBuilder) {
+        // we add line break in postGenerateCode to keep comments attached to this element on the same line
+        builder.append(if (newLineAfter) "\n" else " ")
     }
 }
 
-class Annotations(val annotations: List<Annotation>, val newLines: Boolean) : Element() {
-    private val br = if (newLines) "\n" else " "
-
+class Annotations(val annotations: List<Annotation>) : Element() {
     override fun generateCode(builder: CodeBuilder) {
-        if (annotations.isNotEmpty()) {
-            builder.append(annotations, br, "", br)
-        }
+        builder.append(annotations, "")
     }
 
     override val isEmpty: Boolean = annotations.isEmpty()
 
-    fun plus(other: Annotations) = Annotations(annotations + other.annotations, newLines || other.newLines)
+    fun plus(other: Annotations) = Annotations(annotations + other.annotations)
 
     class object {
-        val Empty = Annotations(listOf(), false)
+        val Empty = Annotations(listOf())
     }
 }
+
+fun Annotations.withBrackets(): Annotations
+        = Annotations(annotations.map { Annotation(it.name, it.arguments, true, it.newLineAfter).assignPrototypesFrom(it) }).assignPrototypesFrom(this)

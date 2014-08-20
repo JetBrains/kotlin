@@ -1,6 +1,6 @@
 package test
 
-public open class WrongProjectionKind : java.lang.Object {
+public open class WrongProjectionKind {
     public constructor WrongProjectionKind()
     public open fun copy(/*0*/ p0: kotlin.Array<out kotlin.Number>?, /*1*/ p1: kotlin.Array<out kotlin.Number>?): kotlin.MutableList<kotlin.Number>?
 }

@@ -143,6 +143,6 @@ public final class AnnotationsUtils {
             return true;
         }
         ClassDescriptor containingClass = getContainingClass(descriptor);
-        return containingClass != null && getAnnotationByName(containingClass, fqn) != null;
+        return containingClass != null && hasAnnotationOrInsideAnnotatedClass(containingClass, fqn);
     }
 }

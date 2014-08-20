@@ -229,10 +229,10 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
                 (JetCallExpression) JetPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION);
         if (callExpression == null) return null;
 
-        List<JetExpression> functionLiterals = callExpression.getFunctionLiteralArguments();
+        List<JetFunctionLiteralArgument> functionLiterals = callExpression.getFunctionLiteralArguments();
         if (functionLiterals.isEmpty()) return null;
 
-        return ((JetFunctionLiteralExpression) functionLiterals.get(0)).getBodyExpression();
+        return functionLiterals.get(0).getFunctionLiteral().getBodyExpression();
     }
 
     @Nullable

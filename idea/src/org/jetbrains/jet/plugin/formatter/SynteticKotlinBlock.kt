@@ -77,6 +77,6 @@ public class SyntheticKotlinBlock(
             }
         }
 
-        return getClass().getName() + ": " + textRange
+        return javaClass.getName() + ": " + textRange
     }
 }

@@ -2,9 +2,9 @@ package test
 
 public /*synthesized*/ fun NullInAnnotation(/*0*/ function: () -> kotlin.Unit): test.NullInAnnotation
 
-public trait NullInAnnotation : java.lang.Object {
+public trait NullInAnnotation {
     test.NullInAnnotation.Ann(a = null: kotlin.Nothing?, b = {null}: kotlin.Array<kotlin.String>) public abstract fun foo(): kotlin.Unit
-    
+
     public final annotation class Ann : kotlin.Annotation {
         public constructor Ann(/*0*/ a: kotlin.String, /*1*/ vararg b: kotlin.String /*kotlin.Array<kotlin.String>*/)
         public abstract fun a(): kotlin.String

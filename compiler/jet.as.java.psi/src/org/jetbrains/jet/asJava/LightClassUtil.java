@@ -33,6 +33,8 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -257,7 +259,15 @@ public class LightClassUtil {
         if (getterWrapper == null || setterWrapper == null) {
             // If some getter or setter isn't found yet try to get it from wrappers for general declaration
 
-            List<PsiMethod> wrappers = getPsiMethodWrappers(jetDeclaration, true);
+            List<PsiMethod> wrappers = KotlinPackage.filter(
+                    getPsiMethodWrappers(jetDeclaration, true),
+                    new Function1<PsiMethod, Boolean>() {
+                        @Override
+                        public Boolean invoke(PsiMethod method) {
+                            return JvmAbi.isAccessorName(method.getName());
+                        }
+                    }
+            );
             assert wrappers.size() <= 2 : "Maximum two wrappers are expected to be generated for declaration: " + jetDeclaration.getText();
 
             for (PsiMethod wrapper : wrappers) {

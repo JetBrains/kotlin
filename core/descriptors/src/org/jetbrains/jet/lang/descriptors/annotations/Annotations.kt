@@ -22,12 +22,12 @@ import java.util.Collections
 
 public trait Annotations : Iterable<AnnotationDescriptor> {
 
-    fun isEmpty(): Boolean
+    public fun isEmpty(): Boolean
 
-    fun findAnnotation(fqName: FqName): AnnotationDescriptor?
+    public fun findAnnotation(fqName: FqName): AnnotationDescriptor?
 
     class object {
-        val EMPTY: Annotations = object : Annotations {
+        public val EMPTY: Annotations = object : Annotations {
             override fun isEmpty() = true
 
             override fun findAnnotation(fqName: FqName) = null

@@ -9,6 +9,8 @@ fun f(e1: E, e2: E?, x: Any) {
 
 // EXIST: E.A
 // EXIST: E.B
-// EXIST: e2
+// EXIST: { itemText:"e2" }
+// ABSENT: { itemText:"!! e2" }
 // ABSENT: e1
 // ABSENT: x
+// ABSENT: null

@@ -1,14 +1,14 @@
 package test
 
-public trait SubclassFromGenericAndNot: Object {
+public trait SubclassFromGenericAndNot {
 
-    public trait NonGeneric : Object {
+    public trait NonGeneric  {
         public fun foo(): String?
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
-    public trait Generic<T> : Object {
+    public trait Generic<T>  {
         public fun foo(): T
 
         public fun dummy() // to avoid loading as SAM interface

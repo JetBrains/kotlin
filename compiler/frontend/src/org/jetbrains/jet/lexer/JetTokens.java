@@ -105,7 +105,7 @@ public interface JetTokens {
     JetSingleValueToken EQEQEQ      = new JetSingleValueToken("EQEQEQ", "===");
     JetSingleValueToken ARROW       = new JetSingleValueToken("ARROW", "->");
     JetSingleValueToken DOUBLE_ARROW       = new JetSingleValueToken("DOUBLE_ARROW", "=>");
-    JetSingleValueToken EXCLEQEQEQ  = new JetSingleValueToken("EXCLEQEQEQ", "!===");
+    JetSingleValueToken EXCLEQEQEQ  = new JetSingleValueToken("EXCLEQEQEQ", "!==");
     JetSingleValueToken EQEQ        = new JetSingleValueToken("EQEQ", "==");
     JetSingleValueToken EXCLEQ      = new JetSingleValueToken("EXCLEQ", "!=");
     JetSingleValueToken EXCLEXCL    = new JetSingleValueToken("EXCLEXCL", "!!");
@@ -191,7 +191,7 @@ public interface JetTokens {
      * Don't add KDocTokens to COMMENTS TokenSet, because it is used in JetParserDefinition.getCommentTokens(),
      * and therefor all COMMENTS tokens will be ignored by PsiBuilder.
      *
-     * @see org.jetbrains.jet.lang.psi.JetPsiUtil.isInComment()
+     * @see org.jetbrains.jet.lang.psi.JetPsiUtil#isInComment(com.intellij.psi.PsiElement)
      */
     TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT, SHEBANG_COMMENT);
     TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.orSet(COMMENTS, TokenSet.create(WHITE_SPACE));

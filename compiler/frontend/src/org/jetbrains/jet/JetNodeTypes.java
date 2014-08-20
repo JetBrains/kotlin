@@ -61,6 +61,7 @@ public interface JetNodeTypes {
     IElementType TYPE_ARGUMENT_LIST                 = JetStubElementTypes.TYPE_ARGUMENT_LIST;
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetValueArgumentList.class);
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetValueArgument.class);
+    JetNodeType FUNCTION_LITERAL_ARGUMENT           = new JetNodeType("FUNCTION_LITERAL_ARGUMENT", JetFunctionLiteralArgument.class);
     JetNodeType VALUE_ARGUMENT_NAME                 = new JetNodeType("VALUE_ARGUMENT_NAME", JetValueArgumentName.class);
     IElementType TYPE_REFERENCE                     = JetStubElementTypes.TYPE_REFERENCE;
 

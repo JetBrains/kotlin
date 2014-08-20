@@ -20,12 +20,8 @@ JetFile: SimpleExpressions.kt
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        DOT_QUALIFIED_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('Unit')
-          PsiElement(DOT)('.')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('VALUE')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Unit')
       PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       VALUE_PARAMETER

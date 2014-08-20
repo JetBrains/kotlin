@@ -44,7 +44,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
@@ -307,6 +307,11 @@ public class CodegenBinding {
             String shortName = name.getIdentifier();
             FqName fqName = ((PackageFragmentDescriptor) container).getFqName();
             return fqName.isRoot() ? shortName : fqName.asString().replace('.', '/') + '/' + shortName;
+        }
+
+        if (container instanceof ScriptDescriptor) {
+            Type scriptType = asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) container);
+            return scriptType.getInternalName() + "$" + name.getIdentifier();
         }
 
         assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;

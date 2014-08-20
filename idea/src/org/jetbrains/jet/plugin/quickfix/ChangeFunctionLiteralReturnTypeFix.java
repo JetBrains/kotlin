@@ -24,10 +24,13 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -47,13 +50,13 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
     private final JetTypeReference functionLiteralReturnTypeRef;
     private IntentionAction appropriateQuickFix = null;
 
-    public ChangeFunctionLiteralReturnTypeFix(@NotNull JetFunctionLiteralExpression element, @NotNull JetType type) {
-        super(element);
+    public ChangeFunctionLiteralReturnTypeFix(@NotNull JetFunctionLiteralExpression functionLiteralExpression, @NotNull JetType type) {
+        super(functionLiteralExpression);
         renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
-        functionLiteralReturnTypeRef = element.getFunctionLiteral().getReturnTypeRef();
+        functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getReturnTypeRef();
 
-        BindingContext context = ResolvePackage.getBindingContext(element.getContainingJetFile());
-        JetType functionLiteralType = context.get(BindingContext.EXPRESSION_TYPE, element);
+        BindingContext context = ResolvePackage.getBindingContext(functionLiteralExpression.getContainingJetFile());
+        JetType functionLiteralType = context.get(BindingContext.EXPRESSION_TYPE, functionLiteralExpression);
         assert functionLiteralType != null : "Type of function literal not available in binding context";
 
         ClassDescriptor functionClass = KotlinBuiltIns.getInstance().getFunction(functionLiteralType.getArguments().size() - 1);
@@ -66,8 +69,8 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
         functionClassTypeParameters.add(type);
         JetType eventualFunctionLiteralType = TypeUtils.substituteParameters(functionClass, functionClassTypeParameters);
 
-        JetProperty correspondingProperty = PsiTreeUtil.getParentOfType(element, JetProperty.class);
-        if (correspondingProperty != null && QuickFixUtil.canEvaluateTo(correspondingProperty.getInitializer(), element)) {
+        JetProperty correspondingProperty = PsiTreeUtil.getParentOfType(functionLiteralExpression, JetProperty.class);
+        if (correspondingProperty != null && QuickFixUtil.canEvaluateTo(correspondingProperty.getInitializer(), functionLiteralExpression)) {
             JetTypeReference correspondingPropertyTypeRef = correspondingProperty.getTypeRef();
             JetType propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef);
             if (propertyType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, propertyType)) {
@@ -76,18 +79,24 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
             return;
         }
 
-        JetParameter correspondingParameter = QuickFixUtil.getParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(element);
-        if (correspondingParameter != null) {
-            JetTypeReference correspondingParameterTypeRef = correspondingParameter.getTypeReference();
-            JetType parameterType = context.get(BindingContext.TYPE, correspondingParameterTypeRef);
-            if (parameterType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parameterType)) {
-                appropriateQuickFix = new ChangeParameterTypeFix(correspondingParameter, eventualFunctionLiteralType);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getParentResolvedCall(
+                functionLiteralExpression, context, true);
+        if (resolvedCall != null) {
+            ValueArgument valueArgument = CallUtilPackage.getValueArgumentForExpression(resolvedCall.getCall(), functionLiteralExpression);
+            JetParameter correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument);
+            if (correspondingParameter != null) {
+                JetTypeReference correspondingParameterTypeRef = correspondingParameter.getTypeReference();
+                JetType parameterType = context.get(BindingContext.TYPE, correspondingParameterTypeRef);
+                if (parameterType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parameterType)) {
+                    appropriateQuickFix = new ChangeParameterTypeFix(correspondingParameter, eventualFunctionLiteralType);
+                }
+                return;
             }
-            return;
         }
 
-        JetFunction parentFunction = PsiTreeUtil.getParentOfType(element, JetFunction.class, true);
-        if (parentFunction != null && QuickFixUtil.canFunctionOrGetterReturnExpression(parentFunction, element)) {
+
+        JetFunction parentFunction = PsiTreeUtil.getParentOfType(functionLiteralExpression, JetFunction.class, true);
+        if (parentFunction != null && QuickFixUtil.canFunctionOrGetterReturnExpression(parentFunction, functionLiteralExpression)) {
             JetTypeReference parentFunctionReturnTypeRef = parentFunction.getReturnTypeRef();
             JetType parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef);
             if (parentFunctionReturnType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parentFunctionReturnType)) {

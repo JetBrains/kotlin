@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,11 +29,12 @@ public interface JetCallElement extends JetElement {
     @Nullable
     JetValueArgumentList getValueArgumentList();
 
+    @KotlinSignature("fun getValueArguments(): List<out ValueArgument>")
     @NotNull
     List<? extends ValueArgument> getValueArguments();
 
     @NotNull
-    List<JetExpression> getFunctionLiteralArguments();
+    List<JetFunctionLiteralArgument> getFunctionLiteralArguments();
 
     @NotNull
     List<JetTypeProjection> getTypeArguments();

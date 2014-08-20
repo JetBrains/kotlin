@@ -7,6 +7,11 @@ tailRecursive fun foo() {
     }
 }
 ---------------------
-        <v1>: {<: Throwable}   NEW: magic[FAKE_INITIALIZER](e: Throwable) -> <v1>
-foo()   <v0>: {<: Unit}        NEW: call(foo(), foo) -> <v0>
+                                                    <v2>: {<: Throwable}   NEW: magic[FAKE_INITIALIZER](e: Throwable) -> <v2>                            
+foo()                                               <v0>: Unit             NEW: call(foo(), foo) -> <v0>
+return foo()                                        !<v1>: *                                                                                             
+{ return foo() }                                    !<v1>: *               COPY                                                                          
+{ }                                                 !<v3>: *                                                                                             
+try { return foo() } catch (e: Throwable) { }       <v4>: *                NEW: merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v3>) -> <v4>
+{ try { return foo() } catch (e: Throwable) { } }   <v4>: *                COPY                                                                          
 =====================

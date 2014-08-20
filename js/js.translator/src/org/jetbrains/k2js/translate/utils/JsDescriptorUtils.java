@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isNativeObject;
 
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
@@ -82,7 +83,9 @@ public final class JsDescriptorUtils {
             @Override
             public boolean value(JetType type) {
                 ClassDescriptor classDescriptor = getClassDescriptorForType(type);
-                return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString());
+
+                return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString()) &&
+                       !(classDescriptor.getKind() == ClassKind.TRAIT && isNativeObject(classDescriptor));
             }
         });
     }

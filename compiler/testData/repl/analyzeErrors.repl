@@ -1,5 +1,4 @@
 >>> fun foo() = 765
-null
 >>> foo(1)
 ERROR: /line2.kts: (1, 5) Too many arguments for internal final fun foo(): kotlin.Int defined in <script>
 >>> foo()

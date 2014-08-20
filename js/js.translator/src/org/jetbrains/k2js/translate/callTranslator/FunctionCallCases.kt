@@ -34,6 +34,8 @@ import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.psi.Call.CallType
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>): List<JsExpression> {
     if (arguments.isEmpty())
@@ -143,10 +145,15 @@ object InvokeIntrinsic : FunctionCallCase {
             return false
         val parameterCount = callInfo.callableDescriptor.getValueParameters().size()
         val funDeclaration = callInfo.callableDescriptor.getContainingDeclaration()
-        return funDeclaration == ((if (callInfo.callableDescriptor.getReceiverParameter() == null)
-            KotlinBuiltIns.getInstance().getFunction(parameterCount)
+
+        val reflectionTypes = callInfo.context.getReflectionTypes()
+        return if (callInfo.callableDescriptor.getReceiverParameter() == null)
+            funDeclaration == KotlinBuiltIns.getInstance().getFunction(parameterCount) ||
+            funDeclaration == reflectionTypes.getKFunction(parameterCount)
         else
-            KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount)))
+            funDeclaration == KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount) ||
+            funDeclaration == reflectionTypes.getKExtensionFunction(parameterCount) ||
+            funDeclaration == reflectionTypes.getKMemberFunction(parameterCount)
     }
 
     override fun FunctionCallInfo.thisObject(): JsExpression {
@@ -163,13 +170,10 @@ object ConstructorCallCase : FunctionCallCase {
     }
 
     override fun FunctionCallInfo.noReceivers(): JsExpression {
-        if (isNative()) {
-            return JsNew(JsNameRef(functionName), argumentsInfo.getTranslateArguments())
-        }
+        val fqName = context.getQualifiedReference(callableDescriptor)
 
-        val functionRef = context.aliasOrValue(callableDescriptor) {
-            context.getQualifiedReference(it)
-        }
+        val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
+
         return JsNew(functionRef, argumentsInfo.getTranslateArguments())
     }
 }

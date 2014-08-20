@@ -28,7 +28,7 @@ import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetThrowExpression
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
@@ -41,9 +41,9 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
     override fun isApplicableTo(element: JetCallExpression): Boolean {
         if (element.getCalleeExpression()?.getText() != "assert") return false
 
-        val arguments = element.getValueArguments().size
-        val lambdas = element.getFunctionLiteralArguments().size
-        if (!(arguments == 1 && (lambdas == 1 || lambdas == 0)) && arguments != 2) return false
+        val argumentSize = element.getValueArguments().size
+        if (argumentSize !in 1..2) return false
+        if (element.getFunctionLiteralArguments().size == 1 && argumentSize == 1) return false
 
         val context = AnalyzerFacadeWithCache.getContextForElement(element)
         val resolvedCall = element.getResolvedCall(context)

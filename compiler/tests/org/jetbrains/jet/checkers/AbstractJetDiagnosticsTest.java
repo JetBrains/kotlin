@@ -26,7 +26,6 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.Call;
@@ -37,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.File;
 import java.util.*;
@@ -78,6 +78,14 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                                            : supportTrace;
             moduleBindings.put(testModule, moduleTrace.getBindingContext());
 
+            if (module == null) {
+                module = support.newModule();
+            }
+            else {
+                module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+                module.seal();
+            }
+
             // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
             // albeit with same class names
             AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
@@ -85,7 +93,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                     jetFiles,
                     moduleTrace,
                     Predicates.<PsiFile>alwaysTrue(),
-                    module == null ? support.getModule() : module,
+                    module,
                     null,
                     null
             );
@@ -119,9 +127,9 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             if (testModule == null) continue;
 
             ModuleDescriptorImpl module = modules.get(testModule);
+            module.addDependencyOnModule(module);
             for (TestModule dependency : testModule.getDependencies()) {
-                // Adding other modules as BINARIES here, because in teh reduced dependency ordering model they are equal to binaries
-                module.addFragmentProvider(DependencyKind.BINARIES, modules.get(dependency).getPackageFragmentProvider());
+                module.addDependencyOnModule(modules.get(dependency));
             }
         }
         return modules;

@@ -80,6 +80,7 @@ public class JsScope {
      *
      * @param identifier An identifier that is unique within this scope.
      */
+    @NotNull
     public JsName declareName(String identifier) {
         JsName name = findOwnName(identifier);
         return name != null ? name : doCreateName(identifier);
@@ -112,6 +113,7 @@ public class JsScope {
      * name) that does not clash with any existing variables in the scope.
      * Future declarations of variables might however clash with the temporary.
      */
+    @NotNull
     public JsName declareTemporary() {
         return declareFreshName(getNextTempName());
     }
@@ -158,6 +160,7 @@ public class JsScope {
         }
     }
 
+    @NotNull
     protected JsName doCreateName(String ident) {
         JsName name = new JsName(this, ident);
         names = Maps.put(names, ident, name);

@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.lang.types.lang;
 
-import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.Name;
+
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 
 public enum PrimitiveType {
     BOOLEAN("Boolean"),
@@ -31,7 +34,8 @@ public enum PrimitiveType {
     DOUBLE("Double"),
     ;
 
-    public static final ImmutableSet<PrimitiveType> NUMBER_TYPES = ImmutableSet.of(CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE);
+    public static final Set<PrimitiveType> NUMBER_TYPES =
+            Collections.unmodifiableSet(EnumSet.of(CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE));
 
     private final Name typeName;
     private final Name arrayTypeName;

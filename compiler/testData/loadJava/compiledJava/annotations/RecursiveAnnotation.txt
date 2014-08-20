@@ -1,12 +1,12 @@
 package test
 
-public trait RecursiveAnnotation : java.lang.Object {
-    
+public trait RecursiveAnnotation {
+
     test.RecursiveAnnotation.B(value = test.RecursiveAnnotation.A(value = "test": kotlin.String): test.RecursiveAnnotation.A) public final annotation class A : kotlin.Annotation {
         public constructor A(/*0*/ value: kotlin.String)
         public abstract fun value(): kotlin.String
     }
-    
+
     test.RecursiveAnnotation.B(value = test.RecursiveAnnotation.A(value = "test": kotlin.String): test.RecursiveAnnotation.A) public final annotation class B : kotlin.Annotation {
         public constructor B(/*0*/ value: test.RecursiveAnnotation.A)
         public abstract fun value(): test.RecursiveAnnotation.A

@@ -19,11 +19,11 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class EnumValueOf extends IntrinsicMethod {
     ) {
         assert arguments != null;
         codegen.gen(arguments.get(0), JAVA_STRING_TYPE);
-        v.invokestatic(returnType.getInternalName(), "valueOf", "(Ljava/lang/String;)" + returnType.getDescriptor());
+        v.invokestatic(returnType.getInternalName(), "valueOf", "(Ljava/lang/String;)" + returnType.getDescriptor(), false);
         return returnType;
     }
 }

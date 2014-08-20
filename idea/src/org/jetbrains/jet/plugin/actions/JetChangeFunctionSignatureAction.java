@@ -152,7 +152,7 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
                             newElement = psiFactory.createFunction(signatureString);
                         }
                         newElement = (JetNamedFunction) element.replace(newElement);
-                        ShortenReferences.instance$.process(newElement);
+                        ShortenReferences.INSTANCE$.process(newElement);
                     }
                 });
             }

@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.context.DefinitionPlace;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.declaration.propertyTranslator.PropertyTranslatorPackage;
 import org.jetbrains.k2js.translate.expression.ExpressionPackage;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
@@ -124,14 +125,16 @@ public final class ClassTranslator extends AbstractTranslator {
         declarationContext = fixContextForClassObjectAccessing(declarationContext);
 
         invocationArguments.add(getSuperclassReferences(declarationContext));
+        DelegationTranslator delegationTranslator = new DelegationTranslator(classDeclaration, context());
         if (!isTrait()) {
-            JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod();
+            JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod(delegationTranslator);
             invocationArguments.add(initializer.getBody().getStatements().isEmpty() ? JsLiteral.NULL : initializer);
         }
 
         translatePropertiesAsConstructorParameters(declarationContext, properties);
         DeclarationBodyVisitor bodyVisitor = new DeclarationBodyVisitor(properties, staticProperties);
         bodyVisitor.traverseContainer(classDeclaration, declarationContext);
+        delegationTranslator.generateDelegated(properties);
         mayBeAddEnumEntry(bodyVisitor.getEnumEntryList(), staticProperties, declarationContext);
 
         if (KotlinBuiltIns.getInstance().isData(descriptor)) {
@@ -241,7 +244,7 @@ public final class ClassTranslator extends AbstractTranslator {
         for (JetParameter parameter : getPrimaryConstructorParameters(classDeclaration)) {
             PropertyDescriptor descriptor = getPropertyDescriptorForConstructorParameter(bindingContext(), parameter);
             if (descriptor != null) {
-                PropertyTranslator.translateAccessors(descriptor, result, classDeclarationContext);
+                PropertyTranslatorPackage.translateAccessors(descriptor, result, classDeclarationContext);
             }
         }
     }

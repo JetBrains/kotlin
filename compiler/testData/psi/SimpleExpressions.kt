@@ -1,5 +1,5 @@
 fun a(
-    a : foo = Unit.VALUE,
+    a : foo = Unit,
     a : foo = 10,
     a : foo = 0x10,
     a : foo = '1',

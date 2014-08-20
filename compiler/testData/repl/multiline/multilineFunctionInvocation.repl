@@ -1,0 +1,10 @@
+>>> fun concat(a: String, b: String, c: String, d: String) = "$a$b$c$d"
+>>> concat(
+...     "hel",
+...     "lo"
+...     ,
+...     "wo" +
+...     "r", "l" +
+...     "d"
+... )
+helloworld

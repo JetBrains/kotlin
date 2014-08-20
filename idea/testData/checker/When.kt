@@ -4,15 +4,15 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      is <error>String</error> -> 1
-      !is Int -> 1
-      is Any<warning>?</warning> -> 1
-      <error>s</error> -> 1
-      1 -> 1
-      1 + <error>a</error> -> 1
-      in 1..<error>a</error> -> 1
-      !in 1..<error>a</error> -> 1
-      else -> 1
+      is <error>String</error> -> <warning>1</warning>
+      !is Int -> <warning>1</warning>
+      is Any<warning>?</warning> -> <warning>1</warning>
+      <error>s</error> -> <warning>1</warning>
+      1 -> <warning>1</warning>
+      1 + <error>a</error> -> <warning>1</warning>
+      in 1..<error>a</error> -> <warning>1</warning>
+      !in 1..<error>a</error> -> <warning>1</warning>
+      else -> <warning>1</warning>
     }
 
     return 0
@@ -25,21 +25,21 @@ fun test() {
   val s = "";
 
   when (x) {
-    <error>s</error> -> 1
-    <error>""</error> -> 1
-    x -> 1
-    1 -> 1
-    else -> 1
+    <error>s</error> -> <warning>1</warning>
+    <error>""</error> -> <warning>1</warning>
+    x -> <warning>1</warning>
+    1 -> <warning>1</warning>
+    else -> <warning>1</warning>
   }
 
   val z = 1
 
   when (z) {
-    <error>else</error> -> 1
+    <error>else</error> -> <warning>1</warning>
     <warning>1 -> 2</warning>
   }
 
-  when (z) {
-    else -> 1
+  when (<warning>z</warning>) {
+    else -> <warning>1</warning>
   }
 }

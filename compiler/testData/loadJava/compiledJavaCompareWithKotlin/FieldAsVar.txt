@@ -1,6 +1,6 @@
 package test
 
-public final class FieldAsVar : java.lang.Object {
+public final class FieldAsVar {
     public constructor FieldAsVar()
     public final var f: kotlin.Int
 }

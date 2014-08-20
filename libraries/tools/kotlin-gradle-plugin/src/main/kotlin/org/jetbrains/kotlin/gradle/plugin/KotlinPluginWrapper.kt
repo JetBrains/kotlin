@@ -4,7 +4,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.specs.Spec
 import java.io.File
 import java.net.URL
@@ -15,7 +14,7 @@ import org.gradle.api.initialization.dsl.ScriptHandler
 
 abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
-    val log = Logging.getLogger(getClass())
+    val log = Logging.getLogger(this.javaClass)
 
     public override fun apply(project: Project) {
         val sourceBuildScript = findSourceBuildScript(project);
@@ -30,7 +29,7 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         log.debug("Loading version information")
         val props = Properties()
         val propFileName = "project.properties"
-        val inputStream = getClass().getClassLoader()!!.getResourceAsStream(propFileName)
+        val inputStream = this.javaClass.getClassLoader()!!.getResourceAsStream(propFileName)
 
         if (inputStream == null) {
             throw FileNotFoundException("property file '" + propFileName + "' not found in the classpath")
@@ -51,7 +50,7 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         val kotlinPluginDependencies : List<URL> = configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!.map({(f: File):URL -> f.toURI().toURL() })
         log.debug("Resolved files: [" + kotlinPluginDependencies.toString() + "]")
         log.debug("Load plugin in parent-last URL classloader")
-        val kotlinPluginClassloader = ParentLastURLClassLoader(kotlinPluginDependencies, getClass().getClassLoader())
+        val kotlinPluginClassloader = ParentLastURLClassLoader(kotlinPluginDependencies, this.javaClass.getClassLoader())
         log.debug("Class loader created")
         val cls = Class.forName(getPluginClassName(), true, kotlinPluginClassloader)
         log.debug("Plugin class loaded")
@@ -79,7 +78,7 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
                 return scriptHandler
             }
             log.debug("not found, switching to parent")
-            curProject = curProject.getParent()
+            curProject = curProject.getParent()!!
         }
         return null
     }

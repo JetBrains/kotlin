@@ -1,4 +1,3 @@
-//file
 class Library {
   final public String myString;
 }

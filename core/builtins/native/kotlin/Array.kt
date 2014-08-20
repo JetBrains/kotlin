@@ -16,11 +16,13 @@
 
 package kotlin
 
-public class Array<reified T>(public val size: Int, init: (Int) -> T) {
+public class Array<reified T>(public val size: Int, init: (Int) -> T) : Cloneable {
     public fun get(index: Int): T
     public fun set(index: Int, value: T): Unit
 
     public fun iterator(): Iterator<T>
 
     public val indices: IntRange
+
+    public override fun clone(): Array<T>
 }

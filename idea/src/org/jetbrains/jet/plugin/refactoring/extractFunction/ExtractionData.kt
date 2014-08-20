@@ -49,7 +49,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.lang.psi.JetClassInitializer
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 data class ExtractionOptions(val inferUnitTypeForUnusedValues: Boolean) {

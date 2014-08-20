@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SourceElement;
@@ -32,6 +31,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor {
@@ -62,7 +62,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
         return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index, source);
     }
 
-    private final Set<JetType> upperBounds = Sets.newLinkedHashSet();
+    private final Set<JetType> upperBounds = new LinkedHashSet<JetType>();
     private boolean initialized = false;
 
     private TypeParameterDescriptorImpl(

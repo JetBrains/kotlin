@@ -85,7 +85,7 @@ public class PseudocodeVariablesData {
                     if (variableDescriptor != null) {
                         result.add(variableDescriptor);
                     }
-                    return Unit.VALUE;
+                    return Unit.INSTANCE$;
                 }
             });
             usedVariables = Collections.unmodifiableSet(result);

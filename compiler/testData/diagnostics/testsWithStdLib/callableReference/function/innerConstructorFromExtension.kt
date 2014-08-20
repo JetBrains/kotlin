@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 import kotlin.reflect.KMemberFunction0
 
 class A {

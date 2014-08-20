@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
 public class OptimizationBasicInterpreter extends BasicInterpreter {
-    private static final BasicValue MIXED_VALUE = new BasicValue(Type.getObjectType("#"));
+    public static final BasicValue MIXED_VALUE = new BasicValue(Type.getObjectType("#"));
     private static final BasicValue BOOLEAN_VALUE = new BasicValue(Type.BOOLEAN_TYPE);
     private static final BasicValue CHAR_VALUE = new BasicValue(Type.CHAR_TYPE);
     private static final BasicValue BYTE_VALUE = new BasicValue(Type.BYTE_TYPE);

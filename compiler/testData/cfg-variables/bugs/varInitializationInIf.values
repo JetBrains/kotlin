@@ -10,12 +10,18 @@ fun foo() {
     use(b)
 }
 ---------------------
-1                                                                      <v0>: {<: Comparable<Int>}   NEW: r(1) -> <v0>                               
-2                                                                      <v1>: Int                    NEW: r(2) -> <v1>                               
-1 < 2                                                                  <v2>: Boolean                NEW: call(1 < 2, compareTo|<v0>, <v1>) -> <v2>  
-false                                                                  <v3>: Boolean                NEW: r(false) -> <v3>                           
-true                                                                   <v4>: Boolean                NEW: r(true) -> <v4>                            
-b                                                                      <v5>: *                      NEW: r(b) -> <v5>                               
-use(b)                                                                 <v6>: *                      NEW: magic[UNRESOLVED_CALL](use(b)|<v5>) -> <v6>
-{ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) }   <v6>: *                      COPY                                            
+1                                                                      <v0>: {<: Comparable<Int>}   NEW: r(1) -> <v0>                                                          
+2                                                                      <v1>: Int                    NEW: r(2) -> <v1>                                                          
+1 < 2                                                                  <v2>: Boolean                NEW: call(1 < 2, compareTo|<v0>, <v1>) -> <v2>                             
+false                                                                  <v3>: Boolean                NEW: r(false) -> <v3>                                                      
+b = false                                                              !<v4>: *                                                                                                
+{ b = false }                                                          !<v4>: *                     COPY                                                                       
+true                                                                   <v5>: Boolean                NEW: r(true) -> <v5>                                                       
+b = true                                                               !<v6>: *                                                                                                
+{ b = true }                                                           !<v6>: *                     COPY                                                                       
+if (1 < 2) { b = false } else { b = true }                             <v7>: *                      NEW: merge(if (1 < 2) { b = false } else { b = true }|!<v4>, !<v6>) -> <v7>
+use                                                                    !<v9>: *                                                                                                
+b                                                                      <v8>: *                      NEW: r(b) -> <v8>                                                          
+use(b)                                                                 <v10>: *                     NEW: magic[UNRESOLVED_CALL](use(b)|<v8>, !<v9>) -> <v10>                   
+{ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) }   <v10>: *                     COPY                                                                       
 =====================

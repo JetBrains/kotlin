@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
@@ -81,9 +82,19 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @NotNull
-    public ModuleDescriptorImpl getModule() {
+    public ModuleDescriptorImpl newModule() {
+        assert this.module == null : "module already configured: " + module;
+        module = AnalyzerFacadeForJVM.createJavaModule("<shared-module-for-cli-light-classes>");
+        module.addDependencyOnModule(module);
+        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        module.seal();
+        return module;
+    }
+
+    @NotNull
+    private ModuleDescriptorImpl getModule() {
         if (module == null) {
-            module = AnalyzerFacadeForJVM.createJavaModule("<module>");
+           return newModule();
         }
         return module;
     }

@@ -174,10 +174,16 @@ public fun Project.checkConflictsInteractively(conflicts: MultiMap<PsiElement, S
     onAccept()
 }
 
+public fun runReadAction<T: Any>(action: () -> T?): T? {
+    return ApplicationManager.getApplication()?.runReadAction<T>(action)
+}
+
+public fun runWriteAction<T: Any>(action: () -> T?): T? {
+    return ApplicationManager.getApplication()?.runWriteAction<T>(action)
+}
+
 public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
-    CommandProcessor.getInstance()!!.executeCommand(
-            this, { ApplicationManager.getApplication()!!.runWriteAction(command) }, name, null
-    )
+    CommandProcessor.getInstance().executeCommand(this, { runWriteAction(command) }, name, null)
 }
 
 public fun <T : PsiElement> getPsiElementPopup(

@@ -38,6 +38,7 @@ public abstract class JavaToKotlinClassMapBuilder {
         register(String.class, kotlinBuiltIns.getString());
         register(CharSequence.class, kotlinBuiltIns.getCharSequence());
         register(Throwable.class, kotlinBuiltIns.getThrowable());
+        register(Cloneable.class, kotlinBuiltIns.getCloneable());
         register(Number.class, kotlinBuiltIns.getNumber());
         register(Comparable.class, kotlinBuiltIns.getComparable());
         register(Enum.class, kotlinBuiltIns.getEnum());

@@ -1,0 +1,8 @@
+>>> enum class E {
+...     FIRST
+...     SECOND
+... }
+>>> E.values().toList()
+[FIRST, SECOND]
+>>> E.FIRST.javaClass == E.SECOND.javaClass // check that no artificial classes are generated for simple enum entries
+true

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicate;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -153,6 +153,9 @@ public class DescriptorUtils {
 
     @NotNull
     public static ModuleDescriptor getContainingModule(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof PackageViewDescriptor) {
+            return ((PackageViewDescriptor) descriptor).getModule();
+        }
         ModuleDescriptor module = getParentOfType(descriptor, ModuleDescriptor.class, false);
         assert module != null : "Descriptor without a containing module: " + descriptor;
         return module;
@@ -223,7 +226,7 @@ public class DescriptorUtils {
         return false;
     }
 
-    public static boolean isEnumClass(@NotNull DeclarationDescriptor descriptor) {
+    public static boolean isEnumClass(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.ENUM_CLASS);
     }
 
@@ -312,10 +315,6 @@ public class DescriptorUtils {
         return receiverParameterDescriptor == null ? null : receiverParameterDescriptor.getType();
     }
 
-    public static boolean isConstructorOfStaticNestedClass(@Nullable CallableDescriptor descriptor) {
-        return descriptor instanceof ConstructorDescriptor && isStaticNestedClass(descriptor.getContainingDeclaration());
-    }
-
     /**
      * @return true if descriptor is a class inside another class and does not have access to the outer class
      */
@@ -329,9 +328,9 @@ public class DescriptorUtils {
     @NotNull
     public static JetScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
         JetScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
-        return new FilteringScope(innerClassesScope, new Predicate<DeclarationDescriptor>() {
+        return new FilteringScope(innerClassesScope, new Function1<DeclarationDescriptor, Boolean>() {
             @Override
-            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+            public Boolean invoke(DeclarationDescriptor descriptor) {
                 return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
             }
         });

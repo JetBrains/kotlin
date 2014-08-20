@@ -14,7 +14,7 @@ fun foo(a: Int): Int {
     return 1
 }
 
-fun b(a: Int, b: Int): Boolean {
+private fun b(a: Int, b: Int): Boolean {
     if (a + b > 0) return true
     val c: Int
     println(a - b)

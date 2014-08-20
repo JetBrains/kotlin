@@ -116,13 +116,9 @@ public class ArgumentTypeResolver {
 
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
-            if (argumentExpression != null && (argumentExpression instanceof JetFunctionLiteralExpression)) {
+            if (argumentExpression != null && isFunctionLiteralArgument(argumentExpression)) {
                 checkArgumentTypeWithNoCallee(context, argumentExpression);
             }
-        }
-
-        for (JetExpression expression : context.call.getFunctionLiteralArguments()) {
-            checkArgumentTypeWithNoCallee(context, expression);
         }
     }
 
@@ -290,6 +286,6 @@ public class ArgumentTypeResolver {
             return;
         }
 
-        ConstantExpressionEvaluator.object$.evaluate(expression, trace, numberType);
+        ConstantExpressionEvaluator.OBJECT$.evaluate(expression, trace, numberType);
     }
 }

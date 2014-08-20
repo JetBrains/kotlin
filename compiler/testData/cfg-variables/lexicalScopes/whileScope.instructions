@@ -16,6 +16,7 @@ L2 [loop entry point]:
 L5 [condition entry point]:
     r(true) -> <v1>
     mark(while (true) { val a: Int })
+    magic[VALUE_CONSUMER](true|<v1>) -> <v2>
 L4 [body entry point]:
   3 mark({ val a: Int })
     v(val a: Int)                                             INIT: in: {} out: {a=D}
@@ -23,7 +24,7 @@ L4 [body entry point]:
 L3 [loop exit point]:
 -   read (Unit)
 -   mark("after")
--   r("after") -> <v2>
+-   r("after") -> <v3>
 L1:
   1 <END>                                                     INIT: in: {} out: {}
 error:

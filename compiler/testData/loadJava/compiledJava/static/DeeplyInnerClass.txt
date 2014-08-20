@@ -1,17 +1,17 @@
 package test
 
-public open class DeeplyInnerClass : java.lang.Object {
+public open class DeeplyInnerClass {
     public constructor DeeplyInnerClass()
-    
-    public/*package*/ open inner class A : java.lang.Object {
+
+    public/*package*/ open inner class A {
         public/*package*/ constructor A()
         public/*package*/ open fun a(): kotlin.Unit
-        
-        public/*package*/ open inner class B : java.lang.Object {
+
+        public/*package*/ open inner class B {
             public/*package*/ constructor B()
             public/*package*/ open fun b(): kotlin.Unit
-            
-            public/*package*/ open inner class C : java.lang.Object {
+
+            public/*package*/ open inner class C {
                 public/*package*/ constructor C()
                 public/*package*/ open fun c(): kotlin.Unit
             }

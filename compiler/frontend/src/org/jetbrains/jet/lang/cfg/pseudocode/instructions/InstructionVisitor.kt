@@ -62,10 +62,6 @@ public open class InstructionVisitor() {
         visitInstruction(instruction)
     }
 
-    public open fun visitUnsupportedElementInstruction(instruction: UnsupportedElementInstruction) {
-        visitInstructionWithNext(instruction)
-    }
-
     public open fun visitSubroutineExit(instruction: SubroutineExitInstruction) {
         visitInstruction(instruction)
     }

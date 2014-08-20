@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.intellij.openapi.util.Condition;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ConstraintPosition {
@@ -31,8 +31,8 @@ public class ConstraintPosition {
     public static final ConstraintPosition FROM_COMPLETER = new ConstraintPosition("FROM_COMPLETER", true);
     public static final ConstraintPosition SPECIAL = new ConstraintPosition("SPECIAL", true);
 
-    private static final Map<Integer, ConstraintPosition> valueParameterPositions = Maps.newHashMap();
-    private static final Map<Integer, ConstraintPosition> typeBoundPositions = Maps.newHashMap();
+    private static final Map<Integer, ConstraintPosition> valueParameterPositions = new HashMap<Integer, ConstraintPosition>();
+    private static final Map<Integer, ConstraintPosition> typeBoundPositions = new HashMap<Integer, ConstraintPosition>();
 
     public static ConstraintPosition getValueParameterPosition(int index) {
         ConstraintPosition position = valueParameterPositions.get(index);
@@ -65,9 +65,9 @@ public class ConstraintPosition {
         }
 
         private static boolean hasConstraint(@NotNull Collection<ConstraintPosition> positions, final boolean strong) {
-            return ContainerUtil.exists(positions, new Condition<ConstraintPosition>() {
+            return KotlinPackage.any(positions, new Function1<ConstraintPosition, Boolean>() {
                 @Override
-                public boolean value(ConstraintPosition constraintPosition) {
+                public Boolean invoke(ConstraintPosition constraintPosition) {
                     return constraintPosition.isStrong() == strong;
                 }
             });
@@ -75,7 +75,7 @@ public class ConstraintPosition {
     }
 
     public static ConstraintPosition getCompoundConstraintPosition(ConstraintPosition... positions) {
-        return new CompoundConstraintPosition(Lists.newArrayList(positions));
+        return new CompoundConstraintPosition(Arrays.asList(positions));
     }
 
     private final String debugName;

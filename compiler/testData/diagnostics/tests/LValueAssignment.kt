@@ -43,7 +43,7 @@ fun cannotBe() {
 
     <!UNRESOLVED_REFERENCE!>z<!> = 30;
     <!VARIABLE_EXPECTED!>""<!> = "";
-    <!VARIABLE_EXPECTED!>foo()<!> = Unit.VALUE;
+    <!VARIABLE_EXPECTED!>foo()<!> = Unit;
 
     (<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as<!> Int<!>) = 34
     (<!VARIABLE_EXPECTED!>i is Int<!>) = false

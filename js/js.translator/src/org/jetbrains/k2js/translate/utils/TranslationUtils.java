@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
@@ -200,6 +201,12 @@ public final class TranslationUtils {
                 "descriptor: " + descriptor + ", containingDeclaration: " + containingDeclaration;
 
         return false;
+    }
+
+    @NotNull
+    public static String getMangledMemberNameForExplicitDelegation(@NotNull String suggestedName, FqName classFqName, FqName typeFqName) {
+        String forCalculateId = classFqName.asString() + ":" + typeFqName.asString();
+        return getStableMangledName(suggestedName, forCalculateId);
     }
 
     @NotNull

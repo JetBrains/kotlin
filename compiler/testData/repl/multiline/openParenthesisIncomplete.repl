@@ -1,0 +1,4 @@
+>>> fun sum(x: Int, y: Int) = x + y
+>>> sum(
+... 23,19)
+42

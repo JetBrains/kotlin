@@ -36,7 +36,7 @@ class LazyPackageFragmentForJavaPackage(
     override fun createMemberScope() = LazyPackageFragmentScopeForJavaPackage(c, jPackage, this)
 }
 
-class LazyPackageFragmentForJavaClass(
+public class LazyPackageFragmentForJavaClass(
         c: LazyJavaResolverContext,
         containingDeclaration: ModuleDescriptor,
         private val jClass: JavaClass

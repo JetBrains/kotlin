@@ -166,7 +166,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
                 @NotNull
                 @Override
-                public List<JetExpression> getFunctionLiteralArguments() {
+                public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
                     return Collections.emptyList();
                 }
 

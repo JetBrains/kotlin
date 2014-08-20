@@ -1,12 +1,12 @@
 package test
 
-public trait TwoTypeParameters : java.lang.Object {
-    
+public trait TwoTypeParameters {
+
     public trait Sub : test.TwoTypeParameters.Super {
-        public abstract override /*1*/ fun </*0*/ B : kotlin.CharSequence, /*1*/ A : java.lang.Cloneable> foo(/*0*/ a: B, /*1*/ b: A): kotlin.Unit
+        public abstract override /*1*/ fun </*0*/ B : kotlin.CharSequence, /*1*/ A : kotlin.Cloneable> foo(/*0*/ a: B, /*1*/ b: A): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
-        public abstract fun </*0*/ A : kotlin.CharSequence, /*1*/ B : java.lang.Cloneable> foo(/*0*/ a: A, /*1*/ b: B): kotlin.Unit
+
+    public trait Super {
+        public abstract fun </*0*/ A : kotlin.CharSequence, /*1*/ B : kotlin.Cloneable> foo(/*0*/ a: A, /*1*/ b: B): kotlin.Unit
     }
 }

@@ -1,25 +1,27 @@
+import org.jetbrains.annotations.NotNull;
+
 class JavaClass {
-    JavaClass plus(Runnable i) {
+    @NotNull JavaClass plus(Runnable i) {
         i.run();
         return this;
     }
 
-    JavaClass minus(Runnable i) {
+    @NotNull JavaClass minus(Runnable i) {
         i.run();
         return this;
     }
 
-    JavaClass times(Runnable i) {
+    @NotNull JavaClass times(Runnable i) {
         i.run();
         return this;
     }
 
-    JavaClass div(Runnable i) {
+    @NotNull JavaClass div(Runnable i) {
         i.run();
         return this;
     }
 
-    JavaClass mod(Runnable i) {
+    @NotNull JavaClass mod(Runnable i) {
         i.run();
         return this;
     }

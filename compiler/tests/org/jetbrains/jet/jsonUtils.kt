@@ -18,7 +18,7 @@ package org.jetbrains.jet
 
 import com.google.gson.JsonObject
 
-fun JsonObject.getString(name: String): String {
+public fun JsonObject.getString(name: String): String {
     val member = getNullableString(name)
     if (member == null) {
         throw IllegalStateException("Member with name '$name' is expected in '$this'")
@@ -27,4 +27,4 @@ fun JsonObject.getString(name: String): String {
     return member
 }
 
-fun JsonObject.getNullableString(name: String): String? = this[name]?.getAsString()
+public fun JsonObject.getNullableString(name: String): String? = this[name]?.getAsString()

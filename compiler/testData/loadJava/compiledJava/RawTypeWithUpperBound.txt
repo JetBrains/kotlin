@@ -1,12 +1,12 @@
 package test
 
-public trait RawTypeWithUpperBound : java.lang.Object {
-    
-    public trait Bar : java.lang.Object {
+public trait RawTypeWithUpperBound {
+
+    public trait Bar {
         public abstract fun f(/*0*/ p0: test.RawTypeWithUpperBound.Foo<out kotlin.CharSequence?>?): kotlin.Unit
     }
-    
-    public trait Foo</*0*/ T : kotlin.CharSequence?> : java.lang.Object {
+
+    public trait Foo</*0*/ T : kotlin.CharSequence?> {
     }
 }
 

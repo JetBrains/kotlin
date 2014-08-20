@@ -17,15 +17,19 @@ get() {
               return $a
           }
 ---------------------
-     <v0>: A     NEW: magic[IMPLICIT_RECEIVER]($a) -> <v0>
-$a   <v1>: Int   NEW: r($a|<v0>) -> <v1>
+                <v0>: A     NEW: magic[IMPLICIT_RECEIVER]($a) -> <v0>
+$a              <v1>: Int   NEW: r($a|<v0>) -> <v1>                  
+return $a       !<v2>: *                                             
+{ return $a }   !<v2>: *    COPY                                     
 =====================
 == set_a ==
 set(v: Int) {
               $a = v
           }
 ---------------------
-    <v0>: Int   NEW: magic[FAKE_INITIALIZER](v: Int) -> <v0>
-    <v1>: A     NEW: magic[IMPLICIT_RECEIVER]($a) -> <v1>
-v   <v2>: Int   NEW: r(v) -> <v2>
+             <v0>: Int   NEW: magic[FAKE_INITIALIZER](v: Int) -> <v0>
+             <v1>: A     NEW: magic[IMPLICIT_RECEIVER]($a) -> <v1>   
+v            <v2>: Int   NEW: r(v) -> <v2>                           
+$a = v       !<v3>: *                                                
+{ $a = v }   !<v3>: *    COPY                                        
 =====================

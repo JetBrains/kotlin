@@ -1,7 +1,7 @@
 package test
 
-public class MethodReferencesOuterClassTP<P>() : java.lang.Object() {
-    public inner class Inner() : java.lang.Object() {
+public class MethodReferencesOuterClassTP<P>() {
+    public inner class Inner() {
         public fun f<Q : P>() {}
     }
 }

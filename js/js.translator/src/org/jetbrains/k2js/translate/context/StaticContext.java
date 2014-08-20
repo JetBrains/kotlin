@@ -24,6 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -31,14 +32,12 @@ import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.getNameForAnnotatedObjectWithOverrides;
-import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isLibraryObject;
+import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMangledName;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName;
@@ -48,12 +47,12 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedNa
  */
 public final class StaticContext {
 
-    public static StaticContext generateStaticContext(@NotNull BindingContext bindingContext, @NotNull EcmaVersion ecmaVersion) {
+    public static StaticContext generateStaticContext(@NotNull BindingContext bindingContext, @NotNull EcmaVersion ecmaVersion, @NotNull ModuleDescriptor moduleDescriptor) {
         JsProgram program = new JsProgram("main");
         Namer namer = Namer.newInstance(program.getRootScope());
         Intrinsics intrinsics = new Intrinsics();
         StandardClasses standardClasses = StandardClasses.bindImplementations(namer.getKotlinScope());
-        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, program.getRootScope(), ecmaVersion);
+        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, program.getRootScope(), ecmaVersion, moduleDescriptor);
     }
 
     @NotNull
@@ -69,6 +68,9 @@ public final class StaticContext {
 
     @NotNull
     private final StandardClasses standardClasses;
+
+    @NotNull
+    private final ReflectionTypes reflectionTypes;
 
     @NotNull
     private final JsScope rootScope;
@@ -93,7 +95,7 @@ public final class StaticContext {
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
             @NotNull Namer namer, @NotNull Intrinsics intrinsics,
-            @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull EcmaVersion ecmaVersion) {
+            @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull EcmaVersion ecmaVersion, @NotNull ModuleDescriptor moduleDescriptor) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.namer = namer;
@@ -101,6 +103,7 @@ public final class StaticContext {
         this.rootScope = rootScope;
         this.standardClasses = standardClasses;
         this.ecmaVersion = ecmaVersion;
+        this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
     }
 
     public boolean isEcma5() {
@@ -125,6 +128,11 @@ public final class StaticContext {
     @NotNull
     public Namer getNamer() {
         return namer;
+    }
+
+    @NotNull
+    public ReflectionTypes getReflectionTypes() {
+        return reflectionTypes;
     }
 
     @NotNull
@@ -426,6 +434,8 @@ public final class StaticContext {
             Rule<JsNameRef> packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier = new Rule<JsNameRef>() {
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (isNativeObject(descriptor)) return null;
+
                     DeclarationDescriptor containingDescriptor = getContainingDeclaration(descriptor);
                     if (!(containingDescriptor instanceof PackageFragmentDescriptor)) {
                         return null;
@@ -479,10 +489,25 @@ public final class StaticContext {
                     return null;
                 }
             };
+            Rule<JsNameRef> nativeObjectsHaveNativePartOfFullQualifier = new Rule<JsNameRef>() {
+                @Override
+                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (descriptor instanceof ConstructorDescriptor || !isNativeObject(descriptor)) return null;
+
+                    DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+                    if (containingDeclaration != null && isNativeObject(containingDeclaration)) {
+                        return getQualifiedReference(containingDeclaration);
+                    }
+
+                    return null;
+                }
+            };
+
             addRule(libraryObjectsHaveKotlinQualifier);
             addRule(constructorHaveTheSameQualifierAsTheClass);
             addRule(standardObjectsHaveKotlinQualifier);
             addRule(packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier);
+            addRule(nativeObjectsHaveNativePartOfFullQualifier);
         }
     }
 
@@ -498,18 +523,7 @@ public final class StaticContext {
                     return null;
                 }
             };
-            //TODO: hack!  it seems like needed, only for Inheritance from native class
-            Rule<Boolean> nativeObjectsHaveNoQualifiers = new Rule<Boolean>() {
-                @Override
-                public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!AnnotationsUtils.isNativeObject(descriptor)) {
-                        return null;
-                    }
-                    return true;
-                }
-            };
             addRule(propertiesInClassHaveNoQualifiers);
-            addRule(nativeObjectsHaveNoQualifiers);
         }
     }
 }

@@ -1,0 +1,20 @@
+fun foo() {
+    <caret>bar { }
+}
+
+fun bar(a: Any) = a
+fun <T> bar(f: () -> T): T = f()
+
+
+Resolved call:
+
+Candidate descriptor: fun <T> bar(f: () -> T): T
+Resulting descriptor: fun <T> bar(f: () -> Unit): Unit
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  f : () -> Unit = { }

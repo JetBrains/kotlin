@@ -1,3 +1,3 @@
 fun test() {
-  return Unit.VALUE : Unit
+  return Unit : Unit
 }

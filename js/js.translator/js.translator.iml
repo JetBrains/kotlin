@@ -12,6 +12,7 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend-common" />
     <orderEntry type="module" module-name="js.dart-ast" exported="" />
+    <orderEntry type="module" module-name="js.frontend" exported="" />
   </component>
 </module>
 

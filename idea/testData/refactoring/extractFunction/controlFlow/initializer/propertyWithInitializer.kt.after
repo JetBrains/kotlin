@@ -4,7 +4,7 @@ fun foo() {
     println(a)
 }
 
-fun i(): Int {
+private fun i(): Int {
     val a = 10
     return a
 }

@@ -1,0 +1,6 @@
+>>> Integer.valueOf(42)
+42
+>>> Integer(239).intValue()
+239
+>>> java.lang.Long.MIN_VALUE as Any
+-9223372036854775808

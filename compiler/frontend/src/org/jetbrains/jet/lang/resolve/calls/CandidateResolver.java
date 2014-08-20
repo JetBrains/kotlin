@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -31,9 +31,10 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
-import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
@@ -45,7 +46,10 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
@@ -317,13 +321,13 @@ public class CandidateResolver {
 
         // Restore type variables before alpha-conversion
         ConstraintSystem constraintSystemWithRightTypeParameters = constraintSystem.substituteTypeVariables(
-                new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
+                new Function1<TypeParameterDescriptor, TypeParameterDescriptor>() {
                     @Override
-                    public TypeParameterDescriptor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
-                        assert typeParameterDescriptor != null;
+                    public TypeParameterDescriptor invoke(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
                         return candidate.getTypeParameters().get(typeParameterDescriptor.getIndex());
                     }
-                });
+                }
+        );
         candidateCall.setConstraintSystem(constraintSystemWithRightTypeParameters);
 
 

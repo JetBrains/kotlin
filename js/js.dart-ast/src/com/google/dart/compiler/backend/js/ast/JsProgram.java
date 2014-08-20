@@ -7,6 +7,7 @@ package com.google.dart.compiler.backend.js.ast;
 import gnu.trove.TDoubleObjectHashMap;
 import gnu.trove.THashMap;
 import gnu.trove.TIntObjectHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -91,6 +92,7 @@ public final class JsProgram extends SourceInfoAwareJsNode {
     /**
      * Creates or retrieves a JsStringLiteral from an interned object pool.
      */
+    @NotNull
     public JsStringLiteral getStringLiteral(String value) {
         JsStringLiteral literal = stringLiteralMap.get(value);
         if (literal == null) {

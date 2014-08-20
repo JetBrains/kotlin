@@ -20,7 +20,9 @@ fun bar() {
     b = 3
 }
 ---------------------
-3   <v0>: Int   NEW: r(3) -> <v0>
+3                      <v0>: Int   NEW: r(3) -> <v0>
+b = 3                  !<v1>: *                     
+{ val b: Int b = 3 }   !<v1>: *    COPY             
 =====================
 == use ==
 fun use(a: Int) = a

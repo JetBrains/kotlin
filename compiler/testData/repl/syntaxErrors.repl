@@ -2,6 +2,5 @@
 ERROR: /line1.kts: (1, 1) Expecting an element
 ERROR: /line1.kts: (1, 3) Expecting an expression
 >>> fun foo() = 98
-null
 >>> foo()
 98

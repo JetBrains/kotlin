@@ -79,8 +79,7 @@ L5:
     r(1) -> <v20>
     mark(t.x += 1)
     call(t.x += 1, plus|<v19>, <v20>) -> <v21>
-    r(t) -> <v22>
-    w(t.x|<v22>, <v21>)
+    w(t.x|<v18>, <v21>)
 L1:
   1 <END>                                                                                                                                   NEXT:[<SINK>]
 error:

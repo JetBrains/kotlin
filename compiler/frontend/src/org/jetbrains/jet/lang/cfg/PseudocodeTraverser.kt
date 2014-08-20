@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionD
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
 
-fun Pseudocode.traverse(
+public fun Pseudocode.traverse(
         traversalOrder: TraversalOrder,
         analyzeInstruction: (Instruction) -> Unit
 ) {
@@ -37,7 +37,7 @@ fun Pseudocode.traverse(
     }
 }
 
-fun <D> Pseudocode.traverse(
+public fun <D> Pseudocode.traverse(
         traversalOrder: TraversalOrder,
         edgesMap: Map<Instruction, Edges<D>>,
         analyzeInstruction: (Instruction, D, D) -> Unit
@@ -189,7 +189,7 @@ fun traverseFollowingInstructions(
     return true
 }
 
-enum class TraversalOrder {
+public enum class TraversalOrder {
     FORWARD
     BACKWARD
 }

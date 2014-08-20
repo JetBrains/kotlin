@@ -23,7 +23,7 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -45,7 +45,7 @@ public class JavaClassFunction extends IntrinsicMethod {
             @Nullable List<JetExpression> arguments,
             StackValue receiver
     ) {
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCallWithAssert(
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(
                 (JetElement) element, codegen.getBindingContext());
         JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
         assert returnType != null;

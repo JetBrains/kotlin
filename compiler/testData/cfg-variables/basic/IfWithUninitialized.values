@@ -9,15 +9,17 @@ fun foo() {
     }
 }
 ---------------------
-1                                                            <v0>: {<: Comparable<Int>}   NEW: r(1) -> <v0>                             
-2                                                            <v1>: Int                    NEW: r(2) -> <v1>                             
-1 < 2                                                        <v2>: Boolean                NEW: call(1 < 2, compareTo|<v0>, <v1>) -> <v2>
-b                                                            <v3>: *                      NEW: r(b) -> <v3>
-use(b)                                                       <v4>: *                      NEW: call(use(b), use|<v3>) -> <v4>           
-{ use(b) }                                                   <v4>: *                      COPY                                          
-true                                                         <v5>: Boolean                NEW: r(true) -> <v5>                          
-if (1 < 2) { use(b) } else { b = true }                      <v4>: *                      COPY                                          
-{ val b: Boolean if (1 < 2) { use(b) } else { b = true } }   <v4>: *                      COPY                                          
+1                                                            <v0>: {<: Comparable<Int>}   NEW: r(1) -> <v0>                                                      
+2                                                            <v1>: Int                    NEW: r(2) -> <v1>                                                      
+1 < 2                                                        <v2>: Boolean                NEW: call(1 < 2, compareTo|<v0>, <v1>) -> <v2>                         
+b                                                            <v3>: *                      NEW: r(b) -> <v3>                                                      
+use(b)                                                       <v4>: *                      NEW: call(use(b), use|<v3>) -> <v4>                                    
+{ use(b) }                                                   <v4>: *                      COPY                                                                   
+true                                                         <v5>: Boolean                NEW: r(true) -> <v5>                                                   
+b = true                                                     !<v6>: *                                                                                            
+{ b = true }                                                 !<v6>: *                     COPY                                                                   
+if (1 < 2) { use(b) } else { b = true }                      <v7>: *                      NEW: merge(if (1 < 2) { use(b) } else { b = true }|<v4>, !<v6>) -> <v7>
+{ val b: Boolean if (1 < 2) { use(b) } else { b = true } }   <v7>: *                      COPY                                                                   
 =====================
 == use ==
 fun use(vararg a: Any?) = a

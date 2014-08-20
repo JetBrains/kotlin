@@ -51,7 +51,7 @@ inline fun Function1<Int, Unit>.inlineExt() {
         this invoke 11
         this(11)
 
-        <!USAGE_IS_NOT_INLINABLE!>this<!>
+        <!USAGE_IS_NOT_INLINABLE, UNUSED_EXPRESSION!>this<!>
 
         11
     }

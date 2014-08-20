@@ -28,7 +28,7 @@ import com.intellij.psi.util.PsiFormatUtilBase
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 
-abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTestCase() {
     private val fixture: JavaCodeInsightTestFixture
         get() = myFixture
 

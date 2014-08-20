@@ -1,0 +1,2 @@
+Implicit iteration (13: 12) for (a in A<String>()) {}
+Implicit iteration (15: 12) for (a in A<Int>()) {}

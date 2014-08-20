@@ -5,7 +5,7 @@ class A {
                 return i()
             }
 
-            fun i(): Int {
+            private fun i(): Int {
                 return a + b - 1
             }
         }

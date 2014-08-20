@@ -1,4 +1,3 @@
-//file
 package org.test.customer
 
 class Customer {

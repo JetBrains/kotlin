@@ -25,9 +25,9 @@ public class Identifier<T>(private val myName: T, private val myHasDollar: Boole
 public class User {
     class object {
         public fun main() {
-            val i1 = Identifier<String>("name", false, true)
+            val i1 = Identifier("name", false, true)
             val i2 = Identifier<String>("name", false)
-            val i3 = Identifier<String>("name")
+            val i3 = Identifier("name")
         }
     }
 }

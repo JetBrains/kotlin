@@ -5,12 +5,11 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/properties/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/properties/testSrc" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/properties/resources" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/properties/properties-psi-api/gen" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/properties/properties-psi-api/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/properties/properties-psi-impl/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/properties/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/properties/testSrc" />
     </SOURCES>
   </library>
 </component>

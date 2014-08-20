@@ -16,4 +16,4 @@
 
 package kotlin.platform
 
-public annotation class platformName(val name: String)
+public annotation class platformName(public val name: String)

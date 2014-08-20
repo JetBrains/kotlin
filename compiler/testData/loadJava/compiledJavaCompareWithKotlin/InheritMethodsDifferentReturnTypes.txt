@@ -1,19 +1,19 @@
 package test
 
-public final class InheritMethodsDifferentReturnTypes : java.lang.Object {
+public final class InheritMethodsDifferentReturnTypes {
     public constructor InheritMethodsDifferentReturnTypes()
-    
+
     public trait Sub : test.InheritMethodsDifferentReturnTypes.Super1, test.InheritMethodsDifferentReturnTypes.Super2 {
         public abstract override /*2*/ /*fake_override*/ fun bar(): kotlin.String?
         public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.String?
     }
-    
-    public trait Super1 : java.lang.Object {
+
+    public trait Super1 {
         public abstract fun bar(): kotlin.String?
         public abstract fun foo(): kotlin.CharSequence?
     }
-    
-    public trait Super2 : java.lang.Object {
+
+    public trait Super2 {
         public abstract fun bar(): kotlin.CharSequence?
         public abstract fun foo(): kotlin.String?
     }

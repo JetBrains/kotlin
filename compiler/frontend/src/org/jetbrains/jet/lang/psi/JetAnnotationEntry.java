@@ -73,7 +73,7 @@ public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationEntry
 
     @NotNull
     @Override
-    public List<JetExpression> getFunctionLiteralArguments() {
+    public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
         return Collections.emptyList();
     }
 

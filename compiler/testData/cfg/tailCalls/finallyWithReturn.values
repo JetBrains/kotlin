@@ -7,5 +7,10 @@ tailRecursive fun test() : Int {
     }
 }
 ---------------------
-test()   <v0>: Int   NEW: call(test(), test) -> <v0>
+{ // do nothing }                                     !<v2>: *                                                                             
+test()                                                <v0>: Int   NEW: call(test(), test) -> <v0>                                          
+return test()                                         !<v1>: *                                                                             
+{ return test() }                                     !<v1>: *    COPY                                                                     
+try { // do nothing } finally { return test() }       <v3>: *     NEW: merge(try { // do nothing } finally { return test() }|!<v2>) -> <v3>
+{ try { // do nothing } finally { return test() } }   <v3>: *     COPY                                                                     
 =====================

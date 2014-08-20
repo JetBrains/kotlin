@@ -31,27 +31,16 @@ import org.jetbrains.jet.j2k.ast.ErrorType
 import com.intellij.codeInsight.NullableNotNullManager
 import org.jetbrains.jet.j2k.ast.ArrayType
 import org.jetbrains.jet.j2k.ast.ClassType
+import org.jetbrains.jet.j2k.ast.ReferenceElement
 import org.jetbrains.jet.j2k.ast.Identifier
 
-class TypeConverter(val settings: ConverterSettings, val conversionScope: ConversionScope) {
+class TypeConverter(val converter: Converter) {
     private val nullabilityCache = HashMap<PsiElement, Nullability>()
-    private val classesToImport = HashSet<String>()
-
-    public var importList: ImportList? = null
-        set(value) {
-            $importList = value
-            importNames = importList?.imports?.mapTo(HashSet<String>()) { it.name } ?: setOf()
-
-        }
-    private var importNames: Set<String> = setOf()
-
-    public val importsToAdd: Collection<Import>
-        get() = classesToImport.map { Import(it).assignNoPrototype() }
 
     public fun convertType(`type`: PsiType?, nullability: Nullability = Nullability.Default): Type {
         if (`type` == null) return ErrorType().assignNoPrototype()
 
-        val result = `type`.accept<Type>(TypeVisitor(this, importNames, classesToImport))!!.assignNoPrototype()
+        val result = `type`.accept<Type>(TypeVisitor(converter))!!.assignNoPrototype()
         return when (nullability) {
             Nullability.NotNull -> result.toNotNullType()
             Nullability.Nullable -> result.toNullableType()
@@ -64,9 +53,9 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
 
     public fun convertVariableType(variable: PsiVariable): Type {
         val result = if (variable.isMainMethodParameter()) {
-            ArrayType(ClassType(Identifier("String").assignNoPrototype(), listOf(), Nullability.NotNull, settings).assignNoPrototype(),
+            ArrayType(ClassType(ReferenceElement(Identifier("String").assignNoPrototype(), listOf()).assignNoPrototype(), Nullability.NotNull, converter.settings).assignNoPrototype(),
                       Nullability.NotNull,
-                      settings)
+                      converter.settings).assignNoPrototype()
         }
         else {
             convertType(variable.getType(), variableNullability(variable))
@@ -124,7 +113,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
             return Nullability.NotNull
         }
 
-        if (!conversionScope.contains(variable)) { // do not analyze usages out of our conversion scope
+        if (!converter.conversionScope.contains(variable)) { // do not analyze usages out of our conversion scope
             if (variable is PsiParameter) {
                 // Object.equals corresponds to Any.equals which has nullable parameter:
                 val scope = variable.getDeclarationScope()
@@ -203,7 +192,7 @@ class TypeConverter(val settings: ConverterSettings, val conversionScope: Conver
             return Nullability.Nullable
         }
 
-        if (!conversionScope.contains(method)) return nullability // do not analyze body and usages of methods out of our conversion scope
+        if (!converter.conversionScope.contains(method)) return nullability // do not analyze body and usages of methods out of our conversion scope
 
         if (nullability == Nullability.Default) {
             method.getBody()?.accept(object: JavaRecursiveElementVisitor() {

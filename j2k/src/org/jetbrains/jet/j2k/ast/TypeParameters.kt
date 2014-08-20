@@ -61,8 +61,9 @@ class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
     }
 }
 
-fun Converter.convertTypeParameter(psiTypeParameter: PsiTypeParameter): TypeParameter {
-    return convertElement(psiTypeParameter) as TypeParameter
+private fun Converter.convertTypeParameter(typeParameter: PsiTypeParameter): TypeParameter {
+    return TypeParameter(typeParameter.declarationIdentifier(),
+                           typeParameter.getExtendsListTypes().map { typeConverter.convertType(it) }).assignPrototype(typeParameter)
 }
 
 fun Converter.convertTypeParameterList(typeParameterList: PsiTypeParameterList?): TypeParameterList {

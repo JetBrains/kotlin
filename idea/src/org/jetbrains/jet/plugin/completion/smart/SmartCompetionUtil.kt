@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin.completion.smart
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.calls.util.noErrorsInValueArguments
-import org.jetbrains.jet.lang.resolve.calls.util.hasUnmappedParameters
+import org.jetbrains.jet.lang.resolve.calls.callUtil.noErrorsInValueArguments
+import org.jetbrains.jet.lang.resolve.calls.callUtil.hasUnmappedParameters
 
 
 fun <D : CallableDescriptor> OverloadResolutionResults<D>.getCandidatesForCompletion(): Collection<ResolvedCall<D>> {

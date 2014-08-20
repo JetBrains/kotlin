@@ -26,67 +26,41 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.test.Tmpdir;
+import org.jetbrains.jet.utils.PathUtil;
 import org.junit.ComparisonFailure;
 import org.junit.Rule;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
 public abstract class KotlinIntegrationTestBase {
-    protected File testDataDir;
+    protected static final File INTEGRATION_TEST_DATA_BASE_DIR =
+            new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "testData");
 
     @Rule
     public final Tmpdir tmpdir = new Tmpdir();
-
-    @Rule
-    public TestRule watchman = new TestWatcher() {
-        @Override
-        protected void starting(Description description) {
-            File baseTestDataDir =
-                    new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "testData");
-            testDataDir = new File(baseTestDataDir, description.getMethodName());
-        }
-    };
 
     static {
         System.setProperty("java.awt.headless", "true");
     }
 
-    protected int runCompiler(String logName, String... arguments) throws Exception {
-        File lib = getCompilerLib();
-
-        String classpath = lib.getAbsolutePath() + File.separator +
-                           "kotlin-compiler.jar" + File.pathSeparator +
-                           getKotlinRuntimePath();
-
-        Collection<String> javaArgs = new ArrayList<String>();
-        javaArgs.add("-cp");
-        javaArgs.add(classpath);
-        javaArgs.add("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
-        Collections.addAll(javaArgs, arguments);
-
-        return runJava(logName, ArrayUtil.toStringArray(javaArgs));
-    }
+    @NotNull
+    protected abstract File getTestDataDir();
 
     protected int runJava(String logName, String... arguments) throws Exception {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setWorkDirectory(testDataDir);
+        commandLine.setWorkDirectory(getTestDataDir());
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 
@@ -118,16 +92,16 @@ public abstract class KotlinIntegrationTestBase {
     }
 
     protected String normalizeOutput(String content) {
-        content = normalizePath(content, testDataDir, "[TestData]");
+        content = normalizePath(content, getTestDataDir(), "[TestData]");
         content = normalizePath(content, tmpdir.getTmpDir(), "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
         content = StringUtil.convertLineSeparators(content);
         return content;
     }
 
-    protected void check(String baseName, String content) throws IOException {
-        File actualFile = new File(testDataDir, baseName + ".actual");
-        File expectedFile = new File(testDataDir, baseName + ".expected");
+    private void check(String baseName, String content) throws IOException {
+        File actualFile = new File(getTestDataDir(), baseName + ".actual");
+        File expectedFile = new File(getTestDataDir(), baseName + ".expected");
 
         String normalizedContent = normalizeOutput(content);
 
@@ -135,20 +109,19 @@ public abstract class KotlinIntegrationTestBase {
             Files.write(normalizedContent, actualFile, Charsets.UTF_8);
             fail("No .expected file " + expectedFile);
         }
-        else {
-            try {
-                JetTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
-                //noinspection ResultOfMethodCallIgnored
-                actualFile.delete();
-            }
-            catch (ComparisonFailure e) {
-                Files.write(normalizedContent, actualFile, Charsets.UTF_8);
-                throw e;
-            }
+
+        try {
+            JetTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
+            //noinspection ResultOfMethodCallIgnored
+            actualFile.delete();
+        }
+        catch (ComparisonFailure e) {
+            Files.write(normalizedContent, actualFile, Charsets.UTF_8);
+            throw e;
         }
     }
 
-    protected static int runProcess(GeneralCommandLine commandLine, StringBuilder executionLog) throws ExecutionException {
+    private static int runProcess(GeneralCommandLine commandLine, StringBuilder executionLog) throws ExecutionException {
         OSProcessHandler handler =
                 new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString(), commandLine.getCharset());
 
@@ -176,26 +149,24 @@ public abstract class KotlinIntegrationTestBase {
         }
     }
 
-    protected static File getJavaRuntime() {
+    private static File getJavaRuntime() {
         File javaHome = new File(System.getProperty("java.home"));
         String javaExe = SystemInfo.isWindows ? "java.exe" : "java";
 
         File runtime = new File(javaHome, "bin" + File.separator + javaExe);
-        assertTrue("no java runtime at " + runtime, runtime.isFile());
+        assertTrue("No java runtime at " + runtime, runtime.isFile());
 
         return runtime;
     }
 
     protected static File getCompilerLib() {
-        File file = new File(getKotlinProjectHome(), "dist" + File.separator + "kotlinc" + File.separator + "lib");
-        assertTrue("no kotlin compiler lib at " + file, file.isDirectory());
+        File file = PathUtil.getKotlinPathsForDistDirectory().getLibPath().getAbsoluteFile();
+        assertTrue("Lib directory doesn't exist. Run 'ant dist'", file.isDirectory());
         return file;
     }
 
     protected static String getKotlinRuntimePath() {
-        File file = new File(getCompilerLib(), "kotlin-runtime.jar");
-        assertTrue("no kotlin runtime at " + file, file.isFile());
-        return file.getAbsolutePath();
+        return ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath();
     }
 
     protected static File getKotlinProjectHome() {

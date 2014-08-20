@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.config.Config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class LibraryFilePathsUtil {
@@ -30,12 +31,15 @@ public final class LibraryFilePathsUtil {
 
     @NotNull
     public static List<String> getBasicLibraryFiles() {
-        return Lists.transform(Config.LIB_FILE_NAMES, new Function<String, String>() {
+        List<String> files = new ArrayList<String>();
+        files.addAll(Lists.transform(Config.LIB_FILE_NAMES, new Function<String, String>() {
             @Override
             public String apply(@Nullable String s) {
                 return Config.LIBRARIES_LOCATION + s;
             }
-        });
+        }));
+        files.addAll(getReflectionLibraryFiles());
+        return files;
     }
 
     @NotNull
@@ -54,5 +58,10 @@ public final class LibraryFilePathsUtil {
             additionalKotlinFiles.add(Config.STDLIB_LOCATION + libFileName);
         }
         return additionalKotlinFiles;
+    }
+
+    @NotNull
+    public static List<String> getReflectionLibraryFiles() {
+        return JsTestUtils.kotlinFilesInDirectory(Config.REFLECTION_LIB_LOCATION);
     }
 }

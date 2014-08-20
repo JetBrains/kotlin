@@ -2,6 +2,6 @@ package c;
 
 class J {
     void bar() {
-        a.Test t = a.Test.instance$;
+        a.Test t = a.Test.INSTANCE$;
     }
 }

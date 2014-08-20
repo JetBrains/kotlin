@@ -71,10 +71,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
-        if (isStatement) {
-            contextWithExpectedType.trace.record(BindingContext.STATEMENT, expression);
-        }
-
         DataFlowUtils.recordExpectedType(contextWithExpectedType.trace, expression, contextWithExpectedType.expectedType);
 
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);

@@ -17,38 +17,17 @@
 package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
+import org.jetbrains.jet.plugin.util.psiModificationUtil.moveInsideParentheses
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getResolvedCall
 
-public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(
+public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<JetFunctionLiteralArgument>(
         "move.lambda.inside.parentheses", javaClass()) {
 
-    override fun isApplicableTo(element: JetCallExpression): Boolean = !element.getFunctionLiteralArguments().isEmpty()
+    override fun isApplicableTo(element: JetFunctionLiteralArgument): Boolean = true
 
-    override fun applyTo(element: JetCallExpression, editor: Editor) {
-        val typeArgs = element.getTypeArgumentList()?.getText()
-        val exprText = element.getCalleeExpression()?.getText()
-        if (exprText == null) return
-        val funName = if (!element.getTypeArguments().isEmpty() && typeArgs != null) "$exprText$typeArgs" else "$exprText"
-        val sb = StringBuilder()
-        sb.append("(")
-        for (value in element.getValueArguments()) {
-            if (value == null) continue
-            if (value.getArgumentName() != null) {
-                sb.append("${value.getArgumentName()?.getText()} = ${value.getArgumentExpression()?.getText()},")
-            } else {
-                sb.append("${value.getArgumentExpression()?.getText()},")
-            }
-        }
-        if (element.getValueArguments().any { it?.getArgumentName() != null}) {
-            val context = element.getBindingContext()
-            val resolvedCall = element.getResolvedCall(context)
-            val literalName = resolvedCall?.getResultingDescriptor()?.getValueParameters()?.last?.getName().toString()
-            sb.append("$literalName = ")
-        }
-        val newExpression = "$funName${sb.toString()}${element.getFunctionLiteralArguments()[0].getText()})"
-        element.replace(JetPsiFactory(element).createExpression(newExpression))
+    override fun applyTo(element: JetFunctionLiteralArgument, editor: Editor) {
+        element.moveInsideParentheses(element.getBindingContext())
     }
 }
+

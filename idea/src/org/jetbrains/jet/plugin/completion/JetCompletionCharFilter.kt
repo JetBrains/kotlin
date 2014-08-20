@@ -26,6 +26,7 @@ import com.intellij.openapi.util.Key
 public open class JetCompletionCharFilter() : CharFilter() {
     class object {
         public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key<Boolean>("JetCompletionCharFilter.ACCEPT_OPENNING_BRACE")
+        public val ACCEPT_EQ: Key<Boolean> = Key<Boolean>("JetCompletionCharFilter.ACCEPT_EQ")
     }
 
     public override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
@@ -47,7 +48,7 @@ public open class JetCompletionCharFilter() : CharFilter() {
 
         if (c == '=') {
             val currentItem = lookup.getCurrentItem()
-            if (currentItem != null && (currentItem.getObject() is KotlinNamedParametersContributor.NamedParameterLookupObject)) {
+            if (currentItem != null && currentItem.getUserData(ACCEPT_EQ) ?: false) {
                 return Result.SELECT_ITEM_AND_FINISH_LOOKUP
             }
         }

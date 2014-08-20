@@ -106,7 +106,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         private final PseudoValueFactory valueFactory = new PseudoValueFactoryImpl() {
             @NotNull
             @Override
-            public PseudoValue newValue(@Nullable JetElement element, @NotNull InstructionWithValue instruction) {
+            public PseudoValue newValue(@Nullable JetElement element, @Nullable InstructionWithValue instruction) {
                 PseudoValue value = super.newValue(element, instruction);
                 if (element != null) {
                     bindValue(value, element);
@@ -283,6 +283,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             pseudocode.bindElementToValue(element, value);
         }
 
+        @NotNull
+        @Override
+        public PseudoValue newValue(@Nullable JetElement element) {
+            return valueFactory.newValue(element, null);
+        }
+
         @Override
         public void returnValue(@NotNull JetExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine) {
             Label exitPoint = getExitPoint(subroutine);
@@ -387,11 +393,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void unsupported(JetElement element) {
-            add(new UnsupportedElementInstruction(element, getCurrentScope()));
-        }
-
-        @Override
         public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
             pseudocode.repeatPart(startLabel, finishLabel);
         }
@@ -418,7 +419,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public InstructionWithValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
             if (inputValues.isEmpty()) return read(expression);
-            Map<PseudoValue, TypePredicate> predicate = PseudocodePackage.expectedTypeFor(AllTypes.instance$, inputValues);
+            Map<PseudoValue, TypePredicate> predicate = PseudocodePackage.expectedTypeFor(AllTypes.INSTANCE$, inputValues);
             return magic(expression, expression, inputValues, predicate, MagicKind.STRING_TEMPLATE);
         }
 
@@ -431,7 +432,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
                 @NotNull MagicKind kind
         ) {
-            MagicInstruction instruction = MagicInstruction.object$.create(
+            MagicInstruction instruction = MagicInstruction.OBJECT$.create(
                     instructionElement, valueElement, getCurrentScope(), inputValues, expectedTypes, kind, valueFactory
             );
             add(instruction);
@@ -441,7 +442,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public MergeInstruction merge(@NotNull JetExpression expression, @NotNull List<PseudoValue> inputValues) {
-            MergeInstruction instruction = MergeInstruction.object$.create(expression, getCurrentScope(), inputValues, valueFactory);
+            MergeInstruction instruction = MergeInstruction.OBJECT$.create(expression, getCurrentScope(), inputValues, valueFactory);
             add(instruction);
             return instruction;
         }
@@ -465,7 +466,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
         ) {
             JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
-            CallInstruction instruction = CallInstruction.object$.create(
+            CallInstruction instruction = CallInstruction.OBJECT$.create(
                     valueElement,
                     getCurrentScope(),
                     resolvedCall,
@@ -492,7 +493,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                     expectedTypes = PseudocodePackage.expectedTypeFor(onlyBoolean, inputValues);
                     break;
                 case NOT_NULL_ASSERTION:
-                    expectedTypes = PseudocodePackage.expectedTypeFor(AllTypes.instance$, inputValues);
+                    expectedTypes = PseudocodePackage.expectedTypeFor(AllTypes.INSTANCE$, inputValues);
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid operation: " + operation);
@@ -526,8 +527,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @Nullable ResolvedCall<?> resolvedCall,
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues
         ) {
-            AccessTarget accessTarget = resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.instance$;
-            ReadValueInstruction instruction = ReadValueInstruction.object$.create(
+            AccessTarget accessTarget = resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE$;
+            ReadValueInstruction instruction = ReadValueInstruction.OBJECT$.create(
                     expression, getCurrentScope(), accessTarget, receiverValues, valueFactory
             );
             add(instruction);

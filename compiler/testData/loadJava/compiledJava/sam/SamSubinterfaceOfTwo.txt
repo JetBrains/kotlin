@@ -1,16 +1,16 @@
 package test
 
-public trait SamSubinterfaceOfTwo : java.lang.Object {
-    
+public trait SamSubinterfaceOfTwo {
+
     public trait Sub : test.SamSubinterfaceOfTwo.Super1, test.SamSubinterfaceOfTwo.Super2<kotlin.String> {
         public abstract override /*2*/ /*fake_override*/ fun f(): kotlin.String?
     }
-    
-    public trait Super1 : java.lang.Object {
+
+    public trait Super1 {
         public abstract fun f(): kotlin.CharSequence?
     }
-    
-    public trait Super2</*0*/ T> : java.lang.Object {
+
+    public trait Super2</*0*/ T> {
         public abstract fun f(): T?
     }
 }

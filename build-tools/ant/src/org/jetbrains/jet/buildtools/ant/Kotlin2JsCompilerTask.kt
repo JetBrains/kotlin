@@ -37,7 +37,7 @@ public class Kotlin2JsCompilerTask : Task() {
     public var library: Path? = null
     public var outputPrefix: File? = null
     public var outputPostfix: File? = null
-    public var sourcemap: Boolean = false
+    public var sourceMap: Boolean = false
 
     /**
      * {@link K2JsArgumentConstants.CALL} (default) if need generate a main function call (main function will be auto detected)
@@ -84,7 +84,7 @@ public class Kotlin2JsCompilerTask : Task() {
         arguments.outputPostfix = outputPostfix?.canonicalPath
 
         arguments.main = main
-        arguments.sourcemap = sourcemap
+        arguments.sourceMap = sourceMap
 
         log("Compiling ${arguments.freeArgs} => [${arguments.outputFile}]");
 

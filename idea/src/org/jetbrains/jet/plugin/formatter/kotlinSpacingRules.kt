@@ -125,12 +125,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             beforeInside(COLON, EXTEND_COLON_ELEMENTS) { spaceIf(jetSettings.SPACE_BEFORE_EXTEND_COLON) }
             afterInside(COLON, EXTEND_COLON_ELEMENTS) { spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON) }
 
-            between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
+            between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_ARGUMENT).spaces(1)
             beforeInside(ARROW, FUNCTION_LITERAL).spaceIf(jetSettings.SPACE_BEFORE_LAMBDA_ARROW)
 
             aroundInside(ARROW, FUNCTION_TYPE).spaceIf(jetSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
 
-            betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_EXPRESSION, CALL_EXPRESSION).spaces(1)
+            betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_ARGUMENT, CALL_EXPRESSION).spaces(1)
         }
         custom {
 

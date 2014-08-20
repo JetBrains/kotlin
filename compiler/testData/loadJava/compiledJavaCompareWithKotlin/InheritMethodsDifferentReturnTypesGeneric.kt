@@ -1,12 +1,12 @@
 package test
 
-public class InheritMethodsDifferentReturnTypesGeneric: Object() {
-    public trait Super1<F, B>: Object {
+public class InheritMethodsDifferentReturnTypesGeneric {
+    public trait Super1<F, B> {
         public fun foo(): F?
         public fun bar(): B?
     }
 
-    public trait Super2<FF, BB>: Object {
+    public trait Super2<FF, BB> {
         public fun foo(): FF?
         public fun bar(): BB?
     }

@@ -36,6 +36,11 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/debugger/selectExpression"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("annotation.kt")
+    public void testAnnotation() throws Exception {
+        doTest("idea/testData/debugger/selectExpression/annotation.kt");
+    }
+    
     @TestMetadata("binaryExpression.kt")
     public void testBinaryExpression() throws Exception {
         doTest("idea/testData/debugger/selectExpression/binaryExpression.kt");
@@ -71,6 +76,11 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
         doTest("idea/testData/debugger/selectExpression/getConvention.kt");
     }
     
+    @TestMetadata("imports.kt")
+    public void testImports() throws Exception {
+        doTest("idea/testData/debugger/selectExpression/imports.kt");
+    }
+    
     @TestMetadata("infixCall.kt")
     public void testInfixCall() throws Exception {
         doTest("idea/testData/debugger/selectExpression/infixCall.kt");
@@ -94,6 +104,11 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
     @TestMetadata("modifier.kt")
     public void testModifier() throws Exception {
         doTest("idea/testData/debugger/selectExpression/modifier.kt");
+    }
+    
+    @TestMetadata("package.kt")
+    public void testPackage() throws Exception {
+        doTest("idea/testData/debugger/selectExpression/package.kt");
     }
     
     @TestMetadata("param.kt")
@@ -144,6 +159,21 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
     @TestMetadata("unaryExpression.kt")
     public void testUnaryExpression() throws Exception {
         doTest("idea/testData/debugger/selectExpression/unaryExpression.kt");
+    }
+    
+    @TestMetadata("userType.kt")
+    public void testUserType() throws Exception {
+        doTest("idea/testData/debugger/selectExpression/userType.kt");
+    }
+    
+    @TestMetadata("userTypeGeneric.kt")
+    public void testUserTypeGeneric() throws Exception {
+        doTest("idea/testData/debugger/selectExpression/userTypeGeneric.kt");
+    }
+    
+    @TestMetadata("userTypeQualified.kt")
+    public void testUserTypeQualified() throws Exception {
+        doTest("idea/testData/debugger/selectExpression/userTypeQualified.kt");
     }
     
 }

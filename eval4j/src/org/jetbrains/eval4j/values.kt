@@ -19,9 +19,9 @@ package org.jetbrains.eval4j
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 
-trait Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
-    val asmType: Type
-    val valid: Boolean
+public trait Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
+    public val asmType: Type
+    public val valid: Boolean
     override fun getSize(): Int = asmType.getSize()
 
     override fun toString(): String
@@ -57,7 +57,7 @@ abstract class AbstractValueBase<V>(
         override val asmType: Type
 ) : Value {
     override val valid = true
-    abstract val value: V
+    public abstract val value: V
 
     override fun toString() = "$value: $asmType"
 
@@ -81,7 +81,7 @@ class IntValue(value: Int, asmType: Type): AbstractValue<Int>(value, asmType)
 class LongValue(value: Long): AbstractValue<Long>(value, Type.LONG_TYPE)
 class FloatValue(value: Float): AbstractValue<Float>(value, Type.FLOAT_TYPE)
 class DoubleValue(value: Double): AbstractValue<Double>(value, Type.DOUBLE_TYPE)
-class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
+public class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
 class NewObjectValue(asmType: Type): AbstractValueBase<Any?>(asmType) {
     override var value: Any? = null
 }

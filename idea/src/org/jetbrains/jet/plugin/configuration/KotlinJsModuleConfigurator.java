@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.plugin.configuration;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,7 @@ import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
@@ -97,26 +100,36 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
         boolean showPathToJarPanel = needToChooseJarPath(project);
         boolean showPathToJsFilePanel = needToChooseJsFilePath(project);
 
-        List<Module> nonConfiguredModules = ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this);
+        List<Module> nonConfiguredModules =
+                !ApplicationManager.getApplication().isUnitTestMode() ?
+                ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this) :
+                Arrays.asList(ModuleManager.getInstance(project).getModules());
+
+        List<Module> modulesToConfigure = nonConfiguredModules;
+        String copyLibraryIntoPath = null;
+        String jsFilesIntoPath = null;
 
         if (nonConfiguredModules.size() > 1 || showPathToJarPanel || showPathToJsFilePanel) {
             CreateJavaScriptLibraryDialogWithModules dialog =
                     new CreateJavaScriptLibraryDialogWithModules(project, nonConfiguredModules,
                                                                  defaultPathToJar, defaultPathToJsFile,
                                                                  showPathToJarPanel, showPathToJsFilePanel);
-            dialog.show();
-            if (!dialog.isOK()) return;
-            for (Module module : dialog.getModulesToConfigure()) {
-                configureModuleWithLibrary(module, defaultPathToJar, dialog.getCopyLibraryIntoPath());
+
+            if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                dialog.show();
+                if (!dialog.isOK()) return;
             }
-            configureModuleWithJsFile(defaultPathToJsFile, dialog.getCopyJsIntoPath());
+
+            modulesToConfigure = dialog.getModulesToConfigure();
+            copyLibraryIntoPath = dialog.getCopyLibraryIntoPath();
+            jsFilesIntoPath = dialog.getCopyJsIntoPath();
         }
-        else {
-            for (Module module : nonConfiguredModules) {
-                configureModuleWithLibrary(module, defaultPathToJar, null);
-            }
-            configureModuleWithJsFile(defaultPathToJsFile, null);
+
+        for (Module module : modulesToConfigure) {
+            configureModuleWithLibrary(module, defaultPathToJar, copyLibraryIntoPath);
         }
+
+        configureModuleWithJsFile(defaultPathToJsFile, jsFilesIntoPath);
     }
 
     public static boolean isJsFilePresent(@NotNull String dir) {
@@ -134,7 +147,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     }
 
     @NotNull
-    private static String getDefaultPathToJsFile(@NotNull Project project) {
+    protected String getDefaultPathToJsFile(@NotNull Project project) {
         return FileUIUtils.createRelativePath(project, project.getBaseDir(), "script");
     }
 

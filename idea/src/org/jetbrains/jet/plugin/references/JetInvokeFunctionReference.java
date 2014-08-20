@@ -19,11 +19,13 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -33,7 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> implements MultiRangeReference {
+public class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> implements MultiRangeReference {
 
     public JetInvokeFunctionReference(@NotNull JetCallExpression expression) {
         super(expression);
@@ -47,8 +49,8 @@ class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> i
     @Override
     @NotNull
     protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
-        Call call = BindingContextUtilPackage.getCall(getElement(), context);
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(call, context);
+        Call call = CallUtilPackage.getCall(getElement(), context);
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(call, context);
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return Collections.<DeclarationDescriptor>singleton(
                     ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall().getCandidateDescriptor());
@@ -81,19 +83,13 @@ class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> i
             }
         }
 
-        List<JetExpression> functionLiteralArguments = getExpression().getFunctionLiteralArguments();
-        for (JetExpression functionLiteralArgument : functionLiteralArguments) {
-            while (functionLiteralArgument instanceof JetLabeledExpression) {
-                functionLiteralArgument = ((JetLabeledExpression) functionLiteralArgument).getBaseExpression();
-            }
-
-            if (functionLiteralArgument instanceof JetFunctionLiteralExpression) {
-                JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) functionLiteralArgument;
-                list.add(getRange(functionLiteralExpression.getLeftCurlyBrace()));
-                ASTNode rightCurlyBrace = functionLiteralExpression.getRightCurlyBrace();
-                if (rightCurlyBrace != null) {
-                    list.add(getRange(rightCurlyBrace));
-                }
+        List<JetFunctionLiteralArgument> functionLiteralArguments = getExpression().getFunctionLiteralArguments();
+        for (JetFunctionLiteralArgument functionLiteralArgument : functionLiteralArguments) {
+            JetFunctionLiteralExpression functionLiteralExpression = functionLiteralArgument.getFunctionLiteral();
+            list.add(getRange(functionLiteralExpression.getLeftCurlyBrace()));
+            ASTNode rightCurlyBrace = functionLiteralExpression.getRightCurlyBrace();
+            if (rightCurlyBrace != null) {
+                list.add(getRange(rightCurlyBrace));
             }
         }
 
@@ -103,5 +99,17 @@ class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> i
     private TextRange getRange(ASTNode node) {
         TextRange textRange = node.getTextRange();
         return textRange.shiftRight(-getExpression().getTextOffset());
+    }
+
+    @Override
+    public boolean canRename() {
+        return true;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Nullable
+    @Override
+    public PsiElement handleElementRename(@Nullable String newElementName) {
+        return ReferencesPackage.renameImplicitConventionalCall(this, newElementName);
     }
 }

@@ -15,7 +15,7 @@ fun test2(a: A): Int {
 }
 
 fun test3(b: B): Int {
-    return b[Unit.VALUE, Unit.VALUE]
+    return b[Unit, Unit]
 }
 
 

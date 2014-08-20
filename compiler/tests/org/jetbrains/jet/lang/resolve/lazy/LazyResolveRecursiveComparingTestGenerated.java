@@ -798,6 +798,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("Assert.kt")
+            public void testAssert() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/fun/Assert.kt");
+            }
+            
             @TestMetadata("DeclaredMemberOverridesDelegated.kt")
             public void testDeclaredMemberOverridesDelegated() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/fun/DeclaredMemberOverridesDelegated.kt");

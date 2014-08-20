@@ -46,7 +46,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
 
     public void testBuiltIns() throws Exception {
         RecursiveDescriptorComparator.Configuration configuration =
-                RecursiveDescriptorComparator.RECURSIVE_ALL.includeMethodsOfObject(false).withRenderer(
+                RecursiveDescriptorComparator.RECURSIVE_ALL.includeMethodsOfKotlinAny(false).withRenderer(
                         new DescriptorRendererBuilder()
                                 .setWithDefinedIn(false)
                                 .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)

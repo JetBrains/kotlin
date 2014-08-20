@@ -70,20 +70,22 @@ L9:
     r(a) -> <v21>
     jf(L10|<v21>)                                                                                                        NEXT:[read (Unit), r(11) -> <v22>]
     r(11) -> <v22>
-    jmp(L11)                                                                                                             NEXT:[r(12) -> <v23>]
+    jmp(L11)                                                                                                             NEXT:[merge(if (a) 11|<v22>) -> <v23>]
 L10:
     read (Unit)                                                                                                          PREV:[jf(L10|<v21>)]
 L11:
-    r(12) -> <v23>                                                                                                       PREV:[jmp(L11), read (Unit)]
+    merge(if (a) 11|<v22>) -> <v23>                                                                                      PREV:[jmp(L11), read (Unit)]
+    r(12) -> <v24>
     mark(if (a) else 13)
-    r(a) -> <v24>
-    jf(L12|<v24>)                                                                                                        NEXT:[r(13) -> <v25>, read (Unit)]
+    r(a) -> <v25>
+    jf(L12|<v25>)                                                                                                        NEXT:[r(13) -> <v26>, read (Unit)]
     read (Unit)
-    jmp(L13)                                                                                                             NEXT:[r(14) -> <v26>]
+    jmp(L13)                                                                                                             NEXT:[merge(if (a) else 13|<v26>) -> <v27>]
 L12:
-    r(13) -> <v25>                                                                                                       PREV:[jf(L12|<v24>)]
+    r(13) -> <v26>                                                                                                       PREV:[jf(L12|<v25>)]
 L13:
-    r(14) -> <v26>                                                                                                       PREV:[jmp(L13), r(13) -> <v25>]
+    merge(if (a) else 13|<v26>) -> <v27>                                                                                 PREV:[jmp(L13), r(13) -> <v26>]
+    r(14) -> <v28>
 L1:
   1 <END>                                                                                                                NEXT:[<SINK>]
 error:

@@ -8,7 +8,7 @@ public final class Sub : test.Super {
     public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ r: java.lang.Runnable?): kotlin.Unit
 }
 
-public open class Super : java.lang.Object {
+public open class Super {
     public constructor Super()
     public/*package*/ final /*synthesized*/ fun foo(/*0*/ r: (() -> kotlin.Unit)?): kotlin.Unit
     public/*package*/ final /*synthesized*/ fun foo(/*0*/ r: (() -> kotlin.Unit)?): kotlin.Unit

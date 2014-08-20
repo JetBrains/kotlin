@@ -1,5 +1,5 @@
 package test
 
-public open class ClassWithTypePRefNext</*0*/ R : kotlin.Iterable<P>?, /*1*/ P> : java.lang.Object {
+public open class ClassWithTypePRefNext</*0*/ R : kotlin.Iterable<P>?, /*1*/ P> {
     public constructor ClassWithTypePRefNext</*0*/ R : kotlin.Iterable<P>?, /*1*/ P>()
 }

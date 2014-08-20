@@ -14,6 +14,6 @@ fun foo(a: Int) {
     unit(a, b)
 }
 
-fun unit(a: Int, b: Int) {
+private fun unit(a: Int, b: Int) {
     if (a > 0) bar(a) else b
 }

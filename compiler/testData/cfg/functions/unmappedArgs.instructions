@@ -1,0 +1,47 @@
+== foo ==
+fun foo(a: Int, b: Int) = a + b
+---------------------
+L0:
+  1 <START>
+    v(a: Int)
+    magic[FAKE_INITIALIZER](a: Int) -> <v0>
+    w(a|<v0>)
+    v(b: Int)
+    magic[FAKE_INITIALIZER](b: Int) -> <v1>
+    w(b|<v1>)
+    r(a) -> <v2>
+    r(b) -> <v3>
+    mark(a + b)
+    call(a + b, plus|<v2>, <v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== bar ==
+fun bar(i: Int) {
+    foo(1, 1, i)
+}
+---------------------
+L0:
+  1 <START>
+    v(i: Int)
+    magic[FAKE_INITIALIZER](i: Int) -> <v0>
+    w(i|<v0>)
+  2 mark({ foo(1, 1, i) })
+    r(1) -> <v1>
+    r(1) -> <v2>
+    r(i) -> <v3>
+    magic[VALUE_CONSUMER](i|<v3>) -> <v4>
+    mark(foo(1, 1, i))
+    call(foo(1, 1, i), foo|<v1>, <v2>) -> <v5>
+L1:
+  1 <END>                                         NEXT:[<SINK>]
+error:
+    <ERROR>                                       PREV:[]
+sink:
+    <SINK>                                        PREV:[<ERROR>, <END>]
+=====================

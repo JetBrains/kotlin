@@ -19,6 +19,7 @@ package org.jetbrains.jet.compiler.runner;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
@@ -41,19 +42,14 @@ import static org.jetbrains.jet.cli.common.messages.MessageCollectorUtil.reportE
 
 public class CompilerOutputParser {
     public static void parseCompilerMessagesFromReader(MessageCollector messageCollector, final Reader reader, OutputItemsCollector collector) {
-        // Sometimes the compiler can't output valid XML
-        // Example: error in command line arguments passed to the compiler
-        // having no -tags key (arguments are not parsed), the compiler doesn't know
-        // if it should put any tags in the output, so it will simply print the usage
-        // and the SAX parser will break.
-        // In this case, we want to read everything from this stream
-        // and report it as an IDE error.
+        // Sometimes the compiler doesn't output valid XML.
+        // Example: error in command line arguments passed to the compiler.
+        // The compiler will print the usage and the SAX parser will break.
+        // In this case, we want to read everything from this stream and report it as an IDE error.
         final StringBuilder stringBuilder = new StringBuilder();
-        //noinspection IOResourceOpenedButNotSafelyClosed
         Reader wrappingReader = new Reader() {
-
             @Override
-            public int read(char[] cbuf, int off, int len) throws IOException {
+            public int read(@NotNull char[] cbuf, int off, int len) throws IOException {
                 int read = reader.read(cbuf, off, len);
                 stringBuilder.append(cbuf, off, len);
                 return read;
@@ -74,7 +70,6 @@ public class CompilerOutputParser {
             parser.parse(new InputSource(wrappingReader), new CompilerOutputSAXHandler(messageCollector, collector));
         }
         catch (Throwable e) {
-
             // Load all the text into the stringBuilder
             try {
                 // This will not close the reader (see the wrapper above)
@@ -112,7 +107,7 @@ public class CompilerOutputParser {
         private final OutputItemsCollector collector;
 
         private final StringBuilder message = new StringBuilder();
-        private Stack<String> tags = new Stack<String>();
+        private final Stack<String> tags = new Stack<String>();
         private String path;
         private int line;
         private int column;
@@ -123,7 +118,8 @@ public class CompilerOutputParser {
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(@NotNull String uri, @NotNull String localName, @NotNull String qName, @NotNull Attributes attributes)
+                throws SAXException {
             tags.push(qName);
 
             message.setLength(0);
@@ -148,7 +144,7 @@ public class CompilerOutputParser {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(String uri, @NotNull String localName, @NotNull String qName) throws SAXException {
             if (tags.size() == 1) {
                 // We're directly inside the root tag: <MESSAGES>
                 return;

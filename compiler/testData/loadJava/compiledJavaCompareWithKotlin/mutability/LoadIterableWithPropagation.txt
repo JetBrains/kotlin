@@ -1,14 +1,14 @@
 package test
 
-public trait LoadIterableWithPropagation : java.lang.Object {
-    
-    public trait LoadIterable</*0*/ T> : java.lang.Object {
+public trait LoadIterableWithPropagation {
+
+    public trait LoadIterable</*0*/ T> {
         org.jetbrains.annotations.Mutable() public abstract fun getIterable(): kotlin.MutableIterable<T>?
         org.jetbrains.annotations.ReadOnly() public abstract fun getReadOnlyIterable(): kotlin.Iterable<T>?
         public abstract fun setIterable(/*0*/ org.jetbrains.annotations.Mutable() p0: kotlin.MutableIterable<T>?): kotlin.Unit
         public abstract fun setReadOnlyIterable(/*0*/ org.jetbrains.annotations.ReadOnly() p0: kotlin.Iterable<T>?): kotlin.Unit
     }
-    
+
     public open class LoadIterableImpl</*0*/ T> : test.LoadIterableWithPropagation.LoadIterable<T> {
         public constructor LoadIterableImpl</*0*/ T>()
         public open override /*1*/ fun getIterable(): kotlin.MutableIterable<T>?

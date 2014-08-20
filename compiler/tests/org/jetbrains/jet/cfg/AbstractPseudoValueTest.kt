@@ -54,7 +54,10 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
         }
 
         fun valueDescription(element: JetElement?, value: PseudoValue): String {
-            return if (value.element != element) "COPY" else "NEW: ${value.createdAt}"
+            return when {
+                value.element != element -> "COPY"
+                else -> value.createdAt?.let { "NEW: $it" } ?: ""
+            }
         }
 
         val elementToValues = getElementToValueMap(pseudocode)

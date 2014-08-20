@@ -1,10 +1,46 @@
 <root>
   <item
+      name='com.intellij.codeInsight.completion.CompletionParameters com.intellij.codeInsight.completion.CompletionParameters delegateToClassName()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionParameters com.intellij.codeInsight.completion.CompletionParameters withInvocationCount(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionParameters com.intellij.codeInsight.completion.CompletionParameters withType(com.intellij.codeInsight.completion.CompletionType)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionProvider void addCompletionVariants(V, com.intellij.util.ProcessingContext, com.intellij.codeInsight.completion.CompletionResultSet) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionProvider void addCompletions(V, com.intellij.util.ProcessingContext, com.intellij.codeInsight.completion.CompletionResultSet) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionService com.intellij.codeInsight.completion.CompletionService getCompletionService()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.codeInsight.completion.CompletionSorter com.intellij.codeInsight.completion.CompletionSorter weighAfter(java.lang.String, com.intellij.codeInsight.lookup.LookupElementWeigher...)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
       name='com.intellij.codeInsight.completion.CompletionSorter com.intellij.codeInsight.completion.CompletionSorter weighBefore(java.lang.String, com.intellij.codeInsight.lookup.LookupElementWeigher...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionUtil java.lang.String findIdentifierPrefix(com.intellij.psi.PsiElement, int, com.intellij.patterns.ElementPattern&lt;java.lang.Character&gt;, com.intellij.patterns.ElementPattern&lt;java.lang.Character&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionUtil java.lang.String findJavaIdentifierPrefix(com.intellij.codeInsight.completion.CompletionParameters)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionUtil java.lang.String findJavaIdentifierPrefix(com.intellij.psi.PsiElement, int)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
@@ -19,6 +55,10 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.intellij.codeInsight.completion.InsertionContext com.intellij.openapi.project.Project getProject()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.JavaCompletionSorting com.intellij.codeInsight.completion.CompletionResultSet addJavaSorting(com.intellij.codeInsight.completion.CompletionParameters, com.intellij.codeInsight.completion.CompletionResultSet)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.intellij.codeInsight.completion.OffsetKey com.intellij.codeInsight.completion.OffsetKey create(java.lang.String)'>

@@ -4,6 +4,6 @@
 // PARAM_DESCRIPTOR: value-parameter val b: kotlin.Int defined in foo
 fun foo(a: Int, b: Int) = { i(a, b) - 1 }.invoke()
 
-fun i(a: Int, b: Int): Int {
+private fun i(a: Int, b: Int): Int {
     return a + b
 }

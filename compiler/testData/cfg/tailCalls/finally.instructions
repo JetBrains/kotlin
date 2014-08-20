@@ -11,25 +11,26 @@ L0:
   1 <START>
   2 mark({ try { // do nothing } finally { test() } })
     mark(try { // do nothing } finally { test() })
-    jmp?(L2 [onExceptionToFinallyBlock])                  NEXT:[mark({ test() }), mark({ // do nothing })]
+    jmp?(L2 [onExceptionToFinallyBlock])                             NEXT:[mark({ test() }), mark({ // do nothing })]
   3 mark({ // do nothing })
     read (Unit)
-  2 jmp(L3 [skipFinallyToErrorBlock])                     NEXT:[mark({ test() })]
+  2 jmp(L3 [skipFinallyToErrorBlock])                                NEXT:[mark({ test() })]
 L2 [onExceptionToFinallyBlock]:
 L4 [start finally]:
-  3 mark({ test() })                                      PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+  3 mark({ test() })                                                 PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
     mark(test())
     call(test(), test) -> <v0>
 L5 [finish finally]:
-  2 jmp(error)                                            NEXT:[<ERROR>]
+  2 jmp(error)                                                       NEXT:[<ERROR>]
 L3 [skipFinallyToErrorBlock]:
-  3 mark({ test() })                                      PREV:[jmp(L3 [skipFinallyToErrorBlock])]
+  3 mark({ test() })                                                 PREV:[jmp(L3 [skipFinallyToErrorBlock])]
     mark(test())
     call(test(), test) -> <v0>
+  2 merge(try { // do nothing } finally { test() }|!<v1>) -> <v2>
 L1:
-  1 <END>                                                 NEXT:[<SINK>]
+  1 <END>                                                            NEXT:[<SINK>]
 error:
-    <ERROR>                                               PREV:[jmp(error)]
+    <ERROR>                                                          PREV:[jmp(error)]
 sink:
-    <SINK>                                                PREV:[<ERROR>, <END>]
+    <SINK>                                                           PREV:[<ERROR>, <END>]
 =====================

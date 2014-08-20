@@ -17,7 +17,6 @@
 package org.jetbrains.jet.compiler.runner;
 
 import com.intellij.util.Function;
-import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -124,7 +123,7 @@ public class CompilerRunnerUtil {
                              : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
 
         Class<?> kompiler = Class.forName(compilerClassName, true, loader);
-        Method exec = kompiler.getMethod("exec", PrintStream.class,  String[].class);
+        Method exec = kompiler.getMethod("execAndOutputHtml", PrintStream.class, String[].class);
 
         return exec.invoke(kompiler.newInstance(), out, arguments);
     }

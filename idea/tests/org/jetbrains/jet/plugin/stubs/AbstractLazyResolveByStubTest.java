@@ -57,13 +57,13 @@ public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTes
         configureByFile(path);
         configureModule(getModule(), JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
         boolean shouldFail = getTestName(false).equals("ClassWithConstVal");
-        AstAccessControl.instance$.testWithControlledAccessToAst(
+        AstAccessControl.INSTANCE$.testWithControlledAccessToAst(
                 shouldFail, getProject(), getTestRootDisposable(),
                 new Function0<Unit>() {
                     @Override
                     public Unit invoke() {
                         performTest(path, checkPrimaryConstructors, checkPropertyAccessors);
-                        return Unit.VALUE;
+                        return Unit.INSTANCE$;
                     }
                 }
         );
@@ -71,7 +71,7 @@ public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTes
 
     private void performTest(@NotNull String path, boolean checkPrimaryConstructors, boolean checkPropertyAccessors) {
         ResolveSessionForBodies resolveSession =
-                KotlinCacheService.object$.getInstance(getFile().getProject()).getLazyResolveSession((JetFile) getFile());
+                KotlinCacheService.OBJECT$.getInstance(getFile().getProject()).getLazyResolveSession((JetFile) getFile());
         ModuleDescriptor module = resolveSession.getModuleDescriptor();
         PackageViewDescriptor packageViewDescriptor = module.getPackage(new FqName("test"));
         Assert.assertNotNull(packageViewDescriptor);

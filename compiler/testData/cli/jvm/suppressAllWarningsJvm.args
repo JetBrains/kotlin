@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/../warnings.kt
+-nowarn
+-d
+$TEMP_DIR$

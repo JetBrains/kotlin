@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableMap
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import com.intellij.psi.PsiElement
 
-class CompositeBindingContext private (
+public class CompositeBindingContext private (
         private val delegates: List<BindingContext>
 ) : BindingContext {
 

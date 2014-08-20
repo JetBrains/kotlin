@@ -10,13 +10,13 @@ L0:
     mark(throw Exception())
     mark(Exception())
     call(Exception(), <init>) -> <v0>
-    throw (throw Exception()|<v0>)                                      NEXT:[<ERROR>]
--   r(1) -> <v1>                                                        PREV:[]
--   magic[STRING_TEMPLATE]("${throw Exception()} ${1}"|<v1>) -> <v2>    PREV:[]
+    throw (throw Exception()|<v0>)                                             NEXT:[<ERROR>]
+-   r(1) -> <v1>                                                               PREV:[]
+-   magic[STRING_TEMPLATE]("${throw Exception()} ${1}"|!<v2>, <v1>) -> <v3>    PREV:[]
 L1:
-  1 <END>                                                               NEXT:[<SINK>]                                                              PREV:[]
+  1 <END>                                                                      NEXT:[<SINK>]                                                                     PREV:[]
 error:
-    <ERROR>                                                             PREV:[throw (throw Exception()|<v0>)]
+    <ERROR>                                                                    PREV:[throw (throw Exception()|<v0>)]
 sink:
-    <SINK>                                                              PREV:[<ERROR>, <END>]
+    <SINK>                                                                     PREV:[<ERROR>, <END>]
 =====================

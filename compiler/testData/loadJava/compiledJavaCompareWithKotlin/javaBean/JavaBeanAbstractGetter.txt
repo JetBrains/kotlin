@@ -1,6 +1,6 @@
 package test
 
-public trait JavaBeanAbstractGetter : java.lang.Object {
+public trait JavaBeanAbstractGetter {
     public abstract fun getBlue(): kotlin.Int
     public abstract fun getRed(): kotlin.Int
 }

@@ -1,6 +1,6 @@
 package test
 
-public trait LoadIterable</*0*/ T> : java.lang.Object {
+public trait LoadIterable</*0*/ T> {
     public abstract fun getIterable(): kotlin.MutableIterable<T>?
     public abstract fun setIterable(/*0*/ p0: kotlin.Iterable<T>?): kotlin.Unit
 }

@@ -1,3 +1,3 @@
 package test
 
-public open class ConstructorGenericUpperBound(p0: java.util.RandomAccess?) : java.lang.Object()
+public open class ConstructorGenericUpperBound(p0: java.util.RandomAccess?)

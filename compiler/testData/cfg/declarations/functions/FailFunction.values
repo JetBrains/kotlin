@@ -3,6 +3,8 @@ fun fail() : Nothing {
   throw java.lang.RuntimeException()
 }
 ---------------------
-RuntimeException()             <v0>: {<: Throwable}   NEW: call(RuntimeException(), <init>) -> <v0>
-java.lang.RuntimeException()   <v0>: {<: Throwable}   COPY
+RuntimeException()                       <v0>: {<: Throwable}   NEW: call(RuntimeException(), <init>) -> <v0>
+java.lang.RuntimeException()             <v0>: {<: Throwable}   COPY
+throw java.lang.RuntimeException()       !<v1>: *
+{ throw java.lang.RuntimeException() }   !<v1>: *               COPY
 =====================

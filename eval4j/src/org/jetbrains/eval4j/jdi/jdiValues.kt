@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import com.sun.jdi
 
-fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Value> {
+public fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Value> {
     val isStatic = (methodNode.access and ACC_STATIC) != 0
 
     val params = Type.getArgumentTypes(methodNode.desc)
@@ -51,7 +51,7 @@ class JDIFailureException(message: String?, cause: Throwable? = null): RuntimeEx
 
 fun <T: Any> T?.sure(message: String? = null): T = this ?: throw JDIFailureException(message)
 
-fun jdi.Value?.asValue(): Value {
+public fun jdi.Value?.asValue(): Value {
     return when (this) {
         null -> NULL_VALUE
         is jdi.VoidValue -> VOID_VALUE
@@ -76,7 +76,7 @@ val Value.jdiObj: jdi.ObjectReference?
 val Value.jdiClass: jdi.ClassObjectReference?
     get() = this.jdiObj as jdi.ClassObjectReference?
 
-fun Value.asJdiValue(vm: jdi.VirtualMachine, expectedType: Type): jdi.Value? {
+public fun Value.asJdiValue(vm: jdi.VirtualMachine, expectedType: Type): jdi.Value? {
     return when (this) {
         NULL_VALUE -> null
         VOID_VALUE -> vm.mirrorOfVoid()

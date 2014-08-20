@@ -30,8 +30,23 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.refactoring.rename.RenameHandler
+import org.jetbrains.jet.plugin.refactoring.rename.RenameKotlinImplicitLambdaParameter
+import com.intellij.openapi.project.Project
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl
+import com.intellij.codeInsight.template.TemplateManager
+import com.intellij.refactoring.rename.inplace.InplaceRefactoring
+import com.intellij.injected.editor.EditorWindow
+import com.intellij.codeInsight.template.impl.TemplateState
+import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.command.WriteCommandAction
 
-public class InplaceRenameTest : LightCodeInsightTestCase() {
+public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
+    {
+        System.setProperty("idea.platform.prefix", "Idea")
+    }
+
     override fun isRunInWriteAction(): Boolean = false
     override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/refactoring/rename/inplace/"
 
@@ -49,6 +64,59 @@ public class InplaceRenameTest : LightCodeInsightTestCase() {
 
     public fun testFunctionLiteral() {
         doTestInplaceRename("y")
+    }
+
+    public fun testFunctionLiteralIt() {
+        configureByFile(getTestName(false) + ".kt")
+        val newName = "y"
+
+        // This code is copy-pasted from CodeInsightTestUtil.doInlineRename() and slightly modified.
+        // Original method was not suitable because it expects renamed element to be reference to other or referrable
+
+        val file = LightPlatformCodeInsightTestCase.getFile()!!
+        val editor = LightPlatformCodeInsightTestCase.getEditor()!!
+        val element = file.findReferenceAt(editor.getCaretModel().getOffset())!!.getElement()
+        assertNotNull(element)
+
+        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.getName(), element!!,
+                                                             LightPlatformCodeInsightTestCase.getCurrentEditorDataContext())
+        val handler = RenameKotlinImplicitLambdaParameter()
+
+        assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
+
+        val project = editor.getProject()!!
+        val templateManager = TemplateManager.getInstance(project) as TemplateManagerImpl
+        try {
+            templateManager.setTemplateTesting(true)
+
+            object : WriteCommandAction.Simple<Any>(project) {
+                throws(javaClass<Throwable>())
+                override fun run() {
+                    handler.invoke(project, editor, file, dataContext)
+                }
+            }.execute()
+
+            var state = TemplateManagerImpl.getTemplateState(editor)
+            assert(state != null)
+            val range = state!!.getCurrentVariableRange()
+            assert(range != null)
+            object : WriteCommandAction.Simple<Any>(project) {
+                throws(javaClass<Throwable>())
+                override fun run() {
+                    editor.getDocument().replaceString(range!!.getStartOffset(), range!!.getEndOffset(), newName)
+                }
+            }.execute().throwException()
+
+            state = TemplateManagerImpl.getTemplateState(editor)
+            assert(state != null)
+            state!!.gotoEnd(false)
+        }
+        finally {
+            templateManager.setTemplateTesting(false)
+        }
+
+
+        checkResultByFile(getTestName(false) + ".kt.after")
     }
 
     public fun testFunctionLiteralParenthesis() {

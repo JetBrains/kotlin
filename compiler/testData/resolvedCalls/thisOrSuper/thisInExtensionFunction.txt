@@ -1,0 +1,14 @@
+class A {
+    fun foo() {}
+}
+
+fun A.bar() = <caret>this.foo()
+
+
+Resolved call:
+
+Resulting descriptor: AExt{fun A.bar(): Unit}::this
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER

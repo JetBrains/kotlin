@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
+import java.io.File;
 import java.util.List;
 
 public final class NativeInteropTest extends SingleFileTranslationTest {
@@ -36,8 +37,13 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     @Override
     protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
         List<String> result = Lists.newArrayList(super.additionalJSFiles(ecmaVersion));
-        result.add(pathToTestFiles() + NATIVE + "/" + getTestName(true) + ".js");
-        //result.addAll(JsTestUtils.getAllFilesInDir(pathToTestFiles() + NATIVE));
+
+        String jsFilePath = pathToTestFiles() + NATIVE + "/" + getTestName(true) + ".js";
+        File jsFile = new File(jsFilePath);
+        if (jsFile.exists() && jsFile.isFile()) {
+            result.add(jsFilePath);
+        }
+
         return result;
     }
 
@@ -46,6 +52,10 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     }
 
     public void testInheritanceFromNativeClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testInheritanceFromNativeTrait() throws Exception {
         checkFooBoxIsOk();
     }
 
@@ -89,11 +99,35 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testNativeExtensionLikeMember() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testPassExtLambdaToNative() throws Exception {
         checkFooBoxIsOk();
     }
 
+    public void testPassMemberOrExtToNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testPassExtLambdaFromNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testPassMemberOrExtFromNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testPassTopLevelOrLocalFunctionToNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testPassTopLevelFunctionFromNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testNestedElements() throws Exception {
         checkFooBoxIsOk();
     }
 }

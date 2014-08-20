@@ -1,4 +1,4 @@
-ERROR: $TESTDATA_DIR$/multipleTextRangesInDiagnosticsOrder.kt: (6, 14) Cannot weaken access privilege 'public' for 'c' in 'A'
-ERROR: $TESTDATA_DIR$/multipleTextRangesInDiagnosticsOrder.kt: (6, 14) Incompatible modifiers: 'private protected'
-ERROR: $TESTDATA_DIR$/multipleTextRangesInDiagnosticsOrder.kt: (6, 24) Incompatible modifiers: 'private protected'
+ERROR: compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.kt: (6, 14) Cannot weaken access privilege 'public' for 'c' in 'A'
+ERROR: compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.kt: (6, 14) Incompatible modifiers: 'private protected'
+ERROR: compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.kt: (6, 24) Incompatible modifiers: 'private protected'
 COMPILATION_ERROR

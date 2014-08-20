@@ -16,10 +16,8 @@
 
 package org.jetbrains.jet.renderer;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -38,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -114,7 +113,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.debugMode = debugMode;
         this.textFormat = textFormat;
         this.includePropertyConstant = includePropertyConstant;
-        this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
+        this.excludedAnnotationClasses = new HashSet<FqName>(excludedAnnotationClasses);
         this.prettyFunctionTypes = prettyFunctionTypes;
         this.uninferredTypeParameterAsName = uninferredTypeParameterAsName;
         this.includeSynthesizedParameterNames = includeSynthesizedParameterNames;
@@ -247,7 +246,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return klass.getTypeConstructor().toString();
         }
         if (shortNames) {
-            List<Name> qualifiedNameElements = Lists.newArrayList();
+            List<Name> qualifiedNameElements = new ArrayList<Name>();
 
             // for nested classes qualified name should be used
             DeclarationDescriptor current = klass;
@@ -407,15 +406,16 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         StringBuilder sb = new StringBuilder();
         sb.append(renderType(annotation.getType()));
         if (verbose) {
-            sb.append("(").append(StringUtil.join(renderAndSortAnnotationArguments(annotation), ", ")).append(")");
+            sb.append("(").append(UtilsPackage.join(renderAndSortAnnotationArguments(annotation), ", ")).append(")");
         }
         return sb.toString();
     }
 
     @NotNull
     private List<String> renderAndSortAnnotationArguments(@NotNull AnnotationDescriptor descriptor) {
-        List<String> resultList = Lists.newArrayList();
-        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : descriptor.getAllValueArguments().entrySet()) {
+        Set<Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>>> valueArguments = descriptor.getAllValueArguments().entrySet();
+        List<String> resultList = new ArrayList<String>(valueArguments.size());
+        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : valueArguments) {
             CompileTimeConstant<?> value = entry.getValue();
             String typeSuffix = ": " + renderType(value.getType(KotlinBuiltIns.getInstance()));
             resultList.add(entry.getKey().getName().asString() + " = " + renderConstant(value) + typeSuffix);
@@ -435,17 +435,15 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
                     @Override
                     public String visitArrayValue(ArrayValue value, Void data) {
-                        return "{" +
-                               StringUtil.join(
-                                value.getValue(),
-                                new Function<CompileTimeConstant<?>, String>() {
-                                    @Override
-                                    public String fun(CompileTimeConstant<?> constant) {
-                                        return renderConstant(constant);
-                                    }
-                                },
-                                ", ") +
-                               "}";
+                        List<String> renderedElements =
+                                KotlinPackage.map(value.getValue(),
+                                                  new Function1<CompileTimeConstant<?>, String>() {
+                                                      @Override
+                                                      public String invoke(CompileTimeConstant<?> constant) {
+                                                          return renderConstant(constant);
+                                                      }
+                                                  });
+                        return "{" + UtilsPackage.join(renderedElements, ", ") + "}";
                     }
 
                     @Override
@@ -666,7 +664,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderWhereSuffix(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull StringBuilder builder) {
         if (withoutTypeParameters) return;
 
-        List<String> upperBoundStrings = Lists.newArrayList();
+        List<String> upperBoundStrings = new ArrayList<String>(0);
 
         for (TypeParameterDescriptor typeParameter : typeParameters) {
             if (typeParameter.getUpperBounds().size() > 1) {
@@ -682,7 +680,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
         if (!upperBoundStrings.isEmpty()) {
             builder.append(" ").append(renderKeyword("where")).append(" ");
-            builder.append(StringUtil.join(upperBoundStrings, ", "));
+            builder.append(UtilsPackage.join(upperBoundStrings, ", "));
         }
     }
 

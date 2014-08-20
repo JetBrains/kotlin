@@ -63,12 +63,15 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
         final ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
-        lazyModule.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        lazyModule.addDependencyOnModule(lazyModule);
+        lazyModule.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        lazyModule.seal();
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         final ResolveSession resolveSession = new InjectorForLazyResolve(
                 getProject(), globalContext, lazyModule,
                 new FileBasedDeclarationProviderFactory(globalContext.getStorageManager(), files),
                 new BindingTraceContext()).getResolveSession();
+        lazyModule.initialize(resolveSession.getPackageFragmentProvider());
 
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
         psiFile.accept(new JetVisitorVoid() {

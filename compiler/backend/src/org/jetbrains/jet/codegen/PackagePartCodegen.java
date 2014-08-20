@@ -55,6 +55,8 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
                       ArrayUtil.EMPTY_STRING_ARRAY
         );
         v.visitSource(element.getName(), null);
+
+        generatePropertyMetadataArrayFieldIfNeeded(packagePartType);
     }
 
     @Override
@@ -73,11 +75,6 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
                 }
             });
         }
-    }
-
-    @Override
-    protected void generateSyntheticParts() {
-        generatePropertyMetadataArrayFieldIfNeeded(packagePartType);
     }
 
     @Override

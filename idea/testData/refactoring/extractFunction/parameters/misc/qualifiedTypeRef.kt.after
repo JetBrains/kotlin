@@ -11,7 +11,7 @@ class MyClass {
     }
 }
 
-fun unit() {
+private fun unit() {
     val t: MyClass.P.Q = MyClass.P.Q()
     t
 }

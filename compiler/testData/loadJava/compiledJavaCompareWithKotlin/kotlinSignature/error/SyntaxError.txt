@@ -1,6 +1,6 @@
 package test
 
-public open class SyntaxError : java.lang.Object {
+public open class SyntaxError {
     public constructor SyntaxError()
     public open fun foo(): kotlin.Int?
 }

@@ -12,5 +12,5 @@ fun test() : Unit {
   y <warning>as?</warning> Int : Int?
   x <warning>as?</warning> Int? : Int?
   y <warning>as?</warning> Int? : Int?
-  Unit.VALUE
+  Unit
 }

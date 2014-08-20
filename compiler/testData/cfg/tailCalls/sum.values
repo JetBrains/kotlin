@@ -4,19 +4,23 @@ tailRecursive fun sum(x: Long, sum: Long): Long {
     return sum(x - 1, sum + x)
 }
 ---------------------
-                      <v0>: Long                     NEW: magic[FAKE_INITIALIZER](x: Long) -> <v0>           
-                      <v1>: Long                     NEW: magic[FAKE_INITIALIZER](sum: Long) -> <v1>         
-x                     <v2>: OR{{<: Any}, {<: Any}}   NEW: r(x) -> <v2>                                       
-0                     <v3>: {<: Number}              NEW: r(0) -> <v3>                                       
-toLong()              <v4>: *                        NEW: call(toLong(), toLong|<v3>) -> <v4>
-0.toLong()            <v4>: *                        COPY
-x == 0.toLong()       <v5>: Boolean                  NEW: call(x == 0.toLong(), equals|<v2>, <v4>) -> <v5>   
-sum                   <v6>: Long                     NEW: r(sum) -> <v6>                                     
-x                     <v7>: Long                     NEW: r(x) -> <v7>                                       
-1                     <v8>: Int                      NEW: r(1) -> <v8>                                       
-x - 1                 <v9>: Long                     NEW: call(x - 1, minus|<v7>, <v8>) -> <v9>              
-sum                   <v10>: Long                    NEW: r(sum) -> <v10>                                    
-x                     <v11>: Long                    NEW: r(x) -> <v11>                                      
-sum + x               <v12>: Long                    NEW: call(sum + x, plus|<v10>, <v11>) -> <v12>          
-sum(x - 1, sum + x)   <v13>: Long                    NEW: call(sum(x - 1, sum + x), sum|<v9>, <v12>) -> <v13>
+                                                                 <v0>: Long                     NEW: magic[FAKE_INITIALIZER](x: Long) -> <v0>            
+                                                                 <v1>: Long                     NEW: magic[FAKE_INITIALIZER](sum: Long) -> <v1>          
+x                                                                <v2>: OR{{<: Any}, {<: Any}}   NEW: r(x) -> <v2>                                        
+0                                                                <v3>: {<: Number}              NEW: r(0) -> <v3>                                        
+toLong()                                                         <v4>: *                        NEW: call(toLong(), toLong|<v3>) -> <v4>                 
+0.toLong()                                                       <v4>: *                        COPY                                                     
+x == 0.toLong()                                                  <v5>: Boolean                  NEW: call(x == 0.toLong(), equals|<v2>, <v4>) -> <v5>    
+sum                                                              <v6>: Long                     NEW: r(sum) -> <v6>                                      
+return sum                                                       !<v7>: *                                                                                
+if (x == 0.toLong()) return sum                                  <v8>: *                        NEW: merge(if (x == 0.toLong()) return sum|!<v7>) -> <v8>
+x                                                                <v9>: Long                     NEW: r(x) -> <v9>                                        
+1                                                                <v10>: Int                     NEW: r(1) -> <v10>                                       
+x - 1                                                            <v11>: Long                    NEW: call(x - 1, minus|<v9>, <v10>) -> <v11>             
+sum                                                              <v12>: Long                    NEW: r(sum) -> <v12>                                     
+x                                                                <v13>: Long                    NEW: r(x) -> <v13>                                       
+sum + x                                                          <v14>: Long                    NEW: call(sum + x, plus|<v12>, <v13>) -> <v14>           
+sum(x - 1, sum + x)                                              <v15>: Long                    NEW: call(sum(x - 1, sum + x), sum|<v11>, <v14>) -> <v15>
+return sum(x - 1, sum + x)                                       !<v16>: *                                                                               
+{ if (x == 0.toLong()) return sum return sum(x - 1, sum + x) }   !<v16>: *                      COPY                                                     
 =====================

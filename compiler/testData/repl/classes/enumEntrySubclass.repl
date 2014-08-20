@@ -1,0 +1,11 @@
+>>> enum class E {
+...     FIRST {
+...         override fun foo() = "HELLO"
+...     }
+...     SECOND {
+...         override fun foo() = "WORLD"
+...     }
+...     open fun foo() = "E"
+... }
+>>> E.FIRST.foo() + " " + E.SECOND.foo()
+HELLO WORLD

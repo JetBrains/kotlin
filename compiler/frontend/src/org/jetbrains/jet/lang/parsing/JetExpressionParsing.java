@@ -516,6 +516,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     protected boolean parseCallWithClosure() {
         boolean success = false;
         while ((at(LBRACE) || at(LABEL_IDENTIFIER) && lookahead(1) == LBRACE)) {
+            PsiBuilder.Marker argument = mark();
             if (!at(LBRACE)) {
                 assert _at(LABEL_IDENTIFIER);
                 parseLabeledExpression();
@@ -523,6 +524,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             else {
                 parseFunctionLiteral();
             }
+            argument.done(FUNCTION_LITERAL_ARGUMENT);
             success = true;
         }
 

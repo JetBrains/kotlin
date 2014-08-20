@@ -20,7 +20,9 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
@@ -36,7 +38,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
 
-class JetArrayAccessReference extends JetSimpleReference<JetArrayAccessExpression> implements MultiRangeReference {
+public class JetArrayAccessReference extends JetSimpleReference<JetArrayAccessExpression> implements MultiRangeReference {
 
     public JetArrayAccessReference(@NotNull JetArrayAccessExpression expression) {
         super(expression);
@@ -83,5 +85,17 @@ class JetArrayAccessReference extends JetSimpleReference<JetArrayAccessExpressio
         }
 
         return list;
+    }
+
+    @Override
+    public boolean canRename() {
+        return true;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Nullable
+    @Override
+    public PsiElement handleElementRename(@Nullable String newElementName) {
+        return ReferencesPackage.renameImplicitConventionalCall(this, newElementName);
     }
 }

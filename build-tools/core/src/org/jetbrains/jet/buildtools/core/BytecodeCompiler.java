@@ -19,16 +19,20 @@ package org.jetbrains.jet.buildtools.core;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
-import kotlin.modules.Module;
+import com.sampullara.cli.Args;
+import org.apache.tools.ant.BuildException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
-import org.jetbrains.jet.cli.common.CompilerPlugin;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
-import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
-import org.jetbrains.jet.cli.jvm.compiler.*;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -36,58 +40,22 @@ import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.*;
-import static org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil.loadModuleDescriptions;
+import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
+import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 
-
-/**
- * Wrapper class for Kotlin bytecode compiler.
- */
 public class BytecodeCompiler {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
-
-    public BytecodeCompiler() {
-    }
-
-
-    /**
-     * Creates new instance of {@link JetCoreEnvironment} instance using the arguments specified.
-     *
-     * @param stdlib    path to "kotlin-runtime.jar", only used if not null and not empty
-     * @param classpath compilation classpath, only used if not null and not empty
-     * @param sourceRoots
-     * @param enableInline
-     * @param enableOptimization
-     * @return compile environment instance
-     */
-    private JetCoreEnvironment env(
-            String stdlib,
-            String[] classpath,
-            String[] externalAnnotationsPath,
-            String[] sourceRoots,
-            boolean enableInline,
-            boolean enableOptimization
-    ) {
-        CompilerConfiguration configuration = createConfiguration(
-                stdlib, classpath, externalAnnotationsPath, sourceRoots, enableInline, enableOptimization
-        );
-
-        return JetCoreEnvironment.createForProduction(Disposer.newDisposable(), configuration);
-    }
-
-    private CompilerConfiguration createConfiguration(
+    @NotNull
+    private static CompilerConfiguration createConfiguration(
             @Nullable String stdlib,
             @Nullable String[] classpath,
             @Nullable String[] externalAnnotationsPath,
             @NotNull String[] sourceRoots,
-            boolean enableInline,
-            boolean enableOptimization
+            @NotNull List<String> args
     ) {
         KotlinPaths paths = getKotlinPathsForAntTask();
         CompilerConfiguration configuration = new CompilerConfiguration();
@@ -125,21 +93,20 @@ public class BytecodeCompiler {
         }
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
 
-        configuration.put(ENABLE_INLINE, enableInline);
-        configuration.put(ENABLE_OPTIMIZATION, enableOptimization);
+        // TODO: use K2JVMCompiler directly, don't duplicate this code here
+        K2JVMCompilerArguments arguments = new K2JVMCompilerArguments();
+        try {
+            Args.parse(arguments, ArrayUtil.toStringArray(args));
+        }
+        catch (IllegalArgumentException e) {
+            throw new BuildException(e.getMessage());
+        }
 
-        // lets register any compiler plugins
-        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, getCompilerPlugins());
+        K2JVMCompiler.putAdvancedOptions(configuration, arguments);
+
         return configuration;
     }
 
-    /**
-     * Retrieves compilation error message.
-     *
-     * @param source          compilation source
-     * @param exceptionThrown whether compilation failed due to exception thrown
-     * @return compilation error message
-     */
     private static String errorMessage(@NotNull String[] source, boolean exceptionThrown) {
         return String.format("Compilation of the following source roots failed:" + LINE_SEPARATOR +
                              getAbsolutePaths(source) +
@@ -159,116 +126,51 @@ public class BytecodeCompiler {
         );
     }
 
-
     /**
-     * {@code CompileEnvironment#compileBunchOfSources} wrapper.
-     *
-     * @param src       compilation source (directories or files)
-     * @param output    compilation destination directory
-     * @param stdlib    "kotlin-runtime.jar" path
-     * @param classpath compilation classpath, can be <code>null</code> or empty
-     */
-    public void sourcesToDir(@NotNull String[] src,
-            @NotNull String output,
-            @Nullable String stdlib,
-            @Nullable String[] classpath,
-            @Nullable String[] externalAnnotationsPath,
-            boolean enableInline,
-            boolean enableOptimization) {
-        try {
-            JetCoreEnvironment environment = env(stdlib, classpath, externalAnnotationsPath, src, enableInline, enableOptimization);
-
-            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, null, new File(output), true);
-            if (!success) {
-                throw new CompileEnvironmentException(errorMessage(src, false));
-            }
-        }
-        catch (Exception e) {
-            throw new CompileEnvironmentException(errorMessage(src, true), e);
-        }
-    }
-
-
-    /**
-     * {@code CompileEnvironment#compileBunchOfSources} wrapper.
-     *
+     * {@code KotlinToJVMBytecodeCompiler#compileBunchOfSources} wrapper.
      * @param src            compilation source (directory or file)
-     * @param jar            compilation destination jar
+     * @param destination    compilation destination (directory or jar)
      * @param includeRuntime whether Kotlin runtime library is included in destination jar
      * @param stdlib         "kotlin-runtime.jar" path
-     * @param classpath      compilation classpath, can be <code>null</code> or empty
+     * @param args           additional command line arguments to Kotlin compiler
      */
-    public void sourcesToJar(@NotNull String[] src,
-            @NotNull String jar,
+    public static void compileSources(
+            @NotNull String[] src,
+            @NotNull String destination,
             boolean includeRuntime,
             @Nullable String stdlib,
             @Nullable String[] classpath,
             @Nullable String[] externalAnnotationsPath,
-            boolean enableInline,
-            boolean enableOptimization) {
-        try {
-            JetCoreEnvironment environment = env(stdlib, classpath, externalAnnotationsPath, src, enableInline, enableOptimization);
-
-            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, new File(jar), null, includeRuntime);
-            if (!success) {
-                throw new CompileEnvironmentException(errorMessage(src, false));
-            }
-        }
-        catch (Exception e) {
-            throw new CompileEnvironmentException(errorMessage(src, true), e);
-        }
-    }
-
-
-    /**
-     * {@code CompileEnvironment#compileModules} wrapper.
-     *  @param module         compilation module file
-     * @param jar            compilation destination jar
-     * @param includeRuntime whether Kotlin runtime library is included in destination jar
-     * @param stdlib         "kotlin-runtime.jar" path
-     * @param classpath      compilation classpath, can be <code>null</code> or empty
-     * @param enableInline
-     * @param enableOptimization
-     */
-    public void moduleToJar(
-            @NotNull String module,
-            @NotNull String jar,
-            boolean includeRuntime,
-            @Nullable String stdlib,
-            @Nullable String[] classpath,
-            @Nullable String[] externalAnnotationsPath, boolean enableInline, boolean enableOptimization
+            @NotNull List<String> args
     ) {
         try {
-            ModuleScriptData moduleScriptData =
-                    loadModuleDescriptions(getKotlinPathsForAntTask(), module, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
-            List<Module> modules = moduleScriptData.getModules();
-            List<String> sourcesRoots = new ArrayList<String>();
-            for (Module m : modules) {
-                sourcesRoots.addAll(m.getSourceFiles());
-            }
-            CompilerConfiguration configuration = createConfiguration(stdlib, classpath, externalAnnotationsPath, sourcesRoots.toArray(new String[0]),
-                                                                      enableInline, enableOptimization);
-            File directory = new File(module).getParentFile();
-            boolean success = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules, directory, new File(jar), includeRuntime);
+            JetCoreEnvironment environment = JetCoreEnvironment.createForProduction(
+                    Disposer.newDisposable(),
+                    createConfiguration(stdlib, classpath, externalAnnotationsPath, src, args)
+            );
+
+            // TODO: use K2JVMCompiler directly, don't duplicate this code here
+            boolean isJar = destination.endsWith(".jar");
+            File jar = isJar ? new File(destination) : null;
+            File outputDir = isJar ? null : new File(destination);
+
+            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, includeRuntime);
             if (!success) {
-                throw new CompileEnvironmentException(errorMessage(new String[]{module}, false));
+                throw new CompileEnvironmentException(errorMessage(src, false));
             }
+        }
+        catch (BuildException e) {
+            throw e;
+        }
+        catch (CompileEnvironmentException e) {
+            throw e;
         }
         catch (Exception e) {
-            throw new CompileEnvironmentException(errorMessage(new String[]{module}, true), e);
+            throw new CompileEnvironmentException(errorMessage(src, true), e);
         }
-    }
-
-    public List<CompilerPlugin> getCompilerPlugins() {
-        return compilerPlugins;
-    }
-
-    public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
-        this.compilerPlugins = compilerPlugins;
     }
 
     private static KotlinPaths getKotlinPathsForAntTask() {
         return new KotlinPathsFromHomeDir(PathUtil.getJarPathForClass(BytecodeCompiler.class).getParentFile().getParentFile());
     }
-
 }

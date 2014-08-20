@@ -17,44 +17,33 @@
 package org.jetbrains.jet.j2k
 
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
-import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetUnaryExpression
 import org.jetbrains.jet.lang.psi.JetProperty
+import com.intellij.psi.PsiFile
+import org.jetbrains.jet.lang.resolve.BindingContext
 
-class AfterConversionPass(val project: Project) {
+class AfterConversionPass(val project: Project, val postProcessor: PostProcessor) {
     public fun run(kotlinCode: String): String {
         val kotlinFile = JetPsiFactory(project).createFile(kotlinCode)
-        val analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project,
-                listOf(kotlinFile),
-                BindingTraceContext(),
-                { true },
-                ModuleDescriptorImpl(Name.special("<module>"), AnalyzerFacadeForJVM.DEFAULT_IMPORTS, JavaToKotlinClassMap.getInstance()),
-                null,
-                null
-        )
+        val bindingContext = postProcessor.analyzeFile(kotlinFile)
 
-        val problems = analyzeExhaust.getBindingContext().getDiagnostics()
-        val fixes = problems.map {
+        val fixes = bindingContext.getDiagnostics().map {
             val fix = fixForProblem(it)
             if (fix != null) it.getPsiElement() to fix else null
         }.filterNotNull()
-
-        if (fixes.isEmpty()) return kotlinCode
 
         for ((psiElement, fix) in fixes) {
             if (psiElement.isValid()) {
                 fix()
             }
         }
+
+        postProcessor.doAdditionalProcessing(kotlinFile)
+
         return kotlinFile.getText()!!
     }
 

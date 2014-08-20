@@ -101,6 +101,21 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
             doSymbolTest("idea/testData/navigation/gotoSymbol/properties.kt");
         }
         
+        @TestMetadata("stdLibArrayListOf.kt")
+        public void testStdLibArrayListOf() throws Exception {
+            doSymbolTest("idea/testData/navigation/gotoSymbol/stdLibArrayListOf.kt");
+        }
+        
+        @TestMetadata("stdLibArrayListOfNoSources.kt")
+        public void testStdLibArrayListOfNoSources() throws Exception {
+            doSymbolTest("idea/testData/navigation/gotoSymbol/stdLibArrayListOfNoSources.kt");
+        }
+        
+        @TestMetadata("stdLibJoinToString.kt")
+        public void testStdLibJoinToString() throws Exception {
+            doSymbolTest("idea/testData/navigation/gotoSymbol/stdLibJoinToString.kt");
+        }
+        
     }
     
     public static Test suite() {

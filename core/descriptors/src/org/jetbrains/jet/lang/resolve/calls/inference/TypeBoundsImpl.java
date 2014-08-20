@@ -16,28 +16,24 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Condition;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.utils.UtilsPackage;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND;
 
 public class TypeBoundsImpl implements TypeBounds {
     private final TypeParameterDescriptor typeVariable;
     private final Variance varianceOfPosition;
-    private final Set<Bound> bounds = Sets.newLinkedHashSet();
+    private final Set<Bound> bounds = new LinkedHashSet<Bound>();
 
     private Collection<JetType> resultValues;
 
@@ -91,7 +87,7 @@ public class TypeBoundsImpl implements TypeBounds {
             @NotNull BoundKind kind,
             @Nullable Collection<JetType> errorValues
     ) {
-        Set<JetType> result = Sets.newLinkedHashSet();
+        Set<JetType> result = new LinkedHashSet<JetType>();
         for (Bound bound : bounds) {
             if (bound.kind == kind) {
                 if (!ErrorUtils.containsErrorType(bound.type)) {
@@ -113,12 +109,12 @@ public class TypeBoundsImpl implements TypeBounds {
     }
 
     @NotNull
-    public TypeBoundsImpl filter(@NotNull final Condition<ConstraintPosition> condition) {
+    public TypeBoundsImpl filter(@NotNull final Function1<ConstraintPosition, Boolean> condition) {
         TypeBoundsImpl result = new TypeBoundsImpl(typeVariable, varianceOfPosition);
-        result.bounds.addAll(ContainerUtil.filter(bounds, new Condition<Bound>() {
+        result.bounds.addAll(KotlinPackage.filter(bounds, new Function1<Bound, Boolean>() {
             @Override
-            public boolean value(Bound bound) {
-                return condition.value(bound.position);
+            public Boolean invoke(Bound bound) {
+                return condition.invoke(bound.position);
             }
         }));
         return result;
@@ -145,13 +141,13 @@ public class TypeBoundsImpl implements TypeBounds {
 
     @NotNull
     private Collection<JetType> computeValues() {
-        Set<JetType> values = Sets.newLinkedHashSet();
+        Set<JetType> values = new LinkedHashSet<JetType>();
         if (bounds.isEmpty()) {
             return Collections.emptyList();
         }
-        boolean hasStrongBound = ContainerUtil.exists(bounds, new Condition<Bound>() {
+        boolean hasStrongBound = KotlinPackage.any(bounds, new Function1<Bound, Boolean>() {
             @Override
-            public boolean value(Bound bound) {
+            public Boolean invoke(Bound bound) {
                 return bound.position.isStrong();
             }
         });
@@ -176,7 +172,7 @@ public class TypeBoundsImpl implements TypeBounds {
         if (tryPossibleAnswer(superTypeOfLowerBounds)) {
             return Collections.singleton(superTypeOfLowerBounds);
         }
-        ContainerUtil.addIfNotNull(superTypeOfLowerBounds, values);
+        UtilsPackage.addIfNotNull(values, superTypeOfLowerBounds);
 
         //todo
         //fun <T> foo(t: T, consumer: Consumer<T>): T
@@ -186,11 +182,12 @@ public class TypeBoundsImpl implements TypeBounds {
         if (tryPossibleAnswer(superTypeOfNumberLowerBounds)) {
             return Collections.singleton(superTypeOfNumberLowerBounds);
         }
-        ContainerUtil.addIfNotNull(superTypeOfNumberLowerBounds, values);
+        UtilsPackage.addIfNotNull(values, superTypeOfNumberLowerBounds);
 
         if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
             JetType superTypeOfAllLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(
-                    Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
+                    Arrays.asList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds)
+            );
             if (tryPossibleAnswer(superTypeOfAllLowerBounds)) {
                 return Collections.singleton(superTypeOfAllLowerBounds);
             }

@@ -83,7 +83,7 @@ private fun generatorForTopDownAnalyzerBasic() =
         }
 
 private fun generatorForTopDownAnalyzerForJs() =
-        generator("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs") {
+        generator("js/js.frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs") {
             commonForTopDownAnalyzer()
         }
 

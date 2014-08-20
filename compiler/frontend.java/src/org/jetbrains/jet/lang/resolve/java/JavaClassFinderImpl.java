@@ -71,6 +71,13 @@ public class JavaClassFinderImpl implements JavaClassFinder {
                 }
                 return compare;
             }
+
+            //NOTE: expected by class finder to be not null
+            @NotNull
+            @Override
+            public Project getProject() {
+                return project;
+            }
         };
         javaFacade = new JavaPsiFacadeKotlinHacks(project);
     }

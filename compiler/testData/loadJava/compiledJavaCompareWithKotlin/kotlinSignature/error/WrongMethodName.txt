@@ -1,6 +1,6 @@
 package test
 
-public open class WrongMethodName : java.lang.Object {
+public open class WrongMethodName {
     public constructor WrongMethodName()
     public open fun foo(): kotlin.String?
 }

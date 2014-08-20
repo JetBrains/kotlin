@@ -216,6 +216,16 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClassToPackageWithConflicts/moveClassToPackageWithConflicts.test");
     }
     
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveExtensionFunctionToFil/moveExtensionFunctionToFile.test")
+    public void testKotlin_moveTopLevelDeclarations_moveExtensionFunctionToFil_MoveExtensionFunctionToFile() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveExtensionFunctionToFil/moveExtensionFunctionToFile.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveExtensionPropertyToFile/moveExtensionPropertyToFile.test")
+    public void testKotlin_moveTopLevelDeclarations_moveExtensionPropertyToFile_MoveExtensionPropertyToFile() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveExtensionPropertyToFile/moveExtensionPropertyToFile.test");
+    }
+    
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveFunctionToFile/moveFunctionToFile.test")
     public void testKotlin_moveTopLevelDeclarations_moveFunctionToFile_MoveFunctionToFile() throws Exception {
         doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFunctionToFile/moveFunctionToFile.test");

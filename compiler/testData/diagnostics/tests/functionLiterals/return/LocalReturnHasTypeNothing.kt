@@ -1,6 +1,6 @@
 fun test() {
     run1 @f{(): Int ->
-        (return@f 1): Nothing
+        (return@f 1)<!UNREACHABLE_CODE!>: Nothing<!>
     }
 }
 

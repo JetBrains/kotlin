@@ -19,12 +19,11 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.types.JetType;
@@ -38,13 +37,8 @@ import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
-import org.jetbrains.k2js.translate.reference.AccessTranslationUtils;
-import org.jetbrains.k2js.translate.reference.CallExpressionTranslator;
-import org.jetbrains.k2js.translate.reference.QualifiedExpressionTranslator;
-import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
+import org.jetbrains.k2js.translate.reference.*;
+import org.jetbrains.k2js.translate.utils.*;
 import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.List;
@@ -170,6 +164,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
+    public JsNode visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, @NotNull TranslationContext context) {
+        return CallableReferenceTranslator.INSTANCE$.translate(expression, context);
+    }
+
+    @Override
+    @NotNull
     public JsNode visitCallExpression(@NotNull JetCallExpression expression,
             @NotNull TranslationContext context) {
         return CallExpressionTranslator.translate(expression, null, context).source(expression);
@@ -185,7 +185,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsNode thenNode = thenExpression.accept(this, context);
         JsNode elseNode = elseExpression == null ? null : elseExpression.accept(this, context);
 
-        boolean isKotlinStatement = BindingUtils.isStatement(context.bindingContext(), expression);
+        boolean isKotlinStatement = BindingContextUtilPackage.isUsedAsStatement(expression, context.bindingContext());
         boolean canBeJsExpression = thenNode instanceof JsExpression && elseNode instanceof JsExpression;
         if (!isKotlinStatement && canBeJsExpression) {
             return new JsConditional(testExpression, convertToExpression(thenNode), convertToExpression(elseNode)).source(expression);

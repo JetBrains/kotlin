@@ -1,14 +1,14 @@
 package test
 
-public trait TwoSuperclassesMutableAndNot: Object {
+public trait TwoSuperclassesMutableAndNot {
 
-    public trait Super1: Object {
+    public trait Super1 {
         public fun foo(): MutableCollection<String>
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
-    public trait Super2: Object {
+    public trait Super2 {
         public fun foo(): List<String>
 
         public fun dummy() // to avoid loading as SAM interface

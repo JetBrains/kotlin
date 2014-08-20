@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 class A
 
 fun main() {

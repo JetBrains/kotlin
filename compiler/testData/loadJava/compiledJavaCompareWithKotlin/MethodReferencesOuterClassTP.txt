@@ -1,9 +1,9 @@
 package test
 
-public final class MethodReferencesOuterClassTP</*0*/ P> : java.lang.Object {
+public final class MethodReferencesOuterClassTP</*0*/ P> {
     public constructor MethodReferencesOuterClassTP</*0*/ P>()
-    
-    public final inner class Inner : java.lang.Object {
+
+    public final inner class Inner {
         public constructor Inner()
         public final fun </*0*/ Q : P> f(): kotlin.Unit
     }

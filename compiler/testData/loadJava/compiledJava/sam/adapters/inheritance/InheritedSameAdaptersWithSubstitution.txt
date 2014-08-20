@@ -1,22 +1,22 @@
 package test
 
-public trait InheritedSameAdaptersWithSubstitution : java.lang.Object {
-    
+public trait InheritedSameAdaptersWithSubstitution {
+
     public trait Sub : test.InheritedSameAdaptersWithSubstitution.Super1, test.InheritedSameAdaptersWithSubstitution.Super2Substituted {
         public final override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: ((kotlin.String, kotlin.String) -> kotlin.Int)?): kotlin.Unit
         public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: java.util.Comparator<kotlin.String>?): kotlin.Unit
     }
-    
-    public trait Super1 : java.lang.Object {
+
+    public trait Super1 {
         public final /*synthesized*/ fun foo(/*0*/ p0: ((kotlin.String, kotlin.String) -> kotlin.Int)?): kotlin.Unit
         public abstract fun foo(/*0*/ p0: java.util.Comparator<kotlin.String>?): kotlin.Unit
     }
-    
-    public trait Super2</*0*/ T> : java.lang.Object {
+
+    public trait Super2</*0*/ T> {
         public final /*synthesized*/ fun foo(/*0*/ p0: ((T, T) -> kotlin.Int)?): kotlin.Unit
         public abstract fun foo(/*0*/ p0: java.util.Comparator<T>?): kotlin.Unit
     }
-    
+
     public trait Super2Substituted : test.InheritedSameAdaptersWithSubstitution.Super2<kotlin.String> {
         public final override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: ((kotlin.String, kotlin.String) -> kotlin.Int)?): kotlin.Unit
         public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.util.Comparator<kotlin.String>?): kotlin.Unit

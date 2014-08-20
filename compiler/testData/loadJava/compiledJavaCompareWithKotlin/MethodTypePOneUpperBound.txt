@@ -1,6 +1,6 @@
 package test
 
-public open class MethodTypePOneUpperBound : java.lang.Object {
+public open class MethodTypePOneUpperBound {
     public constructor MethodTypePOneUpperBound()
-    public open fun </*0*/ T : java.lang.Cloneable?> bar(): kotlin.Unit
+    public open fun </*0*/ T : kotlin.Cloneable?> bar(): kotlin.Unit
 }

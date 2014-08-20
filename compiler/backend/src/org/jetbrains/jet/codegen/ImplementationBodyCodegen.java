@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import kotlin.Function0;
 import kotlin.Function1;
@@ -43,9 +44,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -75,7 +77,6 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCallWithAssert;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.DelegationToTraitImpl;
@@ -367,7 +368,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
-        if (!explicitKObject) {
+        if (!explicitKObject && !isInterface(descriptor)) {
             Type kObject = asmTypeByFqNameWithoutInnerClasses(JvmAbi.K_OBJECT);
             sw.writeInterface();
             sw.writeClassBegin(kObject);
@@ -517,7 +518,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 mv.visitCode();
 
                 iv.load(0, classAsmType);
-                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray", "(Ljava/util/Collection;)[Ljava/lang/Object;");
+                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray", "(Ljava/util/Collection;)[Ljava/lang/Object;", false);
                 iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
 
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
@@ -534,7 +535,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.load(0, classAsmType);
                 iv.load(1, Type.getObjectType("[Ljava/lang/Object;"));
 
-                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray", "(Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;");
+                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray",
+                                "(Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;", false);
                 iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
 
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
@@ -673,10 +675,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (asmType.getSort() == Type.ARRAY) {
                     Type elementType = correctElementType(asmType);
                     if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
-                        iv.invokestatic("java/util/Arrays", "equals", "([Ljava/lang/Object;[Ljava/lang/Object;)Z");
+                        iv.invokestatic("java/util/Arrays", "equals", "([Ljava/lang/Object;[Ljava/lang/Object;)Z", false);
                     }
                     else {
-                        iv.invokestatic("java/util/Arrays", "equals", "([" + elementType.getDescriptor() + "[" + elementType.getDescriptor() + ")Z");
+                        iv.invokestatic("java/util/Arrays", "equals",
+                                        "([" + elementType.getDescriptor() + "[" + elementType.getDescriptor() + ")Z", false);
                     }
                 }
                 else {
@@ -770,7 +773,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     first = false;
                 }
                 else {
-                    iv.aconst(", " + propertyDescriptor.getName().asString()+"=");
+                    iv.aconst(", " + propertyDescriptor.getName().asString() + "=");
                 }
                 genInvokeAppendMethod(iv, JAVA_STRING_TYPE);
 
@@ -779,12 +782,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (type.getSort() == Type.ARRAY) {
                     Type elementType = correctElementType(type);
                     if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
-                        iv.invokestatic("java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;");
+                        iv.invokestatic("java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;", false);
                         type = JAVA_STRING_TYPE;
                     }
                     else {
                         if (elementType.getSort() != Type.CHAR) {
-                            iv.invokestatic("java/util/Arrays", "toString", "(" + type.getDescriptor() + ")Ljava/lang/String;");
+                            iv.invokestatic("java/util/Arrays", "toString", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
                             type = JAVA_STRING_TYPE;
                         }
                     }
@@ -795,7 +798,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.aconst(")");
             genInvokeAppendMethod(iv, JAVA_STRING_TYPE);
 
-            iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
+            iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
             iv.areturn(JAVA_STRING_TYPE);
 
             FunctionCodegen.endVisit(mv, "toString", myClass);
@@ -812,14 +815,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             else {
                 //noinspection ConstantConditions
                 Method method = typeMapper.mapSignature(propertyDescriptor.getGetter()).getAsmMethod();
-                iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
+                iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor(), false);
                 return method.getReturnType();
             }
         }
 
         @Override
         public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter) {
-            functionCodegen.generateMethod(OtherOrigin(myClass, function), typeMapper.mapSignature(function), function, new FunctionGenerationStrategy() {
+            PsiElement originalElement = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
+            functionCodegen.generateMethod(OtherOrigin(originalElement, function), typeMapper.mapSignature(function), function, new FunctionGenerationStrategy() {
                 @Override
                 public void generateBody(
                         @NotNull MethodVisitor mv,
@@ -831,9 +835,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     Type componentType = signature.getReturnType();
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     if (!componentType.equals(Type.VOID_TYPE)) {
-                        iv.load(0, classAsmType);
-                        String desc = "()" + componentType.getDescriptor();
-                        iv.invokevirtual(classAsmType.getInternalName(), PropertyCodegen.getterName(parameter.getName()), desc);
+                        PropertyDescriptor property =
+                                bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, descriptorToDeclaration(parameter));
+                        genPropertyOnStack(iv, context, property, 0);
                     }
                     iv.areturn(componentType);
                 }
@@ -884,7 +888,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
 
                     Method constructorAsmMethod = typeMapper.mapSignature(constructor).getAsmMethod();
-                    iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorAsmMethod.getDescriptor());
+                    iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorAsmMethod.getDescriptor(), false);
 
                     iv.areturn(thisDescriptorType);
                 }
@@ -1235,7 +1239,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean generateInitializerInOuter = isClassObjectWithBackingFieldsInOuter(descriptor);
         if (generateInitializerInOuter) {
             final ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
-            //generate object$
+            //generate OBJECT$
             parentCodegen.genInitSingleton(descriptor, StackValue.singleton(descriptor, typeMapper));
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
@@ -1260,10 +1264,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (descriptor.getKind() == ClassKind.ENUM_CLASS || descriptor.getKind() == ClassKind.ENUM_ENTRY) {
             iv.load(1, JAVA_STRING_TYPE);
             iv.load(2, Type.INT_TYPE);
-            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "(Ljava/lang/String;I)V");
+            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "(Ljava/lang/String;I)V", false);
         }
         else {
-            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V");
+            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V", false);
         }
     }
 
@@ -1308,14 +1312,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
             if (specifier instanceof JetDelegatorByExpressionSpecifier) {
                 JetExpression expression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
-                PropertyDescriptor propertyDescriptor = getDelegatePropertyIfAny(expression);
+                PropertyDescriptor propertyDescriptor = CodegenUtil.getDelegatePropertyIfAny(expression, descriptor, bindingContext);
 
                 ClassDescriptor superClassDescriptor = getSuperClass(specifier);
 
-                if (propertyDescriptor != null &&
-                    !propertyDescriptor.isVar() &&
-                    Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
-                    // final property with backing field
+                if (CodegenUtil.isFinalPropertyWithBackingField(propertyDescriptor, bindingContext)) {
                     result.addField((JetDelegatorByExpressionSpecifier) specifier, propertyDescriptor);
                 }
                 else {
@@ -1329,12 +1330,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @NotNull
     private ClassDescriptor getSuperClass(@NotNull JetDelegationSpecifier specifier) {
-        JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
-        assert superType != null;
-
-        ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-        assert superClassDescriptor != null;
-        return superClassDescriptor;
+        return CodegenUtil.getSuperClassByDelegationSpecifier(specifier, bindingContext);
     }
 
     private void genCallToDelegatorByExpressionSpecifier(
@@ -1356,26 +1352,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Nullable
     private PropertyDescriptor getDelegatePropertyIfAny(JetExpression expression) {
-        PropertyDescriptor propertyDescriptor = null;
-        if (expression instanceof JetSimpleNameExpression) {
-            ResolvedCall<?> call = BindingContextUtilPackage.getResolvedCall(expression, bindingContext);
-            if (call != null) {
-                CallableDescriptor callResultingDescriptor = call.getResultingDescriptor();
-                if (callResultingDescriptor instanceof ValueParameterDescriptor) {
-                    ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) callResultingDescriptor;
-                    // constructor parameter
-                    if (valueParameterDescriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
-                        // constructor of my class
-                        if (valueParameterDescriptor.getContainingDeclaration().getContainingDeclaration() == descriptor) {
-                            propertyDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameterDescriptor);
-                        }
-                    }
-                }
-
-                // todo: when and if frontend will allow properties defined not as constructor parameters to be used in delegation specifier
-            }
-        }
-        return propertyDescriptor;
+    	return CodegenUtil.getDelegatePropertyIfAny(expression, descriptor, bindingContext);
     }
 
     private void lookupConstructorExpressionsInClosureIfPresent(final ConstructorContext constructorContext) {
@@ -1505,7 +1482,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                         DeclarationDescriptor containingDeclaration = traitFun.getContainingDeclaration();
                         if (!DescriptorUtils.isTrait(containingDeclaration)) return;
-                        Type traitImplType = typeMapper.mapTraitImpl((ClassDescriptor) containingDeclaration);
+                        ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
+                        Type traitImplType = typeMapper.mapTraitImpl(containingTrait);
 
                         Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal(), OwnerKind.TRAIT_IMPL).getAsmMethod();
 
@@ -1522,7 +1500,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             reg += argTypes[i].getSize();
                         }
 
-                        iv.invokestatic(traitImplType.getInternalName(), traitMethod.getName(), traitMethod.getDescriptor());
+                        if (KotlinBuiltIns.getInstance().isCloneable(containingTrait) && traitMethod.getName().equals("clone")) {
+                            // A special hack for Cloneable: there's no kotlin/Cloneable$$TImpl class at runtime,
+                            // and its 'clone' method is actually located in java/lang/Object
+                            iv.invokespecial("java/lang/Object", "clone", "()Ljava/lang/Object;", false);
+                        }
+                        else {
+                            iv.invokestatic(traitImplType.getInternalName(), traitMethod.getName(), traitMethod.getDescriptor(), false);
+                        }
 
                         Type returnType = signature.getReturnType();
                         StackValue.onStack(traitMethod.getReturnType()).put(returnType, iv);
@@ -1539,7 +1524,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         iv.load(0, OBJECT_TYPE);
 
-        ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(superCall, bindingContext);
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(superCall, bindingContext);
         ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
 
         CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
@@ -1691,14 +1676,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
             }
 
-            ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(specifier, bindingContext);
+            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(specifier, bindingContext);
 
             CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor());
 
             codegen.invokeMethodWithArguments(method, resolvedCall, StackValue.none());
         }
         else {
-            iv.invokespecial(implClass.getInternalName(), "<init>", "(Ljava/lang/String;I)V");
+            iv.invokespecial(implClass.getInternalName(), "<init>", "(Ljava/lang/String;I)V", false);
         }
 
         iv.dup();
@@ -1724,24 +1709,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generateDelegates(ClassDescriptor toClass, DelegationFieldsInfo.Field field) {
-        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-            if (declaration instanceof CallableMemberDescriptor) {
-                CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
-                if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
-                    Set<? extends CallableMemberDescriptor> overriddenDescriptors = callableMemberDescriptor.getOverriddenDescriptors();
-                    for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
-                        if (overriddenDescriptor.getContainingDeclaration() == toClass) {
-                            if (declaration instanceof PropertyDescriptor) {
-                                propertyCodegen
-                                        .genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field.getStackValue());
-                            }
-                            else if (declaration instanceof FunctionDescriptor) {
-                                functionCodegen
-                                        .genDelegate((FunctionDescriptor) declaration, (FunctionDescriptor) overriddenDescriptor, field.getStackValue());
-                            }
-                        }
-                    }
-                }
+        for (Map.Entry<CallableMemberDescriptor, CallableMemberDescriptor> entry : CodegenUtil.getDelegates(descriptor, toClass).entrySet()) {
+            CallableMemberDescriptor callableMemberDescriptor = entry.getKey();
+            CallableMemberDescriptor overriddenDescriptor = entry.getValue();
+            if (callableMemberDescriptor instanceof PropertyDescriptor) {
+                propertyCodegen
+                        .genDelegate((PropertyDescriptor) callableMemberDescriptor, (PropertyDescriptor) overriddenDescriptor, field.getStackValue());
+            }
+            else if (callableMemberDescriptor instanceof FunctionDescriptor) {
+                functionCodegen
+                        .genDelegate((FunctionDescriptor) callableMemberDescriptor, (FunctionDescriptor) overriddenDescriptor, field.getStackValue());
             }
         }
     }

@@ -17,11 +17,13 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
@@ -54,5 +56,15 @@ public class JetMultiDeclaration extends JetDeclarationImpl {
     @Nullable
     public ASTNode getValOrVarNode() {
         return getNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
+    }
+
+    @Nullable
+    public PsiElement getRPar() {
+        return findChildByType(JetTokens.RPAR);
+    }
+
+    @Nullable
+    public PsiElement getLPar() {
+        return findChildByType(JetTokens.LPAR);
     }
 }

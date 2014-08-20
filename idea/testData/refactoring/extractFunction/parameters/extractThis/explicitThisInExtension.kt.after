@@ -7,6 +7,6 @@ fun Z.foo(): Int {
     return i() + 1
 }
 
-fun Z.i(): Int {
+private fun Z.i(): Int {
     return this.a
 }

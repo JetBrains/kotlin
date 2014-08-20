@@ -61,8 +61,7 @@ public class RecursiveDescriptorComparator {
                                                                         Predicates.<FqName>alwaysTrue(),
                                                                         FORBID_ERROR_TYPES, DEFAULT_RENDERER);
 
-    private static final ImmutableSet<String> JAVA_OBJECT_METHOD_NAMES = ImmutableSet.of(
-            "equals", "hashCode", "finalize", "wait", "notify", "notifyAll", "toString", "clone", "getClass");
+    private static final ImmutableSet<String> KOTLIN_ANY_METHOD_NAMES = ImmutableSet.of("equals", "hashCode", "toString");
 
     private final Configuration conf;
 
@@ -142,8 +141,8 @@ public class RecursiveDescriptorComparator {
     private boolean shouldSkip(@NotNull DeclarationDescriptor subDescriptor) {
         return subDescriptor.getContainingDeclaration() instanceof ClassDescriptor
                 && subDescriptor instanceof FunctionDescriptor
-                && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().asString())
-                && !conf.includeMethodsOfJavaObject
+                && KOTLIN_ANY_METHOD_NAMES.contains(subDescriptor.getName().asString())
+                && !conf.includeMethodsOfKotlinAny
             ||
                 subDescriptor instanceof PackageViewDescriptor
                 && !conf.recurseIntoPackage.apply(((PackageViewDescriptor) subDescriptor).getFqName());
@@ -232,7 +231,7 @@ public class RecursiveDescriptorComparator {
     public static class Configuration {
         private final boolean checkPrimaryConstructors;
         private final boolean checkPropertyAccessors;
-        private final boolean includeMethodsOfJavaObject;
+        private final boolean includeMethodsOfKotlinAny;
         private final Predicate<FqName> recurseIntoPackage;
         private final DescriptorRenderer renderer;
 
@@ -241,46 +240,46 @@ public class RecursiveDescriptorComparator {
         public Configuration(
                 boolean checkPrimaryConstructors,
                 boolean checkPropertyAccessors,
-                boolean includeMethodsOfJavaObject,
+                boolean includeMethodsOfKotlinAny,
                 Predicate<FqName> recurseIntoPackage,
                 DescriptorValidator.ValidationVisitor validationStrategy,
                 DescriptorRenderer renderer
         ) {
             this.checkPrimaryConstructors = checkPrimaryConstructors;
             this.checkPropertyAccessors = checkPropertyAccessors;
-            this.includeMethodsOfJavaObject = includeMethodsOfJavaObject;
+            this.includeMethodsOfKotlinAny = includeMethodsOfKotlinAny;
             this.recurseIntoPackage = recurseIntoPackage;
             this.validationStrategy = validationStrategy;
             this.renderer = renderer;
         }
 
         public Configuration filterRecursion(@NotNull Predicate<FqName> recurseIntoPackage) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
                                      validationStrategy, renderer);
         }
 
         public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
                                      validationStrategy, renderer);
         }
 
         public Configuration checkPropertyAccessors(boolean checkPropertyAccessors) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
                                      validationStrategy, renderer);
         }
 
-        public Configuration includeMethodsOfObject(boolean includeMethodsOfJavaObject) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+        public Configuration includeMethodsOfKotlinAny(boolean includeMethodsOfKotlinAny) {
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
                                      validationStrategy, renderer);
         }
 
         public Configuration withValidationStrategy(@NotNull DescriptorValidator.ValidationVisitor validationStrategy) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
                                      validationStrategy, renderer);
         }
 
         public Configuration withRenderer(@NotNull DescriptorRenderer renderer) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
                                      validationStrategy, renderer);
         }
     }

@@ -1,6 +1,0 @@
->>> fun clock() =
-incomplete
->>>     12
-null
->>> clock()
-12

@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfos
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.plugin.refactoring.runWriteAction
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: JetType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)
@@ -54,7 +55,7 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
 
     context.setLaterRunnable {
         commandProcessor.executeCommand(context.getProject(), {
-            ApplicationManager.getApplication()!!.runWriteAction(Computable<Unit> {
+            runWriteAction {
                 try {
                     if (rangeMarker.isValid()) {
                         context.getDocument().deleteString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
@@ -66,7 +67,7 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
                 finally {
                     rangeMarker.dispose()
                 }
-            })
+            }
         }, commandName, commandGroupId)
     }
 }

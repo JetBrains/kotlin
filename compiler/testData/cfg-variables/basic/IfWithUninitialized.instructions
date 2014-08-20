@@ -10,31 +10,32 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                                             INIT: in: {} out: {}           USE: in: {} out: {}
+  1 <START>                                                               INIT: in: {} out: {}           USE: in: {} out: {}
   2 mark({ val b: Boolean if (1 < 2) { use(b) } else { b = true } })
-    v(val b: Boolean)                                                   INIT: in: {} out: {b=D}
-    mark(if (1 < 2) { use(b) } else { b = true })                       INIT: in: {b=D} out: {b=D}
+    v(val b: Boolean)                                                     INIT: in: {} out: {b=D}
+    mark(if (1 < 2) { use(b) } else { b = true })                         INIT: in: {b=D} out: {b=D}
     r(1) -> <v0>
     r(2) -> <v1>
     mark(1 < 2)
     call(1 < 2, compareTo|<v0>, <v1>) -> <v2>
     jf(L2|<v2>)
-  3 mark({ use(b) })                                                                                   USE: in: {b=READ} out: {b=READ}
-    r(b) -> <v3>                                                                                       USE: in: {} out: {b=READ}
+  3 mark({ use(b) })                                                                                     USE: in: {b=READ} out: {b=READ}
+    r(b) -> <v3>                                                                                         USE: in: {} out: {b=READ}
     mark(use(b))
     call(use(b), use|<v3>) -> <v4>
-  2 jmp(L3)                                                                                            USE: in: {} out: {}
+  2 jmp(L3)                                                                                              USE: in: {} out: {}
 L2:
   3 mark({ b = true })
-    r(true) -> <v5>                                                                                    USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
-    w(b|<v5>)                                                           INIT: in: {b=D} out: {b=ID}    USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
-L1:
+    r(true) -> <v5>                                                                                      USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
+    w(b|<v5>)                                                             INIT: in: {b=D} out: {b=ID}    USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
 L3:
-  1 <END>                                                               INIT: in: {} out: {}
+  2 merge(if (1 < 2) { use(b) } else { b = true }|<v4>, !<v6>) -> <v7>    INIT: in: {b=D} out: {b=D}
+L1:
+  1 <END>                                                                 INIT: in: {} out: {}
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                             USE: in: {} out: {}
+    <SINK>                                                                                               USE: in: {} out: {}
 =====================
 == use ==
 fun use(vararg a: Any?) = a

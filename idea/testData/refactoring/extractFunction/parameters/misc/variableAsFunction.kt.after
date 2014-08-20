@@ -9,6 +9,6 @@ fun testProp() {
     unit(foo)
 }
 
-fun unit(foo: A) {
+private fun unit(foo: A) {
     foo()
 }

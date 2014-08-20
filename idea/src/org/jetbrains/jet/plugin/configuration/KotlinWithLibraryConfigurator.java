@@ -35,12 +35,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 import java.io.File;
 
 import static org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils.showInfoNotification;
 
 public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConfigurator {
+    public static final String DEFAULT_LIBRARY_DIR = "lib";
 
     @NotNull
     protected abstract String getLibraryName();
@@ -285,7 +287,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
     @NotNull
     private static DependencyScope getDependencyScope(@NotNull Module module) {
-        if (ConfigureKotlinInProjectUtils.hasKotlinFilesOnlyInTests(module)) {
+        if (ProjectStructureUtil.hasKotlinFilesOnlyInTests(module)) {
             return DependencyScope.TEST;
         }
         return DependencyScope.COMPILE;
@@ -376,8 +378,8 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return !isProjectLibraryPresent(project) && !getFileInDir(getJarName(), defaultPath).exists();
     }
 
-    protected static String getDefaultPathToJarFile(@NotNull Project project) {
-        return FileUIUtils.createRelativePath(project, project.getBaseDir(), "lib");
+    protected String getDefaultPathToJarFile(@NotNull Project project) {
+        return FileUIUtils.createRelativePath(project, project.getBaseDir(), DEFAULT_LIBRARY_DIR);
     }
 
     protected void showError(@NotNull String message) {

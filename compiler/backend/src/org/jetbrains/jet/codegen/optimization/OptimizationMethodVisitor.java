@@ -23,6 +23,7 @@ import org.jetbrains.jet.codegen.optimization.boxing.RedundantBoxingMethodTransf
 import org.jetbrains.jet.codegen.optimization.boxing.RedundantNullCheckMethodTransformer;
 import org.jetbrains.jet.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.util.Textifier;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OptimizationMethodVisitor extends MethodVisitor {
+    private static final int MAX_INSTRUCTIONS_SIZE_TO_OPTIMIZE = 5000;
     private static final MethodTransformer MAIN_METHOD_TRANSFORMER = new RedundantNullCheckMethodTransformer(
             new RedundantBoxingMethodTransformer(null)
     );
@@ -47,7 +49,7 @@ public class OptimizationMethodVisitor extends MethodVisitor {
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
-        super(OptimizationUtils.API);
+        super(Opcodes.ASM5);
         this.delegate = delegate;
         this.methodNode = new MethodNode(access, name, desc, signature, exceptions);
         this.methodNode.localVariables = new ArrayList<LocalVariableNode>(5);
@@ -63,11 +65,12 @@ public class OptimizationMethodVisitor extends MethodVisitor {
 
         super.visitEnd();
 
-        if (methodNode.instructions.size() > 0) {
+        if (methodNode.instructions.size() > 0 &&
+            methodNode.instructions.size() <= MAX_INSTRUCTIONS_SIZE_TO_OPTIMIZE) {
             MAIN_METHOD_TRANSFORMER.transform("fake", methodNode);
         }
 
-        methodNode.accept(new EndIgnoringMethodVisitorDecorator(OptimizationUtils.API, delegate));
+        methodNode.accept(new EndIgnoringMethodVisitorDecorator(Opcodes.ASM5, delegate));
 
 
         // In case of empty instructions list MethodNode.accept doesn't call visitLocalVariables of delegate

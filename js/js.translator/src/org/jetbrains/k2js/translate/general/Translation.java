@@ -20,10 +20,12 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.k2js.config.Config;
@@ -40,8 +42,10 @@ import org.jetbrains.k2js.translate.declaration.PackageDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
+import org.jetbrains.k2js.translate.test.JSRhinoUnitTester;
 import org.jetbrains.k2js.translate.test.JSTestGenerator;
 import org.jetbrains.k2js.translate.test.JSTester;
+import org.jetbrains.k2js.translate.test.QUnitTester;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousData;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
@@ -108,10 +112,11 @@ public final class Translation {
     @NotNull
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
             @NotNull Collection<JetFile> files, @NotNull MainCallParameters mainCallParameters,
+            @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config)
             throws TranslationException {
         try {
-            return doGenerateAst(bindingContext, files, mainCallParameters, config);
+            return doGenerateAst(bindingContext, files, mainCallParameters, moduleDescriptor, config);
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -124,8 +129,9 @@ public final class Translation {
     @NotNull
     private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files,
             @NotNull MainCallParameters mainCallParameters,
+            @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config) throws MainFunctionNotFoundException {
-        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config.getTarget());
+        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config.getTarget(), moduleDescriptor);
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
 
@@ -158,12 +164,10 @@ public final class Translation {
 
     private static void mayBeGenerateTests(@NotNull Collection<JetFile> files, @NotNull Config config,
             @NotNull JsBlock rootBlock, @NotNull TranslationContext context) {
-        JSTester tester = config.getTester();
-        if (tester != null) {
-            tester.initialize(context, rootBlock);
-            JSTestGenerator.generateTestCalls(context, files, tester);
-            tester.deinitialize();
-        }
+        JSTester tester = config.isTestConfig() ? new JSRhinoUnitTester() : new QUnitTester();
+        tester.initialize(context, rootBlock);
+        JSTestGenerator.generateTestCalls(context, files, tester);
+        tester.deinitialize();
     }
 
     //TODO: determine whether should throw exception
@@ -177,6 +181,6 @@ public final class Translation {
         }
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(context.bindingContext(), mainFunction);
         JsArrayLiteral argument = new JsArrayLiteral(toStringLiteralList(arguments, context.program()));
-        return CallTranslator.instance$.buildCall(context, functionDescriptor, Collections.singletonList(argument), null).makeStmt();
+        return CallTranslator.INSTANCE$.buildCall(context, functionDescriptor, Collections.singletonList(argument), null).makeStmt();
     }
 }

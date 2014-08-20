@@ -1,8 +1,8 @@
 package test
 
-public trait AddNullabilitySameGenericType1: Object {
+public trait AddNullabilitySameGenericType1 {
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(): MutableList<String>
 
         public fun dummy() // to avoid loading as SAM interface

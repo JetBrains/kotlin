@@ -29,7 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitState;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState;
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodePackage;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeUtil;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor;
@@ -49,6 +51,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -67,8 +70,8 @@ import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORW
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TAIL_RECURSION_CALL;
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCall;
 import static org.jetbrains.jet.lang.resolve.calls.TailRecursionKind.*;
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
@@ -120,7 +123,11 @@ public class JetFlowInformationProvider {
 
         markUnusedVariables();
 
-        markUnusedLiteralsInBlock();
+        markStatements();
+
+        markUnusedExpressions();
+
+        markWhenWithoutElse();
     }
 
     public void checkFunction(@Nullable JetType expectedReturnType) {
@@ -661,34 +668,68 @@ public class JetFlowInformationProvider {
     }
 
 ////////////////////////////////////////////////////////////////////////////////
-//  "Unused literals" in block
+//  "Unused expressions" in block
 
-    public void markUnusedLiteralsInBlock() {
+    public void markUnusedExpressions() {
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
         PseudocodeTraverserPackage.traverse(
-                pseudocode, FORWARD, new FunctionVoid1<Instruction>() {
+                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
-                        if (!(instruction instanceof ReadValueInstruction || instruction instanceof MagicInstruction)) return;
+                        if (!(instruction instanceof JetElementInstruction)) return;
 
-                        JetElement element = ((JetElementInstruction) instruction).getElement();
-                        if (!(element instanceof JetFunctionLiteralExpression
-                              || element instanceof JetConstantExpression
-                              || element instanceof JetStringTemplateExpression
-                              || element instanceof JetSimpleNameExpression)) return;
+                        JetElement element = ((JetElementInstruction)instruction).getElement();
+                        if (!(element instanceof JetExpression)) return;
 
-                        if (!(element instanceof JetStringTemplateExpression || instruction instanceof ReadValueInstruction)) return;
+                        if (BindingContextUtilPackage.isUsedAsStatement((JetExpression) element, trace.getBindingContext())
+                                && PseudocodePackage.getSideEffectFree(instruction)) {
+                            VariableContext ctxt = new VariableContext(instruction, reportedDiagnosticMap);
+                            report(
+                                    element instanceof JetFunctionLiteralExpression
+                                        ? Errors.UNUSED_FUNCTION_LITERAL.on((JetFunctionLiteralExpression) element)
+                                        : Errors.UNUSED_EXPRESSION.on(element),
+                                    ctxt
+                            );
+                        }
+                    }
+                }
+        );
+    }
 
-                        VariableContext ctxt = new VariableContext(instruction, reportedDiagnosticMap);
+////////////////////////////////////////////////////////////////////////////////
+// Statements
 
-                        PsiElement parent = element.getParent();
-                        if (parent instanceof JetBlockExpression) {
-                            if (!JetPsiUtil.isImplicitlyUsed(element)) {
-                                if (element instanceof JetFunctionLiteralExpression) {
-                                    report(Errors.UNUSED_FUNCTION_LITERAL.on((JetFunctionLiteralExpression) element), ctxt);
-                                }
-                                else {
-                                    report(Errors.UNUSED_EXPRESSION.on(element), ctxt);
+    public void markStatements() {
+        PseudocodeTraverserPackage.traverse(
+                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
+                    @Override
+                    public void execute(@NotNull Instruction instruction) {
+                        PseudoValue value = instruction instanceof InstructionWithValue
+                                            ? ((InstructionWithValue) instruction).getOutputValue()
+                                            : null;
+                        Pseudocode pseudocode = instruction.getOwner();
+                        boolean isUsedAsExpression = !pseudocode.getUsages(value).isEmpty();
+                        for (JetElement element : pseudocode.getValueElements(value)) {
+                            trace.record(BindingContext.USED_AS_EXPRESSION, element, isUsedAsExpression);
+                        }
+                    }
+                }
+        );
+    }
+
+    public void markWhenWithoutElse() {
+        PseudocodeTraverserPackage.traverse(
+                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
+                    @Override
+                    public void execute(@NotNull Instruction instruction) {
+                        PseudoValue value = instruction instanceof InstructionWithValue
+                                            ? ((InstructionWithValue) instruction).getOutputValue()
+                                            : null;
+                        for (JetElement element : instruction.getOwner().getValueElements(value)) {
+                            if (element instanceof JetWhenExpression) {
+                                JetWhenExpression whenExpression = (JetWhenExpression) element;
+                                if (whenExpression.getElseExpression() == null && WhenChecker.mustHaveElse(whenExpression, trace)) {
+                                    trace.report(NO_ELSE_IN_WHEN.on(whenExpression));
                                 }
                             }
                         }
@@ -957,7 +998,7 @@ public class JetFlowInformationProvider {
         @Override
         public Unit invoke(Instruction instruction, D enterData, D exitData) {
             execute(instruction, enterData, exitData);
-            return Unit.VALUE;
+            return Unit.INSTANCE$;
         }
 
         public abstract void execute(Instruction instruction, D enterData, D exitData);
@@ -967,7 +1008,7 @@ public class JetFlowInformationProvider {
         @Override
         public Unit invoke(P p) {
             execute(p);
-            return Unit.VALUE;
+            return Unit.INSTANCE$;
         }
 
         public abstract void execute(P p);

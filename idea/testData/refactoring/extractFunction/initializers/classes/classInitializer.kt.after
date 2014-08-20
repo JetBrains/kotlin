@@ -5,7 +5,7 @@ class A(val a: Int, b: Int) {
         println(i(b) - 1)
     }
 
-    fun i(b: Int): Int {
+    private fun i(b: Int): Int {
         return a + b
     }
 }

@@ -3616,6 +3616,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest("idea/testData/intentions/moveLambdaInsideParentheses/inapplicable2.kt");
         }
         
+        @TestMetadata("moveLabeledLambda1.kt")
+        public void testMoveLabeledLambda1() throws Exception {
+            doTest("idea/testData/intentions/moveLambdaInsideParentheses/moveLabeledLambda1.kt");
+        }
+        
+        @TestMetadata("moveLabeledLambda2.kt")
+        public void testMoveLabeledLambda2() throws Exception {
+            doTest("idea/testData/intentions/moveLambdaInsideParentheses/moveLabeledLambda2.kt");
+        }
+        
         @TestMetadata("moveLambda1.kt")
         public void testMoveLambda1() throws Exception {
             doTest("idea/testData/intentions/moveLambdaInsideParentheses/moveLambda1.kt");

@@ -4,6 +4,6 @@ fun foo(a: Int): Int {
     return if (a + b > 0) i() else if (a - b < 0) 2 else b
 }
 
-fun i(): Int {
+private fun i(): Int {
     return 1
 }

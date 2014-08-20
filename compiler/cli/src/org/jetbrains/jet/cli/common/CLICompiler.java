@@ -22,6 +22,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
@@ -33,7 +34,6 @@ import java.util.List;
 import static org.jetbrains.jet.cli.common.ExitCode.*;
 
 public abstract class CLICompiler<A extends CommonCompilerArguments> {
-
     @NotNull
     private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
 
@@ -48,42 +48,41 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
-        A arguments = createArguments();
-        if (!parseArguments(errStream, arguments, args)) {
-            return INTERNAL_ERROR;
-        }
-        return exec(errStream, arguments);
+        return exec(errStream, MessageRenderer.PLAIN_WITH_RELATIVE_PATH, args);
     }
 
-    /**
-     * Returns true if the arguments can be parsed correctly
-     */
-    protected boolean parseArguments(@NotNull PrintStream errStream, @NotNull A arguments, @NotNull String[] args) {
+    @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
+    @NotNull
+    public ExitCode execAndOutputHtml(@NotNull PrintStream errStream, @NotNull String... args) {
+        return exec(errStream, MessageRenderer.TAGS, args);
+    }
+
+    @Nullable
+    private A parseArguments(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull String[] args) {
         try {
+            A arguments = createArguments();
             arguments.freeArgs = Args.parse(arguments, args);
-            checkArguments(arguments);
-            return true;
+            return arguments;
         }
         catch (IllegalArgumentException e) {
             errStream.println(e.getMessage());
-            usage(errStream);
+            usage(errStream, false);
         }
         catch (Throwable t) {
-            // Always use tags
-            errStream.println(MessageRenderer.TAGS.renderException(t));
+            errStream.println(messageRenderer.render(
+                    CompilerMessageSeverity.EXCEPTION,
+                    OutputMessageUtil.renderException(t),
+                    CompilerMessageLocation.NO_LOCATION)
+            );
         }
-        return false;
-    }
-
-    protected void checkArguments(@NotNull A argument) {
-
+        return null;
     }
 
     /**
      * Allow derived classes to add additional command line arguments
      */
-    protected void usage(@NotNull PrintStream target) {
-        Usage.print(target, createArguments());
+    protected void usage(@NotNull PrintStream target, boolean extraHelp) {
+        Usage.print(target, createArguments(), extraHelp);
     }
 
     /**
@@ -97,24 +96,25 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     @NotNull
     protected abstract A createArguments();
 
-    /**
-     * Executes the compiler on the parsed arguments
-     */
     @NotNull
-    public ExitCode exec(@NotNull PrintStream errStream, @NotNull A arguments) {
-        if (arguments.help) {
-            usage(errStream);
+    private ExitCode exec(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull String[] args) {
+        A arguments = parseArguments(errStream, messageRenderer, args);
+        if (arguments == null) {
+            return INTERNAL_ERROR;
+        }
+
+        if (arguments.help || arguments.extraHelp) {
+            usage(errStream, arguments.extraHelp);
             return OK;
         }
 
-        MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
 
         printVersionIfNeeded(errStream, arguments, messageRenderer);
 
         MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
 
-        if (arguments.suppressAllWarnings()) {
+        if (arguments.suppressWarnings) {
             collector = new FilteringMessageCollector(collector, Predicates.equalTo(CompilerMessageSeverity.WARNING));
         }
 
@@ -141,7 +141,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             }
         }
         catch (Throwable t) {
-            groupingCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
+            groupingCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(t),
                                      CompilerMessageLocation.NO_LOCATION);
             return INTERNAL_ERROR;
         }
@@ -152,12 +152,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     protected abstract ExitCode doExecute(@NotNull A arguments, @NotNull MessageCollector messageCollector, @NotNull Disposable rootDisposable);
-
-    //TODO: can we make it private?
-    @NotNull
-    protected MessageRenderer getMessageRenderer(@NotNull A arguments) {
-        return arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
-    }
 
     protected void printVersionIfNeeded(
             @NotNull PrintStream errStream,

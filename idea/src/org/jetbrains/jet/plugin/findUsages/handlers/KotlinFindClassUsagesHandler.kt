@@ -19,30 +19,24 @@ package org.jetbrains.jet.plugin.findUsages.handlers
 import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.asJava.LightClassUtil
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindClassUsagesDialog
 import org.jetbrains.jet.plugin.search.declarationsSearch.HierarchySearchRequest
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearch
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchRequest
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.jet.plugin.search.declarationsSearch.searchInheritors
 import org.jetbrains.jet.plugin.findUsages.toSearchTarget
 import org.jetbrains.jet.plugin.findUsages.toClassHelper
 import org.jetbrains.jet.plugin.findUsages.toClassDeclarationsHelper
 import org.jetbrains.jet.plugin.search.usagesSearch.search
+import org.jetbrains.jet.plugin.refactoring.runReadAction
 
 public class KotlinFindClassUsagesHandler(
         jetClass: JetClassOrObject,
@@ -81,7 +75,7 @@ public class KotlinFindClassUsagesHandler(
 
         val classOrObject = element as JetClassOrObject
 
-        return ApplicationManager.getApplication()!!.runReadAction<Boolean> {
+        return runReadAction {
             val target = kotlinOptions.toSearchTarget(classOrObject, true)
             val classUsages = kotlinOptions.toClassHelper().newRequest(target).search()
             val declarationUsages = kotlinOptions.toClassDeclarationsHelper().newRequest(target).search()

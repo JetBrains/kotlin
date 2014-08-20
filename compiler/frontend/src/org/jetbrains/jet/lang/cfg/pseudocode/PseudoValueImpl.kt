@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithVa
 class PseudoValueImpl(
         override val debugName: String,
         override val element: JetElement?,
-        override val createdAt: InstructionWithValue
+        override val createdAt: InstructionWithValue?
 ) : PseudoValue {
     override fun toString(): String = debugName
 }
@@ -30,7 +30,7 @@ class PseudoValueImpl(
 open class PseudoValueFactoryImpl: PseudoValueFactory {
     private var lastIndex: Int = 0
 
-    override fun newValue(element: JetElement?, instruction: InstructionWithValue): PseudoValue {
-        return PseudoValueImpl("<v${lastIndex++}>", element, instruction)
+    override fun newValue(element: JetElement?, instruction: InstructionWithValue?): PseudoValue {
+        return PseudoValueImpl((instruction?.let { "" } ?: "!") + "<v${lastIndex++}>", element, instruction)
     }
 }

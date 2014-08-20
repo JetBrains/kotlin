@@ -9,6 +9,9 @@ fun test(a: Any, ls: List<String>) {
 
 Resolved call:
 
+Candidate descriptor: fun <T> foo(t: T, l: List<T>): Unit
+Resulting descriptor: fun <T> foo(t: Comparable<out Any?>, l: List<Comparable<out Any?>>): Unit
+
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER
 Receiver argument = NO_RECEIVER

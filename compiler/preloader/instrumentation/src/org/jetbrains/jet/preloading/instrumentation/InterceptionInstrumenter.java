@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.preloading.instrumentation;
 
+import org.jetbrains.jet.preloading.instrumentation.annotations.*;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.util.Textifier;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
-import org.jetbrains.jet.preloading.instrumentation.annotations.*;
 
 import java.io.PrintStream;
 import java.lang.annotation.Annotation;
@@ -580,7 +580,7 @@ public class InterceptionInstrumenter {
 
     private static void box(InstructionAdapter ia, Type from, Class<?> boxedClass) {
         Type boxedType = Type.getType(boxedClass);
-        ia.invokestatic(boxedType.getInternalName(), "valueOf", "(" + from.getDescriptor() + ")" + boxedType.getDescriptor());
+        ia.invokestatic(boxedType.getInternalName(), "valueOf", "(" + from.getDescriptor() + ")" + boxedType.getDescriptor(), false);
     }
 
     public void dump(PrintStream out) {

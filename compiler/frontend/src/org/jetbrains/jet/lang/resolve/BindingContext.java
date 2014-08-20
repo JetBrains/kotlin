@@ -136,7 +136,7 @@ public interface BindingContext {
      * Has type of current expression has been already resolved
      */
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
-    WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice();
+    WritableSlice<JetElement, Boolean> USED_AS_EXPRESSION = Slices.createRemovableSetSlice();
 
     WritableSlice<VariableDescriptor, CaptureKind> CAPTURED_IN_CLOSURE = new BasicWritableSlice<VariableDescriptor, CaptureKind>(DO_NOTHING);
 

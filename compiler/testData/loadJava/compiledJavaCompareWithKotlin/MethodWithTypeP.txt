@@ -1,6 +1,6 @@
 package test
 
-public final class MethodWithTypeP : java.lang.Object {
+public final class MethodWithTypeP {
     public constructor MethodWithTypeP()
     public final fun </*0*/ P> f(): kotlin.Unit
 }

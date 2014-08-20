@@ -47,7 +47,7 @@ public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionActi
         JetType type = getReconstructedType(typeRef);
         JetTypeReference newType = JetPsiFactory(typeRef).createType(DescriptorRenderer.SOURCE_CODE.renderType(type));
         JetTypeReference replaced = (JetTypeReference) typeRef.replace(newType);
-        ShortenReferences.instance$.process(replaced);
+        ShortenReferences.INSTANCE$.process(replaced);
     }
 
     @Override

@@ -1,14 +1,14 @@
 package test
 
-public open class ClassObjectInParam : java.lang.Object {
+public open class ClassObjectInParam {
     public constructor ClassObjectInParam()
-    
+
     public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: java.lang.Class<out kotlin.Any?>)
         public abstract fun value(): java.lang.Class<out kotlin.Any?>
     }
-    
-    test.ClassObjectInParam.Anno(value = test.ClassObjectInParam.class: java.lang.Class<test.ClassObjectInParam>) public open class Nested : java.lang.Object {
+
+    test.ClassObjectInParam.Anno(value = test.ClassObjectInParam.class: java.lang.Class<test.ClassObjectInParam>) public open class Nested {
         public constructor Nested()
     }
 }

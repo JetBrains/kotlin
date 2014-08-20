@@ -31,28 +31,28 @@ sink:
 == foo ==
 fun foo() {
     null!!.doSomething()
-    bar().doSomething
+    bar().doSomething()
 }
 ---------------------
 L0:
   1 <START>
-  2 mark({ null!!.doSomething() bar().doSomething })
+  2 mark({ null!!.doSomething() bar().doSomething() })
     mark(null!!.doSomething())
     r(null) -> <v0>
     magic[NOT_NULL_ASSERTION](null!!|<v0>) -> <v1>
-    jmp(error)                                          NEXT:[<ERROR>]
--   mark(doSomething())                                 PREV:[]
--   call(doSomething(), doSomething|<v1>) -> <v2>       PREV:[]
--   mark(bar().doSomething)                             PREV:[]
--   mark(bar())                                         PREV:[]
--   call(bar(), bar)                                    PREV:[]
--   jmp(error)                                          NEXT:[<ERROR>]                                             PREV:[]
--   mark(doSomething)                                   PREV:[]
--   call(doSomething, doSomething) -> <v3>              PREV:[]
+    jmp(error)                                            NEXT:[<ERROR>]
+-   mark(doSomething())                                   PREV:[]
+-   call(doSomething(), doSomething|<v1>) -> <v2>         PREV:[]
+-   mark(bar().doSomething())                             PREV:[]
+-   mark(bar())                                           PREV:[]
+-   call(bar(), bar)                                      PREV:[]
+-   jmp(error)                                            NEXT:[<ERROR>]                                               PREV:[]
+-   mark(doSomething())                                   PREV:[]
+-   call(doSomething(), doSomething|!<v3>) -> <v4>        PREV:[]
 L1:
-  1 <END>                                               NEXT:[<SINK>]                                              PREV:[]
+  1 <END>                                                 NEXT:[<SINK>]                                                PREV:[]
 error:
-    <ERROR>                                             PREV:[jmp(error)]
+    <ERROR>                                               PREV:[jmp(error)]
 sink:
-    <SINK>                                              PREV:[<ERROR>, <END>]
+    <SINK>                                                PREV:[<ERROR>, <END>]
 =====================

@@ -1,17 +1,17 @@
 package test
 
-public trait SubclassFromGenericAndNot : java.lang.Object {
-    
-    public trait Generic</*0*/ T> : java.lang.Object {
+public trait SubclassFromGenericAndNot {
+
+    public trait Generic</*0*/ T> {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): T
     }
-    
-    public trait NonGeneric : java.lang.Object {
+
+    public trait NonGeneric {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.String?
     }
-    
+
     public trait Sub : test.SubclassFromGenericAndNot.NonGeneric, test.SubclassFromGenericAndNot.Generic<kotlin.String> {
         public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*2*/ fun foo(): kotlin.String

@@ -5,7 +5,7 @@ fun foo() {
     unit()
 }
 
-fun unit() {
+private fun unit() {
     if (true) {
         val k = 1
         T().n + k + 1

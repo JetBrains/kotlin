@@ -1,14 +1,14 @@
 package test
 
-public open class ArithmeticExpressionInParam : java.lang.Object {
+public open class ArithmeticExpressionInParam {
     public constructor ArithmeticExpressionInParam()
-    
+
     public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.Int)
         public abstract fun value(): kotlin.Int
     }
-    
-    test.ArithmeticExpressionInParam.Anno(value = 42: kotlin.Int) public open class Class : java.lang.Object {
+
+    test.ArithmeticExpressionInParam.Anno(value = 42: kotlin.Int) public open class Class {
         public constructor Class()
     }
 }

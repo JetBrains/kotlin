@@ -32,7 +32,7 @@ import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getFunctionResolvedCallWithAssert;
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
@@ -65,7 +65,7 @@ public final class UnaryOperationTranslator {
         }
 
         ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCallWithAssert(expression, context.bindingContext());
-        return CallTranslator.instance$.translate(context, resolvedCall, baseExpression);
+        return CallTranslator.INSTANCE$.translate(context, resolvedCall, baseExpression);
     }
 
     private static boolean isExclForBinaryEqualLikeExpr(@NotNull JetUnaryExpression expression, @NotNull JsExpression baseExpression) {

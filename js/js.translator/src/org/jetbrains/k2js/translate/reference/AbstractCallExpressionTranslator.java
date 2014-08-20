@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -42,7 +42,7 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
     ) {
         super(context);
         this.expression = expression;
-        this.resolvedCall = BindingContextUtilPackage.getFunctionResolvedCallWithAssert(expression, bindingContext());
+        this.resolvedCall = CallUtilPackage.getFunctionResolvedCallWithAssert(expression, bindingContext());
         this.receiver = receiver;
     }
 

@@ -1,5 +1,5 @@
 package test
 
-public final class ClassWithTypePRefSelfAndClass</*0*/ P : test.ClassWithTypePRefSelfAndClass<P>?> : java.lang.Object {
+public final class ClassWithTypePRefSelfAndClass</*0*/ P : test.ClassWithTypePRefSelfAndClass<P>?> {
     public constructor ClassWithTypePRefSelfAndClass</*0*/ P : test.ClassWithTypePRefSelfAndClass<P>?>()
 }

@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
@@ -81,7 +80,6 @@ public abstract class JetScopeImpl implements JetScope {
     }
 
     // This method should not be implemented here by default: every scope class has its unique structure pattern
-    @TestOnly
     @Override
     public abstract void printScopeStructure(@NotNull Printer p);
 }

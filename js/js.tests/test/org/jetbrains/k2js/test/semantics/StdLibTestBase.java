@@ -20,17 +20,17 @@ import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.utils.LibraryFilePathsUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 abstract class StdLibTestBase extends SingleFileTranslationTest {
-
     protected StdLibTestBase() {
         super("stdlib/");
     }
@@ -65,16 +65,19 @@ abstract class StdLibTestBase extends SingleFileTranslationTest {
     }
 
     //TODO: reuse this in CompileMavenGeneratedJSLibrary
-    private static void invokeCompiler(@NotNull List<String> files, @NotNull List<String> libFiles,
-            @NotNull EcmaVersion version, @NotNull String outputFilePath) {
-        K2JSCompiler compiler = new K2JSCompiler();
-        K2JSCompilerArguments arguments = new K2JSCompilerArguments();
-        arguments.outputFile = outputFilePath;
-        arguments.freeArgs = files;
-        arguments.verbose = true;
-        arguments.libraryFiles = ArrayUtil.toStringArray(libFiles);
-        System.out.println("Compiling with version: " + version + " to: " + arguments.outputFile);
-        ExitCode answer = compiler.exec(System.out, arguments);
+    private static void invokeCompiler(
+            @NotNull List<String> files,
+            @NotNull List<String> libFiles,
+            @NotNull EcmaVersion version,
+            @NotNull String outputFilePath
+    ) {
+        System.out.println("Compiling with version: " + version + " to: " + outputFilePath);
+
+        List<String> args = new ArrayList<String>(Arrays.asList("-output", outputFilePath, "-verbose", "-library-files"));
+        args.addAll(libFiles);
+        args.addAll(files);
+        ExitCode answer = new K2JSCompiler().exec(System.out, ArrayUtil.toStringArray(args));
+
         assertEquals("Compile failed", ExitCode.OK, answer);
     }
 

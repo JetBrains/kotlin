@@ -7,7 +7,7 @@ public final class InheritJavaField : test.Super {
     public open override /*1*/ /*fake_override*/ fun method(): kotlin.Int
 }
 
-public open class Super : java.lang.Object {
+public open class Super {
     public constructor Super()
     public final var field: kotlin.Int
     private final var privateField: kotlin.Int

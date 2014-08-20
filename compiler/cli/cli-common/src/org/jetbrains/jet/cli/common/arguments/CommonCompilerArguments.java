@@ -22,11 +22,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static org.jetbrains.jet.cli.common.arguments.CommonArgumentConstants.SUPPRESS_WARNINGS;
-
 public abstract class CommonCompilerArguments {
-    @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
-    public boolean tags;
+    @Argument(value = "nowarn", description = "Generate no warnings")
+    public boolean suppressWarnings;
 
     @Argument(value = "verbose", description = "Enable verbose logging output")
     public boolean verbose;
@@ -37,15 +35,10 @@ public abstract class CommonCompilerArguments {
     @Argument(value = "help", alias = "h", description = "Print a synopsis of standard options")
     public boolean help;
 
-    @Argument(value = "suppress", description = "Suppress all compiler warnings")
-    @ValueDescription(SUPPRESS_WARNINGS)
-    public String suppress;
+    @Argument(value = "X", description = "Print a synopsis of advanced options")
+    public boolean extraHelp;
 
     public List<String> freeArgs = new SmartList<String>();
-
-    public boolean suppressAllWarnings() {
-        return SUPPRESS_WARNINGS.equalsIgnoreCase(suppress);
-    }
 
     @NotNull
     public String executableScriptFileName() {

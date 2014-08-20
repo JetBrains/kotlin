@@ -32,6 +32,7 @@ import org.jetbrains.jet.plugin.editor.JetEditorOptions
 import java.awt.datatransfer.Transferable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.codeInsight.editorActions.ReferenceTransferableData
 
 public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
 

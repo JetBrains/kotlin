@@ -22,11 +22,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 
 public class OutputMessageUtil {
     private static final String SOURCE_FILES_PREFIX = "Sources:";
     private static final String OUTPUT_FILES_PREFIX = "Output:";
+
+    @NotNull
+    public static String renderException(@NotNull Throwable e) {
+        StringWriter out = new StringWriter();
+        e.printStackTrace(new PrintWriter(out));
+        return out.toString();
+    }
 
     @NotNull
     public static String formatOutputMessage(Collection<File> sourceFiles, File outputFile) {

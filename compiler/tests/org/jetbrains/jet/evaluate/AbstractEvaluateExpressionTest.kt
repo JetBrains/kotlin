@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.lang.types.TypeUtils
 
-abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorResolveTest() {
+public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorResolveTest() {
 
     // Test directives should look like [// val testedPropertyName: expectedValue]
     fun doConstantTest(path: String) {

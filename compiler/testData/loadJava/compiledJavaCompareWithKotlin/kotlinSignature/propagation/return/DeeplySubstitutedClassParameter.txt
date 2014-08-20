@@ -1,18 +1,18 @@
 package test
 
-public trait DeeplySubstitutedClassParameter : java.lang.Object {
-    
+public trait DeeplySubstitutedClassParameter {
+
     public trait Middle</*0*/ E> : test.DeeplySubstitutedClassParameter.Super<E> {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(): E
     }
-    
+
     public trait Sub : test.DeeplySubstitutedClassParameter.Middle<kotlin.String> {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(): kotlin.String
     }
-    
-    public trait Super</*0*/ T> : java.lang.Object {
+
+    public trait Super</*0*/ T> {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): T
     }

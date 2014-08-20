@@ -67,13 +67,23 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 
-public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boolean = false) : RefactoringActionHandler {
+public open class ExtractKotlinFunctionHandlerHelper {
+    open fun adjustGeneratorOptions(options: ExtractionGeneratorOptions): ExtractionGeneratorOptions = options
+    open fun adjustDescriptor(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor = descriptor
+
+    class object {
+        public val DEFAULT: ExtractKotlinFunctionHandlerHelper = ExtractKotlinFunctionHandlerHelper()
+    }
+}
+
+public class ExtractKotlinFunctionHandler(
+        public val allContainersEnabled: Boolean = false,
+        private val helper: ExtractKotlinFunctionHandlerHelper = ExtractKotlinFunctionHandlerHelper.DEFAULT) : RefactoringActionHandler {
     fun doInvoke(
             editor: Editor,
             file: JetFile,
             elements: List<PsiElement>,
-            targetSibling: PsiElement,
-            preprocessor: ((ExtractionDescriptor) -> Unit)? = null
+            targetSibling: PsiElement
     ) {
         val project = file.getProject()
 
@@ -83,19 +93,22 @@ public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boole
             throw ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
         }
 
-        fun doRefactor(descriptor: ExtractionDescriptor) {
-            preprocessor?.invoke(descriptor)
-            project.executeWriteCommand(EXTRACT_FUNCTION) { descriptor.generateFunction() }
+        fun doRefactor(descriptor: ExtractableCodeDescriptor, generatorOptions: ExtractionGeneratorOptions) {
+            val adjustedDescriptor = helper.adjustDescriptor(descriptor)
+            val adjustedGeneratorOptions = helper.adjustGeneratorOptions(generatorOptions)
+            project.executeWriteCommand(EXTRACT_FUNCTION) { adjustedDescriptor.generateDeclaration(adjustedGeneratorOptions) }
         }
 
         fun validateAndRefactor() {
             val validationResult = analysisResult.descriptor!!.validate()
             project.checkConflictsInteractively(validationResult.conflicts) {
                 if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
-                    doRefactor(validationResult.descriptor)
+                    doRefactor(validationResult.descriptor, ExtractionGeneratorOptions.DEFAULT)
                 }
                 else {
-                    KotlinExtractFunctionDialog(project, validationResult) { doRefactor(it.getCurrentDescriptor()) }.show()
+                    KotlinExtractFunctionDialog(project, validationResult) {
+                        doRefactor(it.getCurrentDescriptor(), it.getGeneratorOptions())
+                    }.show()
                 }
             }
         }

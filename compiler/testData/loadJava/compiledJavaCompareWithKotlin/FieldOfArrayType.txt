@@ -1,6 +1,6 @@
 package test
 
-public open class FieldOfArrayType : java.lang.Object {
+public open class FieldOfArrayType {
     public constructor FieldOfArrayType()
     public final var files: kotlin.Array<java.io.File>?
 }

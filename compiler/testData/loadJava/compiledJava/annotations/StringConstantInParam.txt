@@ -1,13 +1,13 @@
 package test
 
-public trait StringConstantInParam : java.lang.Object {
-    
+public trait StringConstantInParam {
+
     public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.String)
         public abstract fun value(): kotlin.String
     }
-    
-    test.StringConstantInParam.Anno(value = "hello": kotlin.String) public open class Class : java.lang.Object {
+
+    test.StringConstantInParam.Anno(value = "hello": kotlin.String) public open class Class {
         public constructor Class()
     }
 }

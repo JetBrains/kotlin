@@ -11,7 +11,7 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                                                  INIT: in: {} out: {}
+  1 <START>                                                                   INIT: in: {} out: {}
   2 mark({ "before" if (true) { val a = 1 } else { val b = 2 } "after" })
     mark("before")
     r("before") -> <v0>
@@ -19,22 +19,23 @@ L0:
     r(true) -> <v1>
     jf(L2|<v1>)
   3 mark({ val a = 1 })
-    v(val a = 1)                                                             INIT: in: {} out: {a=D}
-    r(1) -> <v2>                                                             INIT: in: {a=D} out: {a=D}
-    w(a|<v2>)                                                                INIT: in: {a=D} out: {a=ID}
-  2 jmp(L3)                                                                  INIT: in: {} out: {}
+    v(val a = 1)                                                              INIT: in: {} out: {a=D}
+    r(1) -> <v2>                                                              INIT: in: {a=D} out: {a=D}
+    w(a|<v2>)                                                                 INIT: in: {a=D} out: {a=ID}
+  2 jmp(L3)                                                                   INIT: in: {} out: {}
 L2:
   3 mark({ val b = 2 })
-    v(val b = 2)                                                             INIT: in: {} out: {b=D}
-    r(2) -> <v3>                                                             INIT: in: {b=D} out: {b=D}
-    w(b|<v3>)                                                                INIT: in: {b=D} out: {b=ID}
+    v(val b = 2)                                                              INIT: in: {} out: {b=D}
+    r(2) -> <v3>                                                              INIT: in: {b=D} out: {b=D}
+    w(b|<v3>)                                                                 INIT: in: {b=D} out: {b=ID}
 L3:
-  2 mark("after")                                                            INIT: in: {} out: {}
-    r("after") -> <v4>
+  2 merge(if (true) { val a = 1 } else { val b = 2 }|!<v4>, !<v5>) -> <v6>    INIT: in: {} out: {}
+    mark("after")
+    r("after") -> <v7>
 L1:
   1 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                  USE: in: {} out: {}
+    <SINK>                                                                                                   USE: in: {} out: {}
 =====================

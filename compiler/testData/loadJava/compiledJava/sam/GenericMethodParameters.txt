@@ -1,5 +1,5 @@
 package test
 
-public trait GenericMethodParameters : java.lang.Object {
+public trait GenericMethodParameters {
     public abstract fun </*0*/ A : kotlin.CharSequence?, /*1*/ B : kotlin.List<A>?> method(/*0*/ p0: kotlin.Array<out A>?, /*1*/ p1: B?): kotlin.Unit
 }

@@ -1,21 +1,21 @@
 package test
 
-public open class PrivateMembers : java.lang.Object {
+public open class PrivateMembers {
     private constructor PrivateMembers()
     private final var field: kotlin.Int
     private open fun method(): kotlin.Unit
     private final /*synthesized*/ fun samAdapter(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
     private open fun samAdapter(/*0*/ p0: test.PrivateMembers.SamInterface?): kotlin.Unit
 
-    private open inner class Inner : java.lang.Object {
+    private open inner class Inner {
         private constructor Inner()
     }
 
-    private open class Nested : java.lang.Object {
+    private open class Nested {
         private constructor Nested()
     }
 
-    private trait SamInterface : java.lang.Object {
+    private trait SamInterface {
         public abstract fun foo(): kotlin.Unit
     }
 }

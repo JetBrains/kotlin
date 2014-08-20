@@ -1,4 +1,3 @@
-//file
 public class Identifier<T> {
   private final T myName;
   private boolean myHasDollar;

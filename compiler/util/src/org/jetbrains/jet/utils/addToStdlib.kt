@@ -20,7 +20,7 @@ import java.util.HashMap
 import java.util.Collections
 
 deprecated("Replace with filterKeys when bootstrapped")
-fun <K, V> Map<K, V>.filterKeys_tmp(predicate: (K)->Boolean): Map<K, V> {
+public fun <K, V> Map<K, V>.filterKeys_tmp(predicate: (K)->Boolean): Map<K, V> {
     val result = HashMap<K, V>()
     for ((k, v) in this) {
         if (predicate(k)) {
@@ -30,6 +30,6 @@ fun <K, V> Map<K, V>.filterKeys_tmp(predicate: (K)->Boolean): Map<K, V> {
     return result
 }
 
-fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
+public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
 
-fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()
+public fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()

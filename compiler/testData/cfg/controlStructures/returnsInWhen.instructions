@@ -16,17 +16,18 @@ L0:
     mark(is Int -> return a)
     mark(is Int)
     magic[IS](is Int|<v1>) -> <v2>
-    jmp?(L4|<v2>)                               NEXT:[<END>, r(a) -> <v3>]
+    jmp?(L4|<v2>)                                          NEXT:[merge(when(a) { is Int -> return a }|!<v4>) -> <v5>, r(a) -> <v3>]
 L3:
     r(a) -> <v3>
-    ret(*|<v3>) L1                              NEXT:[<END>]
--   jmp(L2)                                     PREV:[]
-L1:
+    ret(*|<v3>) L1                                         NEXT:[<END>]
+-   jmp(L2)                                                PREV:[]
 L2:
 L4:
-  1 <END>                                       NEXT:[<SINK>]                                      PREV:[jmp?(L4|<v2>), ret(*|<v3>) L1]
+    merge(when(a) { is Int -> return a }|!<v4>) -> <v5>    PREV:[jmp?(L4|<v2>)]
+L1:
+  1 <END>                                                  NEXT:[<SINK>]                                                               PREV:[ret(*|<v3>) L1, merge(when(a) { is Int -> return a }|!<v4>) -> <v5>]
 error:
-    <ERROR>                                     PREV:[]
+    <ERROR>                                                PREV:[]
 sink:
-    <SINK>                                      PREV:[<ERROR>, <END>]
+    <SINK>                                                 PREV:[<ERROR>, <END>]
 =====================

@@ -1,4 +1,4 @@
 Unclassified usage (10: 32) println("a.foo = " + A.foo);
-Unclassified usage (7: 19) A.object$.setFoo("a");
+Unclassified usage (7: 19) A.OBJECT$.setFoo("a");
 Unclassified usage (8: 11) A.foo = "a";
-Unclassified usage (9: 40) println("a.foo = " + A.object$.getFoo());
+Unclassified usage (9: 40) println("a.foo = " + A.OBJECT$.getFoo());

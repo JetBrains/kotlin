@@ -1,4 +1,4 @@
-open abstract class B() : java.lang.Object() {
+open abstract class B {
     fun foo(arg: Int = 239 + 1) : Int = arg
 }
 

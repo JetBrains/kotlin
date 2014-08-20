@@ -1,15 +1,15 @@
 package test
 
-public trait InheritedAndOverriddenAmbiguousAdapters : java.lang.Object {
-    
+public trait InheritedAndOverriddenAmbiguousAdapters {
+
     public trait Sub : test.InheritedAndOverriddenAmbiguousAdapters.Super {
         public final override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public final override /*1*/ /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.io.Closeable?): kotlin.Unit
         public abstract override /*1*/ fun foo(/*0*/ p0: java.lang.Runnable?): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
         public abstract fun foo(/*0*/ p0: java.io.Closeable?): kotlin.Unit

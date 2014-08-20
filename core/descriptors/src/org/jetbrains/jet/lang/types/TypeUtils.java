@@ -16,14 +16,9 @@
 
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.intellij.util.Processor;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -39,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.DFS;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -141,7 +137,7 @@ public class TypeUtils {
     }
 
     public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
-        return intersect(JetTypeChecker.DEFAULT, Sets.newLinkedHashSet(Lists.newArrayList(typeA, typeB))) == null;
+        return intersect(JetTypeChecker.DEFAULT, new LinkedHashSet<JetType>(Arrays.asList(typeA, typeB))) == null;
     }
 
     @Nullable
@@ -158,7 +154,7 @@ public class TypeUtils {
         //   made nullable is they all were nullable
         boolean allNullable = true;
         boolean nothingTypePresent = false;
-        List<JetType> nullabilityStripped = Lists.newArrayList();
+        List<JetType> nullabilityStripped = new ArrayList<JetType>(types.size());
         for (JetType type : types) {
             nothingTypePresent |= KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type);
             allNullable &= type.isNullable();
@@ -170,7 +166,7 @@ public class TypeUtils {
         }
 
         // Now we remove types that have subtypes in the list
-        List<JetType> resultingTypes = Lists.newArrayList();
+        List<JetType> resultingTypes = new ArrayList<JetType>();
         outer:
         for (JetType type : nullabilityStripped) {
             if (!canHaveSubtypes(typeChecker, type)) {
@@ -240,17 +236,17 @@ public class TypeUtils {
 
         private static boolean unify(JetType withParameters, JetType expected) {
             // T -> how T is used
-            final Map<TypeParameterDescriptor, Variance> parameters = Maps.newHashMap();
-            Processor<TypeParameterUsage> processor = new Processor<TypeParameterUsage>() {
+            final Map<TypeParameterDescriptor, Variance> parameters = new HashMap<TypeParameterDescriptor, Variance>();
+            Function1<TypeParameterUsage, Unit> processor = new Function1<TypeParameterUsage, Unit>() {
                 @Override
-                public boolean process(TypeParameterUsage parameterUsage) {
+                public Unit invoke(TypeParameterUsage parameterUsage) {
                     Variance howTheTypeIsUsedBefore = parameters.get(parameterUsage.typeParameterDescriptor);
                     if (howTheTypeIsUsedBefore == null) {
                         howTheTypeIsUsedBefore = Variance.INVARIANT;
                     }
                     parameters.put(parameterUsage.typeParameterDescriptor,
                                    parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
-                    return true;
+                    return Unit.INSTANCE$;
                 }
             };
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
@@ -262,10 +258,10 @@ public class TypeUtils {
             return constraintSystem.getStatus().isSuccessful();
         }
 
-        private static void processAllTypeParameters(JetType type, Variance howThiTypeIsUsed, Processor<TypeParameterUsage> result) {
+        private static void processAllTypeParameters(JetType type, Variance howThisTypeIsUsed, Function1<TypeParameterUsage, Unit> result) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof TypeParameterDescriptor) {
-                result.process(new TypeParameterUsage((TypeParameterDescriptor)descriptor, howThiTypeIsUsed));
+                result.invoke(new TypeParameterUsage((TypeParameterDescriptor) descriptor, howThisTypeIsUsed));
             }
             for (TypeProjection projection : type.getArguments()) {
                 processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
@@ -374,21 +370,18 @@ public class TypeUtils {
         return result;
     }
 
-    private static void collectImmediateSupertypes(@NotNull JetType type, @NotNull Collection<JetType> result) {
+    @NotNull
+    public static List<JetType> getImmediateSupertypes(@NotNull JetType type) {
         boolean isNullable = type.isNullable();
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
-        for (JetType supertype : type.getConstructor().getSupertypes()) {
+        Collection<JetType> originalSupertypes = type.getConstructor().getSupertypes();
+        List<JetType> result = new ArrayList<JetType>(originalSupertypes.size());
+        for (JetType supertype : originalSupertypes) {
             JetType substitutedType = substitutor.substitute(supertype, Variance.INVARIANT);
             if (substitutedType != null) {
                 result.add(makeNullableIfNeeded(substitutedType, isNullable));
             }
         }
-    }
-
-    @NotNull
-    public static List<JetType> getImmediateSupertypes(@NotNull JetType type) {
-        List<JetType> result = Lists.newArrayList();
-        collectImmediateSupertypes(type, result);
         return result;
     }
 
@@ -475,7 +468,7 @@ public class TypeUtils {
             throw new IllegalArgumentException("type parameter counts do not match: " + clazz + ", " + projections);
         }
 
-        Map<TypeConstructor, TypeProjection> substitutions = Maps.newHashMap();
+        Map<TypeConstructor, TypeProjection> substitutions = UtilsPackage.newHashMapWithExpectedSize(clazzTypeParameters.size());
 
         for (int i = 0; i < clazzTypeParameters.size(); ++i) {
             TypeConstructor typeConstructor = clazzTypeParameters.get(i).getTypeConstructor();
@@ -490,14 +483,15 @@ public class TypeUtils {
     }
 
     public static boolean dependsOnTypeParameters(@NotNull JetType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
-        return dependsOnTypeConstructors(type, Collections2
-                .transform(typeParameters, new Function<TypeParameterDescriptor, TypeConstructor>() {
+        return dependsOnTypeConstructors(type, KotlinPackage.map(
+                typeParameters,
+                new Function1<TypeParameterDescriptor, TypeConstructor>() {
                     @Override
-                    public TypeConstructor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
-                        assert typeParameterDescriptor != null;
+                    public TypeConstructor invoke(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
                         return typeParameterDescriptor.getTypeConstructor();
                     }
-                }));
+                }
+        ));
     }
 
     public static boolean dependsOnTypeConstructors(@NotNull JetType type, @NotNull Collection<TypeConstructor> typeParameterConstructors) {
@@ -552,7 +546,7 @@ public class TypeUtils {
 
     @NotNull
     private static Set<JetType> getIntersectionOfSupertypes(@NotNull Collection<JetType> types) {
-        Set<JetType> upperBounds = Sets.newHashSet();
+        Set<JetType> upperBounds = new HashSet<JetType>();
         for (JetType type : types) {
             Collection<JetType> supertypes = type.getConstructor().getSupertypes();
             if (upperBounds.isEmpty()) {
@@ -618,8 +612,9 @@ public class TypeUtils {
                     @Override
                     public Iterable<JetType> getNeighbors(JetType current) {
                         TypeSubstitutor substitutor = TypeSubstitutor.create(current);
-                        List<JetType> result = Lists.newArrayList();
-                        for (JetType supertype : current.getConstructor().getSupertypes()) {
+                        Collection<JetType> supertypes = current.getConstructor().getSupertypes();
+                        List<JetType> result = new ArrayList<JetType>(supertypes.size());
+                        for (JetType supertype : supertypes) {
                             if (visited.contains(supertype.getConstructor())) {
                                 continue;
                             }
@@ -658,7 +653,7 @@ public class TypeUtils {
     }
 
     public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
-        final Set<TypeConstructor> constructors = Sets.newHashSet();
+        final Set<TypeConstructor> constructors = UtilsPackage.newHashSetWithExpectedSize(typeParameterDescriptors.size());
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
             constructors.add(typeParameterDescriptor.getTypeConstructor());
         }

@@ -33,8 +33,8 @@ class KDocCompiler() : K2JVMCompiler() {
         return KDocArguments()
     }
 
-    protected override fun usage(target : PrintStream) {
-        target.println("Usage: KDocCompiler -docOutput <docOutputDir> -d [<outputDir>|<jarFileName>] [-stdlib <path to runtime.jar>] [<filename or dirname>|-module <module file>] [-includeRuntime]");
+    protected override fun usage(target: PrintStream, extraHelp: Boolean) {
+        target.println("Usage: KDocCompiler -d [<directory>|<jar>] [-stdlib <path to runtime.jar>] [<path>|-module <module file>] [-include-runtime]");
     }
 }
 

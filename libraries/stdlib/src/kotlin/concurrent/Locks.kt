@@ -63,7 +63,7 @@ public inline fun <T> ReentrantReadWriteLock.write([inlineOptions(ONLY_LOCAL_RET
 Execute given calculation and await for CountDownLatch
 Returns result of the calculation
 */
-fun <T> Int.latch(op: CountDownLatch.() -> T) : T {
+public fun <T> Int.latch(op: CountDownLatch.() -> T): T {
     val cdl = CountDownLatch(this)
     val res = cdl.op()
     cdl.await()

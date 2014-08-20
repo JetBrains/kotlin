@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -31,20 +29,19 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
-
-    protected List<TypeParameterDescriptor> typeParameters;
-    protected List<ValueParameterDescriptor> unsubstitutedValueParameters;
-    protected JetType unsubstitutedReturnType;
+    private List<TypeParameterDescriptor> typeParameters;
+    private List<ValueParameterDescriptor> unsubstitutedValueParameters;
+    private JetType unsubstitutedReturnType;
     private ReceiverParameterDescriptor receiverParameter;
-    protected ReceiverParameterDescriptor expectedThisObject;
-    protected Modality modality;
-
-    protected Visibility visibility;
-    protected final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet(); // LinkedHashSet is essential here
+    private ReceiverParameterDescriptor expectedThisObject;
+    private Modality modality;
+    private Visibility visibility;
+    private final Set<FunctionDescriptor> overriddenFunctions = new LinkedHashSet<FunctionDescriptor>(); // LinkedHashSet is essential here
     private final FunctionDescriptor original;
     private final Kind kind;
 
@@ -69,8 +66,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility) {
-        this.typeParameters = Lists.newArrayList(typeParameters);
+            @NotNull Visibility visibility
+    ) {
+        this.typeParameters = new ArrayList<TypeParameterDescriptor>(typeParameters);
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
@@ -202,8 +200,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     ) {
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind);
 
-        List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
-        TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
+        List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
+        List<TypeParameterDescriptor> substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
+        TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
+                originalTypeParameters, originalSubstitutor, substitutedDescriptor, substitutedTypeParameters
+        );
 
         JetType substitutedReceiverParameterType = null;
         if (receiverParameter != null) {

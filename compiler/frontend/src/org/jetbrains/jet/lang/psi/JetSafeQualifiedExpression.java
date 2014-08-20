@@ -34,24 +34,24 @@ public class JetSafeQualifiedExpression extends JetExpressionImpl implements Jet
     @NotNull
     @Override
     public JetExpression getReceiverExpression() {
-        return JetQualifiedExpressionImpl.instance$.getReceiverExpression(this);
+        return JetQualifiedExpressionImpl.INSTANCE$.getReceiverExpression(this);
     }
 
     @Nullable
     @Override
     public JetExpression getSelectorExpression() {
-        return JetQualifiedExpressionImpl.instance$.getSelectorExpression(this);
+        return JetQualifiedExpressionImpl.INSTANCE$.getSelectorExpression(this);
     }
 
     @NotNull
     @Override
     public ASTNode getOperationTokenNode() {
-        return JetQualifiedExpressionImpl.instance$.getOperationTokenNode(this);
+        return JetQualifiedExpressionImpl.INSTANCE$.getOperationTokenNode(this);
     }
 
     @NotNull
     @Override
     public JetToken getOperationSign() {
-        return JetQualifiedExpressionImpl.instance$.getOperationSign(this);
+        return JetQualifiedExpressionImpl.INSTANCE$.getOperationSign(this);
     }
 }

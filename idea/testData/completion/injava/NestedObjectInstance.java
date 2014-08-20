@@ -4,4 +4,4 @@ public class Testing {
     }
 }
 
-// EXIST: instance$
+// EXIST: INSTANCE$

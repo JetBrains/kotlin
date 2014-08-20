@@ -1,4 +1,29 @@
 <root>
+  <item name='com.google.common.collect.ImmutableBiMap com.google.common.collect.ImmutableBiMap&lt;V,K&gt; inverse()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.google.common.collect.ImmutableSet com.google.common.collect.ImmutableSet&lt;E&gt; of()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.google.common.collect.ImmutableSet com.google.common.collect.ImmutableSet&lt;E&gt; of(E)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.google.common.collect.ImmutableSet com.google.common.collect.ImmutableSet&lt;E&gt; of(E, E)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.google.common.collect.ImmutableSet com.google.common.collect.ImmutableSet.Builder&lt;E&gt; builder()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.google.common.collect.ImmutableSet.Builder com.google.common.collect.ImmutableSet&lt;E&gt; build()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.google.common.collect.ImmutableSet.Builder com.google.common.collect.ImmutableSet.Builder&lt;E&gt; add(E)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.google.common.collect.ImmutableSet.Builder com.google.common.collect.ImmutableSet.Builder&lt;E&gt; addAll(java.lang.Iterable&lt;? extends E&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.google.common.collect.Lists java.util.ArrayList&lt;E&gt; newArrayList(E...)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

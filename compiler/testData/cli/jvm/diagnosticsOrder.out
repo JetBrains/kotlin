@@ -1,10 +1,10 @@
-ERROR: $TESTDATA_DIR$/diagnosticsOrder1.kt: (1, 5) Redeclaration: x
-ERROR: $TESTDATA_DIR$/diagnosticsOrder1.kt: (2, 5) Redeclaration: x
-ERROR: $TESTDATA_DIR$/diagnosticsOrder1.kt: (3, 5) Redeclaration: x
-ERROR: $TESTDATA_DIR$/diagnosticsOrder1.kt: (4, 5) Redeclaration: x
-ERROR: $TESTDATA_DIR$/diagnosticsOrder1.kt: (5, 5) Redeclaration: x
-ERROR: $TESTDATA_DIR$/diagnosticsOrder1.kt: (6, 5) Redeclaration: x
-ERROR: $TESTDATA_DIR$/diagnosticsOrder1.kt: (7, 5) Redeclaration: x
-ERROR: $TESTDATA_DIR$/diagnosticsOrder2.kt: (1, 5) Redeclaration: y
-ERROR: $TESTDATA_DIR$/diagnosticsOrder2.kt: (2, 5) Redeclaration: y
+ERROR: compiler/testData/cli/jvm/diagnosticsOrder1.kt: (1, 5) Redeclaration: x
+ERROR: compiler/testData/cli/jvm/diagnosticsOrder1.kt: (2, 5) Redeclaration: x
+ERROR: compiler/testData/cli/jvm/diagnosticsOrder1.kt: (3, 5) Redeclaration: x
+ERROR: compiler/testData/cli/jvm/diagnosticsOrder1.kt: (4, 5) Redeclaration: x
+ERROR: compiler/testData/cli/jvm/diagnosticsOrder1.kt: (5, 5) Redeclaration: x
+ERROR: compiler/testData/cli/jvm/diagnosticsOrder1.kt: (6, 5) Redeclaration: x
+ERROR: compiler/testData/cli/jvm/diagnosticsOrder1.kt: (7, 5) Redeclaration: x
+ERROR: compiler/testData/cli/jvm/diagnosticsOrder2.kt: (1, 5) Redeclaration: y
+ERROR: compiler/testData/cli/jvm/diagnosticsOrder2.kt: (2, 5) Redeclaration: y
 COMPILATION_ERROR

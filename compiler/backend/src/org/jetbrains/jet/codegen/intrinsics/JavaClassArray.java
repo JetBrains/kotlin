@@ -33,7 +33,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getResolvedCallWithAssert;
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 
 public class JavaClassArray extends IntrinsicMethod {
     @NotNull

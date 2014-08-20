@@ -22,9 +22,9 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithVa
 public trait PseudoValue {
     public val debugName: String
     public val element: JetElement?
-    public val createdAt: InstructionWithValue
+    public val createdAt: InstructionWithValue?
 }
 
 public trait PseudoValueFactory {
-    public fun newValue(element: JetElement?, instruction: InstructionWithValue): PseudoValue
+    public fun newValue(element: JetElement?, instruction: InstructionWithValue?): PseudoValue
 }

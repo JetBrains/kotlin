@@ -18,7 +18,6 @@ package org.jetbrains.jet;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
@@ -36,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -71,8 +71,8 @@ public class ScriptTest {
             @NotNull List<JetScriptDefinition> scriptDefinitions
     ) {
         KotlinPaths paths = PathUtil.getKotlinPathsForDistDirectory();
-        GroupingMessageCollector messageCollector =
-                new GroupingMessageCollector(new PrintingMessageCollector(System.err, MessageRenderer.PLAIN, false));
+        MessageCollector messageCollector = MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR;
+
         Disposable rootDisposable = Disposer.newDisposable();
         try {
             CompilerConfiguration configuration =
@@ -89,7 +89,7 @@ public class ScriptTest {
                 return KotlinToJVMBytecodeCompiler.compileScript(paths, environment);
             }
             catch (CompilationException e) {
-                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
+                messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
                                         MessageUtil.psiElementToMessageLocation(e.getElement()));
                 return null;
             }
@@ -99,7 +99,6 @@ public class ScriptTest {
             }
         }
         finally {
-            messageCollector.flush();
             Disposer.dispose(rootDisposable);
         }
     }

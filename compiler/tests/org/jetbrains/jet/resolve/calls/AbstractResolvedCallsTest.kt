@@ -21,7 +21,6 @@ import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.scopes.receivers.AbstractReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 
@@ -29,7 +28,6 @@ import java.io.File
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
-import org.jetbrains.jet.lang.resolve.calls.util.getAllValueArguments
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.lang.psi.ValueArgument
@@ -37,7 +35,11 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getParentResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getParentResolvedCall
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
@@ -63,8 +65,9 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
 }
 
 private fun ReceiverValue.getText() = when (this) {
-    is ExpressionReceiver -> getExpression().getText()
-    is AbstractReceiverValue -> getType().toString()
+    is ExpressionReceiver -> "${getExpression().getText()} {${getType()}}"
+    is ClassReceiver -> "Class{${getType()}}"
+    is ExtensionReceiver -> "${getType()}Ext{${getDeclarationDescriptor().getText()}}"
     else -> toString()
 }
 
@@ -78,25 +81,38 @@ private fun ArgumentMapping.getText() = when (this) {
     else -> "ARGUMENT UNMAPPED: "
 }
 
+private fun DeclarationDescriptor.getText(): String = when (this) {
+    is ReceiverParameterDescriptor -> "${getValue().getText()}::this"
+    else -> DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(this)
+}
+
 private fun ResolvedCall<*>.renderToText(): String {
-    val result = StringBuilder()
-    fun addLine(line: String) = result.append(line).append("\n")
+    return StringBuilder {
+        appendln("Resolved call:")
+        appendln()
 
-    addLine("Resolved call:\n")
-    addLine("Explicit receiver kind = ${getExplicitReceiverKind()}")
-    addLine("This object = ${getThisObject().getText()}")
-    addLine("Receiver argument = ${getReceiverArgument().getText()}")
+        if (getCandidateDescriptor() != getResultingDescriptor()) {
+            appendln("Candidate descriptor: ${getCandidateDescriptor()!!.getText()}")
+        }
+        appendln("Resulting descriptor: ${getResultingDescriptor()!!.getText()}")
+        appendln()
 
-    val valueArguments = getCall().getAllValueArguments()
-    if (valueArguments.isEmpty()) return result.toString()
+        appendln("Explicit receiver kind = ${getExplicitReceiverKind()}")
+        appendln("This object = ${getThisObject().getText()}")
+        appendln("Receiver argument = ${getReceiverArgument().getText()}")
 
-    addLine("\nValue arguments mapping:\n")
+        val valueArguments = getCall().getValueArguments()
+        if (!valueArguments.isEmpty()) {
+            appendln()
+            appendln("Value arguments mapping:")
+            appendln()
 
-    for (valueArgument in valueArguments) {
-        val argumentText = valueArgument.getText()
-        val argumentMappingText = getArgumentMapping(valueArgument).getText()
+            for (valueArgument in valueArguments) {
+                val argumentText = valueArgument!!.getText()
+                val argumentMappingText = getArgumentMapping(valueArgument).getText()
 
-        addLine("$argumentMappingText $argumentText")
-    }
-    return result.toString()
+                appendln("$argumentMappingText $argumentText")
+            }
+        }
+    }.toString()
 }

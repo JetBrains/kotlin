@@ -1,8 +1,8 @@
 package test
 
-public trait TwoBounds: Object {
+public trait TwoBounds {
 
-    public trait Super: Object {
+    public trait Super {
         public fun <A: CharSequence> foo(a: A) where A: Cloneable
     }
 

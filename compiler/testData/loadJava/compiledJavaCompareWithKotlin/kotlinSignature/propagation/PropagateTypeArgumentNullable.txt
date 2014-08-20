@@ -1,7 +1,7 @@
 package test
 
-public trait PropagateTypeArgumentNullable : java.lang.Object {
-    
+public trait PropagateTypeArgumentNullable {
+
     public trait Sub : test.PropagateTypeArgumentNullable.Super {
         public abstract override /*1*/ fun invOutR(): kotlin.MutableList<kotlin.List<kotlin.String?>>
         public abstract override /*1*/ fun invOutS(/*0*/ p: kotlin.MutableList<kotlin.List<kotlin.String?>>): kotlin.Unit
@@ -10,8 +10,8 @@ public trait PropagateTypeArgumentNullable : java.lang.Object {
         public abstract override /*1*/ fun outR(): kotlin.List<kotlin.String?>
         public abstract override /*1*/ fun outS(/*0*/ p: kotlin.List<kotlin.String?>): kotlin.Unit
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun invOutR(): kotlin.MutableList<kotlin.List<kotlin.String?>>
         public abstract fun invOutS(/*0*/ p: kotlin.MutableList<kotlin.List<kotlin.String?>>): kotlin.Unit
         public abstract fun invR(): kotlin.MutableList<kotlin.String?>

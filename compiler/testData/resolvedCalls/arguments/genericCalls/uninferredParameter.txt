@@ -9,6 +9,9 @@ fun test(ls: MutableList<String>) {
 
 Resolved call:
 
+Candidate descriptor: fun <T> foo(t: T, l: MutableList<T>): Unit
+Resulting descriptor: fun <T> foo(t: ???, l: MutableList<???>): Unit
+
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER
 Receiver argument = NO_RECEIVER

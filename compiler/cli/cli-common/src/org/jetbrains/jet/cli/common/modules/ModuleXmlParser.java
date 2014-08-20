@@ -23,7 +23,7 @@ import kotlin.modules.ModuleBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorUtil;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
+import org.jetbrains.jet.cli.common.messages.OutputMessageUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -99,7 +99,7 @@ public class ModuleXmlParser {
             MessageCollectorUtil.reportException(messageCollector, e);
         }
         catch (SAXException e) {
-            messageCollector.report(ERROR, MessageRenderer.PLAIN.renderException(e), NO_LOCATION);
+            messageCollector.report(ERROR, OutputMessageUtil.renderException(e), NO_LOCATION);
         }
         catch (IOException e) {
             MessageCollectorUtil.reportException(messageCollector, e);

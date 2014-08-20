@@ -5,12 +5,11 @@ import java.util.NoSuchElementException
 // TODO should not need this - its here for the JS stuff
 import java.lang.UnsupportedOperationException
 
-// not using an enum for now as JS generation doesn't support it
-object State {
-    val Ready = 0
-    val NotReady = 1
-    val Done = 2
-    val Failed = 3
+private enum class State {
+    Ready
+    NotReady
+    Done
+    Failed
 }
 
 /**
@@ -34,12 +33,6 @@ public abstract class AbstractIterator<T>: Iterator<T> {
         if (!hasNext()) throw NoSuchElementException()
         state = State.NotReady
         return nextValue as T
-    }
-
-    /** Returns the next element in the iteration without advancing the iteration */
-    fun peek(): T {
-        if (!hasNext()) throw NoSuchElementException()
-        return nextValue as T;
     }
 
     private fun tryToComputeNext(): Boolean {

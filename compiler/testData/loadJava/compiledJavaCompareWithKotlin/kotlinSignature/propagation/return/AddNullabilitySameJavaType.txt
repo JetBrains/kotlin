@@ -1,13 +1,13 @@
 package test
 
-public trait AddNullabilitySameJavaType : java.lang.Object {
-    
+public trait AddNullabilitySameJavaType {
+
     public trait Sub : test.AddNullabilitySameJavaType.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(): kotlin.CharSequence
     }
-    
-    public trait Super : java.lang.Object {
+
+    public trait Super {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.CharSequence
     }

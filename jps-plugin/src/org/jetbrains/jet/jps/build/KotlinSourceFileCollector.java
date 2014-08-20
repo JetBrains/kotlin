@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.FileProcessor;
@@ -39,21 +40,21 @@ import java.util.List;
 
 public class KotlinSourceFileCollector {
     // For incremental compilation
-    public static List<File> getDirtySourceFiles(DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder)
+    public static MultiMap<ModuleBuildTarget, File> getDirtySourceFiles(DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder)
             throws IOException
     {
-        final List<File> sourceFiles = ContainerUtil.newArrayList();
+        final MultiMap<ModuleBuildTarget, File> result = new MultiMap<ModuleBuildTarget, File>();
 
         dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
             @Override
             public boolean apply(ModuleBuildTarget target, File file, JavaSourceRootDescriptor root) throws IOException {
                 if (isKotlinSourceFile(file)) {
-                    sourceFiles.add(file);
+                    result.putValue(target, file);
                 }
                 return true;
             }
         });
-        return sourceFiles;
+        return result;
     }
 
     @NotNull

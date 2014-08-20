@@ -174,7 +174,7 @@ public fun String.toRegex(flags: Int = 0): java.util.regex.Pattern {
     return java.util.regex.Pattern.compile(this, flags)
 }
 
-val String.reader: StringReader
+public val String.reader: StringReader
     get() = StringReader(this)
 
 /**

@@ -32,8 +32,8 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
@@ -84,9 +84,15 @@ public class ExpressionTypingUtils {
 
     @NotNull
     protected static ExpressionReceiver safeGetExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
-        JetType type = facade.safeGetTypeInfo(expression, context).getType();
-        assert type != null : "safeGetTypeInfo should return @NotNull type";
+        JetType type = safeGetType(facade.safeGetTypeInfo(expression, context));
         return new ExpressionReceiver(expression, type);
+    }
+
+    @NotNull
+    public static JetType safeGetType(@NotNull JetTypeInfo typeInfo) {
+        JetType type = typeInfo.getType();
+        assert type != null : "safeGetType should be invoked on safe JetTypeInfo; safeGetTypeInfo should return @NotNull type";
+        return type;
     }
 
     @NotNull
@@ -150,12 +156,7 @@ public class ExpressionTypingUtils {
 
         PsiElement parent = scopeDeclaration.getParent();
         assert parent instanceof JetFunctionLiteralExpression : "parent of JetFunctionLiteral is " + parent;
-        JetCallExpression callExpression = getCallExpression((JetFunctionLiteralExpression) parent);
-        if (callExpression == null) {
-            return false;
-        }
-
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(callExpression, context);
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getParentResolvedCall((JetFunctionLiteralExpression) parent, context, true);
         if (resolvedCall == null) {
             return false;
         }
@@ -171,26 +172,6 @@ public class ExpressionTypingUtils {
         }
     }
 
-    @Nullable
-    private static JetCallExpression getCallExpression(@NotNull JetFunctionLiteralExpression functionLiteralExpression) {
-        PsiElement parent = functionLiteralExpression.getParent();
-        if (parent instanceof JetValueArgument) {
-            // foo({ ... })    or     foo(f = { ... })
-
-            PsiElement valueArgumentList = parent.getParent();
-            assert valueArgumentList instanceof JetValueArgumentList : "parent of value argument is " + valueArgumentList;
-
-            if (valueArgumentList.getParent() instanceof JetCallExpression) { // may be argument list of annotation
-                return (JetCallExpression) valueArgumentList.getParent();
-            }
-        }
-        else if (parent instanceof JetCallExpression) {
-            // foo { ... }
-
-            return  (JetCallExpression) parent;
-        }
-        return null;
-    }
     public static void checkCapturingInClosure(JetSimpleNameExpression expression, BindingTrace trace, JetScope scope) {
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
         if (variable != null) {

@@ -30,10 +30,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -325,7 +325,7 @@ public class AnnotationResolver {
             @NotNull JetCallExpression expression,
             @NotNull BindingTrace trace
     ) {
-        ResolvedCall<?> resolvedCall = BindingContextUtilPackage.getResolvedCall(expression, trace.getBindingContext());
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, trace.getBindingContext());
         if (resolvedCall == null || !CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
             return null;
         }
@@ -361,7 +361,7 @@ public class AnnotationResolver {
         for (ValueArgument argument : resolvedValueArgument.getArguments()) {
             JetExpression argumentExpression = argument.getArgumentExpression();
             if (argumentExpression != null) {
-                CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(argumentExpression, trace, expectedType);
+                CompileTimeConstant<?> constant = ConstantExpressionEvaluator.OBJECT$.evaluate(argumentExpression, trace, expectedType);
                 if (constant instanceof IntegerValueTypeConstant) {
                     JetType defaultType = ((IntegerValueTypeConstant) constant).getType(expectedType);
                     ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, trace);

@@ -9,8 +9,10 @@ fun test(a: A) {
 
 Resolved call:
 
+Resulting descriptor: fun invoke(p1: Int): Int
+
 Explicit receiver kind = THIS_OBJECT
-This object = foo
+This object = foo {Function1<Int, Int>}
 Receiver argument = NO_RECEIVER
 
 Value arguments mapping:

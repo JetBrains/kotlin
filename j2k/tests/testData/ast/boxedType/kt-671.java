@@ -1,4 +1,3 @@
-//file
 package demo;
 
 class Test {

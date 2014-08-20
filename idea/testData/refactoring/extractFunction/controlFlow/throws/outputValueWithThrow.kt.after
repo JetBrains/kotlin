@@ -9,7 +9,7 @@ fun foo(a: Int): Int {
     return b
 }
 
-fun i(b: Int): Int {
+private fun i(b: Int): Int {
     var b1 = b
     if (n == 10) throw Exception("")
     b1++

@@ -20,11 +20,11 @@ public trait MemoizedFunctionToNotNull<P, R: Any> : Function1<P, R>
 public trait MemoizedFunctionToNullable<P, R: Any> : Function1<P, R?>
 
 public trait NotNullLazyValue<T: Any> : Function0<T> {
-    fun isComputed(): Boolean
+    public fun isComputed(): Boolean
 }
 
 public trait NullableLazyValue<T: Any> : Function0<T?> {
-    fun isComputed(): Boolean
+    public fun isComputed(): Boolean
 }
 
-fun <T> NotNullLazyValue<T>.get(_this: Any?, p: PropertyMetadata): T = invoke()
+public fun <T> NotNullLazyValue<T>.get(_this: Any?, p: PropertyMetadata): T = invoke()

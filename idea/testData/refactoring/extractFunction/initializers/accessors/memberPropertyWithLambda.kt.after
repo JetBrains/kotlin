@@ -1,7 +1,7 @@
 class A(val a: Int, val b: Int) {
     val foo: Int get() = { i() - 1 }.invoke()
 
-    fun i(): Int {
+    private fun i(): Int {
         return a + b
     }
 }

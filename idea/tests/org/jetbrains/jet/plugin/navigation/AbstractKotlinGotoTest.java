@@ -24,9 +24,10 @@ import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.UsefulTestCase;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
@@ -42,12 +43,12 @@ import java.util.List;
 public abstract class AbstractKotlinGotoTest extends JetLightCodeInsightFixtureTestCase {
     protected void doSymbolTest(String path) {
         myFixture.configureByFile(path);
-        assertGotoSymbol(new GotoSymbolModel2(getProject()), getProject(), myFixture.getEditor());
+        assertGotoSymbol(new GotoSymbolModel2(getProject()), myFixture.getEditor());
     }
 
     protected void doClassTest(String path) {
         myFixture.configureByFile(path);
-        assertGotoSymbol(new GotoClassModel2(getProject()), getProject(), myFixture.getEditor());
+        assertGotoSymbol(new GotoClassModel2(getProject()), myFixture.getEditor());
     }
 
     private String dirPath = null;
@@ -77,13 +78,22 @@ public abstract class AbstractKotlinGotoTest extends JetLightCodeInsightFixtureT
         return getTestName(true) + ".kt";
     }
 
-    private static void assertGotoSymbol(FilteringGotoByModel<Language> model, @NotNull Project project, @NotNull Editor editor) {
-        List<String> searchTextList = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// SEARCH_TEXT:");
+    private static void assertGotoSymbol(@NotNull FilteringGotoByModel<Language> model, @NotNull Editor editor) {
+        String documentText = editor.getDocument().getText();
+        List<String> searchTextList = InTextDirectivesUtils.findListWithPrefixes(documentText, "// SEARCH_TEXT:");
         Assert.assertFalse("There's no search text in test data file given. Use '// SEARCH_TEXT:' directive",
                            searchTextList.isEmpty());
 
-        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
-        boolean enableCheckbox = InTextDirectivesUtils.isDirectiveDefined(editor.getDocument().getText(), "// CHECK_BOX");
+        List<String> expectedReferences = KotlinPackage.map(
+                InTextDirectivesUtils.findLinesWithPrefixesRemoved(documentText, "// REF:"),
+                new Function1<String, String>() {
+                    @Override
+                    public String invoke(String input) {
+                        return input.trim();
+                    }
+                }
+        );
+        boolean enableCheckbox = InTextDirectivesUtils.isDirectiveDefined(documentText, "// CHECK_BOX");
 
         String searchText = searchTextList.get(0);
 

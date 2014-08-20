@@ -5,11 +5,13 @@ fun main() {
     }
 }
 ---------------------
-0       <v0>: {<: Comparable<Int>}   NEW: r(0) -> <v0>
-1       <v1>: Int                    NEW: r(1) -> <v1>
-0 > 1   <v2>: Boolean                NEW: call(0 > 1, compareTo|<v0>, <v1>) -> <v2>
-2       <v3>: *                      NEW: r(2) -> <v3>
-{ 2 }   <v3>: *                      COPY
+0                        <v0>: {<: Comparable<Int>}   NEW: r(0) -> <v0>                             
+1                        <v1>: Int                    NEW: r(1) -> <v1>                             
+0 > 1                    <v2>: Boolean                NEW: call(0 > 1, compareTo|<v0>, <v1>) -> <v2>
+2                        <v3>: *                      NEW: r(2) -> <v3>                             
+{ 2 }                    <v3>: *                      COPY                                          
+while(0 > 1) { 2 }       !<v4>: *                                                                   
+{ while(0 > 1) { 2 } }   !<v4>: *                     COPY                                          
 =====================
 == dowhile ==
 fun dowhile() {
@@ -17,7 +19,11 @@ fun dowhile() {
     while(0 > 1)
 }
 ---------------------
-0       <v0>: *   NEW: r(0) -> <v0>
-1       <v1>: *   NEW: r(1) -> <v1>
-0 > 1   <v2>: *   NEW: call(0 > 1, compareTo|<v0>, <v1>) -> <v2>
+return                         !<v0>: *                                                                   
+{return}                       !<v0>: *                     COPY                                          
+0                              <v1>: {<: Comparable<Int>}   NEW: r(0) -> <v1>                             
+1                              <v2>: Int                    NEW: r(1) -> <v2>                             
+0 > 1                          <v3>: Boolean                NEW: call(0 > 1, compareTo|<v1>, <v2>) -> <v3>
+do {return} while(0 > 1)       !<v4>: *                                                                   
+{ do {return} while(0 > 1) }   !<v4>: *                     COPY                                          
 =====================

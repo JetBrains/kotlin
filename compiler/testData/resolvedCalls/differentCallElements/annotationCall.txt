@@ -1,0 +1,16 @@
+annotation class MyA(val i: Int)
+
+<caret>MyA(1) fun foo() {}
+
+
+Resolved call:
+
+Resulting descriptor: constructor MyA(i: Int)
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  i : Int = 1

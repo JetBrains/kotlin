@@ -1,6 +1,6 @@
 package test
 
-public open class WrongFieldMutability : java.lang.Object {
+public open class WrongFieldMutability {
     public constructor WrongFieldMutability()
     public final val fooFinal: kotlin.String? = "Test"
     public final var fooNotFinal: kotlin.String?

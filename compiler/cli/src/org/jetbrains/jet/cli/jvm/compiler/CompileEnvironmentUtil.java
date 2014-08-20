@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
+import org.jetbrains.jet.cli.common.messages.OutputMessageUtil;
 import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
 import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
@@ -62,7 +62,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.jar.*;
 
@@ -159,8 +158,8 @@ public class CompileEnvironmentUtil {
             method.setAccessible(true);
             method.invoke(null);
 
-            ArrayList<Module> answer = new ArrayList<Module>(AllModules.instance$.get());
-            AllModules.instance$.get().clear();
+            ArrayList<Module> answer = new ArrayList<Module>(AllModules.INSTANCE$.get());
+            AllModules.INSTANCE$.get().clear();
             return answer;
         }
         catch (Exception e) {
@@ -241,14 +240,12 @@ public class CompileEnvironmentUtil {
 
     // Used for debug output only
     private static String loadModuleScriptText(String moduleScriptFile) {
-        String moduleScriptText;
         try {
-            moduleScriptText = FileUtil.loadFile(new File(moduleScriptFile));
+            return FileUtil.loadFile(new File(moduleScriptFile));
         }
         catch (IOException e) {
-            moduleScriptText = "Can't load module script text:\n" + MessageRenderer.PLAIN.renderException(e);
+            return "Can't load module script text:\n" + OutputMessageUtil.renderException(e);
         }
-        return moduleScriptText;
     }
 
     static void writeOutputToDirOrJar(
@@ -304,7 +301,7 @@ public class CompileEnvironmentUtil {
                             }
                         }
                     }
-                    return Unit.VALUE;
+                    return Unit.INSTANCE$;
                 }
             });
         }

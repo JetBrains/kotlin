@@ -1,6 +1,6 @@
 package test
 
-public open class MissingUpperBound : java.lang.Object {
+public open class MissingUpperBound {
     public constructor MissingUpperBound()
-    public open fun </*0*/ A : java.lang.Runnable?> foo(): kotlin.String? where A : java.lang.Cloneable?
+    public open fun </*0*/ A : java.lang.Runnable?> foo(): kotlin.String? where A : kotlin.Cloneable?
 }

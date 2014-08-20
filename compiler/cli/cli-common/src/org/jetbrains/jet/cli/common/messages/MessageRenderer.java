@@ -17,10 +17,11 @@
 package org.jetbrains.jet.cli.common.messages;
 
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.io.IoPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.File;
 
 public interface MessageRenderer {
 
@@ -52,45 +53,55 @@ public interface MessageRenderer {
         }
 
         @Override
-        public String renderException(@NotNull Throwable e) {
-            return render(CompilerMessageSeverity.EXCEPTION, PLAIN.renderException(e), CompilerMessageLocation.NO_LOCATION);
-        }
-
-        @Override
         public String renderConclusion() {
             return "</MESSAGES>";
         }
     };
 
-    MessageRenderer PLAIN = new MessageRenderer() {
+    MessageRenderer PLAIN = new PlainText() {
+        @Nullable
+        @Override
+        protected String getPath(@NotNull CompilerMessageLocation location) {
+            return location.getPath();
+        }
+    };
+
+    MessageRenderer PLAIN_WITH_RELATIVE_PATH = new PlainText() {
+        private final File cwd = new File(".").getAbsoluteFile();
+
+        @Nullable
+        @Override
+        protected String getPath(@NotNull CompilerMessageLocation location) {
+            String path = location.getPath();
+            return cwd == null || path == null ? path : IoPackage.relativePath(cwd, new File(path));
+        }
+    };
+
+    abstract class PlainText implements MessageRenderer {
         @Override
         public String renderPreamble() {
             return "";
         }
 
         @Override
-        public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
-            String path = location.getPath();
+        public String render(
+                @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
+        ) {
+            String path = getPath(location);
             String position = path == null ? "" : path + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";
             return severity + ": " + position + message;
         }
 
-        @Override
-        public String renderException(@NotNull Throwable e) {
-            StringWriter out = new StringWriter();
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            e.printStackTrace(new PrintWriter(out));
-            return out.toString();
-        }
+        @Nullable
+        protected abstract String getPath(@NotNull CompilerMessageLocation location);
 
         @Override
         public String renderConclusion() {
             return "";
         }
-    };
+    }
 
     String renderPreamble();
     String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location);
-    String renderException(@NotNull Throwable e);
     String renderConclusion();
 }

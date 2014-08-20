@@ -25,10 +25,10 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.engine.BasicStepMethodFilter
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
+import org.jetbrains.jet.plugin.refactoring.runReadAction
 
-abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
+public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
 
     protected fun doStepIntoTest(path: String) {
         createDebugProcess(path)
@@ -86,7 +86,7 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
 
         val line = (breakpoint as LineBreakpoint).getLineIndex()
 
-        return ApplicationManager.getApplication()?.runReadAction(Computable {
+        return runReadAction {
             val containingFile = breakpoint.getPsiFile()
             if (containingFile == null) throw AssertionError("Couldn't find file for breakpoint at the line $line")
 
@@ -101,6 +101,6 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
                     else -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
                 }
             }
-        })!!
+        }!!
     }
 }

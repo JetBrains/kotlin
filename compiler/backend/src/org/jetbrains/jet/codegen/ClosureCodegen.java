@@ -45,10 +45,10 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ClosureCodegen extends ParentCodegenAware {
@@ -194,7 +194,7 @@ public class ClosureCodegen extends ParentCodegenAware {
             v.dup();
 
             codegen.pushClosureOnStack(closure, false, codegen.defaultCallGenerator);
-            v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor());
+            v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
         }
         return StackValue.onStack(asmType);
     }
@@ -210,7 +210,7 @@ public class ClosureCodegen extends ParentCodegenAware {
             mv.visitCode();
             iv.anew(asmType);
             iv.dup();
-            iv.invokespecial(asmType.getInternalName(), "<init>", "()V");
+            iv.invokespecial(asmType.getInternalName(), "<init>", "()V", false);
             iv.putstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
             mv.visitInsn(RETURN);
             FunctionCodegen.endVisit(mv, "<clinit>", fun);
@@ -243,7 +243,7 @@ public class ClosureCodegen extends ParentCodegenAware {
             count++;
         }
 
-        iv.invokevirtual(asmType.getInternalName(), delegate.getName(), delegate.getDescriptor());
+        iv.invokevirtual(asmType.getInternalName(), delegate.getName(), delegate.getDescriptor(), false);
         StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), iv);
 
         iv.areturn(bridge.getReturnType());
@@ -270,7 +270,7 @@ public class ClosureCodegen extends ParentCodegenAware {
             }
 
             iv.load(0, superClassAsmType);
-            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V");
+            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V", false);
 
             iv.visitInsn(RETURN);
 

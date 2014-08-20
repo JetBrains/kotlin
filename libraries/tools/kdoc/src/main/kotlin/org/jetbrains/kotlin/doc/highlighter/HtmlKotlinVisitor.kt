@@ -48,7 +48,7 @@ class HtmlKotlinVisitor: JetTreeVisitor<StringBuilder>() {
                 if (child is PsiComment || child is PsiWhiteSpace) {
                     // ignore
                 } else {
-                    println("------- Child $child of type ${child.javaClass}")
+                    println("------- Child $child of type ${child?.javaClass}")
                 }
                 child?.accept(this)
             }

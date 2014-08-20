@@ -37,8 +37,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 public final class DescriptorResolverUtils {
-    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
-
     private DescriptorResolverUtils() {
     }
 
@@ -62,7 +60,7 @@ public final class DescriptorResolverUtils {
                             @Override
                             public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
                                 errorReporter.reportCannotInferVisibility(descriptor);
-                                return Unit.VALUE;
+                                return Unit.INSTANCE$;
                             }
                         });
                         result.add((D) fakeOverride);

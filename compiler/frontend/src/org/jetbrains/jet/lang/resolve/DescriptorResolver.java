@@ -390,7 +390,7 @@ public class DescriptorResolver {
                 Annotations.EMPTY,
                 Name.identifier(functionName),
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
-                SourceElement.NO_SOURCE
+                parameter.getSource()
         );
 
         functionDescriptor.initialize(
@@ -1078,7 +1078,7 @@ public class DescriptorResolver {
                 public CompileTimeConstant<?> invoke() {
                     JetExpression initializer = variable.getInitializer();
                     JetType initializerType = expressionTypingServices.safeGetType(scope, initializer, variableType, dataFlowInfo, trace);
-                    CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(initializer, trace, initializerType);
+                    CompileTimeConstant<?> constant = ConstantExpressionEvaluator.OBJECT$.evaluate(initializer, trace, initializerType);
                     if (constant instanceof IntegerValueTypeConstant) {
                         return EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) constant, initializerType);
                     }
@@ -1277,12 +1277,9 @@ public class DescriptorResolver {
         parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         ConstructorDescriptorImpl constructor = constructorDescriptor.initialize(
                 typeParameters,
-                resolveValueParameters(
-                        constructorDescriptor,
-                        parameterScope,
-                        valueParameters, trace),
-                resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)),
-                isConstructorOfStaticNestedClass(constructorDescriptor));
+                resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace),
+                resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor))
+        );
         if (isAnnotationClass(classDescriptor)) {
             CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace);
         }

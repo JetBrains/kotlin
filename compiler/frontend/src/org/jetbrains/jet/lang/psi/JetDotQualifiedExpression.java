@@ -54,7 +54,7 @@ public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlace
                 return childExpressionsByStub[0];
             }
         }
-        return JetQualifiedExpressionImpl.instance$.getReceiverExpression(this);
+        return JetQualifiedExpressionImpl.INSTANCE$.getReceiverExpression(this);
     }
 
     @Nullable
@@ -67,7 +67,7 @@ public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlace
                 return childExpressionsByStub[1];
             }
         }
-        return JetQualifiedExpressionImpl.instance$.getSelectorExpression(this);
+        return JetQualifiedExpressionImpl.INSTANCE$.getSelectorExpression(this);
     }
 
 
@@ -93,12 +93,12 @@ public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlace
     @NotNull
     @Override
     public ASTNode getOperationTokenNode() {
-        return JetQualifiedExpressionImpl.instance$.getOperationTokenNode(this);
+        return JetQualifiedExpressionImpl.INSTANCE$.getOperationTokenNode(this);
     }
 
     @NotNull
     @Override
     public JetToken getOperationSign() {
-        return JetQualifiedExpressionImpl.instance$.getOperationSign(this);
+        return JetQualifiedExpressionImpl.INSTANCE$.getOperationSign(this);
     }
 }

@@ -20,6 +20,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetDeclaration
 
 public trait KotlinLightElement<T: JetDeclaration, D: PsiElement> {
-    val origin: T?
-    val delegate: D
+    public val origin: T?
+    public val delegate: D
 }

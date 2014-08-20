@@ -20,5 +20,5 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 
 // marker for DescriptorRenderer to treat specially in decompiler mode
 public trait MissingDependencyErrorClass {
-    val fullFqName: FqName
+    public val fullFqName: FqName
 }

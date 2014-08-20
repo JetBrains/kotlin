@@ -61,6 +61,7 @@ public class IntrinsicMethods {
     private static final EnumValues ENUM_VALUES = new EnumValues();
     private static final EnumValueOf ENUM_VALUE_OF = new EnumValueOf();
     private static final ToString TO_STRING = new ToString();
+    private static final Clone CLONE = new Clone();
 
     private static final FqNameUnsafe KOTLIN_ANY_FQ_NAME = DescriptorUtils.getFqName(KotlinBuiltIns.getInstance().getAny());
     private static final FqNameUnsafe KOTLIN_STRING_FQ_NAME = DescriptorUtils.getFqName(KotlinBuiltIns.getInstance().getString());
@@ -121,6 +122,8 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("CharSequence", "get", 1, new StringGetChar());
         declareIntrinsicFunction("String", "get", 1, new StringGetChar());
 
+        declareIntrinsicFunction("Cloneable", "clone", 0, CLONE);
+
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_ANY_FQ_NAME, "toString", 0, TO_STRING);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_ANY_FQ_NAME, "equals", 1, EQUALS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_ANY_FQ_NAME, "identityEquals", 1, IDENTITY_EQUALS);
@@ -148,6 +151,7 @@ public class IntrinsicMethods {
         declareIntrinsicProperty("Array", "indices", ARRAY_INDICES);
         declareIntrinsicFunction("Array", "set", 2, ARRAY_SET);
         declareIntrinsicFunction("Array", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("Array", "clone", 0, CLONE);
         declareIterator("Array");
     }
 
@@ -157,6 +161,7 @@ public class IntrinsicMethods {
         declareIntrinsicProperty(arrayTypeName, "indices", ARRAY_INDICES);
         declareIntrinsicFunction(arrayTypeName, "set", 2, ARRAY_SET);
         declareIntrinsicFunction(arrayTypeName, "get", 1, ARRAY_GET);
+        declareIntrinsicFunction(arrayTypeName, "clone", 0, CLONE);
         declareIterator(arrayTypeName);
     }
 

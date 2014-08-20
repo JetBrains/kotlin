@@ -1,6 +1,6 @@
 package test
 
-public open class SeveralSamParameters : java.lang.Object {
+public open class SeveralSamParameters {
     public constructor SeveralSamParameters()
 }
 

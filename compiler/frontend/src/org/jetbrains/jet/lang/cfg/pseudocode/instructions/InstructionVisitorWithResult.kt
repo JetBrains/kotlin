@@ -64,10 +64,6 @@ public abstract class InstructionVisitorWithResult<R>() {
         return visitInstruction(instruction)
     }
 
-    public open fun visitUnsupportedElementInstruction(instruction: UnsupportedElementInstruction): R {
-        return visitInstructionWithNext(instruction)
-    }
-
     public open fun visitSubroutineExit(instruction: SubroutineExitInstruction): R {
         return visitInstruction(instruction)
     }

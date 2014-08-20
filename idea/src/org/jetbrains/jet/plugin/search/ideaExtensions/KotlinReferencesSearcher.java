@@ -24,11 +24,14 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
-import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
+import org.jetbrains.jet.plugin.search.usagesSearch.*;
 
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     public static void processJetClassOrObject(
@@ -43,20 +46,48 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                 }
             });
             if (lightClass != null) {
-                queryParameters.getOptimizer().searchWord(className, queryParameters.getEffectiveSearchScope(), true, lightClass);
+                searchNamedElement(queryParameters, lightClass, className);
             }
         }
     }
 
     @Override
-    public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer) {
+    public void processQuery(
+            @NotNull final ReferencesSearch.SearchParameters queryParameters,
+            @NotNull final Processor<PsiReference> consumer
+    ) {
         PsiElement element = queryParameters.getElementToSearch();
 
-        PsiElement unwrappedElement = AsJavaPackage.getUnwrapped(element);
+        final PsiNamedElement unwrappedElement = AsJavaPackage.getNamedUnwrappedElement(element);
         if (unwrappedElement == null
-            || !JetPluginUtil.isInSource(unwrappedElement)
-            || JetPluginUtil.isKtFileInGradleProjectInWrongFolder(unwrappedElement)) return;
+            || !ProjectRootsUtil.isInSource(unwrappedElement)
+            || JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(unwrappedElement)) return;
 
+        ApplicationManager.getApplication().runReadAction(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        KotlinPsiSearchHelper searchHelper = new KotlinPsiSearchHelper(queryParameters.getElementToSearch().getProject());
+                        UsagesSearchTarget<PsiNamedElement> searchTarget = new UsagesSearchTarget<PsiNamedElement>(
+                                unwrappedElement,
+                                queryParameters.getEffectiveSearchScope(),
+                                UsagesSearchLocation.EVERYWHERE,
+                                false
+                        );
+                        UsagesSearchRequestItem requestItem = new UsagesSearchRequestItem(
+                                searchTarget,
+                                UsagesSearchPackage.getSpecialNamesToSearch(unwrappedElement),
+                                UsagesSearchPackage.getIsTargetUsage()
+                        );
+                        searchHelper.processFilesWithText(requestItem, consumer);
+                    }
+                }
+        );
+
+        searchLightElements(queryParameters, element);
+    }
+
+    private static void searchLightElements(ReferencesSearch.SearchParameters queryParameters, PsiElement element) {
         if (element instanceof JetClassOrObject) {
             processJetClassOrObject((JetClassOrObject) element, queryParameters);
         }
@@ -99,7 +130,10 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
     }
 
     private static void searchNamedElement(ReferencesSearch.SearchParameters queryParameters, PsiNamedElement element) {
-        String name = element != null ? element.getName() : null;
+        searchNamedElement(queryParameters, element, element != null ? element.getName() : null);
+    }
+
+    private static void searchNamedElement(ReferencesSearch.SearchParameters queryParameters, PsiNamedElement element, @Nullable String name) {
         if (name != null) {
             queryParameters.getOptimizer().searchWord(name, queryParameters.getEffectiveSearchScope(), true, element);
         }

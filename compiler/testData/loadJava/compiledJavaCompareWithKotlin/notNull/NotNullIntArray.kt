@@ -1,5 +1,5 @@
 package test
 
-public open class NotNullIntArray() : java.lang.Object() {
+public open class NotNullIntArray() {
     public open fun hi(): IntArray = throw Exception()
 }

@@ -5,7 +5,7 @@ fun foo() {
     unit()
 }
 
-fun unit() {
+private fun unit() {
     bar { t ->
         val k = 1
         t.n + k + 1

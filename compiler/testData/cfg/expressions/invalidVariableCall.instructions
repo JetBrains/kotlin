@@ -1,0 +1,19 @@
+== foo ==
+fun foo(i: Int) {
+    i()
+}
+---------------------
+L0:
+  1 <START>
+    v(i: Int)
+    magic[FAKE_INITIALIZER](i: Int) -> <v0>
+    w(i|<v0>)
+  2 mark({ i() })
+    r(i) -> <v1>
+L1:
+  1 <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================

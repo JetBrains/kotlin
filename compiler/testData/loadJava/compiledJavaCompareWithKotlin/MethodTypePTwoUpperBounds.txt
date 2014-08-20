@@ -1,6 +1,6 @@
 package test
 
-public open class MethodTypePTwoUpperBounds : java.lang.Object {
+public open class MethodTypePTwoUpperBounds {
     public constructor MethodTypePTwoUpperBounds()
-    public open fun </*0*/ T : java.lang.Cloneable?> foo(): kotlin.Unit where T : java.lang.Runnable?
+    public open fun </*0*/ T : kotlin.Cloneable?> foo(): kotlin.Unit where T : java.lang.Runnable?
 }

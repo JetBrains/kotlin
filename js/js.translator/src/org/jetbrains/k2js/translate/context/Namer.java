@@ -43,11 +43,17 @@ public final class Namer {
     private static final String TRAIT_OBJECT_NAME = "createTrait";
     private static final String OBJECT_OBJECT_NAME = "createObject";
     private static final String ENUM_ENTRIES_NAME = "createEnumEntries";
+    private static final String CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME = "getCallableRefForMemberFunction";
+    private static final String CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME = "getCallableRefForExtensionFunction";
+    private static final String CALLABLE_REF_FOR_CONSTRUCTOR_NAME = "getCallableRefForConstructor";
+    private static final String CALLABLE_REF_FOR_TOP_LEVEL_PROPERTY = "getCallableRefForTopLevelProperty";
+    private static final String CALLABLE_REF_FOR_MEMBER_PROPERTY = "getCallableRefForMemberProperty";
+    private static final String CALLABLE_REF_FOR_EXTENSION_PROPERTY = "getCallableRefForExtensionProperty";
 
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
-    private static final String DELEGATE_POSTFIX = "$delegate";
+    private static final String DELEGATE = "$delegate";
 
     private static final String SUPER_METHOD_NAME = "baseInitializer";
 
@@ -126,8 +132,13 @@ public final class Namer {
     }
 
     @NotNull
+    public static String getDelegatePrefix() {
+        return DELEGATE;
+    }
+
+    @NotNull
     public static String getDelegateName(@NotNull String propertyName) {
-        return propertyName + DELEGATE_POSTFIX;
+        return propertyName + DELEGATE;
     }
 
     @NotNull
@@ -177,6 +188,18 @@ public final class Namer {
     @NotNull
     private final JsName enumEntriesName;
     @NotNull
+    private final JsName callableRefForMemberFunctionName;
+    @NotNull
+    private final JsName callableRefForExtensionFunctionName;
+    @NotNull
+    private final JsName callableRefForConstructorName;
+    @NotNull
+    private final JsName callableRefForTopLevelProperty;
+    @NotNull
+    private final JsName callableRefForMemberProperty;
+    @NotNull
+    private final JsName callableRefForExtensionProperty;
+    @NotNull
     private final JsExpression undefinedExpression;
     @NotNull
     private final JsExpression callGetProperty;
@@ -200,6 +223,12 @@ public final class Namer {
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
         enumEntriesName = kotlinScope.declareName(ENUM_ENTRIES_NAME);
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
+        callableRefForMemberFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME);
+        callableRefForExtensionFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME);
+        callableRefForConstructorName = kotlinScope.declareName(CALLABLE_REF_FOR_CONSTRUCTOR_NAME);
+        callableRefForTopLevelProperty = kotlinScope.declareName(CALLABLE_REF_FOR_TOP_LEVEL_PROPERTY);
+        callableRefForMemberProperty = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_PROPERTY);
+        callableRefForExtensionProperty = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_PROPERTY);
 
         isTypeName = kotlinScope.declareName("isType");
 
@@ -234,6 +263,36 @@ public final class Namer {
     @NotNull
     public JsExpression objectCreationMethodReference() {
         return kotlin(objectName);
+    }
+
+    @NotNull
+    public JsExpression callableRefForMemberFunctionReference() {
+        return kotlin(callableRefForMemberFunctionName);
+    }
+
+    @NotNull
+    public JsExpression callableRefForExtensionFunctionReference() {
+        return kotlin(callableRefForExtensionFunctionName);
+    }
+
+    @NotNull
+    public JsExpression callableRefForConstructorReference() {
+        return kotlin(callableRefForConstructorName);
+    }
+
+    @NotNull
+    public JsExpression callableRefForTopLevelPropertyReference() {
+        return kotlin(callableRefForTopLevelProperty);
+    }
+
+    @NotNull
+    public JsExpression callableRefForMemberPropertyReference() {
+        return kotlin(callableRefForMemberProperty);
+    }
+
+    @NotNull
+    public JsExpression callableRefForExtensionPropertyReference() {
+        return kotlin(callableRefForExtensionProperty);
     }
 
     @NotNull

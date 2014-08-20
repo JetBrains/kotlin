@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +15,7 @@ import java.util.List;
  * Represents a JavaScript block statement.
  */
 public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
+    @NotNull
     private final List<JsStatement> statements;
 
     public JsBlock() {
@@ -27,10 +30,11 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
         this(Arrays.asList(statements));
     }
 
-    public JsBlock(List<JsStatement> statements) {
+    public JsBlock(@NotNull List<JsStatement> statements) {
         this.statements = statements;
     }
 
+    @NotNull
     public List<JsStatement> getStatements() {
         return statements;
     }

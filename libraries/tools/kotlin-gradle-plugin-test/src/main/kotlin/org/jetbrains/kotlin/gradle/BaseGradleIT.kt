@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import com.google.common.io.Files
 import java.io.File
+import java.io.InputStream
 import java.util.Scanner
 import org.junit.Before
 import org.junit.After
@@ -76,16 +77,19 @@ open class BaseGradleIT(resourcesRoot: String = "src/test/resources") {
     }
 
     private fun readOutput(process: Process): Pair<String, Int> {
-        val s = Scanner(process.getInputStream()!!)
-        val text = StringBuilder()
-        while (s.hasNextLine()) {
-            text append s.nextLine()
-            text append "\n"
+        fun InputStream.readFully(): String {
+            val text = reader().readText()
+            close()
+            return text
         }
-        s.close()
+
+        val stdout = process.getInputStream()!!.readFully()
+        System.out.println(stdout)
+        val stderr = process.getErrorStream()!!.readFully()
+        System.err.println(stderr)
 
         val result = process.waitFor()
-        return text.toString() to result
+        return stdout to result
     }
 
     fun copyRecursively(source: File, target: File) {

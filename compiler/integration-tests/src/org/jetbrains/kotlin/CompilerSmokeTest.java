@@ -16,34 +16,63 @@
 
 package org.jetbrains.kotlin;
 
+import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
 public class CompilerSmokeTest extends KotlinIntegrationTestBase {
+    @Rule
+    public final TestName name = new TestName();
+
+    @NotNull
+    @Override
+    protected File getTestDataDir() {
+        return new File(new File(INTEGRATION_TEST_DATA_BASE_DIR, "smoke"), name.getMethodName());
+    }
+
+    private int runCompiler(String logName, String... arguments) throws Exception {
+        String classpath = getCompilerLib().getAbsolutePath() + File.separator + "kotlin-compiler.jar" + File.pathSeparator +
+                           getKotlinRuntimePath();
+
+        Collection<String> javaArgs = new ArrayList<String>();
+        javaArgs.add("-cp");
+        javaArgs.add(classpath);
+        javaArgs.add("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
+        Collections.addAll(javaArgs, arguments);
+
+        return runJava(logName, ArrayUtil.toStringArray(javaArgs));
+    }
+
     @Test
-    public void compileAndRunHelloApp() throws Exception {
+    public void helloApp() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-d", jar));
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
         runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 
     @Test
-    public void compileAndRunHelloAppFQMain() throws Exception {
+    public void helloAppFQMain() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-d", jar));
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
         runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 
     @Test
-    public void compileAndRunHelloAppVarargMain() throws Exception {
+    public void helloAppVarargMain() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-includeRuntime", "hello.kt", "-d", jar));
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
         runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 

@@ -94,9 +94,12 @@ public class LabelResolver {
     @Nullable
     private JetCallExpression getContainingCallExpression(@NotNull JetFunctionLiteralExpression expression) {
         PsiElement parent = expression.getParent();
-        if (parent instanceof JetCallExpression) {
+        if (parent instanceof JetFunctionLiteralArgument) {
             // f {}
-            return (JetCallExpression) parent;
+            PsiElement call = parent.getParent();
+            if (call instanceof JetCallExpression) {
+                return (JetCallExpression) call;
+            }
         }
 
         if (parent instanceof JetValueArgument) {

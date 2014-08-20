@@ -39,7 +39,7 @@ fun test() {
     <!DEBUG_INFO_AUTOCAST!>out<!>.println();
   }
 
-  if (out == null || <!DEBUG_INFO_AUTOCAST!>out<!>.println(0) == Unit.VALUE) {
+  if (out == null || <!DEBUG_INFO_AUTOCAST!>out<!>.println(0) == Unit) {
     out?.println(1)
     out<!UNSAFE_CALL!>.<!>println(1)
   }
@@ -47,21 +47,21 @@ fun test() {
     <!DEBUG_INFO_AUTOCAST!>out<!>.println(2)
   }
 
-  if (out != null && <!DEBUG_INFO_AUTOCAST!>out<!>.println() == Unit.VALUE) {
+  if (out != null && <!DEBUG_INFO_AUTOCAST!>out<!>.println() == Unit) {
     <!DEBUG_INFO_AUTOCAST!>out<!>.println();
   }
   else {
     out?.println();
   }
 
-  if (out == null || <!DEBUG_INFO_AUTOCAST!>out<!>.println() == Unit.VALUE) {
+  if (out == null || <!DEBUG_INFO_AUTOCAST!>out<!>.println() == Unit) {
     out?.println();
   }
   else {
     <!DEBUG_INFO_AUTOCAST!>out<!>.println();
   }
 
-  if (1 == 2 || out != null && <!DEBUG_INFO_AUTOCAST!>out<!>.println(1) == Unit.VALUE) {
+  if (1 == 2 || out != null && <!DEBUG_INFO_AUTOCAST!>out<!>.println(1) == Unit) {
     out?.println(2);
     out<!UNSAFE_CALL!>.<!>println(2);
   }
@@ -98,7 +98,7 @@ fun test() {
     <!DEBUG_INFO_AUTOCAST!>out<!>.println();
   }
 
-  if (out == null || <!DEBUG_INFO_AUTOCAST!>out<!>.println(0) == Unit.VALUE) {
+  if (out == null || <!DEBUG_INFO_AUTOCAST!>out<!>.println(0) == Unit) {
     out?.println(1)
     out<!UNSAFE_CALL!>.<!>println(1)
   }
@@ -106,7 +106,7 @@ fun test() {
     <!DEBUG_INFO_AUTOCAST!>out<!>.println(2)
   }
 
-  if (out != null && <!DEBUG_INFO_AUTOCAST!>out<!>.println() == Unit.VALUE) {
+  if (out != null && <!DEBUG_INFO_AUTOCAST!>out<!>.println() == Unit) {
     <!DEBUG_INFO_AUTOCAST!>out<!>.println();
   }
   else {
@@ -114,7 +114,7 @@ fun test() {
     out<!UNSAFE_CALL!>.<!>println();
   }
 
-  if (out == null || <!DEBUG_INFO_AUTOCAST!>out<!>.println() == Unit.VALUE) {
+  if (out == null || <!DEBUG_INFO_AUTOCAST!>out<!>.println() == Unit) {
     out?.println();
     out<!UNSAFE_CALL!>.<!>println();
   }
@@ -122,7 +122,7 @@ fun test() {
     <!DEBUG_INFO_AUTOCAST!>out<!>.println();
   }
 
-  if (1 == 2 || out != null && <!DEBUG_INFO_AUTOCAST!>out<!>.println(1) == Unit.VALUE) {
+  if (1 == 2 || out != null && <!DEBUG_INFO_AUTOCAST!>out<!>.println(1) == Unit) {
     out?.println(2);
     out<!UNSAFE_CALL!>.<!>println(2);
   }

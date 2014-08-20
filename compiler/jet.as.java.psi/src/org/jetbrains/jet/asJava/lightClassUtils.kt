@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import com.intellij.psi.PsiClass
 
-fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
+public fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
 
 public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {

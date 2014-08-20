@@ -9,6 +9,6 @@ class A<T> {
     }
 }
 
-fun <T> i(d: Data<T>): Int {
+private fun <T> i(d: Data<T>): Int {
     return d.t + 1
 }

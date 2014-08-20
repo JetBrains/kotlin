@@ -290,13 +290,14 @@ JetFile: StringTemplates.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('map')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BLOCK
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('foo')
-                  PsiElement(RBRACE)('}')
+              FUNCTION_LITERAL_ARGUMENT
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    BLOCK
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('foo')
+                    PsiElement(RBRACE)('}')
           PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('sdfsdf')
@@ -319,18 +320,19 @@ JetFile: StringTemplates.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('map')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  PsiWhiteSpace(' ')
-                  BLOCK
-                    STRING_TEMPLATE
-                      PsiElement(OPEN_QUOTE)('"')
-                      LITERAL_STRING_TEMPLATE_ENTRY
-                        PsiElement(REGULAR_STRING_PART)('foo')
-                      PsiElement(CLOSING_QUOTE)('"')
-                  PsiWhiteSpace(' ')
-                  PsiElement(RBRACE)('}')
+              FUNCTION_LITERAL_ARGUMENT
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace(' ')
+                    BLOCK
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)('foo')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiWhiteSpace(' ')
+                    PsiElement(RBRACE)('}')
           PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('sdfsdf')
@@ -353,35 +355,37 @@ JetFile: StringTemplates.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('map')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  PsiWhiteSpace('\n      ')
-                  BLOCK
-                    STRING_TEMPLATE
-                      PsiElement(OPEN_QUOTE)('"')
-                      LITERAL_STRING_TEMPLATE_ENTRY
-                        PsiElement(REGULAR_STRING_PART)('foo')
-                      SHORT_STRING_TEMPLATE_ENTRY
-                        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('sdf')
-                      LONG_STRING_TEMPLATE_ENTRY
-                        PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
-                        PsiWhiteSpace(' ')
-                        CALL_EXPRESSION
+              FUNCTION_LITERAL_ARGUMENT
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n      ')
+                    BLOCK
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)('foo')
+                        SHORT_STRING_TEMPLATE_ENTRY
+                          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('buzz')
-                          FUNCTION_LITERAL_EXPRESSION
-                            FUNCTION_LITERAL
-                              PsiElement(LBRACE)('{')
-                              BLOCK
-                                <empty list>
-                              PsiElement(RBRACE)('}')
-                        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
-                      PsiElement(CLOSING_QUOTE)('"')
-                  PsiWhiteSpace(' ')
-                  PsiElement(RBRACE)('}')
+                            PsiElement(IDENTIFIER)('sdf')
+                        LONG_STRING_TEMPLATE_ENTRY
+                          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                          PsiWhiteSpace(' ')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('buzz')
+                            FUNCTION_LITERAL_ARGUMENT
+                              FUNCTION_LITERAL_EXPRESSION
+                                FUNCTION_LITERAL
+                                  PsiElement(LBRACE)('{')
+                                  BLOCK
+                                    <empty list>
+                                  PsiElement(RBRACE)('}')
+                          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiWhiteSpace(' ')
+                    PsiElement(RBRACE)('}')
           PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('sdfsdf')

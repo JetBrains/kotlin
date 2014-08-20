@@ -15,8 +15,8 @@ open class MyClass() : MyTrait, MyAbstractClass() {
     override fun foo() {}
     override fun bar() {}
 
-    override val pr : Unit = Unit.VALUE
-    override val prr : Unit = Unit.VALUE
+    override val pr : Unit = Unit
+    override val prr : Unit = Unit
 }
 
 class MyChildClass() : MyClass() {}
@@ -25,14 +25,14 @@ class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass<!> : MyTrait, MyAbstract
 
 class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass2<!>() : MyTrait, MyAbstractClass() {
     override fun foo() {}
-    override val pr : Unit = Unit.VALUE
-    override val prr : Unit = Unit.VALUE
+    override val pr : Unit = Unit
+    override val prr : Unit = Unit
 }
 
 class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass3<!>() : MyTrait, MyAbstractClass() {
     override fun bar() {}
-    override val pr : Unit = Unit.VALUE
-    override val prr : Unit = Unit.VALUE
+    override val pr : Unit = Unit
+    override val prr : Unit = Unit
 }
 
 class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass4<!>() : MyTrait, MyAbstractClass() {
@@ -44,7 +44,7 @@ class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass4<!>() : MyTrait, MyAbstr
 
 class MyChildClass1() : MyClass() {
     <!VIRTUAL_MEMBER_HIDDEN!>fun foo()<!> {}
-    <!VIRTUAL_MEMBER_HIDDEN!>val pr : Unit<!> = Unit.VALUE
+    <!VIRTUAL_MEMBER_HIDDEN!>val pr : Unit<!> = Unit
     override fun bar() {}
-    override val prr : Unit = Unit.VALUE
+    override val prr : Unit = Unit
 }

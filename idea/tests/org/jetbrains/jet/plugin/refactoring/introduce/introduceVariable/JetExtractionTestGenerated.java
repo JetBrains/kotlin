@@ -211,10 +211,38 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
     }
     
     @TestMetadata("idea/testData/refactoring/extractFunction")
-    @InnerTestClasses({ExtractFunction.Basic.class, ExtractFunction.ControlFlow.class, ExtractFunction.DefaultContainer.class, ExtractFunction.Delegation.class, ExtractFunction.Initializers.class, ExtractFunction.Parameters.class, ExtractFunction.TypeParameters.class})
+    @InnerTestClasses({ExtractFunction.AsProperty.class, ExtractFunction.Basic.class, ExtractFunction.ControlFlow.class, ExtractFunction.DefaultContainer.class, ExtractFunction.Delegation.class, ExtractFunction.Initializers.class, ExtractFunction.Parameters.class, ExtractFunction.TypeParameters.class})
     public static class ExtractFunction extends AbstractJetExtractionTest {
         public void testAllFilesPresentInExtractFunction() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("idea/testData/refactoring/extractFunction/asProperty")
+        public static class AsProperty extends AbstractJetExtractionTest {
+            public void testAllFilesPresentInAsProperty() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/asProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("extractToClass.kt")
+            public void testExtractToClass() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/asProperty/extractToClass.kt");
+            }
+            
+            @TestMetadata("extractToFile.kt")
+            public void testExtractToFile() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/asProperty/extractToFile.kt");
+            }
+            
+            @TestMetadata("extractToFunction.kt")
+            public void testExtractToFunction() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/asProperty/extractToFunction.kt");
+            }
+            
+            @TestMetadata("extractWithParams.kt")
+            public void testExtractWithParams() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/asProperty/extractWithParams.kt");
+            }
+            
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/basic")
@@ -288,9 +316,24 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/noConflictWithInnerFunction.kt");
             }
             
+            @TestMetadata("privateMemberInClassObject.kt")
+            public void testPrivateMemberInClassObject() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateMemberInClassObject.kt");
+            }
+            
             @TestMetadata("privateMemberRef.kt")
             public void testPrivateMemberRef() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateMemberRef.kt");
+            }
+            
+            @TestMetadata("privateNestedClass.kt")
+            public void testPrivateNestedClass() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateNestedClass.kt");
+            }
+            
+            @TestMetadata("privateSetter.kt")
+            public void testPrivateSetter() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateSetter.kt");
             }
             
             @TestMetadata("refInReturn.kt")
@@ -1296,6 +1339,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("ExtractFunction");
             suite.addTestSuite(ExtractFunction.class);
+            suite.addTestSuite(AsProperty.class);
             suite.addTestSuite(Basic.class);
             suite.addTest(ControlFlow.innerSuite());
             suite.addTestSuite(DefaultContainer.class);

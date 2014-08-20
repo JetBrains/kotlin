@@ -1,8 +1,8 @@
 package test
 
-public trait NullableToNotNullKotlinSignature: Object {
+public trait NullableToNotNullKotlinSignature {
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(p: String?)
 
         public fun dummy() // to avoid loading as SAM interface

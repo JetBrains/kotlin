@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.util
 
-fun <T: Any, R> T?.inn(then: (T) -> R, _else: R): R = if (this != null) then(this) else _else
+public fun <T: Any, R> T?.inn(then: (T) -> R, _else: R): R = if (this != null) then(this) else _else
 
-fun <T: Any> T?.sure(message: String): T = this ?: throw AssertionError(message)
+public fun <T: Any> T?.sure(message: String): T = this ?: throw AssertionError(message)
 
 fun <T> T.printAndReturn(message: String = ""): T {
     if (!message.isEmpty()) {

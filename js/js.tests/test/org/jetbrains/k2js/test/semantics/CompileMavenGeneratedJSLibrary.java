@@ -17,14 +17,16 @@
 package org.jetbrains.k2js.test.semantics;
 
 import com.google.common.collect.Lists;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,7 +36,6 @@ import java.util.List;
  * has completed so that there are various kotlin files to be compiled
  */
 public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
-
     protected final String generatedJsDir = "libraries/tools/kotlin-js-library/target/";
     protected String generatedJsDefinitionsDir = generatedJsDir + "generated-js-definitions";
     protected File generatedJsLibraryDir = new File( generatedJsDir + "generated-js-library");
@@ -65,21 +66,22 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
                                     "collections/ListTest.kt",
                                     "collections/SetTest.kt",
                                     "text/StringTest.kt");
-
-        } else {
+        }
+        else {
             System.out.println("Warning " + generatedJsLibraryDir + " does not exist - I guess you've not run the maven build in library/ yet?");
         }
     }
 
-    protected void generateJavaScriptFiles(@NotNull Iterable<EcmaVersion> ecmaVersions,
-            @NotNull String sourceDir, @NotNull String... stdLibFiles) throws Exception {
+    private void generateJavaScriptFiles(
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull String sourceDir,
+            @NotNull String... stdLibFiles
+    ) throws Exception {
         List<String> files = Lists.newArrayList();
-
 
         // now lets add all the files from the definitions and library
         //addAllSourceFiles(files, generatedJsDefinitionsDir);
         addAllSourceFiles(files, generatedJsLibraryDir);
-
 
         File stdlibDir = new File(sourceDir);
         assertTrue("Cannot find stdlib test source: " + stdlibDir, stdlibDir.exists());
@@ -89,14 +91,17 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
 
         // now lets try invoke the compiler
         for (EcmaVersion version : ecmaVersions) {
-            K2JSCompiler compiler = new K2JSCompiler();
-            K2JSCompilerArguments arguments = new K2JSCompilerArguments();
-            arguments.outputFile = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
-            arguments.freeArgs = files;
-            arguments.verbose = true;
-            arguments.libraryFiles = new String[] {generatedJsDefinitionsDir};
-            System.out.println("Compiling with version: " + version + " to: " + arguments.outputFile);
-            ExitCode answer = compiler.exec(System.out, arguments);
+            String outputFile = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
+            System.out.println("Compiling with version: " + version + " to: " + outputFile);
+
+            List<String> args = new ArrayList<String>(Arrays.asList(
+                    "-output", outputFile,
+                    "-library-files", generatedJsDefinitionsDir,
+                    "-verbose"
+            ));
+            args.addAll(files);
+            ExitCode answer = new K2JSCompiler().exec(System.out, ArrayUtil.toStringArray(args));
+
             assertEquals("Compile failed", ExitCode.OK, answer);
         }
     }
@@ -107,7 +112,8 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
             for (File child : children) {
                 if (child.isDirectory()) {
                     addAllSourceFiles(files, child);
-                } else {
+                }
+                else {
                     String name = child.getName();
                     if (name.toLowerCase().endsWith(".kt")) {
                         files.add(child.getPath());

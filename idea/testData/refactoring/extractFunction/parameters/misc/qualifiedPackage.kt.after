@@ -10,7 +10,7 @@ class MyClass {
     }
 }
 
-fun unit() {
+private fun unit() {
     foo()
     a
 }

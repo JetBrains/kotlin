@@ -1,5 +1,28 @@
 <root>
   <item
+      name='com.intellij.refactoring.rename.RenamePsiElementProcessor void findCollisions(com.intellij.psi.PsiElement, java.lang.String, java.util.Map&lt;? extends com.intellij.psi.PsiElement,java.lang.String&gt;, java.util.List&lt;com.intellij.usageView.UsageInfo&gt;)'>
+    <annotation name='kotlin.jvm.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun findCollisions(element: PsiElement?, newName: String?, allRenames: Map&lt;out PsiElement?, String&gt;, result: MutableList&lt;UsageInfo&gt;): Unit&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.rename.RenamePsiElementProcessor void findCollisions(com.intellij.psi.PsiElement, java.lang.String, java.util.Map&lt;? extends com.intellij.psi.PsiElement,java.lang.String&gt;, java.util.List&lt;com.intellij.usageView.UsageInfo&gt;) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.rename.RenamePsiElementProcessor void findCollisions(com.intellij.psi.PsiElement, java.lang.String, java.util.Map&lt;? extends com.intellij.psi.PsiElement,java.lang.String&gt;, java.util.List&lt;com.intellij.usageView.UsageInfo&gt;) 3'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.rename.RenamePsiElementProcessor void findExistingNameConflicts(com.intellij.psi.PsiElement, java.lang.String, com.intellij.util.containers.MultiMap&lt;com.intellij.psi.PsiElement,java.lang.String&gt;) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.rename.RenamePsiElementProcessor void findExistingNameConflicts(com.intellij.psi.PsiElement, java.lang.String, com.intellij.util.containers.MultiMap&lt;com.intellij.psi.PsiElement,java.lang.String&gt;, java.util.Map&lt;com.intellij.psi.PsiElement,java.lang.String&gt;) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.refactoring.rename.RenamePsiElementProcessor void prepareRenaming(com.intellij.psi.PsiElement, java.lang.String, java.util.Map&lt;com.intellij.psi.PsiElement,java.lang.String&gt;, com.intellij.psi.search.SearchScope)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value"

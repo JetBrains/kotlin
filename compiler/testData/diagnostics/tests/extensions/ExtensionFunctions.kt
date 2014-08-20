@@ -2,7 +2,7 @@
 package outer
 
 fun Int?.optint() : Unit {}
-val Int?.optval : Unit get() = Unit.VALUE
+val Int?.optval : Unit get() = Unit
 
 fun <T: Any, E> T.foo(<!UNUSED_PARAMETER!>x<!> : E, y : A) : T   {
   y.plus(1)
@@ -71,5 +71,5 @@ import outer.*
             val c = Command()
             c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)
 
-            if (command == null) 1
+            if (command == null) <!UNUSED_EXPRESSION!>1<!>
         }

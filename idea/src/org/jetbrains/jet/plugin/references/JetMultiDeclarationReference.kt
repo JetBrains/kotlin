@@ -20,23 +20,36 @@ import org.jetbrains.jet.lang.psi.JetMultiDeclaration
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.openapi.util.TextRange
+import java.util.Collections
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.resolve.source.PsiSourceElement
+import org.jetbrains.jet.lang.resolve.source.getPsi
+import com.intellij.psi.PsiElement
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 
 class JetMultiDeclarationReference(element: JetMultiDeclaration) : JetMultiReference<JetMultiDeclaration>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         return expression.getEntries().map { entry ->
-            //TODO: remove getOriginal
-            context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)?.getCandidateDescriptor()?.getOriginal()
+            context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)?.getCandidateDescriptor()
         }.filterNotNull()
     }
 
-
     override fun getRangeInElement(): TextRange? {
-        val entries = expression.getEntries()
-        if (entries.isEmpty()) {
-            return TextRange.EMPTY_RANGE
-        }
-        val start = entries.first!!.getStartOffsetInParent()
-        val end = entries.last!!.getStartOffsetInParent() + entries.last!!.getTextLength()
-        return TextRange(start, end)
+        val start = expression.getLPar()
+        val end = expression.getRPar()
+        if (start == null || end == null) return TextRange.EMPTY_RANGE
+        return TextRange(start.getStartOffsetInParent(), end.getStartOffsetInParent())
+    }
+
+    override fun canRename(): Boolean {
+        return resolveToDescriptors().all { it is CallableMemberDescriptor && it.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED}
+    }
+
+    override fun handleElementRename(newElementName: String?): PsiElement? {
+        if (canRename()) return expression
+        throw IncorrectOperationException()
     }
 }

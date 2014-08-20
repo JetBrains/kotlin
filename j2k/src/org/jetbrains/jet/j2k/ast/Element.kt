@@ -72,6 +72,8 @@ abstract class Element {
     /** This method should not be used anywhere except for CodeBuilder! Use CodeBuilder.append instead. */
     public abstract fun generateCode(builder: CodeBuilder)
 
+    public open fun postGenerateCode(builder: CodeBuilder) { }
+
     public open val isEmpty: Boolean get() = false
 
     object Empty : Element() {

@@ -1,5 +1,5 @@
 package test
 
-public open class ConstructorGenericSimple : java.lang.Object {
+public open class ConstructorGenericSimple {
     public constructor ConstructorGenericSimple(/*0*/ p0: kotlin.Any?)
 }

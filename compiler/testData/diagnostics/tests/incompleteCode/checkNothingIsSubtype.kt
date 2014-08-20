@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 package d
 
 trait A<T>

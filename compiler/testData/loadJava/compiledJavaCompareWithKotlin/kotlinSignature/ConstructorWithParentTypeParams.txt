@@ -1,5 +1,5 @@
 package test
 
-public open class ConstructorWithParentTypeParams</*0*/ T> : java.lang.Object {
+public open class ConstructorWithParentTypeParams</*0*/ T> {
     public constructor ConstructorWithParentTypeParams</*0*/ T>(/*0*/ first: T)
 }

@@ -3,7 +3,7 @@ fun testIf() {
 }
 
 fun testIf1(b: Boolean) {
-    if (b) todo() else 1
+    if (b) todo() else <!UNUSED_EXPRESSION!>1<!>
 
     bar()
 }

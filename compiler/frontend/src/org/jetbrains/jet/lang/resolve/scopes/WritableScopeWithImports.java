@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
@@ -245,7 +244,6 @@ public abstract class WritableScopeWithImports extends AbstractScopeAdapter impl
         return getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + " " + debugName + " for " + getContainingDeclaration();
     }
 
-    @TestOnly
     @Override
     public void printScopeStructure(@NotNull Printer p) {
         p.println(getClass().getSimpleName(), ": ", debugName, " for ", getContainingDeclaration(), " {");
@@ -275,6 +273,5 @@ public abstract class WritableScopeWithImports extends AbstractScopeAdapter impl
         p.println("}");
     }
 
-    @TestOnly
     protected abstract void printAdditionalScopeStructure(@NotNull Printer p);
 }

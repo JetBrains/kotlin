@@ -107,7 +107,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                         PsiElement anchor = body.getRBrace();
                         JetNamedFunction insertedFunctionElement = (JetNamedFunction) body.addBefore(functionElement, anchor);
 
-                        ShortenReferences.instance$.process(insertedFunctionElement);
+                        ShortenReferences.INSTANCE$.process(insertedFunctionElement);
                     }
                 });
             }

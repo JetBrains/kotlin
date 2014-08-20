@@ -10,6 +10,6 @@ fun foo(a: Int): Int {
     return t
 }
 
-fun i(a: Int, b: Int): Int {
+private fun i(a: Int, b: Int): Int {
     return if (a > 0) throw Exception("") else a + b
 }

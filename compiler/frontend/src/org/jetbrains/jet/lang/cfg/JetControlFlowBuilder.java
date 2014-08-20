@@ -98,6 +98,8 @@ public interface JetControlFlowBuilder {
     @Nullable
     PseudoValue getBoundValue(@Nullable JetElement element);
     void bindValue(@NotNull PseudoValue value, @NotNull JetElement element);
+    @NotNull
+    PseudoValue newValue(@Nullable JetElement element);
 
     void loadUnit(@NotNull JetExpression expression);
 
@@ -160,7 +162,4 @@ public interface JetControlFlowBuilder {
             @NotNull PseudoValue rValue,
             @NotNull AccessTarget target,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues);
-    
-    // Other
-    void unsupported(JetElement element);
 }

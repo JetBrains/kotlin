@@ -40,7 +40,7 @@ class IteratorsTest {
         assertEquals(arrayList("foo", "bar", "cheese"), iter2.toList())
 
         // lets use a mutable variable
-        var mi = arrayList("a", "b").iterator()
+        var mi : Iterator<String> = arrayList("a", "b").iterator()
         mi += "c"
         assertEquals(arrayList("a", "b", "c"), mi.toList())
     }
@@ -52,7 +52,7 @@ class IteratorsTest {
         assertEquals(arrayList("foo", "bar", "cheese", "wine"), iter.toList())
 
         // lets use a mutable variable
-        var ml = arrayList("a").iterator()
+        var ml : Iterator<String> = arrayList("a").iterator()
         ml += a.iterator()
         ml += "beer"
         ml += b

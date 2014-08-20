@@ -45,7 +45,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.InfinitePeriodicalTask;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
@@ -79,7 +79,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             }
 
             JetFile file = location.getJetFile();
-            if (file == null || !JetPluginUtil.isInSource(file, false)) {
+            if (file == null || !ProjectRootsUtil.isInSource(file, false)) {
                 return null;
             }
 
@@ -115,7 +115,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                                             exhaust.getModuleDescriptor(), exhaust.getBindingContext(),
                                             Collections.singletonList(jetFile), true, true,
                                             GenerationState.GenerateClassFilter.GENERATE_ALL,
-                                            enableInline.isSelected(), enableOptimization.isSelected(), null, null,
+                                            !enableInline.isSelected(), !enableOptimization.isSelected(), null, null,
                                             DiagnosticHolder.DO_NOTHING, null);
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }
@@ -196,8 +196,8 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         add(optionPanel, BorderLayout.NORTH);
 
         /*TODO: try to extract default parameter from compiler options*/
-        enableInline = new JCheckBox("Enable inline");
-        enableOptimization = new JCheckBox("Enable optimization");
+        enableInline = new JCheckBox("Enable inline", true);
+        enableOptimization = new JCheckBox("Enable optimization", true);
         optionPanel.add(enableInline, BorderLayout.WEST);
         optionPanel.add(enableOptimization, BorderLayout.CENTER);
 

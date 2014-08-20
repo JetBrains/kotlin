@@ -1,8 +1,8 @@
 package test
 
-public trait InheritNotVarargPrimitive: Object {
+public trait InheritNotVarargPrimitive {
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(p0: IntArray?)
 
         public fun dummy() // to avoid loading as SAM interface

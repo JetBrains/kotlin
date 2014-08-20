@@ -1,28 +1,28 @@
 package test
 
-public trait CustomAnnotation : java.lang.Object {
-    
+public trait CustomAnnotation {
+
     public final annotation class MyAnnotation : kotlin.Annotation {
         public constructor MyAnnotation(/*0*/ value: test.CustomAnnotation.MyEnum)
         public abstract fun value(): test.CustomAnnotation.MyEnum
     }
-    
+
     public final enum class MyEnum : kotlin.Enum<test.CustomAnnotation.MyEnum> {
         private constructor MyEnum()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-MyEnum> {
             private constructor <class-object-for-MyEnum>()
             public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.CustomAnnotation.MyEnum
             public final /*synthesized*/ fun values(): kotlin.Array<test.CustomAnnotation.MyEnum>
         }
-        
+
         public enum entry ONE : test.CustomAnnotation.MyEnum {
             private constructor ONE()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            
+
             public class object <class-object-for-ONE> : test.CustomAnnotation.MyEnum.ONE {
                 private constructor <class-object-for-ONE>()
                 public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
@@ -30,8 +30,8 @@ public trait CustomAnnotation : java.lang.Object {
             }
         }
     }
-    
-    test.CustomAnnotation.MyAnnotation(value = MyEnum.ONE: test.CustomAnnotation.MyEnum) public open class MyTest : java.lang.Object {
+
+    test.CustomAnnotation.MyAnnotation(value = MyEnum.ONE: test.CustomAnnotation.MyEnum) public open class MyTest {
         public constructor MyTest()
     }
 }

@@ -1,4 +1,4 @@
 package test
 
-public trait RawUpperBound</*0*/ T : test.RawUpperBound<out kotlin.Any?>?> : java.lang.Object {
+public trait RawUpperBound</*0*/ T : test.RawUpperBound<out kotlin.Any?>?> {
 }

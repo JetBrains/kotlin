@@ -23,7 +23,7 @@ public trait PackageFragmentDescriptor : ClassOrPackageFragmentDescriptor {
 
     override fun getContainingDeclaration(): ModuleDescriptor
 
-    val fqName: FqName
+    public val fqName: FqName
 
-    fun getMemberScope(): JetScope
+    public fun getMemberScope(): JetScope
 }

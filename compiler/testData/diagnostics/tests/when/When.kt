@@ -4,15 +4,15 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      is <!INCOMPATIBLE_TYPES!>String<!> -> 1
-      !is Int -> 1
-      is Any<!USELESS_NULLABLE_CHECK!>?<!> -> 1
-      <!INCOMPATIBLE_TYPES!>s<!> -> 1
-      1 -> 1
-      1 + <!UNRESOLVED_REFERENCE!>a<!> -> 1
-      in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
-      !in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
-      else -> 1
+      is <!INCOMPATIBLE_TYPES!>String<!> -> <!UNUSED_EXPRESSION!>1<!>
+      !is Int -> <!UNUSED_EXPRESSION!>1<!>
+      is Any<!USELESS_NULLABLE_CHECK!>?<!> -> <!UNUSED_EXPRESSION!>1<!>
+      <!INCOMPATIBLE_TYPES!>s<!> -> <!UNUSED_EXPRESSION!>1<!>
+      1 -> <!UNUSED_EXPRESSION!>1<!>
+      1 + <!UNRESOLVED_REFERENCE!>a<!> -> <!UNUSED_EXPRESSION!>1<!>
+      in 1..<!UNRESOLVED_REFERENCE!>a<!> -> <!UNUSED_EXPRESSION!>1<!>
+      !in 1..<!UNRESOLVED_REFERENCE!>a<!> -> <!UNUSED_EXPRESSION!>1<!>
+      else -> <!UNUSED_EXPRESSION!>1<!>
     }
 
     return 0
@@ -25,20 +25,20 @@ fun test() {
   val s = "";
 
   when (x) {
-    <!INCOMPATIBLE_TYPES!>s<!> -> 1
-    <!INCOMPATIBLE_TYPES!>""<!> -> 1
-    x -> 1
-    1 -> 1
+    <!INCOMPATIBLE_TYPES!>s<!> -> <!UNUSED_EXPRESSION!>1<!>
+    <!INCOMPATIBLE_TYPES!>""<!> -> <!UNUSED_EXPRESSION!>1<!>
+    x -> <!UNUSED_EXPRESSION!>1<!>
+    1 -> <!UNUSED_EXPRESSION!>1<!>
   }
 
   val z = 1
 
   when (z) {
-    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> 1
+    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> <!UNUSED_EXPRESSION!>1<!>
     <!UNREACHABLE_CODE!>1 -> 2<!>
   }
 
-  when (z) {
-    else -> 1
+  when (<!UNUSED_EXPRESSION!>z<!>) {
+    else -> <!UNUSED_EXPRESSION!>1<!>
   }
 }

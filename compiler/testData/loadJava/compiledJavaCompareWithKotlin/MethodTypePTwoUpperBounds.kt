@@ -1,6 +1,6 @@
 package test
 
-public open class MethodTypePTwoUpperBounds() : java.lang.Object() {
+public open class MethodTypePTwoUpperBounds() {
     public open fun <T> foo(): Unit where T : Cloneable?, T : Runnable? {
     }
 }

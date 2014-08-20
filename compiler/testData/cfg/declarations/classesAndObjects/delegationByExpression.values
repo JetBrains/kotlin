@@ -11,14 +11,14 @@ class A(a: Int, b: Int): T
 == B ==
 class B(a: Int, b: Int): T by A(a + b, a - b)
 ---------------------
-                       <v0>: Int      NEW: magic[FAKE_INITIALIZER](a: Int) -> <v0>
-                       <v1>: Int      NEW: magic[FAKE_INITIALIZER](b: Int) -> <v1>
-a                      <v2>: Int      NEW: r(a) -> <v2>
-b                      <v3>: Int      NEW: r(b) -> <v3>
-a + b                  <v4>: Int      NEW: call(a + b, plus|<v2>, <v3>) -> <v4>
-a                      <v5>: Int      NEW: r(a) -> <v5>
-b                      <v6>: Int      NEW: r(b) -> <v6>
-a - b                  <v7>: Int      NEW: call(a - b, minus|<v5>, <v6>) -> <v7>
-A(a + b, a - b)        <v8>: {<: T}   NEW: call(A(a + b, a - b), <init>|<v4>, <v7>) -> <v8>
-T by A(a + b, a - b)   <v9>: *        NEW: magic[VALUE_CONSUMER](T by A(a + b, a - b)|<v8>) -> <v9>
+                  <v0>: Int      NEW: magic[FAKE_INITIALIZER](a: Int) -> <v0>                 
+                  <v1>: Int      NEW: magic[FAKE_INITIALIZER](b: Int) -> <v1>                 
+                  <v9>: *        NEW: magic[VALUE_CONSUMER](T by A(a + b, a - b)|<v8>) -> <v9>
+a                 <v2>: Int      NEW: r(a) -> <v2>                                            
+b                 <v3>: Int      NEW: r(b) -> <v3>                                            
+a + b             <v4>: Int      NEW: call(a + b, plus|<v2>, <v3>) -> <v4>                    
+a                 <v5>: Int      NEW: r(a) -> <v5>                                            
+b                 <v6>: Int      NEW: r(b) -> <v6>                                            
+a - b             <v7>: Int      NEW: call(a - b, minus|<v5>, <v6>) -> <v7>                   
+A(a + b, a - b)   <v8>: {<: T}   NEW: call(A(a + b, a - b), <init>|<v4>, <v7>) -> <v8>        
 =====================

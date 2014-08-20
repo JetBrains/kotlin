@@ -122,7 +122,7 @@ public class SamWrapperCodegen {
 
             // super constructor
             iv.load(0, OBJECT_TYPE);
-            iv.invokespecial(OBJECT_TYPE.getInternalName(), "<init>", "()V");
+            iv.invokespecial(OBJECT_TYPE.getInternalName(), "<init>", "()V", false);
 
             // save parameter to field
             iv.load(0, OBJECT_TYPE);

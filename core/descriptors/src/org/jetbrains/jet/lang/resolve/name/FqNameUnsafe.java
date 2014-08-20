@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.name;
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.utils.UtilsPackage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -170,7 +170,7 @@ public final class FqNameUnsafe extends FqNameBase {
 
     @NotNull
     public List<FqNameUnsafe> path() {
-        final List<FqNameUnsafe> path = Lists.newArrayList();
+        final List<FqNameUnsafe> path = new ArrayList<FqNameUnsafe>();
         path.add(FqName.ROOT.toUnsafe());
         walk(new WalkCallback() {
             @Override
@@ -184,7 +184,7 @@ public final class FqNameUnsafe extends FqNameBase {
     @Override
     @NotNull
     public List<Name> pathSegments() {
-        final List<Name> path = Lists.newArrayList();
+        final List<Name> path = new ArrayList<Name>();
         walk(new WalkCallback() {
             @Override
             public void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName) {
@@ -256,8 +256,7 @@ public final class FqNameUnsafe extends FqNameBase {
 
     @NotNull
     public static FqNameUnsafe fromSegments(@NotNull List<Name> names) {
-        String fqName = StringUtil.join(names, ".");
-        return new FqNameUnsafe(fqName);
+        return new FqNameUnsafe(UtilsPackage.join(names, "."));
     }
 
 

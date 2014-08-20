@@ -1,9 +1,9 @@
 package test
 
-public open class ConstructorInProtectedStaticNestedClass : java.lang.Object {
+public open class ConstructorInProtectedStaticNestedClass {
     public constructor ConstructorInProtectedStaticNestedClass()
-    
-    protected/*protected static*/ open class Inner : java.lang.Object {
+
+    protected/*protected static*/ open class Inner {
         protected/*protected and package*/ constructor Inner()
     }
 }

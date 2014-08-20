@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +27,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 public class OperatorConventions {
 
     public static final Name EQUALS = Name.identifier("equals");
+    public static final Name IDENTITY_EQUALS = Name.identifier("identityEquals");
     public static final Name COMPARE_TO = Name.identifier("compareTo");
     public static final Name CONTAINS = Name.identifier("contains");
 
@@ -77,6 +77,9 @@ public class OperatorConventions {
     public static final ImmutableSet<JetToken> EQUALS_OPERATIONS =
             ImmutableSet.<JetToken>of(JetTokens.EQEQ, JetTokens.EXCLEQ);
 
+    public static final ImmutableSet<JetToken> IDENTITY_EQUALS_OPERATIONS =
+            ImmutableSet.<JetToken>of(JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ);
+
     public static final ImmutableSet<JetToken> IN_OPERATIONS =
             ImmutableSet.<JetToken>of(JetTokens.IN_KEYWORD, JetTokens.NOT_IN);
 
@@ -88,7 +91,7 @@ public class OperatorConventions {
             .put(JetTokens.MINUSEQ, Name.identifier("minusAssign"))
             .build();
 
-    public static final ImmutableMap<JetToken, JetToken> ASSIGNMENT_OPERATION_COUNTERPARTS = ImmutableMap.<JetToken, JetToken>builder()
+    public static final ImmutableBiMap<JetToken, JetToken> ASSIGNMENT_OPERATION_COUNTERPARTS = ImmutableBiMap.<JetToken, JetToken>builder()
             .put(JetTokens.MULTEQ, JetTokens.MUL)
             .put(JetTokens.DIVEQ, JetTokens.DIV)
             .put(JetTokens.PERCEQ, JetTokens.PERC)
@@ -100,7 +103,7 @@ public class OperatorConventions {
              .put(JetTokens.ANDAND, Name.identifier("and"))
              .put(JetTokens.OROR, Name.identifier("or"))
              .build();
-    
+
     @Nullable
     public static Name getNameForOperationSymbol(@NotNull JetToken token) {
         Name name = UNARY_OPERATION_NAMES.get(token);

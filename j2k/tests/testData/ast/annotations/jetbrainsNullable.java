@@ -1,4 +1,3 @@
-//file
 // !specifyLocalVariableTypeByDefault: true
 package test;
 

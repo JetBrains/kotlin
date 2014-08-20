@@ -35,9 +35,9 @@ import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.psi.PsiDocumentManager
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.convertToIfNullExpression
-import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStatement
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.NULL_PTR_EXCEPTION
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.KOTLIN_NULL_PTR_EXCEPTION
+import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStatement
 
 public class DoubleBangToIfThenIntention : JetSelfTargetingIntention<JetPostfixExpression>("double.bang.to.if.then", javaClass()) {
 

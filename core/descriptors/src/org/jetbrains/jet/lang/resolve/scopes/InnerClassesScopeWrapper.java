@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
@@ -31,8 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
-    private static final Predicate<Object> IS_CLASS = Predicates.instanceOf(ClassDescriptor.class);
-
     private final JetScope actualScope;
 
     public InnerClassesScopeWrapper(@NotNull JetScope actualScope) {
@@ -48,19 +44,21 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassifierDescriptor classifier = actualScope.getClassifier(name);
-        return IS_CLASS.apply(classifier) ? classifier : null;
+        return classifier instanceof ClassDescriptor ? classifier : null;
     }
 
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull Name labelName) {
-        return Collections2.filter(actualScope.getDeclarationsByLabel(labelName), IS_CLASS);
+        return (Collection) KotlinPackage.filterIsInstance(actualScope.getDeclarationsByLabel(labelName), ClassDescriptor.class);
     }
 
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return Collections2.filter(actualScope.getAllDescriptors(), IS_CLASS);
+        return (Collection) KotlinPackage.filterIsInstance(actualScope.getAllDescriptors(), ClassDescriptor.class);
     }
 
     @NotNull

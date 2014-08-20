@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 class A {
     fun Int.extInt() = 42
     fun A.extA(x: String) = x

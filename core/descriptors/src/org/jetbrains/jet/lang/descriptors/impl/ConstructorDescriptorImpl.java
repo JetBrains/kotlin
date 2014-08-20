@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
@@ -60,18 +59,22 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     public ConstructorDescriptorImpl initialize(
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @NotNull Visibility visibility,
-            boolean isStatic
+            @NotNull Visibility visibility
     ) {
-        super.initialize(null, isStatic ? NO_RECEIVER_PARAMETER : getExpectedThisObject(getContainingDeclaration()), typeParameters,
-                         unsubstitutedValueParameters, null, Modality.FINAL, visibility);
+        super.initialize(null, calculateExpectedThisObject(), typeParameters, unsubstitutedValueParameters, null, Modality.FINAL, visibility);
         return this;
     }
 
     @Nullable
-    private static ReceiverParameterDescriptor getExpectedThisObject(@NotNull ClassDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        return DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration);
+    private ReceiverParameterDescriptor calculateExpectedThisObject() {
+        ClassDescriptor classDescriptor = getContainingDeclaration();
+        if (classDescriptor.isInner()) {
+            DeclarationDescriptor classContainer = classDescriptor.getContainingDeclaration();
+            if (classContainer instanceof ClassDescriptor) {
+                return ((ClassDescriptor) classContainer).getThisAsReceiverParameter();
+            }
+        }
+        return NO_RECEIVER_PARAMETER;
     }
 
     @NotNull

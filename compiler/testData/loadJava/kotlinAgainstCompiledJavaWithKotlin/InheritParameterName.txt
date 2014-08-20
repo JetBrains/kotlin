@@ -2,7 +2,7 @@ package test
 
 public /*synthesized*/ fun A(/*0*/ function: (kotlin.Int) -> kotlin.Unit): test.A
 
-public trait A : java.lang.Object {
+public trait A {
     public abstract fun foo(/*0*/ p0: kotlin.Int): kotlin.Unit
 }
 

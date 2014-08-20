@@ -3,9 +3,12 @@ package kotlin.properties
 import java.util.HashMap
 import java.util.ArrayList
 
-public class ChangeEvent(val source: Any, val name: String, val oldValue: Any?, val newValue: Any?) {
-    var propogationId: Any? = null
-
+public class ChangeEvent(
+        public val source: Any,
+        public val name: String,
+        public val oldValue: Any?,
+        public val newValue: Any?
+) {
     override fun toString(): String = "ChangeEvent($name, $oldValue, $newValue)"
 }
 

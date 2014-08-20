@@ -48,13 +48,13 @@ fun test2(): Unit { while(true) {} }
 
 fun testCoercionToUnit() {
     val <!UNUSED_VARIABLE!>simple<!>: ()-> Unit = {
-        41
+        <!UNUSED_EXPRESSION!>41<!>
     }
     val <!UNUSED_VARIABLE!>withIf<!>: ()-> Unit = {
         if (true) {
-            3
+            <!UNUSED_EXPRESSION!>3<!>
         } else {
-            45
+            <!UNUSED_EXPRESSION!>45<!>
         }
     }
     val i = 34
@@ -66,8 +66,8 @@ fun testCoercionToUnit() {
                 doSmth(d)
 
             }
-            2 -> '4'
-            else -> true
+            2 -> <!UNUSED_EXPRESSION!>'4'<!>
+            else -> <!UNUSED_EXPRESSION!>true<!>
         }
     }
 

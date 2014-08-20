@@ -1,4 +1,3 @@
-//file
 class Base {
   private String myFirst;
 }

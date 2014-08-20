@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -27,11 +28,10 @@ public interface VirtualFileFinder extends KotlinClassFinder {
     class SERVICE {
         @NotNull
         public static VirtualFileFinder getInstance(@NotNull Project project) {
-            return ServiceManager.getService(project, VirtualFileFinder.class);
+            return ServiceManager.getService(project, VirtualFileFinderFactory.class).create(GlobalSearchScope.allScope(project));
         }
     }
 
-    // TODO: support scope
     @Nullable
     VirtualFile findVirtualFileWithHeader(@NotNull FqName className);
 

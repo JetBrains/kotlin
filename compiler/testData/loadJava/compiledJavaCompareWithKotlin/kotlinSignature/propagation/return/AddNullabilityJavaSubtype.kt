@@ -1,8 +1,8 @@
 package test
 
-public trait AddNullabilityJavaSubtype: Object {
+public trait AddNullabilityJavaSubtype {
 
-    public trait Super: Object {
+    public trait Super {
         public fun foo(): CharSequence
 
         public fun dummy() // to avoid loading as SAM interface

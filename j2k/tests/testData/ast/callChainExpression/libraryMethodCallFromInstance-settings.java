@@ -1,4 +1,3 @@
-//file
 // !forceNotNullTypes: false
 // !specifyLocalVariableTypeByDefault: true
 class Library {

@@ -1,18 +1,18 @@
 package test
 
-public trait TwoSuperclassesMutableAndNot : java.lang.Object {
-    
+public trait TwoSuperclassesMutableAndNot {
+
     public trait Sub : test.TwoSuperclassesMutableAndNot.Super1, test.TwoSuperclassesMutableAndNot.Super2 {
         public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*2*/ fun foo(): kotlin.MutableList<kotlin.String>
     }
-    
-    public trait Super1 : java.lang.Object {
+
+    public trait Super1 {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.MutableCollection<kotlin.String>
     }
-    
-    public trait Super2 : java.lang.Object {
+
+    public trait Super2 {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.List<kotlin.String>
     }

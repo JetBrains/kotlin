@@ -23,6 +23,7 @@ import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.Element
 import kotlin.platform.platformName
 import org.jetbrains.jet.j2k.ast.CommentsAndSpacesInheritance
+import com.intellij.psi.impl.light.LightElement
 
 fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
@@ -88,6 +89,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
         if (topElement == null || element.prototypes!!.isEmpty()) {
             element.generateCode(this)
+            element.postGenerateCode(this)
             return this
         }
 
@@ -97,7 +99,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
         for ((prototype, inheritance) in element.prototypes!!) {
             assert(prototype !is PsiComment)
             assert(prototype !is PsiWhiteSpace)
-            assert(topElement.isAncestor(prototype))
+            if (!topElement.isAncestor(prototype)) continue
             prefixElements.collectPrefixElements(prototype, inheritance, notInsideElements)
             postfixElements.collectPostfixElements(prototype, inheritance, notInsideElements)
         }
@@ -133,6 +135,8 @@ class CodeBuilder(private val topElement: PsiElement?) {
         }
 
         postfixElements.forEach { appendCommentOrWhiteSpace(it) }
+
+        element.postGenerateCode(this)
 
         return this
     }

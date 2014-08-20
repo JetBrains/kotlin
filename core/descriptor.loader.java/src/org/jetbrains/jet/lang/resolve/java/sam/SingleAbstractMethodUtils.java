@@ -210,12 +210,7 @@ public class SingleAbstractMethodUtils {
                     @NotNull List<ValueParameterDescriptor> valueParameters,
                     @Nullable JetType returnType
             ) {
-                result.initialize(
-                        typeParameters,
-                        valueParameters,
-                        original.getVisibility(),
-                        original.getExpectedThisObject() == ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER
-                );
+                result.initialize(typeParameters, valueParameters, original.getVisibility());
             }
         });
     }
@@ -331,6 +326,8 @@ public class SingleAbstractMethodUtils {
     }
 
     private static class OnlyAbstractMethodFinder {
+        private static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
+
         private JavaMethod foundMethod;
         private JavaTypeSubstitutor foundClassSubstitutor;
 
@@ -342,7 +339,7 @@ public class SingleAbstractMethodUtils {
             }
             assert classifier instanceof JavaClass : "Classifier should be a class here: " + classifier;
             JavaClass javaClass = (JavaClass) classifier;
-            if (DescriptorResolverUtils.OBJECT_FQ_NAME.equals(javaClass.getFqName())) {
+            if (OBJECT_FQ_NAME.equals(javaClass.getFqName())) {
                 return true;
             }
             for (JavaMethod method : javaClass.getMethods()) {

@@ -299,6 +299,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 basic.resolveArrayAccessSetMethod((JetArrayAccessExpression) left, right, contextForResolve, context.trace);
             }
             dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
+            DataFlowUtils.checkType(binaryOperationType, expression, leftType, dataFlowInfo, context.trace);
             BasicExpressionTypingVisitor.checkLValue(context.trace, leftOperand);
         }
         temporary.commit();

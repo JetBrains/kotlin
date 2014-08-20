@@ -4,18 +4,18 @@ public final enum class StaticMembersInEnum : kotlin.Enum<test.StaticMembersInEn
     private constructor StaticMembersInEnum()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     public class object <class-object-for-StaticMembersInEnum> {
         private constructor <class-object-for-StaticMembersInEnum>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.StaticMembersInEnum
         public final /*synthesized*/ fun values(): kotlin.Array<test.StaticMembersInEnum>
     }
-    
+
     public enum entry ENTRY : test.StaticMembersInEnum {
         private constructor ENTRY()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-ENTRY> : test.StaticMembersInEnum.ENTRY {
             private constructor <class-object-for-ENTRY>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String

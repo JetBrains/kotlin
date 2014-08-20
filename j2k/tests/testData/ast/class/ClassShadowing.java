@@ -1,4 +1,3 @@
-//file
 package test;
 
 public class Short {

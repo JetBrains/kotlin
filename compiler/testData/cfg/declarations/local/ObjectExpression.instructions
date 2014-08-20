@@ -31,13 +31,12 @@ class B : A {
 ---------------------
 L0:
   1 <START>
-    unsupported(DELEGATOR_SUPER_CLASS : A)
 L1:
-    <END>                                     NEXT:[<SINK>]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>                                   PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>                                    PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 override fun foo() = 10

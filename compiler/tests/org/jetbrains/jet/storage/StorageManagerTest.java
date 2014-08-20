@@ -281,7 +281,7 @@ public class StorageManagerTest extends TestCase {
                     new Function1<String, Unit>() {
                         @Override
                         public Unit invoke(String s) {
-                            return Unit.VALUE;
+                            return Unit.INSTANCE$;
                         }
                     }
             );
@@ -317,7 +317,7 @@ public class StorageManagerTest extends TestCase {
                         public Unit invoke(String s) {
                             counter.inc();
                             assertEquals("tolerant", s);
-                            return Unit.VALUE;
+                            return Unit.INSTANCE$;
                         }
                     }
             );
@@ -346,7 +346,7 @@ public class StorageManagerTest extends TestCase {
                     public Unit invoke(Collection<String> strings) {
                         counter.inc();
                         strings.add("postComputed");
-                        return Unit.VALUE;
+                        return Unit.INSTANCE$;
                     }
                 }
         );
@@ -372,7 +372,7 @@ public class StorageManagerTest extends TestCase {
                     public Unit invoke(Collection<String> strings) {
                         counter.inc();
                         strings.add("postComputed");
-                        return Unit.VALUE;
+                        return Unit.INSTANCE$;
                     }
                 }
         );
@@ -405,7 +405,7 @@ public class StorageManagerTest extends TestCase {
                         @Override
                         public Unit invoke(String s) {
                             fail("Recursion-tolerating value should not be post computed");
-                            return Unit.VALUE;
+                            return Unit.INSTANCE$;
                         }
                     }
             );

@@ -1,4 +1,3 @@
-//file
 package foo; // we use package 'foo'
 
 // imports:

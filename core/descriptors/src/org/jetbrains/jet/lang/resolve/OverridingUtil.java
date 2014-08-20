@@ -16,12 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
+import kotlin.KotlinPackage;
 import kotlin.Unit;
 import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +39,10 @@ import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilit
 public class OverridingUtil {
 
     private static final List<ExternalOverridabilityCondition> EXTERNAL_CONDITIONS =
-            ContainerUtil.collect(ServiceLoader.load(
+            KotlinPackage.toList(ServiceLoader.load(
                     ExternalOverridabilityCondition.class,
-                    ExternalOverridabilityCondition.class.getClassLoader()).iterator()
-            );
+                    ExternalOverridabilityCondition.class.getClassLoader()
+            ));
 
     public static final OverridingUtil DEFAULT = new OverridingUtil(new JetTypeChecker.TypeConstructorEquality() {
         @Override
@@ -252,7 +248,7 @@ public class OverridingUtil {
             @NotNull ClassDescriptor current,
             @NotNull DescriptorSink sink
     ) {
-        Collection<CallableMemberDescriptor> notOverridden = Sets.newLinkedHashSet(membersFromSupertypes);
+        Collection<CallableMemberDescriptor> notOverridden = new LinkedHashSet<CallableMemberDescriptor>(membersFromSupertypes);
 
         for (CallableMemberDescriptor fromCurrent : membersFromCurrent) {
             Collection<CallableMemberDescriptor> bound =
@@ -269,7 +265,7 @@ public class OverridingUtil {
             @NotNull ClassDescriptor current,
             @NotNull DescriptorSink sink
     ) {
-        Collection<CallableMemberDescriptor> bound = Lists.newArrayList();
+        Collection<CallableMemberDescriptor> bound = new ArrayList<CallableMemberDescriptor>(descriptorsFromSuper.size());
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
             OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent).getResult();
 
@@ -378,13 +374,11 @@ public class OverridingUtil {
             @NotNull final ClassDescriptor current,
             @NotNull Collection<CallableMemberDescriptor> toFilter
     ) {
-        return Collections2.filter(toFilter, new Predicate<CallableMemberDescriptor>() {
+        return KotlinPackage.filter(toFilter, new Function1<CallableMemberDescriptor, Boolean>() {
             @Override
-            public boolean apply(@Nullable CallableMemberDescriptor descriptor) {
+            public Boolean invoke(CallableMemberDescriptor descriptor) {
                 //nested class could capture private member, so check for private visibility added
-                return descriptor != null &&
-                       descriptor.getVisibility() != Visibilities.PRIVATE &&
-                       Visibilities.isVisible(descriptor, current);
+                return descriptor.getVisibility() != Visibilities.PRIVATE && Visibilities.isVisible(descriptor, current);
             }
         });
     }
@@ -395,7 +389,7 @@ public class OverridingUtil {
             @NotNull Queue<CallableMemberDescriptor> extractFrom,
             @NotNull DescriptorSink sink
     ) {
-        Collection<CallableMemberDescriptor> overridable = Lists.newArrayList();
+        Collection<CallableMemberDescriptor> overridable = new ArrayList<CallableMemberDescriptor>();
         overridable.add(overrider);
         for (Iterator<CallableMemberDescriptor> iterator = extractFrom.iterator(); iterator.hasNext(); ) {
             CallableMemberDescriptor candidate = iterator.next();

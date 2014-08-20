@@ -366,7 +366,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             iv.anew(PROPERTY_METADATA_IMPL_TYPE);
             iv.dup();
             iv.visitLdcInsn(property.getName().asString());
-            iv.invokespecial(PROPERTY_METADATA_IMPL_TYPE.getInternalName(), "<init>", "(Ljava/lang/String;)V");
+            iv.invokespecial(PROPERTY_METADATA_IMPL_TYPE.getInternalName(), "<init>", "(Ljava/lang/String;)V", false);
             iv.astore(PROPERTY_METADATA_IMPL_TYPE);
         }
 

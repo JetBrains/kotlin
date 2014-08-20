@@ -28,18 +28,15 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.di.InjectorForTests;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -128,7 +125,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("\"d\"", builtIns.getStringType());
         assertType("\"\"\"d\"\"\"", builtIns.getStringType());
 
-        assertType("Unit.VALUE", KotlinBuiltIns.getInstance().getUnitType());
+        assertType("Unit", KotlinBuiltIns.getInstance().getUnitType());
 
         assertType("null", KotlinBuiltIns.getInstance().getNullableNothingType());
     }
@@ -597,10 +594,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
-        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext());
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        ModuleDescriptorImpl module = (ModuleDescriptorImpl) javaDescriptorResolver.getModule();
-        module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        InjectorForJavaDescriptorResolver injector =
+                InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext(), true);
+        ModuleDescriptor module = injector.getModule();
         for (ImportPath defaultImport : module.getDefaultImports()) {
             writableScope.importScope(module.getPackage(defaultImport.fqnPart()).getMemberScope());
         }

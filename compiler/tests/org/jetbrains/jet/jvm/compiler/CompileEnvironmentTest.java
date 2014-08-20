@@ -36,7 +36,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 public class CompileEnvironmentTest extends TestCase {
-
     public void testSmokeWithCompilerJar() throws IOException {
         File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
 
@@ -48,9 +47,9 @@ public class CompileEnvironmentTest extends TestCase {
                     System.out,
                     "-module", JetTestCaseBuilder.getTestDataPathBase() + "/compiler/smoke/Smoke.ktm",
                     "-d", resultJar.getAbsolutePath(),
-                    "-noStdlib",
+                    "-no-stdlib",
                     "-classpath", stdlib.getAbsolutePath(),
-                    "-noJdkAnnotations",
+                    "-no-jdk-annotations",
                     "-annotations", jdkAnnotations.getAbsolutePath()
             );
             Assert.assertEquals("compilation completed with non-zero code", ExitCode.OK, rv);
@@ -85,15 +84,16 @@ public class CompileEnvironmentTest extends TestCase {
                     System.out,
                     JetTestCaseBuilder.getTestDataPathBase() + "/compiler/smoke/Smoke.kt",
                     "-d", out.getAbsolutePath(),
-                    "-noStdlib",
+                    "-no-stdlib",
                     "-classpath", stdlib.getAbsolutePath(),
-                    "-noJdkAnnotations",
+                    "-no-jdk-annotations",
                     "-annotations", jdkAnnotations.getAbsolutePath()
             );
             Assert.assertEquals(ExitCode.OK, exitCode);
             assertEquals(1, out.listFiles().length);
             assertEquals(2, out.listFiles()[0].listFiles().length);
-        } finally {
+        }
+        finally {
             FileUtil.delete(tempDir);
         }
     }

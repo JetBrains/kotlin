@@ -26,9 +26,6 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker
-import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
-import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode
@@ -46,16 +43,21 @@ import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetContainerNode
 import org.jetbrains.jet.plugin.completion.smart.isSubtypeOf
-import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
-import org.jetbrains.jet.lang.resolve.calls.util.noErrorsInValueArguments
-import org.jetbrains.jet.lang.resolve.calls.util.hasUnmappedParameters
+import org.jetbrains.jet.lang.resolve.calls.callUtil.noErrorsInValueArguments
+import org.jetbrains.jet.lang.resolve.calls.callUtil.hasUnmappedParameters
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.plugin.util.makeNullable
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.lang.psi.JetWhenConditionWithExpression
 import org.jetbrains.jet.lang.psi.JetWhenEntry
 import org.jetbrains.jet.lang.psi.JetWhenExpression
+import org.jetbrains.jet.lang.psi.JetCallElement
+import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
+import org.jetbrains.jet.lang.psi.JetPrefixExpression
+import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 
 enum class Tail {
     COMMA
@@ -74,36 +76,37 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             ?: calculateForElvis(expressionWithType)
             ?: calculateForBlockExpression(expressionWithType)
             ?: calculateForWhenEntryValue(expressionWithType)
+            ?: calculateForExclOperand(expressionWithType)
             ?: getFromBindingContext(expressionWithType)
     }
 
     private fun calculateForArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val argument = expressionWithType.getParent() as? JetValueArgument ?: return null
         if (argument.isNamed()) return null //TODO - support named arguments (also do not forget to check for presence of named arguments before)
-        val argumentList = argument.getParent() as JetValueArgumentList
+        val argumentList = argument.getParent() as? JetValueArgumentList ?: return null
         val argumentIndex = argumentList.getArguments().indexOf(argument)
-        val callExpression = argumentList.getParent() as? JetCallExpression ?: return null
-        return calculateForArgument(callExpression, argumentIndex, false)
+        val callElement = argumentList.getParent() as? JetCallElement ?: return null
+        return calculateForArgument(callElement, argumentIndex, false)
     }
 
     private fun calculateForFunctionLiteralArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
-        val callExpression = expressionWithType.getParent() as? JetCallExpression
+        val functionLiteralArgument = expressionWithType.getParent() as? JetFunctionLiteralArgument
+        val callExpression = functionLiteralArgument?.getParent() as? JetCallExpression
         if (callExpression != null) {
-            val arguments = callExpression.getFunctionLiteralArguments()
-            if (arguments.firstOrNull() == expressionWithType) {
-                return calculateForArgument(callExpression, callExpression.getValueArguments().size, true)
+            if (callExpression.getFunctionLiteralArguments().head?.getArgumentExpression() == expressionWithType) {
+                return calculateForArgument(callExpression, callExpression.getValueArguments().size - 1, true)
             }
         }
         return null
     }
 
-    private fun calculateForArgument(callExpression: JetCallExpression, argumentIndex: Int, isFunctionLiteralArgument: Boolean): Collection<ExpectedInfo>? {
-        val calleeExpression = callExpression.getCalleeExpression()
+    private fun calculateForArgument(callElement: JetCallElement, argumentIndex: Int, isFunctionLiteralArgument: Boolean): Collection<ExpectedInfo>? {
+        val calleeExpression = callElement.getCalleeExpression()
 
-        val parent = callExpression.getParent()
+        val parent = callElement.getParent()
         val receiver: ReceiverValue
         val callOperationNode: ASTNode?
-        if (parent is JetQualifiedExpression && callExpression == parent.getSelectorExpression()) {
+        if (parent is JetQualifiedExpression && callElement == parent.getSelectorExpression()) {
             val receiverExpression = parent.getReceiverExpression()
             val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, receiverExpression] ?: return null
             receiver = ExpressionReceiver(receiverExpression, expressionType)
@@ -113,7 +116,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             receiver = ReceiverValue.NO_RECEIVER
             callOperationNode = null
         }
-        var call = CallMaker.makeCall(receiver, callOperationNode, callExpression)
+        var call = CallMaker.makeCall(receiver, callOperationNode, callElement)
 
         if (!isFunctionLiteralArgument) { // leave only arguments before the current one
             call = object : DelegatingCall(call) {
@@ -124,17 +127,19 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
 
         val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return null //TODO: discuss it
 
+        val expectedType = (callElement as? JetExpression)?.let { bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it] } ?: TypeUtils.NO_EXPECTED_TYPE
+        val dataFlowInfo = (callElement as? JetExpression)?.let { bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, it] } ?: DataFlowInfo.EMPTY
         val callResolutionContext = BasicCallResolutionContext.create(
                 DelegatingBindingTrace(bindingContext, "Temporary trace for completion"),
                 resolutionScope,
                 call,
-                bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression] ?: TypeUtils.NO_EXPECTED_TYPE,
-                bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, callExpression] ?: DataFlowInfo.EMPTY,
+                expectedType,
+                dataFlowInfo,
                 ContextDependency.INDEPENDENT,
                 CheckValueArgumentsMode.ENABLED,
                 CompositeExtension(listOf()),
                 false).replaceCollectAllCandidates(true)
-        val callResolver = InjectorForMacros(callExpression.getProject(), moduleDescriptor).getCallResolver()!!
+        val callResolver = InjectorForMacros(callElement.getProject(), moduleDescriptor).getCallResolver()!!
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = HashSet<ExpectedInfo>()
@@ -145,15 +150,18 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 if (!Visibilities.isVisible(descriptor, resolutionScope.getContainingDeclaration())) continue
 
                 val parameters = descriptor.getValueParameters()
-                if (isFunctionLiteralArgument) {
-                    if (argumentIndex != parameters.size - 1) continue
-                }
-                else {
-                    if (parameters.size <= argumentIndex) continue
-                }
-                val parameterDescriptor = parameters[argumentIndex]
-                val tail = if (isFunctionLiteralArgument) null else if (argumentIndex == parameters.size - 1) Tail.RPARENTH else Tail.COMMA
-                expectedInfos.add(ExpectedInfo(parameterDescriptor.getType(), tail))
+                if (isFunctionLiteralArgument && argumentIndex != parameters.lastIndex) continue
+
+                val tail = if (isFunctionLiteralArgument)
+                    null
+                else if (argumentIndex == parameters.lastIndex)
+                    Tail.RPARENTH
+                else if (parameters.drop(argumentIndex + 1).all { it.hasDefaultValue() || it.getVarargElementType() != null })
+                    null
+                else
+                    Tail.COMMA
+
+                expectedInfos.add(ExpectedInfo(parameters[argumentIndex].getType(), tail))
             }
         }
         return expectedInfos
@@ -167,7 +175,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
                 if (otherOperand != null) {
                     val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand] ?: return null
-                    return listOf(ExpectedInfo(expressionType.makeNullable(), null))
+                    return listOf(ExpectedInfo(expressionType, null))
                 }
             }
         }
@@ -235,6 +243,12 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         else {
             return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null))
         }
+    }
+
+    private fun calculateForExclOperand(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val prefixExpression = expressionWithType.getParent() as? JetPrefixExpression ?: return null
+        if (prefixExpression.getOperationToken() != JetTokens.EXCL) return null
+        return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null))
     }
 
     private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

@@ -1,7 +1,7 @@
 package test
 
-public trait ArrayOfEnumInParam : java.lang.Object {
-    
+public trait ArrayOfEnumInParam {
+
     java.lang.annotation.Target(value = {ElementType.FIELD, ElementType.CONSTRUCTOR}: kotlin.Array<java.lang.annotation.ElementType>) public final annotation class targetAnnotation : kotlin.Annotation {
         public constructor targetAnnotation(/*0*/ value: kotlin.String)
         public abstract fun value(): kotlin.String

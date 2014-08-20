@@ -1,4 +1,3 @@
-//file
 class X {
     public int length = 5;
 }

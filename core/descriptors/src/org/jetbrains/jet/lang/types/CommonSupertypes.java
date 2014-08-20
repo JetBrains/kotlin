@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -107,7 +106,7 @@ public class CommonSupertypes {
 
         List<TypeConstructor> order = null;
         for (JetType type : types) {
-            Set<TypeConstructor> visited = Sets.newHashSet();
+            Set<TypeConstructor> visited = new HashSet<TypeConstructor>();
             order = topologicallySortSuperclassesAndRecordAllInstances(type, constructorToAllInstances, visited);
 
             if (commonSuperclasses == null) {

@@ -1,4 +1,3 @@
-//file
 package foo;
 
 class A {

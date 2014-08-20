@@ -167,32 +167,32 @@ public final class AnalyzerWithCompilerReport {
 
     public static class SyntaxErrorReport {
         private final boolean hasErrors;
-        private final boolean onlyErrorAtEof;
+        private final boolean allErrorsAtEof;
 
-        public SyntaxErrorReport(boolean hasErrors, boolean onlyErrorAtEof) {
+        public SyntaxErrorReport(boolean hasErrors, boolean allErrorsAtEof) {
             this.hasErrors = hasErrors;
-            this.onlyErrorAtEof = onlyErrorAtEof;
+            this.allErrorsAtEof = allErrorsAtEof;
         }
 
         public boolean isHasErrors() {
             return hasErrors;
         }
 
-        public boolean isOnlyErrorAtEof() {
-            return onlyErrorAtEof;
+        public boolean isAllErrorsAtEof() {
+            return allErrorsAtEof;
         }
     }
 
     public static SyntaxErrorReport reportSyntaxErrors(@NotNull final PsiElement file, @NotNull final MessageCollector messageCollector) {
         class ErrorReportingVisitor extends AnalyzingUtils.PsiErrorElementVisitor {
             boolean hasErrors = false;
-            boolean onlyErrorAtEof = false;
+            boolean allErrorsAtEof = true;
 
             private <E extends PsiElement> void reportDiagnostic(E element, DiagnosticFactory0<E> factory, String message) {
                 MyDiagnostic<?> diagnostic = new MyDiagnostic<E>(element, factory, message);
                 AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, messageCollector);
-                if (element.getTextRange().getStartOffset() == file.getTextRange().getEndOffset()) {
-                    onlyErrorAtEof = !hasErrors;
+                if (element.getTextRange().getStartOffset() != file.getTextRange().getEndOffset()) {
+                    allErrorsAtEof = false;
                 }
                 hasErrors = true;
             }
@@ -207,7 +207,7 @@ public final class AnalyzerWithCompilerReport {
 
         file.accept(visitor);
 
-        return new SyntaxErrorReport(visitor.hasErrors, visitor.onlyErrorAtEof);
+        return new SyntaxErrorReport(visitor.hasErrors, visitor.allErrorsAtEof);
     }
 
     @Nullable

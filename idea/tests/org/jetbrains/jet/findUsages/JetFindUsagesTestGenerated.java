@@ -33,10 +33,88 @@ import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
 @InnerTestClasses({JetFindUsagesTestGenerated.Kotlin.class, JetFindUsagesTestGenerated.Java.class})
 public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
     @TestMetadata("idea/testData/findUsages/kotlin")
-    @InnerTestClasses({Kotlin.FindClassUsages.class, Kotlin.FindFunctionUsages.class, Kotlin.FindObjectUsages.class, Kotlin.FindPackageUsages.class, Kotlin.FindParameterUsages.class, Kotlin.FindPropertyUsages.class, Kotlin.FindTypeParameterUsages.class, Kotlin.FindWithFilteringImports.class, Kotlin.FindWithStructuralGrouping.class, Kotlin.UnresolvedAnnotation.class})
+    @InnerTestClasses({Kotlin.Conventions.class, Kotlin.FindClassUsages.class, Kotlin.FindFunctionUsages.class, Kotlin.FindObjectUsages.class, Kotlin.FindPackageUsages.class, Kotlin.FindParameterUsages.class, Kotlin.FindPropertyUsages.class, Kotlin.FindTypeParameterUsages.class, Kotlin.FindWithFilteringImports.class, Kotlin.FindWithStructuralGrouping.class, Kotlin.UnresolvedAnnotation.class})
     public static class Kotlin extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInKotlin() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/findUsages/kotlin"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+        }
+        
+        @TestMetadata("idea/testData/findUsages/kotlin/conventions")
+        public static class Conventions extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInConventions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/findUsages/kotlin/conventions"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+            
+            @TestMetadata("compareTo.0.kt")
+            public void testCompareTo() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/compareTo.0.kt");
+            }
+            
+            @TestMetadata("componentFunctions.0.kt")
+            public void testComponentFunctions() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/componentFunctions.0.kt");
+            }
+            
+            @TestMetadata("componentFunctionsByRef.0.kt")
+            public void testComponentFunctionsByRef() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/componentFunctionsByRef.0.kt");
+            }
+            
+            @TestMetadata("contains.0.kt")
+            public void testContains() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/contains.0.kt");
+            }
+            
+            @TestMetadata("equals.0.kt")
+            public void testEquals() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/equals.0.kt");
+            }
+            
+            @TestMetadata("forIteration.0.kt")
+            public void testForIteration() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/forIteration.0.kt");
+            }
+            
+            @TestMetadata("get.0.kt")
+            public void testGet() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/get.0.kt");
+            }
+            
+            @TestMetadata("identityEquals.0.kt")
+            public void testIdentityEquals() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/identityEquals.0.kt");
+            }
+            
+            @TestMetadata("inc.0.kt")
+            public void testInc() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/inc.0.kt");
+            }
+            
+            @TestMetadata("invoke.0.kt")
+            public void testInvoke() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/invoke.0.kt");
+            }
+            
+            @TestMetadata("plus.0.kt")
+            public void testPlus() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/plus.0.kt");
+            }
+            
+            @TestMetadata("plusAssign.0.kt")
+            public void testPlusAssign() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/plusAssign.0.kt");
+            }
+            
+            @TestMetadata("set.0.kt")
+            public void testSet() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/set.0.kt");
+            }
+            
+            @TestMetadata("unaryMinus.0.kt")
+            public void testUnaryMinus() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/conventions/unaryMinus.0.kt");
+            }
+            
         }
         
         @TestMetadata("idea/testData/findUsages/kotlin/findClassUsages")
@@ -597,6 +675,7 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Kotlin");
             suite.addTestSuite(Kotlin.class);
+            suite.addTestSuite(Conventions.class);
             suite.addTestSuite(FindClassUsages.class);
             suite.addTestSuite(FindFunctionUsages.class);
             suite.addTestSuite(FindObjectUsages.class);

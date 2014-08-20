@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.descriptors.impl.PropertyGetterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertySetterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.ArrayList;
@@ -192,8 +191,7 @@ public class MemberDeserializer {
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
                 local.getDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
-                visibility(Flags.VISIBILITY.get(proto.getFlags())),
-                DescriptorUtils.isConstructorOfStaticNestedClass(descriptor)
+                visibility(Flags.VISIBILITY.get(proto.getFlags()))
         );
         descriptor.setReturnType(local.getTypeDeserializer().type(proto.getReturnType()));
         return descriptor;

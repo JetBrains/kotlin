@@ -7,6 +7,8 @@ fun test() {
 
 Resolved call:
 
+Resulting descriptor: fun foo(f: (Int) -> String): Unit
+
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER
 Receiver argument = NO_RECEIVER

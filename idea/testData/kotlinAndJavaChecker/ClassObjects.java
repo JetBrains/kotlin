@@ -1,12 +1,12 @@
 class ClassObject {
     void foo() {
-        WithClassObject.object$.getValue();
-        WithClassObject.object$.getValue();
-        WithClassObject.object$.foo();
-        WithClassObject.object$.getValueWithGetter();
-        WithClassObject.object$.getVariable();
-        WithClassObject.object$.setVariable(0);
-        WithClassObject.object$.getVariableWithAccessors();
-        WithClassObject.object$.setVariableWithAccessors(0);
+        WithClassObject.OBJECT$.getValue();
+        WithClassObject.OBJECT$.getValue();
+        WithClassObject.OBJECT$.foo();
+        WithClassObject.OBJECT$.getValueWithGetter();
+        WithClassObject.OBJECT$.getVariable();
+        WithClassObject.OBJECT$.setVariable(0);
+        WithClassObject.OBJECT$.getVariableWithAccessors();
+        WithClassObject.OBJECT$.setVariableWithAccessors(0);
     }
 }

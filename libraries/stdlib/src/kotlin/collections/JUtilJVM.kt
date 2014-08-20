@@ -46,4 +46,4 @@ public fun <T> Set<T>?.orEmpty(): Set<T>
  * specified enumeration in the order they are returned by the
  * enumeration.
  */
-fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
+public fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)

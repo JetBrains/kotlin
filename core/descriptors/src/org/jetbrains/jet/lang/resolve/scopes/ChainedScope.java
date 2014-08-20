@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
@@ -73,10 +70,12 @@ public class ChainedScope implements JetScope {
     @Override
     public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
         if (implicitReceiverHierarchy == null) {
-            implicitReceiverHierarchy = Lists.newArrayList();
+            ArrayList<ReceiverParameterDescriptor> result = new ArrayList<ReceiverParameterDescriptor>();
             for (JetScope jetScope : scopeChain) {
-                implicitReceiverHierarchy.addAll(jetScope.getImplicitReceiversHierarchy());
+                result.addAll(jetScope.getImplicitReceiversHierarchy());
             }
+            result.trimToSize();
+            implicitReceiverHierarchy = result;
         }
         return implicitReceiverHierarchy;
     }
@@ -102,7 +101,7 @@ public class ChainedScope implements JetScope {
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
-            allDescriptors = Sets.newHashSet();
+            allDescriptors = new HashSet<DeclarationDescriptor>();
             for (JetScope scope : scopeChain) {
                 allDescriptors.addAll(scope.getAllDescriptors());
             }
@@ -121,7 +120,6 @@ public class ChainedScope implements JetScope {
         return debugName;
     }
 
-    @TestOnly
     @Override
     public void printScopeStructure(@NotNull Printer p) {
         p.println(getClass().getSimpleName(), ": ", debugName, " {");

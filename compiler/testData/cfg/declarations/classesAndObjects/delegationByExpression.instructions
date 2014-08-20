@@ -21,7 +21,6 @@ L0:
     v(b: Int)
     magic[FAKE_INITIALIZER](b: Int) -> <v1>
     w(b|<v1>)
-    unsupported(DELEGATOR_SUPER_CLASS : T)
 L1:
     <END>                                      NEXT:[<SINK>]
 error:

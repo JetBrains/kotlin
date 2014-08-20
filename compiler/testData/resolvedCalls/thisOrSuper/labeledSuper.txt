@@ -1,0 +1,18 @@
+open class A {
+    open fun foo() {}
+}
+
+class B: A() {
+    override fun foo() {
+        <caret>super@B.foo()
+    }
+}
+
+
+Resolved call:
+
+Resulting descriptor: Class{B}::this
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER

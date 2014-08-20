@@ -45,7 +45,8 @@ public class ReplFromTerminal {
             public void run() {
                 try {
                     replInterpreter = new ReplInterpreter(disposable, compilerConfiguration);
-                } catch (Throwable e) {
+                }
+                catch (Throwable e) {
                     replInitializationFailed = e;
                 }
                 synchronized (waitRepl) {
@@ -57,8 +58,10 @@ public class ReplFromTerminal {
         try {
             consoleReader = new ConsoleReader("kotlin", System.in, System.out, null);
             consoleReader.setHistoryEnabled(true);
+            consoleReader.setExpandEvents(false);
             consoleReader.setHistory(new FileHistory(new File(new File(System.getProperty("user.home")), ".kotlin_history")));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw UtilsPackage.rethrow(e);
         }
     }
@@ -71,7 +74,8 @@ public class ReplFromTerminal {
             while (replInterpreter == null && replInitializationFailed == null) {
                 try {
                     waitRepl.wait();
-                } catch (Throwable e) {
+                }
+                catch (Throwable e) {
                     throw UtilsPackage.rethrow(e);
                 }
             }
@@ -93,12 +97,15 @@ public class ReplFromTerminal {
                     break;
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw UtilsPackage.rethrow(e);
-        } finally {
+        }
+        finally {
             try {
                 ((FileHistory) consoleReader.getHistory()).flush();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.err.println("failed to flush history: " + e);
             }
         }
@@ -118,7 +125,7 @@ public class ReplFromTerminal {
                 return WhatNextAfterOneLine.QUIT;
             }
 
-            if (line.startsWith(":")) {
+            if (line.startsWith(":") && (line.length() == 1 || line.charAt(1) != ':')) {
                 boolean notQuit = oneCommand(line.substring(1));
                 return notQuit ? WhatNextAfterOneLine.READ_LINE : WhatNextAfterOneLine.QUIT;
             }

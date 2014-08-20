@@ -44,7 +44,7 @@ class ListSpecificTest {
     Test fun mutableList() {
         val items = listOf("beverage", "location", "name")
 
-        var list = arrayListOf<String>()
+        var list = listOf<String>()
         for (item in items) {
             list += item
         }

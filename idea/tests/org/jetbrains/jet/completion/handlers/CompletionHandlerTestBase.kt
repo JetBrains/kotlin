@@ -18,8 +18,6 @@ package org.jetbrains.jet.completion.handlers
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
-import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings
 import com.intellij.codeInsight.lookup.LookupElement
 import java.io.File
 import org.jetbrains.jet.plugin.PluginTestCaseBase
@@ -31,8 +29,6 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.junit.Assert
 import com.intellij.openapi.application.Result
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import kotlin.properties.Delegates
-import com.intellij.openapi.util.io.FileUtil
 
 public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTestCase() {
     protected abstract val completionType : CompletionType
@@ -41,28 +37,27 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
     protected val fixture: JavaCodeInsightTestFixture
         get() = myFixture
 
-    protected fun doTest() : Unit = doTest(2, null, null, null, '\n')
+    protected fun doTest() : Unit = doTest(2, "*", null, null, '\n')
 
-    protected fun doTest(time : Int, lookupString : String?, tailText : String?, completionChar : Char) {
+    protected fun doTest(time: Int, lookupString: String?, tailText: String?, completionChar: Char) {
         doTest(time, lookupString, null, tailText, completionChar)
     }
 
-    protected fun doTest(time : Int, lookupString : String?, itemText: String?, tailText : String?, completionChar : Char) {
+    protected fun doTest(time: Int, lookupString: String?, itemText: String?, tailText: String?, completionChar: Char) {
         fixture.configureByFile(fileName())
         doTestWithTextLoaded(time, lookupString, itemText, tailText, completionChar)
     }
 
-    protected fun doTestWithTextLoaded(time : Int, lookupString : String?, itemText: String?, tailText : String?, completionChar : Char) {
+    protected fun doTestWithTextLoaded(time: Int, lookupString: String?, itemText: String?, tailText: String?, completionChar: Char) {
+        fixture.complete(completionType, time)
+
         if (lookupString != null || itemText != null || tailText != null) {
-            fixture.complete(completionType, time)
             val item = getExistentLookupElement(lookupString, itemText, tailText)
             if (item != null) {
                 selectItem(item, completionChar)
             }
         }
-        else {
-            forceCompleteFirst(completionType, time)
-        }
+
         checkResult()
     }
 
@@ -70,13 +65,20 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
         fixture.checkResultByFile(afterFileName())
     }
 
-    private fun getExistentLookupElement(lookupString : String?, itemText: String?, tailText : String?) : LookupElement? {
+    private fun getExistentLookupElement(lookupString: String?, itemText: String?, tailText: String?): LookupElement? {
         val lookup = LookupManager.getInstance(getProject())?.getActiveLookup() as LookupImpl?
         if (lookup == null) return null
+        val items = lookup.getItems()
+
+        if (lookupString == "*") {
+            assert(itemText == null)
+            assert(tailText == null)
+            return items.firstOrNull()
+        }
 
         var foundElement : LookupElement? = null
         val presentation = LookupElementPresentation()
-        for (lookupElement in lookup.getItems()) {
+        for (lookupElement in items) {
             val lookupOk = if (lookupString != null) lookupElement.getLookupString().contains(lookupString) else true
 
             if (lookupOk) {
@@ -116,21 +118,13 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
 
     protected fun afterFileName(): String = getTestName(false) + ".kt.after"
 
-    private fun forceCompleteFirst(`type` : CompletionType, time : Int) {
-        fixture.complete(`type`, time)
-        val items : Array<LookupElement>? = fixture.getLookupElements()
-        if (items != null && items.isNotEmpty()) {
-            selectItem(items[0])
-        }
-    }
-
     protected override fun getTestDataPath() : String = File(PluginTestCaseBase.getTestDataPathBase(), testDataRelativePath).getPath() + File.separator
 
-    protected fun selectItem(item : LookupElement?) {
+    protected fun selectItem(item: LookupElement?) {
         selectItem(item, 0.toChar())
     }
 
-    protected fun selectItem(item : LookupElement?, completionChar : Char) {
+    protected fun selectItem(item: LookupElement?, completionChar: Char) {
         val lookup = (fixture.getLookup() as LookupImpl)
         lookup.setCurrentItem(item)
         if (LookupEvent.isSpecialCompletionChar(completionChar)) {

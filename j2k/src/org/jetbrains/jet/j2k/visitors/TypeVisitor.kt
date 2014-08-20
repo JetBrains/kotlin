@@ -19,15 +19,17 @@ package org.jetbrains.jet.j2k.visitors
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import org.jetbrains.jet.j2k.ast.*
-import java.util.LinkedList
 import com.intellij.openapi.util.text.StringUtil
-import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
 import org.jetbrains.jet.j2k.TypeConverter
+import org.jetbrains.jet.j2k.Converter
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 
-class TypeVisitor(private val converter: TypeConverter, private val importNames: Set<String>, private val classesToImport: MutableSet<String>) : PsiTypeVisitor<Type>() {
+class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>() {
+
+    private val typeConverter: TypeConverter = converter.typeConverter
+
     override fun visitPrimitiveType(primitiveType: PsiPrimitiveType): Type {
         val name = primitiveType.getCanonicalText()
         return if (name == "void") {
@@ -45,100 +47,72 @@ class TypeVisitor(private val converter: TypeConverter, private val importNames:
     }
 
     override fun visitArrayType(arrayType: PsiArrayType): Type {
-        return ArrayType(converter.convertType(arrayType.getComponentType()), Nullability.Default, converter.settings)
+        return ArrayType(typeConverter.convertType(arrayType.getComponentType()), Nullability.Default, converter.settings)
     }
 
     override fun visitClassType(classType: PsiClassType): Type {
-        val identifier = constructClassTypeIdentifier(classType)
-        val resolvedClassTypeParams = createRawTypesForResolvedReference(classType)
-        if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0) {
-            val starParamList = ArrayList<Type>()
-            if (resolvedClassTypeParams.size() == 1) {
-                if ((resolvedClassTypeParams.single() as ClassType).name.name == "Any") {
-                    starParamList.add(StarProjectionType())
-                    return ClassType(identifier, starParamList, Nullability.Default, converter.settings)
-                }
-                else {
-                    return ClassType(identifier, resolvedClassTypeParams, Nullability.Default, converter.settings)
-                }
-            }
-            else {
-                return ClassType(identifier, resolvedClassTypeParams, Nullability.Default, converter.settings)
-            }
-        }
-        else {
-            return ClassType(identifier, converter.convertTypes(classType.getParameters()), Nullability.Default, converter.settings)
-        }
+        val refElement = constructReferenceElement(classType)
+        return ClassType(refElement, Nullability.Default, converter.settings)
     }
 
-    private fun constructClassTypeIdentifier(classType: PsiClassType): Identifier {
+    private fun constructReferenceElement(classType: PsiClassType): ReferenceElement {
+        val typeArgs = convertTypeArgs(classType)
+
         val psiClass = classType.resolve()
         if (psiClass != null) {
             val javaClassName = psiClass.getQualifiedName()
             val kotlinClassName = toKotlinTypesMap[javaClassName]
             if (kotlinClassName != null) {
                 val kotlinShortName = getShortName(kotlinClassName)
-                if (kotlinShortName == getShortName(javaClassName!!) && importNames.contains(getPackageName(javaClassName) + ".*")) {
-                    classesToImport.add(kotlinClassName)
+                if (kotlinShortName == getShortName(javaClassName!!) && converter.importNames.contains(getPackageName(javaClassName) + ".*")) {
+                    converter.importsToAdd?.add(kotlinClassName)
                 }
-                return Identifier(kotlinShortName).assignNoPrototype()
+                return ReferenceElement(Identifier(kotlinShortName).assignNoPrototype(), typeArgs).assignNoPrototype()
             }
         }
 
         if (classType is PsiClassReferenceType) {
-            val reference = classType.getReference()
-            if (reference.isQualified()) {
-                var result = Identifier.toKotlin(reference.getReferenceName()!!)
-                var qualifier = reference.getQualifier()
-                while (qualifier != null) {
-                    val codeRefElement = qualifier as PsiJavaCodeReferenceElement
-                    result = Identifier.toKotlin(codeRefElement.getReferenceName()!!) + "." + result
-                    qualifier = codeRefElement.getQualifier()
-                }
-                return Identifier(result).assignNoPrototype()
-            }
+            return converter.convertCodeReferenceElement(classType.getReference(), hasExternalQualifier = false, typeArgsConverted = typeArgs)
         }
 
-        return Identifier(classType.getClassName() ?: "").assignNoPrototype()
+        return ReferenceElement(Identifier(classType.getClassName() ?: "").assignNoPrototype(), typeArgs).assignNoPrototype()
     }
 
     private fun getPackageName(className: String): String = className.substring(0, className.lastIndexOf('.'))
     private fun getShortName(className: String): String = className.substring(className.lastIndexOf('.') + 1)
 
-    private fun createRawTypesForResolvedReference(classType: PsiClassType): List<Type> {
-        val typeParams = LinkedList<Type>()
+    private fun convertTypeArgs(classType: PsiClassType): List<Type> {
+        if (classType.getParameterCount() == 0) {
+            return createTypeArgsForRawTypeUsage(classType)
+        }
+        else {
+            return typeConverter.convertTypes(classType.getParameters())
+        }
+    }
+
+    private fun createTypeArgsForRawTypeUsage(classType: PsiClassType): List<Type> {
         if (classType is PsiClassReferenceType) {
-            val resolve = classType.getReference().resolve()
-            if (resolve is PsiClass) {
-                for (typeParam in resolve.getTypeParameters()) {
-                    val superTypes = typeParam.getSuperTypes()
-                    val boundType = if (superTypes.size > 0) {
-                        ClassType(constructClassTypeIdentifier(superTypes[0]),
-                                  converter.convertTypes(superTypes[0].getParameters()),
-                                  Nullability.Default,
-                                  converter.settings)
-                    }
-                    else {
-                        StarProjectionType()
-                    }
-                    typeParams.add(boundType)
+            val targetClass = classType.getReference().resolve() as? PsiClass
+            if (targetClass != null) {
+                return targetClass.getTypeParameters().map {
+                    val superType = it.getSuperTypes().first() // there must be at least one super type always
+                    ClassType(constructReferenceElement(superType), Nullability.Default, converter.settings).assignNoPrototype()
                 }
             }
         }
-
-        return typeParams
+        return listOf()
     }
 
     override fun visitWildcardType(wildcardType: PsiWildcardType): Type {
         return when {
-            wildcardType.isExtends() -> OutProjectionType(converter.convertType(wildcardType.getExtendsBound()))
-            wildcardType.isSuper() -> InProjectionType(converter.convertType(wildcardType.getSuperBound()))
+            wildcardType.isExtends() -> OutProjectionType(typeConverter.convertType(wildcardType.getExtendsBound()))
+            wildcardType.isSuper() -> InProjectionType(typeConverter.convertType(wildcardType.getSuperBound()))
             else -> StarProjectionType()
         }
     }
 
     override fun visitEllipsisType(ellipsisType: PsiEllipsisType): Type {
-        return VarArgType(converter.convertType(ellipsisType.getComponentType()))
+        return VarArgType(typeConverter.convertType(ellipsisType.getComponentType()))
     }
 
     class object {

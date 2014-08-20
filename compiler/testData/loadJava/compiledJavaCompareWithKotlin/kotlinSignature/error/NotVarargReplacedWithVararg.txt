@@ -1,6 +1,6 @@
 package test
 
-public open class NotVarargReplacedWithVararg : java.lang.Object {
+public open class NotVarargReplacedWithVararg {
     public constructor NotVarargReplacedWithVararg()
     public open fun foo(/*0*/ p0: kotlin.String?): kotlin.Unit
 }

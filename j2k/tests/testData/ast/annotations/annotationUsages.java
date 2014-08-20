@@ -1,4 +1,3 @@
-//file
 import javaApi.*;
 
 @Anon1(value = {"a"}, stringArray = {"b"}, intArray = {1, 2}, string = "x")

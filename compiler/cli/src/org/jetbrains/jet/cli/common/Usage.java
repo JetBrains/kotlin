@@ -29,35 +29,39 @@ class Usage {
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
     private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
-    public static void print(@NotNull PrintStream target, @NotNull CommonCompilerArguments arguments) {
+    public static void print(@NotNull PrintStream target, @NotNull CommonCompilerArguments arguments, boolean extraHelp) {
         target.println("Usage: " + arguments.executableScriptFileName() + " <options> <source files>");
-        target.println("where possible options include:");
+        target.println("where " + (extraHelp ? "advanced" : "possible") + " options include:");
         for (Class<?> clazz = arguments.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
             for (Field field : clazz.getDeclaredFields()) {
-                String usage = fieldUsage(field);
+                String usage = fieldUsage(field, extraHelp);
                 if (usage != null) {
                     target.println(usage);
                 }
             }
         }
+
+        if (extraHelp) {
+            target.println();
+            target.println("Advanced options are non-standard and may be changed or removed without any notice.");
+        }
     }
 
     @Nullable
-    private static String fieldUsage(@NotNull Field field) {
+    private static String fieldUsage(@NotNull Field field, boolean extraHelp) {
         Argument argument = field.getAnnotation(Argument.class);
         if (argument == null) return null;
         ValueDescription description = field.getAnnotation(ValueDescription.class);
+
+        String value = argument.value();
+        boolean extraOption = value.startsWith("X") && value.length() > 1;
+        if (extraHelp != extraOption) return null;
 
         String prefix = argument.prefix();
 
         StringBuilder sb = new StringBuilder("  ");
         sb.append(prefix);
-        if (argument.value().isEmpty()) {
-            sb.append(field.getName());
-        }
-        else {
-            sb.append(argument.value());
-        }
+        sb.append(value);
         if (!argument.alias().isEmpty()) {
             sb.append(" (");
             sb.append(prefix);

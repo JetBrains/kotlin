@@ -99,7 +99,7 @@ public abstract class JetCodeFragment(
         _myImports.addAll(imports.split(IMPORT_SEPARATOR))
     }
 
-    fun importsAsImportList(): JetImportList? {
+    public fun importsAsImportList(): JetImportList? {
         return JetPsiFactory(this).createFile(_myImports.makeString("\n")).getImportList()
     }
 
@@ -118,9 +118,9 @@ public abstract class JetCodeFragment(
     }
 
     class object {
-        val IMPORT_SEPARATOR = ","
+        public val IMPORT_SEPARATOR: String = ","
 
-        fun getImportsForElement(elementAtCaret: PsiElement): String {
+        public fun getImportsForElement(elementAtCaret: PsiElement): String {
             val containingFile = elementAtCaret.getContainingFile()
             if (containingFile !is JetFile) return ""
 

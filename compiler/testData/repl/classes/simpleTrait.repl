@@ -1,0 +1,6 @@
+>>> trait A
+>>> trait B : A {
+...    fun foo() = 45
+... }
+>>> javaClass<A>().isAssignableFrom(javaClass<B>())
+true

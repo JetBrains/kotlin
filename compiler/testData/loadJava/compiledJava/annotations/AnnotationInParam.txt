@@ -1,45 +1,45 @@
 package test
 
-public trait AnnotationInParam : java.lang.Object {
-    
-    test.AnnotationInParam.MyAnnotationWithParam(value = test.AnnotationInParam.MyAnnotation(value = "test": kotlin.String): test.AnnotationInParam.MyAnnotation) public open class A : java.lang.Object {
+public trait AnnotationInParam {
+
+    test.AnnotationInParam.MyAnnotationWithParam(value = test.AnnotationInParam.MyAnnotation(value = "test": kotlin.String): test.AnnotationInParam.MyAnnotation) public open class A {
         public constructor A()
     }
-    
-    test.AnnotationInParam.MyAnnotationWithParam2(value = test.AnnotationInParam.MyAnnotation2(value = {"test", "test2"}: kotlin.Array<kotlin.String>): test.AnnotationInParam.MyAnnotation2) public open class B : java.lang.Object {
+
+    test.AnnotationInParam.MyAnnotationWithParam2(value = test.AnnotationInParam.MyAnnotation2(value = {"test", "test2"}: kotlin.Array<kotlin.String>): test.AnnotationInParam.MyAnnotation2) public open class B {
         public constructor B()
     }
-    
-    test.AnnotationInParam.MyAnnotationWithParam3(value = test.AnnotationInParam.MyAnnotation3(first = "f": kotlin.String, second = "s": kotlin.String): test.AnnotationInParam.MyAnnotation3) public open class C : java.lang.Object {
+
+    test.AnnotationInParam.MyAnnotationWithParam3(value = test.AnnotationInParam.MyAnnotation3(first = "f": kotlin.String, second = "s": kotlin.String): test.AnnotationInParam.MyAnnotation3) public open class C {
         public constructor C()
     }
-    
+
     public final annotation class MyAnnotation : kotlin.Annotation {
         public constructor MyAnnotation(/*0*/ value: kotlin.String)
         public abstract fun value(): kotlin.String
     }
-    
+
     public final annotation class MyAnnotation2 : kotlin.Annotation {
         public constructor MyAnnotation2(/*0*/ vararg value: kotlin.String /*kotlin.Array<kotlin.String>*/)
         public abstract fun value(): kotlin.Array<kotlin.String>
     }
-    
+
     public final annotation class MyAnnotation3 : kotlin.Annotation {
         public constructor MyAnnotation3(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String)
         public abstract fun first(): kotlin.String
         public abstract fun second(): kotlin.String
     }
-    
+
     public final annotation class MyAnnotationWithParam : kotlin.Annotation {
         public constructor MyAnnotationWithParam(/*0*/ value: test.AnnotationInParam.MyAnnotation)
         public abstract fun value(): test.AnnotationInParam.MyAnnotation
     }
-    
+
     public final annotation class MyAnnotationWithParam2 : kotlin.Annotation {
         public constructor MyAnnotationWithParam2(/*0*/ value: test.AnnotationInParam.MyAnnotation2)
         public abstract fun value(): test.AnnotationInParam.MyAnnotation2
     }
-    
+
     public final annotation class MyAnnotationWithParam3 : kotlin.Annotation {
         public constructor MyAnnotationWithParam3(/*0*/ value: test.AnnotationInParam.MyAnnotation3)
         public abstract fun value(): test.AnnotationInParam.MyAnnotation3

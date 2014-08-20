@@ -139,3 +139,20 @@ fun PsiMethod.isMainMethod(): Boolean = PsiMethodUtil.isMainMethod(this)
 
 fun <T: Any> List<T>.singleOrNull2(): T? = if (size == 1) this[0] else null
 fun <T: Any> Array<T>.singleOrNull2(): T? = if (size == 1) this[0] else null
+
+fun PsiMember.isImported(file: PsiJavaFile): Boolean {
+    if (this is PsiClass) {
+        val fqName = getQualifiedName()
+        val index = fqName?.lastIndexOf('.') ?: -1
+        val parentName = if (index >= 0) fqName!!.substring(0, index) else null
+        return file.getImportList()?.getAllImportStatements()?.any {
+            it.getImportReference()?.getQualifiedName() == (if (it.isOnDemand()) parentName else fqName)
+        } ?: false
+    }
+    else {
+        return getContainingClass() != null && file.getImportList()?.getImportStaticStatements()?.any {
+            it.resolveTargetClass() == getContainingClass() && (it.isOnDemand() || it.getReferenceName() == getName())
+        } ?: false
+    }
+}
+

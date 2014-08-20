@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
@@ -33,8 +32,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
-import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -47,8 +44,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.Predicates.in;
-import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
-import static org.jetbrains.jet.cli.common.ExitCode.OK;
+import static org.jetbrains.jet.cli.common.ExitCode.*;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
@@ -93,6 +89,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         else if (arguments.module != null) {
         }
         else if (arguments.script) {
+            if (arguments.freeArgs.isEmpty()) {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Specify script source path to evaluate",
+                                        CompilerMessageLocation.NO_LOCATION);
+                return COMPILATION_ERROR;
+            }
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
         }
         else {
@@ -103,12 +104,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                                                   ? CommandLineScriptUtils.scriptParameters()
                                                                   : Collections.<AnalyzerScriptParameter>emptyList());
 
-        configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, arguments.notNullAssertions);
-        configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);
-        configuration.put(JVMConfigurationKeys.ENABLE_INLINE,
-                          CompilerArgumentsUtil.optionToBooleanFlag(arguments.inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG));
-        configuration.put(JVMConfigurationKeys.ENABLE_OPTIMIZATION,
-                          CompilerArgumentsUtil.optionToBooleanFlag(arguments.optimize, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG));
+        putAdvancedOptions(configuration, arguments);
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
@@ -127,8 +123,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 outputDir = isJar ? null : new File(destination);
             }
             else {
-                jar = arguments.jar != null ? new File(arguments.jar) : null;
-                outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
+                jar = null;
+                outputDir = null;
             }
 
             if (arguments.module != null) {
@@ -162,12 +158,18 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             return OK;
         }
         catch (CompilationException e) {
-            messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
+            messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
                                     MessageUtil.psiElementToMessageLocation(e.getElement()));
             return INTERNAL_ERROR;
         }
     }
 
+    public static void putAdvancedOptions(@NotNull CompilerConfiguration configuration, @NotNull K2JVMCompilerArguments arguments) {
+        configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions);
+        configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions);
+        configuration.put(JVMConfigurationKeys.DISABLE_INLINE, arguments.noInline);
+        configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize);
+    }
 
     /**
      * Allow derived classes to add additional command line arguments
@@ -208,18 +210,4 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         }
         return annotationsPath;
     }
-
-    @Override
-    protected void checkArguments(@NotNull K2JVMCompilerArguments argument) {
-        super.checkArguments(argument);
-
-        if (!CompilerArgumentsUtil.checkOption(argument.inline)) {
-            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("inline", argument.inline));
-        }
-
-        if (!CompilerArgumentsUtil.checkOption(argument.optimize)) {
-            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongCheckOptionErrorMessage("optimize", argument.optimize));
-        }
-    }
-
 }

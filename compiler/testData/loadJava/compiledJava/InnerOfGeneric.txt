@@ -1,27 +1,27 @@
 package test
 
-public open class InnerOfGeneric : java.lang.Object {
+public open class InnerOfGeneric {
     public constructor InnerOfGeneric()
-    
-    public abstract inner class A</*0*/ K> : java.lang.Object {
+
+    public abstract inner class A</*0*/ K> {
         public constructor A</*0*/ K>()
-        
+
         public abstract inner class Inner : test.InnerOfGeneric.S<K> {
             public constructor Inner()
             public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<K>?
         }
     }
-    
+
     public open inner class B</*0*/ L> : test.InnerOfGeneric.A<L> {
         public constructor B</*0*/ L>()
-        
+
         public open inner class SubInner : test.InnerOfGeneric.A.Inner {
             public constructor SubInner()
             public open override /*1*/ fun iterator(): kotlin.MutableIterator<L>?
         }
     }
-    
-    public trait S</*0*/ E> : java.lang.Object {
+
+    public trait S</*0*/ E> {
         public abstract fun iterator(): kotlin.MutableIterator<E>?
     }
 }

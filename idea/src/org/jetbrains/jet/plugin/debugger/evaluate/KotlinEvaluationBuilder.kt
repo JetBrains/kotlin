@@ -24,7 +24,6 @@ import com.intellij.debugger.engine.evaluation.expression.*
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils
 import org.jetbrains.jet.codegen.state.GenerationState
 import org.jetbrains.jet.codegen.ClassBuilderFactories
-import java.util.Collections
 import org.jetbrains.jet.codegen.KotlinCodegenFacade
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.LightVirtualFile
@@ -59,10 +58,10 @@ import com.sun.jdi.ObjectReference
 import com.intellij.debugger.engine.SuspendContext
 import org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import com.sun.jdi.StackFrame
 import com.sun.jdi.VirtualMachine
 import org.jetbrains.jet.codegen.AsmUtil
 import com.sun.jdi.InvalidStackFrameException
+import org.jetbrains.jet.plugin.refactoring.runReadAction
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -79,7 +78,7 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
         }
 
         val packageName = file.getPackageDirective()?.getFqName()?.asString()
-        if (packageName != null) {
+        if (packageName != null && packageName.isNotEmpty()) {
             codeFragment.addImportsFromString("import $packageName.*")
         }
         return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment as JetCodeFragment, position))
@@ -184,7 +183,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         }
 
         private fun JetNamedFunction.getParametersForDebugger(): ParametersDescriptor {
-            return ApplicationManager.getApplication()?.runReadAction(Computable {
+            return runReadAction {
                 val parameters = ParametersDescriptor()
                 val bindingContext = getAnalysisResults().getBindingContext()
                 val descriptor = bindingContext[BindingContext.FUNCTION, this]
@@ -200,7 +199,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     }
                 }
                 parameters
-            })!!
+            }!!
         }
 
         private fun EvaluationContextImpl.getArgumentsForEval4j(parameterNames: List<String>, parameterTypes: Array<Type>): List<Value> {
@@ -208,39 +207,36 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         }
 
         private fun createClassFileFactory(codeFragment: JetCodeFragment, extractedFunction: JetNamedFunction): ClassFileFactory {
-            return ApplicationManager.getApplication()?.runReadAction(object : Computable<ClassFileFactory> {
-                override fun compute(): ClassFileFactory? {
-                    val file = createFileForDebugger(codeFragment, extractedFunction)
+            return runReadAction {
+                val file = createFileForDebugger(codeFragment, extractedFunction)
 
-                    checkForSyntacticErrors(file)
+                checkForSyntacticErrors(file)
 
-                    val analyzeExhaust = file.getAnalysisResults()
-                    if (analyzeExhaust.isError()) {
-                        exception(analyzeExhaust.getError())
-                    }
-
-                    val bindingContext = analyzeExhaust.getBindingContext()
-                    bindingContext.getDiagnostics().forEach {
-                        diagnostic ->
-                        if (diagnostic.getSeverity() == Severity.ERROR) {
-                            exception(DefaultErrorMessages.RENDERER.render(diagnostic))
-                        }
-                    }
-
-                    val state = GenerationState(
-                            file.getProject(),
-                            ClassBuilderFactories.BINARIES,
-                            analyzeExhaust.getModuleDescriptor(),
-                            bindingContext,
-                            listOf(file)
-                    )
-
-                    KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
-
-                    return state.getFactory()
+                val analyzeExhaust = file.getAnalysisResults()
+                if (analyzeExhaust.isError()) {
+                    exception(analyzeExhaust.getError())
                 }
-            })!!
 
+                val bindingContext = analyzeExhaust.getBindingContext()
+                bindingContext.getDiagnostics().forEach {
+                    diagnostic ->
+                    if (diagnostic.getSeverity() == Severity.ERROR) {
+                        exception(DefaultErrorMessages.RENDERER.render(diagnostic))
+                    }
+                }
+
+                val state = GenerationState(
+                        file.getProject(),
+                        ClassBuilderFactories.BINARIES,
+                        analyzeExhaust.getModuleDescriptor(),
+                        bindingContext,
+                        listOf(file)
+                )
+
+                KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
+
+                state.getFactory()
+            }!!
         }
 
         private fun exception(msg: String) = throw EvaluateExceptionUtil.createEvaluateException(msg)

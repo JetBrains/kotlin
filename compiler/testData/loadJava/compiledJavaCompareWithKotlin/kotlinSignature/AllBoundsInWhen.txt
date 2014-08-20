@@ -1,6 +1,6 @@
 package test
 
-public open class AllBoundsInWhen : java.lang.Object {
+public open class AllBoundsInWhen {
     public constructor AllBoundsInWhen()
     public open fun </*0*/ T : java.io.Serializable> foo(): kotlin.Unit
 }

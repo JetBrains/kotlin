@@ -49,7 +49,6 @@ import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 
@@ -253,7 +252,6 @@ public class ExpressionTypingServices {
         );
         JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
-        trace.record(STATEMENT, bodyExpression, false);
         JetType type = typeInfo.getType();
         if (type != null) {
             return type;
@@ -283,7 +281,6 @@ public class ExpressionTypingServices {
             if (!(statement instanceof JetExpression)) {
                 continue;
             }
-            trace.record(STATEMENT, statement);
             JetExpression statementExpression = (JetExpression) statement;
             if (!iterator.hasNext()) {
                 result = getTypeOfLastExpressionInBlock(
@@ -396,7 +393,7 @@ public class ExpressionTypingServices {
             if (defaultValue != null) {
                 getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), dataFlowInfo, trace);
                 if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(declaringScope))) {
-                    ConstantExpressionEvaluator.object$.evaluate(defaultValue, trace, valueParameterDescriptor.getType());
+                    ConstantExpressionEvaluator.OBJECT$.evaluate(defaultValue, trace, valueParameterDescriptor.getType());
                 }
             }
         }

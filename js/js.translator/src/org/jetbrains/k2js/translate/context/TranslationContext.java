@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
@@ -227,6 +228,11 @@ public class TranslationContext {
     @NotNull
     public Intrinsics intrinsics() {
         return staticContext.getIntrinsics();
+    }
+
+    @NotNull
+    public ReflectionTypes getReflectionTypes() {
+        return staticContext.getReflectionTypes();
     }
 
     @NotNull

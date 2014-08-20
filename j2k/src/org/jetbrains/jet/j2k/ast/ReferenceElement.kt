@@ -18,8 +18,8 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-class ReferenceElement(val reference: Identifier, val types: List<Type>) : Element() {
+class ReferenceElement(val name: Identifier, val typeArgs: List<Element>) : Element() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(reference).append(types, ", ", "<", ">")
+        builder.append(name).append(typeArgs, ", ", "<", ">")
     }
 }

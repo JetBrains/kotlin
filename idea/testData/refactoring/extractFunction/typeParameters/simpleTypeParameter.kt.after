@@ -9,6 +9,6 @@ fun foo<V: Data>(v: V): Pair<Int, V> {
     return pair(v)
 }
 
-fun <V : Data> pair(v: V): Pair<Int, V> {
+private fun <V : Data> pair(v: V): Pair<Int, V> {
     return Pair(v.x + 10, v)
 }

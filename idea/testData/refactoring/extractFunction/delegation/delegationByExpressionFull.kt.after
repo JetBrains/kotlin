@@ -6,6 +6,6 @@ class A(a: Int, b: Int): T
 
 class B(t: T): T by t(t)
 
-fun t(t: T): T {
+private fun t(t: T): T {
     return t
 }

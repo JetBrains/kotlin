@@ -199,7 +199,7 @@ class CollectionTest {
         assertEquals(arrayListOf("foo", "bar", "cheese"), list2)
 
         // lets use a mutable variable
-        var list3 = arrayListOf("a", "b")
+        var list3 = listOf("a", "b")
         list3 += "c"
         assertEquals(arrayListOf("a", "b", "c"), list3)
     }
@@ -216,7 +216,7 @@ class CollectionTest {
         assertEquals(arrayListOf("foo", "bar", "cheese", "wine"), list)
 
         // lets use a mutable variable
-        var ml = a
+        var ml: List<String> = a
         ml += "beer"
         ml += b
         ml += "z"

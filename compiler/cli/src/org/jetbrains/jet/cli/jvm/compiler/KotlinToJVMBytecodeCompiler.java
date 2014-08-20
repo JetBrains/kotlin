@@ -39,8 +39,6 @@ import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -59,6 +57,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.utils.KotlinPaths;
 
@@ -291,9 +290,8 @@ public class KotlinToJVMBytecodeCompiler {
                     public AnalyzeExhaust invoke() {
                         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
                         BindingTrace sharedTrace = support.getTrace();
-                        ModuleDescriptorImpl sharedModule = support.getModule();
-
-                        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
+                        ModuleDescriptorImpl sharedModule = support.newModule();
+                        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.OBJECT$.getInstance();
                         File incrementalCacheBaseDir = environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
                         final IncrementalCache incrementalCache;
                         if (incrementalCacheProvider != null && incrementalCacheBaseDir != null) {
@@ -345,7 +343,7 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         CompilerConfiguration configuration = environment.getConfiguration();
         File incrementalCacheDir = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
-        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
+        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.OBJECT$.getInstance();
 
         Collection<FqName> packagesWithRemovedFiles;
         if (incrementalCacheDir == null || moduleId == null || incrementalCacheProvider == null) {
@@ -369,15 +367,16 @@ public class KotlinToJVMBytecodeCompiler {
                 exhaust.getModuleDescriptor(),
                 exhaust.getBindingContext(),
                 sourceFiles,
-                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
-                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false),
+                configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
+                configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
-                configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
-                configuration.get(JVMConfigurationKeys.ENABLE_OPTIMIZATION, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG),
+                configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
+                configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 packagesWithRemovedFiles,
                 moduleId,
                 diagnosticHolder,
-                outputDirectory);
+                outputDirectory
+        );
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
         AnalyzerWithCompilerReport.reportDiagnostics(
                 new FilteredJvmDiagnostics(

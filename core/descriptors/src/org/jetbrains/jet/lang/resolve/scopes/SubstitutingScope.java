@@ -16,20 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.jet.utils.UtilsPackage;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SubstitutingScope implements JetScope {
 
@@ -50,7 +45,7 @@ public class SubstitutingScope implements JetScope {
         if (substitutor.isEmpty()) return descriptor;
 
         if (substitutedDescriptors == null) {
-            substitutedDescriptors = Maps.newHashMap();
+            substitutedDescriptors = new HashMap<DeclarationDescriptor, DeclarationDescriptor>();
         }
 
         DeclarationDescriptor substituted = substitutedDescriptors.get(descriptor);
@@ -70,7 +65,7 @@ public class SubstitutingScope implements JetScope {
         if (substitutor.isEmpty()) return descriptors;
         if (descriptors.isEmpty()) return descriptors;
 
-        Set<D> result = Sets.newHashSetWithExpectedSize(descriptors.size());
+        Set<D> result = UtilsPackage.newHashSetWithExpectedSize(descriptors.size());
         for (D descriptor : descriptors) {
             D substitute = substitute(descriptor);
             if (substitute != null) {
@@ -141,7 +136,6 @@ public class SubstitutingScope implements JetScope {
         return substitute(workerScope.getOwnDeclaredDescriptors());
     }
 
-    @TestOnly
     @Override
     public void printScopeStructure(@NotNull Printer p) {
         p.println(getClass().getSimpleName(), " {");

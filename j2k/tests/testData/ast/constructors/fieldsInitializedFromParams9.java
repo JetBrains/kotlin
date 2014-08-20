@@ -1,4 +1,3 @@
-//file
 class C {
     private final String string;
 

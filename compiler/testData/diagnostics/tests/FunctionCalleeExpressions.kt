@@ -55,12 +55,12 @@ fun main1() {
     1.{Int.() -> 1}();
     {1}();
     {(x : Int) -> x}(1)
-    1.{Int.(x : Int) -> x}(1)
+    1.{Int.(x : Int) -> x}(1);
     @l{1}()
     1.({Int.() -> 1})()
     1.(f())()
     1.if(true){f()}else{f()}()
-    1.if(true){Int.() -> 1}else{f()}()
+    1.if(true){Int.() -> <!UNUSED_EXPRESSION!>1<!>}else{f()}()
     1.if(true){Int.() -> 1}else{Int.() -> 1}()
 
     1.<!FUNCTION_EXPECTED!>"sdf"<!>()

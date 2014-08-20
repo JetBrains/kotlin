@@ -6,7 +6,7 @@ import java.util.Comparator
 * Helper method for implementing [[Comparable]] methods using a list of functions
 * to calculate the values to compare
 */
-fun <T : Any> compareBy(a: T?, b: T?, vararg functions: T.() -> Comparable<*>?): Int {
+public fun <T : Any> compareBy(a: T?, b: T?, vararg functions: T.() -> Comparable<*>?): Int {
     require(functions.size > 0)
     if (a === b) return 0
     if (a == null) return - 1
@@ -41,7 +41,7 @@ public fun <T> comparator(vararg functions: T.() -> Comparable<*>?): Comparator<
 }
 
 
-private class FunctionComparator<T>(vararg val functions: T.() -> Comparable<*>?):  Comparator<T> {
+private class FunctionComparator<T>(private vararg val functions: T.() -> Comparable<*>?) : Comparator<T> {
 
     public override fun toString(): String {
         return "FunctionComparator${functions.toList()}"
@@ -62,7 +62,8 @@ private class FunctionComparator<T>(vararg val functions: T.() -> Comparable<*>?
 public fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {
     return Function2Comparator<T>(fn)
 }
-private class Function2Comparator<T>(val compareFn: (T,T) -> Int):  Comparator<T> {
+
+private class Function2Comparator<T>(private val compareFn: (T, T) -> Int) : Comparator<T> {
 
     public override fun toString(): String {
         return "Function2Comparator${compareFn}"

@@ -29,7 +29,7 @@ import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaLibraryDialogWithModules;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
-import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
+import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryCoreUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -91,31 +91,24 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
                 ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this):
                 Arrays.asList(ModuleManager.getInstance(project).getModules());
 
+        List<Module> modulesToConfigure = nonConfiguredModules;
+        String copyLibIntoPath = null;
+
         if (nonConfiguredModules.size() > 1 || showPathPanelForJava) {
-            List<Module> modulesToConfigure;
-            String copyLibIntoPath;
+            CreateJavaLibraryDialogWithModules dialog = new CreateJavaLibraryDialogWithModules(
+                    project, nonConfiguredModules, defaultPath, showPathPanelForJava);
 
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                CreateJavaLibraryDialogWithModules dialog = new CreateJavaLibraryDialogWithModules(
-                        project, nonConfiguredModules, defaultPath, showPathPanelForJava);
                 dialog.show();
                 if (!dialog.isOK()) return;
-                modulesToConfigure = dialog.getModulesToConfigure();
-                copyLibIntoPath = dialog.getCopyIntoPath();
-            }
-            else {
-                modulesToConfigure = nonConfiguredModules;
-                copyLibIntoPath = defaultPath;
             }
 
-            for (Module module : modulesToConfigure) {
-                configureModuleWithLibrary(module, defaultPath, copyLibIntoPath);
-            }
+            modulesToConfigure = dialog.getModulesToConfigure();
+            copyLibIntoPath = dialog.getCopyIntoPath();
         }
-        else {
-            for (Module module : nonConfiguredModules) {
-                configureModuleWithLibrary(module, defaultPath, null);
-            }
+
+        for (Module module : modulesToConfigure) {
+            configureModuleWithLibrary(module, defaultPath, copyLibIntoPath);
         }
     }
 
@@ -182,7 +175,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         }
 
         LibraryScope scope = new LibraryScope(project, library);
-        return KotlinRuntimeLibraryUtil.getKotlinRuntimeMarkerClass(scope) != null;
+        return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(scope) != null;
     }
 
     KotlinJavaModuleConfigurator() {

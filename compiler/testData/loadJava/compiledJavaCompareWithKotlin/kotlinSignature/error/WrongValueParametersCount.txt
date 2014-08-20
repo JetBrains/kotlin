@@ -1,6 +1,6 @@
 package test
 
-public open class WrongValueParametersCount : java.lang.Object {
+public open class WrongValueParametersCount {
     public constructor WrongValueParametersCount()
     public open fun foo(): kotlin.Int?
 }

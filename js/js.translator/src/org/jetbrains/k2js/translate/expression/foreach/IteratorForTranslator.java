@@ -73,6 +73,6 @@ public final class IteratorForTranslator extends ForTranslator {
     @NotNull
     private JsExpression translateMethodInvocation(@Nullable JsExpression receiver,
             @NotNull ResolvedCall<FunctionDescriptor> resolvedCall) {
-        return CallTranslator.instance$.translate(context(), resolvedCall, receiver);
+        return CallTranslator.INSTANCE$.translate(context(), resolvedCall, receiver);
     }
 }

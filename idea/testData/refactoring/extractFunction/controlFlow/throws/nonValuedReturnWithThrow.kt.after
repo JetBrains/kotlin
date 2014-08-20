@@ -9,7 +9,7 @@ fun foo(a: Int) {
     if (b(a, b)) return
 }
 
-fun b(a: Int, b: Int): Boolean {
+private fun b(a: Int, b: Int): Boolean {
     if (a > 0) throw Exception("")
     if (b + a > 0) return true
     println(a - b)

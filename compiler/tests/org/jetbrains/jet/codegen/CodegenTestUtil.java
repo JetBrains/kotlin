@@ -28,8 +28,6 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.jet.codegen.optimization.OptimizationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -47,7 +45,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 public class CodegenTestUtil {
     private CodegenTestUtil() {}
@@ -57,7 +55,8 @@ public class CodegenTestUtil {
         AnalyzeExhaust analyzeExhaust = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 environment.getProject(),
                 files.getPsiFiles(),
-                Predicates.<PsiFile>alwaysTrue());
+                Predicates.<PsiFile>alwaysTrue()
+        );
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         CompilerConfiguration configuration = environment.getConfiguration();
@@ -65,15 +64,16 @@ public class CodegenTestUtil {
         GenerationState state = new GenerationState(
                 environment.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
                 analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(), files.getPsiFiles(),
-                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true),
-                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true),
+                configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
+                configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
-                configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
-                configuration.get(JVMConfigurationKeys.ENABLE_OPTIMIZATION, OptimizationUtils.DEFAULT_OPTIMIZATION_FLAG),
+                configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
+                configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 null,
                 null,
                 forExtraDiagnostics,
-                null);
+                null
+        );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
 
         // For JVM-specific errors

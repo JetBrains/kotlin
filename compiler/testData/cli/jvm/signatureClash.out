@@ -1,29 +1,29 @@
-WARNING: $TESTDATA_DIR$/signatureClash.kt: (26, 17) Parameter 'c' is never used
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (6, 5) Accidental override: The following declarations have the same JVM signature (getX()I):
+WARNING: compiler/testData/cli/jvm/signatureClash.kt: (26, 17) Parameter 'c' is never used
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (6, 5) Accidental override: The following declarations have the same JVM signature (getX()I):
     fun getX(): kotlin.Int
     fun <get-x>(): kotlin.Int
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (8, 5) Platform declaration clash: The following declarations have the same JVM signature (getA()I):
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (8, 5) Platform declaration clash: The following declarations have the same JVM signature (getA()I):
     fun getA(): kotlin.Int
     fun <get-a>(): kotlin.Int
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (9, 5) Platform declaration clash: The following declarations have the same JVM signature (getA()I):
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (9, 5) Platform declaration clash: The following declarations have the same JVM signature (getA()I):
     fun getA(): kotlin.Int
     fun <get-a>(): kotlin.Int
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (12, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (12, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
     fun <get-b>(): kotlin.Int
     fun getB(): kotlin.Int
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (13, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (13, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
     fun <get-b>(): kotlin.Int
     fun getB(): kotlin.Int
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (16, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (16, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
     fun <get-tr>(): kotlin.Int
     fun getTr(): kotlin.Int
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (20, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (20, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
     fun <get-tr>(): kotlin.Int
     fun getTr(): kotlin.Int
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (24, 7) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (24, 7) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
     fun f$b$0(c: C): kotlin.Unit
     fun f(): kotlin.Unit
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (26, 5) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (26, 5) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
     fun f$b$0(c: C): kotlin.Unit
     fun f(): kotlin.Unit
 COMPILATION_ERROR

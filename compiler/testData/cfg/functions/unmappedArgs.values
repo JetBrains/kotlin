@@ -1,0 +1,22 @@
+== foo ==
+fun foo(a: Int, b: Int) = a + b
+---------------------
+        <v0>: Int   NEW: magic[FAKE_INITIALIZER](a: Int) -> <v0>
+        <v1>: Int   NEW: magic[FAKE_INITIALIZER](b: Int) -> <v1>
+a       <v2>: Int   NEW: r(a) -> <v2>
+b       <v3>: Int   NEW: r(b) -> <v3>
+a + b   <v4>: Int   NEW: call(a + b, plus|<v2>, <v3>) -> <v4>
+=====================
+== bar ==
+fun bar(i: Int) {
+    foo(1, 1, i)
+}
+---------------------
+                   <v0>: Int   NEW: magic[FAKE_INITIALIZER](i: Int) -> <v0>
+                   <v4>: *     NEW: magic[VALUE_CONSUMER](i|<v3>) -> <v4>
+1                  <v1>: Int   NEW: r(1) -> <v1>
+1                  <v2>: Int   NEW: r(1) -> <v2>
+i                  <v3>: *     NEW: r(i) -> <v3>
+foo(1, 1, i)       <v5>: *     NEW: call(foo(1, 1, i), foo|<v1>, <v2>) -> <v5>
+{ foo(1, 1, i) }   <v5>: *     COPY
+=====================

@@ -1,3 +1,3 @@
 package test
 
-public open class ClassWithTypePRefNext<R : kotlin.Iterable<P>?, P>() : java.lang.Object()
+public open class ClassWithTypePRefNext<R : kotlin.Iterable<P>?, P>()

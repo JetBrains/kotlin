@@ -18,12 +18,10 @@ package org.jetbrains.jet.plugin.ktSignature;
 
 import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.compiled.ClsElementImpl;
-import com.intellij.psi.impl.source.SourceTreeToPsiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
@@ -38,16 +36,13 @@ class KotlinSignatureUtil {
     @NotNull
     static PsiModifierListOwner getAnnotationOwner(@NotNull PsiElement element) {
         PsiModifierListOwner annotationOwner = element.getOriginalElement() instanceof PsiModifierListOwner
-                                    ? (PsiModifierListOwner) element.getOriginalElement()
-                                    : (PsiModifierListOwner) element;
+                                               ? (PsiModifierListOwner) element.getOriginalElement()
+                                               : (PsiModifierListOwner) element;
         if (!annotationOwner.isPhysical()) {
             // this is fake PsiFile which is mirror for ClsFile without sources
-            ASTNode node = SourceTreeToPsiMap.psiElementToTree(element);
-            if (node != null) {
-                PsiCompiledElement compiledElement = node.getUserData(ClsElementImpl.COMPILED_ELEMENT);
-                if (compiledElement instanceof PsiModifierListOwner) {
-                    return (PsiModifierListOwner) compiledElement;
-                }
+            PsiCompiledElement compiledElement = element.getUserData(ClsElementImpl.COMPILED_ELEMENT);
+            if (compiledElement instanceof PsiModifierListOwner) {
+                return (PsiModifierListOwner) compiledElement;
             }
         }
         return annotationOwner;

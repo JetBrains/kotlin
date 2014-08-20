@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode
 
-import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*
@@ -31,10 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
-
-fun JetExpression.isStatement(pseudocode: Pseudocode): Boolean =
-        pseudocode.getUsages(pseudocode.getElementValue(this)).isEmpty()
+import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
     val callableDescriptor = resolvedCall.getResultingDescriptor()
@@ -56,8 +52,10 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
     return null
 }
 
-fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
-    val pseudocode = value.createdAt.owner
+public fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
+    val pseudocode = value.createdAt?.owner
+    if (pseudocode == null) return AllTypes
+
     val typePredicates = LinkedHashSet<TypePredicate?>()
 
     fun addSubtypesOf(jetType: JetType?) = typePredicates.add(jetType?.getSubtypesPredicate())
@@ -69,7 +67,7 @@ fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext)
                     val returnElement = it.element
                     val functionDescriptor = when(returnElement) {
                         is JetReturnExpression -> returnElement.getTargetFunctionDescriptor(bindingContext)
-                        else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, value.createdAt.owner.getCorrespondingElement()]
+                        else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, pseudocode.getCorrespondingElement()]
                     }
                     addSubtypesOf((functionDescriptor as? CallableDescriptor)?.getReturnType())
                 }
@@ -137,14 +135,30 @@ public fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: Bind
     }
 }
 
-private fun Pseudocode.collectValueUsages(): Map<PseudoValue, List<Instruction>> {
-    val map = HashMap<PseudoValue, MutableList<Instruction>>()
-    traverseFollowingInstructions(getEnterInstruction(), HashSet(), TraversalOrder.FORWARD) {
-        for (value in it.inputValues) {
-            map.getOrPut(value){ ArrayList() }.add(it)
-        }
-        true
-    }
+public val Instruction.sideEffectFree: Boolean
+    get() = owner.isSideEffectFree(this)
 
-    return map
+private fun Instruction.calcSideEffectFree(): Boolean {
+    if (this !is InstructionWithValue) return false
+    if (!inputValues.all { it.createdAt?.sideEffectFree ?: false }) return false
+
+    return when (this) {
+        is ReadValueInstruction -> target.let {
+            when (it) {
+                is AccessTarget.Call -> when (it.resolvedCall.getResultingDescriptor()) {
+                    is LocalVariableDescriptor, is ValueParameterDescriptor, is ReceiverParameterDescriptor -> true
+                    else -> false
+                }
+
+                else -> when (element) {
+                    is JetConstantExpression, is JetFunctionLiteralExpression, is JetStringTemplateExpression -> true
+                    else -> false
+                }
+            }
+        }
+
+        is MagicInstruction -> kind.sideEffectFree
+
+        else -> false
+    }
 }

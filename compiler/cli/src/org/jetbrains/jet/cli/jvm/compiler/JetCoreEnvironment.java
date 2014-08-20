@@ -33,8 +33,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.compiled.ClassFileDecompilers;
-import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import kotlin.Function1;
 import kotlin.Unit;
@@ -56,7 +54,7 @@ import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.CliDeclarationProviderFactoryService;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -190,12 +188,6 @@ public class JetCoreEnvironment {
         registerProjectServicesForCLI(projectEnvironment);
         registerProjectServices(projectEnvironment);
 
-        // This extension points should be registered in JavaCoreApplicationEnvironment
-        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME,
-                                                          ClsCustomNavigationPolicy.class);
-        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME,
-                                                          ClassFileDecompilers.Decompiler.class);
-
         for (File path : configuration.getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             addToClasspath(path);
         }
@@ -209,13 +201,13 @@ public class JetCoreEnvironment {
                                          @Override
                                          public Unit invoke(String s) {
                                              report(ERROR, s);
-                                             return Unit.VALUE;
+                                             return Unit.INSTANCE$;
                                          }
                                      }));
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(
                 configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
-        project.registerService(VirtualFileFinder.class, new CliVirtualFileFinder(classPath));
+        project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
     }
 
     // made public for Upsource
@@ -223,19 +215,18 @@ public class JetCoreEnvironment {
         MockProject project = projectEnvironment.getProject();
         project.registerService(JetScriptDefinitionProvider.class, new JetScriptDefinitionProvider());
 
-        CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport();
-        project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
-        project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
         project.registerService(KotlinLightClassForPackage.FileStubCache.class, new KotlinLightClassForPackage.FileStubCache(project));
-
-        Extensions.getArea(project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME)
-                .registerExtension(new JavaElementFinder(project, cliLightClassGenerationSupport));
     }
 
     private static void registerProjectServicesForCLI(@NotNull JavaCoreProjectEnvironment projectEnvironment) {
         MockProject project = projectEnvironment.getProject();
         project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
+        CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport();
+        project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
+        project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
+        Extensions.getArea(project)
+                .getExtensionPoint(PsiElementFinder.EP_NAME)
+                .registerExtension(new JavaElementFinder(project, cliLightClassGenerationSupport));
     }
 
     @NotNull

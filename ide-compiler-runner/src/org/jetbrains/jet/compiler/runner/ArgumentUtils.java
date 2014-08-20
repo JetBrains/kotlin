@@ -21,6 +21,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ComparatorUtil;
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -30,18 +31,22 @@ public class ArgumentUtils {
     private ArgumentUtils() {}
 
     @NotNull
-    public static <T> List<String> convertArgumentsToStringList(@NotNull T arguments, @NotNull T defaultArguments) {
+    public static <T extends CommonCompilerArguments> List<String> convertArgumentsToStringList(
+            @NotNull T arguments,
+            @NotNull T defaultArguments
+    ) {
         List<String> result = new ArrayList<String>();
         convertArgumentsToStringList(arguments, defaultArguments, arguments.getClass(), result);
+        result.addAll(arguments.freeArgs);
         return result;
     }
 
-    private static <T> void convertArgumentsToStringList(T arguments, T defaultArguments, Class clazz, List<String> result) {
-        Class superClazz = clazz.getSuperclass();
-        if (superClazz != null) {
-            convertArgumentsToStringList(arguments, defaultArguments, superClazz, result);
-        }
-
+    private static <T extends CommonCompilerArguments> void convertArgumentsToStringList(
+            @NotNull T arguments,
+            @NotNull T defaultArguments,
+            @NotNull Class<?> clazz,
+            @NotNull List<String> result
+    ) {
         for (Field field : clazz.getDeclaredFields()) {
             Argument argument = field.getAnnotation(Argument.class);
             if (argument == null) continue;
@@ -78,6 +83,11 @@ public class ArgumentUtils {
             if (fieldType == boolean.class || fieldType == Boolean.class) continue;
 
             result.add(value.toString());
+        }
+
+        Class<?> superClazz = clazz.getSuperclass();
+        if (superClazz != null) {
+            convertArgumentsToStringList(arguments, defaultArguments, superClazz, result);
         }
     }
 

@@ -1,8 +1,8 @@
-open abstract class B() : java.lang.Object() {
+open abstract class B {
     abstract fun foo2(arg: Int = 239) : Int
 }
 
-class C() : B() {
+class C : B() {
     override fun foo2(arg: Int) : Int = arg
 }
 

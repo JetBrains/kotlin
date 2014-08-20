@@ -60,5 +60,10 @@ public interface Pseudocode {
     PseudoValue getElementValue(@Nullable JetElement element);
 
     @NotNull
+    List<? extends JetElement> getValueElements(@Nullable PseudoValue value);
+
+    @NotNull
     List<? extends Instruction> getUsages(@Nullable PseudoValue value);
+
+    boolean isSideEffectFree(@NotNull Instruction instruction);
 }

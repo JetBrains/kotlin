@@ -1,5 +1,0 @@
-
-ERR:
-ERROR: [TestData]/hello.kt: (4, 5) Unresolved reference: a
-
-Return code: 1

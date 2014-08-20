@@ -12,7 +12,7 @@ fun foo(a: Int): Int {
     return 1
 }
 
-fun unit(a: Int, b: Int) {
+private fun unit(a: Int, b: Int) {
     when {
         a + b > 0 -> return
         a - b > 0 -> return

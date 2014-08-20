@@ -1,8 +1,8 @@
 package test
 
-public trait DeeplySubstitutedClassParameter: Object {
+public trait DeeplySubstitutedClassParameter {
 
-    public trait Super<T>: Object {
+    public trait Super<T> {
         public fun foo(t: T)
 
         public fun dummy() // to avoid loading as SAM interface
