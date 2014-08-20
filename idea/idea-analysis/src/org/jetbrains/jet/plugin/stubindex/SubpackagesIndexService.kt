@@ -62,8 +62,9 @@ public class SubpackagesIndexService(private val project: Project) {
                 if (candidateSubPackageShortName in existingSubPackagesShortNames) {
                     continue
                 }
-                //TODO: better check
-                val existsInThisScope = !JetExactPackagesIndex.getInstance().get(filesFqName.asString(), project, scope).isEmpty()
+                val existsInThisScope = PackageIndexUtil.containsAny(
+                        filesFqName, scope, project, JetExactPackagesIndex.getInstance().getKey()
+                )
                 if (existsInThisScope) {
                     existingSubPackagesShortNames.add(candidateSubPackageShortName)
                 }

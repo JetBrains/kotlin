@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
+import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -51,9 +52,18 @@ public final class PackageIndexUtil {
             @NotNull GlobalSearchScope searchScope,
             @NotNull Project project
     ) {
+        return containsAny(packageFqName, searchScope, project, JetAllPackagesIndex.getInstance().getKey());
+    }
+
+    public static boolean containsAny(
+            @NotNull FqName packageFqName,
+            @NotNull GlobalSearchScope searchScope,
+            @NotNull Project project,
+            @NotNull StubIndexKey<String, JetFile> key
+    ) {
         final Ref<Boolean> result = new Ref<Boolean>(false);
         StubIndex.getInstance().processElements(
-                JetAllPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, JetFile.class,
+                key, packageFqName.asString(), project, searchScope, JetFile.class,
                 new Processor<JetFile>() {
                     @Override
                     public boolean process(JetFile file) {
