@@ -1814,6 +1814,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/contains.kt");
             }
             
+            @TestMetadata("extensionFunctionManyArgs.kt")
+            public void testExtensionFunctionManyArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/extensionFunctionManyArgs.kt");
+            }
+            
             @TestMetadata("extentionFunction.kt")
             public void testExtentionFunction() throws Exception {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunction.kt");
@@ -1837,11 +1842,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("extentionFunctionInObject.kt")
             public void testExtentionFunctionInObject() throws Exception {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionInObject.kt");
-            }
-            
-            @TestMetadata("extentionFunctionManyArgs.kt")
-            public void testExtentionFunctionManyArgs() throws Exception {
-                doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionManyArgs.kt");
             }
             
             @TestMetadata("extentionFunctionWithOneDefArg.kt")
