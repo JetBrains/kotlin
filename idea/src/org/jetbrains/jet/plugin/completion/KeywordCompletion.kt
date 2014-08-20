@@ -149,7 +149,7 @@ class KeywordCompletion {
         add(JetTokens.WHILE_KEYWORD, inNonClassBlock)
 
         val result = ArrayList<Pair<ElementFilter, Collection<String>>>()
-        for ((filters, tokens) in filtersToKeywords.entrySet()) {
+        for ((filters, tokens) in filtersToKeywords.entrySet()!!) {
             val orFilter = OrFilter()
             filters.forEach { filter -> orFilter.addFilter(filter) }
             result.add(orFilter to tokens)

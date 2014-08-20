@@ -22,7 +22,6 @@ import com.intellij.codeInsight.completion.CompletionSorter
 import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.WeighingContext
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
@@ -44,14 +43,13 @@ public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters
             JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile),
             DeprecatedWeigher)
 
-    sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
+    sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher(parameters))
 
     return withRelevanceSorter(sorter)
 }
 
 private object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
-    override fun weigh(element: LookupElement, context: WeighingContext)
-            = (element.getUserData(ITEM_PRIORITY_KEY) ?: ItemPriority.DEFAULT).ordinal()
+    override fun weigh(element: LookupElement): Comparable<Int>? = (element.getUserData(ITEM_PRIORITY_KEY) ?: ItemPriority.DEFAULT).ordinal()
 }
 
 private object KindWeigher : LookupElementWeigher("kotlin.kind") {
@@ -94,9 +92,9 @@ private object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     }
 }
 
-private object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMatching", false, true) {
-    override fun weigh(element: LookupElement, context: WeighingContext): Comparable<Int> {
-        val prefix = context.itemPattern(element)
+private class PreferMatchingItemWeigher(private val parameters: CompletionParameters) : LookupElementWeigher("kotlin.preferMatching", false, true) {
+    override fun weigh(element: LookupElement): Comparable<Int>? {
+        val prefix = parameters.getLookup().itemPattern(element)
         return if (element.getLookupString() == prefix) 0 else 1
     }
 }

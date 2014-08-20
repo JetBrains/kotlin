@@ -28,7 +28,7 @@ import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileMoveEvent
 import com.intellij.openapi.vfs.VirtualFileCopyEvent
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent
-import com.intellij.openapi.util.SimpleModificationTracker
+import com.intellij.openapi.util.DefaultModificationTracker
 
 class ModuleTypeCacheManager private (project: Project) {
     class object {
@@ -50,7 +50,7 @@ class ModuleTypeCacheManager private (project: Project) {
         return cachedValue?.getValue(module)
     }
 
-    private class VfsModificationTracker(project: Project): SimpleModificationTracker() {
+    private class VfsModificationTracker(project: Project): DefaultModificationTracker() {
         {
             val connection = project.getMessageBus().connect();
             connection.subscribe(VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(

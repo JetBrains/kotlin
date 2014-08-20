@@ -16,21 +16,28 @@
 
 package org.jetbrains.jet.plugin.framework;
 
-import com.intellij.openapi.util.io.JarUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.roots.libraries.JarVersionDetectionUtil;
+import com.intellij.openapi.vfs.JarFile;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.PathUtil;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.jar.Attributes;
 
 public class JavaRuntimeDetectionUtil {
     public static String getJavaRuntimeVersion(@NotNull List<VirtualFile> classesRoots) {
         VirtualFile stdJar = getRuntimeJar(classesRoots);
         if (stdJar != null) {
-            return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(stdJar), Attributes.Name.IMPLEMENTATION_VERSION);
+            try {
+                JarFile zipFile = JarFileSystem.getInstance().getJarFile(stdJar);
+                return JarVersionDetectionUtil.detectJarVersion(zipFile);
+            }
+            catch (IOException e) {
+                return null;
+            }
         }
 
         return null;

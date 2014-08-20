@@ -4,7 +4,7 @@
       <root url="file://$PROJECT_DIR$/annotations" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/core-analysis/intellij-core-analysis.jar!/" />
+      <root url="file://$PROJECT_DIR$/ideaSDK/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -320,6 +320,9 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/xml/xml-psi-impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/xml/xml-structure-view-api/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/xml/xml-structure-view-impl/src" />
+      <root url="file://$PROJECT_DIR$/ideaSDK/lib" />
     </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/lib" recursive="false" type="SOURCES" />
   </library>
 </component>

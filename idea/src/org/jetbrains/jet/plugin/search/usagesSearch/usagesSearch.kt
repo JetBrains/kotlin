@@ -115,8 +115,8 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
     ): TextOccurenceProcessor {
         private val referenceService = PsiReferenceService.getService()!!
 
-        override fun execute(element: PsiElement, offsetInElement: Int): Boolean {
-            return referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
+        override fun execute(element: PsiElement?, offsetInElement: Int): Boolean {
+            return referenceService.getReferences(element!!, PsiReferenceService.Hints.NO_HINTS).all { ref ->
                 ProgressManager.checkCanceled()
 
                 when {

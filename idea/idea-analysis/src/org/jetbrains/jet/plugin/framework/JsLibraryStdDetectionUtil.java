@@ -16,14 +16,15 @@
 
 package org.jetbrains.jet.plugin.framework;
 
-import com.intellij.openapi.util.io.JarUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.roots.libraries.JarVersionDetectionUtil;
+import com.intellij.openapi.vfs.JarFile;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.PathUtil;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.jar.Attributes;
 
 public class JsLibraryStdDetectionUtil {
     public static String getJsLibraryStdVersion(@NotNull List<VirtualFile> classesRoots) {
@@ -36,11 +37,16 @@ public class JsLibraryStdDetectionUtil {
             if (root.getName().equals(PathUtil.JS_LIB_JAR_NAME)) {
                 assert JsHeaderLibraryDetectionUtil.isJsHeaderLibraryDetected(classesRoots) : "StdLib should also be detected as headers library";
 
-                return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(root), Attributes.Name.IMPLEMENTATION_VERSION);
+                try {
+                    JarFile zipFile = JarFileSystem.getInstance().getJarFile(root);
+                    return JarVersionDetectionUtil.detectJarVersion(zipFile);
+                }
+                catch (IOException e) {
+                    return null;
+                }
             }
         }
 
         return null;
-
     }
 }
