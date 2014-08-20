@@ -2182,7 +2182,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return;
         }
 
-        boolean callDefault = masks != null;
+        boolean callDefault = !masks.isEmpty();
         if (callDefault) {
             for (int mask : masks) {
                 callGenerator.putValueIfNeeded(null, Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE));

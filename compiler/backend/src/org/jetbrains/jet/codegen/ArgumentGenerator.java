@@ -30,6 +30,7 @@ public abstract class ArgumentGenerator {
      * @return a bit mask of default arguments which should be passed as the last argument to $default method, if there were any default
      * arguments, or 0 if there were none
      */
+    @NotNull
     public List<Integer> generate(@NotNull List<ResolvedValueArgument> valueArguments) {
         List<Integer> masks = new ArrayList<Integer>();
         boolean maskIsNeeded = false;
@@ -56,9 +57,10 @@ public abstract class ArgumentGenerator {
                 generateOther(i, argument);
             }
         }
-        masks.add(mask);
         if (!maskIsNeeded) {
-            masks = null;
+            masks.clear();
+        } else {
+            masks.add(mask);
         }
         return masks;
     }
