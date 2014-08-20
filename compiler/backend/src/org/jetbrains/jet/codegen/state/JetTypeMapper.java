@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.state;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -618,10 +619,7 @@ public class JetTypeMapper {
         String descriptor = method.getDescriptor();
         int argumentsSize = (Type.getArgumentsAndReturnSizes(descriptor) >> 2) - 1;
         int maskArgumentsCount = (argumentsSize + Integer.SIZE - 1) / Integer.SIZE;
-        String maskArguments = "I";
-        for (int i = 1; i < maskArgumentsCount; i++) {
-            maskArguments += 'I';
-        }
+        String maskArguments = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount);
         return descriptor.replace(")", maskArguments + ")");
     }
 
