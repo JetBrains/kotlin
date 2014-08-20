@@ -484,5 +484,6 @@
                 <fail message="File name '${android.file.name}' wasn't matched"/>
             </else>
         </if>
+        <copydir src="${android.destination.dir}/plugins/android" dest="ideaSDK/plugins/android"/>
     </target>
 </project>
