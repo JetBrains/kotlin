@@ -748,5 +748,5 @@
 
     </target>
 
-    <target name="build-artifacts" depends="zip,kotlin-for-upsource"/>
+    <target name="build-artifacts" depends="zip"/>
 </project>
