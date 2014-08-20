@@ -158,7 +158,7 @@ public class JetPositionManager implements PositionManager {
             @NotNull JetFile file,
             boolean isInLibrary
     ) {
-        PsiElement element = PsiTreeUtil.getParentOfType(notPositionedElement, JetClassOrObject.class, JetFunctionLiteral.class, JetNamedFunction.class);
+        PsiElement element = getElementToCalculateClassName(notPositionedElement);
 
         if (element instanceof JetClassOrObject) {
             return getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) element);
@@ -172,11 +172,11 @@ public class JetPositionManager implements PositionManager {
             }
         }
         else if (element instanceof JetNamedFunction) {
-            PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
+            PsiElement parent = getElementToCalculateClassName(element);
             if (parent instanceof JetClassOrObject) {
                 return getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) parent);
             }
-            else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
+            else if (parent != null) {
                 Type asmType = asmTypeForAnonymousClass(typeMapper.getBindingContext(), (JetElement) element);
                 return asmType.getInternalName();
             }
@@ -192,6 +192,11 @@ public class JetPositionManager implements PositionManager {
         return PackagePartClassUtils.getPackagePartInternalName(file);
     }
 
+    @Nullable
+    private static JetNamedDeclaration getElementToCalculateClassName(@Nullable PsiElement notPositionedElement) {
+        //noinspection unchecked
+        return PsiTreeUtil.getParentOfType(notPositionedElement, JetClassOrObject.class, JetFunctionLiteral.class, JetNamedFunction.class);
+    }
 
     @Nullable
     private static JetElement getElementToCreateTypeMapperForLibraryFile(@Nullable PsiElement notPositionedElement) {

@@ -63,6 +63,17 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
     public void testAnonymousFunction() {
         doTest();
     }
+    public void testAnonymousNamedFunction() {
+        doTest();
+    }
+
+    public void testFunctionLiteral() {
+        doTest();
+    }
+
+    public void testFunctionLiteralInVal() {
+        doTest();
+    }
 
     public void testClass() {
         doTest();
@@ -105,6 +116,14 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
     }
 
     public void testPropertyAccessor() {
+        doTest();
+    }
+
+    public void testPropertyInitializer() {
+        doTest();
+    }
+
+    public void testTopLevelPropertyInitializer() {
         doTest();
     }
 
