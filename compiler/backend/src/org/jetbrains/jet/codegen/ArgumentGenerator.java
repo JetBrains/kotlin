@@ -27,8 +27,8 @@ import java.util.List;
 
 public abstract class ArgumentGenerator {
     /**
-     * @return a bit mask of default arguments which should be passed as the last argument to $default method, if there were any default
-     * arguments, or 0 if there were none
+     * @return a {@code List} of bit masks of default arguments that should be passed as the last arguments to $default method, if there were any default
+     * arguments, or an empty {@code List} if there were none
      */
     @NotNull
     public List<Integer> generate(@NotNull List<ResolvedValueArgument> valueArguments) {
