@@ -163,6 +163,9 @@
     <projectService serviceInterface="org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService"
                     serviceImplementation="org.jetbrains.jet.plugin.stubindex.resolve.PluginDeclarationProviderFactoryService"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.plugin.stubindex.SubpackagesIndexService"
+                    serviceImplementation="org.jetbrains.jet.plugin.stubindex.SubpackagesIndexService"/>
+
     <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>

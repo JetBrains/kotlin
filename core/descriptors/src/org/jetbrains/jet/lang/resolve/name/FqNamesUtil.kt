@@ -56,18 +56,6 @@ public fun FqName.tail(headFQN: FqName): FqName {
     }
 }
 
-/**
- * Add one segment of nesting to given qualified name according to the full qualified name.
- *
- * @param fullFQN
- * @return qualified name with one more segment or null if fqn is not head part of fullFQN or there's no additional segment.
- */
-public fun FqName.plusOneSegment(fullFQN: FqName): FqName? {
-    if (!isParent(fullFQN) || fullFQN == this) return null
-
-    return child(fullFQN.tail(this).pathSegments().first!!)
-}
-
 public fun FqName.isImported(importPath: ImportPath, skipAliasedImports: Boolean = true): Boolean {
     return when {
         skipAliasedImports && importPath.hasAlias() -> false
