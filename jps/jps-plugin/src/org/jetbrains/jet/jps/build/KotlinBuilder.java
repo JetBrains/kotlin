@@ -37,7 +37,7 @@ import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
-import org.jetbrains.jet.config.CompilerServices;
+import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.jps.incremental.*;
@@ -128,7 +128,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             incrementalCaches.put(target, dataManager.getStorage(target, IncrementalCacheStorageProvider.INSTANCE$));
         }
 
-        CompilerServices compilerServices = new CompilerServices.Builder()
+        Services compilerServices = new Services.Builder()
                 .register(IncrementalCacheProvider.class, new IncrementalCacheProviderImpl(incrementalCaches))
                 .build();
 
