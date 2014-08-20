@@ -42,8 +42,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
-import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
+import org.jetbrains.jet.plugin.stubindex.JetExactPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil;
 
@@ -201,7 +201,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     public MultiMap<String, FqName> getAllPossiblePackageClasses(@NotNull GlobalSearchScope scope) {
-        Collection<String> packageFqNames = JetAllPackagesIndex.getInstance().getAllKeys(project);
+        Collection<String> packageFqNames = JetExactPackagesIndex.getInstance().getAllKeys(project);
 
         MultiMap<String, FqName> result = new MultiMap<String, FqName>();
         for (String packageFqName : packageFqNames) {
