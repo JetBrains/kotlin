@@ -32,14 +32,6 @@ public class StubIndexServiceImpl implements StubIndexService {
         FqName packageFqName = stub.getPackageFqName();
 
         sink.occurrence(JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString());
-
-        while (true) {
-            sink.occurrence(JetAllPackagesIndex.getInstance().getKey(), packageFqName.asString());
-            if (packageFqName.isRoot()) {
-                return;
-            }
-            packageFqName = packageFqName.parent();
-        }
     }
 
     @Override
