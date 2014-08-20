@@ -1776,11 +1776,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/defaultArguments/constructor/kt3060.kt");
             }
             
-            @TestMetadata("manyArgs.kt")
-            public void testManyArgs() throws Exception {
-                doTest("compiler/testData/codegen/box/defaultArguments/constructor/manyArgs.kt");
-            }
-            
         }
         
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")

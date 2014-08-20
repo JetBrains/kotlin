@@ -59,10 +59,7 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
@@ -524,17 +521,21 @@ public class FunctionCodegen extends ParentCodegenAware {
         v.load(0, methodOwner); // Load this on stack
 
         int mask = 0;
+        List<Integer> masks = new ArrayList<Integer>();
         for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
             Type paramType = state.getTypeMapper().mapType(parameterDescriptor.getType());
             pushDefaultValueOnStack(paramType, v);
             int i = parameterDescriptor.getIndex();
             if (i != 0 && i % Integer.SIZE == 0) {
-                v.iconst(mask);
+                masks.add(mask);
                 mask = 0;
             }
             mask |= (1 << (i % Integer.SIZE));
         }
-        v.iconst(mask);
+        masks.add(mask);
+        for (int m : masks) {
+            v.iconst(m);
+        }
         String desc = JetTypeMapper.getDefaultDescriptor(method.getAsmMethod());
         v.invokespecial(methodOwner.getInternalName(), "<init>", desc, false);
         v.areturn(Type.VOID_TYPE);
