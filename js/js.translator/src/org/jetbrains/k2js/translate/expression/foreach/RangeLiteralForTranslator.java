@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.expression.foreach;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
@@ -25,10 +24,9 @@ import org.jetbrains.jet.lang.psi.JetForExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.List;
-
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.inequality;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.lessThanEq;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
@@ -66,22 +64,25 @@ public final class RangeLiteralForTranslator extends ForTranslator {
         JetExpression loopRange = getLoopRange(expression);
         assert loopRange instanceof JetBinaryExpression;
         JetBinaryExpression loopRangeAsBinary = ((JetBinaryExpression) loopRange);
-        rangeStart = translateLeftExpression(context, loopRangeAsBinary);
-        rangeEnd = context.declareTemporary(getRangeEnd(loopRangeAsBinary));
+        JsBlock startBlock = new JsBlock();
+        JsExpression rangeStartExpression = translateLeftExpression(context, loopRangeAsBinary, startBlock);
+        JsBlock endBlock = new JsBlock();
+        JsExpression rightExpression = translateRightExpression(context(), loopRangeAsBinary, endBlock);
+        if (TranslationUtils.isCacheNeeded(rangeStartExpression)) {
+            TemporaryVariable startVar = context.declareTemporary(rangeStartExpression);
+            rangeStartExpression = startVar.reference();
+            context.addStatementToCurrentBlock(startVar.assignmentExpression().makeStmt());
+        }
+        rangeStart = rangeStartExpression;
+        context.addStatementsToCurrentBlockFrom(startBlock);
+        context.addStatementsToCurrentBlockFrom(endBlock);
+        rangeEnd = context.declareTemporary(rightExpression);
     }
 
     @NotNull
-    private JsExpression getRangeEnd(@NotNull JetBinaryExpression loopRangeAsBinary) {
-        JsExpression rightExpression = translateRightExpression(context(), loopRangeAsBinary);
-        return new JsBinaryOperation(JsBinaryOperator.ADD, rightExpression, program().getNumberLiteral(1));
-    }
-
-    @NotNull
-    private JsBlock translate() {
-        List<JsStatement> blockStatements = Lists.newArrayList();
-        blockStatements.add(temporariesInitialization(rangeEnd).makeStmt());
-        blockStatements.add(new JsFor(initExpression(), getCondition(), getIncrExpression(), translateBody(null)));
-        return new JsBlock(blockStatements);
+    private JsStatement translate() {
+        context().addStatementToCurrentBlock(temporariesInitialization(rangeEnd).makeStmt());
+        return new JsFor(initExpression(), getCondition(), getIncrExpression(), translateBody(null));
     }
 
     @NotNull
@@ -91,7 +92,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression getCondition() {
-        return inequality(parameterName.makeRef(), rangeEnd.reference());
+        return lessThanEq(parameterName.makeRef(), rangeEnd.reference());
     }
 
     @NotNull

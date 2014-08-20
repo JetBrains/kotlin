@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.expression.foreach;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -29,7 +28,6 @@ import org.jetbrains.k2js.translate.intrinsic.functions.factories.CompositeFIF;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
@@ -75,11 +73,9 @@ public final class ArrayForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private JsBlock translate() {
-        List<JsStatement> blockStatements = Lists.newArrayList();
-        blockStatements.add(temporariesInitialization(loopRange, end).makeStmt());
-        blockStatements.add(new JsFor(getInitExpression(), getCondition(), getIncrementExpression(), getBody()));
-        return new JsBlock(blockStatements);
+    private JsStatement translate() {
+        context().addStatementToCurrentBlock(temporariesInitialization(loopRange, end).makeStmt());
+        return new JsFor(getInitExpression(), getCondition(), getIncrementExpression(), getBody());
     }
 
 

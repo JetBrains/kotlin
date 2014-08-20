@@ -16,5 +16,13 @@ fun box(): Boolean {
             d += 1
         }
     }
-    return (c == 2) && (d == 8)
+    assertEquals(2, c)
+    assertEquals(8, d)
+
+    var s: String = ""
+    for(i in array(0,1,2))
+        try { s += "A${i}:"} finally {}
+    assertEquals("A0:A1:A2:", s)
+
+    return true
 }

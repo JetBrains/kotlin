@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.expression.foreach;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -26,8 +25,6 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-
-import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
@@ -69,11 +66,9 @@ public final class RangeForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private JsBlock translate() {
-        List<JsStatement> blockStatements = Lists.newArrayList();
-        blockStatements.add(temporariesInitialization(rangeExpression, start, end, increment).makeStmt());
-        blockStatements.add(generateForExpression());
-        return new JsBlock(blockStatements);
+    private JsStatement translate() {
+        context().addStatementToCurrentBlock(temporariesInitialization(rangeExpression, start, end, increment).makeStmt());
+        return generateForExpression();
     }
 
     @NotNull
