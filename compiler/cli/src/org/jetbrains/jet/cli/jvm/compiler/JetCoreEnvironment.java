@@ -33,8 +33,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.compiled.ClassFileDecompilers;
-import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import kotlin.Function1;
 import kotlin.Unit;
@@ -189,12 +187,6 @@ public class JetCoreEnvironment {
 
         registerProjectServicesForCLI(projectEnvironment);
         registerProjectServices(projectEnvironment);
-
-        // This extension points should be registered in JavaCoreApplicationEnvironment
-        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME,
-                                                          ClsCustomNavigationPolicy.class);
-        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME,
-                                                          ClassFileDecompilers.Decompiler.class);
 
         for (File path : configuration.getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             addToClasspath(path);
