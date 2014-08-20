@@ -532,7 +532,7 @@ public class FunctionCodegen extends ParentCodegenAware {
                 v.iconst(mask);
                 mask = 0;
             }
-            mask |= (1 << (parameterDescriptor.getIndex() % Integer.SIZE));
+            mask |= (1 << (i % Integer.SIZE));
         }
         v.iconst(mask);
         String desc = JetTypeMapper.getDefaultDescriptor(method.getAsmMethod());
