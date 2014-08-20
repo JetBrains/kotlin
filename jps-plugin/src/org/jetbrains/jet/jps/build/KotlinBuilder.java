@@ -137,7 +137,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                     @Override
                     public boolean accept(String className) {
                         return className.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.") ||
-                               className.equals("org.jetbrains.jet.config.CompilerServices");
+                               className.equals("org.jetbrains.jet.config.Services");
                     }
                 }, compilerServices);
         if (!environment.success()) {

@@ -128,7 +128,7 @@ public class CompilerRunnerUtil {
         Method exec = kompiler.getMethod(
                 "execAndOutputHtml",
                 PrintStream.class,
-                Class.forName("org.jetbrains.jet.config.CompilerServices", true, loader), String[].class);
+                Class.forName("org.jetbrains.jet.config.Services", true, loader), String[].class);
 
         return exec.invoke(kompiler.newInstance(), out, environment.getServices(), arguments);
     }
