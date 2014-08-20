@@ -31,6 +31,7 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERRO
 
 public final class CompilerEnvironment {
 
+    @NotNull
     public static CompilerEnvironment getEnvironmentFor(
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File outputDir,
