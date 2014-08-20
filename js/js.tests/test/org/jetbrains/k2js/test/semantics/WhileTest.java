@@ -25,4 +25,20 @@ public class WhileTest extends AbstractExpressionTest {
     public void testWhileWithComplexOneStatement() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testWhileWithComplexCondition() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testWhileWithComplexConditionAndContinue() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testDoWhileWithComplexCondition() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testDoWhileWithComplexConditionAndContinue() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

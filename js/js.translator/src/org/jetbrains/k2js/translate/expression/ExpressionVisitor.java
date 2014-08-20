@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.expression.foreach.ForTranslator;
@@ -237,19 +238,44 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitWhileExpression(@NotNull JetWhileExpression expression, @NotNull TranslationContext context) {
-        return createWhile(new JsWhile(), expression, context);
+        return createWhile(false, expression, context);
     }
 
     @Override
     @NotNull
     public JsNode visitDoWhileExpression(@NotNull JetDoWhileExpression expression, @NotNull TranslationContext context) {
-        return createWhile(new JsDoWhile(), expression, context);
+        return createWhile(true, expression, context);
     }
 
-    private JsNode createWhile(@NotNull JsWhile result, @NotNull JetWhileExpressionBase expression, @NotNull TranslationContext context) {
-        result.setCondition(translateConditionExpression(expression.getCondition(), context));
-        TranslationContext bodyContext = context.innerBlock();
-        JsStatement bodyStatement = translateNullableExpressionAsNotNullStatement(expression.getBody(), bodyContext);
+    private static JsNode createWhile(boolean doWhile, @NotNull JetWhileExpressionBase expression, @NotNull TranslationContext context) {
+        JetExpression conditionExpression = expression.getCondition();
+        assert conditionExpression != null : "condition expression should not be null: " + expression.getText();
+
+        JsBlock conditionBlock = new JsBlock();
+        JsExpression jsCondition = Translation.translateAsExpression(conditionExpression, context, conditionBlock);
+        JsStatement bodyStatement = translateNullableExpressionAsNotNullStatement(expression.getBody(), context);
+        if (!conditionBlock.isEmpty()) {
+            JsIf IfStatement = new JsIf(not(jsCondition), new JsBreak());
+            JsBlock bodyBlock = JsAstUtils.convertToBlock(bodyStatement);
+            jsCondition = JsLiteral.TRUE;
+            if (doWhile) {
+                // translate to: tmpSecondRun = false; do { if(tmpSecondRun) { <expr> if(!tmpExprVar) break; } else tmpSecondRun=true; <body> } while(true)
+                TemporaryVariable secondRun = context.declareTemporary(JsLiteral.FALSE);
+                context.addStatementToCurrentBlock(secondRun.assignmentExpression().makeStmt());
+                conditionBlock.getStatements().add(IfStatement);
+                bodyBlock.getStatements().add(0,
+                                              new JsIf(secondRun.reference(), conditionBlock,
+                                                       JsAstUtils.assignment(secondRun.reference(), JsLiteral.TRUE).makeStmt())
+                );
+            } else {
+                // translate to: while (true) { <expr> if(!tmpExprVar) break; <body> }
+                conditionBlock.getStatements().add(IfStatement);
+                bodyBlock.getStatements().addAll(0, conditionBlock.getStatements());
+            }
+            bodyStatement = bodyBlock;
+        }
+        JsWhile result = doWhile ? new JsDoWhile() : new JsWhile();
+        result.setCondition(jsCondition);
         result.setBody(bodyStatement);
         return result.source(expression);
     }
