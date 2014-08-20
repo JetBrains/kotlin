@@ -159,7 +159,7 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
         if (!declarationsWithMissingAnnotations.isEmpty()) {
             StringBuilder builder = new StringBuilder("Annotations missing for JDK items:\n");
             for (PsiModifierListOwner declaration : declarationsWithMissingAnnotations) {
-                builder.append(PsiFormatUtil.getExternalName(declaration) + " " + declaration.getText()).append("\n");
+                builder.append(PsiFormatUtil.getExternalName(declaration)).append("\n");
             }
             fail(builder.toString());
         }
