@@ -83,7 +83,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         override fun findKotlinClass(fqName: FqName) = findKotlinClass(fqName.toClassId())
         override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.getFqName()!!)
 
-        fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
+        override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
             if (classId.getPackageFqName() != directoryPackageFqName) {
                 return null
             }

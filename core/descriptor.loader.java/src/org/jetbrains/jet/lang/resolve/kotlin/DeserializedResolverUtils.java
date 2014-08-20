@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -46,6 +47,11 @@ public class DeserializedResolverUtils {
     }
 
     @NotNull
+    public static ClassId kotlinClassIdToJavaClassId(@NotNull ClassId kotlinClassId) {
+        return new ClassId(kotlinClassId.getPackageFqName(), kotlinFqNameToJavaFqName(kotlinClassId.getRelativeClassName()).toUnsafe());
+    }
+
+    @NotNull
     public static FqNameUnsafe javaFqNameToKotlinFqName(@NotNull FqName javaFqName) {
         if (javaFqName.isRoot()) {
             return javaFqName.toUnsafe();
@@ -63,16 +69,11 @@ public class DeserializedResolverUtils {
     }
 
     @NotNull
-    public static FqNameUnsafe naiveKotlinFqName(@NotNull ClassDescriptor descriptor) {
-        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
-        if (containing instanceof ClassDescriptor) {
-            return naiveKotlinFqName((ClassDescriptor) containing).child(descriptor.getName());
+    public static ClassId getClassId(@NotNull ClassDescriptor descriptor) {
+        DeclarationDescriptor owner = descriptor.getContainingDeclaration();
+        if (owner instanceof PackageFragmentDescriptor) {
+            return new ClassId(((PackageFragmentDescriptor) owner).getFqName(), FqNameUnsafe.topLevel(descriptor.getName()));
         }
-        else if (containing instanceof PackageFragmentDescriptor) {
-            return ((PackageFragmentDescriptor) containing).getFqName().child(descriptor.getName()).toUnsafe();
-        }
-        else {
-            throw new IllegalArgumentException("Class doesn't have a FQ name: " + descriptor);
-        }
+        return getClassId((ClassDescriptor) owner).createNestedClassId(descriptor.getName());
     }
 }

@@ -16,13 +16,10 @@
 
 package org.jetbrains.jet.utils.builtinsSerializer
 
-import org.jetbrains.jet.descriptors.serialization.ClassId
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
 
 public object ClassSerializationUtil {
     public trait Sink {
@@ -47,13 +44,5 @@ public object ClassSerializationUtil {
                 serializeClass(descriptor, serializer, sink)
             }
         }
-    }
-
-    public fun getClassId(classDescriptor: ClassDescriptor): ClassId {
-        val owner = classDescriptor.getContainingDeclaration()
-        if (owner is PackageFragmentDescriptor) {
-            return ClassId(owner.fqName, FqNameUnsafe.topLevel(classDescriptor.getName()))
-        }
-        return getClassId(owner as ClassDescriptor).createNestedClassId(classDescriptor.getName())
     }
 }

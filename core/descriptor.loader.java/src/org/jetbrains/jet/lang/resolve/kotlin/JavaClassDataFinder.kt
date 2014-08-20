@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.kotlin
 
 import org.jetbrains.jet.descriptors.serialization.ClassId
 import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName
 import org.jetbrains.jet.descriptors.serialization.ClassData
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
@@ -27,9 +26,9 @@ public class JavaClassDataFinder(
         private val kotlinClassFinder: KotlinClassFinder,
         private val deserializedDescriptorResolver: DeserializedDescriptorResolver
 ) : ClassDataFinder {
-
     override fun findClassData(classId: ClassId): ClassData? {
-        val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(kotlinFqNameToJavaFqName(classId.asSingleFqName())) ?: return null
+        val javaClassId = DeserializedResolverUtils.kotlinClassIdToJavaClassId(classId)
+        val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(javaClassId) ?: return null
         val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, KotlinClassHeader.Kind.CLASS) ?: return null
         return JavaProtoBufUtil.readClassDataFrom(data)
     }

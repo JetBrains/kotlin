@@ -34,8 +34,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
-import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
-import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
+import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.getClassId;
+import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinClassIdToJavaClassId;
 
 public abstract class BaseDescriptorLoader {
     protected KotlinClassFinder kotlinClassFinder;
@@ -150,7 +150,7 @@ public abstract class BaseDescriptorLoader {
     @Nullable
     protected KotlinJvmBinaryClass findKotlinClassByDescriptor(@NotNull ClassOrPackageFragmentDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
-            return kotlinClassFinder.findKotlinClass(kotlinFqNameToJavaFqName(naiveKotlinFqName((ClassDescriptor) descriptor)));
+            return kotlinClassFinder.findKotlinClass(kotlinClassIdToJavaClassId(getClassId((ClassDescriptor) descriptor)));
         }
         else if (descriptor instanceof PackageFragmentDescriptor) {
             return kotlinClassFinder.findKotlinClass(
