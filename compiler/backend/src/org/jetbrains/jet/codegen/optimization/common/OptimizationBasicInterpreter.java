@@ -27,7 +27,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
 public class OptimizationBasicInterpreter extends BasicInterpreter {
-    public static final BasicValue MIXED_VALUE = new BasicValue(Type.getObjectType("#"));
     private static final BasicValue BOOLEAN_VALUE = new BasicValue(Type.BOOLEAN_TYPE);
     private static final BasicValue CHAR_VALUE = new BasicValue(Type.CHAR_TYPE);
     private static final BasicValue BYTE_VALUE = new BasicValue(Type.BYTE_TYPE);
@@ -93,7 +92,25 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
             @NotNull BasicValue v, @NotNull BasicValue w
     ) {
         if (!v.equals(w)) {
-            return MIXED_VALUE;
+            if (v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE) {
+                return BasicValue.UNINITIALIZED_VALUE;
+            }
+
+            // if merge of two references then `lub` is java/lang/Object
+            // arrays also are BasicValues with reference type's
+            if (v.getType().getSort() == Type.OBJECT && w.getType().getSort() == Type.OBJECT) {
+                return BasicValue.REFERENCE_VALUE;
+            }
+
+            assert v.getType().getSort() != Type.ARRAY && w.getType().getSort() != Type.ARRAY : "There should not be arrays";
+
+            // if merge of something can be stored in int var (int, char, boolean, byte, character)
+            if (v.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE &&
+                w.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE) {
+                return BasicValue.INT_VALUE;
+            }
+
+            return BasicValue.UNINITIALIZED_VALUE;
         }
         return v;
     }
