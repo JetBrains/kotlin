@@ -24,6 +24,18 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import java.util.List;
 
 public interface MethodSignatureChecker {
+    MethodSignatureChecker DO_NOTHING = new MethodSignatureChecker() {
+        @Override
+        public void checkSignature(
+                @NotNull JavaMethod method,
+                boolean reportSignatureErrors,
+                @NotNull SimpleFunctionDescriptor descriptor,
+                @NotNull List<String> signatureErrors,
+                @NotNull List<FunctionDescriptor> superFunctions
+        ) {
+        }
+    };
+
     void checkSignature(
             @NotNull JavaMethod method,
             boolean reportSignatureErrors,

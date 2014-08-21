@@ -28,6 +28,53 @@ import java.util.Collections;
 import java.util.List;
 
 public interface ExternalSignatureResolver {
+    ExternalSignatureResolver DO_NOTHING = new ExternalSignatureResolver() {
+        @NotNull
+        @Override
+        public PropagatedMethodSignature resolvePropagatedSignature(
+                @NotNull JavaMethod method,
+                @NotNull ClassDescriptor owner,
+                @NotNull JetType returnType,
+                @Nullable JetType receiverType,
+                @NotNull List<ValueParameterDescriptor> valueParameters,
+                @NotNull List<TypeParameterDescriptor> typeParameters
+        ) {
+            return new PropagatedMethodSignature(
+                    returnType, receiverType, valueParameters, typeParameters, Collections.<String>emptyList(), false,
+                    Collections.<FunctionDescriptor>emptyList()
+            );
+        }
+
+        @NotNull
+        @Override
+        public AlternativeMethodSignature resolveAlternativeMethodSignature(
+                @NotNull JavaMember methodOrConstructor,
+                boolean hasSuperMethods,
+                @Nullable JetType returnType,
+                @Nullable JetType receiverType,
+                @NotNull List<ValueParameterDescriptor> valueParameters,
+                @NotNull List<TypeParameterDescriptor> typeParameters,
+                boolean hasStableParameterNames
+        ) {
+            return new AlternativeMethodSignature(
+                    returnType, receiverType, valueParameters, typeParameters, Collections.<String>emptyList(), hasStableParameterNames
+            );
+        }
+
+        @NotNull
+        @Override
+        public AlternativeFieldSignature resolveAlternativeFieldSignature(
+                @NotNull JavaField field, @NotNull JetType returnType, boolean isVar
+        ) {
+            return new AlternativeFieldSignature(returnType, null);
+        }
+
+        @Override
+        public void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors) {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+    };
+
     abstract class MemberSignature {
         private final List<String> signatureErrors;
 

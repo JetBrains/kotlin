@@ -14,25 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.structure;
+package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.kotlin.load.java.structure.JavaElement
 
-import java.util.Collection;
-
-public interface JavaTypeParameter extends JavaClassifier {
-    @NotNull
-    @ReadOnly
-    Collection<JavaClassifierType> getUpperBounds();
-
-    @Nullable
-    JavaTypeParameterListOwner getOwner();
-
-    @NotNull
-    JavaType getType();
-
-    @NotNull
-    JavaTypeProvider getTypeProvider();
-}
+public abstract class ReflectJavaElement : JavaElement

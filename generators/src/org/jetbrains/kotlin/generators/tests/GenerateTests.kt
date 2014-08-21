@@ -94,6 +94,7 @@ import org.jetbrains.kotlin.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
+import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidXml2KConversionTest
@@ -216,6 +217,10 @@ fun main(args: Array<String>) {
             model("loadJava/javaAgainstKotlin", extension = "txt", testMethod = "doTestJavaAgainstKotlin")
             model("loadJava/kotlinAgainstCompiledJavaWithKotlin", extension = "kt", testMethod = "doTestKotlinAgainstCompiledJavaWithKotlin", recursive = false)
             model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava")
+        }
+
+        testClass(javaClass<AbstractJvmRuntimeDescriptorLoaderTest>()) {
+            model("loadJava/compiledKotlin")
         }
 
         testClass(javaClass<AbstractCompileJavaAgainstKotlinTest>()) {

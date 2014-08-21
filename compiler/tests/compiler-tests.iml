@@ -17,6 +17,7 @@
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="module" module-name="builtins-serializer" />
+    <orderEntry type="module" module-name="descriptors.runtime" />
     <orderEntry type="module" module-name="js.frontend" />
     <orderEntry type="module" module-name="js.tests" />
     <orderEntry type="module" module-name="preloader" />

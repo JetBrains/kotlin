@@ -7,7 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="descriptors.runtime" />
-    <orderEntry type="module" module-name="reflection" />
+    <orderEntry type="module" module-name="descriptor.loader.java" exported="" />
+    <orderEntry type="module" module-name="descriptors" exported="" />
+    <orderEntry type="module" module-name="serialization" exported="" />
+    <orderEntry type="module" module-name="serialization.jvm" exported="" />
+    <orderEntry type="module" module-name="util.runtime" />
   </component>
 </module>
