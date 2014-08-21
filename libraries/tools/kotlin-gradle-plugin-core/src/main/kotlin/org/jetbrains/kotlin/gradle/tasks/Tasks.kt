@@ -189,7 +189,7 @@ public open class KDoc(): SourceTask() {
         val compiler = KDocCompiler()
 
         val messageCollector = GradleMessageCollector(getLogger())
-        val exitCode = compiler.exec(messageCollector, CompilerServices.empty, args);
+        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args);
 
         when (exitCode) {
             ExitCode.COMPILATION_ERROR -> throw GradleException("Failed to generate kdoc. See log for more details")
