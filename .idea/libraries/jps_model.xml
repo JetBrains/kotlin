@@ -1,5 +1,8 @@
 <component name="libraryTable">
   <library name="jps-model">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ideaSDK/jps/jps-model.jar!/" />
     </CLASSES>

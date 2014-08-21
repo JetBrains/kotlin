@@ -1,5 +1,8 @@
 <component name="libraryTable">
   <library name="jline">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/dependencies/jline.jar!/" />
     </CLASSES>
