@@ -32,6 +32,7 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="js.frontend" />
     <orderEntry type="library" name="trove4j" level="project" />
+    <orderEntry type="module" module-name="ide-lazy-resolve" exported="" />
   </component>
 </module>
 
