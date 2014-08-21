@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/bytecodeText")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
+@InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.StoreStackBeforeInline.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
 @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("accessorForProtected.kt")
@@ -368,6 +368,46 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("whenSubject.kt")
         public void testWhenSubject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/statements/whenSubject.kt");
+            doTest(fileName);
+        }
+        
+    }
+    
+    @TestMetadata("compiler/testData/codegen/bytecodeText/storeStackBeforeInline")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    public static class StoreStackBeforeInline extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInStoreStackBeforeInline() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/storeStackBeforeInline"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("differentTypes.kt")
+        public void testDifferentTypes() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/storeStackBeforeInline/differentTypes.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("primitiveMerge.kt")
+        public void testPrimitiveMerge() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/storeStackBeforeInline/primitiveMerge.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/storeStackBeforeInline/simple.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("unreachableMarker.kt")
+        public void testUnreachableMarker() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/storeStackBeforeInline/unreachableMarker.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("withLambda.kt")
+        public void testWithLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/storeStackBeforeInline/withLambda.kt");
             doTest(fileName);
         }
         
