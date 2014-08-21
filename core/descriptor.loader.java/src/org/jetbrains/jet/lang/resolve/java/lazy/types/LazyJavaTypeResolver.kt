@@ -59,7 +59,11 @@ class LazyJavaTypeResolver(
         val javaComponentType = arrayType.getComponentType()
         if (javaComponentType is JavaPrimitiveType) {
             val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
-            if (jetType != null) return TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
+            if (jetType != null) {
+                return if (PLATFORM_TYPES && attr.allowFlexible)
+                           DelegatingFlexibleType(jetType, TypeUtils.makeNullable(jetType))
+                       else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
+            }
         }
 
         val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !isVararg) OUT_VARIANCE else INVARIANT
