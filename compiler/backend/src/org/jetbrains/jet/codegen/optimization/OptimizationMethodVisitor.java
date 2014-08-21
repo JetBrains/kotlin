@@ -36,7 +36,7 @@ public class OptimizationMethodVisitor extends MethodVisitor {
     private static final int MEMORY_LIMIT_BY_METHOD_MB = 50;
     private static final MethodTransformer[] TRANSFORMERS = new MethodTransformer[]{
             new RedundantNullCheckMethodTransformer(), new RedundantBoxingMethodTransformer(),
-            new RedundantGotoMethodTransformer()
+            new RedundantGotoMethodTransformer(), new StoreStackBeforeInlineMethodTransformer()
     };
 
     private final MethodNode methodNode;
