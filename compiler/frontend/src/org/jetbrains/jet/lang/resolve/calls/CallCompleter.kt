@@ -326,6 +326,6 @@ public class CallCompleter(
 
         //If a receiver type is not null, then this safe expression is useless, and we don't need to make the result type nullable.
         val expressionType = trace[BindingContext.EXPRESSION_TYPE, expression.getReceiverExpression()]
-        return expressionType != null && expressionType.isNullable()
+        return expressionType != null && TypeUtils.isNullableType(expressionType)
     }    
 }
