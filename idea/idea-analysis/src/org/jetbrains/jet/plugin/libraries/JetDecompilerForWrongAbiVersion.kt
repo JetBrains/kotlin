@@ -26,4 +26,4 @@ public class JetDecompilerForWrongAbiVersion : ClassFileDecompilers.Light() {
     override fun getText(file: VirtualFile) = "$INCOMPATIBLE_ABI_VERSION_COMMENT\n${ClsFileImpl.decompile(file)}"
 }
 
-val INCOMPATIBLE_ABI_VERSION_COMMENT = "  // This Kotlin file has an incompatible ABI version and is displayed as Java class"
+public val INCOMPATIBLE_ABI_VERSION_COMMENT: String = "  // This Kotlin file has an incompatible ABI version and is displayed as Java class"

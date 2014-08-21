@@ -24,16 +24,16 @@ import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypesAndPredicate
 import com.intellij.codeInsight.intention.IntentionAction
 
-public abstract class JetSelfTargetingIntention<T: JetElement>(val key: String, val elementType: Class<T>) : IntentionAction {
+public abstract class JetSelfTargetingIntention<T: JetElement>(protected val key: String, val elementType: Class<T>) : IntentionAction {
     private var myText:String = JetBundle.message(key);
     protected fun setText(text: String) {
         myText = text
     }
     override fun getText(): String = myText
 
-    abstract fun isApplicableTo(element: T): Boolean
-    open fun isApplicableTo(element: T, editor: Editor): Boolean = isApplicableTo(element)
-    abstract fun applyTo(element: T, editor: Editor)
+    public abstract fun isApplicableTo(element: T): Boolean
+    public open fun isApplicableTo(element: T, editor: Editor): Boolean = isApplicableTo(element)
+    public abstract fun applyTo(element: T, editor: Editor)
 
     protected fun getTarget(editor: Editor, file: PsiFile): T? {
         val offset = editor.getCaretModel().getOffset()

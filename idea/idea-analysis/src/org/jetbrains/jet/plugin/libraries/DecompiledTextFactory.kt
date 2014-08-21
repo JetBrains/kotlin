@@ -63,7 +63,7 @@ public fun descriptorToKey(descriptor: DeclarationDescriptor): String {
     return descriptorRendererForDecompiler.render(descriptor)
 }
 
-private data class DecompiledText(val text: String, val renderedDescriptorsToRange: Map<String, TextRange>)
+public data class DecompiledText(public val text: String, public val renderedDescriptorsToRange: Map<String, TextRange>)
 
 private fun buildDecompiledText(packageFqName: FqName, descriptors: List<DeclarationDescriptor>): DecompiledText {
     val builder = StringBuilder()

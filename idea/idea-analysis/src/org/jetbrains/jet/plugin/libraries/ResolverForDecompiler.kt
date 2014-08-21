@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
-trait ResolverForDecompiler {
-    fun resolveTopLevelClass(classFqName: FqName): ClassDescriptor?
-    fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor>
+public trait ResolverForDecompiler {
+    public fun resolveTopLevelClass(classFqName: FqName): ClassDescriptor?
+    public fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor>
 }

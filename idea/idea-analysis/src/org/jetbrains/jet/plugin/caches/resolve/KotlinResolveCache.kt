@@ -66,8 +66,8 @@ import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 
 public trait CacheExtension<T> {
-    val platform: TargetPlatform
-    fun getData(setup: AnalyzerFacade.Setup): T
+    public val platform: TargetPlatform
+    public fun getData(setup: AnalyzerFacade.Setup): T
 }
 
 private class SessionAndSetup(
