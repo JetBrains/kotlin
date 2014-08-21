@@ -72,7 +72,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
     @Override
     public JetType visitNullableType(@NotNull JetNullableType nullableType, Void aVoid) {
-        if (!originalType.isNullable() && typeUsage != TYPE_ARGUMENT) {
+        if (!TypeUtils.isNullableType(originalType) && typeUsage != TYPE_ARGUMENT) {
             throw new AlternativeSignatureMismatchException("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
                  DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(originalType), nullableType.getText());
         }

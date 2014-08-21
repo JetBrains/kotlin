@@ -2,5 +2,5 @@ package test
 
 public open class NotNullMethod {
     public constructor NotNullMethod()
-    public open fun hi(): kotlin.String
+    public open fun hi(): kotlin.String!
 }

@@ -38,7 +38,7 @@ public open class Rendering {
         public abstract fun foo4(/*0*/ p0: kotlin.(Mutable)List<kotlin.String!>!): kotlin.Unit
         public abstract fun foo5(/*0*/ p0: kotlin.(Mutable)Set<kotlin.String!>!): kotlin.Unit
         public abstract fun foo6(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, kotlin.String!>!): kotlin.Unit
-        public abstract fun foo7(/*0*/ p0: (kotlin.MutableMap.MutableEntry<kotlin.String!, kotlin.String!>..kotlin.Map.Entry<kotlin.String!, kotlin.String!>?)): kotlin.Unit
+        public abstract fun foo7(/*0*/ p0: kotlin.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.String!>!): kotlin.Unit
     }
 
     public/*package*/ trait H_Raw {
