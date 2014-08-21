@@ -115,7 +115,7 @@ public class JetPositionManager implements PositionManager {
         JvmClassName className = JvmClassName.byInternalName(referenceInternalName);
 
         Project project = myDebugProcess.getProject();
-        return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName);
+        return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName, location.lineNumber() - 1);
     }
 
     @NotNull
