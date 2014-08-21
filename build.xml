@@ -665,6 +665,9 @@
                 source="${java.target}" target="${java.target}">
             <withKotlin externalannotations="${external.annotations.path}"/>
             <src>
+                <dirset dir="${basedir}/idea/ide-lazy-resolve">
+                    <include name="src"/>
+                </dirset>
                 <dirset dir="${basedir}/idea/idea-analysis">
                     <include name="src"/>
                 </dirset>
@@ -674,16 +677,16 @@
                 <fileset dir="${idea.sdk}" includes="core-analysis/*.jar"/>
                 <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
 
-          <fileset dir="${basedir}/lib" includes="**/*.jar"/>
-          <fileset dir="${dependencies.dir}" includes="jline.jar"/>
-          <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
-          <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
-          <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
-          <pathelement location="${output}/classes/runtime"/>
-          <pathelement location="${output}/classes/compiler"/>
-          <pathelement location="${output}/classes/stdlib"/>
-        </classpath>
-      </javac2>
+                <fileset dir="${basedir}/lib" includes="**/*.jar"/>
+                <fileset dir="${dependencies.dir}" includes="jline.jar"/>
+                <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
+                <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
+                <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
+                <pathelement location="${output}/classes/runtime"/>
+                <pathelement location="${output}/classes/compiler"/>
+                <pathelement location="${output}/classes/stdlib"/>
+            </classpath>
+        </javac2>
       <!--copy resources-->
       <copy todir="${output}/classes/idea-analysis">
         <fileset dir="${basedir}/idea/idea-analysis/src" excludes="**/*.java, **/*.kt"/>
