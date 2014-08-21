@@ -164,9 +164,12 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
         @Override
         protected String replaceAdditionalInOutput(String str) {
+            //noinspection ConstantConditions
+            String jdkPath = PluginTestCaseBase.fullJdk().getHomePath().replace('/', File.separatorChar);
             return super.replaceAdditionalInOutput(
                     str.replace(ForTestCompileRuntime.runtimeJarForTests().getPath(), "!KOTLIN_RUNTIME!")
                             .replace(CUSTOM_LIBRARY_JAR.getPath(), "!CUSTOM_LIBRARY!")
+                            .replace(jdkPath, "!JDK_HOME!")
             );
         }
     }
