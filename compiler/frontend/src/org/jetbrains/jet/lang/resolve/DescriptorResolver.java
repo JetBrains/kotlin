@@ -952,7 +952,7 @@ public class DescriptorResolver {
                 WritableScope writableScope = new WritableScopeImpl(
                         scope, containingDeclaration, new TraceBasedRedeclarationHandler(trace),
                         "Scope with type parameters of a property");
-                typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(containingDeclaration, writableScope, typeParameters,
+                typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(propertyDescriptor, writableScope, typeParameters,
                                                                                       trace);
                 writableScope.changeLockLevel(WritableScope.LockLevel.READING);
                 resolveGenericBounds(property, propertyDescriptor, writableScope, typeParameterDescriptors, trace);

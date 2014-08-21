@@ -9,6 +9,9 @@ public open class TheClass<out T : Int, X> [AnotherAnnotation] () {
 
   val shouldBeFinal: Int = 5
 
+  val <T> T.checkTypeParameterScope: Int get() = 6
+  val <T> checkTypeParameterScope2 = 6
+
   protected abstract fun foo() {}
 
   private class Inner {}
@@ -40,6 +43,11 @@ public trait TwoUpperBounds<T> where T : Number, T : Any
 //<X> defined in rendererTest.TheClass
 //private final val privateVal: kotlin.Int defined in rendererTest.TheClass
 //internal final val shouldBeFinal: kotlin.Int defined in rendererTest.TheClass
+//internal final val <T> T.checkTypeParameterScope: kotlin.Int defined in rendererTest.TheClass
+//<T> defined in rendererTest.TheClass.checkTypeParameterScope
+//internal final fun T.<get-checkTypeParameterScope>(): kotlin.Int defined in rendererTest.TheClass
+//internal final val <T> checkTypeParameterScope2: kotlin.Int defined in rendererTest.TheClass
+//<T> defined in rendererTest.TheClass.checkTypeParameterScope2
 //protected abstract fun foo(): kotlin.Unit defined in rendererTest.TheClass
 //private final class Inner defined in rendererTest.TheClass
 //public constructor Inner() defined in rendererTest.TheClass.Inner
