@@ -282,23 +282,24 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     private static AnalysisResult analyze(@NotNull final JetCoreEnvironment environment) {
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
-                environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
+        MessageCollector collector = environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        assert collector != null;
+
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(collector);
         analyzerWithCompilerReport.analyzeAndReport(
                 environment.getSourceFiles(), new Function0<AnalysisResult>() {
                     @NotNull
                     @Override
                     public AnalysisResult invoke() {
-                        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
-                        BindingTrace sharedTrace = support.getTrace();
-                        ModuleDescriptorImpl sharedModule = support.newModule();
+                        BindingTrace sharedTrace = CliLightClassGenerationSupport.createTrace();
+                        ModuleDescriptorImpl analyzeModule = TopDownAnalyzerFacadeForJVM.createAnalyzeModule();
 
                         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                                 environment.getProject(),
                                 environment.getSourceFiles(),
                                 sharedTrace,
                                 Predicates.<PsiFile>alwaysTrue(),
-                                sharedModule,
+                                analyzeModule,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
                                 environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER)
                         );

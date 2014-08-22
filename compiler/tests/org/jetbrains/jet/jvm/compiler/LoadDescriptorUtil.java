@@ -95,7 +95,6 @@ public final class LoadDescriptorUtil {
                 InjectorForJavaDescriptorResolverUtil.create(jetCoreEnvironment.getProject(), trace, true);
         ModuleDescriptorImpl module = injector.getModule();
 
-        CliLightClassGenerationSupport.getInstanceForCli(jetCoreEnvironment.getProject()).setModule(module);
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null;
 

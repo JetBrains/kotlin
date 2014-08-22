@@ -53,6 +53,11 @@ public class JavaClassFinderImpl implements JavaClassFinder {
         this.baseScope = scope;
     }
 
+    @Inject
+    public void setComponentPostConstruct(@NotNull JavaClassFinderPostConstruct finderPostConstruct) {
+        // Only activate post create
+    }
+
     @PostConstruct
     public void initialize() {
         javaSearchScope = new DelegatingGlobalSearchScope(baseScope) {

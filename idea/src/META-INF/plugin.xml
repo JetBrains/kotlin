@@ -158,6 +158,9 @@
     <projectService serviceInterface="org.jetbrains.jet.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.lang.resolve.CodeAnalyzerInitializer"
+                      serviceImplementation="org.jetbrains.jet.lang.resolve.DummyCodeAnalyzerInitializer"/>
+
     <projectService serviceInterface="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"/>
 

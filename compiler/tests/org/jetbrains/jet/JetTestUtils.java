@@ -416,11 +416,6 @@ public class JetTestUtils {
         return configuration;
     }
 
-    public static void newTrace(@NotNull JetCoreEnvironment environment) {
-        // let the next analysis use another trace
-        CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).newBindingTrace();
-    }
-
     public static void resolveAllKotlinFiles(JetCoreEnvironment environment) throws IOException {
         List<String> paths = environment.getConfiguration().get(CommonConfigurationKeys.SOURCE_ROOTS_KEY);
         if (paths == null) return;

@@ -247,8 +247,6 @@ private object KotlinResolveDataProvider {
                     TargetPlatformDetector.getPlatform(analyzableElement.getContainingJetFile()).getAdditionalCheckerProvider()
             ).getLazyTopDownAnalyzer()!!
 
-            lazyTopDownAnalyzer.setKotlinCodeAnalyzer(resolveSession);
-
             lazyTopDownAnalyzer.analyzeDeclarations(
                     TopDownAnalysisParameters.createForLazy(
                             resolveSession.getStorageManager(),

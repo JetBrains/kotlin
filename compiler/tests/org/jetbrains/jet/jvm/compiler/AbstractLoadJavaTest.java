@@ -145,10 +145,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("compiler/tests")); // for @ExpectLoadError annotation
         JetCoreEnvironment environment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
 
-        // we need the same binding trace for resolve from Java and Kotlin
-        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
-        BindingTrace trace = support.getTrace();
-        ModuleDescriptorImpl module = support.newModule();
+        BindingTrace trace = CliLightClassGenerationSupport.createTrace();
+        ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createAnalyzeModule();
 
         TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
                 new LockBasedStorageManager(),
@@ -163,8 +161,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 environment.getSourceFiles(),
                 trace,
                 parameters,
-                module
-        );
+                module);
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null : "Test package not found";

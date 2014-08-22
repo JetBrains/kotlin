@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.ArrayList;
@@ -68,11 +69,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull ModuleDescriptorImpl module
     ) {
-        GlobalContext globalContext = new GlobalContextImpl(
-                (LockBasedStorageManager) topDownAnalysisParameters.getStorageManager(),
-                topDownAnalysisParameters.getExceptionTracker());
-
-        return analyzeFilesWithJavaIntegration(project, files, trace, topDownAnalysisParameters, module, globalContext, null, null);
+        return analyzeFilesWithJavaIntegration(project, files, trace, topDownAnalysisParameters, module, null, null);
     }
 
     @NotNull
@@ -112,7 +109,7 @@ public enum TopDownAnalyzerFacadeForJVM {
 
         return analyzeFilesWithJavaIntegration(
                 project, files, trace, topDownAnalysisParameters, module,
-                globalContext, moduleIds, incrementalCacheProvider);
+                moduleIds, incrementalCacheProvider);
     }
 
     @NotNull
@@ -122,7 +119,6 @@ public enum TopDownAnalyzerFacadeForJVM {
             BindingTrace trace,
             TopDownAnalysisParameters topDownAnalysisParameters,
             ModuleDescriptorImpl module,
-            GlobalContext globalContext,
             @Nullable List<String> moduleIds,
             @Nullable IncrementalCacheProvider incrementalCacheProvider
     ) {
@@ -131,7 +127,7 @@ public enum TopDownAnalyzerFacadeForJVM {
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project,
-                globalContext,
+                topDownAnalysisParameters,
                 trace,
                 module,
                 GlobalSearchScope.allScope(project),
@@ -166,6 +162,17 @@ public enum TopDownAnalyzerFacadeForJVM {
 
     @NotNull
     public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
-        return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, JavaToKotlinClassMap.getInstance());
+        return new ModuleDescriptorImpl(Name.special(name),
+                                        DEFAULT_IMPORTS,
+                                        JavaToKotlinClassMap.getInstance());
+    }
+
+    @NotNull
+    public static ModuleDescriptorImpl createAnalyzeModule() {
+        ModuleDescriptorImpl module = createJavaModule("<shared-module>");
+        module.addDependencyOnModule(module);
+        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        module.seal();
+        return module;
     }
 }

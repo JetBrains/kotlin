@@ -45,6 +45,8 @@ import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.jet.lang.resolve.java.JavaFlexibleTypeCapabilitiesProvider
 import org.jetbrains.jet.context.LazyResolveToken
+import org.jetbrains.jet.lang.resolve.java.JavaLazyAnalyzerPostConstruct
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolverPostConstruct
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -172,8 +174,9 @@ private fun generatorForTopDownAnalyzerForJvm() =
                     javaClass<JavaPropertyInitializerEvaluatorImpl>(),
                     javaClass<SamConversionResolverImpl>(),
                     javaClass<JavaSourceElementFactoryImpl>(),
-                    javaClass<SingleModuleClassResolver>(),
                     javaClass<MutablePackageFragmentProvider>(),
+                    javaClass<SingleModuleClassResolver>(),
+                    javaClass<JavaLazyAnalyzerPostConstruct>(),
                     javaClass<JavaFlexibleTypeCapabilitiesProvider>()
             )
 
@@ -209,7 +212,8 @@ private fun generatorForJavaDescriptorResolver() =
                     javaClass<JavaPropertyInitializerEvaluatorImpl>(),
                     javaClass<SamConversionResolverImpl>(),
                     javaClass<JavaSourceElementFactoryImpl>(),
-                    javaClass<SingleModuleClassResolver>()
+                    javaClass<SingleModuleClassResolver>(),
+                    javaClass<JavaDescriptorResolverPostConstruct>()
             )
             field(javaClass<VirtualFileFinder>(),
                   init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
@@ -247,7 +251,8 @@ private fun generatorForLazyResolveWithJava() =
                     javaClass<SamConversionResolverImpl>(),
                     javaClass<JavaSourceElementFactoryImpl>(),
                     javaClass<JavaFlexibleTypeCapabilitiesProvider>(),
-                    javaClass<LazyResolveToken>()
+                    javaClass<LazyResolveToken>(),
+                    javaClass<JavaLazyAnalyzerPostConstruct>()
             )
             field(javaClass<AdditionalCheckerProvider>(),
                   init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))

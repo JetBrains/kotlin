@@ -18,10 +18,8 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.context.ContextPackage;
@@ -49,22 +47,19 @@ public class LazyResolveTestUtil {
     }
 
     private static ModuleDescriptor doResolve(List<JetFile> files, JetCoreEnvironment environment) {
-        JetTestUtils.newTrace(environment);
-
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters params = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(),
                 globalContext.getExceptionTracker(),
                 Predicates.<PsiFile>alwaysTrue(),
                 false, false);
-        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
-        BindingTrace sharedTrace = support.getTrace();
-        ModuleDescriptorImpl sharedModule = support.newModule();
+        BindingTrace trace = CliLightClassGenerationSupport.createTrace();
+        ModuleDescriptorImpl sharedModule = TopDownAnalyzerFacadeForJVM.createAnalyzeModule();
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 environment.getProject(),
-                files, 
-                sharedTrace,
+                files,
+                trace,
                 params, sharedModule);
 
         return sharedModule;
@@ -76,14 +71,7 @@ public class LazyResolveTestUtil {
             @NotNull JetCoreEnvironment environment,
             boolean addBuiltIns
     ) {
-        JetTestUtils.newTrace(environment);
-
-        Project project = environment.getProject();
-        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(project);
-        ResolveSession lazyResolveSession = createResolveSessionForFiles(project, files, addBuiltIns);
-        support.setModule((ModuleDescriptorImpl) lazyResolveSession.getModuleDescriptor());
-
-        return lazyResolveSession;
+        return createResolveSessionForFiles(environment.getProject(), files, addBuiltIns);
     }
 
     public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
