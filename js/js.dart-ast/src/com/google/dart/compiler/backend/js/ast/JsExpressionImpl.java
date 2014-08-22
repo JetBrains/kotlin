@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 abstract class JsExpressionImpl extends SourceInfoAwareJsNode implements JsExpression {
@@ -20,6 +22,7 @@ abstract class JsExpressionImpl extends SourceInfoAwareJsNode implements JsExpre
     }
 
     @Override
+    @NotNull
     public JsStatement makeStmt() {
         return new JsExpressionStatement(this);
     }

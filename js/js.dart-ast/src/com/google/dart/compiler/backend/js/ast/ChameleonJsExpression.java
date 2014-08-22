@@ -1,5 +1,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ChameleonJsExpression implements JsExpression {
     private JsExpression expression;
 
@@ -20,6 +22,7 @@ public class ChameleonJsExpression implements JsExpression {
     }
 
     @Override
+    @NotNull
     public JsStatement makeStmt() {
         return expression.makeStmt();
     }
