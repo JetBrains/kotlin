@@ -21,7 +21,7 @@
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
     <orderEntry type="library" name="asm" level="project" />
-    <orderEntry type="library" name="android" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="android" level="project" />
   </component>
 </module>
 

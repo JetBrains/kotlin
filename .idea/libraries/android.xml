@@ -15,6 +15,7 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/common.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/sdklib.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/resources_en.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/sdk-tools.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
