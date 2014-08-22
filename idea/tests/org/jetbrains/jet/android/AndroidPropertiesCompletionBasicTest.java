@@ -37,6 +37,9 @@ public class AndroidPropertiesCompletionBasicTest extends AbstractJvmBasicComple
     @TestMetadata("PropertiesSimple.kt")
     public void testPropertiesSimple() throws Exception {
         getProject().putUserData(TestConst.TESTDATA_PATH, getTestDataPath());
+        myFixture.addFileToProject("Activity.kt", "package android.app\ntrait Activity");
+        myFixture.addFileToProject("View.kt", "package android.view\ntrait View");
+        myFixture.addFileToProject("Button.kt", "package android.widget\ntrait Button");
         doTest("idea/testData/android/completion/PropertiesSimple/PropertiesSimple.kt");
     }
 }
