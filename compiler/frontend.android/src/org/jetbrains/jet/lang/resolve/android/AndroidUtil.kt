@@ -42,6 +42,6 @@ fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
     return f?.getUserData(AndroidConst.ANDROID_USER_PACKAGE) != null
 }
 
-fun isAndroidSyntheticElement(element: PsiElement?): Boolean {
+public fun isAndroidSyntheticElement(element: PsiElement?): Boolean {
     return isAndroidSyntheticFile(element?.getContainingFile())
 }

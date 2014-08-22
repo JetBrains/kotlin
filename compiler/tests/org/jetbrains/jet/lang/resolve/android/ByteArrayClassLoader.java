@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
+// todo: get rid of this class
 public class ByteArrayClassLoader extends URLClassLoader {
 
     private final Queue<OutputFile> q;

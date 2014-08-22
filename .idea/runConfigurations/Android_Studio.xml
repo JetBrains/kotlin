@@ -21,7 +21,9 @@
     <ConfigurationWrapper RunnerId="Debug" />
     <ConfigurationWrapper RunnerId="Run" />
     <method>
-      <option name="BuildArtifacts" enabled="true" />
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="KotlinPlugin" />
+      </option>
     </method>
   </configuration>
 </component>
