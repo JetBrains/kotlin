@@ -43,7 +43,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
     private final File fakeViewSrc = new File(getTestDataPath() + "/fakeHelpers/View.kt");
     private final File fakeWidgetsSrc = new File(getTestDataPath() + "/fakeHelpers/Widgets.kt");
     private final File fakeMyActivitySrc = new File(singleFilePrefix + "MyActivity.kt");
-    private final String singleFileResPath = singleFilePrefix + "res/layout/";
+    private static final String singleFileResPath = singleFilePrefix + "res/layout/";
 
     @Override
     public void setUp() throws Exception {
