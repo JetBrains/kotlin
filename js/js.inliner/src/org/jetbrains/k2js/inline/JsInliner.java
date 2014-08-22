@@ -18,6 +18,7 @@ package org.jetbrains.k2js.inline;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.IdentityHashMap;
 import java.util.Stack;
@@ -53,6 +54,19 @@ public class JsInliner extends JsVisitorWithContextImpl {
         scopeStack.pop();
     }
 
+    @Override
+    public void endVisit(JsInvocation call, JsContext context) {
+        super.endVisit(call, context);
+
+        if (call == null) {
+            return;
+        }
+
+        if (shouldInline(call) && canInline(call)) {
+            inline(call, context);
+        }
+    }
+    
     private JsProgram process() {
         return this.accept(program);
     }
@@ -60,5 +74,57 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private JsScope getCurrentFunctionScope() {
         assert !scopeStack.isEmpty();
         return scopeStack.peek();
+    }
+
+    private void inline(@NotNull JsInvocation call, @NotNull JsContext context) {
+        JsFunction functionToInline = findDeclaration(call);
+        assert functionToInline != null;
+        JsContext statementLevelContext = getLastStatementLevelContext();
+        assert statementLevelContext != null;
+
+        JsScope currentScope = getCurrentFunctionScope();
+        InlineableResult inlineableResult = getInlineableCallReplacement(call, currentScope, functionToInline);
+
+        JsStatement inlineableBody = inlineableResult.getInlineableBody();
+        JsExpression resultExpression = inlineableResult.getResultExpression();
+
+        statementLevelContext.insertAfter(statementLevelContext.getCurrentNode());
+        statementLevelContext.insertAfter(inlineableBody);
+        statementLevelContext.replaceMe(program.getEmptyStatement());
+
+        context.replaceMe(resultExpression);
+    }
+
+    @Nullable
+    private JsFunction findDeclaration(@NotNull JsInvocation call) {
+        JsName name = getFunctionName(call);
+        if (functions.containsKey(name)) {
+            return functions.get(name);
+        }
+
+        if (name.getStaticRef() != null && name.getStaticRef() instanceof JsFunction) {
+            return (JsFunction) name.getStaticRef();
+        }
+
+        return null;
+    }
+
+    private boolean canInline(@NotNull JsInvocation call) {
+        return findDeclaration(call) != null;
+    }
+
+    private static boolean shouldInline(@NotNull JsInvocation call) {
+        return call.getInlineStrategy().isInline();
+    }
+
+    @NotNull
+    private static JsName getFunctionName(@NotNull JsInvocation call) {
+        JsExpression qualifier = call.getQualifier();
+        assert qualifier instanceof JsNameRef;
+
+        JsName name = ((JsNameRef) qualifier).getName();
+        assert name != null;
+
+        return name;
     }
 }
