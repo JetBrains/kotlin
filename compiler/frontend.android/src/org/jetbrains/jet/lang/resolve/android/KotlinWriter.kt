@@ -22,9 +22,9 @@ trait KotlinWriter {
 
 class KotlinStringWriter : KotlinWriter {
 
-    val ctx = Context()
-    val imports = ctx.fork()
-    val body = ctx.fork()
+    private val ctx = Context()
+    private val imports = ctx.fork()
+    private val body = ctx.fork()
 
     fun writeFunction(name: String,
                       args: Collection<String>?,

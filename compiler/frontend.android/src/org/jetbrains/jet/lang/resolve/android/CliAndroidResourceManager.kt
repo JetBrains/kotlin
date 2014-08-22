@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor.NoAndroidMan
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
-public class CliAndroidResourceManager(project: Project, searchPath: String?, val manifestPath: String?) : AndroidResourceManagerBase(project, searchPath) {
+public class CliAndroidResourceManager(project: Project, searchPath: String?, private val manifestPath: String?) : AndroidResourceManagerBase(project, searchPath) {
 
     val saxParser: SAXParser = initSAX()
 

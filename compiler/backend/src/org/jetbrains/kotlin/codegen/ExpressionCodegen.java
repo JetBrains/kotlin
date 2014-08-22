@@ -1889,11 +1889,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
             JetFile file = DescriptorToSourceUtils.getContainingFile(propertyDescriptor);
-            if (file != null && file.getName() == AndroidConst.SYNTHETIC_FILENAME) {
-
-                String userData = file.getUserData(AndroidConst.ANDROID_SYNTHETIC);
-                if (userData != null && userData.equals("OK")) {
-                    String androidPackage = file.getUserData(AndroidConst.ANDROID_USER_PACKAGE);
+            if (file != null) {
+                String androidPackage = file.getUserData(ANDROID_USER_PACKAGE);
+                if (androidPackage != null) {
 
                     Type retType = typeMapper.mapType(propertyDescriptor.getReturnType());
                     v.load(0, Type.getType("Landroid/app/Activity;"));

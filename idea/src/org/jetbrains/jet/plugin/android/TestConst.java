@@ -19,5 +19,5 @@ package org.jetbrains.jet.plugin.android;
 import com.intellij.openapi.util.Key;
 
 public class TestConst {
-    public static final Key<String> TESTDATA_PATH = Key.create("TEPITE");
+    public static final Key<String> TESTDATA_PATH = Key.create("");
 }

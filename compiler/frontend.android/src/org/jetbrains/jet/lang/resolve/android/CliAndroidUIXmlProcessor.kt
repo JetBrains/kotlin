@@ -23,13 +23,9 @@ import com.intellij.psi.PsiFile
 class CliAndroidUIXmlProcessor(project: Project, override val searchPath: String?, val manifestPath: String?) : AndroidUIXmlProcessor(project) {
 
     override var androidAppPackage: String = ""
+        get() = resourceManager.readManifest()._package
 
     override val resourceManager = CliAndroidResourceManager(project, searchPath, manifestPath)
-
-    override fun lazySetup() {
-        populateQueue()
-        androidAppPackage = resourceManager.readManifest()._package
-    }
 
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
