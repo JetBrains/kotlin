@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public enum AnalyzerFacadeForJVM  {
+public enum TopDownAnalyzerFacadeForJVM {
 
     INSTANCE;
 
@@ -53,7 +53,7 @@ public enum AnalyzerFacadeForJVM  {
             new ImportPath("kotlin.io.*")
     );
 
-    private AnalyzerFacadeForJVM() {
+    private TopDownAnalyzerFacadeForJVM() {
     }
 
     @NotNull

@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
@@ -57,11 +57,11 @@ public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase(
 
 class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompiler {
     val module: ModuleDescriptor = run {
-        val module = AnalyzerFacadeForJVM.createJavaModule("<module for resolving stdlib with java top down analysis>")
+        val module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module for resolving stdlib with java top down analysis>")
         module.addDependencyOnModule(module)
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
         module.seal()
-        AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project, listOf(), BindingTraceContext(), { false },
                 module, null, null
         ).getModuleDescriptor()

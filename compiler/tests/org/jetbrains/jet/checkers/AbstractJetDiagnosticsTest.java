@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.File;
@@ -88,7 +88,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
             // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
             // albeit with same class names
-            AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                     getProject(),
                     jetFiles,
                     moduleTrace,
@@ -119,7 +119,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         for (TestModule testModule : groupedByModule.keySet()) {
             if (testModule == null) continue;
-            ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<" + testModule.getName() + ">");
+            ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createJavaModule("<" + testModule.getName() + ">");
             modules.put(testModule, module);
         }
 

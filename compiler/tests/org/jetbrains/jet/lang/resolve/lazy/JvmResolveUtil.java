@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
@@ -76,7 +76,7 @@ public class JvmResolveUtil {
     ) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
-        ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<module>");
+        ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module>");
         module.addDependencyOnModule(module);
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         module.seal();
@@ -84,7 +84,7 @@ public class JvmResolveUtil {
         if (lightClassGenerationSupport != null) {
             lightClassGenerationSupport.setModule(module);
         }
-        return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, filesToAnalyzeCompletely,
-                                                                    module, null, null);
+        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, filesToAnalyzeCompletely,
+                                                                           module, null, null);
     }
 }

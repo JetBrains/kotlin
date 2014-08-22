@@ -40,7 +40,7 @@ import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
 import org.jetbrains.js.compiler.JsSourceGenerationVisitor;
 import org.jetbrains.js.compiler.sourcemap.SourceMap3Builder;
 import org.jetbrains.js.compiler.sourcemap.SourceMapBuilder;
-import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
+import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -145,9 +145,9 @@ public final class K2JSTranslator {
     public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate,
             @NotNull MainCallParameters mainCallParameters)
             throws TranslationException {
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJS.analyzeFiles(filesToTranslate, Predicates.<PsiFile>alwaysTrue(), config);
+        AnalyzeExhaust analyzeExhaust = TopDownAnalyzerFacadeForJS.analyzeFiles(filesToTranslate, Predicates.<PsiFile>alwaysTrue(), config);
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
-        AnalyzerFacadeForJS.checkForErrors(Config.withJsLibAdded(filesToTranslate, config), bindingContext);
+        TopDownAnalyzerFacadeForJS.checkForErrors(Config.withJsLibAdded(filesToTranslate, config), bindingContext);
         ModuleDescriptor moduleDescriptor = analyzeExhaust.getModuleDescriptor();
         return Translation.generateAst(bindingContext, filesToTranslate, mainCallParameters, moduleDescriptor, config);
     }

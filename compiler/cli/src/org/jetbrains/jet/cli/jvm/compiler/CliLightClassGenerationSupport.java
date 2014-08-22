@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -82,7 +82,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     public ModuleDescriptorImpl newModule() {
         assert this.module == null : "module already configured: " + module;
-        module = AnalyzerFacadeForJVM.createJavaModule("<shared-module-for-cli-light-classes>");
+        module = TopDownAnalyzerFacadeForJVM.createJavaModule("<shared-module-for-cli-light-classes>");
         module.addDependencyOnModule(module);
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         module.seal();

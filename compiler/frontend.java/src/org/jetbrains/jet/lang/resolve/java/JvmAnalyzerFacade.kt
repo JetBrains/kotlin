@@ -73,7 +73,7 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
         return JvmResolverForModule(resolveSession, javaDescriptorResolver)
     }
 
-    override val defaultImports = AnalyzerFacadeForJVM.DEFAULT_IMPORTS
+    override val defaultImports = TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS
     override val platformToKotlinClassMap = JavaToKotlinClassMap.getInstance()
 
 }

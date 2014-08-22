@@ -44,7 +44,7 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
+import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
@@ -179,7 +179,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         analyzerWithCompilerReport.analyzeAndReport(sources, new Function0<AnalyzeExhaust>() {
             @Override
             public AnalyzeExhaust invoke() {
-                return AnalyzerFacadeForJS.analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), config);
+                return TopDownAnalyzerFacadeForJS.analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), config);
             }
         });
         return analyzerWithCompilerReport.hasErrors();

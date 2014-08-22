@@ -19,7 +19,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.config.CommonConfigurationKeys
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.name.FqName
@@ -103,10 +103,10 @@ class NoInternalVisibilityInStdLibTest {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "../src/kotlin")
             configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots())
             val environment = JetCoreEnvironment.createForProduction(disposable, configuration)
-            val module = AnalyzerFacadeForJVM.createJavaModule("<module for validating std lib>")
+            val module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module for validating std lib>")
             module.addDependencyOnModule(module)
             module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
-            AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                     environment.getProject(),
                     environment.getSourceFiles(),
                     BindingTraceContext(),

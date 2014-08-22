@@ -25,7 +25,7 @@ import org.jetbrains.jet.analyzer.AnalyzerFacade
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.analyzer.ResolverForProject
-import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS
+import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
@@ -60,7 +60,7 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
         return JsResolverForModule(resolveSession)
     }
 
-    override val defaultImports = AnalyzerFacadeForJS.DEFAULT_IMPORTS
+    override val defaultImports = TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
     override val platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY
 
 }

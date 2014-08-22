@@ -39,14 +39,14 @@ import org.jetbrains.k2js.config.Config;
 import java.util.Collection;
 import java.util.List;
 
-public final class AnalyzerFacadeForJS {
+public final class TopDownAnalyzerFacadeForJS {
     public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
             new ImportPath("js.*"),
             new ImportPath("java.lang.*"),
             new ImportPath("kotlin.*")
     );
 
-    private AnalyzerFacadeForJS() {
+    private TopDownAnalyzerFacadeForJS() {
     }
 
     //NOTE: web demo related method

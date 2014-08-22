@@ -51,7 +51,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackage;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
@@ -291,7 +291,7 @@ public class KotlinToJVMBytecodeCompiler {
                         BindingTrace sharedTrace = support.getTrace();
                         ModuleDescriptorImpl sharedModule = support.newModule();
 
-                        return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                                 environment.getProject(),
                                 environment.getSourceFiles(),
                                 sharedTrace,

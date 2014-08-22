@@ -58,7 +58,7 @@ import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -843,7 +843,7 @@ public class JetTestUtils {
 
     @NotNull
     public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName, @NotNull String moduleName) {
-        ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule(moduleName);
+        ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createJavaModule(moduleName);
         MutablePackageFragmentProvider provider = new MutablePackageFragmentProvider(module);
         module.initialize(provider);
         module.addDependencyOnModule(module);
