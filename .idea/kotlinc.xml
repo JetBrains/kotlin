@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="KotlinCommonCompilerArguments">
-    <option name="suppress" value="warnings" />
-  </component>
-  <component name="KotlinCommonCompilerSettings">
-    <option name="suppress" value="warnings" />
+    <option name="suppressWarnings" value="true" />
   </component>
 </project>
 
