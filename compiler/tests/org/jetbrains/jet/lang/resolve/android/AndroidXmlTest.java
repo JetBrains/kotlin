@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.android;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
@@ -34,7 +35,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class AndroidXmlTest extends TestCaseWithTmpdir {
+public class AndroidXmlTest extends UsefulTestCase {
 
     private static final String singleFilePrefix = getTestDataPath() + "/converter/singleFile/";
     public static final String singleFileManifestPath = singleFilePrefix + "AndroidManifest.xml";
@@ -94,6 +95,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
         List<File> files = addDefaultFiles();
 
         compileManyFilesGetGenerationState(files, singleFileResPath);
+        // TODO: why?
         Disposer.dispose(getTestRootDisposable());
     }
 
@@ -107,6 +109,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
         return files;
     }
 
+    // TODO: many tests
     public void testConverterOneFile() throws Exception {
         JetCoreEnvironment jetCoreEnvironment = getEnvironment(singleFileResPath);
         AndroidUIXmlProcessor parser = new CliAndroidUIXmlProcessor(jetCoreEnvironment.getProject(),
@@ -119,6 +122,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
         assertEquals(expected, actual);
     }
 
+    // todo: unify with box tests
     public void testGeneratedByteCode() throws Exception {
 
         String resPath = getTestDataPath() + "/converter/singleFile/res/layout/";
@@ -130,6 +134,7 @@ public class AndroidXmlTest extends TestCaseWithTmpdir {
         classLoader.loadFiles();
         Class<?> activity = classLoader.findClass("com.myapp.MyActivity");
         String res =(String) activity.getMethod("test").invoke(activity.newInstance());
+        // todo: why?
         Disposer.dispose(getTestRootDisposable());
         assertEquals("OK", res);
     }
