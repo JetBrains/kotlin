@@ -28,15 +28,13 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
 import com.intellij.openapi.application.ApplicationManager
 
-abstract class AndroidUIXmlProcessor(val project: Project) {
+abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     class NoAndroidManifestFound : Exception("No android manifest file found in project root")
-    class ManifestParsingFailed
 
-    enum class CacheAction { HIT; MISS
-    }
+    private enum class CacheAction { HIT; MISS }
 
-    val androidImports = arrayListOf("android.app.Activity",
+    private val androidImports = arrayListOf("android.app.Activity",
                                      "android.view.View",
                                      "android.widget.*")
 
@@ -45,10 +43,10 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
 
     private val fileCache = HashMap<PsiFile, String>()
     var lastCachedPsi: JetFile? = null
+        private set
     protected val fileModificationTime: HashMap<PsiFile, Long> = HashMap()
 
     protected val filesToProcess: Queue<PsiFile> = ConcurrentLinkedQueue()
-    protected var listenerSetUp: Boolean = false
 
     protected val LOG: Logger = Logger.getInstance(this.javaClass)
 
@@ -67,7 +65,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
             try {
                 val vf = LightVirtualFile(SYNTHETIC_FILENAME, renderString())
                 val psiFile = PsiManager.getInstance(project).findFile(vf) as JetFile
-                psiFile.putUserData(ANDROID_SYNTHETIC, "OK")
                 psiFile.putUserData(ANDROID_USER_PACKAGE, androidAppPackage)
                 lastCachedPsi = psiFile
                 psiFile
@@ -82,7 +79,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
 
     private fun writeImports(kw: KotlinStringWriter): KotlinWriter {
         kw.writePackage(androidAppPackage)
-//        if (ApplicationManager.getApplication()?.isUnitTestMode() ?: false) return kw
         for (elem in androidImports)
             kw.writeImport(elem)
         kw.writeEmptyLine()
@@ -108,7 +104,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
 
     private fun doParse(): CacheAction? {
         if (searchPath == null || searchPath == "") return null
-        lazySetup()
         populateQueue()
         var overallCacheMiss = false
         var file = filesToProcess.poll()
@@ -137,7 +132,6 @@ abstract class AndroidUIXmlProcessor(val project: Project) {
         filesToProcess.addAll(resourceManager.getLayoutXmlFiles())
     }
 
-    protected abstract fun lazySetup()
 
     protected fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
         for (id in ids) {

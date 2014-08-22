@@ -88,6 +88,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
+import static org.jetbrains.jet.lang.resolve.android.AndroidConst.ANDROID_USER_PACKAGE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
@@ -1734,11 +1735,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
             JetFile file = DescriptorToSourceUtils.getContainingFile(propertyDescriptor);
-            if (file != null && file.getName() == AndroidConst.SYNTHETIC_FILENAME) {
-
-                String userData = file.getUserData(AndroidConst.ANDROID_SYNTHETIC);
-                if (userData != null && userData.equals("OK")) {
-                    String androidPackage = file.getUserData(AndroidConst.ANDROID_USER_PACKAGE);
+            if (file != null) {
+                String androidPackage = file.getUserData(ANDROID_USER_PACKAGE);
+                if (androidPackage != null) {
 
                     Type retType = typeMapper.mapType(propertyDescriptor.getReturnType());
                     v.load(0, Type.getType("Landroid/app/Activity;"));

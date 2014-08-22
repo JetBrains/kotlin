@@ -19,12 +19,12 @@ package org.jetbrains.jet.lang.resolve.android
 import java.util.ArrayList
 
 
-open class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: Int = 0) {
+open class Context(val buffer: StringBuffer = StringBuffer(), private var indentDepth: Int = 0) {
     open class InvalidIndent(num: Int) : RuntimeException("Indentation level < 0: $num")
 
     val indentUnit = "    "
     protected var currentIndent: String = indentUnit.repeat(indentDepth)
-    val children = ArrayList<Context>()
+    private val children = ArrayList<Context>()
 
     public fun incIndent() {
         indentDepth++

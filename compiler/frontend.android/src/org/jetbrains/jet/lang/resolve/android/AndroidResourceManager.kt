@@ -20,7 +20,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
 
-abstract class AndroidResourceManager(val project: Project, val searchPath: String?) {
+abstract class AndroidResourceManager(protected val project: Project, protected val searchPath: String?) {
     private val idDeclarationPrefix = "@+id/"
     private val idUsagePrefix = "@id/"
     public val androidNamespace: String = "android"

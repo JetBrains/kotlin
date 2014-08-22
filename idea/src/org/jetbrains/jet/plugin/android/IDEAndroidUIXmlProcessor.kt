@@ -37,13 +37,6 @@ class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project
         CliAndroidResourceManager(project, searchPath, searchPath + "AndroidManifest.xml")
         else IDEAndroidResourceManager(project, searchPath)
 
-    override protected fun lazySetup() {
-        if (listenerSetUp) return
-//        androidAppPackage = resourceManager.readManifest()._package
-//        populateQueue()
-        listenerSetUp = true
-    }
-
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
         if (!ApplicationManager.getApplication()!!.isUnitTestMode()) (resourceManager as IDEAndroidResourceManager).resetAttributeCache()
