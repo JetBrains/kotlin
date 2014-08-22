@@ -22,7 +22,6 @@ import java.util.ArrayList
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.resolve.android.AndroidWidget
 import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
-import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.resolve.android.CliAndroidResourceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager

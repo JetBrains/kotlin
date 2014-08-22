@@ -29,7 +29,8 @@ abstract class AndroidResourceManagerBase(project: Project, searchPath: String?)
         val fileManager = VirtualFileManager.getInstance()
         val watchDir = fileManager.findFileByUrl("file://" + searchPath)
         val psiManager = PsiManager.getInstance(project)
-        return watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) }?.mapNotNull { it } ?: ArrayList(0)
+        val files= watchDir?.getChildren()?.toArrayList()?.map { psiManager.findFile(it) }?.mapNotNull { it } ?: ArrayList(0)
+        return files.sortBy({it.getName()})
     }
 
     protected fun vritualFileToPsi(vf: VirtualFile): PsiFile? {

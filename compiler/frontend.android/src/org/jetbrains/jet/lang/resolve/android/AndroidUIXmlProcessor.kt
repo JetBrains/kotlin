@@ -26,9 +26,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
-import com.intellij.openapi.application.ApplicationManager
 
-abstract class AndroidUIXmlProcessor(protected val project: Project) {
+public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     class NoAndroidManifestFound : Exception("No android manifest file found in project root")
 
@@ -48,6 +47,8 @@ abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     protected val filesToProcess: Queue<PsiFile> = ConcurrentLinkedQueue()
 
+    public abstract val resourceManager: AndroidResourceManager
+
     protected val LOG: Logger = Logger.getInstance(this.javaClass)
 
     public fun parseToString(): String? {
@@ -56,7 +57,6 @@ abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return renderString()
     }
 
-    public abstract val resourceManager: AndroidResourceManager
 
     public fun parseToPsi(project: Project): JetFile? {
         val cacheState = doParse()
@@ -100,7 +100,7 @@ abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return res
     }
 
-    abstract fun parseSingleFileImpl(file: PsiFile): String
+    protected abstract fun parseSingleFileImpl(file: PsiFile): String
 
     private fun doParse(): CacheAction? {
         if (searchPath == null || searchPath == "") return null
@@ -117,8 +117,8 @@ abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     private fun renderString(): String {
         val buffer = writeImports(KotlinStringWriter()).output()
-        for (buf in fileCache.values())
-            buffer.append(buf)
+        for (buf in fileCache.entrySet().sortBy({it.key.getName()}))
+            buffer.append(buf.value)
         return buffer.toString()
     }
 

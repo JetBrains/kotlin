@@ -16,15 +16,9 @@
 
 package org.jetbrains.jet.android;
 
-import com.intellij.codeInsight.completion.CompletionType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.completion.AbstractJvmBasicCompletionTest;
-import org.jetbrains.jet.completion.AbstractJvmSmartCompletionTest;
-import org.jetbrains.jet.completion.AbstractMultiFileJvmBasicCompletionTest;
-import org.jetbrains.jet.completion.JetFixtureCompletionBaseTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.android.TestConst;
-import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.test.TestMetadata;
 
 @TestMetadata("idea/testData/android/completion/")

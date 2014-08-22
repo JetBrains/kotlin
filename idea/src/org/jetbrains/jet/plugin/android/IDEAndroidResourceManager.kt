@@ -22,8 +22,6 @@ import com.intellij.psi.PsiElement
 import java.util.HashMap
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.PsiFile
-import org.jetbrains.android.util.AndroidResourceUtil
-import org.jetbrains.jps.android.AndroidJpsUtil
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.jet.lang.resolve.android.AndroidManifest
 import com.intellij.openapi.module.ModuleManager
@@ -31,7 +29,11 @@ import java.util.ArrayList
 
 public class IDEAndroidResourceManager(project: Project, searchPath: String?) : AndroidResourceManagerBase(project, searchPath) {
 
-    class NoAndroidFacetException: Exception("No android facet found in project")
+    private class NoAndroidFacetException: Exception("No android facet found in project")
+
+    // TODO: synchronize!
+    // TODO: invalidate on modification?
+    private val idToXmlAttributeCache = HashMap<String, PsiElement>()
 
     override fun getLayoutXmlFiles(): Collection<PsiFile> {
         try {
@@ -55,8 +57,6 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
         val attributeValue = facet.getManifest()!!.getPackage()
         return AndroidManifest(attributeValue!!.getRawText()!!)
     }
-
-    private val idToXmlAttributeCache = HashMap<String, PsiElement>()
 
     public fun addMapping(name: String, attr: XmlAttribute) {
         idToXmlAttributeCache[name] = attr
