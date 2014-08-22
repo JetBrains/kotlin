@@ -32,7 +32,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
-import org.jetbrains.k2js.translate.expression.loopTranslator.ForTranslator;
 import org.jetbrains.k2js.translate.expression.loopTranslator.LoopTranslatorPackage;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
@@ -428,7 +427,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitForExpression(@NotNull JetForExpression expression,
             @NotNull TranslationContext context) {
-        return ForTranslator.OBJECT$.translate(expression, context).source(expression);
+        return LoopTranslatorPackage.translateForExpression(expression, context).source(expression);
     }
 
     @Override
