@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.ModuleClassResolver
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava
 import org.jetbrains.jet.lang.resolve.java.lazy.SingleModuleClassResolver
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -126,7 +127,7 @@ private fun generatorForJavaDescriptorResolver() =
             publicField(javaClass<GlobalContextImpl>(), useAsContext = true,
                         init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))
             publicField(javaClass<ModuleDescriptorImpl>(), name = "module",
-                        init = GivenExpression("org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule(\"<fake-jdr-module>\")"))
+                        init = GivenExpression(javaClass<TopDownAnalyzerFacadeForJVM>().getName() + ".createJavaModule(\"<fake-jdr-module>\")"))
             publicField(javaClass<JavaDescriptorResolver>())
             publicField(javaClass<JavaClassFinderImpl>())
 

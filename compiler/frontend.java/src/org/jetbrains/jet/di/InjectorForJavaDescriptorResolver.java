@@ -19,7 +19,6 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -83,7 +82,7 @@ public class InjectorForJavaDescriptorResolver {
         this.bindingTrace = bindingTrace;
         this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.lockBasedStorageManager = globalContext.getStorageManager();
-        this.module = TopDownAnalyzerFacadeForJVM.createJavaModule("<fake-jdr-module>");
+        this.module = org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM.createJavaModule("<fake-jdr-module>");
         this.javaClassFinder = new JavaClassFinderImpl();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
