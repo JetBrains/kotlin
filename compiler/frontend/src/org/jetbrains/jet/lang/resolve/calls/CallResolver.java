@@ -20,13 +20,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
@@ -56,7 +53,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.NOT_A_CLASS;
 import static org.jetbrains.jet.lang.diagnostics.Errors.NO_CONSTRUCTOR;
-import static org.jetbrains.jet.lang.resolve.BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW;
+import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_DATA_FLOW_INFO;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
@@ -417,8 +414,8 @@ public class CallResolver {
     ) {
         context.trace.record(RESOLUTION_SCOPE, context.call.getCalleeExpression(), context.scope);
 
-        if (context.dataFlowInfo.hasTypeInfoConstraints()) {
-            context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, context.call.getCalleeExpression(), context.dataFlowInfo);
+        if (context.dataFlowInfo != DataFlowInfo.EMPTY) {
+            context.trace.record(EXPRESSION_DATA_FLOW_INFO, context.call.getCalleeExpression(), context.dataFlowInfo);
         }
 
         return doResolveCall(context, prioritizedTasks, callTransformer, tracing);

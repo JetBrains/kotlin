@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext
 import org.jetbrains.jet.lang.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getClassObjectReferenceTarget
 import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
 import kotlin.properties.Delegates
 
 public trait Qualifier {
@@ -122,8 +123,8 @@ fun createQualifier(
     if (packageViewDescriptor == null && classifierDescriptor == null) return null
 
     context.trace.record(RESOLUTION_SCOPE, expression, context.scope)
-    if (context.dataFlowInfo.hasTypeInfoConstraints()) {
-        context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, expression, context.dataFlowInfo)
+    if (context.dataFlowInfo != DataFlowInfo.EMPTY) {
+        context.trace.record(EXPRESSION_DATA_FLOW_INFO, expression, context.dataFlowInfo)
     }
 
     val qualifier = QualifierReceiver(expression, packageViewDescriptor, classifierDescriptor)

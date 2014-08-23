@@ -66,7 +66,7 @@ public final class TipsManager {
             if (expressionType != null && resolutionScope != null && !expressionType.isError()) {
                 ExpressionReceiver receiverValue = new ExpressionReceiver(receiverExpression, expressionType);
 
-                DataFlowInfo info = context.get(BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW, expression);
+                DataFlowInfo info = context.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression);
                 if (info == null) {
                     info = DataFlowInfo.EMPTY;
                 }
