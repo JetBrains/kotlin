@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import kotlin.properties.Delegates
 import javax.inject.Inject
 
-trait ModuleClassResolver {
-    fun resolveClass(javaClass: JavaClass): ClassDescriptor?
+public trait ModuleClassResolver {
+    public fun resolveClass(javaClass: JavaClass): ClassDescriptor?
 }
 
 public class SingleModuleClassResolver() : ModuleClassResolver {
