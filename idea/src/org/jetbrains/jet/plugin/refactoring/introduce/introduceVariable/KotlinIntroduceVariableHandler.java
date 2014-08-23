@@ -139,7 +139,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             }
         }
 
-        if (expressionType == null && bindingContext.get(BindingContext.QUALIFIER_RECEIVER, expression) != null) {
+        if (expressionType == null && bindingContext.get(BindingContext.QUALIFIER, expression) != null) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.package.expression"));
             return;
         }

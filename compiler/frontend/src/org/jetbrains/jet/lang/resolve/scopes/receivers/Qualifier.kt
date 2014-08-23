@@ -38,26 +38,46 @@ import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext
 import org.jetbrains.jet.lang.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getClassObjectReferenceTarget
+import org.jetbrains.jet.lang.psi.JetExpression
+import kotlin.properties.Delegates
 
-public class QualifierReceiver(
-        val expression: JetSimpleNameExpression,
-        val packageView: PackageViewDescriptor?,
-        val classifier: ClassifierDescriptor?
-) : ReceiverValue {
+public trait Qualifier {
+
+    val expression: JetExpression
+
+    val packageView: PackageViewDescriptor?
+
+    val classifier: ClassifierDescriptor?
 
     val name: Name
         get() = classifier?.getName() ?: packageView!!.getName()
 
-    fun getClassObjectReceiver(): ReceiverValue =
-            classifier?.getClassObjectType()?.let { ExpressionReceiver(expression, it) } ?: ReceiverValue.NO_RECEIVER
+    // package, classifier or class object descriptor
+    val resultingDescriptor: DeclarationDescriptor
+
+    val scope: JetScope
+}
+
+class QualifierReceiver (
+        val referenceExpression: JetSimpleNameExpression,
+        override val packageView: PackageViewDescriptor?,
+        override val classifier: ClassifierDescriptor?
+) : Qualifier, ReceiverValue {
+
+    override val expression: JetExpression = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
 
     val descriptor: DeclarationDescriptor
         get() = classifier ?: packageView ?: throw AssertionError("PackageView and classifier both are null")
 
-    fun getScope(): JetScope {
+    override var resultingDescriptor: DeclarationDescriptor by Delegates.notNull()
+
+    override val scope: JetScope get() {
         val scopes = listOf(classifier?.getClassObjectType()?.getMemberScope(), getNestedClassesAndPackageMembersScope()).filterNotNull().copyToArray()
         return ChainedScope(descriptor, "Member scope for " + name + " as package or class or object", *scopes as Array<JetScope?>)
     }
+
+    fun getClassObjectReceiver(): ReceiverValue =
+            classifier?.getClassObjectType()?.let { ExpressionReceiver(referenceExpression, it) } ?: ReceiverValue.NO_RECEIVER
 
     fun getNestedClassesAndPackageMembersScope(): JetScope {
         val scopes = ArrayList<JetScope>(3)
@@ -84,14 +104,14 @@ public class QualifierReceiver(
     override fun toString() = "Package{$packageView} OR Class{$classifier}"
 }
 
-fun createQualifierReceiver(
+fun createQualifier(
         expression: JetSimpleNameExpression,
         receiver: ReceiverValue,
         context: ExpressionTypingContext
 ): QualifierReceiver? {
     val receiverScope = when {
         !receiver.exists() -> context.scope
-        receiver is QualifierReceiver -> receiver.getScope()
+        receiver is QualifierReceiver -> receiver.scope
         else -> receiver.getType().getMemberScope()
     }
 
@@ -106,34 +126,39 @@ fun createQualifierReceiver(
         context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, expression, context.dataFlowInfo)
     }
 
-    val qualifierReceiver = QualifierReceiver(expression, packageViewDescriptor, classifierDescriptor)
-    context.trace.record(QUALIFIER_RECEIVER, expression.getTopmostParentQualifiedExpressionForSelector() ?: expression, qualifierReceiver)
-    return qualifierReceiver
+    val qualifier = QualifierReceiver(expression, packageViewDescriptor, classifierDescriptor)
+    context.trace.record(QUALIFIER, qualifier.expression, qualifier)
+    return qualifier
 }
 
 private fun QualifierReceiver.resolveAsStandaloneExpression(context: ExpressionTypingContext): JetType? {
-    context.trace.record(REFERENCE_TARGET, expression, resolveReferenceTarget(selector = null))
+    resolveAndRecordReferenceTarget(context, selector = null)
     if (classifier is TypeParameterDescriptor) {
-        context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(expression, classifier))
+        context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(referenceExpression, classifier))
     }
     else if (classifier is ClassDescriptor && classifier.getClassObjectType() == null) {
-        context.trace.report(NO_CLASS_OBJECT.on(expression, classifier))
+        context.trace.report(NO_CLASS_OBJECT.on(referenceExpression, classifier))
     }
     else if (packageView != null) {
-        context.trace.report(EXPRESSION_EXPECTED_PACKAGE_FOUND.on(expression))
+        context.trace.report(EXPRESSION_EXPECTED_PACKAGE_FOUND.on(referenceExpression))
     }
     return null
 }
 
 private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: ExpressionTypingContext, selector: DeclarationDescriptor?) {
-    context.trace.record(REFERENCE_TARGET, expression, resolveReferenceTarget(selector))
+    resolveAndRecordReferenceTarget(context, selector)
     if (classifier is TypeParameterDescriptor) {
-        context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(expression, classifier as TypeParameterDescriptor))
+        context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier as TypeParameterDescriptor))
     }
     else if (classifier is ClassDescriptor && classifier.getClassObjectDescriptor() != null) {
         checkClassObjectVisibility(context)
-        context.trace.record(EXPRESSION_TYPE, expression, classifier.getClassObjectType())
+        context.trace.record(EXPRESSION_TYPE, referenceExpression, classifier.getClassObjectType())
     }
+}
+
+private fun QualifierReceiver.resolveAndRecordReferenceTarget(context: ExpressionTypingContext, selector: DeclarationDescriptor?) {
+    resultingDescriptor = resolveReferenceTarget(selector)
+    context.trace.record(REFERENCE_TARGET, referenceExpression, resultingDescriptor)
 }
 
 private fun QualifierReceiver.resolveReferenceTarget(selector: DeclarationDescriptor?): DeclarationDescriptor {
@@ -168,7 +193,7 @@ private fun QualifierReceiver.checkClassObjectVisibility(context: ExpressionTypi
     val classObject = classifier.getClassObjectDescriptor()
     assert(classObject != null) { "This check should be done only for classes with class objects: " + classifier }
     if (!Visibilities.isVisible(classObject!!, scopeContainer)) {
-        context.trace.report(INVISIBLE_MEMBER.on(expression, classObject, classObject.getVisibility(), scopeContainer))
+        context.trace.report(INVISIBLE_MEMBER.on(referenceExpression, classObject, classObject.getVisibility(), scopeContainer))
     }
 }
 

@@ -91,7 +91,7 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
         val bindingContext = AnalyzerFacadeWithCache.getContextForElement(parent)
         val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver]
         if (receiverType == null) {
-            if (bindingContext[BindingContext.QUALIFIER_RECEIVER, receiver] != null) {
+            if (bindingContext[BindingContext.QUALIFIER, receiver] != null) {
                 intentionFailed(editor, "package.call")
                 return
             }

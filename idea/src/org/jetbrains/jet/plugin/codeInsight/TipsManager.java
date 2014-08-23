@@ -23,10 +23,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -35,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -56,19 +53,18 @@ public final class TipsManager {
         PsiElement parent = expression.getParent();
         boolean inPositionForCompletionWithReceiver = parent instanceof JetCallExpression || parent instanceof JetQualifiedExpression;
         if (receiverExpression != null && inPositionForCompletionWithReceiver) {
+            Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
             // Process as call expression
             JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
-            QualifierReceiver qualifierReceiver = context.get(BindingContext.QUALIFIER_RECEIVER, receiverExpression);
-            if (qualifierReceiver != null && resolutionScope != null) {
-                return includeExternalCallableExtensions(
-                        excludePrivateDescriptors(qualifierReceiver.getScope().getAllDescriptors()),
-                        resolutionScope, qualifierReceiver);
+            Qualifier qualifier = context.get(BindingContext.QUALIFIER, receiverExpression);
+            if (qualifier != null && resolutionScope != null) {
+                // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
+                descriptors.addAll(new HashSet<DeclarationDescriptor>(excludePrivateDescriptors(qualifier.getScope().getAllDescriptors())));
             }
 
             JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
             if (expressionType != null && resolutionScope != null && !expressionType.isError()) {
                 ExpressionReceiver receiverValue = new ExpressionReceiver(receiverExpression, expressionType);
-                Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
 
                 DataFlowInfo info = context.get(BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW, expression);
                 if (info == null) {
@@ -83,9 +79,8 @@ public final class TipsManager {
                             resolutionScope, receiverValue));
                 }
 
-                return descriptors;
             }
-            return Collections.emptyList();
+            return descriptors;
         }
         else {
             return getVariantsNoReceiver(expression, context);
@@ -196,10 +191,6 @@ public final class TipsManager {
             @NotNull JetScope externalScope,
             @NotNull final ReceiverValue receiverValue
     ) {
-        // It's impossible to add extension function for package
-        if (receiverValue instanceof QualifierReceiver) {
-            return new HashSet<DeclarationDescriptor>(descriptors);
-        }
         Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
 
         descriptorsSet.addAll(

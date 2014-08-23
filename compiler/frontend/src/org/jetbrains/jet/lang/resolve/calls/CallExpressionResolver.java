@@ -39,10 +39,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiversPackage;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
@@ -115,11 +112,11 @@ public class CallExpressionResolver {
             }
         }
 
-        QualifierReceiver qualifierReceiver = createQualifierReceiver(nameExpression, receiver, context);
-        if (qualifierReceiver != null) {
+        QualifierReceiver qualifier = createQualifier(nameExpression, receiver, context);
+        if (qualifier != null) {
             result[0] = true;
             if (!isLHSOfDot) {
-                resolveAsStandaloneExpression(qualifierReceiver, context);
+                resolveAsStandaloneExpression(qualifier, context);
             }
             return null;
         }
@@ -286,7 +283,7 @@ public class CallExpressionResolver {
         ResolutionContext contextForReceiver = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
         JetType receiverType = receiverTypeInfo.getType();
-        QualifierReceiver qualifierReceiver = context.trace.get(BindingContext.QUALIFIER_RECEIVER, receiverExpression);
+        QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, receiverExpression);
 
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
 
@@ -350,8 +347,8 @@ public class CallExpressionResolver {
         // A.B - if B is a nested class accessed by outer class, 'A' and 'A.B' were marked as qualifiers
         // a.B - if B is a nested class accessed by instance reference, 'a.B' was marked as a qualifier, but 'a' was not (it's an expression)
 
-        QualifierReceiver expressionQualifier = context.trace.get(BindingContext.QUALIFIER_RECEIVER, expression);
-        QualifierReceiver receiverQualifier = context.trace.get(BindingContext.QUALIFIER_RECEIVER, expression.getReceiverExpression());
+        Qualifier expressionQualifier = context.trace.get(BindingContext.QUALIFIER, expression);
+        Qualifier receiverQualifier = context.trace.get(BindingContext.QUALIFIER, expression.getReceiverExpression());
 
         if (receiverQualifier == null && expressionQualifier != null) {
             assert expressionQualifier.getClassifier() instanceof ClassDescriptor :

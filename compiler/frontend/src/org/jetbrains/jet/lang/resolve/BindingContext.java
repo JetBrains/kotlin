@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.CaptureKind;
@@ -85,7 +85,10 @@ public interface BindingContext {
     WritableSlice<JetExpression, DataFlowInfo> EXPRESSION_DATA_FLOW_INFO = new BasicWritableSlice<JetExpression, DataFlowInfo>(DO_NOTHING);
     WritableSlice<JetExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
 
-    WritableSlice<JetExpression, QualifierReceiver> QUALIFIER_RECEIVER = new BasicWritableSlice<JetExpression, QualifierReceiver>(DO_NOTHING);
+    /**
+     * A qualifier corresponds to a receiver expression (if any). For 'A.B' qualifier is recorded for 'A'.
+     */
+    WritableSlice<JetExpression, Qualifier> QUALIFIER = new BasicWritableSlice<JetExpression, Qualifier>(DO_NOTHING);
 
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET =
             new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
