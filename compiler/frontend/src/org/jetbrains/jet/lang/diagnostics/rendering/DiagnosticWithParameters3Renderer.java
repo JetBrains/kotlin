@@ -23,7 +23,7 @@ import org.jetbrains.jet.renderer.Renderer;
 
 import java.text.MessageFormat;
 
-import static org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRendererUtil.renderParameter;
+import static org.jetbrains.jet.lang.diagnostics.rendering.RenderingPackage.renderParameter;
 
 public class DiagnosticWithParameters3Renderer<A, B, C> implements DiagnosticRenderer<DiagnosticWithParameters3<?, A, B, C>> {
     private final MessageFormat messageFormat;

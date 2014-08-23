@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.diagnostics.rendering;
+package org.jetbrains.jet.lang.diagnostics.rendering
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.renderer.Renderer;
+import org.jetbrains.jet.renderer.Renderer
 
-public class DiagnosticRendererUtil {
-    private DiagnosticRendererUtil() {
-    }
-
-    @NotNull
-    public static <P> Object renderParameter(@NotNull P parameter, @Nullable Renderer<P> renderer) {
-        return renderer == null ? parameter : renderer.render(parameter);
-    }
-}
+public fun <P> renderParameter(parameter: P, renderer: Renderer<P>?): Any = renderer?.render(parameter) ?: parameter
