@@ -46,6 +46,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
+
 public class ElementResolver {
 
     protected final ResolveSession resolveSession;
@@ -216,12 +218,12 @@ public class ElementResolver {
                     codeFragmentScope
             );
 
-            DataFlowInfo dataFlowInfoForContextElement = contextForElement.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, contextExpression);
+            DataFlowInfo dataFlowInfoForContextElement = getDataFlowInfo(contextForElement, contextExpression);
             AnalyzerPackage.computeTypeInContext(
                     (JetExpression) codeFragmentExpression,
                     chainedScope,
                     trace,
-                    dataFlowInfoForContextElement == null ? DataFlowInfo.EMPTY : dataFlowInfoForContextElement,
+                    dataFlowInfoForContextElement,
                     TypeUtils.NO_EXPECTED_TYPE,
                     resolveSession.getModuleDescriptor()
             );

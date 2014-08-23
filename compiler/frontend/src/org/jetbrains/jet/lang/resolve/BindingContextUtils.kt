@@ -54,3 +54,6 @@ public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlo
         trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, dataFlowInfo)
     }
 }
+
+public fun BindingContext.getDataFlowInfo(expression: JetExpression?): DataFlowInfo =
+    expression?.let { this[BindingContext.EXPRESSION_DATA_FLOW_INFO, it] } ?: DataFlowInfo.EMPTY

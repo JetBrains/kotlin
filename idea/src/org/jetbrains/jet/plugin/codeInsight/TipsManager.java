@@ -39,6 +39,8 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
+
 public final class TipsManager {
 
     private TipsManager() {
@@ -66,11 +68,7 @@ public final class TipsManager {
             if (expressionType != null && resolutionScope != null && !expressionType.isError()) {
                 ExpressionReceiver receiverValue = new ExpressionReceiver(receiverExpression, expressionType);
 
-                DataFlowInfo info = context.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression);
-                if (info == null) {
-                    info = DataFlowInfo.EMPTY;
-                }
-
+                DataFlowInfo info = getDataFlowInfo(context, expression);
                 List<JetType> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiverValue, context, info);
 
                 for (JetType variant : variantsForExplicitReceiver) {

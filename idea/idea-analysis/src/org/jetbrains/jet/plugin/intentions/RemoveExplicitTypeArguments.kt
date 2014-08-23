@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.psi.JetReturnExpression
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 
 public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgumentList>(
         "remove.explicit.type.arguments", javaClass()) {
@@ -72,7 +73,7 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgu
         else {
             TypeUtils.NO_EXPECTED_TYPE
         }
-        val dataFlow = context[BindingContext.EXPRESSION_DATA_FLOW_INFO, callExpression] ?: DataFlowInfo.EMPTY
+        val dataFlow = context.getDataFlowInfo(callExpression)
         val resolutionResults = injector.getExpressionTypingServices()?.getCallResolver()?.resolveFunctionCall(
                 BindingTraceContext(), scope, untypedCall, jType, dataFlow, false)
         assert (resolutionResults?.isSingleResult() ?: true) { "Removing type arguments changed resolve for: " +

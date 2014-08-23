@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 
 enum class Tail {
     COMMA
@@ -128,7 +129,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return null //TODO: discuss it
 
         val expectedType = (callElement as? JetExpression)?.let { bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it] } ?: TypeUtils.NO_EXPECTED_TYPE
-        val dataFlowInfo = (callElement as? JetExpression)?.let { bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, it] } ?: DataFlowInfo.EMPTY
+        val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
         val callResolutionContext = BasicCallResolutionContext.create(
                 DelegatingBindingTrace(bindingContext, "Temporary trace for completion"),
                 resolutionScope,

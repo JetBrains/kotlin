@@ -63,6 +63,7 @@ import org.jetbrains.jet.analyzer.analyzeInContext
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 
 public trait CacheExtension<T> {
@@ -289,8 +290,7 @@ private object KotlinResolveDataProvider {
                                 "Scope for resolve code fragment",
                                 scopeForContextElement, codeFragmentScope)
 
-        val dataFlowInfoForContextElement = contextForElement[BindingContext.EXPRESSION_DATA_FLOW_INFO, contextElement]
-        val dataFlowInfo = dataFlowInfoForContextElement ?: DataFlowInfo.EMPTY
+        val dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)
         return codeFragmentExpression.analyzeInContext(
                 chainedScope,
                 BindingTraceContext(),
