@@ -149,7 +149,6 @@ private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: Ex
         context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier as TypeParameterDescriptor))
     }
     else if (classifier is ClassDescriptor && classifier.getClassObjectDescriptor() != null) {
-        checkClassObjectVisibility(context)
         context.trace.record(EXPRESSION_TYPE, referenceExpression, classifier.getClassObjectType())
     }
 }
@@ -183,16 +182,3 @@ private fun QualifierReceiver.resolveReferenceTarget(selector: DeclarationDescri
 
     return descriptor
 }
-
-private fun QualifierReceiver.checkClassObjectVisibility(context: ExpressionTypingContext) {
-    if (classifier !is ClassDescriptor) return
-
-    val scopeContainer = context.scope.getContainingDeclaration()
-    val classObject = classifier.getClassObjectDescriptor()
-    assert(classObject != null) { "This check should be done only for classes with class objects: " + classifier }
-    if (!Visibilities.isVisible(classObject!!, scopeContainer)) {
-        context.trace.report(INVISIBLE_MEMBER.on(referenceExpression, classObject, classObject.getVisibility(), scopeContainer))
-    }
-}
-
-
