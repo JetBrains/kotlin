@@ -122,10 +122,7 @@ fun createQualifier(
 
     if (packageViewDescriptor == null && classifierDescriptor == null) return null
 
-    context.trace.record(RESOLUTION_SCOPE, expression, context.scope)
-    if (context.dataFlowInfo != DataFlowInfo.EMPTY) {
-        context.trace.record(EXPRESSION_DATA_FLOW_INFO, expression, context.dataFlowInfo)
-    }
+    context.recordScopeAndDataFlowInfo(expression)
 
     val qualifier = QualifierReceiver(expression, packageViewDescriptor, classifierDescriptor)
     context.trace.record(QUALIFIER, qualifier.expression, qualifier)

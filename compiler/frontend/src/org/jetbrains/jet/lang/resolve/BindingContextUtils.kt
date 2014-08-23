@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext
 
 public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()
@@ -43,3 +45,12 @@ public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingConte
 
 public fun JetExpression.isUsedAsExpression(context: BindingContext): Boolean = context[BindingContext.USED_AS_EXPRESSION, this]!!
 public fun JetExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
+
+public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlowInfo(expression: JetExpression?) {
+    if (expression == null) return
+
+    trace.record(BindingContext.RESOLUTION_SCOPE, expression, scope)
+    if (dataFlowInfo != DataFlowInfo.EMPTY) {
+        trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, dataFlowInfo)
+    }
+}

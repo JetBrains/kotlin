@@ -53,8 +53,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.NOT_A_CLASS;
 import static org.jetbrains.jet.lang.diagnostics.Errors.NO_CONSTRUCTOR;
-import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_DATA_FLOW_INFO;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults.Code.*;
@@ -349,7 +348,8 @@ public class CallResolver {
         }
         if (results == null) {
             BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
-            results = doResolveCallAndRecordDebugInfo(newContext, prioritizedTasks, callTransformer, tracing);
+            recordScopeAndDataFlowInfo(newContext, newContext.call.getCalleeExpression());
+            results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
             DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
             if (deltasTraceForTypeInference != null) {
                 deltasTraceForTypeInference.addAllMyDataTo(traceToResolveCall);
@@ -403,22 +403,6 @@ public class CallResolver {
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> checkArgumentTypesAndFail(BasicCallResolutionContext context) {
         argumentTypeResolver.checkTypesWithNoCallee(context);
         return OverloadResolutionResultsImpl.nameNotFound();
-    }
-
-    @NotNull
-    private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallAndRecordDebugInfo(
-            @NotNull BasicCallResolutionContext context,
-            @NotNull List<ResolutionTask<D, F>> prioritizedTasks, // high to low priority
-            @NotNull CallTransformer<D, F> callTransformer,
-            @NotNull TracingStrategy tracing
-    ) {
-        context.trace.record(RESOLUTION_SCOPE, context.call.getCalleeExpression(), context.scope);
-
-        if (context.dataFlowInfo != DataFlowInfo.EMPTY) {
-            context.trace.record(EXPRESSION_DATA_FLOW_INFO, context.call.getCalleeExpression(), context.dataFlowInfo);
-        }
-
-        return doResolveCall(context, prioritizedTasks, callTransformer, tracing);
     }
 
     @NotNull

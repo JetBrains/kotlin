@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -29,6 +28,7 @@ import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
 
@@ -149,13 +149,8 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
             result = JetTypeInfo.create(null, context.dataFlowInfo);
         }
 
-        if (!context.trace.get(BindingContext.PROCESSED, expression) && !BindingContextUtils.isExpressionWithValidReference(expression, context.trace.getBindingContext())) {
-            context.trace.record(BindingContext.RESOLUTION_SCOPE, expression, context.scope);
-        }
         context.trace.record(BindingContext.PROCESSED, expression);
-        if (result.getDataFlowInfo() != DataFlowInfo.EMPTY) {
-            context.trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, result.getDataFlowInfo());
-        }
+        recordScopeAndDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
         return result;
     }  
 
