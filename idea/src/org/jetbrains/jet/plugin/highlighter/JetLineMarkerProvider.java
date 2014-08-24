@@ -51,6 +51,7 @@ import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,10 +61,10 @@ import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
@@ -74,6 +75,8 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.OverrideResolver.getDirectlyOverriddenDeclarations;
 
 public class JetLineMarkerProvider implements LineMarkerProvider {
     public static final Icon OVERRIDING_MARK = AllIcons.Gutter.OverridingMethod;
@@ -238,35 +241,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
-        JetFile file = (JetFile)element.getContainingFile();
-        if (file == null) return null;
-
-        if (!(element instanceof JetNamedFunction || element instanceof JetProperty)) return null;
-
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-
-        if (!(descriptor instanceof CallableMemberDescriptor)) return null;
-
-        Set<? extends CallableMemberDescriptor> overriddenMembers = OverrideResolver.getDirectlyOverriddenDeclarations(
-                (CallableMemberDescriptor) descriptor);
-        if (overriddenMembers.isEmpty()) return null;
-
-        // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
-        // clearing the whole BindingTrace.
-        return new LineMarkerInfo<JetElement>(
-                (JetElement) element,
-                element.getTextOffset(),
-                isImplementsAndNotOverrides((CallableMemberDescriptor) descriptor, overriddenMembers) ? IMPLEMENTING_MARK : OVERRIDING_MARK,
-                Pass.UPDATE_ALL,
-                new Function<JetElement, String>() {
-                    @Override
-                    public String fun(JetElement element) {
-                        return calculateTooltipString(element);
-                    }
-                },
-                new KotlinSuperNavigationHandler()
-        );
+        // all Kotlin markers are added in slow marker pass
+        return null;
     }
 
     private static String calculateTooltipString(JetElement element) {
@@ -276,7 +252,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         if (!(descriptor instanceof CallableMemberDescriptor)) return "";
         CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) descriptor;
 
-        Set<CallableMemberDescriptor> overriddenMembers = OverrideResolver.getDirectlyOverriddenDeclarations(callableDescriptor);
+        Set<CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations(callableDescriptor);
         if (overriddenMembers.isEmpty()) return "";
 
         final boolean isAbstract = callableDescriptor.getModality() == Modality.ABSTRACT;
@@ -324,8 +300,10 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
-        if (elements.isEmpty() ||
-            DumbService.getInstance(elements.get(0).getProject()).isDumb() ||
+        if (elements.isEmpty()) return;
+
+        PsiElement first = KotlinPackage.first(elements);
+        if (DumbService.getInstance(first.getProject()).isDumb() ||
             !ProjectRootsUtil.isInSourceWithGradleCheck(elements.get(0))) {
             return;
         }
@@ -339,16 +317,54 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             }
 
             if (element instanceof JetNamedFunction) {
-                functions.add((JetNamedFunction) element);
+                JetNamedFunction function = (JetNamedFunction) element;
+
+                functions.add(function);
+                collectSuperDeclarationMarker(function, result);
             }
 
             if (element instanceof JetProperty) {
-                properties.add((JetProperty) element);
+                JetProperty property = (JetProperty) element;
+
+                properties.add(property);
+                collectSuperDeclarationMarker(property, result);
             }
         }
 
         collectOverridingAccessors(functions, result);
         collectOverridingPropertiesAccessors(properties, result);
+    }
+
+    private static void collectSuperDeclarationMarker(JetDeclaration declaration, Collection<LineMarkerInfo> result) {
+        assert (declaration instanceof JetNamedFunction || declaration instanceof JetProperty);
+
+        if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return;
+
+        DeclarationDescriptor descriptor =
+                ResolvePackage.getLazyResolveSession(declaration).resolveToDescriptor(declaration);
+
+        if (!(descriptor instanceof CallableMemberDescriptor)) return;
+
+        Set<? extends CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+        if (overriddenMembers.isEmpty()) return;
+
+        // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
+        // clearing the whole BindingTrace.
+        LineMarkerInfo<JetElement> marker = new LineMarkerInfo<JetElement>(
+                declaration,
+                declaration.getTextOffset(),
+                isImplementsAndNotOverrides((CallableMemberDescriptor) descriptor, overriddenMembers) ? IMPLEMENTING_MARK : OVERRIDING_MARK,
+                Pass.UPDATE_OVERRIDEN_MARKERS,
+                new Function<JetElement, String>() {
+                    @Override
+                    public String fun(JetElement element) {
+                        return calculateTooltipString(element);
+                    }
+                },
+                new KotlinSuperNavigationHandler()
+        );
+
+        result.add(marker);
     }
 
     private static void collectInheritingClasses(JetClass element, Collection<LineMarkerInfo> result) {
@@ -611,7 +627,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             if (!(descriptor instanceof CallableMemberDescriptor)) return;
 
             Set<CallableMemberDescriptor> overriddenMembers =
-                    OverrideResolver.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+                    getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
             if (overriddenMembers.isEmpty()) return;
 
             List<NavigatablePsiElement> superDeclarations = Lists.newArrayList();
