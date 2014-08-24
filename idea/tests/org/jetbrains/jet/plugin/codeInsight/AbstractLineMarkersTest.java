@@ -33,7 +33,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.highlighter.JetLineMarkerProvider;
+import org.jetbrains.jet.plugin.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
 import org.jetbrains.jet.plugin.navigation.NavigationTestUtils;
 import org.jetbrains.jet.testing.HighlightTestDataUtil;
 import org.jetbrains.jet.testing.ReferenceUtils;
@@ -113,13 +113,13 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
                     navigateMarker);
 
             GutterIconNavigationHandler handler = navigateMarker.getNavigationHandler();
-            if (handler instanceof JetLineMarkerProvider.KotlinSuperNavigationHandler) {
+            if (handler instanceof SuperDeclarationMarkerNavigationHandler) {
                 PsiElement element = navigateMarker.getElement();
 
                 //noinspection unchecked
                 handler.navigate(null, element);
                 List<NavigatablePsiElement> navigateElements =
-                        ((JetLineMarkerProvider.KotlinSuperNavigationHandler) handler).getNavigationElements();
+                        ((SuperDeclarationMarkerNavigationHandler) handler).getNavigationElements();
 
                 Collections.sort(navigateElements, new Comparator<NavigatablePsiElement>() {
                     @Override
@@ -137,7 +137,7 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
                 assertSameLines(getExpectedNavigationText(navigationComment), actualNavigationData);
             }
             else {
-                Assert.fail("Only JetLineMarkerProvider.KotlinSuperNavigationHandler are supported in navigate check");
+                Assert.fail("Only SuperDeclarationMarkerNavigationHandler are supported in navigate check");
             }
         }
     }

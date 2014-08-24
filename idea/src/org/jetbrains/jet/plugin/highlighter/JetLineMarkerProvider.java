@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.google.common.collect.*;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper;
@@ -32,14 +31,12 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.ide.util.MethodCellRenderer;
 import com.intellij.ide.util.PsiClassListCellRenderer;
 import com.intellij.ide.util.PsiElementListCellRenderer;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
@@ -55,28 +52,23 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.KotlinLightMethodFromTrait;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
-import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.highlighter.markers.MarkersPackage;
+import org.jetbrains.jet.plugin.highlighter.markers.ResolveWithParentsResult;
+import org.jetbrains.jet.plugin.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
+import org.jetbrains.jet.plugin.highlighter.markers.SuperDeclarationMarkerTooltip;
 import org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.*;
-
-import static org.jetbrains.jet.lang.resolve.OverrideResolver.getDirectlyOverriddenDeclarations;
 
 public class JetLineMarkerProvider implements LineMarkerProvider {
     public static final Icon OVERRIDING_MARK = AllIcons.Gutter.OverridingMethod;
@@ -245,46 +237,6 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         return null;
     }
 
-    private static String calculateTooltipString(JetElement element) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(element);
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-
-        if (!(descriptor instanceof CallableMemberDescriptor)) return "";
-        CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) descriptor;
-
-        Set<CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations(callableDescriptor);
-        if (overriddenMembers.isEmpty()) return "";
-
-        final boolean isAbstract = callableDescriptor.getModality() == Modality.ABSTRACT;
-
-        final DescriptorRenderer renderer = new DescriptorRendererBuilder()
-                .setTextFormat(DescriptorRenderer.TextFormat.HTML)
-                .setWithDefinedIn(false)
-                .setStartFromName(true)
-                .setWithoutSuperTypes(true)
-                .build();
-
-        List<String> containingStrings = ContainerUtil.map(overriddenMembers, new Function<CallableMemberDescriptor, String>() {
-            @Override
-            public String fun(CallableMemberDescriptor overriddenDescriptor) {
-                DeclarationDescriptor declaration = overriddenDescriptor.getContainingDeclaration();
-                String memberKind =
-                        overriddenDescriptor instanceof PropertyAccessorDescriptor || overriddenDescriptor instanceof PropertyDescriptor ?
-                        "property" : "function";
-
-                boolean isBaseAbstract = overriddenDescriptor.getModality() == Modality.ABSTRACT;
-
-                return String.format("%s %s in '%s'",
-                                     !isAbstract && isBaseAbstract ? "Implements" : "Overrides",
-                                     memberKind, renderer.render(declaration));
-            }
-        });
-
-        Collections.sort(containingStrings);
-
-        return StringUtil.join(containingStrings, "<br/>");
-    }
-
     private static boolean isImplementsAndNotOverrides(
             CallableMemberDescriptor descriptor,
             Collection<? extends CallableMemberDescriptor> overriddenMembers
@@ -340,28 +292,20 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return;
 
-        DeclarationDescriptor descriptor =
-                ResolvePackage.getLazyResolveSession(declaration).resolveToDescriptor(declaration);
-
-        if (!(descriptor instanceof CallableMemberDescriptor)) return;
-
-        Set<? extends CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-        if (overriddenMembers.isEmpty()) return;
+        ResolveWithParentsResult resolveWithParents = MarkersPackage.resolveDeclarationWithParents(declaration);
+        if (resolveWithParents.getOverriddenDescriptors().isEmpty()) return;
 
         // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
         // clearing the whole BindingTrace.
         LineMarkerInfo<JetElement> marker = new LineMarkerInfo<JetElement>(
                 declaration,
                 declaration.getTextOffset(),
-                isImplementsAndNotOverrides((CallableMemberDescriptor) descriptor, overriddenMembers) ? IMPLEMENTING_MARK : OVERRIDING_MARK,
+                isImplementsAndNotOverrides(resolveWithParents.getDescriptor(), resolveWithParents.getOverriddenDescriptors()) ?
+                IMPLEMENTING_MARK :
+                OVERRIDING_MARK,
                 Pass.UPDATE_OVERRIDEN_MARKERS,
-                new Function<JetElement, String>() {
-                    @Override
-                    public String fun(JetElement element) {
-                        return calculateTooltipString(element);
-                    }
-                },
-                new KotlinSuperNavigationHandler()
+                SuperDeclarationMarkerTooltip.INSTANCE$,
+                new SuperDeclarationMarkerNavigationHandler()
         );
 
         result.add(marker);
@@ -606,52 +550,6 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                             return super.process(psiMethod);
                         }
                     });
-        }
-    }
-
-    public static class KotlinSuperNavigationHandler implements GutterIconNavigationHandler<JetElement> {
-        private List<NavigatablePsiElement> testNavigableElements;
-
-        @TestOnly
-        @NotNull
-        public List<NavigatablePsiElement> getNavigationElements() {
-            List<NavigatablePsiElement> navigationResult = testNavigableElements;
-            testNavigableElements = null;
-            return navigationResult;
-        }
-
-        @Override
-        public void navigate(MouseEvent e, JetElement element) {
-            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(element);
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-            if (!(descriptor instanceof CallableMemberDescriptor)) return;
-
-            Set<CallableMemberDescriptor> overriddenMembers =
-                    getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-            if (overriddenMembers.isEmpty()) return;
-
-            List<NavigatablePsiElement> superDeclarations = Lists.newArrayList();
-            for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
-                Collection<PsiElement> declarations =
-                        DescriptorToDeclarationUtil.INSTANCE$.resolveToPsiElements(element.getProject(), overriddenMember);
-                for (PsiElement declaration : declarations) {
-                    if (declaration instanceof NavigatablePsiElement) {
-                        superDeclarations.add((NavigatablePsiElement) declaration);
-                    }
-                }
-            }
-
-            if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                PsiElementListNavigator.openTargets(
-                        e,
-                        ArrayUtil.toObjectArray(superDeclarations, NavigatablePsiElement.class),
-                        JetBundle.message("navigation.title.super.declaration", descriptor.getName()),
-                        JetBundle.message("navigation.findUsages.title.super.declaration", descriptor.getName()),
-                        new JetFunctionPsiElementCellRenderer(bindingContext));
-            }
-            else {
-                testNavigableElements = superDeclarations;
-            }
         }
     }
 }
