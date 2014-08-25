@@ -95,6 +95,7 @@ import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetTestUtils {
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.jet.generators.tests.TestsPackage";
+    public static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
     private static final Pattern KT_FILES = Pattern.compile(".*?.kt");
     private static final List<File> filesToDelete = new ArrayList<File>();
@@ -725,7 +726,7 @@ public class JetTestUtils {
         if (path != null) {
             String relativePath = FileUtil.nameToCompare(path);
             if (!filePaths.contains(relativePath)) {
-                Assert.fail("Test data file missing from the generated test class: " + file + pleaseReRunGenerator());
+                Assert.fail("Test data file missing from the generated test class: " + file + "\n" + PLEASE_REGENERATE_TESTS);
             }
         }
     }
@@ -781,19 +782,7 @@ public class JetTestUtils {
                 return;
             }
         }
-        Assert.fail("Test data directory missing from the generated test class: " + testDataDir + pleaseReRunGenerator());
-    }
-
-    private static String pleaseReRunGenerator() {
-        return "\nPlease re-run the generator: " + TEST_GENERATOR_NAME + getLocationFormattedForConsole();
-    }
-
-    private static String getLocationFormattedForConsole() {
-        return "(" + getSimpleName() + ".java:1)";
-    }
-
-    private static String getSimpleName() {
-        return TEST_GENERATOR_NAME.substring(TEST_GENERATOR_NAME.lastIndexOf(".") + 1);
+        Assert.fail("Test data directory missing from the generated test class: " + testDataDir + "\n" + PLEASE_REGENERATE_TESTS);
     }
 
     @NotNull
