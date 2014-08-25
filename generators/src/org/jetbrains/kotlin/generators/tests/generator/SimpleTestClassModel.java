@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBackend;
@@ -53,6 +50,8 @@ public class SimpleTestClassModel implements TestClassModel {
     private final String testClassName;
     @NotNull
     private final TargetBackend targetBackend;
+    @NotNull
+    private final Set<String> excludeDirs;
     @Nullable
     private Collection<TestClassModel> innerTestClasses;
     @Nullable
@@ -65,7 +64,8 @@ public class SimpleTestClassModel implements TestClassModel {
             @NotNull Pattern filenamePattern,
             @NotNull String doTestMethodName,
             @NotNull String testClassName,
-            @NotNull TargetBackend targetBackend
+            @NotNull TargetBackend targetBackend,
+            @NotNull Collection<String> excludeDirs
     ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
@@ -74,6 +74,7 @@ public class SimpleTestClassModel implements TestClassModel {
         this.doTestMethodName = doTestMethodName;
         this.testClassName = testClassName;
         this.targetBackend = targetBackend;
+        this.excludeDirs = excludeDirs.isEmpty() ? Collections.<String>emptySet() : new LinkedHashSet<String>(excludeDirs);
     }
 
     @NotNull
@@ -88,12 +89,10 @@ public class SimpleTestClassModel implements TestClassModel {
             File[] files = rootFile.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (file.isDirectory()) {
-                        if (dirHasFilesInside(file)) {
-                            String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
-                            children.add(new SimpleTestClassModel(file, true, excludeParentDirs, filenamePattern, doTestMethodName, innerTestClassName,
-                                                                  targetBackend));
-                        }
+                    if (file.isDirectory() && dirHasFilesInside(file) && !excludeDirs.contains(file.getName())) {
+                        String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
+                        children.add(new SimpleTestClassModel(file, true, excludeParentDirs, filenamePattern, doTestMethodName,
+                                                              innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName())));
                     }
                 }
             }
@@ -101,6 +100,21 @@ public class SimpleTestClassModel implements TestClassModel {
             innerTestClasses = children;
         }
         return innerTestClasses;
+    }
+
+    @NotNull
+    private Set<String> excludesStripOneDirectory(@NotNull String directoryName) {
+        if (excludeDirs.isEmpty()) return excludeDirs;
+
+        Set<String> result = new LinkedHashSet<String>();
+        for (String excludeDir : excludeDirs) {
+            int firstSlash = excludeDir.indexOf('/');
+            if (firstSlash >= 0 && excludeDir.substring(0, firstSlash).equals(directoryName)) {
+                result.add(excludeDir.substring(firstSlash + 1));
+            }
+        }
+
+        return result;
     }
 
     private static boolean dirHasFilesInside(@NotNull File dir) {
@@ -181,7 +195,6 @@ public class SimpleTestClassModel implements TestClassModel {
     }
 
     private class TestAllFilesPresentMethodModel implements TestMethodModel {
-
         @Override
         public String getName() {
             return "testAllFilesPresentIn" + testClassName;
@@ -189,9 +202,16 @@ public class SimpleTestClassModel implements TestClassModel {
 
         @Override
         public void generateBody(@NotNull Printer p) {
-            String assertTestsPresentStr =
-                    String.format("JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
-                                  JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), recursive);
+            StringBuilder exclude = new StringBuilder();
+            for (String dir : excludeDirs) {
+                exclude.append(", \"");
+                exclude.append(StringUtil.escapeStringCharacters(dir));
+                exclude.append("\"");
+            }
+            String assertTestsPresentStr = String.format(
+                    "JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s%s);",
+                    JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), recursive, exclude
+            );
             p.println(assertTestsPresentStr);
         }
 

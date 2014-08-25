@@ -16,139 +16,105 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.generators.tests.generator.TestGenerator
-import org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBackend
-import java.util.ArrayList
-import org.jetbrains.kotlin.generators.tests.generator.SimpleTestClassModel
-import java.io.File
-import java.util.regex.Pattern
 import junit.framework.TestCase
-import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTest
-import org.jetbrains.kotlin.resolve.AbstractResolveTest
-import org.jetbrains.kotlin.parsing.AbstractJetParsingTest
-import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
-import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
-import org.jetbrains.kotlin.codegen.AbstractTopLevelMembersInvocationTest
-import org.jetbrains.kotlin.codegen.AbstractCheckLocalVariablesTableTest
-import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
-import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
-import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
-import org.jetbrains.kotlin.cli.AbstractKotlincExecutableTest
-import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
-import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
-import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
-import org.jetbrains.kotlin.checkers.AbstractJetJsCheckerTest
-import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
-import org.jetbrains.kotlin.completion.AbstractJSBasicCompletionTest
-import org.jetbrains.kotlin.completion.AbstractKeywordCompletionTest
-import org.jetbrains.kotlin.completion.AbstractJvmSmartCompletionTest
-import org.jetbrains.kotlin.completion.AbstractJvmBasicCompletionTest
-import org.jetbrains.kotlin.completion.AbstractJvmWithLibBasicCompletionTest
-import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
-import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
-import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
-import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
-import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
-import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
-import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
-import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
-import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
-import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
-import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractJetQuickDocProviderTest
-import org.jetbrains.kotlin.safeDelete.AbstractJetSafeDeleteTest
-import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest
-import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveWithLibTest
-import org.jetbrains.kotlin.findUsages.AbstractJetFindUsagesTest
-import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
-import org.jetbrains.kotlin.formatter.AbstractJetFormatterTest
-import org.jetbrains.kotlin.idea.codeInsight.AbstractOutOfBlockModificationTest
-import org.jetbrains.kotlin.completion.AbstractDataFlowValueRenderingTest
-import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationParameterTest
-import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractEvaluateExpressionTest
-import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
-import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
-import org.jetbrains.kotlin.generators.tests.generator.SingleClassTestModel
-import org.jetbrains.kotlin.generators.tests.generator.TestClassModel
-import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
-import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
-import org.jetbrains.kotlin.completion.handlers.AbstractSmartCompletionHandlerTest
-import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil
-import org.jetbrains.kotlin.idea.resolve.AbstractAdditionalResolveDescriptorRendererTest
-import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveInLibrarySourcesTest
-import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
-import org.jetbrains.kotlin.completion.AbstractCompiledKotlinInJavaCompletionTest
-import org.jetbrains.kotlin.completion.AbstractKotlinSourceInJavaCompletionTest
-import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTestWithStdLib
-import org.jetbrains.kotlin.idea.codeInsight.AbstractInsertImportOnPasteTest
-import org.jetbrains.kotlin.idea.codeInsight.AbstractLineMarkersTest
-import org.jetbrains.kotlin.idea.resolve.AbstractReferenceToJavaWithWrongFileStructureTest
-import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
-import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
-import org.jetbrains.kotlin.idea.refactoring.move.AbstractJetMoveTest
-import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
-import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
-import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
-import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
-import org.jetbrains.kotlin.idea.codeInsight.AbstractJetInspectionTest
-import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
-import org.jetbrains.kotlin.idea.debugger.AbstractJetPositionManagerTest
-import org.jetbrains.kotlin.completion.AbstractMultiFileJvmBasicCompletionTest
-import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractJetExtractionTest
-import org.jetbrains.kotlin.formatter.AbstractJetTypingIndentationTestBase
-import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractKotlinEvaluateExpressionTest
-import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractSelectExpressionForDebuggerTest
-import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractCodeFragmentCompletionTest
-import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractCodeFragmentHighlightingTest
-import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
-import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
-import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
-import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
-import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
-import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
+import org.jetbrains.kotlin.addImport.AbstractAddImportTest
+import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.asJava.AbstractKotlinLightClassTest
-import org.jetbrains.kotlin.load.java.AbstractJavaTypeSubstitutorTest
-import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
-import org.jetbrains.kotlin.codegen.AbstractScriptCodegenTest
-import org.jetbrains.kotlin.idea.parameterInfo.AbstractFunctionParameterInfoTest
-import org.jetbrains.kotlin.psi.patternMatching.AbstractJetPsiUnifierTest
+import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
+import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
+import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
+import org.jetbrains.kotlin.checkers.*
+import org.jetbrains.kotlin.cli.AbstractKotlincExecutableTest
+import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
+import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.completion.*
+import org.jetbrains.kotlin.completion.handlers.AbstractBasicCompletionHandlerTest
+import org.jetbrains.kotlin.completion.handlers.AbstractCompletionCharFilterTest
+import org.jetbrains.kotlin.completion.handlers.AbstractKeywordCompletionHandlerTest
+import org.jetbrains.kotlin.completion.handlers.AbstractSmartCompletionHandlerTest
 import org.jetbrains.kotlin.completion.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.kotlin.completion.weighers.AbstractSmartCompletionWeigherTest
+import org.jetbrains.kotlin.findUsages.AbstractJetFindUsagesTest
+import org.jetbrains.kotlin.formatter.AbstractJetFormatterTest
+import org.jetbrains.kotlin.formatter.AbstractJetTypingIndentationTestBase
+import org.jetbrains.kotlin.generators.tests.generator.*
+import org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBackend
 import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForReservedWords
-import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveInJavaTest
-import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
-import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextTest
-import org.jetbrains.kotlin.completion.AbstractMultiFileSmartCompletionTest
-import org.jetbrains.kotlin.completion.handlers.AbstractCompletionCharFilterTest
-import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
-import org.jetbrains.kotlin.idea.resolve.AbstractPartialBodyResolveTest
-import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTestWithJsStdLib
-import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
-import org.jetbrains.kotlin.types.AbstractJetTypeBindingTest
-import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
+import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
+import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
+import org.jetbrains.kotlin.idea.codeInsight.AbstractInsertImportOnPasteTest
+import org.jetbrains.kotlin.idea.codeInsight.AbstractJetInspectionTest
+import org.jetbrains.kotlin.idea.codeInsight.AbstractLineMarkersTest
+import org.jetbrains.kotlin.idea.codeInsight.AbstractOutOfBlockModificationTest
+import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
+import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
+import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
+import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
+import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
-import org.jetbrains.kotlin.completion.handlers.AbstractBasicCompletionHandlerTest
+import org.jetbrains.kotlin.idea.debugger.AbstractJetPositionManagerTest
+import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
+import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
+import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
-import org.jetbrains.kotlin.codegen.AbstractLineNumberTest
-import org.jetbrains.kotlin.completion.handlers.AbstractKeywordCompletionHandlerTest
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextTest
+import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractJetQuickDocProviderTest
+import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
+import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
+import org.jetbrains.kotlin.idea.highlighter.AbstractDiagnosticMessageJsTest
+import org.jetbrains.kotlin.idea.highlighter.AbstractDiagnosticMessageTest
+import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest
+import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
+import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
+import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
-import org.jetbrains.kotlin.addImport.AbstractAddImportTest
-import org.jetbrains.kotlin.idea.highlighter.*
-import org.jetbrains.kotlin.android.AbstractAndroidCompletionTest
-import org.jetbrains.kotlin.android.AbstractAndroidGotoTest
+import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
+import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
+import org.jetbrains.kotlin.idea.parameterInfo.AbstractFunctionParameterInfoTest
+import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
+import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
+import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
+import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractJetExtractionTest
+import org.jetbrains.kotlin.idea.refactoring.move.AbstractJetMoveTest
+import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
+import org.jetbrains.kotlin.idea.resolve.*
+import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
+import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
+import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
+import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
+import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
+import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
+import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
+import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
-import org.jetbrains.kotlin.android.AbstractAndroidRenameTest
-import org.jetbrains.kotlin.android.AbstractAndroidFindUsagesTest
+import org.jetbrains.kotlin.js.test.semantics.*
+import org.jetbrains.kotlin.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
+import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidXml2KConversionTest
-import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
-import org.jetbrains.kotlin.android.AbstractParserResultEqualityTest
-import org.jetbrains.kotlin.js.test.*
-import org.jetbrains.kotlin.js.test.semantics.*
+import org.jetbrains.kotlin.load.java.AbstractJavaTypeSubstitutorTest
+import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
+import org.jetbrains.kotlin.parsing.AbstractJetParsingTest
+import org.jetbrains.kotlin.psi.patternMatching.AbstractJetPsiUnifierTest
+import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
+import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
+import org.jetbrains.kotlin.resolve.AbstractResolveTest
+import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationParameterTest
+import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
+import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractEvaluateExpressionTest
+import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
+import org.jetbrains.kotlin.safeDelete.AbstractJetSafeDeleteTest
+import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
+import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
+import org.jetbrains.kotlin.types.AbstractJetTypeBindingTest
+import java.io.File
+import java.util.ArrayList
+import java.util.regex.Pattern
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -862,15 +828,23 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 testMethod: String = "doTest",
                 singleClass: Boolean = false,
                 testClassName: String? = null,
-                targetBackend: TargetBackend = TargetBackend.ANY
+                targetBackend: TargetBackend = TargetBackend.ANY,
+                excludeDirs: List<String> = listOf()
         ) {
             val rootFile = File(testDataRoot + "/" + relativeRootPath)
             val compiledPattern = Pattern.compile(pattern)
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
-            testModels.add(if (singleClass)
-                               SingleClassTestModel(rootFile, compiledPattern, testMethod, className, targetBackend)
-                           else
-                               SimpleTestClassModel(rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className, targetBackend))
+            testModels.add(
+                    if (singleClass) {
+                        if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
+                        SingleClassTestModel(rootFile, compiledPattern, testMethod, className, targetBackend)
+                    }
+                    else {
+                        SimpleTestClassModel(
+                                rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className, targetBackend, excludeDirs
+                        )
+                    }
+            )
         }
     }
 
