@@ -1,27 +1,28 @@
 /**
-h2. Expressions
+## Expressions
 
-bq. See [Expressions]
+<!--See [Expressions](expressions.html)-->
 
-h3. Precedence
+### Precedence
 
-||*Precedence*||Title||Symbols||
-|Highest|Postfix|{{\+\+}}, {{\-\-}}, {{.}}, {{?.}}, {{?}}|
-| |Prefix|{{-}}, {{\+}}, {{\+\+}}, {{\-\-}}, {{!}}, [{{@label}}|#LabelName], {{@}}, {{@@}} |
-| |Type RHS|{{:}}, {{as}}, {{as?}} |
-| |Multiplicative|{{*}}, {{/}}, {{%}} |
-| |Additive|{{\+}}, {{-}} |
-| |Range|{{..}} |
-| |Infix function|[{{SimpleName}}|#SimpleName] |
-| |Elvis|{{?:}} |
-| |Named checks|{{in}}, {{\!in}}, {{is}}, {{\!is}} |
-| |Comparison|{{<}}, {{>}}, {{<=}}, {{>=}} |
-| |Equality|{{==}}, {{\!==}}|
-| |Conjunction|{{&&}}|
-| |Disjunction|{{\|\|}}|
-|Lowest|Assignment|{{=}}, {{+=}}, {{-=}}, {{*=}}, {{/=}}, {{%=}}|
+| Precedence | Title | Symbols |
+|------------|-------|---------|
+| Highest    | Postfix | `++`, `--`, `.`, `?.`, `?` |
+| | Prefix | `-`, `+`, `++`, `--`, `!`, [`@label`](#LabelName), `@`, `@@` |
+| | Type RHS | `:`, `as`, `as?` |
+| | Multiplicative | `*`, `/`, `%` |
+| | Additive | `+`, `-` |
+| | Range | `..` |
+| | Infix function | [`SimpleName`](#SimpleName) |
+| | Elvis | `?:` |
+| | Named checks | `in`, `!in`, `is`, `!is` |
+| | Comparison | `<`, `>`, `<=`, `>=` |
+| | Equality | `==`, `\!==` |
+| | Conjunction | `&&` |
+| | Disjunction | `||` |
+| Lowest | Assignment | `=`, `+=`, `-=`, `*=`, `/=`, `%=` |
 
-h3. Rules
+### Rules
 
 */
 
@@ -42,7 +43,6 @@ Decreasing precedence:
   "||"
   assignmentOperator
 */
-
 
 expression
   : disjunction (assignmentOperator disjunction)*
@@ -284,5 +284,3 @@ objectLiteralMember
 factoryMethod
   : accessModifier? SimpleName typeParameters? functionParameters functionBody
   ;
-
-*/

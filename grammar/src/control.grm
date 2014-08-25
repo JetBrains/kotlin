@@ -1,7 +1,7 @@
 /**
-h2. Control structures
+## Control structures
 
-bq. See [Control structures]
+See [Control structures](control-flow.html)
 */
 
 if

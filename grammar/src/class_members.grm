@@ -1,5 +1,5 @@
 /**
-h3. Class members
+### Class members
 */
 
 /*
@@ -26,8 +26,6 @@ class Example(a : Foo, i : Int) : Bar(i), Some {
 }
 */
 
-// h5. Grammar
-
 memberDeclaration
   : classObject
   : object
@@ -46,7 +44,7 @@ classObject
   : modifiers "class" object
   ;
 /**
-bq. See [Class objects|Classes and Inheritance#Class objects]
+See [Class objects](classes.html#class-objects)
 */
 
 valueParameters
@@ -96,9 +94,8 @@ property
       ("by" | "=" expression SEMI?)?
       (getter? setter? | setter? getter?) SEMI?
   ;
-
 /**
-bq. See [Properties and Fields]
+See [Properties and Fields](properties.html)
 */
 
 getter
@@ -118,5 +115,5 @@ parameter
 object
   : "object" SimpleName (":" delegationSpecifier{","})? classBody? // Class body can be optional: this is a declaration
 /**
-bq. See [Object expressions and Declarations]
+See [Object expressions and Declarations](object-declarations.html)
 */
