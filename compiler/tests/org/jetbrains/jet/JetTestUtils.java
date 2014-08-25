@@ -41,6 +41,7 @@ import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -629,22 +630,52 @@ public class JetTestUtils {
         return result.toString();
     }
 
-    public static String getLastCommentInFile(JetFile file) {
+    public enum CommentType {
+        ALL,
+        LINE_COMMENT,
+        BLOCK_COMMENT
+    }
+
+    @NotNull
+    public static String getLastCommentInFile(@NotNull JetFile file) {
+        return KotlinPackage.first(getLastCommentsInFile(file, CommentType.ALL, true));
+    }
+
+    @NotNull
+    public static List<String> getLastCommentsInFile(@NotNull JetFile file, CommentType commentType, boolean assertMustExist) {
         PsiElement lastChild = file.getLastChild();
         if (lastChild != null && lastChild.getNode().getElementType().equals(JetTokens.WHITE_SPACE)) {
             lastChild = lastChild.getPrevSibling();
         }
         assert lastChild != null;
 
-        if (lastChild.getNode().getElementType().equals(JetTokens.BLOCK_COMMENT)) {
-            String lastChildText = lastChild.getText();
-            return lastChildText.substring(2, lastChildText.length() - 2).trim();
+        List<String> comments = ContainerUtil.newArrayList();
+
+        while (true) {
+            if (lastChild.getNode().getElementType().equals(JetTokens.BLOCK_COMMENT)) {
+                if (commentType == CommentType.ALL || commentType == CommentType.BLOCK_COMMENT) {
+                    String lastChildText = lastChild.getText();
+                    comments.add(lastChildText.substring(2, lastChildText.length() - 2).trim());
+                }
+            }
+            else if (lastChild.getNode().getElementType().equals(JetTokens.EOL_COMMENT)) {
+                if (commentType == CommentType.ALL || commentType == CommentType.LINE_COMMENT) {
+                    comments.add(lastChild.getText().substring(2).trim());
+                }
+            }
+            else {
+                break;
+            }
+
+            lastChild = lastChild.getPrevSibling();
         }
-        else if (lastChild.getNode().getElementType().equals(JetTokens.EOL_COMMENT)) {
-            return lastChild.getText().substring(2).trim();
-        } else {
-            throw new AssertionError("Test file '" + file.getName() + "' should end in a comment; last node was: " + lastChild);
+
+        if (comments.isEmpty() && assertMustExist) {
+            throw new AssertionError(String.format(
+                    "Test file '%s' should end in a comment of type %s; last node was: %s", file.getName(), commentType, lastChild));
         }
+
+        return comments;
     }
 
     public static void compileJavaFiles(@NotNull Collection<File> files, List<String> options) throws IOException {

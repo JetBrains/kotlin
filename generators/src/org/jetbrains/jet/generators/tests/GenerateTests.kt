@@ -88,6 +88,7 @@ import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithStdLib
 import org.jetbrains.jet.plugin.codeInsight.AbstractInsertImportOnPasteTest
+import org.jetbrains.jet.plugin.codeInsight.AbstractLineMarkersTest
 import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTest
 import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
@@ -532,6 +533,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractInsertImportOnPasteTest>()) {
             model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCopy", testClassName = "Copy", recursive = false)
             model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCut", testClassName = "Cut", recursive = false)
+        }
+
+        testClass(javaClass<AbstractLineMarkersTest>()) {
+            model("codeInsight/lineMarker")
         }
 
         testClass(javaClass<AbstractShortenRefsTest>()) {
