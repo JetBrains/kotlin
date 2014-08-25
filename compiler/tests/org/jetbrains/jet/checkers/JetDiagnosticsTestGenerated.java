@@ -7811,6 +7811,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("visitor.kt")
+                public void testVisitor() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/visitor.kt");
+                }
+                
             }
             
         }

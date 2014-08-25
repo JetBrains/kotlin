@@ -264,6 +264,22 @@ class LazyJavaTypeResolver(
         override fun isNullable(): Boolean = _nullable()
     }
 
+    private open class FlexibleJavaClassifierType(
+            lowerBound: JetType,
+            upperBound: JetType
+    ) : DelegatingFlexibleType(lowerBound, upperBound), CustomTypeVariable {
+
+        override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
+                                               && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor
+
+        override val typeParameterDescriptor: TypeParameterDescriptor? = if (isTypeVariable) lowerBound.getConstructor().getDeclarationDescriptor() as TypeParameterDescriptor else null
+
+        override fun substitutionResult(replacement: JetType): JetType {
+            return if (replacement.isFlexible()) replacement
+                   else FlexibleJavaClassifierType(TypeUtils.makeNotNullable(replacement), TypeUtils.makeNullable(replacement))
+        }
+    }
+
     /*
      * For a java type like java.util.List<Foo>
      *     lowerBound = MutableList<Foo>
@@ -272,23 +288,10 @@ class LazyJavaTypeResolver(
     private inner class LazyFlexibleJavaClassifierType(
             javaType: JavaClassifierType,
             attr: JavaTypeAttributes
-    ) : DelegatingFlexibleType(
+    ) : FlexibleJavaClassifierType(
             LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_LOWER_BOUND)),
             LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_UPPER_BOUND))
-    ), CustomTypeVariable {
-
-        override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
-                                                && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor
-
-        override val typeParameterDescriptor: TypeParameterDescriptor? = if (isTypeVariable) lowerBound.getConstructor().getDeclarationDescriptor() as TypeParameterDescriptor else null
-
-        override fun substitutionResult(replacement: JetType): JetType {
-            return if (replacement.isFlexible()) replacement
-                   else DelegatingFlexibleType(TypeUtils.makeNotNullable(replacement), TypeUtils.makeNullable(replacement))
-        }
-    }
-
-    private class JavaTypeVariable()
+    )
 }
 
 trait JavaTypeAttributes {
