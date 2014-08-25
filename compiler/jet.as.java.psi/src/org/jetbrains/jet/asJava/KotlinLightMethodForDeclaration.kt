@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,11 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.search.SearchScope
 
-public class KotlinLightMethodForDeclaration(
-        manager: PsiManager, override val delegate: PsiMethod, override val origin: JetDeclaration, containingClass: PsiClass
+open public class KotlinLightMethodForDeclaration(
+        manager: PsiManager,
+        override val delegate: PsiMethod,
+        override val origin: JetDeclaration,
+        containingClass: PsiClass
 ): LightMethod(manager, delegate, containingClass), KotlinLightMethod {
 
     private val paramsList: CachedValue<PsiParameterList> by Delegates.blockingLazy {

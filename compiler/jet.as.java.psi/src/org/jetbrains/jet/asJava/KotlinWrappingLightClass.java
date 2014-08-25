@@ -24,9 +24,12 @@ import com.intellij.psi.impl.light.LightField;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.source.ClassInnerStuffCache;
 import com.intellij.psi.impl.source.PsiExtensibleClass;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 
@@ -125,13 +128,18 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     @NotNull
     @Override
     public List<PsiMethod> getOwnMethods() {
-        return ContainerUtil.map(getDelegate().getMethods(), new Function<PsiMethod, PsiMethod>() {
+        return KotlinPackage.map(getDelegate().getMethods(), new Function1<PsiMethod, PsiMethod>() {
             @Override
-            public PsiMethod fun(PsiMethod method) {
+            public PsiMethod invoke(PsiMethod method) {
                 JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(method);
-                return declaration != null
-                       ? new KotlinLightMethodForDeclaration(myManager, method, declaration, KotlinWrappingLightClass.this)
-                       : new LightMethod(myManager, method, KotlinWrappingLightClass.this);
+
+                if (declaration != null) {
+                    return !isMethodFromTrait(declaration) ?
+                           new KotlinLightMethodForDeclaration(myManager, method, declaration, KotlinWrappingLightClass.this) :
+                           new KotlinLightMethodFromTrait(myManager, method, declaration, KotlinWrappingLightClass.this);
+                }
+
+                return new LightMethod(myManager, method, KotlinWrappingLightClass.this);
             }
         });
     }
@@ -151,5 +159,19 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     public String getText() {
         JetClassOrObject origin = getOrigin();
         return origin == null ? null : origin.getText();
+    }
+
+    private boolean isMethodFromTrait(@NotNull JetDeclaration originMethodDeclaration) {
+        if (!(originMethodDeclaration instanceof JetNamedFunction ||
+              originMethodDeclaration instanceof JetPropertyAccessor ||
+              originMethodDeclaration instanceof JetProperty)) {
+            return false;
+        }
+
+        JetClassOrObject parentOfMethodOrigin = PsiTreeUtil.getParentOfType(originMethodDeclaration, JetClassOrObject.class);
+        JetClassOrObject thisClassDeclaration = getOrigin();
+
+        // Method was generated from declaration in some other trait
+        return (parentOfMethodOrigin != null && thisClassDeclaration != parentOfMethodOrigin && JetPsiUtil.isTrait(parentOfMethodOrigin));
     }
 }
