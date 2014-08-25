@@ -1615,9 +1615,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (declaration instanceof JetEnumEntry) {
             String name = declaration.getName();
             assert name != null : "Enum entry has no name: " + declaration.getText();
-            String desc = classAsmType.getDescriptor();
             ClassDescriptor entryDescriptor = bindingContext.get(BindingContext.CLASS, declaration);
-            v.newField(OtherOrigin(declaration, entryDescriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);
+            FieldVisitor fv = v.newField(OtherOrigin(declaration, entryDescriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL,
+                                         name, classAsmType.getDescriptor(), null, null);
+            AnnotationCodegen.forField(fv, typeMapper).genAnnotations(entryDescriptor, null);
             myEnumConstants.add((JetEnumEntry) declaration);
         }
 
