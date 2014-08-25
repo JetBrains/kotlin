@@ -168,10 +168,10 @@ public class SimpleTestClassModel implements TestClassModel {
         }
 
         @Override
-        public void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName) {
+        public void generateBody(@NotNull Printer p) {
             String assertTestsPresentStr =
-                    String.format("JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), \"%s\", new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
-                                  generatorClassFqName, JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), recursive);
+                    String.format("JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
+                                  JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), recursive);
             p.println(assertTestsPresentStr);
         }
 

@@ -614,8 +614,8 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
     fun testClass(
             baseTestClass: Class<out TestCase>,
             suiteTestClass: String = getDefaultSuiteTestClass(baseTestClass),
-            init: TestClass.() -> Unit) {
-
+            init: TestClass.() -> Unit
+    ) {
         val testClass = TestClass()
         testClass.init()
 
@@ -624,13 +624,11 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 baseTestClass.getPackage()!!.getName()!!,
                 suiteTestClass,
                 baseTestClass,
-                testClass.testModels,
-                "org.jetbrains.jet.generators.tests.TestsPackage"
+                testClass.testModels
         ).generateAndSave()
     }
 
-    inner class TestClass() {
-
+    inner class TestClass {
         val testModels = ArrayList<TestClassModel>()
 
         fun model(

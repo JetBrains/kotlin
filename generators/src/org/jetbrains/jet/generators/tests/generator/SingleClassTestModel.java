@@ -117,10 +117,11 @@ public class SingleClassTestModel implements TestClassModel {
         }
 
         @Override
-        public void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName) {
+        public void generateBody(@NotNull Printer p) {
             String assertTestsPresentStr = String.format(
-                    "JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), \"%s\", new File(\"%s\"), Pattern.compile(\"%s\"));",
-                    generatorClassFqName, JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()));
+                    "JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"));",
+                    JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern())
+            );
             p.println(assertTestsPresentStr);
         }
 

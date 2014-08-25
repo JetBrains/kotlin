@@ -93,6 +93,8 @@ import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToD
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetTestUtils {
+    public static final String TEST_GENERATOR_NAME = "org.jetbrains.jet.generators.tests.TestsPackage";
+
     private static final Pattern KT_FILES = Pattern.compile(".*?.kt");
     private static final List<File> filesToDelete = new ArrayList<File>();
 
@@ -676,7 +678,6 @@ public class JetTestUtils {
 
     public static void assertAllTestsPresentByMetadata(
             @NotNull Class<?> testCaseClass,
-            @NotNull String generatorClassFqName,
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
             boolean recursive
@@ -693,11 +694,11 @@ public class JetTestUtils {
             for (File file : files) {
                 if (file.isDirectory()) {
                     if (recursive && containsTestData(file, filenamePattern)) {
-                        assertTestClassPresentByMetadata(testCaseClass, generatorClassFqName, file);
+                        assertTestClassPresentByMetadata(testCaseClass, file);
                     }
                 }
                 else if (filenamePattern.matcher(file.getName()).matches()) {
-                    assertFilePathPresent(file, rootFile, filePaths, generatorClassFqName);
+                    assertFilePathPresent(file, rootFile, filePaths);
                 }
             }
         }
@@ -705,13 +706,12 @@ public class JetTestUtils {
 
     public static void assertAllTestsPresentInSingleGeneratedClass(
             @NotNull Class<?> testCaseClass,
-            @NotNull final String generatorClassFqName,
             @NotNull File testDataDir,
-            @NotNull final Pattern filenamePattern) {
+            @NotNull final Pattern filenamePattern
+    ) {
         TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
         Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
-        String rootPath = testClassMetadata.value();
-        final File rootFile = new File(rootPath);
+        final File rootFile = new File(testClassMetadata.value());
 
         final Set<String> filePaths = collectPathsMetadata(testCaseClass);
 
@@ -719,7 +719,7 @@ public class JetTestUtils {
             @Override
             public boolean process(File file) {
                 if (file.isFile() && filenamePattern.matcher(file.getName()).matches()) {
-                    assertFilePathPresent(file, rootFile, filePaths, generatorClassFqName);
+                    assertFilePathPresent(file, rootFile, filePaths);
                 }
 
                 return true;
@@ -727,14 +727,14 @@ public class JetTestUtils {
         });
     }
 
-    private static void assertFilePathPresent(File file, File rootFile, Set<String> filePaths, String generatorClassFqName) {
+    private static void assertFilePathPresent(File file, File rootFile, Set<String> filePaths) {
         String path = FileUtil.getRelativePath(rootFile, file);
         if (path != null) {
             String relativePath = FileUtil.nameToCompare(path);
             if (!filePaths.contains(relativePath)) {
                 Assert.fail("Test data file missing from the generated test class: " +
                             file +
-                            pleaseReRunGenerator(generatorClassFqName));
+                            pleaseReRunGenerator());
             }
         }
     }
@@ -780,7 +780,6 @@ public class JetTestUtils {
 
     private static void assertTestClassPresentByMetadata(
             @NotNull Class<?> outerClass,
-            @NotNull String generatorClassFqName,
             @NotNull File testDataDir
     ) {
         InnerTestClasses innerClassesAnnotation = outerClass.getAnnotation(InnerTestClasses.class);
@@ -793,20 +792,19 @@ public class JetTestUtils {
         }
         Assert.fail("Test data directory missing from the generated test class: " +
                     testDataDir +
-                    pleaseReRunGenerator(generatorClassFqName));
+                    pleaseReRunGenerator());
     }
 
-    private static String pleaseReRunGenerator(String generatorClassFqName) {
-        return "\nPlease re-run the generator: " + generatorClassFqName +
-               getLocationFormattedForConsole(generatorClassFqName);
+    private static String pleaseReRunGenerator() {
+        return "\nPlease re-run the generator: " + TEST_GENERATOR_NAME + getLocationFormattedForConsole();
     }
 
-    private static String getLocationFormattedForConsole(String generatorClassFqName) {
-        return "(" + getSimpleName(generatorClassFqName) + ".java:1)";
+    private static String getLocationFormattedForConsole() {
+        return "(" + getSimpleName() + ".java:1)";
     }
 
-    private static String getSimpleName(String generatorClassFqName) {
-        return generatorClassFqName.substring(generatorClassFqName.lastIndexOf(".") + 1);
+    private static String getSimpleName() {
+        return TEST_GENERATOR_NAME.substring(TEST_GENERATOR_NAME.lastIndexOf(".") + 1);
     }
 
     @NotNull
