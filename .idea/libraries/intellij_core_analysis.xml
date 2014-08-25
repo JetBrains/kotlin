@@ -82,8 +82,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/core-api/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/core-impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/duplicates-analysis/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/dvcs/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/dvcs/testFramework" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/editor-ui-api/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/editor-ui-ex/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/extensions/src" />
