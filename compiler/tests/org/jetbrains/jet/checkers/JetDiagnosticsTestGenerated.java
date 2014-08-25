@@ -7717,6 +7717,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("getParentOfType.kt")
+            public void testGetParentOfType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/platformTypes/getParentOfType.kt");
+            }
+            
             @TestMetadata("inference.kt")
             public void testInference() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/inference.kt");

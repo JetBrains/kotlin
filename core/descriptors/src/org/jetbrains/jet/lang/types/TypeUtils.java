@@ -111,6 +111,8 @@ public class TypeUtils {
 
     @NotNull
     public static JetType makeNullableAsSpecified(@NotNull JetType type, boolean nullable) {
+        if (TypesPackage.isFlexible(type)) return type;
+
         // Wrapping serves two purposes here
         // 1. It's requires less memory than copying with a changed nullability flag: a copy has many fields, while a wrapper has only one
         // 2. It preserves laziness of types
