@@ -1,28 +1,28 @@
 /**
-h1. Notation
+# Notation
 
 This section informally explains the grammar notation used below.
 
-h2. Symbols and naming
+## Symbols and naming
 
-_Terminal symbol_ names start with an uppercase letter, e.g. *SimpleName*
-_Nonterminal symbol_ names start with lowercase letter, e.g. *kotlinFile*
-Each _production_ starts with a colon (*:*)
-_Symbol definitions_ may have many productions and are terminated by a semicolon (*;*)
-Symbol definitions may be prepended with _attributes_, e.g. {{start}} attribute denotes a start symbol
+_Terminal symbol_ names start with an uppercase letter, e.g. **SimpleName**.<br>
+_Nonterminal symbol_ names start with lowercase letter, e.g. **kotlinFile**.<br>
+Each _production_ starts with a colon (**:**).<br>
+_Symbol definitions_ may have many productions and are terminated by a semicolon (**;**).<br>
+Symbol definitions may be prepended with _attributes_, e.g. `start` attribute denotes a start symbol.
 
-h2. EBNF expressions
+## EBNF expressions
 
-Operator {color:blue}*|*{color} denotes _alternative_
-Operator {color:blue}*\**{color} denotes _iteration_ (zero or more)
-Operator {color:blue}*+*{color} denotes _iteration_ (one or more)
-Operator {color:blue}*?*{color} denotes _option_ (zero or one)
-alpha{color:blue}*{*{color}beta{color:blue}*}*{color} denotes a nonempty _beta_-separated list of _alpha_'s
+Operator `|` denotes _alternative_.<br>
+Operator `*` denotes _iteration_ (zero or more).<br>
+Operator `+` denotes _iteration_ (one or more).<br>
+Operator `?` denotes _option_ (zero or one).<br>
+alpha`{`beta`}` denotes a nonempty _beta_-separated list of _alpha_'s.
 
-h1. Semicolons
+# Semicolons
 
-[Kotlin] provides "semicolon inference": syntactically, subsentences (e.g., statements, declarations etc) are separated by
-the pseudo-token [SEMI|#SEMI], which stands for "semicolon or newline". In most cases, there's no need for semicolons in
-[Kotlin] code.
+Kotlin provides "semicolon inference": syntactically, subsentences (e.g., statements, declarations etc) are separated by
+the pseudo-token [SEMI](#SEMI), which stands for "semicolon or newline". In most cases, there's no need for semicolons in
+Kotlin code.
 
 */
