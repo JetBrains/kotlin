@@ -35,6 +35,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -51,17 +52,17 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -112,8 +113,6 @@ public class JetTestUtils {
     public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
-
-
         @NotNull
         @Override
         public BindingContext getBindingContext() {
@@ -154,8 +153,9 @@ public class JetTestUtils {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            if (slice == BindingContext.PROCESSED) return (V)Boolean.FALSE;
+            if (slice == BindingContext.PROCESSED) return (V) Boolean.FALSE;
             return SlicedMap.DO_NOTHING.get(slice, key);
         }
 
@@ -234,7 +234,7 @@ public class JetTestUtils {
     };
 
     @SuppressWarnings("unchecked")
-    private static final Class<? extends TestCase>[] NO_INNER_CLASSES = new Class[0];
+    private static final Class<? extends TestCase>[] NO_INNER_CLASSES = ArrayUtil.EMPTY_CLASS_ARRAY;
 
     private JetTestUtils() {
     }
@@ -354,20 +354,13 @@ public class JetTestUtils {
         filesToDelete.add(file);
     }
 
-    public static void rmrf(File file) {
-        if (file == null) {
-            return;
-        }
-        if (!FileUtil.delete(file)) {
-            throw new RuntimeException("failed to delete " + file);
-        }
-    }
-
     @NotNull
     public static JetFile createFile(@NotNull @NonNls String name, @NotNull String text, @NotNull Project project) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        return (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(project)).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        PsiFileFactoryImpl factory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
+        //noinspection ConstantConditions
+        return (JetFile) factory.trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
     }
 
     public static String doLoadFile(String myFullDataPath, String name) throws IOException {
@@ -732,9 +725,7 @@ public class JetTestUtils {
         if (path != null) {
             String relativePath = FileUtil.nameToCompare(path);
             if (!filePaths.contains(relativePath)) {
-                Assert.fail("Test data file missing from the generated test class: " +
-                            file +
-                            pleaseReRunGenerator());
+                Assert.fail("Test data file missing from the generated test class: " + file + pleaseReRunGenerator());
             }
         }
     }
@@ -790,9 +781,7 @@ public class JetTestUtils {
                 return;
             }
         }
-        Assert.fail("Test data directory missing from the generated test class: " +
-                    testDataDir +
-                    pleaseReRunGenerator());
+        Assert.fail("Test data directory missing from the generated test class: " + testDataDir + pleaseReRunGenerator());
     }
 
     private static String pleaseReRunGenerator() {
@@ -814,10 +803,7 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static List<JetFile> loadToJetFiles(
-            @NotNull JetCoreEnvironment environment,
-            @NotNull List<File> files
-    ) throws IOException {
+    public static List<JetFile> loadToJetFiles(@NotNull JetCoreEnvironment environment, @NotNull List<File> files) throws IOException {
         List<JetFile> jetFiles = Lists.newArrayList();
         for (File file : files) {
             jetFiles.add(loadJetFile(environment.getProject(), file));
@@ -830,23 +816,9 @@ public class JetTestUtils {
         return createEmptyModule("<empty-for-test>");
     }
 
+    @NotNull
     public static ModuleDescriptorImpl createEmptyModule(@NotNull String name) {
         return new ModuleDescriptorImpl(Name.special(name), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
-    }
-
-    @NotNull
-    public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName) {
-        return createTestPackageFragment(testPackageName, "<test module>");
-    }
-
-    @NotNull
-    public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName, @NotNull String moduleName) {
-        ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createJavaModule(moduleName);
-        MutablePackageFragmentProvider provider = new MutablePackageFragmentProvider(module);
-        module.initialize(provider);
-        module.addDependencyOnModule(module);
-        module.seal();
-        return provider.getOrCreateFragment(FqName.topLevel(testPackageName));
     }
 
     @NotNull

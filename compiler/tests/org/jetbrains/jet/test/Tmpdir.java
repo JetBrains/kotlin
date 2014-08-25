@@ -19,7 +19,6 @@ package org.jetbrains.jet.test;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.utils.UtilsPackage;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -43,7 +42,12 @@ public class Tmpdir extends TestWatcher {
 
     @Override
     protected void succeeded(Description description) {
-        JetTestUtils.rmrf(tmpDir);
+        if (tmpDir == null) {
+            return;
+        }
+        if (!FileUtil.delete(tmpDir)) {
+            throw new RuntimeException("failed to delete " + tmpDir);
+        }
     }
 
     @Override
