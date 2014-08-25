@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.types
 
 public trait FlexibleType : JetType {
-    val lowerBound: JetType
-    val upperBound: JetType
+    public val lowerBound: JetType
+    public val upperBound: JetType
 }
 
 public fun JetType.isFlexible(): Boolean = this is FlexibleType

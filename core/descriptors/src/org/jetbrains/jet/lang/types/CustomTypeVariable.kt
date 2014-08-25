@@ -22,14 +22,14 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 // even if it turns out that the type an instance represents is not actually a type variable
 // (i.e. it is not derived from a type parameter), see isTypeVariable
 public trait CustomTypeVariable : JetType {
-    val isTypeVariable: Boolean
+    public val isTypeVariable: Boolean
 
     // If typeParameterDescriptor != null <=> isTypeVariable == true, this is not a type variable
-    val typeParameterDescriptor: TypeParameterDescriptor?
+    public val typeParameterDescriptor: TypeParameterDescriptor?
 
 
     // Throws an exception when isTypeVariable == false
-    fun substitutionResult(replacement: JetType): JetType
+    public fun substitutionResult(replacement: JetType): JetType
 }
 
 fun JetType.isCustomTypeVariable() = (this as? CustomTypeVariable)?.isTypeVariable ?: false

@@ -7742,6 +7742,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/methodCall"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("inferenceWithBound.kt")
+                public void testInferenceWithBound() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/inferenceWithBound.kt");
+                }
+                
                 @TestMetadata("int.kt")
                 public void testInt() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/int.kt");
