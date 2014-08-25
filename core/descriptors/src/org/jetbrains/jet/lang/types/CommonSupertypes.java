@@ -237,20 +237,17 @@ public class CommonSupertypes {
             }
         }
 
+        if (outs != null) {
+            Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
+            return new TypeProjectionImpl(projectionKind, commonSupertype(outs));
+        }
         if (ins != null) {
             JetType intersection = TypeUtils.intersect(JetTypeChecker.DEFAULT, ins);
             if (intersection == null) {
-                if (outs != null) {
-                    return new TypeProjectionImpl(OUT_VARIANCE, commonSupertype(outs));
-                }
                 return new TypeProjectionImpl(OUT_VARIANCE, commonSupertype(parameterDescriptor.getUpperBounds()));
             }
             Variance projectionKind = variance == IN_VARIANCE ? Variance.INVARIANT : IN_VARIANCE;
             return new TypeProjectionImpl(projectionKind, intersection);
-        }
-        else if (outs != null) {
-            Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
-            return new TypeProjectionImpl(projectionKind, commonSupertype(outs));
         }
         else {
             Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;

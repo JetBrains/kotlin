@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.types
 
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+
 public trait FlexibleType : JetType {
     public val lowerBound: JetType
     public val upperBound: JetType
@@ -33,6 +35,9 @@ public open class DelegatingFlexibleType(
     {
         assert (!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
         assert (!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
+        assert (JetTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
+            "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
+        }
     }
 
     override fun getDelegate() = lowerBound
