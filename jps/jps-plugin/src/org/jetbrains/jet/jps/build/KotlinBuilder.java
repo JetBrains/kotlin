@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.jps.build;
 
-import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -37,13 +36,16 @@ import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
-import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.config.IncrementalCompilation;
+import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
-import org.jetbrains.jet.jps.incremental.*;
+import org.jetbrains.jet.jps.incremental.IncrementalCacheImpl;
+import org.jetbrains.jet.jps.incremental.IncrementalCacheProviderImpl;
+import org.jetbrains.jet.jps.incremental.IncrementalCacheStorageProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.preloading.ClassCondition;
 import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
@@ -123,7 +125,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         File outputDir = representativeTarget.getOutputDir();
 
         BuildDataManager dataManager = context.getProjectDescriptor().dataManager;
-        Map<ModuleBuildTarget, IncrementalCacheImpl> incrementalCaches = Maps.newHashMap();
+        Map<ModuleBuildTarget, IncrementalCacheImpl> incrementalCaches = UtilsPackage.newHashMapWithExpectedSize(chunk.getTargets().size());
         for (ModuleBuildTarget target : chunk.getTargets()) {
             incrementalCaches.put(target, dataManager.getStorage(target, IncrementalCacheStorageProvider.INSTANCE$));
         }
