@@ -1,7 +1,7 @@
 /**
-h2. Types
+## Types
 
-bq. See [Types]
+See [Types](basic-types.html)
 */
 
 /*
@@ -14,6 +14,7 @@ Foo<Bar<X>, T, Object> // user type
 
 type
   : annotations typeDescriptor
+  ;
 
 // IF YOU CHANGE THIS, please, update TYPE_FIRST in JetParsing
 typeDescriptor
@@ -46,5 +47,3 @@ optionalProjection
 functionType
   : (type ".")? "(" (parameter | modifiers /*lazy out ref*/ type){","} ")" "->" type?
   ;
-
-////////////////////////////////////////
