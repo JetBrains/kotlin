@@ -413,6 +413,23 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @NotNull TypeBoundsImpl.BoundKind boundKind,
             @NotNull ConstraintPosition constraintPosition
     ) {
+        // Here we are handling the case when T! gets a bound Foo (or Foo?)
+        // In this case, type parameter T is supposed to get the bound Foo!
+        // Example:
+        // val c: Collection<Foo> = Collections.singleton(null : Foo?)
+        // Constraints for T are:
+        //   Foo? <: T!
+        //   Foo >: T!
+        // both Foo and Foo? transform to Foo! here
+        if (TypesPackage.isFlexible(parameterType)) {
+            if (parameterType instanceof CustomTypeVariable) {
+                CustomTypeVariable typeVariable = (CustomTypeVariable) parameterType;
+                if (typeVariable.getIsTypeVariable()) {
+                    constrainingType = typeVariable.substitutionResult(constrainingType);
+                }
+            }
+        }
+
         TypeBoundsImpl typeBounds = getTypeBounds(parameterType);
         assert typeBounds != null : "constraint should be generated only for type variables";
 
