@@ -141,6 +141,8 @@ import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTe
 import org.jetbrains.kotlin.codegen.AbstractLineNumberTest
 import org.jetbrains.kotlin.completion.handlers.AbstractKeywordCompletionHandlerTest
 import org.jetbrains.jet.lang.resolve.android.AbstractAndroidXml2KConversionTest
+import org.jetbrains.jet.android.AbstractCrossParserTest
+import org.jetbrains.jet.lang.resolve.android.AbstractAndroidBoxTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -312,6 +314,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractAndroidXml2KConversionTest>()) {
             model("android/converter/simple", recursive = false, extension = null)
             model("android/converter/exceptions", recursive = false, extension = null, testMethod = "doNoManifestTest")
+        }
+
+        testClass(javaClass<AbstractAndroidBoxTest>()) {
+            model("codegen/android", recursive = false, extension = null)
         }
     }
 
@@ -674,6 +680,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractKotlinCoverageOutputFilesTest>()) {
             model("coverage/outputFiles")
+        }
+        
+        testClass(javaClass<AbstractCrossParserTest>()) {
+            model("android/crossParser", recursive = false, extension = null)
         }
     }
 

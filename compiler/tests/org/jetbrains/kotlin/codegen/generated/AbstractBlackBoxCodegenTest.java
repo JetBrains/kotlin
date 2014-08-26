@@ -164,7 +164,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         blackBox();
     }
 
-    private void blackBox() {
+    protected void blackBox() {
         // If there are many files, the first of them should contain the 'box(): String' function
         JetFile firstFile = myFiles.getPsiFiles().get(0);
         String fqName = getPackageClassFqName(firstFile.getPackageFqName()).asString();
