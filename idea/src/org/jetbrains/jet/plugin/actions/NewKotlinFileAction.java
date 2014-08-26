@@ -24,6 +24,7 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -36,7 +37,7 @@ import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 
 import java.util.Map;
 
-public class NewKotlinFileAction extends CreateFileFromTemplateAction {
+public class NewKotlinFileAction extends CreateFileFromTemplateAction implements DumbAware {
     public NewKotlinFileAction() {
         super(JetBundle.message("new.kotlin.file.action"), "Creates new Kotlin file", JetFileType.INSTANCE.getIcon());
     }
