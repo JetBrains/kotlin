@@ -1,3 +1,3 @@
 package foo.bar
 
-val globalProperty: Int = 1
+public val globalProperty: Int = 1
