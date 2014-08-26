@@ -1,7 +1,7 @@
 /**
 #### Pattern matching
 
-<!--See [Pattern matching](pattern-matching.html)-->
+See [When-expression](control-flow.html#when-expression)
 */
 
 when

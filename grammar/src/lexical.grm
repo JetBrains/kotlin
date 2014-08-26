@@ -58,7 +58,7 @@ LabelName
   : "@" SimpleName;
 
 /**
-<!--See [Nonlocal returns and jumps](returns.html)-->
+See [Returns and jumps](returns.html)
 */
 
 /* Symbols:

@@ -1,7 +1,7 @@
 /**
 # Syntax
 
-<!--Relevant pages: [Namespaces](namespaces.html)-->
+Relevant pages: [Packages](packages.html)
 */
 
 
@@ -28,7 +28,7 @@ import
   ;
 
 /**
-<!--See [Imports](namespaces.html#imports)-->
+See [Imports](packages.html#imports)
 */
 
 toplevelObject
@@ -48,7 +48,7 @@ package
   ;
 
 /**
-<!--See [Namespaces](namespaces.html)-->
+See [Packages](packages.html)
 */
 
 [undocumented]
