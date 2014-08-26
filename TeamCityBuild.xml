@@ -17,6 +17,7 @@
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned" />
 
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip" />
+    <property name="bare.plugin.zip" value="${artifact.output.path}/kotlin-bare-plugin-${build.number}.zip" />
 
     <macrodef name="echoprop">
         <attribute name="prop"/>
@@ -96,16 +97,26 @@
 
     <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts"/>
 
-    <target name="zipArtifact">
-        <zip destfile="${plugin.zip}">
-            <zipfileset prefix="Kotlin" dir="${artifact.output.path}/Kotlin" excludes="kotlinc/bin/*"/>
-            <zipfileset prefix="Kotlin/kotlinc/bin" dir="${artifact.output.path}/Kotlin/kotlinc/bin" includes="*.bat" filemode="644"/>
-            <zipfileset prefix="Kotlin/kotlinc/bin" dir="${artifact.output.path}/Kotlin/kotlinc/bin" excludes="*.bat" filemode="755"/>
-        </zip>
-        <delete dir="${artifact.output.path}/Kotlin" quiet="true"/>
+    <target name="zipArtifacts">
+        <macrodef name="zipPlugin">
+            <attribute name="filename"/>
+            <attribute name="dir"/>
+
+            <sequential>
+                <zip destfile="@{filename}">
+                    <zipfileset prefix="@{dir}" dir="${artifact.output.path}/@{dir}" excludes="kotlinc/bin/*"/>
+                    <zipfileset prefix="@{dir}/kotlinc/bin" dir="${artifact.output.path}/@{dir}/kotlinc/bin" includes="*.bat" filemode="644"/>
+                    <zipfileset prefix="@{dir}/kotlinc/bin" dir="${artifact.output.path}/@{dir}/kotlinc/bin" excludes="*.bat" filemode="755"/>
+                </zip>
+                <delete dir="${artifact.output.path}/@{dir}" quiet="true"/>
+            </sequential>
+        </macrodef>
+
+        <zipPlugin filename="${plugin.zip}" dir="Kotlin"/>
+        <zipPlugin filename="${bare.plugin.zip}" dir="BareKotlin"/>
     </target>
 
-    <target name="post_build" depends="zipArtifact, revertTemplateFiles"/>
+    <target name="post_build" depends="zipArtifacts, revertTemplateFiles"/>
 
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>
