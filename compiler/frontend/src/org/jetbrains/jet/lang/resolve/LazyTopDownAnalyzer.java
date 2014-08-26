@@ -39,19 +39,29 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CLASS_OBJECTS;
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
 
 public class LazyTopDownAnalyzer {
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
+    private BindingTrace trace = null;
 
+    @SuppressWarnings("ConstantConditions")
     @NotNull
-    private BindingTrace trace;
+    private DeclarationResolver declarationResolver = null;
+
+    @SuppressWarnings("ConstantConditions")
     @NotNull
-    private DeclarationResolver declarationResolver;
+    private OverrideResolver overrideResolver = null;
+
+    @SuppressWarnings("ConstantConditions")
     @NotNull
-    private OverrideResolver overrideResolver;
+    private OverloadResolver overloadResolver = null;
+
+    @SuppressWarnings("ConstantConditions")
     @NotNull
-    private OverloadResolver overloadResolver;
+    private ModuleDescriptor moduleDescriptor = null;
+
+    @SuppressWarnings("ConstantConditions")
     @NotNull
-    private ModuleDescriptor moduleDescriptor;
-    @NotNull
-    private BodyResolver bodyResolver;
+    private BodyResolver bodyResolver = null;
 
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {

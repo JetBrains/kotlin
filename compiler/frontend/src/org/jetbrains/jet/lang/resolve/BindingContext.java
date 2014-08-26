@@ -166,18 +166,12 @@ public interface BindingContext {
             if (propertyDescriptor.getModality() == Modality.ABSTRACT) return false;
             PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-            if (getter == null) {
-                return true;
-            }
-            else if (propertyDescriptor.isVar() && setter == null) {
-                return true;
-            }
-            else if (setter != null && !setter.hasBody() && setter.getModality() != Modality.ABSTRACT) {
-                return true;
-            }
-            else if (!getter.hasBody() && getter.getModality() != Modality.ABSTRACT) {
-                return true;
-            }
+
+            if (getter == null) return true;
+            if (propertyDescriptor.isVar() && setter == null) return true;
+            if (setter != null && !setter.hasBody() && setter.getModality() != Modality.ABSTRACT) return true;
+            if (!getter.hasBody() && getter.getModality() != Modality.ABSTRACT) return true;
+
             return backingFieldRequired;
         }
     };

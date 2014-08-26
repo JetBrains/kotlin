@@ -52,7 +52,7 @@ public abstract class JetFixtureCompletionBaseTestCase extends JetLightCodeInsig
             oldValue = settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION;
             settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = value;
         }
-        else{
+        else {
             oldValue = settings.AUTOCOMPLETE_COMMON_PREFIX;
             settings.AUTOCOMPLETE_ON_CODE_COMPLETION = value;
         }

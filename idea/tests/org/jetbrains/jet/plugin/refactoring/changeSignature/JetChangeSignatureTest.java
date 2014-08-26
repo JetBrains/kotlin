@@ -259,20 +259,25 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
 
     private JetChangeInfo getChangeInfo() throws Exception {
         configureByFile(getTestName(false) + "Before.kt");
+
         Editor editor = getEditor();
         PsiFile file = getFile();
+        Project project = getProject();
+
         JetElement element = (JetElement) new JetChangeSignatureHandler().findTargetMember(file, editor);
         assertNotNull("Target element is null", element);
-        Project project = getProject();
-        BindingContext bindingContext =
-                AnalyzerFacadeWithCache.getContextForElement(element);
+
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(element);
         PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
         assertNotNull(context);
+
         FunctionDescriptor functionDescriptor = JetChangeSignatureHandler.findDescriptor(element, project, editor, bindingContext);
         assertNotNull(functionDescriptor);
-        JetChangeSignatureDialog dialog = getChangeSignatureDialog(project, functionDescriptor,
-                                                                   JetChangeSignatureHandler.getConfiguration(), bindingContext, context);
+
+        JetChangeSignatureDialog dialog = getChangeSignatureDialog(
+                project, functionDescriptor, JetChangeSignatureHandler.getConfiguration(), bindingContext, context);
         assertNotNull(dialog);
+
         dialog.canRun();
         Disposer.register(getTestRootDisposable(), dialog.getDisposable());
         return dialog.evaluateChangeInfo();
