@@ -129,6 +129,7 @@ public class LazyTopDownAnalyzer {
                                 JetScript script = file.getScript();
                                 assert script != null;
 
+                                DescriptorResolver.registerFileInPackage(trace, file);
                                 c.getScripts().put(script, resolveSession.getScriptDescriptor(script));
                             }
                             else {
