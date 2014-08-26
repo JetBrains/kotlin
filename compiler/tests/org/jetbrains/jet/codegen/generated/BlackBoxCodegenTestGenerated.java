@@ -1468,6 +1468,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/controlStructures/doWhileFib.kt");
         }
         
+        @TestMetadata("doWhileWithContinue.kt")
+        public void testDoWhileWithContinue() throws Exception {
+            doTest("compiler/testData/codegen/box/controlStructures/doWhileWithContinue.kt");
+        }
+        
         @TestMetadata("emptyDoWhile.kt")
         public void testEmptyDoWhile() throws Exception {
             doTest("compiler/testData/codegen/box/controlStructures/emptyDoWhile.kt");

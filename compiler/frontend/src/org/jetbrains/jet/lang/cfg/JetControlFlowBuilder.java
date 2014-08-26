@@ -52,6 +52,8 @@ public interface JetControlFlowBuilder {
     Label getEntryPoint(@NotNull JetElement labelElement);
     @NotNull
     Label getExitPoint(@NotNull JetElement labelElement);
+    @NotNull
+    Label getConditionEntryPoint(@NotNull JetElement labelElement);
 
     // Declarations
     void declareParameter(@NotNull JetParameter parameter);

@@ -202,6 +202,14 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @NotNull
         @Override
+        public Label getConditionEntryPoint(@NotNull JetElement labelElement) {
+            BreakableBlockInfo blockInfo = elementToBlockInfo.get(labelElement);
+            assert blockInfo instanceof LoopInfo : "expected LoopInfo for " + labelElement.getText() ;
+            return ((LoopInfo)blockInfo).getConditionEntryPoint();
+        }
+
+        @NotNull
+        @Override
         public Label getExitPoint(@NotNull JetElement labelElement) {
             BreakableBlockInfo blockInfo = elementToBlockInfo.get(labelElement);
             assert blockInfo != null : labelElement.getText();
