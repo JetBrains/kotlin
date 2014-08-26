@@ -1,0 +1,22 @@
+<idea-plugin version="2" url="http://kotlin.jetbrains.org">
+    <id>org.jetbrains.kotlin.bare</id>
+
+    <name>Kotlin Bare Compiler for IntelliJ IDEA</name>
+    <description>
+        This plugin is intended for IntelliJ IDEA developers only. It should be installed along with main Kotlin plugin.
+        When main Kotlin plugin is disabled due to incompatibility with bleeding edge IntelliJ IDEA,
+        this plugin will still compile Kotlin sources.
+        <br />
+        This plugin is only capable of compiling Kotlin code. All highlighting, inspections, refactorings are disabled.
+    </description>
+    <version>@snapshot@</version>
+    <vendor url="http://www.jetbrains.com">JetBrains Inc.</vendor>
+
+    <idea-version since-build="138.977" until-build="999.9999"/>
+
+    <application-components>
+        <component>
+            <implementation-class>org.jetbrains.jet.plugin.bare.BareJpsPluginRegistrar</implementation-class>
+        </component>
+    </application-components>
+</idea-plugin>
