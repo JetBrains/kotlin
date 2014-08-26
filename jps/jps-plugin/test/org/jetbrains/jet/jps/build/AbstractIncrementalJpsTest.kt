@@ -132,11 +132,11 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
         FileUtil.copyDir(testDataDir, File(workDir, "src"), { it.getName().endsWith(".kt") || it.getName().endsWith(".java") })
 
-        JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject!!)
+        JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject)
                 .setOutputUrl(JpsPathUtil.pathToUrl(getAbsolutePath("out")))
 
         addModule("module", array(getAbsolutePath("src")), null, null, addJdk("my jdk"))
-        AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject!!)
+        AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject)
 
         initialMake()
 
