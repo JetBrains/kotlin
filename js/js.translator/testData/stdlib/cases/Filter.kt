@@ -6,12 +6,12 @@ import java.lang.Iterable
 /*
 Filters given iterator
 */
-inline fun <T> java.util.Iterator<T>.filter(f: (T) -> Boolean): java.util.Iterator<T> = FilterIterator<T>(this, f)
+fun <T> java.util.Iterator<T>.filter(f: (T) -> Boolean): java.util.Iterator<T> = FilterIterator<T>(this, f)
 
 /*
 Adds filtered elements in to given container
 */
-inline fun <T, U : Collection<in T>> java.lang.Iterable<T>.filterTo(var container: U, filter: (T) -> Boolean): U {
+fun <T, U : Collection<in T>> java.lang.Iterable<T>.filterTo(var container: U, filter: (T) -> Boolean): U {
     for (element in this) {
         if (filter(element))
             container.add(element)
@@ -23,7 +23,7 @@ inline fun <T, U : Collection<in T>> java.lang.Iterable<T>.filterTo(var containe
 Create iterator filtering given java.lang.Iterable
 */
 /*
-inline fun <T> java.lang.Iterable<T>.filter(f: (T)->Boolean) : java.util.Iterator<T> = (iterator() as java.util.Iterator<T>).filter(f)
+fun <T> java.lang.Iterable<T>.filter(f: (T)->Boolean) : java.util.Iterator<T> = (iterator() as java.util.Iterator<T>).filter(f)
 */
 
 private class FilterIterator<T>(val original: java.util.Iterator<T>, val filter: (T) -> Boolean) : java.util.Iterator<T> {

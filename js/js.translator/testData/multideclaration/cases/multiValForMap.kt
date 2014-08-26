@@ -3,7 +3,7 @@ package foo
 import java.util.HashMap
 
 
-public inline fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {
+public fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {
     val entrySet = this.entrySet()
     return entrySet.iterator()
 }

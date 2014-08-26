@@ -8,11 +8,11 @@ public class Foo {
 
 }
 
-public inline fun Foo.fooImp(): String {
+public fun Foo.fooImp(): String {
     return "impl" + blah()
 }
 
-public inline fun Foo.fooExp(): String {
+public fun Foo.fooExp(): String {
     return "expl" + this.blah()
 }
 

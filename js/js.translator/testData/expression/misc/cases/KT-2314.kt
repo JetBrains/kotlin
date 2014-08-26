@@ -11,7 +11,7 @@ fun box(): Boolean {
 }
 
 
-public inline fun arrayList<T>(vararg values: T): ArrayList<T> {
+public fun arrayList<T>(vararg values: T): ArrayList<T> {
     val c = ArrayList<T>()
     for (v in values) {
         c.add(v)
@@ -19,7 +19,7 @@ public inline fun arrayList<T>(vararg values: T): ArrayList<T> {
     return c
 }
 
-public inline val <T> ArrayList<T>.head: T
+public val <T> ArrayList<T>.head: T
     get() {
         return get(0)
     }
