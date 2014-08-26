@@ -18,41 +18,30 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.google.common.collect.*;
 import com.intellij.codeHighlighting.Pass;
-import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper;
 import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator;
 import com.intellij.codeInsight.daemon.impl.MarkerType;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
-import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
-import com.intellij.ide.util.MethodCellRenderer;
 import com.intellij.ide.util.PsiClassListCellRenderer;
-import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.PsiElementProcessorAdapter;
-import com.intellij.psi.search.searches.AllOverridingMethodsSearch;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
-import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.*;
-import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightMethodFromTrait;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
@@ -101,7 +90,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                 @Override
                 public String fun(@Nullable PsiElement element) {
                     PsiMethod psiMethod = getPsiMethod(element);
-                    return psiMethod != null ? getOverriddenMethodTooltip(psiMethod) : null;
+                    return psiMethod != null ? MarkersPackage.getOverriddenMethodTooltip(psiMethod) : null;
                 }
             },
 
@@ -110,7 +99,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                 public void browse(@Nullable MouseEvent e, @Nullable PsiElement element) {
                     PsiMethod psiMethod = getPsiMethod(element);
                     if (psiMethod != null) {
-                        navigateToOverriddenMethod(e, psiMethod);
+                        MarkersPackage.navigateToOverriddenMethod(e, psiMethod);
                     }
                 }
             }
@@ -370,7 +359,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         Set<PsiClass> classes = collectContainingClasses(mappingToJava.keySet());
 
-        for (JetProperty property : getOverriddenDeclarations(mappingToJava, classes)) {
+        for (JetProperty property : MarkersPackage.getOverriddenDeclarations(mappingToJava, classes)) {
             ProgressManager.checkCanceled();
 
             PsiElement anchor = property.getNameIdentifier();
@@ -400,7 +389,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         Set<PsiClass> classes = collectContainingClasses(mappingToJava.keySet());
 
-        for (JetNamedFunction function : getOverriddenDeclarations(mappingToJava, classes)) {
+        for (JetNamedFunction function : MarkersPackage.getOverriddenDeclarations(mappingToJava, classes)) {
             ProgressManager.checkCanceled();
 
             PsiElement anchor = function.getNameIdentifier();
@@ -427,129 +416,5 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             }
         }
         return classes;
-    }
-
-    private static <T> Set<T> getOverriddenDeclarations(final Map<PsiMethod, T> mappingToJava, Set<PsiClass> classes) {
-        final Set<T> overridden = Sets.newHashSet();
-        for (PsiClass aClass : classes) {
-            AllOverridingMethodsSearch.search(aClass).forEach(new Processor<Pair<PsiMethod, PsiMethod>>() {
-                @Override
-                public boolean process(Pair<PsiMethod, PsiMethod> pair) {
-                    ProgressManager.checkCanceled();
-
-                    if (!(pair.getSecond() instanceof KotlinLightMethodFromTrait)) {
-                        PsiMethod superMethod = pair.getFirst();
-
-                        T declaration = mappingToJava.get(superMethod);
-                        if (declaration != null) {
-                            mappingToJava.remove(superMethod);
-                            overridden.add(declaration);
-                        }
-                    }
-
-                    return !mappingToJava.isEmpty();
-                }
-            });
-        }
-
-        return overridden;
-    }
-
-    public static String getOverriddenMethodTooltip(PsiMethod method) {
-        PsiElementProcessor.CollectElementsWithLimit<PsiMethod> processor = new PsiElementProcessor.CollectElementsWithLimit<PsiMethod>(5);
-        OverridingMethodsSearch.search(method, true).forEach(new PsiElementProcessorAdapter<PsiMethod>(processor));
-
-        boolean isAbstract = method.hasModifierProperty(PsiModifier.ABSTRACT);
-
-        if (processor.isOverflow()){
-            return isAbstract ? DaemonBundle.message("method.is.implemented.too.many") : DaemonBundle.message("method.is.overridden.too.many");
-        }
-
-        PsiMethod[] javaOverridings = processor.toArray(PsiMethod.EMPTY_ARRAY);
-        List<PsiMethod> filter = ContainerUtil.filter(javaOverridings, new Condition<PsiMethod>() {
-            @Override
-            public boolean value(PsiMethod method) {
-                return !(method instanceof KotlinLightMethodFromTrait);
-            }
-        });
-        PsiMethod[] overridings = filter.toArray(new PsiMethod[filter.size()]);
-
-        if (overridings.length == 0) return null;
-
-        Comparator<PsiMethod> comparator = new MethodCellRenderer(false).getComparator();
-        Arrays.sort(overridings, comparator);
-
-        String start = isAbstract ? DaemonBundle.message("method.is.implemented.header") : DaemonBundle.message("method.is.overriden.header");
-        @NonNls String pattern = "&nbsp;&nbsp;&nbsp;&nbsp;{1}";
-        return GutterIconTooltipHelper.composeText(overridings, start, pattern);
-    }
-
-    public static void navigateToOverriddenMethod(MouseEvent e, final PsiMethod method) {
-        if (DumbService.isDumb(method.getProject())) {
-            DumbService.getInstance(method.getProject()).showDumbModeNotification(
-                    "Navigation to overriding classes is not possible during index update");
-            return;
-        }
-
-        final PsiElementProcessor.CollectElementsWithLimit<PsiMethod> collectProcessor =
-                new PsiElementProcessor.CollectElementsWithLimit<PsiMethod>(2, new THashSet<PsiMethod>());
-        if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-            @Override
-            public void run() {
-                OverridingMethodsSearch.search(method, true).forEach(new PsiElementProcessorAdapter<PsiMethod>(collectProcessor));
-            }
-        }, "Searching for overriding methods", true, method.getProject(), (JComponent)e.getComponent())) {
-            return;
-        }
-
-        PsiMethod[] javaOverridings = collectProcessor.toArray(PsiMethod.EMPTY_ARRAY);
-        List<PsiMethod> filter = ContainerUtil.filter(javaOverridings, new Condition<PsiMethod>() {
-            @Override
-            public boolean value(PsiMethod method) {
-                return !(method instanceof KotlinLightMethodFromTrait);
-            }
-        });
-        PsiMethod[] overridings = filter.toArray(new PsiMethod[filter.size()]);
-
-        if (overridings.length == 0) return;
-        boolean showMethodNames = !PsiUtil.allMethodsHaveSameSignature(overridings);
-        MethodCellRenderer renderer = new MethodCellRenderer(showMethodNames);
-        Arrays.sort(overridings, renderer.getComparator());
-        OverridingMethodsUpdater methodsUpdater = new OverridingMethodsUpdater(method, renderer);
-        PsiElementListNavigator.openTargets(e, overridings, methodsUpdater.getCaption(overridings.length), "Overriding methods of " + method.getName(), renderer, methodsUpdater);
-    }
-
-    private static class OverridingMethodsUpdater extends ListBackgroundUpdaterTask {
-        private final PsiMethod myMethod;
-        private final PsiElementListCellRenderer myRenderer;
-
-        public OverridingMethodsUpdater(PsiMethod method, PsiElementListCellRenderer renderer) {
-            super(method.getProject(), "Searching for overriding methods");
-            myMethod = method;
-            myRenderer = renderer;
-        }
-
-        @Override
-        public String getCaption(int size) {
-            return myMethod.hasModifierProperty(PsiModifier.ABSTRACT) ?
-                   DaemonBundle.message("navigation.title.implementation.method", myMethod.getName(), size) :
-                   DaemonBundle.message("navigation.title.overrider.method", myMethod.getName(), size);
-        }
-
-        @Override
-        public void run(@NotNull final ProgressIndicator indicator) {
-            super.run(indicator);
-            OverridingMethodsSearch.search(myMethod, true).forEach(
-                    new CommonProcessors.CollectProcessor<PsiMethod>() {
-                        @Override
-                        public boolean process(PsiMethod psiMethod) {
-                            if (!updateComponent(psiMethod, myRenderer.getComparator())) {
-                                indicator.cancel();
-                            }
-                            indicator.checkCanceled();
-                            return super.process(psiMethod);
-                        }
-                    });
-        }
     }
 }

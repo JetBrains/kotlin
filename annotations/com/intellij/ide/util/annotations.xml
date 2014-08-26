@@ -8,4 +8,7 @@
   <item name='com.intellij.ide.util.PsiElementListCellRenderer java.lang.String getElementText(T) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+    <item name='com.intellij.ide.util.PsiElementListCellRenderer java.util.Comparator&lt;T&gt; getComparator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>
