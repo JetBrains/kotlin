@@ -345,7 +345,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return lowerRendered + "!";
         }
 
-        String kotlinPrefix = "kotlin.";
+        String kotlinPrefix = !shortNames ? "kotlin." : "";
         String mutablePrefix = "Mutable";
         // java.util.List<Foo> -> (Mutable)List<Foo!>!
         String simpleCollection = replacePrefixes(
