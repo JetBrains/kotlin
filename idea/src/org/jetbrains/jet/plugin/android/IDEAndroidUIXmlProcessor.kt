@@ -27,13 +27,13 @@ import org.jetbrains.jet.lang.resolve.android.CliAndroidResourceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
 
 class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project) {
-    override val searchPath: String? = if (ApplicationManager.getApplication()!!.isUnitTestMode()) project.getUserData(TestConst.TESTDATA_PATH) + "res/layout/"
+    override val searchPath: String? = if (ApplicationManager.getApplication()!!.isUnitTestMode()) project.getUserData(TestConst.TESTDATA_PATH) + "layout/"
         else project.getBasePath() + "/res/layout/"
     override var androidAppPackage: String = ""
         get() = resourceManager.readManifest()._package
 
     override val resourceManager: AndroidResourceManager = if (ApplicationManager.getApplication()!!.isUnitTestMode())
-        CliAndroidResourceManager(project, searchPath, searchPath + "AndroidManifest.xml")
+        CliAndroidResourceManager(project, searchPath, project.getUserData(TestConst.TESTDATA_PATH) + "AndroidManifest.xml")
         else IDEAndroidResourceManager(project, searchPath)
 
     override fun parseSingleFileImpl(file: PsiFile): String {
