@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.structure;
+package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 
-import java.util.List;
-
-public interface JavaMethod extends JavaMember, JavaTypeParameterListOwner {
-    @NotNull
-    @ReadOnly
-    List<JavaValueParameter> getValueParameters();
-
-    boolean hasAnnotationParameterDefaultValue();
-
-    @Nullable
-    JavaType getReturnType();
+public class ReflectJavaPrimitiveType(private val klass: Class<*>): ReflectJavaType(), JavaPrimitiveType {
+    override fun getCanonicalText() = klass.getName()
 }

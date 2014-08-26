@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(), JavaClass {
-    override fun getInnerClasses(): Collection<JavaClass> {
-        // TODO
-        return listOf()
-    }
+    override fun getInnerClasses() =
+            klass.getDeclaredClasses()
+                    .filter { it.getSimpleName().isNotEmpty() }
+                    .map { ReflectJavaClass(it) }
 
     override fun getFqName(): FqName? {
         // TODO: can there be primitive types, arrays?
@@ -41,18 +41,12 @@ public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(
     override fun getSupertypes(): Collection<JavaClassifierType> {
         // TODO: also call getSuperclass() / getInterfaces() for classes without generic signature
         val supertypes = emptyOrSingletonList(klass.getGenericSuperclass()) + klass.getGenericInterfaces()
-        return supertypes.map { supertype -> ReflectJavaClassifierType(supertype) }
+        return supertypes.map { supertype -> ReflectJavaType.create(supertype) as JavaClassifierType }
     }
 
-    override fun getMethods(): Collection<JavaMethod> {
-        // TODO
-        return listOf()
-    }
+    override fun getMethods() = klass.getDeclaredMethods().map { method -> ReflectJavaMethod(method) }
 
-    override fun getFields(): Collection<JavaField> {
-        // TODO
-        return listOf()
-    }
+    override fun getFields() = klass.getDeclaredFields().map { field -> ReflectJavaField(field) }
 
     override fun getConstructors(): Collection<JavaConstructor> {
         // TODO

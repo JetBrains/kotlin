@@ -24,12 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 public class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinClassFinder {
     private fun findKotlinClass(fqName: String): KotlinJvmBinaryClass? {
-        return classLoader.tryLoadClass(fqName)?.let { try {
-            ReflectKotlinClass(it)
-        }
-        catch (e: ReflectKotlinClass.NotAKotlinClass) {
-            null
-        } }
+        return classLoader.tryLoadClass(fqName)?.let { ReflectKotlinClass.create(it) }
     }
 
     override fun findKotlinClass(classId: ClassId) = findKotlinClass(classId.toRuntimeFqName())

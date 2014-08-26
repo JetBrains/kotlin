@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.jvm.runtime
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.codegen.GenerationUtils
@@ -64,11 +63,13 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 .build()
     }
 
+    // NOTE: this test does a dirty hack of text substitution to make all annotations defined in source code retain at runtime.
+    // Specifically each "annotation class" is replaced by "Retention(RUNTIME) annotation class"
     protected fun doTest(ktFileName: String) {
         val ktFile = File(ktFileName)
 
         val environment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.ALL)
-        val jetFile = JetTestUtils.createFile(ktFileName, FileUtil.loadFile(ktFile, true), environment.getProject())
+        val jetFile = JetTestUtils.createFile(ktFileName, loadFileAddingRuntimeRetention(ktFile), environment.getProject())
         val classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile)
         val classLoader = GeneratedClassLoader(classFileFactory, null, ForTestCompileRuntime.runtimeJarForTests().toURI().toURL())
 
@@ -103,7 +104,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
             val klass = classLoader.loadClass(className).sure("Couldn't load class $className")
 
-            when (ReflectKotlinClass(klass).getClassHeader().kind) {
+            when (ReflectKotlinClass.create(klass)!!.getClassHeader().kind) {
                 KotlinClassHeader.Kind.PACKAGE_FACADE -> {
                     val packageView = module.getPackage(actual.getFqName()) ?: error("Couldn't resolve package ${actual.getFqName()}")
                     for (descriptor in packageView.getMemberScope().getAllDescriptors()) {
@@ -125,13 +126,21 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
         val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(tmpdir, getTestRootDisposable(),
                                                                                        ConfigurationKind.ALL)
-        val configuration = RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+        val comparatorConfiguration = RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
                 .checkPrimaryConstructors(true)
                 .checkPropertyAccessors(true)
                 .withRenderer(renderer)
-        RecursiveDescriptorComparator.validateAndCompareDescriptors(expected.first, actual, configuration, null)
+        RecursiveDescriptorComparator.validateAndCompareDescriptors(expected.first, actual, comparatorConfiguration, null)
     }
 
+    private fun loadFileAddingRuntimeRetention(file: File): String {
+        return file.readText().replace(
+                "annotation class",
+                "[java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)] annotation class"
+        )
+    }
+
+    // Resolves not only top level classes, but also nested classes, including class objects and classes nested within them
     private fun resolveClassByFqNameInModule(module: ModuleDescriptor, fqName: FqNameUnsafe): ClassDescriptor? {
         if (fqName.isRoot()) return null
 

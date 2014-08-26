@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.structure;
+package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
+import java.lang.reflect.GenericArrayType
+import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 
-import java.util.List;
-
-public interface JavaMethod extends JavaMember, JavaTypeParameterListOwner {
-    @NotNull
-    @ReadOnly
-    List<JavaValueParameter> getValueParameters();
-
-    boolean hasAnnotationParameterDefaultValue();
-
-    @Nullable
-    JavaType getReturnType();
+public class ReflectJavaArrayType(private val arrayType: GenericArrayType) : ReflectJavaType(), JavaArrayType {
+    override fun getComponentType() = ReflectJavaType.create(arrayType.getGenericComponentType()!!)
 }

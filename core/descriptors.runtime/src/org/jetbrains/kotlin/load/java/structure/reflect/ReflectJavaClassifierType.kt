@@ -29,9 +29,8 @@ public class ReflectJavaClassifierType(val classifierType: Type) : ReflectJavaTy
         return when (classifierType) {
             is Class<*> -> ReflectJavaClass(classifierType)
             is TypeVariable<*> -> ReflectJavaTypeParameter(classifierType)
-            // TODO
             is ParameterizedType -> ReflectJavaClass(classifierType.getRawType() as Class<*>)
-            else -> throw UnsupportedOperationException("Unsupported type (${classifierType.javaClass}): $classifierType")
+            else -> throw IllegalStateException("Not a classifier type (${classifierType.javaClass}): $classifierType")
         }
     }
 
@@ -44,7 +43,9 @@ public class ReflectJavaClassifierType(val classifierType: Type) : ReflectJavaTy
     override fun isRaw(): Boolean = with(classifierType) { this is Class<*> && getTypeParameters().isNotEmpty() }
 
     override fun getTypeArguments(): List<JavaType> {
-        // TODO
+        if (classifierType is ParameterizedType) {
+            return classifierType.getActualTypeArguments()!!.map { ReflectJavaType.create(it) }
+        }
         return listOf()
     }
 }

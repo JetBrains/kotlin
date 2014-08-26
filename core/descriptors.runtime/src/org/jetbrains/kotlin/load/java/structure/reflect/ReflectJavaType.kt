@@ -16,9 +16,28 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
+import org.jetbrains.kotlin.load.java.structure.JavaType
+import java.lang.reflect.*
+
+private val PRIMITIVE_TYPES = setOf(
+        java.lang.Integer.TYPE, java.lang.Character.TYPE, java.lang.Byte.TYPE, java.lang.Long.TYPE,
+        java.lang.Short.TYPE, java.lang.Boolean.TYPE, java.lang.Double.TYPE, java.lang.Float.TYPE,
+        java.lang.Void.TYPE
+)
 
 public abstract class ReflectJavaType : JavaType {
     override fun createArrayType(): JavaArrayType = throw UnsupportedOperationException()
+
+    class object {
+        fun create(reflectType: Type): ReflectJavaType {
+            return when (reflectType) {
+                in PRIMITIVE_TYPES -> ReflectJavaPrimitiveType(reflectType as Class<*>)
+                is Class<*>, is TypeVariable<*>, is ParameterizedType -> ReflectJavaClassifierType(reflectType)
+                is GenericArrayType -> ReflectJavaArrayType(reflectType)
+                is WildcardType -> ReflectJavaWildcardType(reflectType)
+                else -> throw UnsupportedOperationException("Unsupported type (${reflectType.javaClass}): $reflectType")
+            }
+        }
+    }
 }

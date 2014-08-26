@@ -16,40 +16,205 @@
 
 package org.jetbrains.kotlin.load.kotlin.reflect
 
+import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
+import org.jetbrains.kotlin.name.Name
+import java.lang.reflect.Constructor
+import java.lang.reflect.Field
+import java.lang.reflect.Method
 
-public class ReflectKotlinClass(private val klass: Class<*>) : KotlinJvmBinaryClass {
-    private val classHeader: KotlinClassHeader
+suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf(
+        // Primitives
+        javaClass<java.lang.Integer>(), javaClass<java.lang.Character>(), javaClass<java.lang.Byte>(), javaClass<java.lang.Long>(),
+        javaClass<java.lang.Short>(), javaClass<java.lang.Boolean>(), javaClass<java.lang.Double>(), javaClass<java.lang.Float>(),
+        // Arrays of primitives
+        javaClass<IntArray>(), javaClass<CharArray>(), javaClass<ByteArray>(), javaClass<LongArray>(),
+        javaClass<ShortArray>(), javaClass<BooleanArray>(), javaClass<DoubleArray>(), javaClass<FloatArray>(),
+        // Others
+        javaClass<Class<*>>(), javaClass<String>()
+)
 
-    {
-        val headerReader = ReadKotlinClassHeaderAnnotationVisitor()
-        loadClassAnnotations(headerReader)
-        val header = headerReader.createHeader()
-
-        if (header == null) {
-            // This exception must be caught in the caller
-            throw NotAKotlinClass()
+public class ReflectKotlinClass private(
+        private val klass: Class<*>,
+        private val classHeader: KotlinClassHeader
+) : KotlinJvmBinaryClass {
+    default object Factory {
+        public fun create(klass: Class<*>): ReflectKotlinClass? {
+            val headerReader = ReadKotlinClassHeaderAnnotationVisitor()
+            ReflectClassStructure.loadClassAnnotations(klass, headerReader)
+            return ReflectKotlinClass(klass, headerReader.createHeader() ?: return null)
         }
-
-        classHeader = header
     }
 
-    class NotAKotlinClass : RuntimeException()
+    override fun getClassId() = klass.classId
 
-    override fun getClassId(): ClassId = klass.classId
+    override fun getClassHeader() = classHeader
 
     override fun loadClassAnnotations(visitor: KotlinJvmBinaryClass.AnnotationVisitor) {
-        // TODO
-        visitor.visitEnd()
+        ReflectClassStructure.loadClassAnnotations(klass, visitor)
     }
 
     override fun visitMembers(visitor: KotlinJvmBinaryClass.MemberVisitor) {
-        // TODO
+        ReflectClassStructure.visitMembers(klass, visitor)
+    }
+}
+
+private object ReflectClassStructure {
+    fun loadClassAnnotations(klass: Class<*>, visitor: KotlinJvmBinaryClass.AnnotationVisitor) {
+        for (annotation in klass.getDeclaredAnnotations()) {
+            processAnnotation(visitor, annotation)
+        }
+        visitor.visitEnd()
     }
 
-    override fun getClassHeader() = classHeader
+    fun visitMembers(klass: Class<*>, memberVisitor: KotlinJvmBinaryClass.MemberVisitor) {
+        loadMethodAnnotations(klass, memberVisitor)
+        loadConstructorAnnotations(klass, memberVisitor)
+        loadFieldAnnotations(klass, memberVisitor)
+    }
+
+    private fun loadMethodAnnotations(klass: Class<*>, memberVisitor: KotlinJvmBinaryClass.MemberVisitor) {
+        for (method in klass.getDeclaredMethods()) {
+            val visitor = memberVisitor.visitMethod(Name.identifier(method.getName()), SignatureSerializer.methodDesc(method)) ?: continue
+
+            for (annotation in method.getDeclaredAnnotations()) {
+                processAnnotation(visitor, annotation)
+            }
+
+            for ((parameterIndex, annotations) in method.getParameterAnnotations().withIndex()) {
+                for (annotation in annotations) {
+                    val annotationType = annotation.annotationType()
+                    visitor.visitParameterAnnotation(parameterIndex, annotationType.classId)?.let {
+                        processAnnotationArguments(it, annotation, annotationType)
+                    }
+                }
+            }
+
+            visitor.visitEnd()
+        }
+    }
+
+    private fun loadConstructorAnnotations(klass: Class<*>, memberVisitor: KotlinJvmBinaryClass.MemberVisitor) {
+        for (constructor in klass.getDeclaredConstructors()) {
+            // TODO: load annotations on constructors
+            val visitor = memberVisitor.visitMethod(Name.special("<init>"), SignatureSerializer.constructorDesc(constructor)) ?: continue
+
+            // Constructors of enums have 2 additional synthetic parameters
+            // TODO: the similar logic should probably be present for annotations on parameters of inner class constructors
+            val shift = if (klass.isEnum()) 2 else 0
+            for ((parameterIndex, annotations) in constructor.getParameterAnnotations().withIndex()) {
+                for (annotation in annotations) {
+                    val annotationType = annotation.annotationType()
+                    visitor.visitParameterAnnotation(parameterIndex + shift, annotationType.classId)?.let {
+                        processAnnotationArguments(it, annotation, annotationType)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadFieldAnnotations(klass: Class<*>, memberVisitor: KotlinJvmBinaryClass.MemberVisitor) {
+        for (field in klass.getDeclaredFields()) {
+            val visitor = memberVisitor.visitField(Name.identifier(field.getName()), SignatureSerializer.fieldDesc(field), null) ?: continue
+
+            for (annotation in field.getDeclaredAnnotations()) {
+                processAnnotation(visitor, annotation)
+            }
+
+            visitor.visitEnd()
+        }
+    }
+
+    private fun processAnnotation(visitor: KotlinJvmBinaryClass.AnnotationVisitor, annotation: Annotation) {
+        val annotationType = annotation.annotationType()
+        visitor.visitAnnotation(annotationType.classId)?.let {
+            processAnnotationArguments(it, annotation, annotationType)
+        }
+    }
+
+    private fun processAnnotationArguments(
+            visitor: KotlinJvmBinaryClass.AnnotationArgumentVisitor,
+            annotation: Annotation,
+            annotationType: Class<*>
+    ) {
+        for (method in annotationType.getDeclaredMethods()) {
+            processAnnotationArgumentValue(visitor, Name.identifier(method.getName()), method(annotation))
+        }
+        visitor.visitEnd()
+    }
+
+    private fun processAnnotationArgumentValue(visitor: KotlinJvmBinaryClass.AnnotationArgumentVisitor, name: Name, value: Any) {
+        val clazz = value.javaClass
+        when {
+            clazz in TYPES_ELIGIBLE_FOR_SIMPLE_VISIT -> {
+                visitor.visit(name, value)
+            }
+            javaClass<Enum<*>>().isAssignableFrom(clazz) -> {
+                visitor.visitEnum(name, clazz.classId, Name.identifier(value.toString()))
+            }
+            javaClass<Annotation>().isAssignableFrom(clazz) -> {
+                // TODO: support values of annotation types
+                throw UnsupportedOperationException("Values of annotation types are not yet supported in Kotlin reflection: $value")
+            }
+            clazz.isArray() -> {
+                val elementVisitor = visitor.visitArray(name) ?: return
+                val componentType = clazz.getComponentType()
+                if (javaClass<Enum<*>>().isAssignableFrom(componentType)) {
+                    val componentClassName = componentType.classId
+                    for (element in value as Array<*>) {
+                        elementVisitor.visitEnum(componentClassName, Name.identifier(element.toString()))
+                    }
+                }
+                else {
+                    for (element in value as Array<*>) {
+                        elementVisitor.visit(element)
+                    }
+                }
+                elementVisitor.visitEnd()
+            }
+            else -> {
+                throw UnsupportedOperationException("Unsupported annotation argument value ($clazz): $value")
+            }
+        }
+    }
+}
+
+private object SignatureSerializer {
+    fun methodDesc(method: Method): String {
+        val sb = StringBuilder()
+        sb.append("(")
+        for (parameterType in method.getParameterTypes()) {
+            sb.append(typeDesc(parameterType))
+        }
+        sb.append(")")
+        sb.append(typeDesc(method.getReturnType()))
+        return sb.toString()
+    }
+
+    fun constructorDesc(constructor: Constructor<*>): String {
+        val sb = StringBuilder()
+        sb.append("(")
+        for (parameterType in constructor.getParameterTypes()) {
+            sb.append(typeDesc(parameterType))
+        }
+        sb.append(")V")
+        return sb.toString()
+    }
+
+    fun fieldDesc(field: Field): String {
+        return typeDesc(field.getType())
+    }
+
+    suppress("UNCHECKED_CAST")
+    fun typeDesc(clazz: Class<*>): String {
+        if (clazz == Void.TYPE) return "V";
+        // This is a clever exploitation of a format returned by Class.getName(): for arrays, it's almost an internal name,
+        // but with '.' instead of '/'
+        // TODO: ensure there are tests on arrays of nested classes, multi-dimensional arrays, etc.
+        val arrayClass = java.lang.reflect.Array.newInstance(clazz as Class<Any>, 0).javaClass
+        return arrayClass.getName().substring(1).replace('.', '/')
+    }
 }
