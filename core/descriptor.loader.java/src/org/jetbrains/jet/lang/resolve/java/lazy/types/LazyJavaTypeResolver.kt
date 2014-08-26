@@ -61,7 +61,7 @@ class LazyJavaTypeResolver(
             val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
             if (jetType != null) {
                 return if (PLATFORM_TYPES && attr.allowFlexible)
-                           DelegatingFlexibleType(jetType, TypeUtils.makeNullable(jetType))
+                           FlexibleJavaClassifierType.create(jetType, TypeUtils.makeNullable(jetType))
                        else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
             }
         }
@@ -72,7 +72,7 @@ class LazyJavaTypeResolver(
         val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed.toAttributes(attr.allowFlexible))
         val result = KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType)
         return if (PLATFORM_TYPES && attr.allowFlexible)
-                   DelegatingFlexibleType(
+            FlexibleJavaClassifierType.create(
                            KotlinBuiltIns.getInstance().getArrayType(INVARIANT, componentType),
                            TypeUtils.makeNullable(
                                    KotlinBuiltIns.getInstance().getArrayType(OUT_VARIANCE, componentType)
@@ -264,10 +264,20 @@ class LazyJavaTypeResolver(
         override fun isNullable(): Boolean = _nullable()
     }
 
-    private open class FlexibleJavaClassifierType(
+    public open class FlexibleJavaClassifierType protected (
             lowerBound: JetType,
             upperBound: JetType
     ) : DelegatingFlexibleType(lowerBound, upperBound), CustomTypeVariable {
+        public class object {
+            public fun create(lowerBound: JetType, upperBound: JetType): JetType {
+                if (lowerBound == upperBound) return lowerBound
+                return FlexibleJavaClassifierType(lowerBound, upperBound)
+            }
+        }
+
+        override fun create(lowerBound: JetType, upperBound: JetType): JetType {
+            return FlexibleJavaClassifierType.create(lowerBound, upperBound)
+        }
 
         override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
                                                && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor

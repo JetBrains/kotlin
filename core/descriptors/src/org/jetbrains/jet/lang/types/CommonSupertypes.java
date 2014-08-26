@@ -64,7 +64,7 @@ public class CommonSupertypes {
         }
 
         if (!hasFlexible) return commonSuperTypeForInflexible(types);
-        return new DelegatingFlexibleType(commonSuperTypeForInflexible(lower), commonSuperTypeForInflexible(upper));
+        return DelegatingFlexibleType.OBJECT$.create(commonSuperTypeForInflexible(lower), commonSuperTypeForInflexible(upper));
     }
 
     @NotNull

@@ -6157,7 +6157,8 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             
             @TestMetadata("GenericsInSupertypes.kt")
             public void testGenericsInSupertypes() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/j+k/GenericsInSupertypes.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/GenericsInSupertypes.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("inheritAbstractSamAdapter.kt")
@@ -6168,7 +6169,8 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             
             @TestMetadata("InheritedGenericFunction.kt")
             public void testInheritedGenericFunction() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/j+k/InheritedGenericFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/InheritedGenericFunction.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("innerNestedClassFromJava.kt")
@@ -7698,7 +7700,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         
         @TestMetadata("compiler/testData/diagnostics/tests/platformTypes")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({PlatformTypes.MethodCall.class})
+        @InnerTestClasses({PlatformTypes.CommonSupertype.class, PlatformTypes.MethodCall.class})
         @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class PlatformTypes extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInPlatformTypes() throws Exception {
@@ -7719,12 +7721,19 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             
             @TestMetadata("getParentOfType.kt")
             public void testGetParentOfType() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/platformTypes/getParentOfType.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/getParentOfType.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("inference.kt")
             public void testInference() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/inference.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("override.kt")
+            public void testOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/override.kt");
                 doTest(fileName);
             }
             
@@ -7734,9 +7743,32 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
-            @TestMetadata("override.kt")
-            public void testOverride() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/platformTypes/override.kt");
+            @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            public static class CommonSupertype extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInCommonSupertype() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/commonSupertype"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("collectionOrNull.kt")
+                public void testCollectionOrNull() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/collectionOrNull.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("inferenceWithBound.kt")
+                public void testInferenceWithBound() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/inferenceWithBound.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("stringOrNull.kt")
+                public void testStringOrNull() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/stringOrNull.kt");
+                    doTest(fileName);
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall")
@@ -7745,11 +7777,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public static class MethodCall extends AbstractJetDiagnosticsTest {
                 public void testAllFilesPresentInMethodCall() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/methodCall"), Pattern.compile("^(.+)\\.kt$"), true);
-                }
-                
-                @TestMetadata("inferenceWithBound.kt")
-                public void testInferenceWithBound() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/inferenceWithBound.kt");
                 }
                 
                 @TestMetadata("int.kt")
@@ -7802,7 +7829,8 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 
                 @TestMetadata("singleton.kt")
                 public void testSingleton() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/singleton.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/singleton.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("string.kt")
@@ -7813,7 +7841,8 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 
                 @TestMetadata("visitor.kt")
                 public void testVisitor() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/visitor.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/visitor.kt");
+                    doTest(fileName);
                 }
                 
             }

@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.*;
+import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -101,7 +102,7 @@ public class SingleAbstractMethodUtils {
                 if (fixedProjections == null) return null;
 
                 if (JavaPackage.getPLATFORM_TYPES() && !isSamConstructor) {
-                    return new DelegatingFlexibleType(fixedProjections, TypeUtils.makeNullable(fixedProjections));
+                    return LazyJavaTypeResolver.FlexibleJavaClassifierType.OBJECT$.create(fixedProjections, TypeUtils.makeNullable(fixedProjections));
                 }
 
                 return TypeUtils.makeNullableAsSpecified(fixedProjections, !isSamConstructor && samType.isNullable());
