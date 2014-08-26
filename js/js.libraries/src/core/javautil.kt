@@ -64,10 +64,13 @@ public open class ArrayList<E>(capacity: Int = 0) : AbstractList<E>() {
 
 library
 public open class LinkedList<E>() : AbstractList<E>() {
-    public override fun get(index: Int): E = js.noImpl
-    public override fun set(index: Int, element: E): E = js.noImpl
-    public override fun add(index: Int, element: E): Unit = js.noImpl
+    override fun get(index: Int): E = js.noImpl
+    override fun set(index: Int, element: E): E = js.noImpl
+    override fun add(index: Int, element: E): Unit = js.noImpl
+
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
     public fun poll(): E? = js.noImpl
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
     public fun peek(): E? = js.noImpl
     public fun offer(e: E): Boolean = js.noImpl
 }
@@ -92,18 +95,21 @@ public open class LinkedHashSet<E>(
 
 library
 public open class HashMap<K, V>(initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR) : MutableMap<K, V> {
-    public override fun size(): Int = js.noImpl
-    public override fun isEmpty(): Boolean = js.noImpl
-    public override fun get(key: Any?): V? = js.noImpl
-    public override fun containsKey(key: Any?): Boolean = js.noImpl
-    public override fun put(key: K, value: V): V = js.noImpl
-    public override fun putAll(m: Map<out K, out V>): Unit = js.noImpl
-    public override fun remove(key: Any?): V? = js.noImpl
-    public override fun clear(): Unit = js.noImpl
-    public override fun containsValue(value: Any?): Boolean = js.noImpl
-    public override fun keySet(): MutableSet<K> = js.noImpl
-    public override fun values(): MutableCollection<V> = js.noImpl
-    public override fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = js.noImpl
+    override fun size(): Int = js.noImpl
+    override fun isEmpty(): Boolean = js.noImpl
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    override fun get(key: Any?): V? = js.noImpl
+    override fun containsKey(key: Any?): Boolean = js.noImpl
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    override fun put(key: K, value: V): V? = js.noImpl
+    override fun putAll(m: Map<out K, V>): Unit = js.noImpl
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    override fun remove(key: Any?): V? = js.noImpl
+    override fun clear(): Unit = js.noImpl
+    override fun containsValue(value: Any?): Boolean = js.noImpl
+    override fun keySet(): MutableSet<K> = js.noImpl
+    override fun values(): MutableCollection<V> = js.noImpl
+    override fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = js.noImpl
 }
 
 library
