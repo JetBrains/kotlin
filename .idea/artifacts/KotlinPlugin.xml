@@ -34,19 +34,7 @@
           </element>
           <element id="library" level="project" name="javax.inject" />
           <element id="directory" name="jps">
-            <element id="archive" name="kotlin-jps-plugin.jar">
-              <element id="module-output" name="jps-plugin" />
-              <element id="directory" name="META-INF">
-                <element id="dir-copy" path="$PROJECT_DIR$/jps-plugin/src/META-INF" />
-              </element>
-              <element id="module-output" name="ide-compiler-runner" />
-              <element id="module-output" name="cli-common" />
-              <element id="module-output" name="util" />
-              <element id="module-output" name="preloader" />
-              <element id="file-copy" path="$PROJECT_DIR$/resources/manifest.properties" />
-              <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/cli-parser-1.1.1.jar" path-in-jar="/" />
-              <element id="module-output" name="util.runtime" />
-            </element>
+            <element id="artifact" artifact-name="KotlinJpsPlugin" />
           </element>
           <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-runtime.jar" />
         </element>
