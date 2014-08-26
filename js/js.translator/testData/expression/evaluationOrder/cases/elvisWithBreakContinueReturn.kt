@@ -11,14 +11,14 @@ fun bar(a: A?): String {
 
 fun testBreak(a: A?, expected: Int) {
     var i = 0
-    while (i++ < 5) {
-        if (i == 2) a ?: break
+    while(i++<5) {
+        if (i==2) a ?: break
     }
     assertEquals(expected, i, "break 1")
 
     i = 0
-    while (i++ < 5) {
-        if (i == 2) {
+    while(i++<5) {
+        if (i==2) {
             var x = a ?: break
         }
     }
@@ -28,16 +28,16 @@ fun testBreak(a: A?, expected: Int) {
 fun testContinue(a: A?, expected: Int) {
     var i = 0
     var n = 0
-    while (i++ < 5) {
-        if (i == 2) a ?: continue
+    while(i++<5) {
+        if (i==2) a ?: continue
         n++
     }
     assertEquals(expected, n)
 
     i = 0
     n = 0
-    while (i++ < 5) {
-        if (i == 2) {
+    while(i++<5) {
+        if (i==2)  {
             var x = a ?: continue
         }
         n++
@@ -50,8 +50,22 @@ fun box(): String {
     testBreak(null, 2)
     testBreak(A(), 6)
 
+    var i = 0
+    while(i++<5) {
+        if (i==2) break ?: null
+    }
+    assertEquals(2, i, "break ?: null")
+
     testContinue(null, 4)
     testContinue(A(), 5)
+
+    i = 0
+    var n = 0
+    while(i++<5) {
+        if (i==2) continue ?: null
+        n++
+    }
+    assertEquals(4, n, "continue ?: null")
 
     assertEquals("A", bar(null))
     assertEquals("B", bar(A()))

@@ -192,6 +192,9 @@ object SuperCallCase : FunctionCallCase {
 }
 
 fun FunctionCallInfo.translateFunctionCall(): JsExpression {
+    if (this.argumentsInfo.hasEmptyExpressionArgument())
+        return context.getEmptyExpression()
+
     val intrinsic = DelegateFunctionIntrinsic.intrinsic(this)
 
     return when {

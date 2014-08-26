@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isAssignment;
@@ -45,6 +46,10 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression translate() {
+        if (JsAstUtils.isEmptyExpression(right)) {
+            return right;
+        }
+
         if (isAssignment(getOperationToken(expression))) {
             return translateAsPlainAssignment();
         }

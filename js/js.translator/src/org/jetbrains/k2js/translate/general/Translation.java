@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.MainCallParameters;
@@ -36,6 +37,7 @@ import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.StaticContext;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.PackageDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
@@ -46,6 +48,7 @@ import org.jetbrains.k2js.translate.test.JSTestGenerator;
 import org.jetbrains.k2js.translate.test.JSTester;
 import org.jetbrains.k2js.translate.test.QUnitTester;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,6 +56,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 /**
  * This class provides a interface which all translators use to interact with each other.
@@ -101,7 +105,7 @@ public final class Translation {
 
     @NotNull
     public static JsExpression translateAsExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
-        return convertToExpression(translateExpression(expression, context), context);
+        return translateAsExpression(expression, context, context.dynamicContext().jsBlock());
     }
 
     @NotNull
@@ -110,7 +114,21 @@ public final class Translation {
             @NotNull TranslationContext context,
             @NotNull JsBlock block
     ) {
-        return convertToExpression(translateExpression(expression, context, block), context, block);
+        JsNode jsNode = translateExpression(expression, context, block);
+        if (jsNode instanceof  JsExpression) {
+            return (JsExpression) jsNode;
+        }
+
+        assert jsNode instanceof JsStatement : "Unexpected node of type: " + jsNode.getClass().toString();
+        if (BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext())) {
+            TemporaryVariable result = context.declareTemporary(null);
+            AssignToExpressionMutator saveResultToTemporaryMutator = new AssignToExpressionMutator(result.reference());
+            block.getStatements().add(mutateLastExpression(jsNode, saveResultToTemporaryMutator));
+            return result.reference();
+        }
+
+        block.getStatements().add(convertToStatement(jsNode));
+        return context.getEmptyExpression();
     }
 
     @NotNull

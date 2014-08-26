@@ -54,7 +54,7 @@ public final class ForeachTest extends AbstractExpressionTest {
         checkFooBoxIsOk();
     }
 
-    public void testForWithWhile() throws Exception {
+    public void testLabeledForWithWhile() throws Exception {
         checkFooBoxIsOk();
     }
 }

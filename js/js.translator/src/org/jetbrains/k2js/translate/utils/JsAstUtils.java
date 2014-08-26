@@ -21,15 +21,11 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.Namer;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 public final class JsAstUtils {
     private static final JsNameRef DEFINE_PROPERTY = new JsNameRef("defineProperty");
@@ -71,22 +67,28 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression convertToExpression(@NotNull JsNode jsNode, @NotNull TranslationContext context) {
-        return convertToExpression(jsNode, context, context.dynamicContext().jsBlock());
+    private static JsStatement deBlockIfPossible(@NotNull JsStatement statement) {
+        if (statement instanceof JsBlock && ((JsBlock)statement).getStatements().size() == 1) {
+            return ((JsBlock)statement).getStatements().get(0);
+        }
+        else {
+            return statement;
+        }
     }
 
     @NotNull
-    public static JsExpression convertToExpression(@NotNull JsNode jsNode, @NotNull TranslationContext context, @NotNull JsBlock block) {
-        if (jsNode instanceof  JsExpression) {
-            return (JsExpression) jsNode;
-        }
-        else {
-            assert jsNode instanceof JsStatement : "Unexpected node of type: " + jsNode.getClass().toString();
-            TemporaryVariable result = context.declareTemporary(null);
-            AssignToExpressionMutator saveResultToTemporaryMutator = new AssignToExpressionMutator(result.reference());
-            block.getStatements().add(mutateLastExpression(jsNode, saveResultToTemporaryMutator));
-            return result.reference();
-        }
+    public static JsIf newJsIf(
+            @NotNull JsExpression ifExpression,
+            @NotNull JsStatement thenStatement,
+            @Nullable JsStatement elseStatement
+    ) {
+        elseStatement = elseStatement != null ? deBlockIfPossible(elseStatement) : null;
+        return new JsIf(ifExpression, deBlockIfPossible(thenStatement), elseStatement);
+    }
+
+    @NotNull
+    public static JsIf newJsIf(@NotNull JsExpression ifExpression, @NotNull JsStatement thenStatement) {
+        return newJsIf(ifExpression, thenStatement, null);
     }
 
     @Nullable
@@ -99,9 +101,20 @@ public final class JsAstUtils {
         if (block.isEmpty()) {
             return statement;
         } else {
+            if (isEmptyStatement(statement)) {
+                return deBlockIfPossible(block);
+            }
             block.getStatements().add(statement);
             return block;
         }
+    }
+
+    public static boolean isEmptyStatement(@NotNull JsStatement statement) {
+        return statement instanceof JsEmpty;
+    }
+
+    public static boolean isEmptyExpression(@NotNull JsExpression expression) {
+        return expression instanceof JsEmptyExpression;
     }
 
     @NotNull

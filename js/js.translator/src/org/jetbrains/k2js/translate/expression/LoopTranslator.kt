@@ -40,12 +40,13 @@ public fun createWhile(doWhile: Boolean, expression: JetWhileExpressionBase, con
                               throw IllegalArgumentException("condition expression should not be null: ${expression.getText()}")
     val conditionBlock = JsBlock()
     var jsCondition = Translation.translateAsExpression(conditionExpression, context, conditionBlock)
+    val isEmptyLoopCondition = isEmptyExpression(jsCondition)
     val body = expression.getBody()
     var bodyStatement =
         if (body != null)
             Translation.translateAsStatement(body, context)
         else
-            context.program().getEmptyStatement()
+            context.getEmptyStatement()
 
     if (!conditionBlock.isEmpty()) {
         val breakIfConditionIsFalseStatement = JsIf(not(jsCondition), JsBreak())
@@ -56,17 +57,28 @@ public fun createWhile(doWhile: Boolean, expression: JetWhileExpressionBase, con
             // translate to: tmpSecondRun = false; do { if(tmpSecondRun) { <expr> if(!tmpExprVar) break; } else tmpSecondRun=true; <body> } while(true)
             val secondRun = context.declareTemporary(JsLiteral.FALSE)
             context.addStatementToCurrentBlock(secondRun.assignmentExpression().makeStmt())
-            conditionBlock.getStatements().add(breakIfConditionIsFalseStatement)
+            if (!isEmptyLoopCondition) {
+                conditionBlock.getStatements().add(breakIfConditionIsFalseStatement)
+            }
             val ifStatement = JsIf(secondRun.reference(), conditionBlock, assignment(secondRun.reference(), JsLiteral.TRUE).makeStmt())
             bodyBlock.getStatements().add(0, ifStatement)
         }
         else {
             // translate to: while (true) { <expr> if(!tmpExprVar) break; <body> }
-            conditionBlock.getStatements().add(breakIfConditionIsFalseStatement)
-            bodyBlock.getStatements().addAll(0, conditionBlock.getStatements())
+            if (isEmptyLoopCondition) {
+                bodyBlock.getStatements().clear()
+                context.addStatementsToCurrentBlockFrom(conditionBlock)
+            }
+            else {
+                conditionBlock.getStatements().add(breakIfConditionIsFalseStatement)
+                bodyBlock.getStatements().addAll(0, conditionBlock.getStatements())
+            }
         }
 
         bodyStatement = bodyBlock
+    }
+    else if (isEmptyLoopCondition) {
+        jsCondition = JsLiteral.FALSE
     }
 
     val result = if (doWhile) JsDoWhile() else JsWhile()

@@ -30,6 +30,8 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,11 +66,17 @@ public class CallArgumentTranslator extends AbstractTranslator {
         private final List<JsExpression> translateArguments;
         private final boolean hasSpreadOperator;
         private final TemporaryConstVariable cachedReceiver;
+        private final boolean hasEmptyExpressionArgument;
 
         public ArgumentsInfo(List<JsExpression> arguments, boolean operator, TemporaryConstVariable receiver) {
+            this(arguments, operator, receiver, false);
+        }
+
+        public ArgumentsInfo(List<JsExpression> arguments, boolean operator, TemporaryConstVariable receiver, boolean hasEmptyExpressionArgument) {
             translateArguments = arguments;
             hasSpreadOperator = operator;
             cachedReceiver = receiver;
+            this.hasEmptyExpressionArgument = hasEmptyExpressionArgument;
         }
 
         @NotNull
@@ -84,9 +92,16 @@ public class CallArgumentTranslator extends AbstractTranslator {
         public TemporaryConstVariable getCachedReceiver() {
             return cachedReceiver;
         }
+
+        public boolean hasEmptyExpressionArgument() {
+            return hasEmptyExpressionArgument;
+        }
     }
 
-    public static void translateSingleArgument(
+    public static enum ArgumentsKind { HAS_EMPTY_EXPRESSION_ARGUMENT, HAS_NOT_EMPTY_EXPRESSION_ARGUMENT }
+
+    @NotNull
+    public static ArgumentsKind translateSingleArgument(
             @NotNull ResolvedValueArgument actualArgument,
             @NotNull List<JsExpression> result,
             @NotNull TranslationContext context,
@@ -94,31 +109,41 @@ public class CallArgumentTranslator extends AbstractTranslator {
     ) {
         List<ValueArgument> valueArguments = actualArgument.getArguments();
         if (actualArgument instanceof VarargValueArgument) {
-            translateVarargArgument(valueArguments, result, context, shouldWrapVarargInArray);
+            return translateVarargArgument(valueArguments, result, context, shouldWrapVarargInArray);
         }
         else if (actualArgument instanceof DefaultValueArgument) {
             result.add(context.namer().getUndefinedExpression());
+            return ArgumentsKind.HAS_NOT_EMPTY_EXPRESSION_ARGUMENT;
         }
         else {
             assert actualArgument instanceof ExpressionValueArgument;
             assert valueArguments.size() == 1;
             JetExpression argumentExpression = valueArguments.get(0).getArgumentExpression();
             assert argumentExpression != null;
-            result.add(Translation.translateAsExpression(argumentExpression, context));
+            JsExpression jsExpression = Translation.translateAsExpression(argumentExpression, context);
+            result.add(jsExpression);
+            if (JsAstUtils.isEmptyExpression(jsExpression)) {
+                return ArgumentsKind.HAS_EMPTY_EXPRESSION_ARGUMENT;
+            }
+            else {
+                return ArgumentsKind.HAS_NOT_EMPTY_EXPRESSION_ARGUMENT;
+            }
         }
     }
 
-    private static void translateVarargArgument(
+    @NotNull
+    private static ArgumentsKind translateVarargArgument(
             @NotNull List<ValueArgument> arguments,
             @NotNull List<JsExpression> result,
             @NotNull TranslationContext context,
             boolean shouldWrapVarargInArray
     ) {
+        ArgumentsKind resultKind = ArgumentsKind.HAS_NOT_EMPTY_EXPRESSION_ARGUMENT;
         if (arguments.isEmpty()) {
             if (shouldWrapVarargInArray) {
                 result.add(new JsArrayLiteral(Collections.<JsExpression>emptyList()));
             }
-            return;
+            return ArgumentsKind.HAS_NOT_EMPTY_EXPRESSION_ARGUMENT;
         }
 
         List<JsExpression> list;
@@ -140,10 +165,15 @@ public class CallArgumentTranslator extends AbstractTranslator {
             context.moveVarsFrom(argContext);
             argContexts.add(argContext);
             argumentsShouldBeExtractedToTmpVars = argumentsShouldBeExtractedToTmpVars || !argContext.currentBlockIsEmpty();
+            if (JsAstUtils.isEmptyExpression(argExpression)) {
+                resultKind = ArgumentsKind.HAS_EMPTY_EXPRESSION_ARGUMENT;
+                break;
+            }
         }
         if (argumentsShouldBeExtractedToTmpVars) {
             extractArgumentsToTmpVars(list, argContexts, context);
         }
+        return resultKind;
     }
 
     private static void extractArgumentsToTmpVars(
@@ -154,7 +184,7 @@ public class CallArgumentTranslator extends AbstractTranslator {
         for(int i=0; i<argExpressions.size(); i++) {
             TranslationContext argContext = argContexts.get(i);
             JsExpression jsArgExpression = argExpressions.get(i);
-            if (argContext.currentBlockIsEmpty()) {
+            if (argContext.currentBlockIsEmpty() && TranslationUtils.isCacheNeeded(jsArgExpression)) {
                 TemporaryVariable temporaryVariable = context.declareTemporary(jsArgExpression);
                 context.addStatementToCurrentBlock(temporaryVariable.assignmentExpression().makeStmt());
                 argExpressions.set(i, temporaryVariable.reference());
@@ -192,6 +222,7 @@ public class CallArgumentTranslator extends AbstractTranslator {
     }
 
     private ArgumentsInfo translate() {
+        boolean hasEmptyExpressionArgument = false;
         List<ValueParameterDescriptor> valueParameters = resolvedCall.getResultingDescriptor().getValueParameters();
         if (valueParameters.isEmpty()) {
             return new ArgumentsInfo(Collections.<JsExpression>emptyList(), false, null);
@@ -223,10 +254,15 @@ public class CallArgumentTranslator extends AbstractTranslator {
                 }
             }
             TranslationContext argContext = context().innerBlock();
-            translateSingleArgument(actualArgument, result, argContext, !isNativeFunctionCall && !hasSpreadOperator);
+            ArgumentsKind kind = translateSingleArgument(actualArgument, result, argContext, !isNativeFunctionCall && !hasSpreadOperator);
             context().moveVarsFrom(argContext);
             argContexts.add(argContext);
             argumentsShouldBeExtractedToTmpVars = argumentsShouldBeExtractedToTmpVars || !argContext.currentBlockIsEmpty();
+
+            if (kind == ArgumentsKind.HAS_EMPTY_EXPRESSION_ARGUMENT) {
+                hasEmptyExpressionArgument = true;
+                break;
+            }
         }
 
         if (argumentsShouldBeExtractedToTmpVars) {
@@ -249,7 +285,7 @@ public class CallArgumentTranslator extends AbstractTranslator {
         }
 
         removeLastUndefinedArguments(result);
-        return new ArgumentsInfo(result, hasSpreadOperator, cachedReceiver);
+        return new ArgumentsInfo(result, hasSpreadOperator, cachedReceiver, hasEmptyExpressionArgument);
     }
 
 }
