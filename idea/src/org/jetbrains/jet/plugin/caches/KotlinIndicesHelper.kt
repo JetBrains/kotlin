@@ -98,6 +98,7 @@ public class KotlinIndicesHelper(private val project: Project) {
     private fun MutableCollection<in FunctionDescriptor>.addSourceTopLevelFunctions(name: String, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope) {
         val identifier = Name.identifier(name)
         val affectedPackages = JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(name, project, scope)
+                .stream()
                 .map { it.getContainingFile() }
                 .filterIsInstance(javaClass<JetFile>())
                 .map { it.getPackageFqName() }
@@ -113,6 +114,7 @@ public class KotlinIndicesHelper(private val project: Project) {
     private fun MutableCollection<in PropertyDescriptor>.addSourceTopLevelProperties(name: String, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope) {
         val identifier = Name.identifier(name)
         val affectedPackages = JetTopLevelNonExtensionPropertyShortNameIndex.getInstance().get(name, project, scope)
+                .stream()
                 .map { it.getContainingFile() }
                 .filterIsInstance(javaClass<JetFile>())
                 .map { it.getPackageFqName() }

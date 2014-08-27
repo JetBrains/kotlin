@@ -165,8 +165,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun addKotlinTopLevelDeclarations() {
         val filter = { (name: String) -> prefixMatcher.prefixMatches(name) }
-        collector.addDescriptorElements(indicesHelper.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope) +
-                                                indicesHelper.getTopLevelObjects(filter, resolveSession, searchScope))
+        collector.addDescriptorElements(indicesHelper.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope))
+        collector.addDescriptorElements(indicesHelper.getTopLevelObjects(filter, resolveSession, searchScope))
     }
 
     private fun addKotlinExtensions() {

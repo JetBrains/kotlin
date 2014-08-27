@@ -30,7 +30,9 @@ open class BaseDeclarationInsertHandler : InsertHandler<LookupElement> {
             val name = descriptor.getName()
             val nameInCode = DescriptorRenderer.SOURCE_CODE.renderName(name)
             val document = context.getDocument()
-            if (nameInCode != name.asString() && document.getText(TextRange(context.getStartOffset(), context.getTailOffset())) == name.asString()) {
+            val needEscaping = nameInCode != name.asString()
+            // we check that text inserted matches the name because something else can be inserted by custom insert handler
+            if (needEscaping && document.getText(TextRange(context.getStartOffset(), context.getTailOffset())) == name.asString()) {
                 document.replaceString(context.getStartOffset(), context.getTailOffset(), nameInCode)
             }
         }
