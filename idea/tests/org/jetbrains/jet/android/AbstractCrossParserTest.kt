@@ -29,19 +29,32 @@ import kotlin.test.assertEquals
 import org.jetbrains.jet.plugin.android.TestConst
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.jet.test.TestMetadata
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import com.intellij.ide.startup.impl.StartupManagerImpl
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import org.jetbrains.jet.JetTestCaseBuilder
+import com.intellij.openapi.startup.StartupManager
 
 public abstract class AbstractCrossParserTest : LightCodeInsightFixtureTestCase() {
     public fun doTest(path: String) {
-        val jetCoreEnvironment = getEnvironment(path)
-        val project = jetCoreEnvironment.getProject()
+        val project = myFixture.getProject()
         project.putUserData(TestConst.TESTDATA_PATH, path)
-        val cliParser = CliAndroidUIXmlProcessor(jetCoreEnvironment.getProject(), path + "/layout", path + "AndroidManifest.xml")
-        val ideParser = IDEAndroidUIXmlProcessor(jetCoreEnvironment.getProject())
+        myFixture.copyDirectoryToProject(getTestName(true), "")
+        val cliParser = CliAndroidUIXmlProcessor(project, path + "/layout", path + "AndroidManifest.xml")
+        val ideParser = IDEAndroidUIXmlProcessor(project)
 
         val cliResult = cliParser.parseToPsi(project)!!.getText()
         val ideResult = ideParser.parseToPsi(project)!!.getText()
 
         assertEquals(cliResult, ideResult)
+    }
+    override fun setUp() {
+        super.setUp()
+        myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/android/crossParser")
+        (StartupManager.getInstance(getProject()) as StartupManagerImpl).runPostStartupActivities()
+        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory())
     }
 
     private fun getEnvironment(testPath: String): JetCoreEnvironment {
@@ -49,5 +62,8 @@ public abstract class AbstractCrossParserTest : LightCodeInsightFixtureTestCase(
                 configuration.put<String>(JVMConfigurationKeys.ANDROID_RES_PATH, testPath + "/layout")
                 configuration.put<String>(JVMConfigurationKeys.ANDROID_MANIFEST, testPath + "/AndroidManifest.xml")
         return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration)
+    }
+    override fun getTestDataPath(): String? {
+        return PluginTestCaseBase.getTestDataPathBase() + "/android/crossParser/"
     }
 }
