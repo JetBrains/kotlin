@@ -191,8 +191,8 @@ public class TypeSubstitutor {
                         substitutedType = typeVariable.substitutionResult(replacement.getType());
                     }
                     else {
-                        boolean resultingIsNullable = type.isNullable() || replacement.getType().isNullable();
-                        substitutedType = TypeUtils.makeNullableAsSpecified(replacement.getType(), resultingIsNullable);
+                        // this is a simple type T or T?: if it's T, we should just take replacement, if T? - we make replacement nullable
+                        substitutedType = type.isNullable() ? TypeUtils.makeNullable(replacement.getType()) : replacement.getType();
                     }
 
                     Variance resultingProjectionKind = combine(originalProjectionKind, replacement.getProjectionKind());
