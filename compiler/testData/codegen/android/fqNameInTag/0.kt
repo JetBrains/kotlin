@@ -22,8 +22,12 @@ class MyActivity(): Activity() {
             else -> null
         }
     }
+
+    public fun box(): String {
+        return if (login.toString() == "MyButton") "OK" else ""
+    }
 }
 
 fun box(): String {
-    return "OK"
+    return MyActivity().box()
 }
