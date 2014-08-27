@@ -52,8 +52,11 @@ import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
+    class object {
+        public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
+    }
 
-    override fun getPresentableName() = "Kotlin Builder"
+    override fun getPresentableName() = KOTLIN_BUILDER_NAME
 
     override fun getCompilableFileExtensions() = arrayListOf("kt")
 
