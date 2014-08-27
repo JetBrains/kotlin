@@ -30,6 +30,8 @@ import org.jetbrains.jet.config.IncrementalCompilation
 import java.util.ArrayList
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import kotlin.test.fail
+import java.util.HashMap
+import org.jetbrains.jet.utils.keysToMap
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     private var testDataDir: File by Delegates.notNull()
@@ -69,16 +71,35 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         buildGetLog(CompileScopeTestBuilder.rebuild().allModules())
     }
 
-    private fun getModificationsToPerform(): List<List<Modification>> {
+    private fun getModificationsToPerform(moduleNames: Collection<String>?): List<List<Modification>> {
 
         fun getModificationsForIteration(newSuffix: String, deleteSuffix: String): List<Modification> {
+
+            fun getDirPrefix(fileName: String): String {
+                val underscore = fileName.indexOf("_")
+
+                if (underscore != -1) {
+                    val module = fileName.substring(0, underscore)
+
+                    assert(moduleNames != null) { "File name has module prefix, but multi-module environment is absent" }
+                    assert(module in moduleNames!!) { "Module not found for file with prefix: $fileName" }
+
+                    return module + "/src"
+                }
+
+                assert(moduleNames == null) { "Test is multi-module, but file has no module prefix: $fileName" }
+                return "src"
+            }
+
             val modifications = ArrayList<Modification>()
             for (file in testDataDir.listFiles()!!) {
-                if (file.getName().endsWith(newSuffix)) {
-                    modifications.add(ModifyContent(file.getName().trimTrailing(newSuffix), file))
+                val fileName = file.getName()
+
+                if (fileName.endsWith(newSuffix)) {
+                    modifications.add(ModifyContent(getDirPrefix(fileName) + "/" + fileName.trimTrailing(newSuffix), file))
                 }
-                if (file.getName().endsWith(deleteSuffix)) {
-                    modifications.add(DeleteFile(file.getName().trimTrailing(deleteSuffix)))
+                if (fileName.endsWith(deleteSuffix)) {
+                    modifications.add(DeleteFile(getDirPrefix(fileName) + "/" + fileName.trimTrailing(deleteSuffix)))
                 }
             }
             return modifications
@@ -122,6 +143,22 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         rebuildAndCheckOutput()
     }
 
+    private fun readModuleDependencies(): Map<String, List<String>>? {
+        val dependenciesTxt = File(testDataDir, "dependencies.txt")
+        if (!dependenciesTxt.exists()) return null
+
+        val result = HashMap<String, List<String>>()
+        for (line in dependenciesTxt.readLines()) {
+            val split = line.split("->")
+            val module = split[0]
+            val dependencies = split[1].split(",")
+
+            result[module] = dependencies.toList()
+        }
+
+        return result
+    }
+
     protected fun doTest(testDataPath: String) {
         if (!IncrementalCompilation.ENABLED) {
             return
@@ -130,17 +167,47 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         testDataDir = File(testDataPath)
         workDir = FileUtil.createTempDirectory("jps-build", null)
 
-        FileUtil.copyDir(testDataDir, File(workDir, "src"), { it.getName().endsWith(".kt") || it.getName().endsWith(".java") })
-
         JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject)
                 .setOutputUrl(JpsPathUtil.pathToUrl(getAbsolutePath("out")))
 
-        addModule("module", array(getAbsolutePath("src")), null, null, addJdk("my jdk"))
+        val jdk = addJdk("my jdk")
+
+        val moduleDependencies = readModuleDependencies()
+
+        val moduleNames: Set<String>? // null means one module
+
+        if (moduleDependencies == null) {
+            addModule("module", array(getAbsolutePath("src")), null, null, jdk)
+
+            FileUtil.copyDir(testDataDir, File(workDir, "src"), { it.getName().endsWith(".kt") || it.getName().endsWith(".java") })
+
+            moduleNames = null
+        }
+        else {
+            val nameToModule = moduleDependencies.keySet()
+                    .keysToMap { addModule(it, array(getAbsolutePath(it + "/src")), null, null, jdk)!! }
+
+            for ((moduleName, dependencies) in moduleDependencies) {
+                val module = nameToModule[moduleName]!!
+                for (dependency in dependencies) {
+                    module.getDependenciesList().addModuleDependency(nameToModule[dependency]!!)
+                }
+            }
+
+            for (module in nameToModule.values()) {
+                val moduleName = module.getName()
+
+                FileUtil.copyDir(testDataDir, File(workDir, moduleName + "/src"),
+                                 { it.getName().startsWith(moduleName + "_") && (it.getName().endsWith(".kt") || it.getName().endsWith(".java")) })
+            }
+
+            moduleNames = nameToModule.keySet()
+        }
         AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject)
 
         initialMake()
 
-        val modifications = getModificationsToPerform()
+        val modifications = getModificationsToPerform(moduleNames)
         val logs = ArrayList<String>()
 
         for (step in modifications) {
@@ -179,15 +246,15 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
     }
 
-    private abstract class Modification(val name: String) {
+    private abstract class Modification(val path: String) {
         abstract fun perform(workDir: File)
 
-        override fun toString(): String = "${javaClass.getSimpleName()} $name"
+        override fun toString(): String = "${javaClass.getSimpleName()} $path"
     }
 
-    private class ModifyContent(name: String, val dataFile: File) : Modification(name) {
+    private class ModifyContent(path: String, val dataFile: File) : Modification(path) {
         override fun perform(workDir: File) {
-            val file = File(workDir, "src/$name")
+            val file = File(workDir, path)
 
             val oldLastModified = file.lastModified()
             dataFile.copyTo(file)
@@ -200,9 +267,9 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
     }
 
-    private class DeleteFile(name: String) : Modification(name) {
+    private class DeleteFile(path: String) : Modification(path) {
         override fun perform(workDir: File) {
-            val fileToDelete = File(workDir, "src/$name")
+            val fileToDelete = File(workDir, path)
             if (!fileToDelete.delete()) {
                 throw AssertionError("Couldn't delete $fileToDelete")
             }
