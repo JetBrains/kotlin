@@ -36,7 +36,8 @@ import com.intellij.psi.filters.ClassFilter
 import org.jetbrains.jet.plugin.util.FirstChildInParentFilter
 import org.jetbrains.jet.lang.psi.psiUtil.getCallNameExpression
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.plugin.completion.handlers.BaseDeclarationInsertHandler
+import com.intellij.codeInsight.completion.InsertHandler
+import org.jetbrains.jet.lang.resolve.name.Name
 
 object NamedParametersCompletion {
     private val positionFilter = AndFilter(
@@ -83,13 +84,14 @@ object NamedParametersCompletion {
             val usedArguments = QuickFixUtil.getUsedParameters(callElement, valueArgument, funDescriptor)
 
             for (parameter in funDescriptor.getValueParameters()) {
-                val name = parameter.getName().asString()
-                if (name !in usedArguments) {
-                    val lookupElement = LookupElementBuilder.create(parameter, name)
-                            .withPresentableText("$name = ")
-                            .withTailText("${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
+                val name = parameter.getName()
+                val nameString = name.asString()
+                if (nameString !in usedArguments) {
+                    val text = "$nameString ="
+                    val lookupElement = LookupElementBuilder.create(text)
+                            .withTailText(" ${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
                             .withIcon(JetIcons.PARAMETER)
-                            .withInsertHandler(NamedParameterInsertHandler)
+                            .withInsertHandler(NamedParameterInsertHandler(name))
                             .assignPriority(ItemPriority.NAMED_PARAMETER)
                     lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_EQ, true);
 
@@ -99,7 +101,7 @@ object NamedParametersCompletion {
         }
     }
 
-    private object NamedParameterInsertHandler : BaseDeclarationInsertHandler() {
+    private class NamedParameterInsertHandler(val parameterName: Name) : InsertHandler<LookupElement> {
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
             val ch = context.getCompletionChar()
             if (ch == '=' || ch == ' ') {
@@ -107,10 +109,9 @@ object NamedParametersCompletion {
             }
 
             val editor = context.getEditor()
-            val tailOffset = context.getTailOffset()
-
-            editor.getDocument().insertString(tailOffset, " = ")
-            editor.getCaretModel().moveToOffset(tailOffset + 3)
+            val text = DescriptorRenderer.SOURCE_CODE.renderName(parameterName) + " = "
+            editor.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
+            editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length)
         }
     }
 }

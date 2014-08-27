@@ -1,0 +1,5 @@
+fun foo(`class`: Int) {}
+
+fun test() {
+    foo(`class` = <caret>)
+}
