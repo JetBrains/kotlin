@@ -8,7 +8,7 @@ class Zin<in T> {}
 
 class Params(val methodIndex: Int, val paramClass: Class<*>, val expectedReturnType: String, val expecedParamType: String)
 
-class Test<T, out X, in Y>() {
+class Test<T, X, in Y>() {
 
     fun test1(p: T): T? = null
 

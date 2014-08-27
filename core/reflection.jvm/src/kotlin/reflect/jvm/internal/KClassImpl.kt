@@ -29,7 +29,7 @@ enum class KClassOrigin {
 private val KOTLIN_CLASS_ANNOTATION_CLASS = javaClassOf<KotlinClass>()
 private val KOTLIN_SYNTHETIC_CLASS_ANNOTATION_CLASS = javaClassOf<KotlinSyntheticClass>()
 
-class KClassImpl<out T>(val jClass: Class<T>, isKnownToBeKotlin: Boolean) : KClass<T> {
+class KClassImpl<T>(val jClass: Class<T>, isKnownToBeKotlin: Boolean) : KClass<T> {
     // TODO: write metadata to local classes
     private val origin: KClassOrigin =
             if (isKnownToBeKotlin ||

@@ -35,7 +35,7 @@ public trait ResolverForModule {
     public val lazyResolveSession: ResolveSession
 }
 
-public trait ResolverForProject<M : ModuleInfo, R : ResolverForModule> {
+public trait ResolverForProject<M : ModuleInfo,out R : ResolverForModule> {
     public fun resolverForModule(moduleInfo: M): R
     public fun descriptorForModule(moduleInfo: M): ModuleDescriptor
     val allModules: Collection<M>
@@ -113,7 +113,7 @@ public trait ModuleInfo {
 }
 
 //TODO: (module refactoring) extract project context
-public trait AnalyzerFacade<out A : ResolverForModule, in P : PlatformAnalysisParameters> {
+public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParameters> {
     public fun <M : ModuleInfo> setupResolverForProject(
             globalContext: GlobalContext,
             project: Project,
