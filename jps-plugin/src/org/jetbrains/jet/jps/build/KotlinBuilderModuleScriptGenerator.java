@@ -79,7 +79,7 @@ public class KotlinBuilderModuleScriptGenerator {
                     ? sourceFiles.get(target)
                     : KotlinSourceFileCollector.getAllKotlinSourceFiles(target));
 
-            if (sourceFiles.size() > 0 || hasRemovedFiles) {
+            if (moduleSources.size() > 0 || hasRemovedFiles) {
                 noSources = false;
 
                 if (logger.isEnabled()) {
