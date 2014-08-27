@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.structure
 
 import org.jetbrains.jet.lang.resolve.name.Name
 
-public trait JavaAnnotationArgument : JavaElement {
+public trait JavaAnnotationArgument {
     public val name: Name?
 }
 

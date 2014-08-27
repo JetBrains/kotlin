@@ -20,10 +20,9 @@ import com.intellij.psi.*
 import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.resolve.name.Name
 
-abstract class JavaAnnotationArgumentImpl<Psi : PsiAnnotationMemberValue>(
-        psiAnnotationMemberValue: Psi,
+abstract class JavaAnnotationArgumentImpl(
         override val name: Name?
-) : JavaElementImpl<Psi>(psiAnnotationMemberValue), JavaAnnotationArgument {
+) : JavaAnnotationArgument {
     class object {
         fun create(argument: PsiAnnotationMemberValue, name: Name?): JavaAnnotationArgument {
             val value = JavaPsiFacade.getInstance(argument.getProject()).getConstantEvaluationHelper().computeConstantExpression(argument)
@@ -48,18 +47,18 @@ class JavaLiteralAnnotationArgumentImpl(
 ) : JavaLiteralAnnotationArgument
 
 class JavaArrayAnnotationArgumentImpl(
-        psiValue: PsiArrayInitializerMemberValue,
+        private val psiValue: PsiArrayInitializerMemberValue,
         name: Name?
-) : JavaAnnotationArgumentImpl<PsiArrayInitializerMemberValue>(psiValue, name), JavaArrayAnnotationArgument {
-    override fun getElements() = getPsi().getInitializers().map { JavaAnnotationArgumentImpl.create(it, null) }
+) : JavaAnnotationArgumentImpl(name), JavaArrayAnnotationArgument {
+    override fun getElements() = psiValue.getInitializers().map { JavaAnnotationArgumentImpl.create(it, null) }
 }
 
 class JavaEnumValueAnnotationArgumentImpl(
-        psiReference: PsiReferenceExpression,
+        private val psiReference: PsiReferenceExpression,
         name: Name?
-) : JavaAnnotationArgumentImpl<PsiReferenceExpression>(psiReference, name), JavaEnumValueAnnotationArgument {
+) : JavaAnnotationArgumentImpl(name), JavaEnumValueAnnotationArgument {
     override fun resolve(): JavaField? {
-        val element = getPsi().resolve()
+        val element = psiReference.resolve()
         return when (element) {
             null -> null
             is PsiEnumConstant -> JavaFieldImpl(element)
@@ -69,15 +68,15 @@ class JavaEnumValueAnnotationArgumentImpl(
 }
 
 class JavaClassObjectAnnotationArgumentImpl(
-        psiExpression: PsiClassObjectAccessExpression,
+        private val psiExpression: PsiClassObjectAccessExpression,
         name: Name?
-) : JavaAnnotationArgumentImpl<PsiClassObjectAccessExpression>(psiExpression, name), JavaClassObjectAnnotationArgument {
-    override fun getReferencedType() = JavaTypeImpl.create(getPsi().getOperand().getType())
+) : JavaAnnotationArgumentImpl(name), JavaClassObjectAnnotationArgument {
+    override fun getReferencedType() = JavaTypeImpl.create(psiExpression.getOperand().getType())
 }
 
 class JavaAnnotationAsAnnotationArgumentImpl(
-        psiAnnotation: PsiAnnotation,
+        private val psiAnnotation: PsiAnnotation,
         name: Name?
-) : JavaAnnotationArgumentImpl<PsiAnnotation>(psiAnnotation, name), JavaAnnotationAsAnnotationArgument {
-    override fun getAnnotation() = JavaAnnotationImpl(getPsi())
+) : JavaAnnotationArgumentImpl(name), JavaAnnotationAsAnnotationArgument {
+    override fun getAnnotation() = JavaAnnotationImpl(psiAnnotation)
 }
