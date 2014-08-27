@@ -50,9 +50,9 @@ class LazyJavaAnnotationDescriptor(
         val javaAnnotation : JavaAnnotation
 ) : AnnotationDescriptor {
 
-    private val _fqName = c.storageManager.createNullableLazyValue { javaAnnotation.getFqName() }
+    private val fqName = c.storageManager.createNullableLazyValue { javaAnnotation.getFqName() }
     private val _type = c.storageManager.createLazyValue {() : JetType ->
-        val fqName = _fqName()
+        val fqName = fqName()
         if (fqName == null) return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
         val annotationClass = JavaToKotlinClassMap.getInstance().mapKotlinClass(fqName, TypeUsage.MEMBER_SIGNATURE_INVARIANT)
                 ?: javaAnnotation.resolve()?.let { javaClass -> c.moduleClassResolver.resolveClass(javaClass) }
@@ -61,17 +61,17 @@ class LazyJavaAnnotationDescriptor(
 
     override fun getType(): JetType = _type()
 
-    private val _nameToArgument = c.storageManager.createLazyValue {
+    private val nameToArgument = c.storageManager.createLazyValue {
         var arguments: Collection<JavaAnnotationArgument> = javaAnnotation.getArguments()
-        if (arguments.isEmpty() && _fqName()?.asString() == "java.lang.Deprecated") {
+        if (arguments.isEmpty() && fqName()?.asString() == "java.lang.Deprecated") {
             arguments = listOf(DEPRECATED_IN_JAVA)
         }
         arguments.valuesToMap { it.name }
     }
 
-    private val _valueArguments = c.storageManager.createMemoizedFunctionWithNullableValues<ValueParameterDescriptor, CompileTimeConstant<out Any?>> {
+    private val valueArguments = c.storageManager.createMemoizedFunctionWithNullableValues<ValueParameterDescriptor, CompileTimeConstant<out Any?>> {
         valueParameter ->
-        val nameToArg = _nameToArgument()
+        val nameToArg = nameToArgument()
 
         var javaAnnotationArgument = nameToArg[valueParameter.getName()]
         if (javaAnnotationArgument == null && valueParameter.getName() == DEFAULT_ANNOTATION_MEMBER_NAME) {
@@ -81,9 +81,9 @@ class LazyJavaAnnotationDescriptor(
         resolveAnnotationArgument(javaAnnotationArgument)
     }
 
-    override fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) = _valueArguments(valueParameterDescriptor)
+    override fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) = valueArguments(valueParameterDescriptor)
 
-    private val _allValueArguments = c.storageManager.createLazyValue {
+    private val allValueArguments = c.storageManager.createLazyValue {
         val constructors = getAnnotationClass().getConstructors()
         if (constructors.isEmpty())
             mapOf<ValueParameterDescriptor, CompileTimeConstant<*>>()
@@ -93,7 +93,7 @@ class LazyJavaAnnotationDescriptor(
             }
     }
 
-    override fun getAllValueArguments() = _allValueArguments()
+    override fun getAllValueArguments() = allValueArguments()
 
     private fun getAnnotationClass() = getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
 
@@ -163,7 +163,6 @@ class LazyJavaAnnotationDescriptor(
 
         return JavaClassValue(javaClassObjectType)
     }
-
 
     override fun toString(): String {
         return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderAnnotation(this)
