@@ -206,6 +206,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/skipConstructors.kt");
         }
         
+        @TestMetadata("stdlibStep.kt")
+        public void testStdlibStep() throws Exception {
+            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/stdlibStep.kt");
+        }
+        
     }
     
     public static Test suite() {

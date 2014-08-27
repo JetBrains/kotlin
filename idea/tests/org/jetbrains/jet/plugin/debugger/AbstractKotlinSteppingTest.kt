@@ -34,6 +34,8 @@ import com.intellij.debugger.settings.DebuggerSettings
 
 public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
     private var oldSettings: DebuggerSettings by Delegates.notNull()
+    private var oldIsFilterForStdlibAlreadyAdded: Boolean by Delegates.notNull()
+    private var oldDisableKoltinInternalClasses: Boolean by Delegates.notNull()
 
     override fun initApplication() {
         super<KotlinDebuggerTestCase>.initApplication()
@@ -67,17 +69,30 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
     }
 
     private fun configureSettings(fileText: String) {
+        val kotlinSettings = KotlinDebuggerSettings.getInstance()
+        kotlinSettings.DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = false
+        kotlinSettings.DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = fileText.getValueForSetting("DISABLE_KOTLIN_INTERNAL_CLASSES", oldDisableKoltinInternalClasses)
+
         val debuggerSettings = DebuggerSettings.getInstance()!!
-        debuggerSettings.SKIP_CONSTRUCTORS = findStringWithPrefixes(fileText, "// SKIP_CONSTRUCTORS: ")?.toBoolean() ?: oldSettings.SKIP_CONSTRUCTORS
-        debuggerSettings.SKIP_CLASSLOADERS = findStringWithPrefixes(fileText, "// SKIP_CLASSLOADERS: ")?.toBoolean() ?: oldSettings.SKIP_CLASSLOADERS
-        debuggerSettings.TRACING_FILTERS_ENABLED = findStringWithPrefixes(fileText, "// TRACING_FILTERS_ENABLED: ")?.toBoolean() ?: oldSettings.TRACING_FILTERS_ENABLED
+        debuggerSettings.SKIP_CONSTRUCTORS = fileText.getValueForSetting("SKIP_CONSTRUCTORS", oldSettings.SKIP_CONSTRUCTORS)
+        debuggerSettings.SKIP_CLASSLOADERS = fileText.getValueForSetting("SKIP_CLASSLOADERS", oldSettings.SKIP_CLASSLOADERS)
+        debuggerSettings.TRACING_FILTERS_ENABLED = fileText.getValueForSetting("TRACING_FILTERS_ENABLED", oldSettings.TRACING_FILTERS_ENABLED)
+    }
+
+    private fun String.getValueForSetting(name: String, defaultValue: Boolean): Boolean {
+        return findStringWithPrefixes(this, "// $name: ")?.toBoolean() ?: defaultValue
     }
 
     private fun saveDefaultSettings() {
+        oldIsFilterForStdlibAlreadyAdded = KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED
+        oldDisableKoltinInternalClasses = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES
         oldSettings = DebuggerSettings.getInstance()!!.clone()
     }
 
     private fun restoreDefaultSettings() {
+        KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = oldIsFilterForStdlibAlreadyAdded
+        KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = oldDisableKoltinInternalClasses
+
         val debuggerSettings = DebuggerSettings.getInstance()!!
         debuggerSettings.SKIP_CONSTRUCTORS = oldSettings.SKIP_CONSTRUCTORS
         debuggerSettings.SKIP_CLASSLOADERS = oldSettings.SKIP_CLASSLOADERS

@@ -1,0 +1,5 @@
+<root>
+    <item name='com.intellij.debugger.settings.DebuggerSettings com.intellij.ui.classFilter.ClassFilter[] getSteppingFilters()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

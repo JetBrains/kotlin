@@ -35,6 +35,7 @@ import java.util.Arrays
 State(name = "KotlinDebuggerSettings", storages = array(Storage(file = StoragePathMacros.APP_CONFIG + "/kotlin_debug.xml")))
 public class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin_debugger"), Getter<KotlinDebuggerSettings> {
     public var DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES: Boolean = true
+    public var DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED: Boolean = false
 
     class object {
         public fun getInstance(): KotlinDebuggerSettings {
