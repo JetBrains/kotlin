@@ -12,4 +12,4 @@ fun bar() {
     })
 }
 
-// EXIST: this@foo
+// ABSENT: this@foo

@@ -383,6 +383,16 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/ObjectFromType.kt");
     }
     
+    @TestMetadata("QualifiedThisKeywordName1.kt")
+    public void testQualifiedThisKeywordName1() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/QualifiedThisKeywordName1.kt");
+    }
+    
+    @TestMetadata("QualifiedThisKeywordName2.kt")
+    public void testQualifiedThisKeywordName2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/QualifiedThisKeywordName2.kt");
+    }
+    
     @TestMetadata("SAMExpected1.kt")
     public void testSAMExpected1() throws Exception {
         doTest("idea/testData/completion/handlers/smart/SAMExpected1.kt");

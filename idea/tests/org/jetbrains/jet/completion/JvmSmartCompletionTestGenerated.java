@@ -388,6 +388,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/NoPrivateOverload.kt");
     }
     
+    @TestMetadata("NoQualifiedThisOfAnonymousObject.kt")
+    public void testNoQualifiedThisOfAnonymousObject() throws Exception {
+        doTest("idea/testData/completion/smart/NoQualifiedThisOfAnonymousObject.kt");
+    }
+    
     @TestMetadata("NoSillyAssignment.kt")
     public void testNoSillyAssignment() throws Exception {
         doTest("idea/testData/completion/smart/NoSillyAssignment.kt");
@@ -461,11 +466,6 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("QualifiedThis.kt")
     public void testQualifiedThis() throws Exception {
         doTest("idea/testData/completion/smart/QualifiedThis.kt");
-    }
-    
-    @TestMetadata("QualifiedThisOfAnonymousObject.kt")
-    public void testQualifiedThisOfAnonymousObject() throws Exception {
-        doTest("idea/testData/completion/smart/QualifiedThisOfAnonymousObject.kt");
     }
     
     @TestMetadata("QualifiedThisOfExtensionFunction.kt")
