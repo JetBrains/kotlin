@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 enum class ItemPriority {
     DEFAULT
@@ -63,13 +65,14 @@ fun qualifiedNameForSourceCode(descriptor: ClassDescriptor): String? {
     val name = descriptor.getName()
     if (name.isSpecial()) return null
     val nameString = DescriptorRenderer.SOURCE_CODE.renderName(name)
-    val parent = descriptor.getContainingDeclaration()
-    val qualifier = when (parent) {
-        is ClassDescriptor -> qualifiedNameForSourceCode(parent)
-        is PackageViewDescriptor -> DescriptorRenderer.SOURCE_CODE.renderFqName(parent.getFqName())
-        is PackageFragmentDescriptor -> DescriptorRenderer.SOURCE_CODE.renderFqName(parent.fqName)
-        else -> null
-    }
+    val qualifier = qualifierName(descriptor.getContainingDeclaration())
     return if (qualifier != null && qualifier != "") qualifier + "." + nameString else nameString
+}
+
+private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (descriptor) {
+    is ClassDescriptor -> if (descriptor.getKind() != ClassKind.CLASS_OBJECT) qualifiedNameForSourceCode(descriptor) else qualifierName(descriptor.getContainingDeclaration())
+    is PackageViewDescriptor -> DescriptorRenderer.SOURCE_CODE.renderFqName(descriptor.getFqName())
+    is PackageFragmentDescriptor -> DescriptorRenderer.SOURCE_CODE.renderFqName(descriptor.fqName)
+    else -> null
 }
 
