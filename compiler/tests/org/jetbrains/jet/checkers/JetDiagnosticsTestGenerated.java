@@ -3763,6 +3763,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("commonSupertype.kt")
+            public void testCommonSupertype() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/commonSupertype.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("dontCreatePackageTypeForEnumEntry.kt")
             public void testDontCreatePackageTypeForEnumEntry() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry.kt");
@@ -4435,6 +4441,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public void testRawTypeInIsPattern() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/RawTypeInIsPattern.kt");
                 doTest(fileName);
+            }
+            
+            @TestMetadata("recursive.kt")
+            public void testRecursive() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/generics/recursive.kt");
             }
             
             @TestMetadata("RecursiveUpperBoundCheck.kt")
@@ -7761,6 +7772,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 public void testInferenceWithBound() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/inferenceWithBound.kt");
                     doTest(fileName);
+                }
+                
+                @TestMetadata("recursiveGeneric.kt")
+                public void testRecursiveGeneric() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/recursiveGeneric.kt");
                 }
                 
                 @TestMetadata("stringOrNull.kt")

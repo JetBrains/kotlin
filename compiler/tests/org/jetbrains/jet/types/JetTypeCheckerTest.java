@@ -204,6 +204,10 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertCommonSupertype("Base_T<out Parent>", "Base_T<A>", "Base_T<B>");
     }
 
+    public void testCommonSupertypesForRecursive() throws Exception {
+        assertCommonSupertype("Rec<out Rec<out Rec<out Rec<out Rec<out Any?>>>>>", "ARec", "BRec");
+    }
+
     public void testIntersect() throws Exception {
         assertIntersection("Long", "Long?", "Number");
         assertIntersection("Long", "Number", "Long?");

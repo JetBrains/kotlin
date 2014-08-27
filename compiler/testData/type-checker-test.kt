@@ -41,3 +41,7 @@ fun f<T>(a : Float) : T {a}
 trait Parent
 trait A: Parent
 trait B: Parent
+
+trait Rec<T>
+class ARec : Rec<ARec>
+class BRec : Rec<BRec>
