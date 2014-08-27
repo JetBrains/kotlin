@@ -22,13 +22,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.quickfix.QuickFixRegistrar;
 import org.jetbrains.jet.utils.PathUtil;
 
-public class PluginBundledRegistrar implements ApplicationComponent {
+public class PluginStartupComponent implements ApplicationComponent {
     private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
 
     @Override
     @NotNull
     public String getComponentName() {
-        return PluginBundledRegistrar.class.getName();
+        return PluginStartupComponent.class.getName();
     }
 
     @Override
