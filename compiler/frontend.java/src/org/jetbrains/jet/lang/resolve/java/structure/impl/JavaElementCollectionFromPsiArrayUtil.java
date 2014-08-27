@@ -111,15 +111,6 @@ public class JavaElementCollectionFromPsiArrayUtil {
             }
         };
 
-        private static final Factory<PsiAnnotationMemberValue, JavaAnnotationArgument> NAMELESS_ANNOTATION_ARGUMENTS =
-                new Factory<PsiAnnotationMemberValue, JavaAnnotationArgument>() {
-            @NotNull
-            @Override
-            public JavaAnnotationArgument create(@NotNull PsiAnnotationMemberValue psiAnnotationMemberValue) {
-                return JavaAnnotationArgumentImpl.create(psiAnnotationMemberValue, null);
-            }
-        };
-
         private static final Factory<PsiNameValuePair, JavaAnnotationArgument> NAMED_ANNOTATION_ARGUMENTS =
                 new Factory<PsiNameValuePair, JavaAnnotationArgument>() {
             @NotNull
@@ -128,7 +119,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
                 String name = psiNameValuePair.getName();
                 PsiAnnotationMemberValue value = psiNameValuePair.getValue();
                 assert value != null : "Annotation argument value cannot be null: " + name;
-                return JavaAnnotationArgumentImpl.create(value, name == null ? null : Name.identifier(name));
+                return JavaAnnotationArgumentImpl.OBJECT$.create(value, name == null ? null : Name.identifier(name));
             }
         };
     }
@@ -202,11 +193,6 @@ public class JavaElementCollectionFromPsiArrayUtil {
     @NotNull
     public static Collection<JavaAnnotation> annotations(@NotNull PsiAnnotation[] annotations) {
         return convert(annotations, Factories.ANNOTATIONS);
-    }
-
-    @NotNull
-    public static List<JavaAnnotationArgument> namelessAnnotationArguments(@NotNull PsiAnnotationMemberValue[] memberValues) {
-        return convert(memberValues, Factories.NAMELESS_ANNOTATION_ARGUMENTS);
     }
 
     @NotNull

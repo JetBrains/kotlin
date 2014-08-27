@@ -41,8 +41,8 @@ import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 
 private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
-    override fun getName(): Name? = null
-    override fun getValue(): Any? = "Deprecated in Java"
+    override val name: Name? = null
+    override val value: Any? = "Deprecated in Java"
 }
 
 class LazyJavaAnnotationDescriptor(
@@ -66,7 +66,7 @@ class LazyJavaAnnotationDescriptor(
         if (arguments.isEmpty() && _fqName()?.asString() == "java.lang.Deprecated") {
             arguments = listOf(DEPRECATED_IN_JAVA)
         }
-        arguments.valuesToMap { a -> a.getName() }
+        arguments.valuesToMap { it.name }
     }
 
     private val _valueArguments = c.storageManager.createMemoizedFunctionWithNullableValues<ValueParameterDescriptor, CompileTimeConstant<out Any?>> {
@@ -99,9 +99,9 @@ class LazyJavaAnnotationDescriptor(
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): CompileTimeConstant<*>? {
         return when (argument) {
-            is JavaLiteralAnnotationArgument -> createCompileTimeConstant(argument.getValue(), true, false, false, null)
+            is JavaLiteralAnnotationArgument -> createCompileTimeConstant(argument.value, true, false, false, null)
             is JavaEnumValueAnnotationArgument -> resolveFromEnumValue(argument.resolve())
-            is JavaArrayAnnotationArgument -> resolveFromArray(argument.getName() ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
+            is JavaArrayAnnotationArgument -> resolveFromArray(argument.name ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
             is JavaAnnotationAsAnnotationArgument -> resolveFromAnnotation(argument.getAnnotation())
             is JavaClassObjectAnnotationArgument -> resolveFromJavaClassObjectType(argument.getReferencedType())
             else -> null
