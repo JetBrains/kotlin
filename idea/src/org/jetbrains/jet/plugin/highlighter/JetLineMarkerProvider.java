@@ -30,14 +30,16 @@ import com.intellij.ide.util.PsiClassListCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
-import com.intellij.psi.*;
+import com.intellij.psi.NavigatablePsiElement;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.PsiElementProcessorAdapter;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.util.*;
-import gnu.trove.THashSet;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +71,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             new NullableFunction<PsiElement, String>() {
                 @Override
                 public String fun(@Nullable PsiElement element) {
-                    PsiClass psiClass = getPsiClass(element);
+                    PsiClass psiClass = MarkersPackage.getPsiClass(element);
                     return psiClass != null ? MarkerType.getSubclassedClassTooltip(psiClass) : null;
                 }
             },
@@ -77,7 +79,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             new LineMarkerNavigator() {
                 @Override
                 public void browse(@Nullable MouseEvent e, @Nullable PsiElement element) {
-                    PsiClass psiClass = getPsiClass(element);
+                    PsiClass psiClass = MarkersPackage.getPsiClass(element);
                     if (psiClass != null) {
                         MarkerType.navigateToSubclassedClass(e, psiClass);
                     }
@@ -89,7 +91,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             new NullableFunction<PsiElement, String>() {
                 @Override
                 public String fun(@Nullable PsiElement element) {
-                    PsiMethod psiMethod = getPsiMethod(element);
+                    PsiMethod psiMethod = MarkersPackage.getPsiMethod(element);
                     return psiMethod != null ? MarkersPackage.getOverriddenMethodTooltip(psiMethod) : null;
                 }
             },
@@ -97,7 +99,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             new LineMarkerNavigator() {
                 @Override
                 public void browse(@Nullable MouseEvent e, @Nullable PsiElement element) {
-                    PsiMethod psiMethod = getPsiMethod(element);
+                    PsiMethod psiMethod = MarkersPackage.getPsiMethod(element);
                     if (psiMethod != null) {
                         MarkersPackage.navigateToOverriddenMethod(e, psiMethod);
                     }
@@ -197,29 +199,6 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             }
     );
 
-    @Nullable
-    private static PsiClass getPsiClass(@Nullable PsiElement element) {
-        if (element == null) return null;
-        if (element instanceof PsiClass) return (PsiClass) element;
-
-        if (!(element instanceof JetClass)) {
-            element = element.getParent();
-            if (!(element instanceof JetClass)) {
-                return null;
-            }
-        }
-
-        return LightClassUtil.getPsiClass((JetClass) element);
-    }
-
-    @Nullable
-    private static PsiMethod getPsiMethod(@Nullable PsiElement element) {
-        if (element == null) return null;
-        if (element instanceof PsiMethod) return (PsiMethod) element;
-        if (element.getParent() instanceof JetNamedFunction) return LightClassUtil.getLightClassMethod((JetNamedFunction) element.getParent());
-        return null;
-    }
-
     @Override
     public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
         // all Kotlin markers are added in slow marker pass
@@ -254,21 +233,19 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         for (PsiElement element : elements) {
             if (element instanceof JetClass) {
-                collectInheritingClasses((JetClass) element, result);
+                collectInheritedClassMarker((JetClass) element, result);
             }
-
-            if (element instanceof JetNamedFunction) {
+            else if (element instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction) element;
 
                 functions.add(function);
-                collectSuperDeclarationMarker(function, result);
+                collectSuperDeclarationMarkers(function, result);
             }
-
-            if (element instanceof JetProperty) {
+            else if (element instanceof JetProperty) {
                 JetProperty property = (JetProperty) element;
 
                 properties.add(property);
-                collectSuperDeclarationMarker(property, result);
+                collectSuperDeclarationMarkers(property, result);
             }
         }
 
@@ -276,7 +253,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         collectOverridingPropertiesAccessors(properties, result);
     }
 
-    private static void collectSuperDeclarationMarker(JetDeclaration declaration, Collection<LineMarkerInfo> result) {
+    private static void collectSuperDeclarationMarkers(JetDeclaration declaration, Collection<LineMarkerInfo> result) {
         assert (declaration instanceof JetNamedFunction || declaration instanceof JetProperty);
 
         if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return;
@@ -300,17 +277,15 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         result.add(marker);
     }
 
-    private static void collectInheritingClasses(JetClass element, Collection<LineMarkerInfo> result) {
+    private static void collectInheritedClassMarker(JetClass element, Collection<LineMarkerInfo> result) {
         boolean isTrait = element.isTrait();
-        if (!(isTrait ||
-              element.hasModifier(JetTokens.OPEN_KEYWORD) ||
-              element.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
+        if (!(isTrait || element.hasModifier(JetTokens.OPEN_KEYWORD) || element.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
             return;
         }
+
         PsiClass lightClass = LightClassUtil.getPsiClass(element);
-        if (lightClass == null) {
-            return;
-        }
+        if (lightClass == null) return;
+
         PsiClass inheritor = ClassInheritorsSearch.search(lightClass, false).findFirst();
         if (inheritor != null) {
             PsiElement nameIdentifier = element.getNameIdentifier();
@@ -357,7 +332,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             }
         }
 
-        Set<PsiClass> classes = collectContainingClasses(mappingToJava.keySet());
+        Set<PsiClass> classes = MarkersPackage.collectContainingClasses(mappingToJava.keySet());
 
         for (JetProperty property : MarkersPackage.getOverriddenDeclarations(mappingToJava, classes)) {
             ProgressManager.checkCanceled();
@@ -387,7 +362,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             }
         }
 
-        Set<PsiClass> classes = collectContainingClasses(mappingToJava.keySet());
+        Set<PsiClass> classes = MarkersPackage.collectContainingClasses(mappingToJava.keySet());
 
         for (JetNamedFunction function : MarkersPackage.getOverriddenDeclarations(mappingToJava, classes)) {
             ProgressManager.checkCanceled();
@@ -404,17 +379,5 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
             result.add(info);
         }
-    }
-
-    private static Set<PsiClass> collectContainingClasses(Collection<PsiMethod> methods) {
-        Set<PsiClass> classes = new THashSet<PsiClass>();
-        for (PsiMethod method : methods) {
-            ProgressManager.checkCanceled();
-            PsiClass parentClass = method.getContainingClass();
-            if (parentClass != null && !CommonClassNames.JAVA_LANG_OBJECT.equals(parentClass.getQualifiedName())) {
-                classes.add(parentClass);
-            }
-        }
-        return classes;
     }
 }
