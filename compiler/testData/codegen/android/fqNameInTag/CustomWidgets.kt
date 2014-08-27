@@ -4,5 +4,5 @@ import android.widget.Button
 import android.content.Context
 
 class MyButton(ctx: Context): Button(ctx) {
-    override fun toString(): String {return "Button"}
+    override fun toString(): String {return "MyButton"}
 }
