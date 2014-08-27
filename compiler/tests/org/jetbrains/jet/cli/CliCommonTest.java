@@ -42,6 +42,11 @@ public class CliCommonTest extends CliBaseTest {
     }
 
     @Test
+    public void duplicateSource() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
     public void diagnosticsOrder() throws Exception {
         executeCompilerCompareOutputJVM();
     }

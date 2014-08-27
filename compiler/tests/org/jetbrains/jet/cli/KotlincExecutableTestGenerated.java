@@ -51,6 +51,11 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest("compiler/testData/cli/jvm/diagnosticsOrder.args");
         }
         
+        @TestMetadata("duplicateSource.args")
+        public void testDuplicateSource() throws Exception {
+            doJvmTest("compiler/testData/cli/jvm/duplicateSource.args");
+        }
+        
         @TestMetadata("extraHelp.args")
         public void testExtraHelp() throws Exception {
             doJvmTest("compiler/testData/cli/jvm/extraHelp.args");

@@ -1,0 +1,2 @@
+WARNING: Duplicate source roots: $TESTDATA_DIR$/duplicateSource.kt
+OK

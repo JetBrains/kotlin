@@ -19,6 +19,7 @@ package org.jetbrains.jet.cli.jvm.compiler;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
@@ -36,6 +37,8 @@ import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
@@ -51,8 +54,8 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackage;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
@@ -63,9 +66,7 @@ import org.jetbrains.jet.utils.KotlinPaths;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class KotlinToJVMBytecodeCompiler {
 
@@ -159,8 +160,11 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull File directory
     ) {
         CompilerConfiguration configuration = base.copy();
+
+        List<String> sourceRoots = Lists.newArrayList();
+
         for (Module module : chunk) {
-            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, getAbsolutePaths(directory, module));
+            sourceRoots.addAll(getAbsolutePaths(directory, module));
 
             for (String classpathRoot : module.getClasspathRoots()) {
                 configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File(classpathRoot));
@@ -173,7 +177,27 @@ public class KotlinToJVMBytecodeCompiler {
             configuration.add(JVMConfigurationKeys.MODULE_IDS, module.getModuleName());
         }
 
+        MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        assert messageCollector != null : "messageCollector should be set: " + base;
+        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, checkForDuplicatePaths(messageCollector, sourceRoots));
+
         return configuration;
+    }
+
+    private static List<String> checkForDuplicatePaths(@NotNull MessageCollector messageCollector, @NotNull List<String> sourceRoots) {
+        Set<String> uniqueSourceRoots = Sets.newLinkedHashSet();
+
+        for (String sourceRoot : sourceRoots) {
+            if (!uniqueSourceRoots.add(sourceRoot)) {
+                messageCollector.report(
+                        CompilerMessageSeverity.WARNING,
+                        "Duplicate source roots: " + sourceRoot,
+                        CompilerMessageLocation.NO_LOCATION
+                );
+            }
+        }
+
+        return new ArrayList<String>(uniqueSourceRoots);
     }
 
     @Nullable
