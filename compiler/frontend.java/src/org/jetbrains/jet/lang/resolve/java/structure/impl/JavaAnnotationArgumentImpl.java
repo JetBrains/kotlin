@@ -39,7 +39,7 @@ public abstract class JavaAnnotationArgumentImpl<Psi extends PsiAnnotationMember
         }
 
         if (argument instanceof PsiReferenceExpression) {
-            return new JavaReferenceAnnotationArgumentImpl((PsiReferenceExpression) argument, name);
+            return new JavaEnumValueAnnotationArgumentImpl((PsiReferenceExpression) argument, name);
         }
         else if (argument instanceof PsiArrayInitializerMemberValue) {
             return new JavaArrayAnnotationArgumentImpl((PsiArrayInitializerMemberValue) argument, name);

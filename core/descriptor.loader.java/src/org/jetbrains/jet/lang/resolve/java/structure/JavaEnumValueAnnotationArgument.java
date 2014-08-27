@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.Nullable;
 
-public interface JavaReferenceAnnotationArgument extends JavaAnnotationArgument {
+public interface JavaEnumValueAnnotationArgument extends JavaAnnotationArgument {
     @Nullable
-    JavaElement resolve();
+    JavaField resolve();
 }

@@ -22,25 +22,24 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaElement;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaReferenceAnnotationArgument;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaEnumValueAnnotationArgument;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JavaReferenceAnnotationArgumentImpl extends JavaAnnotationArgumentImpl<PsiReferenceExpression>
-        implements JavaReferenceAnnotationArgument {
-    protected JavaReferenceAnnotationArgumentImpl(@NotNull PsiReferenceExpression psiReferenceExpression, @Nullable Name name) {
+public class JavaEnumValueAnnotationArgumentImpl extends JavaAnnotationArgumentImpl<PsiReferenceExpression>
+        implements JavaEnumValueAnnotationArgument {
+    protected JavaEnumValueAnnotationArgumentImpl(@NotNull PsiReferenceExpression psiReferenceExpression, @Nullable Name name) {
         super(psiReferenceExpression, name);
     }
 
     @Override
     @Nullable
-    public JavaElement resolve() {
-        PsiReferenceExpression expression = getPsi();
-        PsiElement element = expression.resolve();
-        if (element instanceof PsiEnumConstant) {
-            return new JavaFieldImpl((PsiField) element);
+    public JavaField resolve() {
+        PsiElement element = getPsi().resolve();
+        if (element == null) return null;
+        if (!(element instanceof PsiEnumConstant)) {
+            throw new IllegalStateException("Reference argument should be an enum value, but was " + element + ": " + element.getText());
         }
-        // TODO: other types of references
-        return null;
+        return new JavaFieldImpl((PsiField) element);
     }
 }

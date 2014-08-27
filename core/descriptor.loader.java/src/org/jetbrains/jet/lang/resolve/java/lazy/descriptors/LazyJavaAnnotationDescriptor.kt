@@ -100,7 +100,7 @@ class LazyJavaAnnotationDescriptor(
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): CompileTimeConstant<*>? {
         return when (argument) {
             is JavaLiteralAnnotationArgument -> createCompileTimeConstant(argument.getValue(), true, false, false, null)
-            is JavaReferenceAnnotationArgument -> resolveFromReference(argument.resolve())
+            is JavaEnumValueAnnotationArgument -> resolveFromEnumValue(argument.resolve())
             is JavaArrayAnnotationArgument -> resolveFromArray(argument.getName() ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
             is JavaAnnotationAsAnnotationArgument -> resolveFromAnnotation(argument.getAnnotation())
             is JavaClassObjectAnnotationArgument -> resolveFromJavaClassObjectType(argument.getReferencedType())
@@ -131,10 +131,8 @@ class LazyJavaAnnotationDescriptor(
         return ArrayValue(values, valueParameter.getType(), true, values.any { it.usesVariableAsConstant() })
     }
 
-    private fun resolveFromReference(element: JavaElement?): CompileTimeConstant<*>? {
-        if (element !is JavaField) return null
-
-        if (!element.isEnumEntry()) return null
+    private fun resolveFromEnumValue(element: JavaField?): CompileTimeConstant<*>? {
+        if (element == null || !element.isEnumEntry()) return null
 
         val containingJavaClass = element.getContainingClass()
 

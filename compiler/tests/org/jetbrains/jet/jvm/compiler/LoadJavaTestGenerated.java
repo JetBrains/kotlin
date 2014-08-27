@@ -374,6 +374,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
             
+            @TestMetadata("NestedEnumArgument.java")
+            public void testNestedEnumArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/NestedEnumArgument.java");
+                doTestCompiledJava(fileName);
+            }
+            
             @TestMetadata("PrimitiveValueInParam.java")
             public void testPrimitiveValueInParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/PrimitiveValueInParam.java");
