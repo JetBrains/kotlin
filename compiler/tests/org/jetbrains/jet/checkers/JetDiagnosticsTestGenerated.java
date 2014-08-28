@@ -5372,6 +5372,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/duplicateClass"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("collectionMethodStub.kt")
+                public void testCollectionMethodStub() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/collectionMethodStub.kt");
+                }
+                
                 @TestMetadata("differentGenericArguments.kt")
                 public void testDifferentGenericArguments() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/differentGenericArguments.kt");

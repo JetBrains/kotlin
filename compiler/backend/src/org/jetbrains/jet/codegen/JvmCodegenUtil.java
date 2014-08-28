@@ -115,7 +115,7 @@ public class JvmCodegenUtil {
     }
 
     private static boolean rawTypeMatches(JetType type, ClassifierDescriptor classifier) {
-        return type.getConstructor().getDeclarationDescriptor().getOriginal() == classifier.getOriginal();
+        return type.getConstructor().equals(classifier.getTypeConstructor());
     }
 
     private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {
