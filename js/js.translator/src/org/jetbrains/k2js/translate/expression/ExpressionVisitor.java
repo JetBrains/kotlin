@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -401,7 +402,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         JsName name = context.getNameForDescriptor(descriptor);
         if (InlineUtil.getInlineType(descriptor).isInline()) {
-            name.setStaticRef(alias);
+            MetadataPackage.setStaticRef(name, alias);
         }
 
         return new JsVars(new JsVars.JsVar(name, alias)).source(expression);

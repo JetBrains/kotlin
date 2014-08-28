@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import com.google.dart.compiler.backend.js.ast.JsObjectScope
 import com.google.dart.compiler.backend.js.ast.JsFunction
+import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
 class DefinitionPlace(
         private val scope: JsObjectScope,
@@ -33,7 +34,7 @@ class DefinitionPlace(
         if (expression is JsFunction) {
             /** JsInliner should be able
              * to find function by name */
-            name.setStaticRef(expression)
+            name.staticRef = expression
         }
 
         properties.add(JsPropertyInitializer(name.makeRef(), expression))

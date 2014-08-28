@@ -27,6 +27,7 @@ import com.google.dart.compiler.backend.js.ast.JsReturn
 import org.jetbrains.k2js.translate.context.Namer
 import com.google.dart.compiler.backend.js.ast.HasName
 import com.google.dart.compiler.backend.js.ast.JsNode
+import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
 /**
  * Gets invocation qualifier name.
@@ -121,5 +122,5 @@ private fun getCallerQualifierImpl(invocation: JsInvocation): JsExpression? {
 private fun getStaticRef(invocation: JsInvocation): JsNode? {
     val qualifier = invocation.getQualifier()
     val qualifierName = (qualifier as? HasName)?.getName()
-    return qualifierName?.getStaticRef()
+    return qualifierName?.staticRef
 }

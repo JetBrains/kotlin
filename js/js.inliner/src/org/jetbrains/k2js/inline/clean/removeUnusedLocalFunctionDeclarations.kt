@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
 import java.util.ArrayList
 import java.util.IdentityHashMap
@@ -78,7 +79,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
     private fun isLocalFunctionDeclaration(jsVar: JsVars.JsVar): Boolean {
         val name = jsVar.getName()
         val expr = jsVar.getInitExpression()
-        val staticRef = name?.getStaticRef()
+        val staticRef = name?.staticRef
 
         return staticRef != null && staticRef == expr
     }

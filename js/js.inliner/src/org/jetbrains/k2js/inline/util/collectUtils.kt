@@ -17,17 +17,18 @@
 package org.jetbrains.k2js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
-import org.jetbrains.k2js.inline.util.IdentitySet
+import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
 import java.util.ArrayList
 import java.util.IdentityHashMap
+import org.jetbrains.k2js.inline.util.IdentitySet
 import org.jetbrains.k2js.inline.util.collectors.ReferenceNameCollector
 import org.jetbrains.k2js.inline.util.collectors.NameCollector
 import org.jetbrains.k2js.inline.util.collectors.InstanceCollector
 import org.jetbrains.k2js.inline.util.collectors.FunctionCollector
 
 public fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
-    collectReferencesInside(scope) filter { it.getStaticRef() is JsFunction }
+    collectReferencesInside(scope) filter { it.staticRef is JsFunction }
 
 public fun collectReferencesInside(scope: JsNode): List<JsName> {
     return with(ReferenceNameCollector()) {

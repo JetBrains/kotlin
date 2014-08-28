@@ -17,11 +17,11 @@
 package org.jetbrains.k2js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
-import org.jetbrains.k2js.inline.util.IdentitySet
+import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
 import com.intellij.util.containers.Stack
 import java.util.IdentityHashMap
-import org.jetbrains.k2js
+import org.jetbrains.k2js.inline.util.IdentitySet
 import org.jetbrains.k2js.inline.util.collectReferencesInside
 import org.jetbrains.k2js.inline.util.collectFunctionReferencesInside
 
@@ -100,6 +100,7 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
         }
     }
 
+    // TODO drop name param?
     private fun processNonLocalFunction(name: JsName, function: JsFunction) {
         for (referenced in collectFunctionReferencesInside(function)) {
             tracker.markReachable(referenced)
@@ -107,7 +108,7 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
     }
 
     private fun isFunctionReference(nameRef: HasName?): Boolean {
-        return nameRef?.getName()?.getStaticRef() is JsFunction
+        return nameRef?.getName()?.staticRef is JsFunction
     }
 
     private fun wasProcessed(function: JsFunction?): Boolean = function in processed

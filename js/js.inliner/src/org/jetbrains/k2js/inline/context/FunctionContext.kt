@@ -25,6 +25,8 @@ import com.google.dart.compiler.backend.js.ast.JsName
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import com.google.dart.compiler.backend.js.ast.JsScope
 import com.google.dart.compiler.backend.js.ast.JsStatement
+import com.google.dart.compiler.backend.js.ast.metadata.staticRef
+
 import org.jetbrains.k2js.inline.util.aliasArgumentsIfNeeded
 import org.jetbrains.k2js.inline.util.getInnerFunction
 import org.jetbrains.k2js.inline.util.getSimpleName
@@ -70,7 +72,7 @@ abstract class FunctionContext(
             val callName = getSimpleName(call)
             if (callName == null) continue
 
-            val staticRef = callName.getStaticRef()
+            val staticRef = callName.staticRef
             if (staticRef !is JsFunction) continue
 
             val functionCalled = staticRef as JsFunction
@@ -125,7 +127,7 @@ abstract class FunctionContext(
 
         /** in case 4, 5 get ref (reduce 4, 5 to 2, 3 accordingly) */
         if (callQualifier is JsNameRef) {
-            val staticRef = (callQualifier as JsNameRef).getName()?.getStaticRef()
+            val staticRef = (callQualifier as JsNameRef).getName()?.staticRef
 
             callQualifier = when (staticRef) {
                 is JsNameRef -> staticRef

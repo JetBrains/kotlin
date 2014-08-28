@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.expression
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
@@ -167,7 +168,7 @@ private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName:
 }
 
 private fun declareAliasInsideFunction(function: JsFunction, name: JsName, alias: JsExpression) {
-    name.setStaticRef(alias)
+    name.staticRef = alias
     function.getInnerFunction()?.addDeclaration(name, alias)
 }
 
@@ -193,7 +194,7 @@ private fun JsFunction.addDeclaration(name: JsName, value: JsExpression?) {
 }
 
 private fun HasName.getStaticRef(): JsNode? {
-    return this.getName()?.getStaticRef()
+    return this.getName()?.staticRef
 }
 
 private fun isLocalInlineDeclaration(descriptor: CallableDescriptor): Boolean {
