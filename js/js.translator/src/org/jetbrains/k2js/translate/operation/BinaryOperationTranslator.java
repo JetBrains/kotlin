@@ -42,9 +42,6 @@ import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompa
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
-
 
 public final class BinaryOperationTranslator extends AbstractTranslator {
 
@@ -65,6 +62,12 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private final JetBinaryExpression expression;
 
+    @NotNull
+    private final JetExpression leftJetExpression;
+
+    @NotNull
+    private final JetExpression rightJetExpression;
+
     @Nullable
     private final CallableDescriptor operationDescriptor;
 
@@ -72,6 +75,13 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
+
+        assert expression.getLeft() != null : "Binary expression should have a left expression: " + expression.getText();
+        leftJetExpression = expression.getLeft();
+
+        assert expression.getRight() != null : "Binary expression should have a right expression: " + expression.getText();
+        rightJetExpression = expression.getRight();
+
         this.operationDescriptor = getCallableDescriptorForOperationExpression(bindingContext(), expression);
     }
 
@@ -100,10 +110,8 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateElvis() {
-        JsExpression leftExpression = translateLeftExpression(context(), expression);
+        JsExpression leftExpression = Translation.translateAsExpression(leftJetExpression, context());
 
-        JetExpression rightJetExpression = expression.getRight();
-        assert rightJetExpression != null : "Binary expression should have a right expression";
         JsBlock rightBlock = new JsBlock();
         JsNode rightNode = Translation.translateExpression(rightJetExpression, context(), rightBlock);
 
@@ -131,9 +139,10 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression applyIntrinsic(@NotNull BinaryOperationIntrinsic intrinsic) {
-        JsExpression leftExpression = translateLeftExpression(context(), expression);
+        JsExpression leftExpression = Translation.translateAsExpression(leftJetExpression, context());
+
         JsBlock rightBlock = new JsBlock();
-        JsExpression rightExpression = translateRightExpression(context(), expression, rightBlock);
+        JsExpression rightExpression = Translation.translateAsExpression(rightJetExpression, context(), rightBlock);
 
         if (rightBlock.isEmpty()) {
             return intrinsic.apply(expression, leftExpression, rightExpression, context());
@@ -158,9 +167,9 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         JetToken token = getOperationToken(expression);
         assert OperatorConventions.NOT_OVERLOADABLE.contains(token);
         JsBinaryOperator operator = OperatorTable.getBinaryOperator(token);
-        JsExpression leftExpression = translateLeftExpression(context(), expression);
+        JsExpression leftExpression = Translation.translateAsExpression(leftJetExpression, context());
         JsBlock rightBlock = new JsBlock();
-        JsExpression rightExpression = translateRightExpression(context(), expression, rightBlock);
+        JsExpression rightExpression = Translation.translateAsExpression(rightJetExpression, context(), rightBlock);
 
         if (rightBlock.isEmpty()) {
             return new JsBinaryOperation(operator, leftExpression, rightExpression);
@@ -201,9 +210,9 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression getReceiver() {
         if (isInOrNotInOperation(expression)) {
-            return translateRightExpression(context(), expression);
+            return Translation.translateAsExpression(rightJetExpression, context());
         } else {
-            return translateLeftExpression(context(), expression);
+            return Translation.translateAsExpression(leftJetExpression, context());
         }
     }
 
