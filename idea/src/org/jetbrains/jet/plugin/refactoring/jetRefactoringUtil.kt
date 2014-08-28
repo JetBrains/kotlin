@@ -141,7 +141,7 @@ public fun PsiElement.isInJavaSourceRoot(): Boolean =
         !JavaProjectRootsUtil.isOutsideJavaSourceRoot(getContainingFile())
 
 public inline fun JetFile.createTempCopy(textTransform: (String) -> String): JetFile {
-    val tmpFile = JetPsiFactory(this).createFile(getName(), textTransform(getText() ?: ""))
+    val tmpFile = JetPsiFactory(this).createAnalyzableFile(getName(), textTransform(getText() ?: ""), this)
     tmpFile.setOriginalFile(this)
     tmpFile.skipVisibilityCheck = skipVisibilityCheck
     return tmpFile

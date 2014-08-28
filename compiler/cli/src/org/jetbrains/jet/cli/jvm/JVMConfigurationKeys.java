@@ -18,6 +18,7 @@ package org.jetbrains.jet.cli.jvm;
 
 import org.jetbrains.jet.config.CompilerConfigurationKey;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 
 import java.io.File;
 import java.util.List;
@@ -40,8 +41,8 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
             CompilerConfigurationKey.create("disable optimization");
 
-    public static final CompilerConfigurationKey<File> INCREMENTAL_CACHE_BASE_DIR =
-            CompilerConfigurationKey.create("incremental cache base dir");
+    public static final CompilerConfigurationKey<IncrementalCacheProvider> INCREMENTAL_CACHE_PROVIDER =
+            CompilerConfigurationKey.create("incremental cache provider");
 
     public static final CompilerConfigurationKey<List<String>> MODULE_IDS =
             CompilerConfigurationKey.create("module id strings");

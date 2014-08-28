@@ -55,10 +55,12 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             if (valueParameter.hasDefaultValue()) {
                 JsNameRef jsNameRef = functionBodyContext.getNameForDescriptor(valueParameter).makeRef();
                 JetExpression defaultArgument = getDefaultArgument(valueParameter);
-                JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext);
-
+                JsBlock defaultArgBlock = new JsBlock();
+                JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
+                JsStatement assignStatement = assignment(jsNameRef, defaultValue).makeStmt();
+                JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
                 JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, functionBodyContext.namer().getUndefinedExpression());
-                JsIf jsIf = new JsIf(checkArgIsUndefined, assignment(jsNameRef, defaultValue).makeStmt());
+                JsIf jsIf = new JsIf(checkArgIsUndefined, thenStatement);
                 result.add(jsIf);
             }
         }

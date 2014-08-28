@@ -106,7 +106,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
             return;
         }
 
-        String signature = getDefaultSignature(project, annotatedElement);
+        String signature = getDefaultSignature(project, (PsiMember) KotlinSignatureUtil.getAnnotationOwner(annotatedElement));
 
         final MessageBusConnection busConnection = project.getMessageBus().connect();
         busConnection.subscribe(ExternalAnnotationsManager.TOPIC, new ExternalAnnotationsListener.Adapter() {
@@ -143,7 +143,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
 
     @NotNull
     private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMember psiMember) {
-        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.INSTANCE$.get(project);
+        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.INSTANCE$.getResolver(project, psiMember);
 
         if (psiMember instanceof PsiMethod) {
             PsiMethod psiMethod = (PsiMethod) psiMember;

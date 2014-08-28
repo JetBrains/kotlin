@@ -48,35 +48,52 @@ public class ClassPreloadingUtils {
      *
      * @param jarFiles jars to load all classes from
      * @param classCountEstimation an estimated number of classes in a the jars
-     * @param parentFactory (nullable) factory for creating parent class loader, passing preloader's as parameter
+     * @param parentClassLoader parent class loader
      * @param handler handler to be notified on class definitions done by this class loader, or null
+     * @param classesToLoadByParent condition to load some classes via parent class loader
      * @return a class loader that reads classes from memory
      * @throws IOException on from reading the jar
      */
     public static ClassLoader preloadClasses(
-            Collection<File> jarFiles, int classCountEstimation, ClassLoaderFactory parentFactory, ClassHandler handler
+            Collection<File> jarFiles,
+            int classCountEstimation,
+            ClassLoader parentClassLoader,
+            ClassCondition classesToLoadByParent,
+            ClassHandler handler
     ) throws IOException {
         Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
 
-        return createMemoryBasedClassLoader(parentFactory, entries, handler);
+        return createMemoryBasedClassLoader(parentClassLoader, entries, handler, classesToLoadByParent);
     }
 
     public static ClassLoader preloadClasses(
-            Collection<File> jarFiles, int classCountEstimation, ClassLoaderFactory parentFactory
+            Collection<File> jarFiles, int classCountEstimation, ClassLoader parentClassLoader, ClassCondition classesToLoadByParent
     ) throws IOException {
-        return preloadClasses(jarFiles, classCountEstimation, parentFactory, null);
+        return preloadClasses(jarFiles, classCountEstimation, parentClassLoader, classesToLoadByParent, null);
     }
 
     private static ClassLoader createMemoryBasedClassLoader(
-            final ClassLoaderFactory parentFactory,
+            final ClassLoader parent,
             final Map<String, ResourceData> preloadedResources,
-            final ClassHandler handler
+            final ClassHandler handler,
+            final ClassCondition classesToLoadByParent
     ) {
         return new ClassLoader(null) {
-            private final ClassLoader parent = parentFactory == null ? null : parentFactory.create(this);
-
             @Override
             public Class<?> loadClass(String name) throws ClassNotFoundException {
+                if (classesToLoadByParent != null && classesToLoadByParent.accept(name)) {
+                    if (parent == null) {
+                        return super.loadClass(name);
+                    }
+
+                    try {
+                        return parent.loadClass(name);
+                    }
+                    catch (ClassNotFoundException e) {
+                        return super.loadClass(name);
+                    }
+                }
+
                 // Look in this class loader and then in the parent one
                 Class<?> aClass = super.loadClass(name);
                 if (aClass == null) {

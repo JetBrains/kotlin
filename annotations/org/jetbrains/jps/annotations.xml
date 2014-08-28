@@ -1,0 +1,11 @@
+<root>
+    <item name='org.jetbrains.jps.ModuleChunk java.util.Set&lt;org.jetbrains.jps.incremental.ModuleBuildTarget&gt; getTargets()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.jps.ModuleChunk java.util.Set&lt;org.jetbrains.jps.model.module.JpsModule&gt; getModules()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.jps.ModuleChunk org.jetbrains.jps.incremental.ModuleBuildTarget representativeTarget()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

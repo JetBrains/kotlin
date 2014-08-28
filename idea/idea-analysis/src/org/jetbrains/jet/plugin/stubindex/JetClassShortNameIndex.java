@@ -30,6 +30,7 @@ public class JetClassShortNameIndex extends StringStubIndexExtension<JetClassOrO
 
     private static final JetClassShortNameIndex ourInstance = new JetClassShortNameIndex();
 
+    @NotNull
     public static JetClassShortNameIndex getInstance() {
         return ourInstance;
     }

@@ -19,11 +19,10 @@ package org.jetbrains.jet.plugin.stubindex;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class KotlinIndexUtil {
-    @NonNls
+    @NotNull
     public static <K, Psi extends PsiElement> StubIndexKey<K, Psi> createIndexKey(@NotNull Class<? extends StubIndexExtension<K, Psi>> indexClass) {
         return StubIndexKey.createIndexKey(indexClass.getCanonicalName());
     }

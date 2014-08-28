@@ -193,6 +193,7 @@ public class ExpressionTypingUtils {
      * @param scope
      * @return
      */
+    @NotNull
     public static List<CallableDescriptor> canFindSuitableCall(
             @NotNull FqName callableFQN,
             @NotNull JetExpression receiverExpression,

@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 
+//TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
 trait LazyJavaClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
 }
@@ -74,12 +75,6 @@ fun LazyJavaResolverContext.lookupBinaryClass(javaClass: JavaClass): ClassDescri
 }
 
 fun LazyJavaResolverContext.findClassInJava(fqName: FqName): JavaClassLookupResult {
-    // TODO: this should be governed by module separation logic
-    // Do not look for JavaClasses for Kotlin binaries & built-ins
-    if (DescriptorResolverUtils.getKotlinBuiltinClassDescriptor(fqName) != null) {
-        return JavaClassLookupResult()
-    }
-
     val kotlinClass = kotlinClassFinder.findKotlinClass(fqName)
     val binaryClassResult = resolveBinaryClass(kotlinClass)
     if (binaryClassResult != null) return binaryClassResult

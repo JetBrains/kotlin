@@ -114,16 +114,10 @@ public class LazyPackageFragmentScopeForJavaPackage(
         else if (jClass == null)
             null
         else {
-            // TODO: this caching is a temporary workaround, should be replaced with properly caching the whole LazyJavaSubModule
-            val cached = c.javaResolverCache.getClass(jClass)
-            if (cached != null)
-                cached
-            else {
-                val classDescriptor = c.javaClassResolver.resolveClass(jClass)
-                assert(classDescriptor == null || classDescriptor.getContainingDeclaration() == packageFragment,
-                       "Wrong package fragment for $classDescriptor, expected $packageFragment")
-                classDescriptor
-            }
+            val classDescriptor = c.javaClassResolver.resolveClass(jClass)
+            assert(classDescriptor == null || classDescriptor.getContainingDeclaration() == packageFragment,
+                   "Wrong package fragment for $classDescriptor, expected $packageFragment")
+            classDescriptor
         }
     }
 

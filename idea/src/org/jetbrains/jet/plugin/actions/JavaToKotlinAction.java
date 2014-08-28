@@ -56,7 +56,8 @@ public class JavaToKotlinAction extends AnAction {
         final Converter converter = Converter.OBJECT$.create(project,
                                                              ConverterSettings.defaultSettings,
                                                              new FilesConversionScope(selectedJavaFiles),
-                                                             J2kPostProcessor.INSTANCE$);
+                                                             //TODO: (module refactoring) resulting files should be analyzed in context of respective java files
+                                                             new J2kPostProcessor(selectedJavaFiles.iterator().next()));
         CommandProcessor.getInstance().executeCommand(
                 project,
                 new Runnable() {

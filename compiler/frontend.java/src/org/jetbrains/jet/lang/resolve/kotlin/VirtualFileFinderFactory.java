@@ -16,10 +16,19 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
 public interface VirtualFileFinderFactory {
     @NotNull
     VirtualFileFinder create(@NotNull GlobalSearchScope scope);
+
+    class SERVICE {
+        @NotNull
+        public static VirtualFileFinderFactory getInstance(@NotNull Project project) {
+            return ServiceManager.getService(project, VirtualFileFinderFactory.class);
+        }
+    }
 }

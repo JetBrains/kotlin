@@ -89,16 +89,22 @@ public class MockLibraryUtil {
 
     // Runs compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
     public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir) {
+        compileKotlin(sourcesPath, outDir, sourcesPath);
+    }
+
+    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String classpath) {
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Class<?> compilerClass = getCompilerClass();
             Object compilerObject = compilerClass.newInstance();
             Method execMethod = compilerClass.getMethod("exec", PrintStream.class, String[].class);
 
+            String newClasspath = classpath.contains(sourcesPath) ? classpath : classpath + File.pathSeparator + sourcesPath;
+
             //noinspection IOResourceOpenedButNotSafelyClosed
             Enum<?> invocationResult = (Enum<?>) execMethod.invoke(
                     compilerObject, new PrintStream(outStream),
-                    new String[] {sourcesPath, "-d", outDir.getAbsolutePath(), "-classpath", sourcesPath}
+                    new String[] {sourcesPath, "-d", outDir.getAbsolutePath(), "-classpath", newClasspath}
             );
 
             assertEquals(new String(outStream.toByteArray()), ExitCode.OK.name(), invocationResult.name());

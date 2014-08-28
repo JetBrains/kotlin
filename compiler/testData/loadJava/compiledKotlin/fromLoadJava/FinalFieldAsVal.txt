@@ -1,0 +1,7 @@
+package test
+
+public final class FinalFieldAsVal {
+    /*primary*/ public constructor FinalFieldAsVal()
+    public final val f: kotlin.Int = 1
+        public final fun <get-f>(): kotlin.Int
+}

@@ -20,5 +20,5 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.Printer;
 
 public interface TestMethodModel extends TestEntityModel {
-    void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName);
+    void generateBody(@NotNull Printer p);
 }

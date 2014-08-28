@@ -37,6 +37,7 @@ public class FilesConversionScope(val files: Collection<PsiJavaFile>) : Conversi
 }
 
 public trait PostProcessor {
+    public val contextToAnalyzeIn: PsiElement
     public fun analyzeFile(file: JetFile): BindingContext
     public fun doAdditionalProcessing(file: JetFile)
 }

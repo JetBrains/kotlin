@@ -34,7 +34,9 @@ import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
@@ -57,6 +59,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @NotNull
     protected ExitCode doExecute(
             @NotNull K2JVMCompilerArguments arguments,
+            @NotNull Services services,
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
@@ -68,6 +71,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                 "Using Kotlin home directory " + paths.getHomePath(), CompilerMessageLocation.NO_LOCATION);
 
         CompilerConfiguration configuration = new CompilerConfiguration();
+
+        IncrementalCacheProvider incrementalCacheProvider = (IncrementalCacheProvider) services.get(IncrementalCacheProvider.class);
+        if (incrementalCacheProvider != null) {
+            configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER, incrementalCacheProvider);
+        }
 
         try {
             configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(paths, arguments));
@@ -131,9 +139,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
                 ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(
                         paths, arguments.module, sanitizedCollector);
-                if (moduleScript.getIncrementalCacheDir() != null) {
-                    configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR, new File(moduleScript.getIncrementalCacheDir()));
-                }
 
                 if (outputDir != null) {
                     messageCollector.report(CompilerMessageSeverity.WARNING,

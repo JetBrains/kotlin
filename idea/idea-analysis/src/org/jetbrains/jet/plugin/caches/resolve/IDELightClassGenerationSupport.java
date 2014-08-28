@@ -24,6 +24,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.MultiMap;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
@@ -42,8 +44,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
-import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
+import org.jetbrains.jet.plugin.stubindex.JetExactPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil;
 
@@ -55,6 +57,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     private static final Logger LOG = Logger.getInstance(IDELightClassGenerationSupport.class);
 
+    @NotNull
     public static IDELightClassGenerationSupport getInstanceForIDE(@NotNull Project project) {
         return (IDELightClassGenerationSupport) ServiceManager.getService(project, LightClassGenerationSupport.class);
     }
@@ -65,19 +68,9 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     public IDELightClassGenerationSupport(@NotNull Project project) {
         this.project = project;
-        final GlobalSearchScope searchScope = GlobalSearchScope.allScope(project);
-        this.jetFileComparator = new Comparator<JetFile>() {
-            @Override
-            public int compare(@NotNull JetFile o1, @NotNull JetFile o2) {
-                VirtualFile f1 = o1.getVirtualFile();
-                VirtualFile f2 = o2.getVirtualFile();
-                if (f1 == f2) return 0;
-                if (f1 == null) return -1;
-                if (f2 == null) return 1;
-                return searchScope.compare(f1, f2);
-            }
-        };
+        this.jetFileComparator = byScopeComparator(GlobalSearchScope.allScope(project));
     }
+
 
     @NotNull
     @Override
@@ -171,6 +164,47 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     @Override
+    public List<KotlinLightPackageClassInfo> findPackageClassesInfos(
+            @NotNull FqName fqName, @NotNull GlobalSearchScope wholeScope
+    ) {
+        Collection<JetFile> allFiles = findFilesForPackage(fqName, wholeScope);
+        Map<IdeaModuleInfo, List<JetFile>> filesByInfo = groupByModuleInfo(allFiles);
+        List<KotlinLightPackageClassInfo> result = new ArrayList<KotlinLightPackageClassInfo>();
+        for (Map.Entry<IdeaModuleInfo, List<JetFile>> entry : filesByInfo.entrySet()) {
+            result.add(new KotlinLightPackageClassInfo(entry.getValue(), entry.getKey().contentScope()));
+        }
+        sortByClasspath(wholeScope, result);
+        return result;
+    }
+
+    @NotNull
+    private static Map<IdeaModuleInfo, List<JetFile>> groupByModuleInfo(@NotNull Collection<JetFile> allFiles) {
+        return KotlinPackage.groupByTo(
+                allFiles,
+                new LinkedHashMap<IdeaModuleInfo, List<JetFile>>(),
+                new Function1<JetFile, IdeaModuleInfo>() {
+                    @Override
+                    public IdeaModuleInfo invoke(JetFile file) {
+                        return ResolvePackage.getModuleInfo(file);
+                    }
+                });
+    }
+
+    private static void sortByClasspath(@NotNull GlobalSearchScope wholeScope, @NotNull List<KotlinLightPackageClassInfo> result) {
+        final Comparator<JetFile> byScopeComparator = byScopeComparator(wholeScope);
+        Collections.sort(result, new Comparator<KotlinLightPackageClassInfo>() {
+            @Override
+            public int compare(@NotNull KotlinLightPackageClassInfo info1, @NotNull KotlinLightPackageClassInfo info2) {
+                JetFile file1 = info1.getFiles().iterator().next();
+                JetFile file2 = info2.getFiles().iterator().next();
+                //classes earlier that would appear earlier on classpath should go first
+                return -byScopeComparator.compare(file1, file2);
+            }
+        });
+    }
+
+    @NotNull
+    @Override
     public Collection<JetClassOrObject> findClassOrObjectDeclarationsInPackage(
             @NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope
     ) {
@@ -179,7 +213,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @Override
     public boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope) {
-        return !JetAllPackagesIndex.getInstance().get(fqName.asString(), project, kotlinSources(scope, project)).isEmpty();
+        return PackageIndexUtil.packageExists(fqName, kotlinSources(scope, project), project);
     }
 
     @NotNull
@@ -201,7 +235,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     public MultiMap<String, FqName> getAllPossiblePackageClasses(@NotNull GlobalSearchScope scope) {
-        Collection<String> packageFqNames = JetAllPackagesIndex.getInstance().getAllKeys(project);
+        Collection<String> packageFqNames = JetExactPackagesIndex.getInstance().getAllKeys(project);
 
         MultiMap<String, FqName> result = new MultiMap<String, FqName>();
         for (String packageFqName : packageFqNames) {
@@ -210,5 +244,20 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         }
 
         return result;
+    }
+
+    @NotNull
+    private static Comparator<JetFile> byScopeComparator(@NotNull final GlobalSearchScope searchScope) {
+        return new Comparator<JetFile>() {
+            @Override
+            public int compare(@NotNull JetFile o1, @NotNull JetFile o2) {
+                VirtualFile f1 = o1.getVirtualFile();
+                VirtualFile f2 = o2.getVirtualFile();
+                if (f1 == f2) return 0;
+                if (f1 == null) return -1;
+                if (f2 == null) return 1;
+                return searchScope.compare(f1, f2);
+            }
+        };
     }
 }

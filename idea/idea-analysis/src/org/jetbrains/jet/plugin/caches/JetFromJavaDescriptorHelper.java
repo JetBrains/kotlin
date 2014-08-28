@@ -57,6 +57,7 @@ public class JetFromJavaDescriptorHelper {
     /**
      * Get names that could have jet descriptor equivalents. It could be inaccurate and return more results than necessary.
      */
+    @NotNull
     static Collection<String> getPossiblePackageDeclarationsNames(Project project, GlobalSearchScope scope) {
         Collection<String> result = new ArrayList<String>();
 
@@ -71,6 +72,7 @@ public class JetFromJavaDescriptorHelper {
         return result;
     }
 
+    @NotNull
     static Collection<PsiClass> getCompiledClassesForTopLevelObjects(Project project, GlobalSearchScope scope) {
         Set<PsiClass> jetObjectClasses = Sets.newHashSet();
 
@@ -161,7 +163,7 @@ public class JetFromJavaDescriptorHelper {
 
 
     @NotNull
-    public static Collection<FqName> getTopLevelFunctionFqNames(
+    public static Collection<FqName> getTopLevelCallableFqNames(
             @NotNull Project project,
             @NotNull GlobalSearchScope scope,
             boolean shouldBeExtension

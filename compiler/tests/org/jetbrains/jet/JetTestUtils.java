@@ -35,6 +35,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -51,17 +52,17 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -93,6 +94,9 @@ import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToD
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetTestUtils {
+    public static final String TEST_GENERATOR_NAME = "org.jetbrains.jet.generators.tests.TestsPackage";
+    public static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
+
     private static final Pattern KT_FILES = Pattern.compile(".*?.kt");
     private static final List<File> filesToDelete = new ArrayList<File>();
 
@@ -110,8 +114,6 @@ public class JetTestUtils {
     public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
-
-
         @NotNull
         @Override
         public BindingContext getBindingContext() {
@@ -152,8 +154,9 @@ public class JetTestUtils {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            if (slice == BindingContext.PROCESSED) return (V)Boolean.FALSE;
+            if (slice == BindingContext.PROCESSED) return (V) Boolean.FALSE;
             return SlicedMap.DO_NOTHING.get(slice, key);
         }
 
@@ -232,7 +235,7 @@ public class JetTestUtils {
     };
 
     @SuppressWarnings("unchecked")
-    private static final Class<? extends TestCase>[] NO_INNER_CLASSES = new Class[0];
+    private static final Class<? extends TestCase>[] NO_INNER_CLASSES = ArrayUtil.EMPTY_CLASS_ARRAY;
 
     private JetTestUtils() {
     }
@@ -352,20 +355,13 @@ public class JetTestUtils {
         filesToDelete.add(file);
     }
 
-    public static void rmrf(File file) {
-        if (file == null) {
-            return;
-        }
-        if (!FileUtil.delete(file)) {
-            throw new RuntimeException("failed to delete " + file);
-        }
-    }
-
     @NotNull
     public static JetFile createFile(@NotNull @NonNls String name, @NotNull String text, @NotNull Project project) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        return (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(project)).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        PsiFileFactoryImpl factory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
+        //noinspection ConstantConditions
+        return (JetFile) factory.trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
     }
 
     public static String doLoadFile(String myFullDataPath, String name) throws IOException {
@@ -676,7 +672,6 @@ public class JetTestUtils {
 
     public static void assertAllTestsPresentByMetadata(
             @NotNull Class<?> testCaseClass,
-            @NotNull String generatorClassFqName,
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
             boolean recursive
@@ -693,11 +688,11 @@ public class JetTestUtils {
             for (File file : files) {
                 if (file.isDirectory()) {
                     if (recursive && containsTestData(file, filenamePattern)) {
-                        assertTestClassPresentByMetadata(testCaseClass, generatorClassFqName, file);
+                        assertTestClassPresentByMetadata(testCaseClass, file);
                     }
                 }
                 else if (filenamePattern.matcher(file.getName()).matches()) {
-                    assertFilePathPresent(file, rootFile, filePaths, generatorClassFqName);
+                    assertFilePathPresent(file, rootFile, filePaths);
                 }
             }
         }
@@ -705,13 +700,12 @@ public class JetTestUtils {
 
     public static void assertAllTestsPresentInSingleGeneratedClass(
             @NotNull Class<?> testCaseClass,
-            @NotNull final String generatorClassFqName,
             @NotNull File testDataDir,
-            @NotNull final Pattern filenamePattern) {
+            @NotNull final Pattern filenamePattern
+    ) {
         TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
         Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
-        String rootPath = testClassMetadata.value();
-        final File rootFile = new File(rootPath);
+        final File rootFile = new File(testClassMetadata.value());
 
         final Set<String> filePaths = collectPathsMetadata(testCaseClass);
 
@@ -719,7 +713,7 @@ public class JetTestUtils {
             @Override
             public boolean process(File file) {
                 if (file.isFile() && filenamePattern.matcher(file.getName()).matches()) {
-                    assertFilePathPresent(file, rootFile, filePaths, generatorClassFqName);
+                    assertFilePathPresent(file, rootFile, filePaths);
                 }
 
                 return true;
@@ -727,14 +721,12 @@ public class JetTestUtils {
         });
     }
 
-    private static void assertFilePathPresent(File file, File rootFile, Set<String> filePaths, String generatorClassFqName) {
+    private static void assertFilePathPresent(File file, File rootFile, Set<String> filePaths) {
         String path = FileUtil.getRelativePath(rootFile, file);
         if (path != null) {
             String relativePath = FileUtil.nameToCompare(path);
             if (!filePaths.contains(relativePath)) {
-                Assert.fail("Test data file missing from the generated test class: " +
-                            file +
-                            pleaseReRunGenerator(generatorClassFqName));
+                Assert.fail("Test data file missing from the generated test class: " + file + "\n" + PLEASE_REGENERATE_TESTS);
             }
         }
     }
@@ -780,7 +772,6 @@ public class JetTestUtils {
 
     private static void assertTestClassPresentByMetadata(
             @NotNull Class<?> outerClass,
-            @NotNull String generatorClassFqName,
             @NotNull File testDataDir
     ) {
         InnerTestClasses innerClassesAnnotation = outerClass.getAnnotation(InnerTestClasses.class);
@@ -791,34 +782,17 @@ public class JetTestUtils {
                 return;
             }
         }
-        Assert.fail("Test data directory missing from the generated test class: " +
-                    testDataDir +
-                    pleaseReRunGenerator(generatorClassFqName));
+        Assert.fail("Test data directory missing from the generated test class: " + testDataDir + "\n" + PLEASE_REGENERATE_TESTS);
     }
 
-    private static String pleaseReRunGenerator(String generatorClassFqName) {
-        return "\nPlease re-run the generator: " + generatorClassFqName +
-               getLocationFormattedForConsole(generatorClassFqName);
-    }
-
-    private static String getLocationFormattedForConsole(String generatorClassFqName) {
-        return "(" + getSimpleName(generatorClassFqName) + ".java:1)";
-    }
-
-    private static String getSimpleName(String generatorClassFqName) {
-        return generatorClassFqName.substring(generatorClassFqName.lastIndexOf(".") + 1);
-    }
-
+    @NotNull
     public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile, true);
         return JetPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
     }
 
     @NotNull
-    public static List<JetFile> loadToJetFiles(
-            @NotNull JetCoreEnvironment environment,
-            @NotNull List<File> files
-    ) throws IOException {
+    public static List<JetFile> loadToJetFiles(@NotNull JetCoreEnvironment environment, @NotNull List<File> files) throws IOException {
         List<JetFile> jetFiles = Lists.newArrayList();
         for (File file : files) {
             jetFiles.add(loadJetFile(environment.getProject(), file));
@@ -831,23 +805,9 @@ public class JetTestUtils {
         return createEmptyModule("<empty-for-test>");
     }
 
+    @NotNull
     public static ModuleDescriptorImpl createEmptyModule(@NotNull String name) {
         return new ModuleDescriptorImpl(Name.special(name), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
-    }
-
-    @NotNull
-    public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName) {
-        return createTestPackageFragment(testPackageName, "<test module>");
-    }
-
-    @NotNull
-    public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName, @NotNull String moduleName) {
-        ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule(moduleName);
-        MutablePackageFragmentProvider provider = new MutablePackageFragmentProvider(module);
-        module.initialize(provider);
-        module.addDependencyOnModule(module);
-        module.seal();
-        return provider.getOrCreateFragment(FqName.topLevel(testPackageName));
     }
 
     @NotNull

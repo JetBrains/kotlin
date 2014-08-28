@@ -7,6 +7,6 @@ fun test() = small(param<caret>First = 12)
 
 // EXIST: paramFirst
 // EXIST: paramSecond
-// ABSENT: paramTest
+// EXIST: paramTest
 
-// NUMBER: 2
+// NUMBER: 3

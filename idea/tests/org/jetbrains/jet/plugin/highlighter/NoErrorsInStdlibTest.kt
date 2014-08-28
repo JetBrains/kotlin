@@ -18,10 +18,7 @@ package org.jetbrains.jet.plugin.highlighter
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources
-import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
-import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport
@@ -31,30 +28,34 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase
 import kotlin.test.assertEquals
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
 import org.jetbrains.jet.lang.diagnostics.Severity
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.jet.JetTestUtils
+import kotlin.test.assertTrue
 
-public class NoErrorsInStdlibTest: LightCodeInsightFixtureTestCase() {
+public class NoErrorsInStdlibTest : LightCodeInsightFixtureTestCase() {
     public fun testNoErrors() {
-        val orderEntries = ModuleRootManager.getInstance(myModule!!)!!.getOrderEntries()
-        val orderEntry = orderEntries.find { it.getPresentableName() == JetJdkAndLibraryProjectDescriptor.LIBRARY_NAME }!!
-        val root = orderEntry.getFiles(OrderRootType.SOURCES)[0]
+        val root = myFixture.copyDirectoryToProject("../libraries/stdlib/src", "")
 
         val psiManager = getPsiManager() // workaround for KT-3974 IllegalAccessError when accessing protected method inherited by outer class
 
         var totalErrors = 0
+        var hasAtLeastOneFile = false
 
         VfsUtil.processFileRecursivelyWithoutIgnored(root) { file ->
             if (!file!!.isDirectory()) {
                 val psiFile = psiManager.findFile(file)
                 if (psiFile is JetFile) {
-                    var bindingContext = psiFile.getBindingContext()
+                    hasAtLeastOneFile = true
+                    val bindingContext = psiFile.getBindingContext()
                     val errors = bindingContext.getDiagnostics().all().filter { it.getSeverity() == Severity.ERROR }
 
-                    if (!errors.isEmpty()) {
-                        System.err.println("${psiFile.getName()}: ${errors.size()} errors")
+                    if (errors.isNotEmpty()) {
+                        System.err.println("${psiFile.getName()}: ${errors.size} errors")
                         AnalyzerWithCompilerReport.reportDiagnostics(
-                                bindingContext.getDiagnostics(), MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR)
+                                bindingContext.getDiagnostics(), MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR
+                        )
 
-                        totalErrors += errors.size()
+                        totalErrors += errors.size
                     }
                 }
             }
@@ -63,10 +64,13 @@ public class NoErrorsInStdlibTest: LightCodeInsightFixtureTestCase() {
         }
 
         assertEquals(0, totalErrors)
+        assertTrue(hasAtLeastOneFile)
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return object : ProjectDescriptorWithStdlibSources() {
+        val dir = JetTestUtils.tmpDir("noErrorsInStdlibTest")
+        ForTestCompileRuntime.compileBuiltIns(dir)
+        return object : JetJdkAndLibraryProjectDescriptor(dir) {
             override fun getSdk(): Sdk? = PluginTestCaseBase.fullJdk()
         }
     }

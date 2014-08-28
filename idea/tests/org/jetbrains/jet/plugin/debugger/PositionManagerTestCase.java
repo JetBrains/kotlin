@@ -29,7 +29,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import com.sun.jdi.Location;
@@ -40,9 +39,7 @@ import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
-import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;

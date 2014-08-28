@@ -46,10 +46,6 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
         });
 
         StringBuilder sb = new StringBuilder();
-        if (result.getIncrementalCacheDir() != null) {
-            sb.append("incrementalCacheDir=").append(result.getIncrementalCacheDir()).append("\n\n");
-        }
-
         for (Module module : result.getModules()) {
             sb.append(moduleToString(module)).append("\n");
         }

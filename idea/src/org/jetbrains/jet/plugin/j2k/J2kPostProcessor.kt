@@ -22,8 +22,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.intentions.RemoveExplicitTypeArguments
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import java.util.ArrayList
+import com.intellij.psi.PsiElement
 
-public object J2kPostProcessor : PostProcessor {
+public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : PostProcessor {
     override fun analyzeFile(file: JetFile): BindingContext {
         return file.getAnalysisResults().getBindingContext()
     }

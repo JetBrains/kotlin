@@ -49,7 +49,7 @@ import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -98,7 +98,7 @@ public class ReplInterpreter {
         Project project = environment.getProject();
         this.psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         this.trace = new BindingTraceContext();
-        this.module = AnalyzerFacadeForJVM.createJavaModule("<repl>");
+        this.module = TopDownAnalyzerFacadeForJVM.createJavaModule("<repl>");
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.createForLocalDeclarations(
                 new LockBasedStorageManager(),
                 new ExceptionTracker(), // dummy

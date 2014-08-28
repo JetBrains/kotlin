@@ -5,5 +5,5 @@ fun test(p: Int) = foo(12, <caret>, third = "")
 
 // EXIST: p
 // ABSENT: first
-// ABSENT: third
+// EXIST: third
 // EXIST: second

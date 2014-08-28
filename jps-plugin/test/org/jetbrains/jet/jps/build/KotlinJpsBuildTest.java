@@ -71,9 +71,6 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     private void initProject() {
         addJdk(JDK_NAME);
         loadProject(workDir.getAbsolutePath() + File.separator + PROJECT_NAME + ".ipr");
-        CompilerSettings settings = new CompilerSettings();
-        settings.setAdditionalArguments(settings.getAdditionalArguments() + " -verbose");
-        JpsKotlinCompilerSettings.setCompilerSettings(myProject, settings);
     }
 
     public void doTest() {

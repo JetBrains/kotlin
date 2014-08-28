@@ -1,7 +1,7 @@
 /**
-h4. Pattern matching
+#### Pattern matching
 
-bq. See [Pattern matching]
+See [When-expression](control-flow.html#when-expression)
 */
 
 when

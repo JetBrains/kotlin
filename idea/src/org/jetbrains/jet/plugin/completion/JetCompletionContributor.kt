@@ -42,6 +42,8 @@ public class JetCompletionContributor : CompletionContributor() {
     private val EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER = "KotlinExtensionDummy.fake() {}" // A way to add reference into file at completion place
     private val EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN = psiElement().afterLeaf(JetTokens.FUN_KEYWORD.toString(), JetTokens.VAL_KEYWORD.toString(), JetTokens.VAR_KEYWORD.toString())
 
+    private val DEFAULT_DUMMY_IDENTIFIER = CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
+
     ;{
         val provider = object : CompletionProvider<CompletionParameters>() {
             override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
@@ -60,7 +62,7 @@ public class JetCompletionContributor : CompletionContributor() {
         val tokenBefore = psiFile.findElementAt(Math.max(0, offset - 1))
 
         val dummyIdentifier = when {
-            context.getCompletionType() == CompletionType.SMART -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
+            context.getCompletionType() == CompletionType.SMART -> DEFAULT_DUMMY_IDENTIFIER
 
             PackageDirectiveCompletion.ACTIVATION_PATTERN.accepts(tokenBefore) -> PackageDirectiveCompletion.DUMMY_IDENTIFIER
 
@@ -68,7 +70,7 @@ public class JetCompletionContributor : CompletionContributor() {
 
             tokenBefore != null && isExtensionReceiverAfterDot(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "."
 
-            else -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
+            else -> DEFAULT_DUMMY_IDENTIFIER
         }
         context.setDummyIdentifier(dummyIdentifier)
 
@@ -153,7 +155,8 @@ public class JetCompletionContributor : CompletionContributor() {
                 val somethingAdded = BasicCompletionSession(configuration, parameters, result).complete()
                 if (!somethingAdded && parameters.getInvocationCount() < 2) {
                     // Rerun completion if nothing was found
-                    val newConfiguration = CompletionSessionConfiguration(completeNonImportedDeclarations = true, completeNonAccessibleDeclarations = parameters.getInvocationCount() > 0)
+                    val newConfiguration = CompletionSessionConfiguration(completeNonImportedDeclarations = true,
+                                                                          completeNonAccessibleDeclarations = false)
                     BasicCompletionSession(newConfiguration, parameters, result).complete()
                 }
             }

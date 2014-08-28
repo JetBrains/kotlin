@@ -51,13 +51,12 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackage;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.utils.KotlinPaths;
 
@@ -291,31 +290,15 @@ public class KotlinToJVMBytecodeCompiler {
                         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
                         BindingTrace sharedTrace = support.getTrace();
                         ModuleDescriptorImpl sharedModule = support.newModule();
-                        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.OBJECT$.getInstance();
-                        File incrementalCacheBaseDir = environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
-                        final IncrementalCache incrementalCache;
-                        if (incrementalCacheProvider != null && incrementalCacheBaseDir != null) {
-                            incrementalCache = incrementalCacheProvider.getIncrementalCache(incrementalCacheBaseDir);
-                            Disposer.register(environment.getApplication(), new Disposable() {
-                                @Override
-                                public void dispose() {
-                                    incrementalCache.close();
-                                }
-                            });
-                        }
-                        else {
-                            incrementalCache = null;
-                        }
 
-
-                        return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                                 environment.getProject(),
                                 environment.getSourceFiles(),
                                 sharedTrace,
                                 Predicates.<PsiFile>alwaysTrue(),
                                 sharedModule,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
-                                incrementalCache
+                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER)
                         );
                     }
                 }
@@ -342,22 +325,15 @@ public class KotlinToJVMBytecodeCompiler {
             File outputDirectory
     ) {
         CompilerConfiguration configuration = environment.getConfiguration();
-        File incrementalCacheDir = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
-        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.OBJECT$.getInstance();
+        IncrementalCacheProvider incrementalCacheProvider = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER);
 
         Collection<FqName> packagesWithRemovedFiles;
-        if (incrementalCacheDir == null || moduleId == null || incrementalCacheProvider == null) {
+        if (moduleId == null || incrementalCacheProvider == null) {
             packagesWithRemovedFiles = null;
         }
         else {
-            IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(incrementalCacheDir);
-            try {
-                packagesWithRemovedFiles = IncrementalPackage.getPackagesWithRemovedFiles(
-                        incrementalCache, moduleId, environment.getSourceFiles());
-            }
-            finally {
-                incrementalCache.close();
-            }
+            IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
+            packagesWithRemovedFiles = IncrementalPackage.getPackagesWithRemovedFiles(incrementalCache, environment.getSourceFiles());
         }
         BindingTraceContext diagnosticHolder = new BindingTraceContext();
         GenerationState generationState = new GenerationState(

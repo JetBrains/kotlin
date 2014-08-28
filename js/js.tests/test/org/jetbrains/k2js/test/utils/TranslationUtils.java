@@ -27,7 +27,7 @@ import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
+import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
@@ -76,8 +76,8 @@ public final class TranslationUtils {
                 return isFileWithCode((JetFile) file);
             }
         };
-        AnalyzeExhaust exhaust = AnalyzerFacadeForJS.analyzeFiles(allLibFiles, filesWithCode, Config.getEmptyConfig(project));
-        AnalyzerFacadeForJS.checkForErrors(allLibFiles, exhaust.getBindingContext());
+        AnalyzeExhaust exhaust = TopDownAnalyzerFacadeForJS.analyzeFiles(allLibFiles, filesWithCode, Config.getEmptyConfig(project));
+        TopDownAnalyzerFacadeForJS.checkForErrors(allLibFiles, exhaust.getBindingContext());
         cachedLibraryExhaust = new SoftReference<AnalyzeExhaust>(exhaust);
         return exhaust;
     }

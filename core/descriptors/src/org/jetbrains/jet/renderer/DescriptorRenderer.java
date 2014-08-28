@@ -21,6 +21,9 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameBase;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 
@@ -109,6 +112,12 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     @NotNull
     String renderFunctionParameters(@NotNull FunctionDescriptor functionDescriptor);
+
+    @NotNull
+    String renderName(@NotNull Name name);
+
+    @NotNull
+    String renderFqName(@NotNull FqNameBase fqName);
 
     enum TextFormat {
         PLAIN, HTML

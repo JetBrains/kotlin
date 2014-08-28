@@ -1,0 +1,7 @@
+package first
+
+import second.`package`
+
+fun foo() {
+    "".`package`()
+}

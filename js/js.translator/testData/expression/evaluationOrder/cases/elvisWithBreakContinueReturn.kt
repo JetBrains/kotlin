@@ -1,0 +1,60 @@
+package foo
+
+class A
+
+fun bar(a: A?): String {
+    if ((a ?: return "A") != null)
+        return "B"
+    else
+        return "C"
+}
+
+fun testBreak(a: A?, expected: Int) {
+    var i = 0
+    while (i++ < 5) {
+        if (i == 2) a ?: break
+    }
+    assertEquals(expected, i, "break 1")
+
+    i = 0
+    while (i++ < 5) {
+        if (i == 2) {
+            var x = a ?: break
+        }
+    }
+    assertEquals(expected, i, "break 2")
+}
+
+fun testContinue(a: A?, expected: Int) {
+    var i = 0
+    var n = 0
+    while (i++ < 5) {
+        if (i == 2) a ?: continue
+        n++
+    }
+    assertEquals(expected, n)
+
+    i = 0
+    n = 0
+    while (i++ < 5) {
+        if (i == 2) {
+            var x = a ?: continue
+        }
+        n++
+    }
+    assertEquals(expected, n)
+}
+
+fun box(): String {
+
+    testBreak(null, 2)
+    testBreak(A(), 6)
+
+    testContinue(null, 4)
+    testContinue(A(), 5)
+
+    assertEquals("A", bar(null))
+    assertEquals("B", bar(A()))
+
+    return "OK"
+}

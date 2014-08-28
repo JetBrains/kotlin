@@ -57,15 +57,10 @@ public class Preloader {
 
         ClassLoader parent = Preloader.class.getClassLoader();
 
-        final ClassLoader withInstrumenter = instrumentersClasspath.length > 0 ? new URLClassLoader(instrumentersClasspath, parent) : parent;
+        ClassLoader withInstrumenter = instrumentersClasspath.length > 0 ? new URLClassLoader(instrumentersClasspath, parent) : parent;
 
         final Handler handler = getHandler(mode, withInstrumenter);
-        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, new ClassLoaderFactory() {
-            @Override
-            public ClassLoader create(ClassLoader parameter) {
-                return withInstrumenter;
-            }
-        }, handler);
+        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, withInstrumenter, null, handler);
 
         Class<?> mainClass = preloaded.loadClass(mainClassCanonicalName);
         Method mainMethod = mainClass.getMethod("main", String[].class);

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
+import com.intellij.core.CoreJavaFileManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
@@ -41,9 +42,11 @@ public class JavaPsiFacadeKotlinHacks {
 
     private final JavaFileManager javaFileManager;
     private final List<PsiElementFinder> extensionPsiElementFinders;
+    private final boolean isCoreJavaFileManager;
 
     public JavaPsiFacadeKotlinHacks(@NotNull Project project) {
         this.javaFileManager = findJavaFileManager(project);
+        this.isCoreJavaFileManager = javaFileManager instanceof CoreJavaFileManager;
         this.extensionPsiElementFinders = Lists.newArrayList();
         for (PsiElementFinder finder : project.getExtensions(PsiElementFinder.EP_NAME)) {
             if (!(finder instanceof KotlinFinderMarker)) {
@@ -82,7 +85,10 @@ public class JavaPsiFacadeKotlinHacks {
 
         PsiClass aClass = javaFileManager.findClass(qualifiedName, scope);
         if (aClass != null) {
-            return aClass;
+            //TODO: (module refactoring) CoreJavaFileManager should check scope
+            if (!isCoreJavaFileManager || scope.contains(aClass.getContainingFile().getOriginalFile().getVirtualFile())) {
+                return aClass;
+            }
         }
 
         for (PsiElementFinder finder : extensionPsiElementFinders) {

@@ -22,8 +22,8 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.lazy.declarations.*
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex
 import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 
 public class PluginDeclarationProviderFactory(
         private val project: Project,
@@ -49,11 +49,8 @@ public class PluginDeclarationProviderFactory(
     }
 
     private fun getStubBasedPackageMemberDeclarationProvider(name: FqName): PackageMemberDeclarationProvider? {
-        //TODO: better check
-        val files = JetAllPackagesIndex.getInstance().get(name.asString(), project, indexedFilesScope)
-        if (files.isEmpty()) {
-            return null
-        }
+        if (!PackageIndexUtil.packageExists(name, indexedFilesScope, project)) return null
+
         return StubBasedPackageMemberDeclarationProvider(name, project, indexedFilesScope)
     }
 }

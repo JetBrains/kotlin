@@ -3,8 +3,11 @@ package test
 internal final annotation class A : kotlin.Annotation {
     /*primary*/ public constructor A(/*0*/ a: kotlin.Int = ..., /*1*/ b: kotlin.String = ..., /*2*/ c: kotlin.String)
     internal final val a: kotlin.Int
+        internal final fun <get-a>(): kotlin.Int
     internal final val b: kotlin.String
+        internal final fun <get-b>(): kotlin.String
     internal final val c: kotlin.String
+        internal final fun <get-c>(): kotlin.String
 }
 
 test.A(a = IntegerValueType(12): IntegerValueType(12), c = "Hello": kotlin.String) internal object SomeObject {

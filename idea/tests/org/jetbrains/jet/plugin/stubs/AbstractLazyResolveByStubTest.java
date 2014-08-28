@@ -44,15 +44,11 @@ import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
 
 public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTestCase {
-    protected void doTestCheckingPrimaryConstructorsAndAccessors(String testFileName) throws Exception {
+    protected void doTest(String testFileName) throws Exception {
         doTest(testFileName, true, true);
     }
 
-    protected void doTestNotCheckingPrimaryConstructors(String testFileName) throws Exception {
-        doTest(testFileName, false, false);
-    }
-
-    public void doTest(@NotNull final String path, final boolean checkPrimaryConstructors, final boolean checkPropertyAccessors)
+    private void doTest(@NotNull final String path, final boolean checkPrimaryConstructors, final boolean checkPropertyAccessors)
             throws Exception {
         configureByFile(path);
         configureModule(getModule(), JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);

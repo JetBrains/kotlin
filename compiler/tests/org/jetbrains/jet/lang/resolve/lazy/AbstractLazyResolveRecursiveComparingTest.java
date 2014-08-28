@@ -45,16 +45,8 @@ public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTe
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
     }
 
-    protected void doTestCheckingPrimaryConstructors(String testFileName) throws IOException {
-        doTest(testFileName, true, false, true);
-    }
-
-    protected void doTestCheckingPrimaryConstructorsAndAccessors(String testFileName) throws IOException {
-        doTest(testFileName, true, true, false);
-    }
-
-    protected void doTestNotCheckingPrimaryConstructors(String testFileName) throws IOException {
-        doTest(testFileName, false, false, false);
+    protected void doTest(String testFileName) throws IOException {
+        doTest(testFileName, true, true, true);
     }
 
     private void doTest(String testFileName, boolean checkPrimaryConstructors, boolean checkPropertyAccessors, boolean allowErrorTypes) throws IOException {

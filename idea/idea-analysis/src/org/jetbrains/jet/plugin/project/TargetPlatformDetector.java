@@ -21,12 +21,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 public class TargetPlatformDetector {
     public static final TargetPlatformDetector INSTANCE = new TargetPlatformDetector();
-    private static final Logger LOG = Logger.getInstance(AnalyzerFacade.class);
+    private static final Logger LOG = Logger.getInstance(TargetPlatformDetector.class);
 
     private TargetPlatformDetector() {
     }

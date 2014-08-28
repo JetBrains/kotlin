@@ -38,6 +38,7 @@ import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
 import org.jetbrains.k2js.translate.utils.TranslationUtils
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsConditional
+import com.google.dart.compiler.backend.js.ast.JsBlock
 
 
 trait CallInfo {
@@ -79,8 +80,25 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
 
 // two receiver need only for FunctionCall in VariableAsFunctionResolvedCall
 fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, explicitReceivers: ExplicitReceivers): FunctionCallInfo {
-    val callInfo = createCallInfo(resolvedCall, explicitReceivers)
-    val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, explicitReceivers.receiverOrThisObject, this)
+    val argsBlock = JsBlock()
+    val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, explicitReceivers.receiverOrThisObject, this, argsBlock)
+    val explicitReceiversCorrected =
+        if (!argsBlock.isEmpty() && explicitReceivers.receiverOrThisObject != null) {
+            val receiverOrThisRefVar = this.declareTemporary(explicitReceivers.receiverOrThisObject)
+            this.addStatementToCurrentBlock(receiverOrThisRefVar.assignmentExpression().makeStmt()!!)
+
+            var receiverRef = explicitReceivers.receiverObject
+            if (receiverRef != null) {
+                receiverRef = this.declareTemporary(null).reference()
+                this.addStatementToCurrentBlock(JsAstUtils.assignment(receiverRef!!, explicitReceivers.receiverObject!!).makeStmt()!!)
+            }
+            ExplicitReceivers(receiverOrThisRefVar.reference(), receiverRef)
+        }
+        else {
+            explicitReceivers
+        }
+    this.addStatementsToCurrentBlockFrom(argsBlock)
+    val callInfo = createCallInfo(resolvedCall, explicitReceiversCorrected)
     return FunctionCallInfo(callInfo, argumentsInfo)
 }
 

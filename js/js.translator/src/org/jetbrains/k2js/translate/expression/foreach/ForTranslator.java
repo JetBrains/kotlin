@@ -29,6 +29,8 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.expression.MultiDeclarationTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
@@ -95,14 +97,9 @@ public abstract class ForTranslator extends AbstractTranslator {
             return realBody;
         } else {
             JsStatement currentVarInit = makeCurrentVarInit(itemValue);
-            if (realBody instanceof JsBlock) {
-                JsBlock block = (JsBlock) realBody;
-                block.getStatements().add(0, currentVarInit);
-                return block;
-            }
-            else {
-                return new JsBlock(currentVarInit, realBody);
-            }
+            JsBlock block = JsAstUtils.convertToBlock(realBody);
+            block.getStatements().add(0, currentVarInit);
+            return block;
         }
     }
 }

@@ -79,6 +79,11 @@
           <option name="ASSIGNMENT_WRAP" value="1" />
           <option name="PARENT_SETTINGS_INSTALLED" value="true" />
         </codeStyleSettings>
+        <codeStyleSettings language="CoffeeScript">
+          <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
+          <option name="METHOD_PARAMETERS_WRAP" value="5" />
+          <option name="PARENT_SETTINGS_INSTALLED" value="true" />
+        </codeStyleSettings>
         <codeStyleSettings language="ECMA Script Level 4">
           <option name="ELSE_ON_NEW_LINE" value="true" />
           <option name="WHILE_ON_NEW_LINE" value="true" />

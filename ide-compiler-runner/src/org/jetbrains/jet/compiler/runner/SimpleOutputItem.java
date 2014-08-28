@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.compiler.runner;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.Collection;
 
@@ -23,15 +25,17 @@ public class SimpleOutputItem {
     private final Collection<File> sourceFiles;
     private final File outputFile;
 
-    public SimpleOutputItem(Collection<File> sourceFiles, File outputFile) {
+    public SimpleOutputItem(@NotNull Collection<File> sourceFiles, @NotNull File outputFile) {
         this.sourceFiles = sourceFiles;
         this.outputFile = outputFile;
     }
 
+    @NotNull
     public Collection<File> getSourceFiles() {
         return sourceFiles;
     }
 
+    @NotNull
     public File getOutputFile() {
         return outputFile;
     }

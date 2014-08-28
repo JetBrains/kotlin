@@ -26,6 +26,7 @@ import org.jetbrains.jet.cli.js.K2JSCompiler
 import java.io.File
 import org.apache.tools.ant.BuildException
 import org.jetbrains.jet.cli.common.ExitCode
+import org.jetbrains.jet.config.Services
 
 /**
  * Kotlin JavaScript compiler Ant task.
@@ -89,7 +90,7 @@ public class Kotlin2JsCompilerTask : Task() {
         log("Compiling ${arguments.freeArgs} => [${arguments.outputFile}]");
 
         val compiler = K2JSCompiler()
-        val exitCode = compiler.exec(MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR, arguments)
+        val exitCode = compiler.exec(MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR, Services.EMPTY, arguments)
 
         if (exitCode != ExitCode.OK) {
             throw BuildException("Compilation finished with exit code $exitCode")

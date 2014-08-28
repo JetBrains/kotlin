@@ -1,7 +1,7 @@
 /**
-h1. Syntax
+# Syntax
 
-*Relevant pages:* [Namespaces]
+Relevant pages: [Packages](packages.html)
 */
 
 
@@ -28,7 +28,7 @@ import
   ;
 
 /**
-bq. See [Imports|Namespaces#Imports]
+See [Imports](packages.html#imports)
 */
 
 toplevelObject
@@ -48,7 +48,7 @@ package
   ;
 
 /**
-bq. See [Namespaces]
+See [Packages](packages.html)
 */
 
 [undocumented]

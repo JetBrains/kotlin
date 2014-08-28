@@ -26,9 +26,16 @@ import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lexer.JetKeywordToken
 import org.jetbrains.jet.plugin.JetFileType
 import org.jetbrains.jet.lang.psi.JetPsiFactory.CallableBuilder.Target
+import com.intellij.openapi.util.Key
+import java.io.PrintWriter
+import java.io.StringWriter
+import com.intellij.openapi.application.ApplicationManager
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
+
+public var JetFile.doNotAnalyze: String? by UserDataProperty(Key.create("DO_NOT_ANALYZE"))
+public var JetFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS_CONTEXT"))
 
 public class JetPsiFactory(private val project: Project) {
 
@@ -114,8 +121,31 @@ public class JetPsiFactory(private val project: Project) {
         return createFile("dummy.kt", text)
     }
 
-    public fun createFile(fileName: String, text: String): JetFile {
+    private fun doCreateFile(fileName: String, text: String): JetFile {
         return PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), false) as JetFile
+    }
+
+    public fun createFile(fileName: String, text: String): JetFile {
+        val file = doCreateFile(fileName, text)
+        //TODO: KotlinInternalMode should be used here
+        if (ApplicationManager.getApplication()!!.isInternal()) {
+            val sw = StringWriter()
+            Exception().printStackTrace(PrintWriter(sw))
+            file.doNotAnalyze = "This file was created by JetPsiFactory and should not be analyzed. It was created at:\n" + sw.toString()
+        }
+        else {
+            file.doNotAnalyze = "This file was created by JetPsiFactory and should not be analyzed\n" +
+                                "Enable kotlin internal mode get more info for debugging\n" +
+                                "Use createAnalyzableFile to create file that can be analyzed\n"
+        }
+
+        return file
+    }
+
+    public fun createAnalyzableFile(fileName: String, text: String, contextToAnalyzeIn: PsiElement): JetFile {
+        val file = doCreateFile(fileName, text)
+        file.analysisContext = contextToAnalyzeIn
+        return file
     }
 
     public fun createPhysicalFile(fileName: String, text: String): JetFile {

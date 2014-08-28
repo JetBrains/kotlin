@@ -46,7 +46,7 @@ public trait JetReference : PsiPolyVariantReference {
 public abstract class AbstractJetReference<T : JetElement>(element: T)
 : PsiPolyVariantReferenceBase<T>(element), JetReference {
 
-    val expression: T
+    public val expression: T
         get() = getElement()
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
@@ -67,7 +67,7 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
 
     override fun getCanonicalText(): String = "<TBD>"
 
-    open fun canRename(): Boolean = false
+    public open fun canRename(): Boolean = false
     override fun handleElementRename(newElementName: String?): PsiElement? = throw IncorrectOperationException()
 
     override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()

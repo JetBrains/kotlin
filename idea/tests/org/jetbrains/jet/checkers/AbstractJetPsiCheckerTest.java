@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.checkers;
 
+import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -23,10 +24,12 @@ import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
 
+import java.io.File;
+
 public abstract class AbstractJetPsiCheckerTest extends JetLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String filePath) throws Exception {
         myFixture.configureByFile(filePath);
-        myFixture.checkHighlighting(true, false, false);
+        checkHighlighting(true, false, false);
     }
 
     public void doTestWithInfos(@NotNull String filePath) throws Exception {
@@ -37,10 +40,19 @@ public abstract class AbstractJetPsiCheckerTest extends JetLightCodeInsightFixtu
             myFixture.enableInspections(SpellCheckingInspection.class);
 
             JetPsiChecker.setNamesHighlightingEnabled(false);
-            myFixture.checkHighlighting(true, true, false);
+            checkHighlighting(true, true, false);
         }
         finally {
             JetPsiChecker.setNamesHighlightingEnabled(true);
+        }
+    }
+
+    protected long checkHighlighting(boolean checkWarnings, boolean checkInfos, boolean checkWeakWarnings) {
+        try {
+            return myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings);
+        }
+        catch (FileComparisonFailure e) {
+            throw new FileComparisonFailure(e.getMessage(), e.getExpected(), e.getActual(), new File(e.getFilePath()).getAbsolutePath());
         }
     }
 

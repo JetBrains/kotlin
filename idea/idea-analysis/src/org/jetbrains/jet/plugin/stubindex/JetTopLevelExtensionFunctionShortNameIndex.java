@@ -26,6 +26,7 @@ public class JetTopLevelExtensionFunctionShortNameIndex extends StringStubIndexE
 
     private static final JetTopLevelExtensionFunctionShortNameIndex instance = new JetTopLevelExtensionFunctionShortNameIndex();
 
+    @NotNull
     public static JetTopLevelExtensionFunctionShortNameIndex getInstance() {
         return instance;
     }

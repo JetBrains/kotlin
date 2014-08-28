@@ -1,5 +1,5 @@
 /**
-h1. Lexical structure
+# Lexical structure
 */
 
 [helper]
@@ -23,7 +23,7 @@ CharacterLiteral
   : <character as in Java>;
 
 /**
-bq. See [Basic types]
+See [Basic types](basic-types.html)
 */
 
 StringWithTemplates
@@ -33,7 +33,7 @@ NoEscapeString
   : <"""-quoted string>;
 
 /**
-bq. See [String templates|Strings#Templates]
+See [String templates](basic-types.html#templates)
 */
 
 SEMI
@@ -46,21 +46,19 @@ SimpleName
   ;
 
 /**
-bq. See [Java interoperability]
+See [Java interoperability](java-interop.html)
 */
 
 FieldName
   : "$" SimpleName;
 
-/**
-bq. See [Properties And Fields]
-*/
+See [Properties And Fields](properties.html)
 
 LabelName
   : "@" SimpleName;
 
 /**
-bq. See [Nonlocal returns and jumps]
+See [Returns and jumps](returns.html)
 */
 
 /* Symbols:

@@ -16,18 +16,17 @@
 
 package org.jetbrains.jet.plugin.stubindex;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.psi.stubs.StubIndex;
+import com.intellij.psi.stubs.StubIndexKey;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.NamePackage;
 
 import java.util.Collection;
-import java.util.Set;
 
 public final class PackageIndexUtil {
     @NotNull
@@ -36,38 +35,44 @@ public final class PackageIndexUtil {
             @NotNull GlobalSearchScope scope,
             @NotNull Project project
     ) {
-        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(packageFqName.asString(), project, scope);
-
-        Set<FqName> result = Sets.newHashSet();
-        for (JetFile file : files) {
-            FqName fqName = file.getPackageFqName();
-
-            assert NamePackage.isSubpackageOf(fqName, packageFqName) :
-                    "Registered package is not a subpackage of actually declared package:\n" +
-                    "in index: " + packageFqName + "\n" +
-                    "declared: " + fqName;
-            FqName subpackage = NamePackage.plusOneSegment(packageFqName, fqName);
-            if (subpackage != null) {
-                result.add(subpackage);
-            }
-        }
-
-        return result;
+        return SubpackagesIndexService.OBJECT$.getInstance(project).getSubpackages(packageFqName, scope);
     }
 
     @NotNull
     public static Collection<JetFile> findFilesWithExactPackage(
-            @NotNull final FqName packageFqName,
+            @NotNull FqName packageFqName,
             @NotNull GlobalSearchScope searchScope,
             @NotNull Project project
     ) {
-        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope);
-        return ContainerUtil.filter(files, new Condition<JetFile>() {
-            @Override
-            public boolean value(JetFile file) {
-                return packageFqName.equals(file.getPackageFqName());
-            }
-        });
+        return JetExactPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope);
+    }
+
+    public static boolean packageExists(
+            @NotNull FqName packageFqName,
+            @NotNull GlobalSearchScope searchScope,
+            @NotNull Project project
+    ) {
+        return containsAny(packageFqName, searchScope, project, JetExactPackagesIndex.getInstance().getKey())
+                || SubpackagesIndexService.OBJECT$.getInstance(project).hasSubpackages(packageFqName, searchScope);
+    }
+
+    public static boolean containsAny(
+            @NotNull FqName packageFqName,
+            @NotNull GlobalSearchScope searchScope,
+            @NotNull Project project,
+            @NotNull StubIndexKey<String, JetFile> key
+    ) {
+        final Ref<Boolean> result = new Ref<Boolean>(false);
+        StubIndex.getInstance().processElements(
+                key, packageFqName.asString(), project, searchScope, JetFile.class,
+                new Processor<JetFile>() {
+                    @Override
+                    public boolean process(JetFile file) {
+                        result.set(true);
+                        return false;
+                    }
+                });
+        return result.get();
     }
 
     private PackageIndexUtil() {

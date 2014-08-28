@@ -62,7 +62,7 @@ public class KotlinBuilderModuleScriptGenerator {
     )
             throws IOException
     {
-        KotlinModuleDescriptionBuilder builder = FACTORY.create(getIncrementalCacheDir(context).getAbsolutePath());
+        KotlinModuleDescriptionBuilder builder = FACTORY.create();
 
         boolean noSources = true;
 
@@ -105,10 +105,6 @@ public class KotlinBuilderModuleScriptGenerator {
         FileUtil.writeToFile(scriptFile, builder.asText().toString());
 
         return scriptFile;
-    }
-
-    public static File getIncrementalCacheDir(CompileContext context) {
-        return new File(context.getProjectDescriptor().dataManager.getDataPaths().getDataStorageRoot(), "kotlin");
     }
 
     @NotNull

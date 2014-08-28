@@ -1,0 +1,5 @@
+package test
+
+public open class ConstructorGenericSimple {
+    /*primary*/ public constructor ConstructorGenericSimple(/*0*/ p0: kotlin.Any?)
+}

@@ -58,7 +58,7 @@ public class ForTestCompileRuntime {
         }
     }
 
-    private static void compileBuiltIns(@NotNull File destDir) throws IOException {
+    public static void compileBuiltIns(@NotNull File destDir) throws IOException {
         compileKotlinToJvm("built-ins", destDir,
                            BUILT_INS_SRC_PATH + File.pathSeparator + RUNTIME_JVM_SRC_PATH + File.pathSeparator + REFLECTION_SRC_PATH,
                            BUILT_INS_SRC_PATH, RUNTIME_JVM_SRC_PATH, REFLECTION_SRC_PATH);

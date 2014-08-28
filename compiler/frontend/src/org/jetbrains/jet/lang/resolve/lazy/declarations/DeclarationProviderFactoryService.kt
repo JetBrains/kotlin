@@ -44,21 +44,28 @@ public abstract class DeclarationProviderFactoryService {
                 filesScope: GlobalSearchScope
         ): DeclarationProviderFactory {
             return ServiceManager.getService(project, javaClass<DeclarationProviderFactoryService>())!!
-                    .create(project, storageManager, syntheticFiles, SyntheticFilesFilteringScope(syntheticFiles, filesScope))
+                    .create(project, storageManager, syntheticFiles, SyntheticFilesFilteringScope.filter(syntheticFiles, filesScope))
         }
 
     }
 
-    private class SyntheticFilesFilteringScope(syntheticFiles: Collection<JetFile>, baseScope: GlobalSearchScope) :
+    class SyntheticFilesFilteringScope(syntheticFiles: Collection<JetFile>, baseScope: GlobalSearchScope) :
             DelegatingGlobalSearchScope(baseScope) {
         val originals = syntheticFiles.map {
             it.getOriginalFile().getVirtualFile()
         }.filterNotNullTo(HashSet<VirtualFile>())
 
         override fun contains(file: VirtualFile): Boolean {
-            if (file in originals) return false
+            return super.contains(file) && file !in originals
+        }
 
-            return super.contains(file)
+        class object {
+            fun filter(syntheticFiles: Collection<JetFile>, baseScope: GlobalSearchScope): GlobalSearchScope {
+                if (syntheticFiles.isEmpty()) {
+                    return baseScope
+                }
+                return SyntheticFilesFilteringScope(syntheticFiles, baseScope)
+            }
         }
     }
 }

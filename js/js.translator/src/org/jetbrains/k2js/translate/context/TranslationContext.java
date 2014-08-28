@@ -81,6 +81,7 @@ public class TranslationContext {
         return usageTracker;
     }
 
+    @NotNull
     public DynamicContext dynamicContext() {
         return dynamicContext;
     }
@@ -110,6 +111,11 @@ public class TranslationContext {
     @NotNull
     public TranslationContext innerBlock(@NotNull JsBlock block) {
         return new TranslationContext(this, staticContext, dynamicContext.innerBlock(block), aliasingContext, usageTracker, null);
+    }
+
+    @NotNull
+    public TranslationContext innerBlock() {
+        return innerBlock(new JsBlock());
     }
 
     @NotNull
@@ -257,6 +263,27 @@ public class TranslationContext {
 
     public void addStatementToCurrentBlock(@NotNull JsStatement statement) {
         dynamicContext.jsBlock().getStatements().add(statement);
+    }
+
+    public void addStatementsToCurrentBlockFrom(@NotNull TranslationContext context) {
+        addStatementsToCurrentBlockFrom(context.dynamicContext().jsBlock());
+    }
+
+    public void addStatementsToCurrentBlockFrom(@NotNull JsBlock block) {
+        dynamicContext.jsBlock().getStatements().addAll(block.getStatements());
+    }
+
+    public boolean currentBlockIsEmpty() {
+        return dynamicContext.jsBlock().isEmpty();
+    }
+
+    public void moveVarsFrom(@NotNull TranslationContext context) {
+        dynamicContext.moveVarsFrom(context.dynamicContext());
+    }
+
+    @NotNull
+    public JsBlock getCurrentBlock() {
+        return dynamicContext.jsBlock();
     }
 
     @Nullable

@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.k2js.config.Config;
@@ -47,8 +46,6 @@ import org.jetbrains.k2js.translate.test.JSTestGenerator;
 import org.jetbrains.k2js.translate.test.JSTester;
 import org.jetbrains.k2js.translate.test.QUnitTester;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.dangerous.DangerousData;
-import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +53,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.dangerous.DangerousData.collect;
 
 /**
  * This class provides a interface which all translators use to interact with each other.
@@ -80,15 +76,21 @@ public final class Translation {
 
     @NotNull
     public static JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+        return translateExpression(expression, context, context.dynamicContext().jsBlock());
+    }
+
+    @NotNull
+    public static JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context, @NotNull JsBlock block) {
         JsExpression aliasForExpression = context.aliasingContext().getAliasForExpression(expression);
         if (aliasForExpression != null) {
             return aliasForExpression;
         }
-        DangerousData data = collect(expression, context);
-        if (data.shouldBeTranslated()) {
-            return DangerousTranslator.translate(data, context);
-        }
-        return doTranslateExpression(expression, context);
+
+        TranslationContext innerContext = context.innerBlock();
+        JsNode result = doTranslateExpression(expression, innerContext);
+        context.moveVarsFrom(innerContext);
+        block.getStatements().addAll(innerContext.dynamicContext().jsBlock().getStatements());
+        return result;
     }
 
     //NOTE: use with care
@@ -98,15 +100,32 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsExpression translateAsExpression(@NotNull JetExpression expression,
-            @NotNull TranslationContext context) {
-        return convertToExpression(translateExpression(expression, context));
+    public static JsExpression translateAsExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+        return convertToExpression(translateExpression(expression, context), context);
     }
 
     @NotNull
-    public static JsStatement translateAsStatement(@NotNull JetExpression expression,
-            @NotNull TranslationContext context) {
-        return convertToStatement(translateExpression(expression, context));
+    public static JsExpression translateAsExpression(
+            @NotNull JetExpression expression,
+            @NotNull TranslationContext context,
+            @NotNull JsBlock block
+    ) {
+        return convertToExpression(translateExpression(expression, context, block), context, block);
+    }
+
+    @NotNull
+    public static JsStatement translateAsStatement(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+        JsBlock block = new JsBlock();
+        JsNode node = translateExpression(expression, context, block);
+        return JsAstUtils.mergeStatementInBlockIfNeeded(convertToStatement(node), block);
+    }
+
+    @NotNull
+    public static JsStatement translateAsStatement(
+            @NotNull JetExpression expression,
+            @NotNull TranslationContext context,
+            @NotNull JsBlock block) {
+        return convertToStatement(translateExpression(expression, context, block));
     }
 
     @NotNull

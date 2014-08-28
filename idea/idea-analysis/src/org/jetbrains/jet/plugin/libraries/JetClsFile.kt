@@ -45,4 +45,7 @@ public class JetClsFile(val provider: JetClassFileViewProvider) : ClsFileImpl(pr
     fun getRenderedDescriptorsToRange(): Map<String, TextRange> {
         return provider.decompiledText.renderedDescriptorsToRange
     }
+
+    override fun getTextLength() = decompiledFile.getTextLength()
+    override fun getText() = decompiledFile.getText()
 }

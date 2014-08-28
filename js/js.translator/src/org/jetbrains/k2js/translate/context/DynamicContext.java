@@ -66,6 +66,19 @@ public final class DynamicContext {
         return TemporaryVariable.create(temporaryName, initExpression);
     }
 
+    void moveVarsFrom(@NotNull DynamicContext dynamicContext) {
+        if (dynamicContext.vars != null) {
+            if (vars == null) {
+                vars = dynamicContext.vars;
+                currentBlock.getStatements().add(vars);
+            } else {
+                vars.addAll(dynamicContext.vars);
+            }
+            dynamicContext.currentBlock.getStatements().remove(dynamicContext.vars);
+            dynamicContext.vars = null;
+        }
+    }
+
     //TODO: replace return type to make it more readable
     @NotNull
     public Pair<JsVar, JsExpression> createTemporary(@Nullable JsExpression initExpression) {

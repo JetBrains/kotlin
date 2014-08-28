@@ -28,7 +28,7 @@ import java.util.Collections;
 
 public class KotlinModuleXmlGeneratorTest extends TestCase {
     public void testBasic() throws Exception {
-        String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create(null).addModule(
+        String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create().addModule(
                 "name",
                 "output",
                 new KotlinModuleDescriptionBuilder.DependencyProvider() {
@@ -45,7 +45,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
     }
 
     public void testFiltered() throws Exception {
-        String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create(null).addModule(
+        String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create().addModule(
                 "name",
                 "output",
                 new KotlinModuleDescriptionBuilder.DependencyProvider() {
@@ -62,7 +62,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
     }
 
     public void testMultiple() throws Exception {
-        KotlinModuleDescriptionBuilder builder = KotlinModuleXmlBuilderFactory.INSTANCE.create(null);
+        KotlinModuleDescriptionBuilder builder = KotlinModuleXmlBuilderFactory.INSTANCE.create();
         builder.addModule(
                 "name",
                 "output",
@@ -92,20 +92,4 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         String actual = builder.asText().toString();
         JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/multiple.xml"), actual);
     }
-
-    public void testIncrementalCache() throws Exception {
-        String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create("/path/to/incremental/cache").addModule(
-                "name",
-                "output",
-                new KotlinModuleDescriptionBuilder.DependencyProvider() {
-                    @Override
-                    public void processClassPath(@NotNull KotlinModuleDescriptionBuilder.DependencyProcessor processor) {
-                    }
-                },
-                Arrays.asList(new File("s1")),
-                false,
-                Collections.<File>emptySet()).asText().toString();
-        JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/incrementalCache.xml"), actual);
-    }
-
 }

@@ -872,7 +872,7 @@ public class CreateFunctionFromUsageFix internal (
     class object {
         public fun createCreateGetFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic?): IntentionAction? {
+                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                     val accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>()) ?: return null
                     val arrayExpr = accessExpr.getArrayExpression() ?: return null
                     val arrayType = TypeOrExpressionThereof(arrayExpr, Variance.IN_VARIANCE)
@@ -889,7 +889,7 @@ public class CreateFunctionFromUsageFix internal (
 
         public fun createCreateSetFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic?): IntentionAction? {
+                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                     val accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>()) ?: return null
                     val arrayExpr = accessExpr.getArrayExpression() ?: return null
                     val arrayType = TypeOrExpressionThereof(arrayExpr, Variance.IN_VARIANCE)
@@ -911,8 +911,8 @@ public class CreateFunctionFromUsageFix internal (
 
         public fun createCreateHasNextFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic?): IntentionAction? {
-                    val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic!!, Errors.HAS_NEXT_MISSING, Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
+                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.HAS_NEXT_MISSING, Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
                     val ownerType = TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
 
                     val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
@@ -924,8 +924,8 @@ public class CreateFunctionFromUsageFix internal (
 
         public fun createCreateNextFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic?): IntentionAction? {
-                    val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic!!, Errors.NEXT_MISSING, Errors.NEXT_NONE_APPLICABLE)
+                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.NEXT_MISSING, Errors.NEXT_NONE_APPLICABLE)
                     val ownerType = TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
 
                     val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
@@ -938,8 +938,8 @@ public class CreateFunctionFromUsageFix internal (
 
         public fun createCreateIteratorFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic?): IntentionAction? {
-                    val file = diagnostic!!.getPsiFile() as? JetFile ?: return null
+                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val file = diagnostic.getPsiFile() as? JetFile ?: return null
                     val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
                     val iterableExpr = forExpr.getLoopRange() ?: return null
                     val variableExpr: JetExpression = ((forExpr.getLoopParameter() ?: forExpr.getMultiParameter()) ?: return null) as JetExpression
@@ -961,8 +961,8 @@ public class CreateFunctionFromUsageFix internal (
 
         public fun createCreateComponentFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic?): IntentionAction? {
-                    val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic!!)
+                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic)
                     val name = diagnosticWithParameters.getA()
                     val componentNumberMatcher = COMPONENT_FUNCTION_PATTERN.matcher(name.getIdentifier())
                     if (!componentNumberMatcher.matches()) return null

@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
  * <p/>
  * See {@link LineBreakpoint#findClassCandidatesInSourceContent} for the primary usage this was introduced
  */
-/* package */ class FakeLightClassForFileOfPackage extends AbstractLightClass implements KotlinLightClass, JetJavaMirrorMarker {
+public class FakeLightClassForFileOfPackage extends AbstractLightClass implements KotlinLightClass, JetJavaMirrorMarker {
     private final KotlinLightClassForPackage delegate;
     private final JetFile file;
 

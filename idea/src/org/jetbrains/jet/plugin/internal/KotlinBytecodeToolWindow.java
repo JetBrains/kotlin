@@ -196,7 +196,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         add(optionPanel, BorderLayout.NORTH);
 
         /*TODO: try to extract default parameter from compiler options*/
-        enableInline = new JCheckBox("Enable inline", true);
+        enableInline = new JCheckBox("Enable inline", false);
         enableOptimization = new JCheckBox("Enable optimization", true);
         optionPanel.add(enableInline, BorderLayout.WEST);
         optionPanel.add(enableOptimization, BorderLayout.CENTER);

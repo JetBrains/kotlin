@@ -44,12 +44,10 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
-import org.junit.Assert;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -88,23 +86,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkJavaPackage(expectedFile, binaryPackageAndContext.first, binaryPackageAndContext.second, DONT_INCLUDE_METHODS_OF_OBJECT);
     }
 
-    protected void doTestCompiledJavaCompareWithKotlin(@NotNull String javaFileName) throws Exception {
-        Assert.assertTrue("A java file expected: " + javaFileName, javaFileName.endsWith(".java"));
-        File javaFile = new File(javaFileName);
-        File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
-        File txtFile = getTxtFile(javaFile.getPath());
-        PackageViewDescriptor kotlinPackage = analyzeKotlinAndLoadTestPackage(ktFile, myTestRootDisposable, ConfigurationKind.ALL);
-        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
-                Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.ALL);
-        checkLoadedPackages(txtFile, kotlinPackage, javaPackageAndContext.first, javaPackageAndContext.second);
-    }
-
     protected void doTestCompiledJavaIncludeObjectMethods(@NotNull String javaFileName) throws Exception {
         doTestCompiledJava(javaFileName, RECURSIVE);
     }
 
     protected void doTestCompiledKotlin(@NotNull String ktFileName) throws Exception {
-        doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_ONLY);
+        doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 
     protected void doTestCompiledKotlinWithStdlib(@NotNull String ktFileName) throws Exception {
@@ -259,10 +246,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkJavaPackage(getTxtFile(javaFileName), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
     }
 
-    private static void checkForLoadErrorsAndCompare(
-            @NotNull PackageViewDescriptor javaPackage,
-            @NotNull BindingContext bindingContext,
-            @NotNull Runnable comparePackagesRunnable
+    private static void checkJavaPackage(
+            File txtFile,
+            PackageViewDescriptor javaPackage,
+            BindingContext bindingContext,
+            Configuration configuration
     ) {
         boolean fail = false;
         try {
@@ -280,38 +268,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             fail = true;
         }
 
-        comparePackagesRunnable.run();
+        validateAndCompareDescriptorWithFile(javaPackage, configuration, txtFile);
+
         if (fail) {
             fail("See error above");
         }
-    }
-
-    private static void checkLoadedPackages(
-            final File txtFile,
-            final PackageViewDescriptor kotlinPackage,
-            final PackageViewDescriptor javaPackage,
-            BindingContext bindingContext
-    ) {
-        checkForLoadErrorsAndCompare(javaPackage, bindingContext, new Runnable() {
-            @Override
-            public void run() {
-                validateAndCompareDescriptors(kotlinPackage, javaPackage, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
-            }
-        });
-    }
-
-    private static void checkJavaPackage(
-            final File txtFile,
-            final PackageViewDescriptor javaPackage,
-            BindingContext bindingContext,
-            final Configuration configuration
-    ) {
-        checkForLoadErrorsAndCompare(javaPackage, bindingContext, new Runnable() {
-            @Override
-            public void run() {
-                validateAndCompareDescriptorWithFile(javaPackage, configuration, txtFile);
-            }
-        });
     }
 
     private static File getTxtFile(String javaFileName) {

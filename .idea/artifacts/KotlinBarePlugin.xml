@@ -1,0 +1,25 @@
+<component name="ArtifactManager">
+  <artifact name="KotlinBarePlugin">
+    <output-path>$PROJECT_DIR$/out/artifacts</output-path>
+    <root id="root">
+      <element id="directory" name="BareKotlin">
+        <element id="directory" name="lib">
+          <element id="archive" name="kotlin-bare-plugin.jar">
+            <element id="module-output" name="bare-plugin" />
+            <element id="module-output" name="descriptor.loader.java" />
+            <element id="module-output" name="frontend.java" />
+            <element id="module-output" name="serialization.java" />
+            <element id="module-output" name="descriptors" />
+          </element>
+          <element id="directory" name="jps">
+            <element id="artifact" artifact-name="KotlinJpsPlugin" />
+          </element>
+          <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-runtime.jar" />
+        </element>
+        <element id="directory" name="kotlinc">
+          <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

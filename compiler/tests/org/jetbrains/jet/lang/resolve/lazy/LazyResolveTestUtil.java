@@ -20,7 +20,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
@@ -33,13 +32,13 @@ import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.lazy.LazyPackage.createResolveSessionForFiles;
 
 public class LazyResolveTestUtil {
     private LazyResolveTestUtil() {
@@ -61,16 +60,18 @@ public class LazyResolveTestUtil {
         return injector.getModuleDescriptor();
     }
 
-    public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment, boolean addBuiltIns) {
+    @NotNull
+    public static KotlinCodeAnalyzer resolveLazilyWithSession(
+            @NotNull List<JetFile> files,
+            @NotNull JetCoreEnvironment environment,
+            boolean addBuiltIns
+    ) {
         JetTestUtils.newTrace(environment);
 
         Project project = environment.getProject();
         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(project);
-        BindingTrace sharedTrace = support.getTrace();
-
-        ResolveSession lazyResolveSession = AnalyzerFacadeForJVM.createSetup(project, files, GlobalSearchScope.EMPTY_SCOPE,
-                                                                             sharedTrace, addBuiltIns).getLazyResolveSession();
-        support.setModule((ModuleDescriptorImpl)lazyResolveSession.getModuleDescriptor());
+        ResolveSession lazyResolveSession = createResolveSessionForFiles(project, files, addBuiltIns);
+        support.setModule((ModuleDescriptorImpl) lazyResolveSession.getModuleDescriptor());
 
         return lazyResolveSession;
     }

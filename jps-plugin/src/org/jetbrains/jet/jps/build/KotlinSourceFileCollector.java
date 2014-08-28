@@ -40,6 +40,7 @@ import java.util.List;
 
 public class KotlinSourceFileCollector {
     // For incremental compilation
+    @NotNull
     public static MultiMap<ModuleBuildTarget, File> getDirtySourceFiles(DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder)
             throws IOException
     {

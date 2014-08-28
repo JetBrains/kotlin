@@ -287,22 +287,4 @@ public final class DescriptorResolverUtils {
 
         return false;
     }
-
-    @Nullable
-    public static ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
-        if (!qualifiedName.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null;
-
-        List<Name> segments = qualifiedName.pathSegments();
-        if (segments.size() < 2) return null;
-
-        JetScope scope = KotlinBuiltIns.getInstance().getBuiltInsPackageScope();
-        for (int i = 1, size = segments.size(); i < size; i++) {
-            ClassifierDescriptor classifier = scope.getClassifier(segments.get(i));
-            if (classifier == null) return null;
-            assert classifier instanceof ClassDescriptor : "Unexpected classifier in built-ins: " + classifier;
-            scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
-        }
-
-        return (ClassDescriptor) scope.getContainingDeclaration();
-    }
 }

@@ -36,6 +36,7 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
 
     public fun flushToResultSet(resultSet: CompletionResultSet) {
         resultSet.addAllElements(elements)
+        elements.clear()
     }
 
     public val isEmpty: Boolean
@@ -48,7 +49,7 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
     }
 
     public fun addDescriptorElements(descriptor: DeclarationDescriptor) {
-        if (!descriptorFilter(descriptor))  return
+        if (!descriptorFilter(descriptor)) return
 
         addElement(DescriptorLookupConverter.createLookupElement(resolveSession, descriptor))
 

@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiField;
-import com.intellij.psi.impl.JavaConstantExpressionEvaluator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -27,8 +25,6 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
@@ -55,12 +51,6 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     @Override
     public ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName) {
         return trace.get(FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe());
-    }
-
-    @Nullable
-    @Override
-    public ClassDescriptor getClass(@NotNull JavaClass javaClass) {
-        return trace.get(CLASS, ((JavaClassImpl) javaClass).getPsi());
     }
 
     @Override

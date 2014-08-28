@@ -1,0 +1,6 @@
+package test
+
+public open class NotNullParameter {
+    /*primary*/ public constructor NotNullParameter()
+    public open fun hi(/*0*/ p0: kotlin.String): kotlin.Unit
+}

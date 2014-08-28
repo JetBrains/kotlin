@@ -19,7 +19,8 @@ package org.jetbrains.jet.compiler.runner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.preloading.ClassLoaderFactory;
+import org.jetbrains.jet.config.Services;
+import org.jetbrains.jet.preloading.ClassCondition;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -30,12 +31,15 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERRO
 
 public final class CompilerEnvironment {
 
+    @NotNull
     public static CompilerEnvironment getEnvironmentFor(
             @NotNull KotlinPaths kotlinPaths,
             @Nullable File outputDir,
-            @Nullable ClassLoaderFactory parentFactory
+            @Nullable ClassLoader parentClassLoader,
+            @NotNull ClassCondition classesToLoadByParent,
+            @NotNull Services compilerServices
     ) {
-        return new CompilerEnvironment(kotlinPaths, outputDir, parentFactory);
+        return new CompilerEnvironment(kotlinPaths, outputDir, parentClassLoader, classesToLoadByParent, compilerServices);
     }
 
     @NotNull
@@ -43,12 +47,24 @@ public final class CompilerEnvironment {
     @Nullable
     private final File output;
     @Nullable
-    private final ClassLoaderFactory parentFactory;
+    private final ClassLoader parentClassLoader;
+    @NotNull
+    private final ClassCondition classesToLoadByParent;
+    @NotNull
+    private final Services services;
 
-    private CompilerEnvironment(@NotNull KotlinPaths kotlinPaths, @Nullable File output, @Nullable ClassLoaderFactory parentFactory) {
+    private CompilerEnvironment(
+            @NotNull KotlinPaths kotlinPaths,
+            @Nullable File output,
+            @Nullable ClassLoader parentClassLoader,
+            @NotNull ClassCondition classesToLoadByParent,
+            @NotNull Services services
+    ) {
         this.kotlinPaths = kotlinPaths;
         this.output = output;
-        this.parentFactory = parentFactory;
+        this.parentClassLoader = parentClassLoader;
+        this.classesToLoadByParent = classesToLoadByParent;
+        this.services = services;
     }
 
     public boolean success() {
@@ -67,8 +83,13 @@ public final class CompilerEnvironment {
     }
 
     @Nullable
-    public ClassLoaderFactory getParentFactory() {
-        return parentFactory;
+    public ClassLoader getParentClassLoader() {
+        return parentClassLoader;
+    }
+
+    @NotNull
+    public ClassCondition getClassesToLoadByParent() {
+        return classesToLoadByParent;
     }
 
     public void reportErrorsTo(@NotNull MessageCollector messageCollector) {
@@ -79,5 +100,10 @@ public final class CompilerEnvironment {
             messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.getHomePath() + ". Make sure plugin is properly installed, " +
                                            "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property", NO_LOCATION);
         }
+    }
+
+    @NotNull
+    public Services getServices() {
+        return services;
     }
 }

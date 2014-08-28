@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin
 
-import com.intellij.ide.highlighter.JavaClassFileType
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import org.jetbrains.jet.lang.resolve.name.FqName
@@ -36,10 +33,6 @@ public abstract class VirtualFileKotlinClassFinder() : VirtualFileFinder {
             // For nested classes we get a file of the containing class, to get the actual class file for A.B.C,
             // we take the file for A, take its parent directory, then in this directory we look for A$B$C.class
             file = file.getParent()!!.findChild(classFileName(javaClass) + ".class").sure("Virtual file not found for $javaClass")
-        }
-
-        if (file.getFileType() != JavaClassFileType.INSTANCE) {
-            return null
         }
 
         return KotlinBinaryClassCache.getKotlinBinaryClass(file)

@@ -45,15 +45,6 @@ public final class MiscTest extends AbstractExpressionTest {
         runFunctionOutputTest("classWithoutPackage.kt", Namer.getRootPackageName(), TEST_FUNCTION, true);
     }
 
-    public void testIfElseAsExpressionWithThrow() throws Exception {
-        try {
-            fooBoxTest();
-            fail();
-        }
-        catch (JavaScriptException e) {
-        }
-    }
-
     public void testKt1052_2() throws Exception {
         checkFooBoxIsTrue("KT-1052-2.kt");
     }

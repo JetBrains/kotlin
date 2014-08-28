@@ -81,7 +81,8 @@ import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
-import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.*;
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
@@ -2175,19 +2176,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         assert valueArguments != null : "Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor();
 
-        int mask = argumentGenerator.generate(valueArguments);
+        List<Integer> masks = argumentGenerator.generate(valueArguments);
 
         if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {
             tailRecursionCodegen.generateTailRecursion(resolvedCall);
             return;
         }
 
-        boolean callDefault = mask != 0;
-        if (callDefault) {
+        for (int mask : masks) {
             callGenerator.putValueIfNeeded(null, Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE));
         }
 
-        callGenerator.genCall(callableMethod, resolvedCall, callDefault, this);
+        callGenerator.genCall(callableMethod, resolvedCall, !masks.isEmpty(), this);
     }
 
     @NotNull

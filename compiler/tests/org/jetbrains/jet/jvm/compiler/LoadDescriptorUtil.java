@@ -126,18 +126,6 @@ public final class LoadDescriptorUtil {
         ));
     }
 
-    @NotNull
-    public static PackageViewDescriptor analyzeKotlinAndLoadTestPackage(
-            @NotNull File ktFile,
-            @NotNull Disposable disposable,
-            @NotNull ConfigurationKind configurationKind
-    ) {
-        JetFilesAndExhaust fileAndExhaust = JetFilesAndExhaust.createJetFilesAndAnalyze(Collections.singletonList(ktFile), disposable, configurationKind);
-        PackageViewDescriptor packageView = fileAndExhaust.getExhaust().getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
-        assert packageView != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
-        return packageView;
-    }
-
     private static class JetFilesAndExhaust {
         @NotNull
         public static JetFilesAndExhaust createJetFilesAndAnalyze(

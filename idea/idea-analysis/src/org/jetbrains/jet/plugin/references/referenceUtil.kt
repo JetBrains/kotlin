@@ -33,7 +33,7 @@ import com.intellij.psi.util.PsiTreeUtil
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
-val PsiReference.unwrappedTargets: Set<PsiElement>
+public val PsiReference.unwrappedTargets: Set<PsiElement>
     get() {
         fun PsiElement.adjust(): PsiElement? {
             val target = unwrapped
@@ -46,7 +46,7 @@ val PsiReference.unwrappedTargets: Set<PsiElement>
         }
     }
 
-fun PsiReference.matchesTarget(target: PsiElement): Boolean {
+public fun PsiReference.matchesTarget(target: PsiElement): Boolean {
     val unwrapped = target.unwrapped
     return when {
         unwrapped in unwrappedTargets ->

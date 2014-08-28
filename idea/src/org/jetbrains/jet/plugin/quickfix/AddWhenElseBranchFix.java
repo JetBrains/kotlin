@@ -82,7 +82,7 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public JetIntentionAction createAction(Diagnostic diagnostic) {
+            public JetIntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 JetWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, JetWhenExpression.class, false);
                 if (whenExpression == null) return null;

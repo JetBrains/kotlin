@@ -1,0 +1,25 @@
+<root>
+    <item name='org.jetbrains.jps.incremental.CompileContext org.jetbrains.jps.cmdline.ProjectDescriptor getProjectDescriptor()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='org.jetbrains.jps.incremental.ModuleLevelBuilder org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode build(org.jetbrains.jps.incremental.CompileContext, org.jetbrains.jps.ModuleChunk, org.jetbrains.jps.builders.DirtyFilesHolder&lt;org.jetbrains.jps.builders.java.JavaSourceRootDescriptor,org.jetbrains.jps.incremental.ModuleBuildTarget&gt;, org.jetbrains.jps.incremental.ModuleLevelBuilder.OutputConsumer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='org.jetbrains.jps.incremental.ModuleLevelBuilder org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode build(org.jetbrains.jps.incremental.CompileContext, org.jetbrains.jps.ModuleChunk, org.jetbrains.jps.builders.DirtyFilesHolder&lt;org.jetbrains.jps.builders.java.JavaSourceRootDescriptor,org.jetbrains.jps.incremental.ModuleBuildTarget&gt;, org.jetbrains.jps.incremental.ModuleLevelBuilder.OutputConsumer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='org.jetbrains.jps.incremental.ModuleLevelBuilder org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode build(org.jetbrains.jps.incremental.CompileContext, org.jetbrains.jps.ModuleChunk, org.jetbrains.jps.builders.DirtyFilesHolder&lt;org.jetbrains.jps.builders.java.JavaSourceRootDescriptor,org.jetbrains.jps.incremental.ModuleBuildTarget&gt;, org.jetbrains.jps.incremental.ModuleLevelBuilder.OutputConsumer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='org.jetbrains.jps.incremental.ModuleLevelBuilder org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode build(org.jetbrains.jps.incremental.CompileContext, org.jetbrains.jps.ModuleChunk, org.jetbrains.jps.builders.DirtyFilesHolder&lt;org.jetbrains.jps.builders.java.JavaSourceRootDescriptor,org.jetbrains.jps.incremental.ModuleBuildTarget&gt;, org.jetbrains.jps.incremental.ModuleLevelBuilder.OutputConsumer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='org.jetbrains.jps.incremental.ModuleLevelBuilder org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode build(org.jetbrains.jps.incremental.CompileContext, org.jetbrains.jps.ModuleChunk, org.jetbrains.jps.builders.DirtyFilesHolder&lt;org.jetbrains.jps.builders.java.JavaSourceRootDescriptor,org.jetbrains.jps.incremental.ModuleBuildTarget&gt;, org.jetbrains.jps.incremental.ModuleLevelBuilder.OutputConsumer) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

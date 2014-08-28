@@ -22,8 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
@@ -37,8 +40,13 @@ public final class QualifiedExpressionTranslator {
 
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull JetQualifiedExpression expression,
-                                                       @NotNull TranslationContext context) {
+                                                       @NotNull TranslationContext context, boolean forceOrderOfEvaluation) {
         JsExpression receiver = translateReceiver(expression, context);
+        if (forceOrderOfEvaluation && receiver != null) {
+            TemporaryVariable temporaryVariable = context.declareTemporary(null);
+            context.addStatementToCurrentBlock(JsAstUtils.assignment(temporaryVariable.reference(), receiver).makeStmt());
+            receiver = temporaryVariable.reference();
+        }
         return VariableAccessTranslator.newInstance(context, getNotNullSimpleNameSelector(expression), receiver);
     }
 
@@ -61,7 +69,15 @@ public final class QualifiedExpressionTranslator {
             return VariableAccessTranslator.newInstance(context, (JetSimpleNameExpression)selector, receiver).translateAsGet();
         }
         if (selector instanceof JetCallExpression) {
-            return invokeCallExpressionTranslator(receiver, selector, context);
+            if (InlinedCallExpressionTranslator.shouldBeInlined((JetCallExpression) selector, context) &&
+                BindingContextUtilPackage.isUsedAsExpression(selector, context.bindingContext())) {
+                TemporaryVariable temporaryVariable = context.declareTemporary(null);
+                JsExpression result = invokeCallExpressionTranslator(receiver, selector, context);
+                context.addStatementToCurrentBlock(JsAstUtils.assignment(temporaryVariable.reference(), result).makeStmt());
+                return temporaryVariable.reference();
+            } else {
+                return invokeCallExpressionTranslator(receiver, selector, context);
+            }
         }
         //TODO: never get there
         if (selector instanceof JetSimpleNameExpression) {

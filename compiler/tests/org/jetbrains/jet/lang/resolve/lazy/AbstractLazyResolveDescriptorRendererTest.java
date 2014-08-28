@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -62,7 +62,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         JetFile psiFile = JetPsiFactory(getProject()).createFile(fileText);
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
-        final ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
+        final ModuleDescriptorImpl lazyModule = TopDownAnalyzerFacadeForJVM.createJavaModule("<lazy module>");
         lazyModule.addDependencyOnModule(lazyModule);
         lazyModule.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         lazyModule.seal();

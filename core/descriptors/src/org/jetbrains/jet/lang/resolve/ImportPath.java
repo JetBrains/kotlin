@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public final class ImportPath {
     private final @NotNull FqName fqName;
@@ -50,7 +51,7 @@ public final class ImportPath {
     }
 
     public String getPathStr() {
-        return fqName.asString() + (isAllUnder ? ".*" : "");
+        return DescriptorRenderer.SOURCE_CODE.renderFqName(fqName) + (isAllUnder ? ".*" : "");
     }
 
     @Override

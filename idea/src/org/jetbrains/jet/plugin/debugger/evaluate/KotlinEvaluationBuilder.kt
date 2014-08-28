@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils
 import org.jetbrains.jet.codegen.state.GenerationState
 import org.jetbrains.jet.codegen.ClassBuilderFactories
 import org.jetbrains.jet.codegen.KotlinCodegenFacade
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.jet.plugin.JetLanguage
 import org.jetbrains.jet.lang.psi.JetFile
@@ -35,7 +34,6 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.*
-import com.intellij.openapi.util.Computable
 import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.jdi.JDIEval
 import org.jetbrains.eval4j.jdi.asJdiValue
@@ -62,6 +60,7 @@ import com.sun.jdi.VirtualMachine
 import org.jetbrains.jet.codegen.AsmUtil
 import com.sun.jdi.InvalidStackFrameException
 import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.lang.psi.analysisContext
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -278,6 +277,7 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
     val jetFile = (PsiFileFactory.getInstance(codeFragment.getProject()) as PsiFileFactoryImpl)
             .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
     jetFile.skipVisibilityCheck = true
+    jetFile.analysisContext = codeFragment
     return jetFile
 }
 

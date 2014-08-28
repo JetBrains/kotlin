@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -40,8 +39,7 @@ import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.k2js.translate.context.Namer.getKotlinBackingFieldName;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.createDataDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
 public final class TranslationUtils {
     public static final Comparator<FunctionDescriptor> OVERLOADED_FUNCTION_COMPARATOR = new OverloadedFunctionComparator();
@@ -344,17 +342,34 @@ public final class TranslationUtils {
     @NotNull
     public static JsExpression translateLeftExpression(@NotNull TranslationContext context,
             @NotNull JetBinaryExpression expression) {
+        return translateLeftExpression(context, expression, context.dynamicContext().jsBlock());
+    }
+
+    @NotNull
+    public static JsExpression translateLeftExpression(
+            @NotNull TranslationContext context,
+            @NotNull JetBinaryExpression expression,
+            @NotNull JsBlock block
+    ) {
         JetExpression left = expression.getLeft();
         assert left != null : "Binary expression should have a left expression: " + expression.getText();
-        return Translation.translateAsExpression(left, context);
+        return Translation.translateAsExpression(left, context, block);
     }
 
     @NotNull
     public static JsExpression translateRightExpression(@NotNull TranslationContext context,
             @NotNull JetBinaryExpression expression) {
+        return translateRightExpression(context, expression, context.dynamicContext().jsBlock());
+    }
+
+    @NotNull
+    public static JsExpression translateRightExpression(
+            @NotNull TranslationContext context,
+            @NotNull JetBinaryExpression expression,
+            @NotNull JsBlock block) {
         JetExpression rightExpression = expression.getRight();
         assert rightExpression != null : "Binary expression should have a right expression";
-        return Translation.translateAsExpression(rightExpression, context);
+        return Translation.translateAsExpression(rightExpression, context, block);
     }
 
     public static boolean hasCorrespondingFunctionIntrinsic(@NotNull TranslationContext context,
@@ -382,20 +397,6 @@ public final class TranslationUtils {
     public static boolean isCacheNeeded(@NotNull JsExpression expression) {
         return !(expression instanceof JsLiteral) &&
                (!(expression instanceof JsNameRef) || ((JsNameRef) expression).getQualifier() != null);
-    }
-
-    @NotNull
-    public static Pair<JsVars.JsVar, JsExpression> createTemporaryIfNeed(
-            @NotNull JsExpression expression,
-            @NotNull TranslationContext context
-    ) {
-        // don't create temp variable for simple expression
-        if (isCacheNeeded(expression)) {
-            return context.dynamicContext().createTemporary(expression);
-        }
-        else {
-            return Pair.create(null, expression);
-        }
     }
 
     @NotNull

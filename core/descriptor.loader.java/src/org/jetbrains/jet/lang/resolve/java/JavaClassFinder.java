@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface JavaClassFinder {
-    // TODO: scope
     @Nullable
     JavaClass findClass(@NotNull FqName fqName);
 

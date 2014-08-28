@@ -25,5 +25,5 @@ import java.util.List;
 public interface JetIntentionActionsFactory {
 
     @NotNull
-    List<IntentionAction> createActions(Diagnostic diagnostic);
+    List<IntentionAction> createActions(@NotNull Diagnostic diagnostic);
 }

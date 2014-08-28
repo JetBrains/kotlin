@@ -33,50 +33,48 @@ import org.jetbrains.jet.plugin.project.TargetPlatform.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
 import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
+import com.intellij.psi.PsiElement
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
-fun JetElement.getLazyResolveSession(): ResolveSessionForBodies {
+public fun JetElement.getLazyResolveSession(): ResolveSessionForBodies {
     return KotlinCacheService.getInstance(getProject()).getLazyResolveSession(this)
 }
 
-fun Project.getLazyResolveSession(platform: TargetPlatform): ResolveSessionForBodies {
-    return KotlinCacheService.getInstance(this).getGlobalLazyResolveSession(platform)
-}
-
-fun JetElement.getAnalysisResults(): AnalyzeExhaust {
+public fun JetElement.getAnalysisResults(): AnalyzeExhaust {
     return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this))
 }
 
-fun JetElement.getBindingContext(): BindingContext {
+public fun JetElement.getBindingContext(): BindingContext {
     return getAnalysisResults().getBindingContext()
 }
 
-fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
+public fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
     if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
     val element = elements.first()
     return KotlinCacheService.getInstance(element.getProject()).getAnalysisResults(elements)
 }
 
-class KotlinCacheService(val project: Project) {
+public class KotlinCacheService(val project: Project) {
     class object {
-        fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
+        public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
     }
 
-    private fun globalResolveSessionProvider(platform: TargetPlatform, syntheticFiles: Collection<JetFile> = listOf()) = {
-        val setup = AnalyzerFacadeProvider.getAnalyzerFacade(platform)
-                .createSetup(project, syntheticFiles, GlobalSearchScope.allScope(project))
-        val resolveSessionForBodies = ResolveSessionForBodies(project, setup.getLazyResolveSession())
+    private fun globalResolveSessionProvider(platform: TargetPlatform, syntheticFiles: Collection<JetFile> = listOf()):
+            () -> CachedValueProvider.Result<ModuleResolverProvider> = {
+        val analyzerFacade = AnalyzerFacadeProvider.getAnalyzerFacade(platform)
+        val moduleMapping = createModuleResolverProvider(project, analyzerFacade, syntheticFiles)
         CachedValueProvider.Result.create(
-                SessionAndSetup(
-                        platform,
-                        resolveSessionForBodies,
-                        setup
-                ),
+                moduleMapping,
                 PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
-                resolveSessionForBodies
+                moduleMapping.exceptionTracker
         )
+
     }
 
     private val globalCachesPerPlatform = mapOf(
@@ -102,17 +100,17 @@ class KotlinCacheService(val project: Project) {
         }
     }
 
-    public fun getGlobalLazyResolveSession(platform: TargetPlatform): ResolveSessionForBodies {
-        return globalCachesPerPlatform[platform]!!.getLazyResolveSession()
+    public fun getGlobalLazyResolveSession(file: JetFile, platform: TargetPlatform): ResolveSessionForBodies {
+        return globalCachesPerPlatform[platform]!!.getLazyResolveSession(file)
     }
 
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
         val file = element.getContainingJetFile()
         if (!isFileInScope(file)) {
-            return getCacheForSyntheticFile(file).getLazyResolveSession()
+            return getCacheForSyntheticFile(file).getLazyResolveSession(file)
         }
 
-        return getGlobalLazyResolveSession(TargetPlatformDetector.getPlatform(file))
+        return getGlobalLazyResolveSession(file, TargetPlatformDetector.getPlatform(file))
     }
 
     public fun getAnalysisResults(elements: Collection<JetElement>): AnalyzeExhaust {

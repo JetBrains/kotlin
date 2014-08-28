@@ -203,7 +203,8 @@ public class RecursiveDescriptorComparator {
             @NotNull Configuration configuration,
             @Nullable File txtFile
     ) {
-        DescriptorValidator.validate(configuration.validationStrategy, expected, actual);
+        DescriptorValidator.validate(configuration.validationStrategy, expected);
+        DescriptorValidator.validate(configuration.validationStrategy, actual);
         compareDescriptors(expected, actual, configuration, txtFile);
     }
 

@@ -25,20 +25,20 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.NotNullFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzerFacade;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
-import java.util.Collections;
 import java.util.List;
 
 public class JetRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
@@ -83,11 +83,15 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         PsiFile psiFile = location.getPsiElement().getContainingFile();
         if (psiFile instanceof JetFile) {
             JetFile jetFile = (JetFile) psiFile;
-            AnalyzerFacade facade = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(jetFile);
-            ResolveSession resolveSession =
-                    facade.createSetup(jetFile.getProject(), Collections.<JetFile>emptyList(), GlobalSearchScope.fileScope(jetFile))
-                            .getLazyResolveSession();
-            MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(resolveSession);
+            final ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(jetFile);
+            MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(
+                    new NotNullFunction<JetNamedFunction, FunctionDescriptor>() {
+                        @NotNull
+                        @Override
+                        public FunctionDescriptor fun(JetNamedFunction function) {
+                            return (FunctionDescriptor) session.resolveToDescriptor(function);
+                        }
+                    });
             if (mainFunctionDetector.hasMain(jetFile.getDeclarations())) {
                 return jetFile;
             }

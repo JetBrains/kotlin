@@ -142,7 +142,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
+            public ChangeFunctionSignatureFix createAction(@NotNull Diagnostic diagnostic) {
                 JetCallElement callElement = PsiTreeUtil.getParentOfType(diagnostic.getPsiElement(), JetCallElement.class);
                 //noinspection unchecked
                 CallableDescriptor descriptor = DiagnosticFactory.cast(diagnostic, Errors.TOO_MANY_ARGUMENTS, Errors.NO_VALUE_FOR_PARAMETER).getA();
@@ -181,7 +181,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
     public static JetSingleIntentionActionFactory createFactoryForUnusedParameter() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
+            public ChangeFunctionSignatureFix createAction(@NotNull Diagnostic diagnostic) {
                 @SuppressWarnings("unchecked")
                 Object descriptor = UNUSED_PARAMETER.cast(diagnostic).getA();
 

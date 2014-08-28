@@ -19,17 +19,25 @@ package org.jetbrains.jet.plugin.util;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
+import org.jetbrains.jet.plugin.debugger.DebuggerPackage;
 
 import java.util.Collection;
+import java.util.List;
 
 import static org.jetbrains.jet.plugin.stubindex.PackageIndexUtil.findFilesWithExactPackage;
 
@@ -41,8 +49,9 @@ public class DebuggerUtils {
     public static JetFile findSourceFileForClass(
             @NotNull Project project,
             @NotNull GlobalSearchScope searchScope,
-            @NotNull JvmClassName className,
-            @NotNull final String fileName
+            @NotNull final JvmClassName className,
+            @NotNull final String fileName,
+            final int lineNumber
     ) {
 
         FqName packageFqName = getPackageFqNameForClass(className);
@@ -64,6 +73,26 @@ public class DebuggerUtils {
         JetFile file = PsiCodegenPredictor.getFileForPackagePartName(filesWithExactName, className);
         if (file != null) {
             return file;
+        }
+
+        boolean isInLibrary = KotlinPackage.any(filesWithExactName, new Function1<JetFile, Boolean>() {
+            @Override
+            public Boolean invoke(JetFile file) {
+                return LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null;
+            }
+        });
+
+        if (isInLibrary) {
+            return KotlinPackage.singleOrNull(KotlinPackage.filter(filesWithExactName, new Function1<JetFile, Boolean>() {
+                @Override
+                public Boolean invoke(JetFile file) {
+                    Integer startLineOffset = CodeInsightUtils.getStartLineOffset(file, lineNumber);
+                    assert startLineOffset != null : "Cannot find start line offset for file " + file.getName() + ", line " + lineNumber;
+                    JetElement elementAt = PsiTreeUtil.getParentOfType(file.findElementAt(startLineOffset), JetElement.class);
+                    return elementAt != null &&
+                           className.getInternalName().equals(DebuggerPackage.findPackagePartInternalNameForLibraryFile(elementAt));
+                }
+            }));
         }
 
         // In the rare case that there's more than one file with this name in this package,

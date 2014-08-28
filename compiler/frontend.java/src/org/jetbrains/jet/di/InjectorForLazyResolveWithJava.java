@@ -17,12 +17,14 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import com.intellij.psi.search.GlobalSearchScope;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.java.lazy.ModuleClassResolver;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
@@ -70,12 +72,14 @@ import javax.annotation.PreDestroy;
 public class InjectorForLazyResolveWithJava {
     
     private final Project project;
-    private final GlobalContextImpl globalContext;
-    private final LockBasedStorageManager lockBasedStorageManager;
-    private final DeclarationProviderFactory declarationProviderFactory;
-    private final BindingTrace bindingTrace;
+    private final GlobalContext globalContext;
+    private final StorageManager storageManager;
     private final ModuleDescriptorImpl module;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final GlobalSearchScope moduleContentScope;
+    private final BindingTrace bindingTrace;
+    private final DeclarationProviderFactory declarationProviderFactory;
+    private final ModuleClassResolver moduleClassResolver;
     private final ResolveSession resolveSession;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final VirtualFileFinder virtualFileFinder;
@@ -118,20 +122,25 @@ public class InjectorForLazyResolveWithJava {
     
     public InjectorForLazyResolveWithJava(
         @NotNull Project project,
-        @NotNull GlobalContextImpl globalContext,
+        @NotNull GlobalContext globalContext,
+        @NotNull ModuleDescriptorImpl module,
+        @NotNull GlobalSearchScope moduleContentScope,
+        @NotNull BindingTrace bindingTrace,
         @NotNull DeclarationProviderFactory declarationProviderFactory,
-        @NotNull BindingTrace bindingTrace
+        @NotNull ModuleClassResolver moduleClassResolver
     ) {
         this.project = project;
         this.globalContext = globalContext;
-        this.lockBasedStorageManager = globalContext.getStorageManager();
-        this.declarationProviderFactory = declarationProviderFactory;
-        this.bindingTrace = bindingTrace;
-        this.module = org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule("<fake-jdr-module>");
+        this.storageManager = globalContext.getStorageManager();
+        this.module = module;
         this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
-        this.resolveSession = new ResolveSession(project, globalContext, getModule(), declarationProviderFactory, bindingTrace);
+        this.moduleContentScope = moduleContentScope;
+        this.bindingTrace = bindingTrace;
+        this.declarationProviderFactory = declarationProviderFactory;
+        this.moduleClassResolver = moduleClassResolver;
+        this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
         this.javaClassFinder = new JavaClassFinderImpl();
-        this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
+        this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory.SERVICE.getInstance(project).create(moduleContentScope);
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
@@ -140,9 +149,9 @@ public class InjectorForLazyResolveWithJava {
         this.lazyResolveBasedCache = new LazyResolveBasedCache();
         this.javaPropertyInitializerEvaluator = new JavaPropertyInitializerEvaluatorImpl();
         this.javaSourceElementFactory = new JavaSourceElementFactoryImpl();
-        this.globalJavaResolverContext = new GlobalJavaResolverContext(lockBasedStorageManager, javaClassFinder, virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, lazyResolveBasedCache, javaPropertyInitializerEvaluator, javaSourceElementFactory);
-        this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModule());
-        this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModule());
+        this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, javaClassFinder, virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, lazyResolveBasedCache, javaPropertyInitializerEvaluator, javaSourceElementFactory, moduleClassResolver);
+        this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, module);
+        this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, module);
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -151,7 +160,7 @@ public class InjectorForLazyResolveWithJava {
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
         this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
-        this.reflectionTypes = new ReflectionTypes(getModule());
+        this.reflectionTypes = new ReflectionTypes(module);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
@@ -166,8 +175,8 @@ public class InjectorForLazyResolveWithJava {
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
         this.annotationDescriptorLoader = new AnnotationDescriptorLoader();
         this.constantDescriptorLoader = new ConstantDescriptorLoader();
-        this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(lockBasedStorageManager, getModule(), javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
-        this.descriptorLoadersStorage = new DescriptorLoadersStorage(lockBasedStorageManager);
+        this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(storageManager, module, javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
+        this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
@@ -178,6 +187,7 @@ public class InjectorForLazyResolveWithJava {
         this.resolveSession.setTypeResolver(typeResolver);
 
         javaClassFinder.setProject(project);
+        javaClassFinder.setScope(moduleContentScope);
 
         traceBasedExternalSignatureResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
         traceBasedExternalSignatureResolver.setProject(project);
@@ -191,7 +201,7 @@ public class InjectorForLazyResolveWithJava {
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
         annotationResolver.setCallResolver(callResolver);
-        annotationResolver.setStorageManager(lockBasedStorageManager);
+        annotationResolver.setStorageManager(storageManager);
         annotationResolver.setTypeResolver(typeResolver);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
@@ -229,7 +239,7 @@ public class InjectorForLazyResolveWithJava {
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
-        descriptorResolver.setStorageManager(lockBasedStorageManager);
+        descriptorResolver.setStorageManager(storageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
         delegatedPropertyResolver.setCallResolver(callResolver);
@@ -266,10 +276,6 @@ public class InjectorForLazyResolveWithJava {
     
     @PreDestroy
     public void destroy() {
-    }
-    
-    public ModuleDescriptorImpl getModule() {
-        return this.module;
     }
     
     public ResolveSession getResolveSession() {

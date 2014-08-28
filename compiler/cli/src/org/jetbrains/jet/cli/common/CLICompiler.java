@@ -27,6 +27,7 @@ import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.config.Services;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -48,13 +49,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
-        return exec(errStream, MessageRenderer.PLAIN_WITH_RELATIVE_PATH, args);
+        return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_WITH_RELATIVE_PATH, args);
     }
 
     @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
     @NotNull
-    public ExitCode execAndOutputHtml(@NotNull PrintStream errStream, @NotNull String... args) {
-        return exec(errStream, MessageRenderer.TAGS, args);
+    public ExitCode execAndOutputHtml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
+        return exec(errStream, services, MessageRenderer.TAGS, args);
     }
 
     @Nullable
@@ -97,7 +98,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     protected abstract A createArguments();
 
     @NotNull
-    private ExitCode exec(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull String[] args) {
+    private ExitCode exec(
+            @NotNull PrintStream errStream,
+            @NotNull Services services,
+            @NotNull MessageRenderer messageRenderer,
+            @NotNull String[] args
+    ) {
         A arguments = parseArguments(errStream, messageRenderer, args);
         if (arguments == null) {
             return INTERNAL_ERROR;
@@ -119,7 +125,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
 
         try {
-            return exec(collector, arguments);
+            return exec(collector, services, arguments);
         }
         finally {
             errStream.print(messageRenderer.renderConclusion());
@@ -127,13 +133,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     }
 
     @NotNull
-    public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
+    public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
         try {
             Disposable rootDisposable = Disposer.newDisposable();
             try {
                 MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
-                ExitCode code = doExecute(arguments, severityCollector, rootDisposable);
+                ExitCode code = doExecute(arguments, services, severityCollector, rootDisposable);
                 return severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
             }
             finally {
@@ -151,7 +157,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     }
 
     @NotNull
-    protected abstract ExitCode doExecute(@NotNull A arguments, @NotNull MessageCollector messageCollector, @NotNull Disposable rootDisposable);
+    protected abstract ExitCode doExecute(
+            @NotNull A arguments,
+            @NotNull Services services,
+            @NotNull MessageCollector messageCollector,
+            @NotNull Disposable rootDisposable
+    );
 
     protected void printVersionIfNeeded(
             @NotNull PrintStream errStream,

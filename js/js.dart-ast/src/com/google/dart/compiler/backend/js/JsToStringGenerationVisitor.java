@@ -558,10 +558,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         accept(x.getIfExpression());
         rightParen();
         JsStatement thenStmt = x.getThenStatement();
+        JsStatement elseStatement = x.getElseStatement();
+        if (elseStatement != null && thenStmt instanceof JsIf && ((JsIf)thenStmt).getElseStatement() == null) {
+            thenStmt = new JsBlock(thenStmt);
+        }
         nestedPush(thenStmt);
         accept(thenStmt);
         nestedPop(thenStmt);
-        JsStatement elseStatement = x.getElseStatement();
         if (elseStatement != null) {
             if (needSemi) {
                 semi();
