@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement
 import org.jetbrains.jet.lang.psi.*
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.roots.LibraryOrSdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.JdkOrderEntry
 import org.jetbrains.jet.asJava.FakeLightClassForFileOfPackage
@@ -70,20 +69,19 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 
     val orderEntries = projectFileIndex.getOrderEntriesForFile(virtualFile)
 
-    val libraryOrSdkEntries = orderEntries.filterIsInstance(javaClass<LibraryOrSdkOrderEntry>())
-    @entries for (libraryOrSdkOrderEntry in libraryOrSdkEntries) {
-        when (libraryOrSdkOrderEntry) {
+    @entries for (orderEntry in orderEntries) {
+        when (orderEntry) {
             is LibraryOrderEntry -> {
-                val library = libraryOrSdkOrderEntry.getLibrary() ?: continue @entries
-                if (projectFileIndex.isInLibrarySource(virtualFile)) {
-                    return LibrarySourceInfo(project, library)
-                }
-                else {
+                val library = orderEntry.getLibrary() ?: continue @entries
+                if (projectFileIndex.isInLibraryClasses(virtualFile)) {
                     return LibraryInfo(project, library)
+                }
+                else if (projectFileIndex.isInLibrarySource(virtualFile)) {
+                    return LibrarySourceInfo(project, library)
                 }
             }
             is JdkOrderEntry -> {
-                val sdk = libraryOrSdkOrderEntry.getJdk() ?: continue @entries
+                val sdk = orderEntry.getJdk() ?: continue @entries
                 return SdkInfo(project, sdk)
             }
         }
