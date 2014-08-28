@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.di.InjectorForTests;
@@ -116,7 +117,7 @@ public class JetExpectedResolveDataUtil {
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, new BindingTraceContext(), false);
-        JavaClass javaClass = injector.getJavaClassFinder().findClass(new FqName(qualifiedName));
+        JavaClass javaClass = injector.getJavaClassFinder().findClass(ClassId.topLevel(new FqName(qualifiedName)));
         Assert.assertNotNull("Class wasn't found: " + qualifiedName, javaClass);
         assertInstanceOf(javaClass, JavaClassImpl.class);
         return ((JavaClassImpl) javaClass).getPsi();

@@ -22,9 +22,9 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.jet.descriptors.serialization.ClassId
 
 //TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
 trait LazyJavaClassResolver {
@@ -70,12 +70,12 @@ fun LazyJavaResolverContext.lookupBinaryClass(javaClass: JavaClass): ClassDescri
     return resolveBinaryClass(kotlinJvmBinaryClass)?.kClass
 }
 
-fun LazyJavaResolverContext.findClassInJava(fqName: FqName): JavaClassLookupResult {
-    val kotlinClass = kotlinClassFinder.findKotlinClass(fqName)
+fun LazyJavaResolverContext.findClassInJava(classId: ClassId): JavaClassLookupResult {
+    val kotlinClass = kotlinClassFinder.findKotlinClass(classId)
     val binaryClassResult = resolveBinaryClass(kotlinClass)
     if (binaryClassResult != null) return binaryClassResult
 
-    val javaClass = finder.findClass(fqName)
+    val javaClass = finder.findClass(classId)
     if (javaClass == null) return JavaClassLookupResult()
 
     // Light classes are not proper binaries either

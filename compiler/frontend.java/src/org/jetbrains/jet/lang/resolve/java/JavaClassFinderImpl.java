@@ -24,20 +24,20 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPackageImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 public class JavaClassFinderImpl implements JavaClassFinder {
-    @NotNull
     private Project project;
-    @NotNull
     private GlobalSearchScope baseScope;
 
     private GlobalSearchScope javaSearchScope;
@@ -57,7 +57,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     public void initialize() {
         javaSearchScope = new DelegatingGlobalSearchScope(baseScope) {
             @Override
-            public boolean contains(VirtualFile file) {
+            public boolean contains(@NotNull VirtualFile file) {
                 return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
             }
 
@@ -73,13 +73,15 @@ public class JavaClassFinderImpl implements JavaClassFinder {
 
     @Nullable
     @Override
-    public JavaClass findClass(@NotNull FqName fqName) {
+    public JavaClass findClass(@NotNull ClassId classId) {
+        FqNameUnsafe fqName = classId.asSingleFqName();
+
         PsiClass psiClass = javaFacade.findClass(fqName.asString(), javaSearchScope);
         if (psiClass == null) return null;
 
         JavaClassImpl javaClass = new JavaClassImpl(psiClass);
 
-        if (!fqName.equals(javaClass.getFqName())) {
+        if (!fqName.equalsTo(javaClass.getFqName())) {
             throw new IllegalStateException("Requested " + fqName + ", got " + javaClass.getFqName());
         }
 
