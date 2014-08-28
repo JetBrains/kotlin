@@ -187,6 +187,11 @@ public class PackageCodegen {
                                                                          }
                                                                      }
                         );
+
+                        memberCodegen.functionCodegen.generateDefaultIfNeeded(
+                                context.intoFunction(function), signature, function, OwnerKind.PACKAGE,
+                                DefaultParameterValueLoader.DEFAULT, null);
+
                     }
                     else if (member instanceof DeserializedPropertyDescriptor) {
                         memberCodegen.propertyCodegen.generateInPackageFacade((DeserializedPropertyDescriptor) member);
