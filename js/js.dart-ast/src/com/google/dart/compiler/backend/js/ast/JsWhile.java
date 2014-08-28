@@ -64,6 +64,6 @@ public class JsWhile extends SourceInfoAwareJsNode implements JsStatement {
         JsExpression conditionCopy = AstUtil.deepCopy(condition);
         JsStatement bodyCopy = AstUtil.deepCopy(body);
 
-        return new JsWhile(conditionCopy, bodyCopy);
+        return new JsWhile(conditionCopy, bodyCopy).withMetadataFrom(this);
     }
 }

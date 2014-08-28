@@ -51,6 +51,6 @@ public final class JsNew extends JsExpressionImpl.JsExpressionHasArguments {
     public JsNew deepCopy() {
         JsExpression constructorCopy = AstUtil.deepCopy(constructorExpression);
         List<JsExpression> argumentsCopy = AstUtil.deepCopy(arguments);
-        return new JsNew(constructorCopy, argumentsCopy);
+        return new JsNew(constructorCopy, argumentsCopy).withMetadataFrom(this);
     }
 }

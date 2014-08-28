@@ -36,6 +36,6 @@ public class JsDocComment extends JsExpressionImpl {
     @NotNull
     @Override
     public JsDocComment deepCopy() {
-        return new JsDocComment(tags);
+        return new JsDocComment(tags).withMetadataFrom(this);
     }
 }

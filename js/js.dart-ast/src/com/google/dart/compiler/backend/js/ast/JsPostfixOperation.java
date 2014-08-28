@@ -32,6 +32,6 @@ public final class JsPostfixOperation extends JsUnaryOperation {
     @NotNull
     @Override
     public JsPostfixOperation deepCopy() {
-        return new JsPostfixOperation(getOperator(), AstUtil.deepCopy(getArg()));
+        return new JsPostfixOperation(getOperator(), AstUtil.deepCopy(getArg())).withMetadataFrom(this);
     }
 }

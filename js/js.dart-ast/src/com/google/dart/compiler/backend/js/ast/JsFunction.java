@@ -108,6 +108,6 @@ public final class JsFunction extends JsLiteral implements HasName {
         functionCopy.params = AstUtil.deepCopy(params);
         functionCopy.isLocal = isLocal;
 
-        return functionCopy;
+        return functionCopy.withMetadataFrom(this);
     }
 }

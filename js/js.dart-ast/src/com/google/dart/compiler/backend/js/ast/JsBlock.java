@@ -68,6 +68,6 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     @NotNull
     @Override
     public JsBlock deepCopy() {
-        return new JsBlock(AstUtil.deepCopy(statements));
+        return new JsBlock(AstUtil.deepCopy(statements)).withMetadataFrom(this);
     }
 }

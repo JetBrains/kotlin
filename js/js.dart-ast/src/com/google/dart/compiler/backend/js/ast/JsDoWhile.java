@@ -38,6 +38,6 @@ public class JsDoWhile extends JsWhile {
         JsExpression conditionCopy = AstUtil.deepCopy(condition);
         JsStatement bodyCopy = AstUtil.deepCopy(body);
 
-        return new JsDoWhile(conditionCopy, bodyCopy);
+        return new JsDoWhile(conditionCopy, bodyCopy).withMetadataFrom(this);
     }
 }

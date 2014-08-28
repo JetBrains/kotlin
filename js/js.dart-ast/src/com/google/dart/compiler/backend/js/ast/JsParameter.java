@@ -55,6 +55,6 @@ public final class JsParameter extends SourceInfoAwareJsNode implements HasName 
     public JsParameter deepCopy() {
         JsParameter parameter = new JsParameter(name);
         parameter.setHasDefaultValue(hasDefaultValue);
-        return parameter;
+        return parameter.withMetadataFrom(this);
     }
 }

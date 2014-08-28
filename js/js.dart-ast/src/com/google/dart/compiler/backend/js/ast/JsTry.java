@@ -82,6 +82,6 @@ public class JsTry extends SourceInfoAwareJsNode implements JsStatement {
         List<JsCatch> catchCopy = AstUtil.deepCopy(catches);
         JsBlock finallyCopy = AstUtil.deepCopy(finallyBlock);
 
-        return new JsTry(tryCopy, catchCopy, finallyCopy);
+        return new JsTry(tryCopy, catchCopy, finallyCopy).withMetadataFrom(this);
     }
 }

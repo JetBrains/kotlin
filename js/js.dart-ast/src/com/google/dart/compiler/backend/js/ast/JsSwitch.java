@@ -66,6 +66,6 @@ public class JsSwitch extends SourceInfoAwareJsNode implements JsStatement {
         JsExpression expressionCopy = AstUtil.deepCopy(expression);
         List<JsSwitchMember> casesCopy = AstUtil.deepCopy(cases);
 
-        return new JsSwitch(expressionCopy, casesCopy);
+        return new JsSwitch(expressionCopy, casesCopy).withMetadataFrom(this);
     }
 }

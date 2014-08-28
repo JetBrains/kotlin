@@ -61,6 +61,6 @@ public final class JsObjectLiteral extends JsLiteral {
     @NotNull
     @Override
     public JsObjectLiteral deepCopy() {
-        return new JsObjectLiteral(AstUtil.deepCopy(properties), multiline);
+        return new JsObjectLiteral(AstUtil.deepCopy(properties), multiline).withMetadataFrom(this);
     }
 }

@@ -74,6 +74,6 @@ public final class JsConditional extends JsExpressionImpl {
         JsExpression thenCopy = AstUtil.deepCopy(thenExpression);
         JsExpression elseCopy = AstUtil.deepCopy(elseExpression);
 
-        return new JsConditional(testCopy, thenCopy, elseCopy);
+        return new JsConditional(testCopy, thenCopy, elseCopy).withMetadataFrom(this);
     }
 }

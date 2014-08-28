@@ -99,6 +99,6 @@ public final class JsNameRef extends JsExpressionImpl implements HasName {
 
         if (name != null) return new JsNameRef(name, qualifierCopy);
 
-        return new JsNameRef(ident, qualifierCopy);
+        return new JsNameRef(ident, qualifierCopy).withMetadataFrom(this);
     }
 }

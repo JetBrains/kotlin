@@ -38,6 +38,6 @@ public final class JsBreak extends JsContinue {
     @NotNull
     @Override
     public JsBreak deepCopy() {
-        return new JsBreak(AstUtil.deepCopy(label));
+        return new JsBreak(AstUtil.deepCopy(label)).withMetadataFrom(this);
     }
 }

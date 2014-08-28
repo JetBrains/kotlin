@@ -28,6 +28,6 @@ public class JsGlobalBlock extends JsBlock {
         JsGlobalBlock globalBlockCopy = new JsGlobalBlock();
         List<JsStatement> statementscopy = AstUtil.deepCopy(getStatements());
         globalBlockCopy.getStatements().addAll(statementscopy);
-        return globalBlockCopy;
+        return globalBlockCopy.withMetadataFrom(this);
     }
 }

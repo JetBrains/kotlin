@@ -92,6 +92,6 @@ public class JsForIn extends SourceInfoAwareJsNode implements JsStatement {
         JsExpression iterCopy = AstUtil.deepCopy(iterExpression);
         JsExpression objectCopy = AstUtil.deepCopy(objectExpression);
 
-        return new JsForIn(iterVarName, iterCopy, objectCopy, bodyCopy);
+        return new JsForIn(iterVarName, iterCopy, objectCopy, bodyCopy).withMetadataFrom(this);
     }
 }

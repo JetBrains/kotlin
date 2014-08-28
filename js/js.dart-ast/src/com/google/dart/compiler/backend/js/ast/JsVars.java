@@ -106,7 +106,7 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
         public JsVar deepCopy() {
             if (initExpression == null) return new JsVar(name);
 
-            return new JsVar(name, initExpression.deepCopy());
+            return new JsVar(name, initExpression.deepCopy()).withMetadataFrom(this);
         }
     }
 
@@ -162,6 +162,6 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
     @NotNull
     @Override
     public JsVars deepCopy() {
-        return new JsVars(AstUtil.deepCopy(vars), multiline);
+        return new JsVars(AstUtil.deepCopy(vars), multiline).withMetadataFrom(this);
     }
 }

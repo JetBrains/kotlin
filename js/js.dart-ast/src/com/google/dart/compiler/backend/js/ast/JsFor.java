@@ -129,16 +129,13 @@ public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
         JsExpression conditionCopy = AstUtil.deepCopy(condition);
         JsExpression incrementalExprCopy = AstUtil.deepCopy(incrementExpression);
 
+        JsFor result;
         if (initVars != null) {
-            return new JsFor(initVars.deepCopy(),
-                             conditionCopy,
-                             incrementalExprCopy,
-                             bodyCopy);
+            result = new JsFor(initVars.deepCopy(), conditionCopy, incrementalExprCopy, bodyCopy);
         } else {
-            return new JsFor(initExpression.deepCopy(),
-                             conditionCopy,
-                             incrementExpression,
-                             bodyCopy);
+            result = new JsFor(initExpression.deepCopy(), conditionCopy, incrementExpression, bodyCopy);
         }
+
+        return result.withMetadataFrom(this);
     }
 }

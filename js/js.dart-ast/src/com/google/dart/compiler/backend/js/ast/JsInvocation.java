@@ -87,6 +87,6 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
         List<JsExpression> argumentsCopy = AstUtil.deepCopy(arguments);
         JsInvocation copy = new JsInvocation(qualifierCopy, argumentsCopy);
         copy.setInlineStrategy(inlineStrategy);
-        return copy;
+        return copy.withMetadataFrom(this);
     }
 }

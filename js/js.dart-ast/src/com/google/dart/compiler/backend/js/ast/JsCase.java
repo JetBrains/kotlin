@@ -52,6 +52,6 @@ public final class JsCase extends JsSwitchMember {
         caseCopy.caseExpression = AstUtil.deepCopy(caseExpression);
         caseCopy.statements.addAll(AstUtil.deepCopy(statements));
 
-        return caseCopy;
+        return caseCopy.withMetadataFrom(this);
     }
 }

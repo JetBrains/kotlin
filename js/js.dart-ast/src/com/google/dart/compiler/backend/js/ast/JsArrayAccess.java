@@ -65,6 +65,6 @@ public final class JsArrayAccess extends JsExpressionImpl {
         JsExpression arrayCopy = AstUtil.deepCopy(arrayExpression);
         JsExpression indexCopy = AstUtil.deepCopy(indexExpression);
 
-        return new JsArrayAccess(arrayCopy, indexCopy);
+        return new JsArrayAccess(arrayCopy, indexCopy).withMetadataFrom(this);
     }
 }

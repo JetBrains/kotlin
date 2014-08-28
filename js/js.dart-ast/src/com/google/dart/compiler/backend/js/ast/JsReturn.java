@@ -53,6 +53,6 @@ public final class JsReturn extends SourceInfoAwareJsNode implements JsStatement
     @NotNull
     @Override
     public JsReturn deepCopy() {
-        return new JsReturn(AstUtil.deepCopy(expression));
+        return new JsReturn(AstUtil.deepCopy(expression)).withMetadataFrom(this);
     }
 }

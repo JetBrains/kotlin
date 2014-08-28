@@ -32,6 +32,6 @@ public final class JsPrefixOperation extends JsUnaryOperation {
     @NotNull
     @Override
     public JsPrefixOperation deepCopy() {
-        return new JsPrefixOperation(getOperator(), AstUtil.deepCopy(getArg()));
+        return new JsPrefixOperation(getOperator(), AstUtil.deepCopy(getArg())).withMetadataFrom(this);
     }
 }

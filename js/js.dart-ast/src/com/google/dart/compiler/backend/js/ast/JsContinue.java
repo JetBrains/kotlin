@@ -52,6 +52,6 @@ public class JsContinue extends SourceInfoAwareJsNode implements JsStatement {
     public JsContinue deepCopy() {
         if (label == null) return new JsContinue();
 
-        return new JsContinue(AstUtil.deepCopy(label));
+        return new JsContinue(AstUtil.deepCopy(label)).withMetadataFrom(this);
     }
 }

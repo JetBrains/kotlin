@@ -75,6 +75,6 @@ public final class JsBinaryOperation extends JsExpressionImpl {
     @NotNull
     @Override
     public JsExpression deepCopy() {
-        return new JsBinaryOperation(op, AstUtil.deepCopy(arg1), AstUtil.deepCopy(arg2));
+        return new JsBinaryOperation(op, AstUtil.deepCopy(arg1), AstUtil.deepCopy(arg2)).withMetadataFrom(this);
     }
 }

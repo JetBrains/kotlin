@@ -86,6 +86,6 @@ public final class JsIf extends SourceInfoAwareJsNode implements JsStatement {
         JsStatement thenCopy = AstUtil.deepCopy(thenStatement);
         JsStatement elseCopy = AstUtil.deepCopy(elseStatement);
 
-        return new JsIf(ifCopy, thenCopy, elseCopy);
+        return new JsIf(ifCopy, thenCopy, elseCopy).withMetadataFrom(this);
     }
 }

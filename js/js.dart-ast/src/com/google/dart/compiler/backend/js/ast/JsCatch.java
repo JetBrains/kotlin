@@ -84,7 +84,7 @@ public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
         JsExpression conditionCopy = AstUtil.deepCopy(condition);
         JsParameter paramCopy = AstUtil.deepCopy(param);
 
-        return new JsCatch(scopeCopy, bodyCopy, conditionCopy, paramCopy);
+        return new JsCatch(scopeCopy, bodyCopy, conditionCopy, paramCopy).withMetadataFrom(this);
     }
 
     private JsCatch(JsCatchScope scope, JsBlock body, JsExpression condition, JsParameter param) {

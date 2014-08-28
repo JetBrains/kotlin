@@ -29,6 +29,6 @@ public final class JsDefault extends JsSwitchMember {
     public JsDefault deepCopy() {
         JsDefault defaultCopy = new JsDefault();
         defaultCopy.statements.addAll(AstUtil.deepCopy(statements));
-        return defaultCopy;
+        return defaultCopy.withMetadataFrom(this);
     }
 }

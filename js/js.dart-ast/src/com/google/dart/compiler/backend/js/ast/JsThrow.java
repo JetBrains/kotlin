@@ -46,6 +46,6 @@ public class JsThrow extends SourceInfoAwareJsNode implements JsStatement {
     @NotNull
     @Override
     public JsThrow deepCopy() {
-        return new JsThrow(AstUtil.deepCopy(expression));
+        return new JsThrow(AstUtil.deepCopy(expression)).withMetadataFrom(this);
     }
 }

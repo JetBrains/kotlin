@@ -49,6 +49,6 @@ public final class JsArrayLiteral extends JsLiteral {
     @NotNull
     @Override
     public JsArrayLiteral deepCopy() {
-        return new JsArrayLiteral(AstUtil.deepCopy(expressions));
+        return new JsArrayLiteral(AstUtil.deepCopy(expressions)).withMetadataFrom(this);
     }
 }
