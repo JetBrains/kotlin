@@ -17,8 +17,10 @@
 package org.jetbrains.k2js.inline;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.k2js.inline.context.*;
 import org.jetbrains.k2js.inline.exception.InlineRecursionException;
 
@@ -26,9 +28,9 @@ import java.util.IdentityHashMap;
 import java.util.Set;
 import java.util.Stack;
 
-import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctionDeclarations;
-import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedFunctionDefinitions;
 import static org.jetbrains.k2js.inline.FunctionInlineMutator.getInlineableCallReplacement;
+import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedFunctionDefinitions;
+import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctionDeclarations;
 import static org.jetbrains.k2js.inline.util.UtilPackage.IdentitySet;
 import static org.jetbrains.k2js.inline.util.UtilPackage.collectNamedFunctions;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.flattenStatement;
@@ -179,7 +181,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     private static boolean shouldInline(@NotNull JsInvocation call) {
-        return call.getInlineStrategy().isInline();
+        InlineStrategy strategy = MetadataPackage.getInlineStrategy(call);
+        return strategy != null && strategy.isInline();
     }
 
 

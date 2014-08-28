@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -46,7 +47,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         if (shouldBeInlined(expression, context)
             && callExpression instanceof JsInvocation) {
 
-            ((JsInvocation) callExpression).setInlineStrategy(InlineStrategy.IN_PLACE);
+            MetadataPackage.setInlineStrategy((JsInvocation) callExpression, InlineStrategy.IN_PLACE);
         }
 
         return callExpression;
