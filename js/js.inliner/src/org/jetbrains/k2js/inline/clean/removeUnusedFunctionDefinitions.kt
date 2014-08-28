@@ -18,6 +18,7 @@ package org.jetbrains.k2js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
+import com.google.dart.compiler.backend.js.ast.metadata.isLocal
 
 import com.intellij.util.containers.Stack
 import java.util.IdentityHashMap
@@ -54,11 +55,11 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
         get() = tracker.removable
 
     public fun process() {
-        functions.filter { it.value.isLocal() }
+        functions.filter { it.value.isLocal }
                  .forEach { tracker.addCandidateForRemoval(it.key, it.value) }
 
         for ((name, function) in functions) {
-            if (function.isLocal()) {
+            if (function.isLocal) {
                 processLocalFunction(name, function)
             } else {
                 processNonLocalFunction(name, function)

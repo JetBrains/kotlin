@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.expression
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
+import com.google.dart.compiler.backend.js.ast.metadata.isLocal
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
@@ -60,11 +61,11 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         if (tracker.hasCapturedExceptContaining()) {
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda)
-            lambdaCreator.markAsLocal()
+            lambdaCreator.isLocal = true
             return lambdaCreator.withCapturedParameters(functionContext, invokingContext, descriptor)
         }
 
-        lambda.markAsLocal()
+        lambda.isLocal = true
         return invokingContext.define(descriptor, lambda)
     }
 }
