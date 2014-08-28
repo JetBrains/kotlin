@@ -98,6 +98,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/ClassInObject.kt");
     }
     
+    @TestMetadata("ClassObjectFieldKeywordName.kt")
+    public void testClassObjectFieldKeywordName() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/ClassObjectFieldKeywordName.kt");
+    }
+    
     @TestMetadata("ClassObjectMethod1.kt")
     public void testClassObjectMethod1() throws Exception {
         doTest("idea/testData/completion/handlers/smart/ClassObjectMethod1.kt");
@@ -216,6 +221,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("ConstructorInsertsImport2.kt")
     public void testConstructorInsertsImport2() throws Exception {
         doTest("idea/testData/completion/handlers/smart/ConstructorInsertsImport2.kt");
+    }
+    
+    @TestMetadata("ConstructorWithKeywordName.kt")
+    public void testConstructorWithKeywordName() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/ConstructorWithKeywordName.kt");
     }
     
     @TestMetadata("ConstructorWithLambdaParameter1.kt")

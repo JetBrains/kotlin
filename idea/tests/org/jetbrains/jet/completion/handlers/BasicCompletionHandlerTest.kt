@@ -149,4 +149,5 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     fun testTypeArgOfSuper() = doTest(1, "X", null, '\n')
 
     fun testKeywordClassName() = doTest(1, "class", null, '\n')
+    fun testKeywordFunctionName() = doTest(1, "fun", "fun()", null, '\n')
 }
