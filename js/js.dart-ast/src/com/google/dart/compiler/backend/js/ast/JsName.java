@@ -4,13 +4,14 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
 import com.google.dart.compiler.common.Symbol;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstract base class for named JavaScript objects.
  */
-public class JsName implements Symbol {
+public class JsName extends HasMetadata implements Symbol {
   private final JsScope enclosing;
   private final String ident;
   private JsNode staticRef = null;
