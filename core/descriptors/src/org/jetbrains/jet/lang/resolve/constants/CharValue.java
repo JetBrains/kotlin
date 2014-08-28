@@ -40,6 +40,29 @@ public class CharValue extends IntegerValueConstant<Character> {
 
     @Override
     public String toString() {
-        return "#" + ((int) value) + "(" + value + ")";
+        return String.format("\\u%04X ('%s')", (int) value, getPrintablePart(value));
+    }
+
+    private static String getPrintablePart(char c) {
+        switch (c) {
+            case '\b':
+                return "\\b";
+            case '\t':
+                return "\\t";
+            case '\n':
+                return "\\n";
+            case '\f':
+                return "\\f";
+            case '\r':
+                return "\\r";
+            default:
+                return isPrintableUnicode(c) ? Character.toString(c) : "?";
+        }
+    }
+
+    private static boolean isPrintableUnicode(char c) {
+        int t = Character.getType(c);
+        return t != Character.UNASSIGNED && t != Character.LINE_SEPARATOR && t != Character.PARAGRAPH_SEPARATOR &&
+               t != Character.CONTROL && t != Character.FORMAT && t != Character.PRIVATE_USE && t != Character.SURROGATE;
     }
 }
