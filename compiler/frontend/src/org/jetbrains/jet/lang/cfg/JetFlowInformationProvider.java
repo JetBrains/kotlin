@@ -260,6 +260,7 @@ public class JetFlowInformationProvider {
     private void reportUnreachableCode(@NotNull UnreachableCode unreachableCode) {
         for (JetElement element : unreachableCode.getElements()) {
             trace.report(UNREACHABLE_CODE.on(element, unreachableCode.getUnreachableTextRanges(element)));
+            trace.record(BindingContext.UNREACHABLE_CODE, element, true);
         }
     }
 
