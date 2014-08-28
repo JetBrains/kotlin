@@ -90,7 +90,7 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
         val mainFilePath = config.getNullableString("mainFile")!!
 
         val conflictFile = File(testDir + "/conflicts.txt")
-        doTest { rootDir, rootAfter ->
+        doTest({ rootDir, rootAfter ->
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
             val mainPsiFile = PsiManager.getInstance(getProject()!!).findFile(mainFile)!!
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
@@ -120,16 +120,13 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
 
                 EditorFactory.getInstance()!!.releaseEditor(editor)
             }
-        }
+        },
+        getTestDirName(true))
     }
 
     protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
         val testName = getTestName(lowercaseFirstLetter)
         return testName.substring(0, testName.lastIndexOf('_')).replace('_', '/')
-    }
-
-    protected fun doTest(action : (VirtualFile, VirtualFile?) -> Unit) {
-        super.doTest(action, getTestDirName(true))
     }
 
     protected override fun getTestRoot() : String {
