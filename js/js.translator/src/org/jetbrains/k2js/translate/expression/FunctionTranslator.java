@@ -17,10 +17,8 @@
 package org.jetbrains.k2js.translate.expression;
 
 
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsParameter;
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
+import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -131,7 +129,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     public static void addParameters(List<JsParameter> list, FunctionDescriptor descriptor, TranslationContext context) {
         for (ValueParameterDescriptor valueParameter : descriptor.getValueParameters()) {
             JsParameter jsParameter = new JsParameter(context.getNameForDescriptor(valueParameter));
-            jsParameter.setHasDefaultValue(valueParameter.hasDefaultValue());
+            MetadataPackage.setHasDefaultValue(jsParameter, valueParameter.hasDefaultValue());
             list.add(jsParameter);
         }
     }

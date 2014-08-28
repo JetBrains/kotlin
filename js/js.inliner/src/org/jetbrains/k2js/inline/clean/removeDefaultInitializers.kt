@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.hasDefaultValue
 
 import org.jetbrains.k2js.inline.util.toIdentitySet
 import org.jetbrains.k2js.inline.util.zipWithDefault
@@ -117,7 +118,7 @@ private fun getDefaultParamsNames(
 
     val argsParams = args.zipWithDefault(params, Namer.UNDEFINED_EXPRESSION)
     val relevantParams = argsParams.stream()
-                                   .filter { it.second.hasDefaultValue() }
+                                   .filter { it.second.hasDefaultValue }
                                    .filter { initialized == !isUndefined(it.first) }
 
     val names = relevantParams.map { it.second.getName() }

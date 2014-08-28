@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public final class JsParameter extends SourceInfoAwareJsNode implements HasName {
     @NotNull
     private final JsName name;
-    private boolean hasDefaultValue = false;
 
     public JsParameter(@NotNull JsName name) {
         this.name = name;
@@ -31,14 +30,6 @@ public final class JsParameter extends SourceInfoAwareJsNode implements HasName 
         return name;
     }
 
-    public boolean hasDefaultValue() {
-        return hasDefaultValue;
-    }
-
-    public void setHasDefaultValue(boolean hasDefaultValue) {
-        this.hasDefaultValue = hasDefaultValue;
-    }
-
     @Override
     public void accept(JsVisitor v) {
         v.visitParameter(this);
@@ -53,8 +44,6 @@ public final class JsParameter extends SourceInfoAwareJsNode implements HasName 
     @NotNull
     @Override
     public JsParameter deepCopy() {
-        JsParameter parameter = new JsParameter(name);
-        parameter.setHasDefaultValue(hasDefaultValue);
-        return parameter.withMetadataFrom(this);
+        return new JsParameter(name).withMetadataFrom(this);
     }
 }
