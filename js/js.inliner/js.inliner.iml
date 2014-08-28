@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="js.dart-ast" />
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="module" module-name="descriptors" />
   </component>
 </module>
 
