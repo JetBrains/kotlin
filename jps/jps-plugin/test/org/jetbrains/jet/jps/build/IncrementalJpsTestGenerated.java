@@ -110,6 +110,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest("jps-plugin/testData/incremental/pureKotlin/constantsUnchanged/");
         }
         
+        @TestMetadata("defaultArguments")
+        public void testDefaultArguments() throws Exception {
+            doTest("jps-plugin/testData/incremental/pureKotlin/defaultArguments/");
+        }
+        
         @TestMetadata("dependencyClassReferenced")
         public void testDependencyClassReferenced() throws Exception {
             doTest("jps-plugin/testData/incremental/pureKotlin/dependencyClassReferenced/");
