@@ -49,10 +49,10 @@ L0:
   2 mark({ with(1) { "".(foo)() } })
     r(1) -> <v0>
     mark({ "".(foo)() })
-    jmp?(L2)                                                 NEXT:[r({ "".(foo)() }) -> <v1>, d({ "".(foo)() })]
+    jmp?(L2 [after local declaration])                       NEXT:[r({ "".(foo)() }) -> <v1>, d({ "".(foo)() })]
     d({ "".(foo)() })                                        NEXT:[<SINK>]
-L2:
-    r({ "".(foo)() }) -> <v1>                                PREV:[jmp?(L2)]
+L2 [after local declaration]:
+    r({ "".(foo)() }) -> <v1>                                PREV:[jmp?(L2 [after local declaration])]
     mark(with(1) { "".(foo)() })
     call(with(1) { "".(foo)() }, with|<v0>, <v1>) -> <v2>
 L1:

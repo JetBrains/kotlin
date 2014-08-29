@@ -13,11 +13,11 @@ L0:
   1 <START>
   2 mark({ class B { val a: Int get() { val b: Int return b } } })
     v(val a: Int get() { val b: Int return b })
-    jmp?(L2)                                                          NEXT:[<END>, d(get() { val b: Int return b })]
+    jmp?(L2 [after local declaration])                                NEXT:[<END>, d(get() { val b: Int return b })]
     d(get() { val b: Int return b })                                  NEXT:[<SINK>]
 L1:
-L2:
-  1 <END>                                                             NEXT:[<SINK>]                                                            PREV:[jmp?(L2)]
+L2 [after local declaration]:
+  1 <END>                                                             NEXT:[<SINK>]                                                            PREV:[jmp?(L2 [after local declaration])]
 error:
     <ERROR>                                                           PREV:[]
 sink:

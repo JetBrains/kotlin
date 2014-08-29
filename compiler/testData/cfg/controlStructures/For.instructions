@@ -13,11 +13,11 @@ L0:
     mark(1..2)
     call(1..2, rangeTo|<v0>, <v1>) -> <v2>
     v(i)
-L3:
-    jmp?(L2)                                          NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>]
+L3 ['for' loop condition entry point]:
+    jmp?(L2 ['for' loop exit point])                  NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>]
 L4 [loop entry point]:
 L5 [body entry point]:
-    magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>    PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>    PREV:[jmp?(L2 ['for' loop exit point]), jmp?(L4 [loop entry point])]
     w(i|<v3>)
     mark(for (i in 1..2) { doSmth(i) })
   4 mark({ doSmth(i) })
@@ -25,8 +25,8 @@ L5 [body entry point]:
     mark(doSmth(i))
     call(doSmth(i), doSmth|<v4>) -> <v5>
   3 jmp?(L4 [loop entry point])                       NEXT:[magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>, read (Unit)]
-L2:
-    read (Unit)                                       PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+L2 ['for' loop exit point]:
+    read (Unit)                                       PREV:[jmp?(L2 ['for' loop exit point]), jmp?(L4 [loop entry point])]
 L1:
   1 <END>                                             NEXT:[<SINK>]
 error:

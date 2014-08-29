@@ -15,9 +15,9 @@ L0:
     w(a|<v0>)                                                           INIT: in: {a=D} out: {a=ID}
     v(val f = { (x: Int) -> val y = x + a use(a) })                     INIT: in: {a=ID} out: {a=ID, f=D}
     mark({ (x: Int) -> val y = x + a use(a) })                          INIT: in: {a=ID, f=D} out: {a=ID, f=D}
-    jmp?(L2)
+    jmp?(L2 [after local declaration])
     d({ (x: Int) -> val y = x + a use(a) })                                                                        USE: in: {a=READ} out: {a=READ}
-L2:
+L2 [after local declaration]:
     r({ (x: Int) -> val y = x + a use(a) }) -> <v1>
     w(f|<v1>)                                                           INIT: in: {a=ID, f=D} out: {a=ID, f=ID}
 L1:

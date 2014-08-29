@@ -17,14 +17,14 @@ L0:
     r(b) -> <v3>
     mark(a != b)
     call(a != b, equals|<v2>, <v3>) -> <v4>
-    jf(L2|<v4>)                                NEXT:[read (Unit), mark({})]
+    jf(L2 [else branch]|<v4>)                  NEXT:[read (Unit), mark({})]
   3 mark({})
     read (Unit)
-  2 jmp(L3)                                    NEXT:[merge(if (a != b) {}|!<v5>) -> <v6>]
-L2:
-    read (Unit)                                PREV:[jf(L2|<v4>)]
-L3:
-    merge(if (a != b) {}|!<v5>) -> <v6>        PREV:[jmp(L3), read (Unit)]
+  2 jmp(L3 ['if' expression result])           NEXT:[merge(if (a != b) {}|!<v5>) -> <v6>]
+L2 [else branch]:
+    read (Unit)                                PREV:[jf(L2 [else branch]|<v4>)]
+L3 ['if' expression result]:
+    merge(if (a != b) {}|!<v5>) -> <v6>        PREV:[jmp(L3 ['if' expression result]), read (Unit)]
 L1:
   1 <END>                                      NEXT:[<SINK>]
 error:
