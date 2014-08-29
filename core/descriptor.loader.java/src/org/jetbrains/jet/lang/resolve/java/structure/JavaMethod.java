@@ -29,6 +29,4 @@ public interface JavaMethod extends JavaMember, JavaTypeParameterListOwner {
 
     @Nullable
     JavaType getReturnType();
-
-    boolean isVararg();
 }

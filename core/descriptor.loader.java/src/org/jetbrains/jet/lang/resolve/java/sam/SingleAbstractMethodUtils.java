@@ -376,15 +376,18 @@ public class SingleAbstractMethodUtils {
                 @NotNull JavaTypeSubstitutor substitutor2
         ) {
             if (!method1.getName().equals(method2.getName())) return false;
-            if (method1.isVararg() != method2.isVararg()) return false;
 
             Collection<JavaValueParameter> parameters1 = method1.getValueParameters();
             Collection<JavaValueParameter> parameters2 = method2.getValueParameters();
             if (parameters1.size() != parameters2.size()) return false;
 
             for (Iterator<JavaValueParameter> it1 = parameters1.iterator(), it2 = parameters2.iterator(); it1.hasNext(); ) {
-                JavaType type1 = DescriptorResolverUtils.erasure(substitutor1.substitute(it1.next().getType()), substitutor1);
-                JavaType type2 = DescriptorResolverUtils.erasure(substitutor2.substitute(it2.next().getType()), substitutor2);
+                JavaValueParameter param1 = it1.next();
+                JavaValueParameter param2 = it2.next();
+                if (param1.isVararg() != param2.isVararg()) return false;
+
+                JavaType type1 = DescriptorResolverUtils.erasure(substitutor1.substitute(param1.getType()), substitutor1);
+                JavaType type2 = DescriptorResolverUtils.erasure(substitutor2.substitute(param2.getType()), substitutor2);
                 if (!(type1 == null ? type2 == null : type1.equals(type2))) return false;
             }
 

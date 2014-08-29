@@ -69,9 +69,4 @@ public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMet
         PsiType psiType = getPsi().getReturnType();
         return psiType == null ? null : JavaTypeImpl.create(psiType);
     }
-
-    @Override
-    public boolean isVararg() {
-        return getPsi().isVarArgs();
-    }
 }
