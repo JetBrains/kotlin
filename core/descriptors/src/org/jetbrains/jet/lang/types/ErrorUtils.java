@@ -433,7 +433,7 @@ public class ErrorUtils {
     }
 
     public static boolean isUninferredParameter(@Nullable JetType type) {
-        return type instanceof UninferredParameterType;
+        return type != null && type.getConstructor() instanceof UninferredParameterTypeConstructor;
     }
 
     public static boolean containsUninferredParameter(@Nullable JetType type) {
@@ -445,24 +445,59 @@ public class ErrorUtils {
         });
     }
 
-    public static UninferredParameterType createUninferredParameterType(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
-        return new UninferredParameterType(typeParameterDescriptor);
+    @NotNull
+    public static JetType createUninferredParameterType(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
+        return new ErrorTypeImpl(
+                new UninferredParameterTypeConstructor(typeParameterDescriptor),
+                createErrorScope("Scope for error type for not inferred parameter: " + typeParameterDescriptor.getName()));
     }
 
-    public static class UninferredParameterType extends ErrorTypeImpl {
+    public static class UninferredParameterTypeConstructor implements TypeConstructor {
         private final TypeParameterDescriptor typeParameterDescriptor;
+        private final TypeConstructor errorTypeConstructor;
 
-        private UninferredParameterType(
-                @NotNull TypeParameterDescriptor descriptor
-        ) {
-            super(createErrorTypeConstructorWithCustomDebugName("CANT_INFER_TYPE_PARAMETER: " + descriptor.getName()),
-                  createErrorScope("Scope for error type for not inferred parameter: " + descriptor.getName()));
+        public UninferredParameterTypeConstructor(@NotNull TypeParameterDescriptor descriptor) {
             typeParameterDescriptor = descriptor;
+            errorTypeConstructor = createErrorTypeConstructorWithCustomDebugName("CANT_INFER_TYPE_PARAMETER: " + descriptor.getName());
         }
 
         @NotNull
         public TypeParameterDescriptor getTypeParameterDescriptor() {
             return typeParameterDescriptor;
+        }
+
+        @NotNull
+        @Override
+        public List<TypeParameterDescriptor> getParameters() {
+            return errorTypeConstructor.getParameters();
+        }
+
+        @NotNull
+        @Override
+        public Collection<JetType> getSupertypes() {
+            return errorTypeConstructor.getSupertypes();
+        }
+
+        @Override
+        public boolean isFinal() {
+            return errorTypeConstructor.isFinal();
+        }
+
+        @Override
+        public boolean isDenotable() {
+            return errorTypeConstructor.isDenotable();
+        }
+
+        @Nullable
+        @Override
+        public ClassifierDescriptor getDeclarationDescriptor() {
+            return errorTypeConstructor.getDeclarationDescriptor();
+        }
+
+        @NotNull
+        @Override
+        public Annotations getAnnotations() {
+            return errorTypeConstructor.getAnnotations();
         }
     }
 

@@ -34,13 +34,13 @@ import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.ErrorUtils.UninferredParameterTypeConstructor;
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.types.ErrorUtils.UninferredParameterType;
 import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
@@ -282,7 +282,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
         if (ErrorUtils.isUninferredParameter(type)) {
             if (uninferredTypeParameterAsName) {
-                return renderError(((UninferredParameterType) type).getTypeParameterDescriptor().getName().toString());
+                return renderError(((UninferredParameterTypeConstructor) type.getConstructor()).getTypeParameterDescriptor().getName().toString());
             }
             return "???";
         }
