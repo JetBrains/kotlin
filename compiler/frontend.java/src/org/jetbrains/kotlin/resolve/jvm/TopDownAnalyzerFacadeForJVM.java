@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import com.google.common.base.Predicate;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.GlobalContext;
@@ -173,12 +171,5 @@ public enum TopDownAnalyzerFacadeForJVM {
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         module.seal();
         return module;
-    }
-
-    private static Collection<JetFile> searchAndAddAndroidDeclarations(Project project, Collection<JetFile> files) {
-        AndroidUIXmlProcessor parser = ServiceManager.getService(project, AndroidUIXmlProcessor.class);
-        JetFile file = parser.parseToPsi(project);
-        if (file != null) files.add(file);
-        return files;
     }
 }

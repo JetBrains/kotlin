@@ -1,10 +1,9 @@
 package com.myapp
 
-trait Activity
-trait Button
+import android.app.Activity
 
 
-class MyActivity: Activity {
+class MyActivity: Activity() {
     val button = this.log<caret>
 }
 
