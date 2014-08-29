@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -50,14 +51,17 @@ public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTe
     }
 
     private void doTest(String testFileName, boolean checkPrimaryConstructors, boolean checkPropertyAccessors, boolean allowErrorTypes) throws IOException {
-        List<JetFile> files = JetTestUtils
-                .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
-                                 new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
-                                     @Override
-                                     public JetFile create(String fileName, String text, Map<String, String> directives) {
-                                         return JetPsiFactory(getProject()).createFile(fileName, text);
-                                     }
-                                 });
+        List<JetFile> files = JetTestUtils.createTestFiles(
+                testFileName,
+                FileUtil.loadFile(new File(testFileName), true),
+                new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
+                    @NotNull
+                    @Override
+                    public JetFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+                        return JetPsiFactory(getProject()).createFile(fileName, text);
+                    }
+                }
+        );
 
         ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(files, getEnvironment());
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
