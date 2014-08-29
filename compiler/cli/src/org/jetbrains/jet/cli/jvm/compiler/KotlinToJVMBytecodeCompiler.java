@@ -19,7 +19,6 @@ package org.jetbrains.jet.cli.jvm.compiler;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
@@ -37,8 +36,6 @@ import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
@@ -177,27 +174,9 @@ public class KotlinToJVMBytecodeCompiler {
             configuration.add(JVMConfigurationKeys.MODULE_IDS, module.getModuleName());
         }
 
-        MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-        assert messageCollector != null : "messageCollector should be set: " + base;
-        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, checkForDuplicatePaths(messageCollector, sourceRoots));
+        CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, sourceRoots);
 
         return configuration;
-    }
-
-    private static List<String> checkForDuplicatePaths(@NotNull MessageCollector messageCollector, @NotNull List<String> sourceRoots) {
-        Set<String> uniqueSourceRoots = Sets.newLinkedHashSet();
-
-        for (String sourceRoot : sourceRoots) {
-            if (!uniqueSourceRoots.add(sourceRoot)) {
-                messageCollector.report(
-                        CompilerMessageSeverity.WARNING,
-                        "Duplicate source roots: " + sourceRoot,
-                        CompilerMessageLocation.NO_LOCATION
-                );
-            }
-        }
-
-        return new ArrayList<String>(uniqueSourceRoots);
     }
 
     @Nullable

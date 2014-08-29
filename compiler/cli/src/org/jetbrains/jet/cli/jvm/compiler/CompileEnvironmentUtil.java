@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.OutputMessageUtil;
 import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
@@ -63,6 +65,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.*;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
@@ -272,6 +275,7 @@ public class CompileEnvironmentUtil {
     ) {
         final VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
 
+        final Set<VirtualFile> processedFiles = Sets.newHashSet();
         final List<JetFile> result = Lists.newArrayList();
 
         for (String sourceRootPath : sourceRoots) {
@@ -293,9 +297,10 @@ public class CompileEnvironmentUtil {
                 @Override
                 public Unit invoke(File file) {
                     if (file.isFile()) {
-                        VirtualFile fileByPath = localFileSystem.findFileByPath(file.getAbsolutePath());
-                        if (fileByPath != null) {
-                            PsiFile psiFile = PsiManager.getInstance(project).findFile(fileByPath);
+                        VirtualFile virtualFile = localFileSystem.findFileByPath(file.getAbsolutePath());
+                        if (virtualFile != null && !processedFiles.contains(virtualFile)) {
+                            processedFiles.add(virtualFile);
+                            PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
                             if (psiFile instanceof JetFile) {
                                 result.add((JetFile) psiFile);
                             }
@@ -307,5 +312,24 @@ public class CompileEnvironmentUtil {
         }
 
         return result;
+    }
+
+    public static void addSourceFilesCheckingForDuplicates(@NotNull CompilerConfiguration configuration, @NotNull List<String> sourceRoots) {
+        MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        assert messageCollector != null : "messageCollector should be set: " + configuration;
+
+        Set<String> uniqueSourceRoots = Sets.newLinkedHashSet();
+
+        for (String sourceRoot : sourceRoots) {
+            if (!uniqueSourceRoots.add(sourceRoot)) {
+                messageCollector.report(
+                        CompilerMessageSeverity.WARNING,
+                        "Duplicate source roots: " + sourceRoot,
+                        NO_LOCATION
+                );
+            }
+        }
+
+        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, new ArrayList<String>(uniqueSourceRoots));
     }
 }

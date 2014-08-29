@@ -42,7 +42,14 @@ public class CliCommonTest extends CliBaseTest {
     }
 
     @Test
-    public void duplicateSource() throws Exception {
+    public void duplicateSources() throws Exception {
+        executeCompilerCompareOutputJVM();
+
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
+    }
+
+    @Test
+    public void duplicateSourcesInModule() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 

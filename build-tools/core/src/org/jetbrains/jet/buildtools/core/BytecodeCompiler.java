@@ -31,9 +31,9 @@ import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
-import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
@@ -59,6 +59,8 @@ public class BytecodeCompiler {
     ) {
         KotlinPaths paths = getKotlinPathsForAntTask();
         CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
+
         configuration.addAll(CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
         if ((stdlib != null) && (stdlib.trim().length() > 0)) {
             configuration.add(CLASSPATH_KEY, new File(stdlib));
@@ -84,14 +86,13 @@ public class BytecodeCompiler {
             configuration.add(ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
         }
 
-        configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(sourceRoots));
+        CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, Arrays.asList(sourceRoots));
         for (String sourceRoot : sourceRoots) {
             File file = new File(sourceRoot);
             if (!file.isFile() || !"kt".equals(FileUtilRt.getExtension(file.getName()))) {
                 configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, file);
             }
         }
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         // TODO: use K2JVMCompiler directly, don't duplicate this code here
         K2JVMCompilerArguments arguments = new K2JVMCompilerArguments();
