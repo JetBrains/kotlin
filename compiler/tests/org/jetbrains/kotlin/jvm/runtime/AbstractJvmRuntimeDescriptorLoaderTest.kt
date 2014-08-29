@@ -16,32 +16,40 @@
 
 package org.jetbrains.kotlin.jvm.runtime
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
-import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler
-import org.jetbrains.kotlin.resolve.scopes.WritableScope.LockLevel
+import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.JetTestUtils.TestFileFactoryNoModules
+import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
+import java.net.URLClassLoader
+import java.util.regex.Pattern
 
 public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     class object {
@@ -49,8 +57,10 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 .setWithDefinedIn(false)
                 .setExcludedAnnotationClasses(listOf(
                         ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME,
+                        // TODO: add these annotations when they are retained at runtime
                         "kotlin.deprecated",
                         "kotlin.data",
+                        "kotlin.inline",
                         "org.jetbrains.annotations.NotNull",
                         "org.jetbrains.annotations.Nullable",
                         "org.jetbrains.annotations.Mutable",
@@ -64,92 +74,122 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
     }
 
     // NOTE: this test does a dirty hack of text substitution to make all annotations defined in source code retain at runtime.
-    // Specifically each "annotation class" is replaced by "Retention(RUNTIME) annotation class"
-    protected fun doTest(ktFileName: String) {
-        val ktFile = File(ktFileName)
+    // Specifically each "annotation class" in Kotlin sources is replaced by "Retention(RUNTIME) annotation class", and the same in Java
+    protected fun doTest(fileName: String) {
+        val file = File(fileName)
+        val text = FileUtil.loadFile(file, true)
 
-        val environment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.ALL)
-        val jetFile = JetTestUtils.createFile(ktFileName, loadFileAddingRuntimeRetention(ktFile), environment.getProject())
-        val classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile)
-        val classLoader = GeneratedClassLoader(classFileFactory, null, ForTestCompileRuntime.runtimeJarForTests().toURI().toURL())
+        if (InTextDirectivesUtils.isDirectiveDefined(text, "SKIP_IN_RUNTIME_TEST")) return
 
-        classFileFactory.writeAllTo(tmpdir)
+        compileFile(file, text)
 
+        val classLoader = URLClassLoader(array(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
+
+        val actual = createReflectedPackageView(classLoader)
+
+        val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
+                tmpdir, getTestRootDisposable(), TestJdkKind.FULL_JDK, ConfigurationKind.ALL
+        ).first
+
+        val comparatorConfiguration = Configuration(
+                /* checkPrimaryConstructors = */ fileName.endsWith(".kt"),
+                /* checkPropertyAccessors = */ true,
+                /* includeMethodsOfKotlinAny = */ false,
+                { descriptor ->
+                    // Skip annotation constructors because order of their parameters is not retained at runtime
+                    !(descriptor is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration()))
+                },
+                errorTypesForbidden(), renderer
+        )
+        RecursiveDescriptorComparator.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
+    }
+
+    private fun compileFile(file: File, text: String) {
+        val fileName = file.getName()
+        when {
+            fileName.endsWith(".java") -> {
+                val sources = JetTestUtils.createTestFiles(fileName, text, object : TestFileFactoryNoModules<File>() {
+                    override fun create(fileName: String, text: String, directives: Map<String, String>): File {
+                        val targetFile = File(tmpdir, fileName)
+                        targetFile.writeText(addRuntimeRetentionToJavaSource(text))
+                        return targetFile
+                    }
+                })
+                LoadDescriptorUtil.compileJavaWithAnnotationsJar(sources, tmpdir)
+            }
+            fileName.endsWith(".kt") -> {
+                val environment = JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable)
+                val jetFile = JetTestUtils.createFile(file.getPath(), addRuntimeRetentionToKotlinSource(text), environment.getProject())
+                GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile).writeAllTo(tmpdir)
+            }
+        }
+    }
+
+    private fun createReflectedPackageView(classLoader: URLClassLoader): SyntheticPackageViewForTest {
         val module = RuntimeModuleData.create(classLoader).module
 
         // Since runtime package view descriptor doesn't support getAllDescriptors(), we construct a synthetic package view here.
         // It has in its scope descriptors for all the classes and top level members generated by the compiler
-        val actual = object : PackageViewDescriptor {
-            val scope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.THROW_EXCEPTION, "runtime descriptor loader test")
-
-            override fun getFqName() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
-            override fun getMemberScope() = scope
-            override fun getModule() = module
-            override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
-                    visitor.visitPackageViewDescriptor(this, data)
-
-            override fun getContainingDeclaration() = throw UnsupportedOperationException()
-            override fun getOriginal() = throw UnsupportedOperationException()
-            override fun substitute(substitutor: TypeSubstitutor) = throw UnsupportedOperationException()
-            override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = throw UnsupportedOperationException()
-            override fun getAnnotations() = throw UnsupportedOperationException()
-            override fun getName() = throw UnsupportedOperationException()
-        }
-
+        val actual = SyntheticPackageViewForTest(module)
         val scope = actual.getMemberScope()
-        scope.changeLockLevel(LockLevel.BOTH)
 
-        for (outputFile in classLoader.getAllGeneratedFiles()) {
-            val className = outputFile.relativePath.substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
+        val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())
+        val allClassFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.class"), generatedPackageDir)
+
+        for (classFile in allClassFiles) {
+            val className = tmpdir.relativePath(classFile).substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
 
             val klass = classLoader.loadClass(className).sure("Couldn't load class $className")
+            val header = ReflectKotlinClass.create(klass)?.getClassHeader()
 
-            when (ReflectKotlinClass.create(klass)!!.getClassHeader().kind) {
-                KotlinClassHeader.Kind.PACKAGE_FACADE -> {
-                    val packageView = module.getPackage(actual.getFqName()) ?: error("Couldn't resolve package ${actual.getFqName()}")
-                    for (descriptor in packageView.getMemberScope().getAllDescriptors()) {
-                        when (descriptor) {
-                            is FunctionDescriptor -> scope.addFunctionDescriptor(descriptor)
-                            is PropertyDescriptor -> scope.addPropertyDescriptor(descriptor)
-                        }
-                    }
-                }
-                KotlinClassHeader.Kind.CLASS -> {
-                    val classDescriptor =
-                            resolveClassByFqNameInModule(module, FqNameUnsafe(className)).sure("Couldn't resolve class $className")
-                    if (classDescriptor.getContainingDeclaration() is PackageFragmentDescriptor) {
-                        scope.addClassifierDescriptor(classDescriptor)
-                    }
+            if (header?.kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
+                val packageView = module.getPackage(actual.getFqName()).sure("Couldn't resolve package ${actual.getFqName()}")
+                scope.importScope(packageView.getMemberScope())
+            }
+            else if (header == null ||
+                     (header.kind == KotlinClassHeader.Kind.CLASS && header.classKind == JvmAnnotationNames.KotlinClass.Kind.CLASS)) {
+                // Either a normal Kotlin class or a Java class
+                val classDescriptor = module.findClassAcrossModuleDependencies(klass.classId).sure("Couldn't resolve class $className")
+                if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
+                    scope.addClassifierDescriptor(classDescriptor)
                 }
             }
         }
-
-        val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(tmpdir, getTestRootDisposable(),
-                                                                                       ConfigurationKind.ALL)
-        val comparatorConfiguration = RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
-                .checkPrimaryConstructors(true)
-                .checkPropertyAccessors(true)
-                .withRenderer(renderer)
-        RecursiveDescriptorComparator.validateAndCompareDescriptors(expected.first, actual, comparatorConfiguration, null)
+        return actual
     }
 
-    private fun loadFileAddingRuntimeRetention(file: File): String {
-        return file.readText().replace(
+    private fun addRuntimeRetentionToKotlinSource(text: String): String {
+        return text.replace(
                 "annotation class",
                 "[java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)] annotation class"
         )
     }
 
-    // Resolves not only top level classes, but also nested classes, including class objects and classes nested within them
-    private fun resolveClassByFqNameInModule(module: ModuleDescriptor, fqName: FqNameUnsafe): ClassDescriptor? {
-        if (fqName.isRoot()) return null
+    private fun addRuntimeRetentionToJavaSource(text: String): String {
+        return text.replace(
+                "@interface",
+                "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) @interface"
+        )
+    }
 
-        if (fqName.isSafe()) {
-            val topLevel = module.resolveTopLevelClass(fqName.toSafe())
-            if (topLevel != null) return topLevel
+    private class SyntheticPackageViewForTest(private val module: ModuleDescriptor) : PackageViewDescriptor {
+        private val scope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.THROW_EXCEPTION, "runtime descriptor loader test")
+
+        ;{
+            scope.changeLockLevel(WritableScope.LockLevel.BOTH)
         }
 
-        val parent = resolveClassByFqNameInModule(module, fqName.parent()) ?: return null
-        return parent.getUnsubstitutedInnerClassesScope().getClassifier(fqName.shortName()) as? ClassDescriptor
+        override fun getFqName() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
+        override fun getMemberScope() = scope
+        override fun getModule() = module
+        override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
+                visitor.visitPackageViewDescriptor(this, data)
+
+        override fun getContainingDeclaration() = throw UnsupportedOperationException()
+        override fun getOriginal() = throw UnsupportedOperationException()
+        override fun substitute(substitutor: TypeSubstitutor) = throw UnsupportedOperationException()
+        override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = throw UnsupportedOperationException()
+        override fun getAnnotations() = throw UnsupportedOperationException()
+        override fun getName() = throw UnsupportedOperationException()
     }
 }

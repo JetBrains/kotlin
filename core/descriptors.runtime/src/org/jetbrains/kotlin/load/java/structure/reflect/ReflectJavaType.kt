@@ -33,8 +33,12 @@ public abstract class ReflectJavaType : JavaType {
         fun create(reflectType: Type): ReflectJavaType {
             return when (reflectType) {
                 in PRIMITIVE_TYPES -> ReflectJavaPrimitiveType(reflectType as Class<*>)
-                is Class<*>, is TypeVariable<*>, is ParameterizedType -> ReflectJavaClassifierType(reflectType)
-                is GenericArrayType -> ReflectJavaArrayType(reflectType)
+                is GenericArrayType -> ReflectJavaArrayType(reflectType.getGenericComponentType()!!)
+                is Class<*> -> {
+                    if (reflectType.isArray()) ReflectJavaArrayType(reflectType.getComponentType()!!)
+                    else ReflectJavaClassifierType(reflectType)
+                }
+                is TypeVariable<*>, is ParameterizedType -> ReflectJavaClassifierType(reflectType)
                 is WildcardType -> ReflectJavaWildcardType(reflectType)
                 else -> throw UnsupportedOperationException("Unsupported type (${reflectType.javaClass}): $reflectType")
             }

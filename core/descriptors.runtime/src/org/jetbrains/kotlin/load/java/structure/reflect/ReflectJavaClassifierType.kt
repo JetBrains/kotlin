@@ -25,14 +25,17 @@ import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 
 public class ReflectJavaClassifierType(val classifierType: Type) : ReflectJavaType(), JavaClassifierType {
-    override fun getClassifier(): JavaClassifier? {
-        return when (classifierType) {
-            is Class<*> -> ReflectJavaClass(classifierType)
-            is TypeVariable<*> -> ReflectJavaTypeParameter(classifierType)
-            is ParameterizedType -> ReflectJavaClass(classifierType.getRawType() as Class<*>)
-            else -> throw IllegalStateException("Not a classifier type (${classifierType.javaClass}): $classifierType")
-        }
+    private val classifier: JavaClassifier = run {
+        val type = classifierType
+        when (type) {
+            is Class<*> -> ReflectJavaClass(type)
+            is TypeVariable<*> -> ReflectJavaTypeParameter(type)
+            is ParameterizedType -> ReflectJavaClass(type.getRawType() as Class<*>)
+            else -> throw IllegalStateException("Not a classifier type (${type.javaClass}): $type")
+        } : JavaClassifier
     }
+
+    override fun getClassifier(): JavaClassifier = classifier
 
     override fun getSubstitutor(): JavaTypeSubstitutor = throw UnsupportedOperationException()
 

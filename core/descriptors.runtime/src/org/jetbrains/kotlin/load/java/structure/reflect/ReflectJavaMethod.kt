@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import java.lang.reflect.Method
-import java.util.ArrayList
-import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
+import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
+import org.jetbrains.kotlin.name.FqName
+import java.lang.reflect.Method
 
 public class ReflectJavaMethod(method: Method) : ReflectJavaMember(method), JavaMethod {
     private val method: Method
@@ -38,17 +37,8 @@ public class ReflectJavaMethod(method: Method) : ReflectJavaMember(method), Java
         return null
     }
 
-    override fun getValueParameters(): List<JavaValueParameter> {
-        val types = method.getGenericParameterTypes()!!
-        val annotations = method.getParameterAnnotations()
-        val result = ArrayList<JavaValueParameter>()
-        val methodIsVararg = method.isVarArgs()
-        for (i in types.indices) {
-            val isVararg = methodIsVararg && i == types.lastIndex
-            result.add(ReflectJavaValueParameter(ReflectJavaType.create(types[i]), annotations[i], isVararg))
-        }
-        return result
-    }
+    override fun getValueParameters(): List<JavaValueParameter> =
+            getValueParameters(method.getGenericParameterTypes(), method.getParameterAnnotations(), method.isVarArgs())
 
     override fun getReturnType(): JavaType? {
         // TODO

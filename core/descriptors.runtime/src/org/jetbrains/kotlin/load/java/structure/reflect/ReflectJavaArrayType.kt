@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import java.lang.reflect.GenericArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
+import java.lang.reflect.Type
 
-public class ReflectJavaArrayType(private val arrayType: GenericArrayType) : ReflectJavaType(), JavaArrayType {
-    override fun getComponentType() = ReflectJavaType.create(arrayType.getGenericComponentType()!!)
+public class ReflectJavaArrayType(private val componentType: Type) : ReflectJavaType(), JavaArrayType {
+    override fun getComponentType() = ReflectJavaType.create(componentType)
 }

@@ -26,7 +26,13 @@ import org.jetbrains.kotlin.name.ClassId
 
 public class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFinder {
     override fun findClass(classId: ClassId): JavaClass? {
-        val klass = classLoader.tryLoadClass(classId.asSingleFqName().asString())
+        val packageFqName = classId.getPackageFqName()
+        val relativeClassName = classId.getRelativeClassName().asString().replace('.', '$')
+        val name =
+                if (packageFqName.isRoot()) relativeClassName
+                else packageFqName.asString() + "." + relativeClassName
+
+        val klass = classLoader.tryLoadClass(name)
         return if (klass != null) ReflectJavaClass(klass) else null
     }
 

@@ -20,7 +20,6 @@ import java.lang.reflect.Field
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.load.java.structure.JavaType
 
 public class ReflectJavaField(field: Field) : ReflectJavaMember(field), JavaField {
     val field: Field
@@ -38,8 +37,5 @@ public class ReflectJavaField(field: Field) : ReflectJavaMember(field), JavaFiel
 
     override fun isEnumEntry() = field.isEnumConstant()
 
-    override fun getType(): JavaType {
-        // TODO
-        throw UnsupportedOperationException()
-    }
+    override fun getType() = ReflectJavaType.create(field.getGenericType()!!)
 }

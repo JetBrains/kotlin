@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import java.lang.reflect.Modifier
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import java.lang.reflect.Modifier
 
 private fun calculateVisibility(modifiers: Int): Visibility {
     return when {
@@ -34,5 +34,8 @@ private fun calculateVisibility(modifiers: Int): Visibility {
     }
 }
 
-val Class<*>.classId: ClassId
+public val Class<*>.fqName: FqName
+    get() = classId.asSingleFqName().toSafe()
+
+public val Class<*>.classId: ClassId
     get() = getDeclaringClass()?.classId?.createNestedClassId(Name.identifier(getSimpleName())) ?: ClassId.topLevel(FqName(getName()))

@@ -16,69 +16,88 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import java.lang.reflect.Modifier
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
+import java.util.Arrays
 
 public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(), JavaClass {
-    override fun getInnerClasses() =
-            klass.getDeclaredClasses()
-                    .filter { it.getSimpleName().isNotEmpty() }
-                    .map { ReflectJavaClass(it) }
+    override fun getInnerClasses() = klass.getDeclaredClasses()
+            .stream()
+            .filterNot {
+                // getDeclaredClasses() returns anonymous classes sometimes, for example enums with specialized entries (which are in fact
+                // anonymous classes) or in case of a special anonymous class created for the synthetic accessor to a private nested class
+                // constructor accessed from the outer class
+                it.getSimpleName().isEmpty()
+            }
+            .map(::ReflectJavaClass)
+            .toList()
 
-    override fun getFqName(): FqName? {
-        // TODO: can there be primitive types, arrays?
-        return getOuterClass()?.getFqName()?.child(Name.identifier(klass.getSimpleName())) ?: FqName(klass.getName())
-    }
+    override fun getFqName() = klass.fqName
 
-    override fun getOuterClass(): JavaClass? {
-        val container = klass.getDeclaringClass()
-        return if (container != null) ReflectJavaClass(container) else null
-    }
+    override fun getOuterClass() = klass.getDeclaringClass()?.let(::ReflectJavaClass)
 
     override fun getSupertypes(): Collection<JavaClassifierType> {
-        // TODO: also call getSuperclass() / getInterfaces() for classes without generic signature
-        val supertypes = emptyOrSingletonList(klass.getGenericSuperclass()) + klass.getGenericInterfaces()
-        return supertypes.map { supertype -> ReflectJavaType.create(supertype) as JavaClassifierType }
+        val supertype = klass.getGenericSuperclass()
+        val superClassName = (supertype as? Class<*>)?.getName()
+        val supertypes =
+                (if (superClassName == "java.lang.Object") emptyList() else emptyOrSingletonList(supertype)) +
+                klass.getGenericInterfaces()
+        return supertypes.map(::ReflectJavaClassifierType)
     }
 
-    override fun getMethods() = klass.getDeclaredMethods().map { method -> ReflectJavaMethod(method) }
+    override fun getMethods() = klass.getDeclaredMethods()
+            .stream()
+            .filter { method ->
+                when {
+                    method.isSynthetic() -> false
+                    isEnum() -> !isEnumValuesOrValueOf(method)
+                    else -> true
+                }
+            }
+            .map(::ReflectJavaMethod)
+            .toList()
 
-    override fun getFields() = klass.getDeclaredFields().map { field -> ReflectJavaField(field) }
-
-    override fun getConstructors(): Collection<JavaConstructor> {
-        // TODO
-        return listOf()
+    private fun isEnumValuesOrValueOf(method: Method): Boolean {
+        return when (method.getName()) {
+            "values" -> method.getParameterTypes().isEmpty()
+            "valueOf" -> Arrays.equals(method.getParameterTypes(), array(javaClass<String>()))
+            else -> false
+        }
     }
 
-    override fun getDefaultType() = ReflectJavaClassifierType(klass)
+    override fun getFields() = klass.getDeclaredFields()
+            .stream()
+            .filter { field -> !field.isSynthetic() }
+            .map(::ReflectJavaField)
+            .toList()
 
-    // TODO: drop OriginKind?
+    override fun getConstructors() = klass.getDeclaredConstructors().map(::ReflectJavaConstructor)
+
+    override fun getDefaultType(): ReflectJavaClassifierType = throw UnsupportedOperationException()
+
+    // TODO: drop OriginKind
     override fun getOriginKind() = JavaClass.OriginKind.COMPILED
 
-    override fun createImmediateType(substitutor: JavaTypeSubstitutor): JavaType {
-        // TODO
-        throw UnsupportedOperationException()
-    }
+    override fun createImmediateType(substitutor: JavaTypeSubstitutor): JavaType = throw UnsupportedOperationException()
 
-    override fun getName(): Name {
-        // TODO: can there be primitive types, arrays?
-        return Name.identifier(klass.getSimpleName())
-    }
+    override fun getName(): Name = Name.identifier(klass.getSimpleName())
 
-    override fun getAnnotations(): Collection<JavaAnnotation> {
-        // TODO
-        return listOf()
-    }
+    override fun getAnnotations() = klass.getDeclaredAnnotations().map { ReflectJavaAnnotation(it) }
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? {
-        // TODO
+        for (annotation in klass.getDeclaredAnnotations()) {
+            if (annotation.annotationType().fqName == fqName) {
+                return ReflectJavaAnnotation(annotation)
+            }
+        }
         return null
     }
 
-    override fun getTypeParameters() = klass.getTypeParameters().map { ReflectJavaTypeParameter(it!!) }
+    override fun getTypeParameters() = klass.getTypeParameters().map { ReflectJavaTypeParameter(it) }
 
     override fun isInterface() = klass.isInterface()
     override fun isAnnotationType() = klass.isAnnotation()

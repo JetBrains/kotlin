@@ -80,10 +80,12 @@ public final class LoadDescriptorUtil {
     public static Pair<PackageViewDescriptor, BindingContext> loadTestPackageAndBindingContextFromJavaRoot(
             @NotNull File javaRoot,
             @NotNull Disposable disposable,
+            @NotNull TestJdkKind testJdkKind,
             @NotNull ConfigurationKind configurationKind
     ) {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                configurationKind, TestJdkKind.MOCK_JDK,
+                configurationKind,
+                testJdkKind,
                 JetTestUtils.getAnnotationsJar(),
                 javaRoot,
                 new File("compiler/tests") // for @ExpectLoadError annotation
@@ -100,19 +102,7 @@ public final class LoadDescriptorUtil {
         return Pair.create(packageView, trace.getBindingContext());
     }
 
-    @NotNull
-    public static Pair<PackageViewDescriptor, BindingContext> compileJavaAndLoadTestPackageAndBindingContextFromBinary(
-            @NotNull Collection<File> javaFiles,
-            @NotNull File outDir,
-            @NotNull Disposable disposable,
-            @NotNull ConfigurationKind configurationKind
-    )
-            throws IOException {
-        compileJavaWithAnnotationsJar(javaFiles, outDir);
-        return loadTestPackageAndBindingContextFromJavaRoot(outDir, disposable, configurationKind);
-    }
-
-    private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
+    public static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
         String classPath = ForTestCompileRuntime.runtimeJarForTests() + File.pathSeparator +
                            JetTestUtils.getAnnotationsJar().getPath();
         JetTestUtils.compileJavaFiles(javaFiles, Arrays.asList(

@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import java.lang.reflect.Member
-import java.lang.reflect.Modifier
 import org.jetbrains.kotlin.load.java.structure.JavaMember
+import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import java.lang.reflect.Member
+import java.lang.reflect.Modifier
+import java.lang.reflect.Type
+import java.util.ArrayList
 
 public abstract class ReflectJavaMember(protected val member: Member) : ReflectJavaElement(), JavaMember {
     override fun getName() = member.getName()?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
@@ -32,4 +35,17 @@ public abstract class ReflectJavaMember(protected val member: Member) : ReflectJ
     override fun isFinal() = Modifier.isFinal(member.getModifiers())
 
     override fun getVisibility() = calculateVisibility(member.getModifiers())
+
+    protected fun getValueParameters(
+            parameterTypes: Array<Type>,
+            parameterAnnotations: Array<Array<Annotation>>,
+            isVararg: Boolean
+    ): List<JavaValueParameter> {
+        val result = ArrayList<JavaValueParameter>(parameterTypes.size())
+        for (i in parameterTypes.indices) {
+            val isParamVararg = isVararg && i == parameterTypes.lastIndex
+            result.add(ReflectJavaValueParameter(ReflectJavaType.create(parameterTypes[i]), parameterAnnotations[i], isParamVararg))
+        }
+        return result
+    }
 }
