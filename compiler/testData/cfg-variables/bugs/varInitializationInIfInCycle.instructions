@@ -49,7 +49,7 @@ L7 ['if' expression result]:
     r(b) -> <v11>                                                                                                                                                                     USE: in: {} out: {b=READ}
     mark(use(b))
     call(use(b), use|<v11>) -> <v12>
-    jmp(L4 [loop entry point])                                                                                                                                                        USE: in: {} out: {}
+    jmp(L3 ['for' loop condition entry point])                                                                                                                                        USE: in: {} out: {}
 - 3 jmp?(L4 [loop entry point])
 L2 ['for' loop exit point]:
     read (Unit)                                                                                                   INIT: in: {i=D, numbers=ID} out: {i=D, numbers=ID}

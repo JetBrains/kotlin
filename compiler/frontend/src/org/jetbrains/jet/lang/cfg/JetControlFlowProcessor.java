@@ -953,11 +953,7 @@ public class JetControlFlowProcessor {
             JetElement loop = getCorrespondingLoop(expression);
             if (loop != null) {
                 checkJumpDoesNotCrossFunctionBoundary(expression, loop);
-                if (loop instanceof JetDoWhileExpression) {
-                    builder.jump(builder.getConditionEntryPoint(loop), expression);
-                } else {
-                    builder.jump(builder.getEntryPoint(loop), expression);
-                }
+                builder.jump(builder.getConditionEntryPoint(loop), expression);
             }
         }
 

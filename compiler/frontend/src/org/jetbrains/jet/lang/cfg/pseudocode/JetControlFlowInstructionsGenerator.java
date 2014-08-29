@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import com.google.common.collect.Sets;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -246,8 +247,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 BlockInfo blockInfo = allBlocks.get(i);
                 if (blockInfo instanceof BreakableBlockInfo) {
                     BreakableBlockInfo breakableBlockInfo = (BreakableBlockInfo) blockInfo;
-                    if (jumpTarget == breakableBlockInfo.getExitPoint() || jumpTarget == breakableBlockInfo.getEntryPoint()
-                        || jumpTarget == error) {
+                    if (breakableBlockInfo.getReferablePoints().contains(jumpTarget) || jumpTarget == error) {
                         for (int j = finallyBlocks.size() - 1; j >= 0; j--) {
                             finallyBlocks.get(j).generateFinallyBlock();
                         }

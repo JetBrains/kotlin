@@ -1,0 +1,47 @@
+== test ==
+fun test(b: Boolean) {
+    for (i in 1..10) {
+        if (b) break;
+        continue;
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(b: Boolean)
+    magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+    w(b|<v0>)
+  2 mark({ for (i in 1..10) { if (b) break; continue; } })
+  3 r(1) -> <v1>
+    r(10) -> <v2>
+    mark(1..10)
+    call(1..10, rangeTo|<v1>, <v2>) -> <v3>
+    v(i)
+L3 ['for' loop condition entry point]:
+    jmp?(L2 ['for' loop exit point])                          NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>]    PREV:[v(i), jmp(L3 ['for' loop condition entry point])]
+L4 [loop entry point]:
+L5 [body entry point]:
+    magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>
+    w(i|<v4>)
+    mark(for (i in 1..10) { if (b) break; continue; })
+  4 mark({ if (b) break; continue; })
+    mark(if (b) break)
+    r(b) -> <v5>
+    jf(L6 [else branch]|<v5>)                                 NEXT:[read (Unit), jmp(L2 ['for' loop exit point])]
+    jmp(L2 ['for' loop exit point])                           NEXT:[read (Unit)]
+-   jmp(L7 ['if' expression result])                          NEXT:[merge(if (b) break|!<v6>) -> <v7>]                               PREV:[]
+L6 [else branch]:
+    read (Unit)                                               PREV:[jf(L6 [else branch]|<v5>)]
+L7 ['if' expression result]:
+    merge(if (b) break|!<v6>) -> <v7>
+    jmp(L3 ['for' loop condition entry point])                NEXT:[jmp?(L2 ['for' loop exit point])]
+- 3 jmp?(L4 [loop entry point])                               NEXT:[magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>, read (Unit)]    PREV:[]
+L2 ['for' loop exit point]:
+    read (Unit)                                               PREV:[jmp?(L2 ['for' loop exit point]), jmp(L2 ['for' loop exit point])]
+L1:
+  1 <END>                                                     NEXT:[<SINK>]
+error:
+    <ERROR>                                                   PREV:[]
+sink:
+    <SINK>                                                    PREV:[<ERROR>, <END>]
+=====================

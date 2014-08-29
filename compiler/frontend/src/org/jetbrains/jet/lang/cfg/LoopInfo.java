@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.lang.cfg;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.jet.lang.psi.JetElement;
+
+import java.util.Set;
 
 public class LoopInfo extends BreakableBlockInfo {
     private final Label bodyEntryPoint;
@@ -26,6 +29,8 @@ public class LoopInfo extends BreakableBlockInfo {
         super(element, entryPoint, exitPoint);
         this.bodyEntryPoint = bodyEntryPoint;
         this.conditionEntryPoint = conditionEntryPoint;
+        referablePoints.add(bodyEntryPoint);
+        referablePoints.add(conditionEntryPoint);
     }
 
     public Label getBodyEntryPoint() {

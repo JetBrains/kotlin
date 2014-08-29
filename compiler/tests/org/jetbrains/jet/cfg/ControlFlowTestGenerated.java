@@ -114,6 +114,21 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("continueInDoWhile.kt")
+        public void testContinueInDoWhile() throws Exception {
+            doTest("compiler/testData/cfg/controlStructures/continueInDoWhile.kt");
+        }
+        
+        @TestMetadata("continueInFor.kt")
+        public void testContinueInFor() throws Exception {
+            doTest("compiler/testData/cfg/controlStructures/continueInFor.kt");
+        }
+        
+        @TestMetadata("continueInWhile.kt")
+        public void testContinueInWhile() throws Exception {
+            doTest("compiler/testData/cfg/controlStructures/continueInWhile.kt");
+        }
+        
         @TestMetadata("Finally.kt")
         public void testFinally() throws Exception {
             doTest("compiler/testData/cfg/controlStructures/Finally.kt");
