@@ -186,6 +186,16 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/checkNotNull.kt");
         }
         
+        @TestMetadata("doNotSkipClassloader.kt")
+        public void testDoNotSkipClassloader() throws Exception {
+            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/doNotSkipClassloader.kt");
+        }
+        
+        @TestMetadata("doNotSkipConstructors.kt")
+        public void testDoNotSkipConstructors() throws Exception {
+            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/doNotSkipConstructors.kt");
+        }
+        
         @TestMetadata("npe.kt")
         public void testNpe() throws Exception {
             doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/npe.kt");
@@ -209,6 +219,16 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("stdlibStep.kt")
         public void testStdlibStep() throws Exception {
             doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/stdlibStep.kt");
+        }
+        
+        @TestMetadata("stepIntoSpecificKotlinClasses.kt")
+        public void testStepIntoSpecificKotlinClasses() throws Exception {
+            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/stepIntoSpecificKotlinClasses.kt");
+        }
+        
+        @TestMetadata("stepIntoStdlib.kt")
+        public void testStepIntoStdlib() throws Exception {
+            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/stepIntoStdlib.kt");
         }
         
     }
