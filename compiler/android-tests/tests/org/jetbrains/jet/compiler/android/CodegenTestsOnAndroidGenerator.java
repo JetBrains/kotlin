@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.UsefulTestCase;
-import junit.framework.Assert;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.OutputFileCollection;
@@ -32,6 +31,7 @@ import org.jetbrains.jet.compiler.PathManager;
 import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.utils.Printer;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,8 +49,10 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     private static final String baseTestClassName = "AbstractCodegenTestCaseOnAndroid";
     private static final String generatorName = "CodegenTestsOnAndroidGenerator";
 
-    private JetCoreEnvironment environmentWithMockJdk = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
-    private JetCoreEnvironment environmentWithFullJdk = JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable);
+    private final JetCoreEnvironment environmentWithMockJdk =
+            JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+    private final JetCoreEnvironment environmentWithFullJdk =
+            JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable);
 
     private final Pattern packagePattern = Pattern.compile("package (.*)");
 

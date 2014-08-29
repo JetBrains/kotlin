@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
@@ -29,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.resolve.ExpectedResolveData;
 import org.jetbrains.jet.resolve.JetExpectedResolveDataUtil;
+import org.junit.Assert;
 
 import java.io.File;
 import java.util.List;
@@ -53,8 +53,8 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
 
         return new ExpectedResolveData(
                 JetExpectedResolveDataUtil.prepareDefaultNameToDescriptors(project),
-                JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(project),
-                getEnvironment()) {
+                JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(project)
+        ) {
             @Override
             protected JetFile createJetFile(String fileName, String text) {
                 return createCheckAndReturnPsiFile(fileName, null, text);

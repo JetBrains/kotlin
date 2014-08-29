@@ -18,13 +18,13 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import junit.framework.Assert;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;

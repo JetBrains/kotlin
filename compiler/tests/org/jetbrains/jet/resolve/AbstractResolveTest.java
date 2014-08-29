@@ -27,8 +27,8 @@ public abstract class AbstractResolveTest extends ExtensibleResolveTestCase {
 
         return new ExpectedResolveData(
                 JetExpectedResolveDataUtil.prepareDefaultNameToDescriptors(project),
-                JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(project),
-                getEnvironment()) {
+                JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(project)
+        ) {
             @Override
             protected JetFile createJetFile(String fileName, String text) {
                 return createCheckAndReturnPsiFile(fileName, null, text);

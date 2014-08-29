@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.compiler;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -25,13 +24,13 @@ import org.jetbrains.jet.compiler.ant.AntRunner;
 import org.jetbrains.jet.compiler.download.SDKDownloader;
 import org.jetbrains.jet.compiler.emulator.Emulator;
 import org.jetbrains.jet.compiler.run.PermissionManager;
+import org.junit.Assert;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 public class CodegenTestsOnAndroidRunner {
     private static final Pattern ERROR_IN_TEST_OUTPUT_PATTERN =
@@ -121,7 +120,7 @@ public class CodegenTestsOnAndroidRunner {
     [exec] ...............
     [exec] Error in testKt529:
     */
-    private Map<String, String> parseOutputForFailedTests(@NotNull String output) {
+    private static Map<String, String> parseOutputForFailedTests(@NotNull String output) {
         Map<String, String> result = new HashMap<String, String>();
         StringBuilder builder = new StringBuilder();
         String failedTestNamePrefix = " Error in ";
@@ -147,7 +146,7 @@ public class CodegenTestsOnAndroidRunner {
 
     //[exec] Tests run: 225,  Failures: 0,  Errors: 2
     @Nullable
-    private Statistics parseOutputForTestsNumberIfThereIsFailedTests(String output) {
+    private static Statistics parseOutputForTestsNumberIfThereIsFailedTests(String output) {
         Matcher matcher = NUMBER_OF_TESTS_IF_FAILED.matcher(output);
         if (matcher.find()) {
             return new Statistics(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)),
@@ -158,7 +157,7 @@ public class CodegenTestsOnAndroidRunner {
 
     //[exec] OK (223 tests)
     @Nullable
-    private Statistics parseOutputForTestsNumberIfTestsPassed(String output) {
+    private static Statistics parseOutputForTestsNumberIfTestsPassed(String output) {
         Matcher matcher = NUMBER_OF_TESTS_OK.matcher(output);
         if (matcher.find()) {
             return new Statistics(Integer.parseInt(matcher.group(1)), 0, 0);
