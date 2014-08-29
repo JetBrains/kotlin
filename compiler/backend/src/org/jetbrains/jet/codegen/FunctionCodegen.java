@@ -619,8 +619,8 @@ public class FunctionCodegen extends ParentCodegenAware {
         CallGenerator generator = codegen.getOrCreateCallGenerator(functionDescriptor, function);
 
         InstructionAdapter iv = new InstructionAdapter(mv);
-        loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, isStatic, signature);
-        generator.putHiddenParams();
+
+        loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, isStatic, signature, generator);
 
         List<JvmMethodParameterSignature> mappedParameters = signature.getValueParameters();
         int capturedArgumentsCount = 0;
@@ -698,18 +698,19 @@ public class FunctionCodegen extends ParentCodegenAware {
             @NotNull InstructionAdapter iv,
             @NotNull Type ownerType,
             boolean isStatic,
-            @NotNull JvmMethodSignature signature
+            @NotNull JvmMethodSignature signature,
+            @NotNull CallGenerator callGenerator
     ) {
         int var = 0;
         if (!isStatic) {
-            iv.load(var, ownerType);
+            callGenerator.putValueIfNeeded(null, ownerType, StackValue.local(var, ownerType));
             var += ownerType.getSize();
         }
 
         for (JvmMethodParameterSignature parameterSignature : signature.getValueParameters()) {
             if (parameterSignature.getKind() != JvmMethodParameterKind.VALUE) {
                 Type type = parameterSignature.getAsmType();
-                iv.load(var, type);
+                callGenerator.putValueIfNeeded(null, type, StackValue.local(var, type));
                 var += type.getSize();
             }
         }
