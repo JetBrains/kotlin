@@ -51,7 +51,12 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
         configureSettings(fileText)
 
         createDebugProcess(path)
-        onBreakpoint { stepInto() }
+        val count = findStringWithPrefixes(fileText, "// REPEAT: ")?.toInt() ?: 1
+
+        for (i in 1..count) {
+            onBreakpoint { stepInto() }
+        }
+
         finish()
     }
 

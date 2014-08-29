@@ -181,6 +181,21 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/filters"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("checkNotNull.kt")
+        public void testCheckNotNull() throws Exception {
+            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/checkNotNull.kt");
+        }
+        
+        @TestMetadata("npe.kt")
+        public void testNpe() throws Exception {
+            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/npe.kt");
+        }
+        
+        @TestMetadata("reflectKClass.kt")
+        public void testReflectKClass() throws Exception {
+            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/reflectKClass.kt");
+        }
+        
         @TestMetadata("skipClassloader.kt")
         public void testSkipClassloader() throws Exception {
             doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/skipClassloader.kt");
