@@ -21,17 +21,13 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaAnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.resolveAnnotation
 
 class LazyJavaAnnotations(c: LazyJavaResolverContextWithTypes, val annotationOwner: JavaAnnotationOwner) : Annotations {
     private val annotationDescriptors = c.storageManager.createMemoizedFunctionWithNullableValues {
-        (jAnnotation: JavaAnnotation) ->
-        val fqName = jAnnotation.getFqName()
-        if (fqName == null || JvmAnnotationNames.isSpecialAnnotation(fqName)) {
-            null
-        }
-        else LazyJavaAnnotationDescriptor(c, jAnnotation)
+        (annotation: JavaAnnotation) ->
+        c.resolveAnnotation(annotation)
     }
 
     override fun findAnnotation(fqName: FqName): AnnotationDescriptor? {

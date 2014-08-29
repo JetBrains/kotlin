@@ -17,17 +17,24 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class JvmClassName {
     @NotNull
     public static JvmClassName byInternalName(@NotNull String internalName) {
         return new JvmClassName(internalName);
+    }
+
+    @NotNull
+    public static JvmClassName byClassId(@NotNull ClassId classId) {
+        FqName packageFqName = classId.getPackageFqName();
+        String relativeClassName = classId.getRelativeClassName().asString().replace('.', '$');
+        return packageFqName.isRoot()
+               ? new JvmClassName(relativeClassName)
+               : new JvmClassName(packageFqName.asString().replace('.', '/') + "/" + relativeClassName);
     }
 
     /**

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -102,8 +103,8 @@ public final class JvmAnnotationNames {
         SPECIAL_ANNOTATIONS.add(KotlinSyntheticClass.CLASS_NAME);
     }
 
-    public static boolean isSpecialAnnotation(@NotNull FqName fqName) {
-        return isSpecialAnnotation(JvmClassName.byFqNameWithoutInnerClasses(fqName));
+    public static boolean isSpecialAnnotation(@NotNull ClassId classId) {
+        return isSpecialAnnotation(JvmClassName.byClassId(classId));
     }
 
     public static boolean isSpecialAnnotation(@NotNull JvmClassName name) {

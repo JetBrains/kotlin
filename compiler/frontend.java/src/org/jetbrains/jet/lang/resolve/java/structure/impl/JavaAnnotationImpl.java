@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
@@ -49,20 +50,36 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
 
     @Override
     @Nullable
-    public FqName getFqName() {
-        String qualifiedName = getPsi().getQualifiedName();
-        return qualifiedName == null ? null : new FqName(qualifiedName);
+    public ClassId getClassId() {
+        PsiClass resolved = resolvePsi();
+        return resolved == null ? null : computeClassId(resolved);
     }
 
     @Nullable
     @Override
     public JavaClass resolve() {
+        PsiClass resolved = resolvePsi();
+        return resolved == null ? null : new JavaClassImpl(resolved);
+    }
+
+    @Nullable
+    private static ClassId computeClassId(@NotNull PsiClass psiClass) {
+        PsiClass container = psiClass.getContainingClass();
+        if (container != null) {
+            ClassId parentClassId = computeClassId(container);
+            return parentClassId == null ? null : parentClassId.createNestedClassId(Name.identifier(psiClass.getName()));
+        }
+
+        String fqName = psiClass.getQualifiedName();
+        return fqName == null ? null : ClassId.topLevel(new FqName(fqName));
+    }
+
+    @Nullable
+    private PsiClass resolvePsi() {
         PsiJavaCodeReferenceElement referenceElement = getPsi().getNameReferenceElement();
         if (referenceElement == null) return null;
 
         PsiElement resolved = referenceElement.resolve();
-        if (!(resolved instanceof PsiClass)) return null;
-
-        return new JavaClassImpl((PsiClass) resolved);
+        return resolved instanceof PsiClass ? (PsiClass) resolved : null;
     }
 }
