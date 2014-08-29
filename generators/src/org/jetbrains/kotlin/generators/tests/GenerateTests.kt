@@ -145,6 +145,7 @@ import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.jet.lang.resolve.android.AbstractAndroidXml2KConversionTest
 import org.jetbrains.jet.android.AbstractCrossParserTest
 import org.jetbrains.jet.lang.resolve.android.AbstractAndroidBoxTest
+import org.jetbrains.jet.android.AbstractAndroidCompletionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -709,6 +710,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractJvmBasicCompletionTest>("org.jetbrains.kotlin.idea.kdoc.KDocCompletionTestGenerated") {
             model("kdoc/completion")
+        }
+        
+        testClass(javaClass<AbstractAndroidCompletionTest>()) {
+            model("android/completion", recursive = false, extension = null)
         }
     }
 

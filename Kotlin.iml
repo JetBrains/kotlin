@@ -8,6 +8,7 @@
       <excludeFolder url="file://$MODULE_DIR$/android.tests.dependencies" />
       <excludeFolder url="file://$MODULE_DIR$/dependencies" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/ideaSDK/androidSDK" />
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/config" />
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/config-idea" />
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/system" />

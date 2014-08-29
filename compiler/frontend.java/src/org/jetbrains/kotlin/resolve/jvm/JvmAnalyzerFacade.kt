@@ -34,6 +34,11 @@ import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
+import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.android.searchAndAddAndroidDeclarations
 
 public class JvmResolverForModule(
         override val lazyResolveSession: ResolveSession,
@@ -56,8 +61,10 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
             resolverForProject: ResolverForProject<M, JvmResolverForModule>
     ): JvmResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
+        val filesToAnalyze = searchAndAddAndroidDeclarations(project, syntheticFiles)
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
-                project, globalContext.storageManager, syntheticFiles, if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
+                project, globalContext.storageManager, filesToAnalyze,
+                if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
