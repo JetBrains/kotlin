@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiSubstitutorImpl;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibility;
@@ -101,13 +103,23 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     @Override
     @NotNull
     public Collection<JavaMethod> getMethods() {
-        return methods(getPsi().getMethods());
+        return methods(KotlinPackage.filter(getPsi().getMethods(), new Function1<PsiMethod, Boolean>() {
+            @Override
+            public Boolean invoke(PsiMethod method) {
+                return !method.isConstructor();
+            }
+        }));
     }
 
     @Override
     @NotNull
     public Collection<JavaMethod> getAllMethods() {
-        return methods(getPsi().getAllMethods());
+        return methods(KotlinPackage.filter(getPsi().getAllMethods(), new Function1<PsiMethod, Boolean>() {
+            @Override
+            public Boolean invoke(PsiMethod method) {
+                return !method.isConstructor();
+            }
+        }));
     }
 
     @Override
@@ -124,8 +136,8 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
 
     @Override
     @NotNull
-    public Collection<JavaMethod> getConstructors() {
-        return methods(getPsi().getConstructors());
+    public Collection<JavaConstructor> getConstructors() {
+        return constructors(getPsi().getConstructors());
     }
 
     @Override

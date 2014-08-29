@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaPackage;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaConstructorImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetIcons;
@@ -118,7 +119,13 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             @NotNull PsiModifierListOwner member
     ) {
         if (member instanceof PsiMethod) {
-            return JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl((PsiMethod) member));
+            PsiMethod method = (PsiMethod) member;
+            if (method.isConstructor()) {
+                return JavaPackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(method));
+            }
+            else {
+                return JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(method));
+            }
         }
         else if (member instanceof PsiField) {
             return JavaPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) member));

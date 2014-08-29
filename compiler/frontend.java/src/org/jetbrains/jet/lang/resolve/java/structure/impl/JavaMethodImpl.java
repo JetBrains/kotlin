@@ -35,6 +35,8 @@ import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementColl
 public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMethod {
     public JavaMethodImpl(@NotNull PsiMethod psiMethod) {
         super(psiMethod);
+        assert !psiMethod.isConstructor() :
+                "PsiMethod which is a constructor should be wrapped in JavaConstructorImpl: " + psiMethod.getName();
     }
 
     @NotNull
@@ -71,11 +73,5 @@ public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMet
     @Override
     public boolean isVararg() {
         return getPsi().isVarArgs();
-    }
-
-    @Override
-    public boolean isConstructor() {
-        // TODO: class JavaConstructor extends JavaMethod
-        return getPsi().isConstructor();
     }
 }

@@ -18,11 +18,9 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
+import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
 import java.util.Collections
@@ -54,9 +52,8 @@ public class LazyJavaClassMemberScope(
     }
 
     internal val _constructors = c.storageManager.createLazyValue {
-        jClass.getConstructors().flatMap {
-            jCtor ->
-            val constructor = resolveConstructor(jCtor, getContainingDeclaration())
+        jClass.getConstructors().flatMap { ctor ->
+            val constructor = resolveConstructor(ctor, getContainingDeclaration())
             val samAdapter = resolveSamAdapter(constructor)
             if (samAdapter != null) {
                 samAdapter.setReturnType(containingDeclaration.getDefaultType())
@@ -116,7 +113,7 @@ public class LazyJavaClassMemberScope(
                else null
     }
 
-    private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor): JavaConstructorDescriptor {
+    private fun resolveConstructor(constructor: JavaConstructor, classDescriptor: ClassDescriptor): JavaConstructorDescriptor {
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
                 classDescriptor, Annotations.EMPTY, /* isPrimary = */ false, c.sourceElementFactory.source(constructor)
         )

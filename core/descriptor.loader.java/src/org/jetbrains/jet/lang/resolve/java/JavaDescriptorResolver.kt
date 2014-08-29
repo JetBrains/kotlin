@@ -29,12 +29,11 @@ public class JavaDescriptorResolver(public val packageFragmentProvider: LazyJava
 }
 
 public fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDescriptor? {
-    val functions = if (method.isConstructor())
-                        resolveClass(method.getContainingClass())?.getConstructors()
-                    else
-                        getContainingScope(method)?.getFunctions(method.getName())
+    return getContainingScope(method)?.getFunctions(method.getName())?.findByJavaElement(method)
+}
 
-    return functions?.findByJavaElement(method)
+public fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructor): ConstructorDescriptor? {
+    return resolveClass(constructor.getContainingClass())?.getConstructors()?.findByJavaElement(constructor)
 }
 
 public fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {

@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaPackage;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaConstructorImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -149,11 +150,17 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
 
         if (analyzableAnnotationOwner instanceof PsiMethod) {
             PsiMethod psiMethod = (PsiMethod) analyzableAnnotationOwner;
-            FunctionDescriptor functionDescriptor = JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(psiMethod));
-            assert functionDescriptor != null : "Couldn't find function descriptor for " + renderMember(analyzableAnnotationOwner);
-            return functionDescriptor instanceof ConstructorDescriptor
-                    ? getDefaultConstructorAnnotation((ConstructorDescriptor) functionDescriptor)
-                    : RENDERER.render(functionDescriptor);
+            if (psiMethod.isConstructor()) {
+                ConstructorDescriptor constructorDescriptor =
+                        JavaPackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(psiMethod));
+                assert constructorDescriptor != null: "Couldn't find constructor descriptor for " + renderMember(psiMethod);
+                return getDefaultConstructorAnnotation(constructorDescriptor);
+            }
+            else {
+                FunctionDescriptor functionDescriptor = JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(psiMethod));
+                assert functionDescriptor != null: "Couldn't find function descriptor for " + renderMember(psiMethod);
+                return RENDERER.render(functionDescriptor);
+            }
         }
 
         if (analyzableAnnotationOwner instanceof PsiField) {

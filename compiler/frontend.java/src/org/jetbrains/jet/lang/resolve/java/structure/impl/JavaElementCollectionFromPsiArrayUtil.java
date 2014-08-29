@@ -62,6 +62,14 @@ public class JavaElementCollectionFromPsiArrayUtil {
             }
         };
 
+        private static final Factory<PsiMethod, JavaConstructor> CONSTRUCTORS = new Factory<PsiMethod, JavaConstructor>() {
+            @NotNull
+            @Override
+            public JavaConstructor create(@NotNull PsiMethod psiMethod) {
+                return new JavaConstructorImpl(psiMethod);
+            }
+        };
+
         private static final Factory<PsiField, JavaField> FIELDS = new Factory<PsiField, JavaField>() {
             @NotNull
             @Override
@@ -163,6 +171,16 @@ public class JavaElementCollectionFromPsiArrayUtil {
     @NotNull
     public static Collection<JavaMethod> methods(@NotNull PsiMethod[] methods) {
         return convert(methods, Factories.METHODS);
+    }
+
+    @NotNull
+    public static Collection<JavaMethod> methods(@NotNull Iterable<PsiMethod> methods) {
+        return convert(methods, Factories.METHODS);
+    }
+
+    @NotNull
+    public static Collection<JavaConstructor> constructors(@NotNull PsiMethod[] methods) {
+        return convert(methods, Factories.CONSTRUCTORS);
     }
 
     @NotNull

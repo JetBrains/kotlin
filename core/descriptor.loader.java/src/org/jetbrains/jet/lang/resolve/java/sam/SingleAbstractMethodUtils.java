@@ -375,9 +375,7 @@ public class SingleAbstractMethodUtils {
                 @NotNull JavaMethod method2,
                 @NotNull JavaTypeSubstitutor substitutor2
         ) {
-            if (method1.isConstructor() != method2.isConstructor()) return false;
-            if (!method1.isConstructor() && !method1.getName().equals(method2.getName())) return false;
-
+            if (!method1.getName().equals(method2.getName())) return false;
             if (method1.isVararg() != method2.isVararg()) return false;
 
             Collection<JavaValueParameter> parameters1 = method1.getValueParameters();

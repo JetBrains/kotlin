@@ -20,7 +20,6 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
-import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMember
 import org.jetbrains.jet.utils.valuesToMap
@@ -44,19 +43,14 @@ object EMPTY_MEMBER_INDEX : MemberIndex {
 open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember) -> Boolean) : MemberIndex {
     private val methodFilter = {
         (m: JavaMethod) ->
-        memberFilter(m) &&
-        !m.isConstructor() &&
-        !DescriptorResolverUtils.isObjectMethodInInterface(m)
+        memberFilter(m) && !DescriptorResolverUtils.isObjectMethodInInterface(m)
     }
 
     private val methods = jClass.getMethods().stream().filter(methodFilter).groupBy { m -> m.getName() }
     private val fields = jClass.getFields().stream().filter(memberFilter).valuesToMap { m -> m.getName() }
 
-    override fun findMethodsByName(name: Name): Collection<JavaMethod> {
-        return methods[name] ?: listOf()
-    }
-
-    override fun getAllMethodNames(): Collection<Name> = jClass.getAllMethods().iterator().filter(methodFilter).map { m -> m.getName() }.toList()
+    override fun findMethodsByName(name: Name): Collection<JavaMethod> = methods[name] ?: listOf()
+    override fun getAllMethodNames(): Collection<Name> = jClass.getAllMethods().stream().filter(methodFilter).map { m -> m.getName() }.toList()
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
     override fun getAllFieldNames() = jClass.getAllFields().stream().filter(memberFilter).map { m -> m.getName() }.toList()

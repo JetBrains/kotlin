@@ -28,7 +28,9 @@ import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaConstructor;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -76,7 +78,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
     @Override
     @NotNull
     public AlternativeMethodSignature resolveAlternativeMethodSignature(
-            @NotNull JavaMethod method,
+            @NotNull JavaMember methodOrConstructor,
             boolean hasSuperMethods,
             @Nullable JetType returnType,
             @Nullable JetType receiverType,
@@ -84,9 +86,12 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             @NotNull List<TypeParameterDescriptor> typeParameters,
             boolean hasStableParameterNames
     ) {
+        assert methodOrConstructor instanceof JavaMethod || methodOrConstructor instanceof JavaConstructor :
+                "Not a method or a constructor: " + methodOrConstructor.getName();
+
         AlternativeMethodSignatureData data =
-                new AlternativeMethodSignatureData(externalAnnotationResolver, method, receiverType, project, valueParameters, returnType,
-                                                   typeParameters, hasSuperMethods);
+                new AlternativeMethodSignatureData(externalAnnotationResolver, methodOrConstructor, receiverType, project, valueParameters,
+                                                   returnType, typeParameters, hasSuperMethods);
 
         if (data.isAnnotated() && !data.hasErrors()) {
             return new AlternativeMethodSignature(data.getReturnType(), receiverType, data.getValueParameters(), data.getTypeParameters(),

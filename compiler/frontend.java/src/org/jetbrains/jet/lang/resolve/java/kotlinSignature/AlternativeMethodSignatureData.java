@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -56,7 +56,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
     public AlternativeMethodSignatureData(
             @NotNull ExternalAnnotationResolver externalAnnotationResolver,
-            @NotNull JavaMethod method,
+            @NotNull JavaMember methodOrConstructor,
             @Nullable JetType receiverType,
             @NotNull Project project,
             @NotNull List<ValueParameterDescriptor> valueParameters,
@@ -64,7 +64,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             boolean hasSuperMethods
     ) {
-        String signature = SignaturesUtil.getKotlinSignature(externalAnnotationResolver, method);
+        String signature = SignaturesUtil.getKotlinSignature(externalAnnotationResolver, methodOrConstructor);
 
         if (signature == null) {
             setAnnotated(false);
@@ -83,7 +83,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
         try {
             checkForSyntaxErrors(altFunDeclaration);
-            checkEqualFunctionNames(altFunDeclaration, method);
+            checkEqualFunctionNames(altFunDeclaration, methodOrConstructor);
 
             computeTypeParameters(methodTypeParameters);
             computeValueParameters(valueParameters);
@@ -290,10 +290,10 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         return result;
     }
 
-    private static void checkEqualFunctionNames(@NotNull PsiNamedElement namedElement, @NotNull JavaMethod method) {
-        if (!ComparatorUtil.equalsNullable(method.getName().asString(), namedElement.getName())) {
+    private static void checkEqualFunctionNames(@NotNull PsiNamedElement namedElement, @NotNull JavaMember methodOrConstructor) {
+        if (!ComparatorUtil.equalsNullable(methodOrConstructor.getName().asString(), namedElement.getName())) {
             throw new AlternativeSignatureMismatchException("Function names mismatch, original: %s, alternative: %s",
-                                                            method.getName().asString(), namedElement.getName());
+                                                            methodOrConstructor.getName().asString(), namedElement.getName());
         }
     }
 }
