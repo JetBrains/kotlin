@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.UsefulTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.OutputFileCollection;
@@ -36,7 +37,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,11 +49,6 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     private static final String baseTestClassPackage = "org.jetbrains.jet.compiler.android";
     private static final String baseTestClassName = "AbstractCodegenTestCaseOnAndroid";
     private static final String generatorName = "CodegenTestsOnAndroidGenerator";
-
-    private final JetCoreEnvironment environmentWithMockJdk =
-            JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
-    private final JetCoreEnvironment environmentWithFullJdk =
-            JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable);
 
     private final Pattern packagePattern = Pattern.compile("package (.*)");
 
@@ -118,14 +114,88 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     private void generateTestMethodsForDirectory(Printer p, File dir) throws IOException {
         File[] files = dir.listFiles();
         Assert.assertNotNull("Folder with testData is empty: " + dir.getAbsolutePath(), files);
-        Set<String> excludedFiles = SpecialFiles.getExcludedFiles();
-        Set<String> filesCompiledWithoutStdLib = SpecialFiles.getFilesCompiledWithoutStdLib();
+        FilesWriter holderFull = new FilesWriter(true);
+        FilesWriter holderMock = new FilesWriter(false);
+        processFiles(p, files, holderFull, holderMock);
+
+        holderFull.writeFilesOnDisk();
+        holderMock.writeFilesOnDisk();
+    }
+
+    private class FilesWriter {
+        private final boolean isFullJdk;
+
+        public List<JetFile> files = new ArrayList<JetFile>();
+        private JetCoreEnvironment environment;
+
+        private FilesWriter(boolean isFullJdk) {
+            this.isFullJdk = isFullJdk;
+            environment = createEnvironment(isFullJdk);
+        }
+
+        private JetCoreEnvironment createEnvironment(boolean isFullJdk) {
+            return isFullJdk
+                    ? JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable)
+                    : JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+        }
+
+        public boolean shouldWriteFilesOnDisk() {
+            return files.size() > 300;
+        }
+
+        public void writeFilesOnDiskIfNeeded() {
+            if (shouldWriteFilesOnDisk()) {
+                writeFilesOnDisk();
+            }
+        }
+
+        public void writeFilesOnDisk() {
+            writeFiles(files);
+            files = new ArrayList<JetFile>();
+            environment = createEnvironment(isFullJdk);
+        }
+
+        private void writeFiles(List<JetFile> filesToCompile) {
+            System.out.println("Generating " + filesToCompile.size() + " files...");
+            OutputFileCollection outputFiles;
+            try {
+                outputFiles = GenerationUtils
+                        .compileManyFilesGetGenerationStateForTest(filesToCompile.iterator().next().getProject(), filesToCompile).getFactory();
+            }
+            catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+
+            File outputDir = new File(pathManager.getOutputForCompiledFiles());
+            if (!outputDir.exists()) {
+                outputDir.mkdirs();
+            }
+            Assert.assertTrue("Cannot create directory for compiled files", outputDir.exists());
+
+            OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
+        }
+    }
+
+    private void processFiles(
+            @NotNull Printer printer,
+            @NotNull File[] files,
+            @NotNull FilesWriter holderFull,
+            @NotNull FilesWriter holderMock)
+            throws IOException
+    {
+
+        holderFull.writeFilesOnDiskIfNeeded();
+        holderMock.writeFilesOnDiskIfNeeded();
+
         for (File file : files) {
-            if (excludedFiles.contains(file.getName())) {
+            if (SpecialFiles.getExcludedFiles().contains(file.getName())) {
                 continue;
             }
             if (file.isDirectory()) {
-                generateTestMethodsForDirectory(p, file);
+                File[] listFiles = file.listFiles();
+                if (listFiles != null) {
+                    processFiles(printer, listFiles, holderFull, holderMock);
+                }
             }
             else {
                 String text = FileUtil.loadFile(file, true);
@@ -134,38 +204,20 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     String generatedTestName = generateTestName(file.getName());
                     String packageName = file.getPath().replaceAll("\\\\|-|\\.|/", "_");
                     text = changePackage(packageName, text);
-                    OutputFileCollection outputFiles;
-                    if (filesCompiledWithoutStdLib.contains(file.getName())) {
-                        outputFiles = compileFromText(file.getAbsolutePath(), text, environmentWithMockJdk);
+
+                    if (SpecialFiles.getFilesCompiledWithoutStdLib().contains(file.getName())) {
+                        CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, holderMock.environment.getProject());
+                        holderMock.files.add(codegenFile.getPsiFile());
                     }
                     else {
-                        outputFiles = compileFromText(file.getAbsolutePath(), text, environmentWithFullJdk);
+                        CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, holderFull.environment.getProject());
+                        holderFull.files.add(codegenFile.getPsiFile());
                     }
 
-                    generateTestMethod(p, generatedTestName, StringUtil.escapeStringCharacters(file.getPath()));
-                    File outputDir = new File(pathManager.getOutputForCompiledFiles());
-                    if (!outputDir.exists()) {
-                        outputDir.mkdirs();
-                    }
-                    Assert.assertTrue("Cannot create directory for compiled files", outputDir.exists());
-
-                    OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
+                    generateTestMethod(printer, generatedTestName, StringUtil.escapeStringCharacters(file.getPath()));
                 }
             }
         }
-    }
-
-    private static OutputFileCollection compileFromText(String filePath, String text, JetCoreEnvironment jetEnvironment) {
-        CodegenTestFiles codegenFile = CodegenTestFiles.create("dummy.kt", text, jetEnvironment.getProject());
-        JetFile psiFile = codegenFile.getPsiFile();
-        OutputFileCollection outputFiles;
-        try {
-            outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
-        }
-        catch (Throwable e) {
-            throw new RuntimeException("Cannot compile: " + filePath + "\n" + text, e);
-        }
-        return outputFiles;
     }
 
     private static boolean hasBoxMethod(String text) {
