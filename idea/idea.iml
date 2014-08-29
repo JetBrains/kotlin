@@ -41,8 +41,9 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="module" module-name="frontend.android" />
-    <orderEntry type="library" name="android" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="android" level="project" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
+    <orderEntry type="library" name="android_tests" level="project" />
   </component>
 </module>
 

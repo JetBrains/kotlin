@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -33,12 +32,13 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
+
+import org.jetbrains.jet.lang.resolve.android.AndroidPackage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,8 +77,7 @@ public enum TopDownAnalyzerFacadeForJVM {
                 false
         );
 
-        List<JetFile> filesToAnalyze = new ArrayList<JetFile>(files);
-        searchAndAddAndroidDeclarations(project, filesToAnalyze);
+        Collection<JetFile> filesToAnalyze = AndroidPackage.searchAndAddAndroidDeclarations(project, files);
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         try {
@@ -109,12 +108,5 @@ public enum TopDownAnalyzerFacadeForJVM {
     @NotNull
     public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
         return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, JavaToKotlinClassMap.getInstance());
-    }
-
-    private static Collection<JetFile> searchAndAddAndroidDeclarations(Project project, Collection<JetFile> files) {
-        AndroidUIXmlProcessor parser = ServiceManager.getService(project, AndroidUIXmlProcessor.class);
-        JetFile file = parser.parseToPsi(project);
-        if (file != null) files.add(file);
-        return files;
     }
 }
