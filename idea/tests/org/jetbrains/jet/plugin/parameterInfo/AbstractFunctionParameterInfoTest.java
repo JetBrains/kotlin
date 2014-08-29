@@ -26,71 +26,15 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
-public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCase {
-    public void testInheritedFunctions() {
-        doTest();
-    }
-
-    public void testInheritedWithCurrentFunctions() {
-        doTest();
-    }
-
-    public void testNamedAndDefaultParameter() {
-        doTest();
-    }
-
-    public void testNamedParameter() {
-        doTest();
-    }
-
-    public void testNamedParameter2() {
-        doTest();
-    }
-
-    public void testNotGreen() {
-        doTest();
-    }
-
-    public void testNullableTypeCall() {
-        doTest();
-    }
-
-    public void testPrintln() {
-        doTest();
-    }
-
-    public void testSimple() {
-        doTest();
-    }
-
-    public void testSimpleConstructor() {
-        doTest();
-    }
-
-    public void testSuperConstructorCall() {
-        doTest();
-    }
-
-    public void testTwoFunctions() {
-        doTest();
-    }
-
-    public void testTwoFunctionsGrey() {
-        doTest();
-    }
-    
-    public void testDeprecated() {
-        doTest();
-    }
-
+public abstract class AbstractFunctionParameterInfoTest extends LightCodeInsightFixtureTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/parameterInfo/functionParameterInfo");
     }
 
-    private void doTest() {
-        myFixture.configureByFile(getTestName(false) + ".kt");
+    protected void doTest(String fileName) {
+        myFixture.configureByFile(fileName);
         JetFile file = (JetFile) myFixture.getFile();
         PsiElement lastChild = file.getLastChild();
         assert lastChild != null;
