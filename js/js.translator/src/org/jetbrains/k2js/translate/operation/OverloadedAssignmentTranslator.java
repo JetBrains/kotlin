@@ -45,10 +45,6 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression translate() {
-        if (JsAstUtils.isEmptyExpression(right)) {
-            return right;
-        }
-
         if (isVariableReassignment) {
             return reassignment();
         }

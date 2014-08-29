@@ -94,6 +94,11 @@ public final class Translation {
         JsNode result = doTranslateExpression(expression, innerContext);
         context.moveVarsFrom(innerContext);
         block.getStatements().addAll(innerContext.dynamicContext().jsBlock().getStatements());
+
+        if (BindingContextUtilPackage.isUnreachableCode(expression, context.bindingContext())) {
+            return context.getEmptyExpression();
+        }
+
         return result;
     }
 

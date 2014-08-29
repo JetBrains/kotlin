@@ -46,10 +46,6 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression translate() {
-        if (JsAstUtils.isEmptyExpression(right)) {
-            return right;
-        }
-
         if (isAssignment(getOperationToken(expression))) {
             return translateAsPlainAssignment();
         }
