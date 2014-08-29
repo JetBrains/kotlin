@@ -188,7 +188,7 @@ public class CandidateResolver {
                 nestedClass = ((FakeCallableDescriptorForObject) candidateDescriptor).getReferencedDescriptor();
             }
             if (nestedClass != null) {
-                context.tracing.nestedClassAccessViaInstanceReference(context.trace, nestedClass);
+                context.tracing.nestedClassAccessViaInstanceReference(context.trace, nestedClass, candidateCall.getExplicitReceiverKind());
                 return false;
             }
         }

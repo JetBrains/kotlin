@@ -128,8 +128,17 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void nestedClassAccessViaInstanceReference(@NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor) {
-        trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(reference, classDescriptor));
+    public void nestedClassAccessViaInstanceReference(
+            @NotNull BindingTrace trace,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull ExplicitReceiverKind explicitReceiverKind
+    ) {
+        if (explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) {
+            trace.report(NESTED_CLASS_SHOULD_BE_QUALIFIED.on(reference, classDescriptor));
+        }
+        else {
+            trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(reference, classDescriptor));
+        }
     }
 
     @Override

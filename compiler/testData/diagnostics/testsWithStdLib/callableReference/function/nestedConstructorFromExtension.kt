@@ -6,7 +6,7 @@ class A {
 }
     
 fun A.main() {
-    ::<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Nested<!>
+    ::<!NESTED_CLASS_SHOULD_BE_QUALIFIED!>Nested<!>
     val y = A::Nested
     
     y : KFunction0<A.Nested>

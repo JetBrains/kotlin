@@ -81,7 +81,11 @@ public interface TracingStrategy {
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
 
         @Override
-        public void nestedClassAccessViaInstanceReference(@NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor) {}
+        public void nestedClassAccessViaInstanceReference(
+                @NotNull BindingTrace trace,
+                @NotNull ClassDescriptor classDescriptor,
+                @NotNull ExplicitReceiverKind explicitReceiverKind
+        ) {}
 
         @Override
         public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke) {}
@@ -132,7 +136,11 @@ public interface TracingStrategy {
 
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
 
-    void nestedClassAccessViaInstanceReference(@NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor);
+    void nestedClassAccessViaInstanceReference(
+            @NotNull BindingTrace trace,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull ExplicitReceiverKind explicitReceiverKind
+    );
 
     void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke);
 
