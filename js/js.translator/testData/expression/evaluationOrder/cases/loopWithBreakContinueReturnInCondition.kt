@@ -56,17 +56,6 @@ fun forReturn(b: Boolean): String {
 }
 
 fun box(): String {
-    var i = 0
-
-    // KT-5704 'while' detected as unreachable though loop is running
-    // TODO Remove or uncomment when issue will be fixed
-    //while(if (++i==10) break else continue) {}
-    //assertEquals(10, i)
-
-    i = 0
-    do { i++ } while(if (++i==10) break else continue)
-    assertEquals(10, i)
-
     assertEquals(":whileReturn:", whileReturn())
     assertEquals("AA:return:", global)
 

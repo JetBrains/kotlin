@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
-import com.google.common.collect.Sets;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +38,7 @@ import java.util.*;
 public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
     private JetControlFlowBuilder builder = null;
 
-    private final Stack<BreakableBlockInfo> loopInfo = new Stack<BreakableBlockInfo>();
+    private final Stack<LoopInfo> loopInfo = new Stack<LoopInfo>();
     private final Stack<LexicalScope> lexicalScopes = new Stack<LexicalScope>();
     private final Map<JetElement, BreakableBlockInfo> elementToBlockInfo = new HashMap<JetElement, BreakableBlockInfo>();
     private int labelCount = 0;
@@ -143,33 +142,40 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             return pseudocode.createLabel("L" + labelCount++ + " [" + name + "]");
         }
 
+        @NotNull
         @Override
-        public final LoopInfo enterLoop(@NotNull JetExpression expression, @Nullable Label loopExitPoint, Label conditionEntryPoint) {
+        public final LoopInfo enterLoop(@NotNull JetLoopExpression expression) {
             Label loopEntryLabel = createUnboundLabel("loop entry point");
             bindLabel(loopEntryLabel);
             LoopInfo blockInfo = new LoopInfo(
                     expression,
                     loopEntryLabel,
-                    loopExitPoint != null ? loopExitPoint : createUnboundLabel("loop exit point"),
+                    createUnboundLabel("loop exit point"),
                     createUnboundLabel("body entry point"),
-                    conditionEntryPoint != null ? conditionEntryPoint : createUnboundLabel("condition entry point"));
-            loopInfo.push(blockInfo);
+                    createUnboundLabel("body exit point"),
+                    createUnboundLabel("condition entry point"));
             elementToBlockInfo.put(expression, blockInfo);
-            allBlocks.push(blockInfo);
-            pseudocode.recordLoopInfo(expression, blockInfo);
             return blockInfo;
         }
 
         @Override
-        public final void exitLoop(@NotNull JetExpression expression) {
-            BreakableBlockInfo info = loopInfo.pop();
-            elementToBlockInfo.remove(expression);
-            allBlocks.pop();
-            bindLabel(info.getExitPoint());
+        public void enterLoopBody(@NotNull JetLoopExpression expression) {
+            LoopInfo info = (LoopInfo) elementToBlockInfo.get(expression);
+            bindLabel(info.getBodyEntryPoint());
+            loopInfo.push(info);
+            allBlocks.push(info);
         }
 
         @Override
-        public JetElement getCurrentLoop() {
+        public final void exitLoopBody(@NotNull JetLoopExpression expression) {
+            LoopInfo info = loopInfo.pop();
+            elementToBlockInfo.remove(expression);
+            allBlocks.pop();
+            bindLabel(info.getBodyExitPoint());
+        }
+
+        @Override
+        public JetLoopExpression getCurrentLoop() {
             return loopInfo.empty() ? null : loopInfo.peek().getElement();
         }
 

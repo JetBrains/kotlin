@@ -19,19 +19,24 @@ package org.jetbrains.jet.lang.cfg;
 import com.google.common.collect.Sets;
 import org.jetbrains.jet.lang.psi.JetElement;
 
+import java.util.Collections;
 import java.util.Set;
 
 public class BreakableBlockInfo extends BlockInfo {
     private final JetElement element;
     private final Label entryPoint;
     private final Label exitPoint;
-    protected final Set<Label> referablePoints;
+    private final Set<Label> referablePoints = Sets.newHashSet();
 
     public BreakableBlockInfo(JetElement element, Label entryPoint, Label exitPoint) {
         this.element = element;
         this.entryPoint = entryPoint;
         this.exitPoint = exitPoint;
-        referablePoints = Sets.newHashSet(entryPoint, exitPoint);
+        markReferablePoints(entryPoint, exitPoint);
+    }
+
+    protected void markReferablePoints(Label... labels) {
+        Collections.addAll(referablePoints, labels);
     }
 
     public JetElement getElement() {

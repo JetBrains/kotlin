@@ -18,15 +18,16 @@ L4 [body entry point]:
     mark({ if (b) break; continue; })                         PREV:[mark(do { if (b) break; continue; } while (true)), jt(L2 [loop entry point]|<v5>)]
     mark(if (b) break)
     r(b) -> <v1>
-    jf(L6 [else branch]|<v1>)                                 NEXT:[read (Unit), jmp(L3 [loop exit point])]
+    jf(L7 [else branch]|<v1>)                                 NEXT:[read (Unit), jmp(L3 [loop exit point])]
     jmp(L3 [loop exit point])                                 NEXT:[read (Unit)]
--   jmp(L7 ['if' expression result])                          NEXT:[merge(if (b) break|!<v2>) -> <v3>]                         PREV:[]
-L6 [else branch]:
-    read (Unit)                                               PREV:[jf(L6 [else branch]|<v1>)]
-L7 ['if' expression result]:
+-   jmp(L8 ['if' expression result])                          NEXT:[merge(if (b) break|!<v2>) -> <v3>]                         PREV:[]
+L7 [else branch]:
+    read (Unit)                                               PREV:[jf(L7 [else branch]|<v1>)]
+L8 ['if' expression result]:
     merge(if (b) break|!<v2>) -> <v3>
-    jmp(L5 [condition entry point])
-L5 [condition entry point]:
+    jmp(L6 [condition entry point])
+L5 [body exit point]:
+L6 [condition entry point]:
     r(true) -> <v5>
     jt(L2 [loop entry point]|<v5>)                            NEXT:[read (Unit), mark({ if (b) break; continue; })]
 L3 [loop exit point]:

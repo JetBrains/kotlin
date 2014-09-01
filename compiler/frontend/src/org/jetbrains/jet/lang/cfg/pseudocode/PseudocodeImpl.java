@@ -101,8 +101,7 @@ public class PseudocodeImpl implements Pseudocode {
     private Set<LocalFunctionDeclarationInstruction> localDeclarations = null;
     //todo getters
     private final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
-    private final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
-    
+
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
 
     private final JetElement correspondingElement;
@@ -243,10 +242,6 @@ public class PseudocodeImpl implements Pseudocode {
         if (PseudocodePackage.calcSideEffectFree(instruction)) {
             sideEffectFree.add(instruction);
         }
-    }
-
-    /*package*/ void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
-        loopInfo.put(expression, blockInfo);
     }
 
     @Override

@@ -19,7 +19,8 @@ L4 [body entry point]:
     v(var a = 2)
     r(2) -> <v1>
     w(a|<v1>)
-L5 [condition entry point]:
+L5 [body exit point]:
+L6 [condition entry point]:
     r(a) -> <v2>
     r(0) -> <v3>
     mark(a > 0)

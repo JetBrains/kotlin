@@ -1202,6 +1202,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter.kt");
             }
             
+            @TestMetadata("breakOrContinueInLoopCondition.kt")
+            public void testBreakOrContinueInLoopCondition() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakOrContinueInLoopCondition.kt");
+            }
+            
             @TestMetadata("checkInnerLocalDeclarations.kt")
             public void testCheckInnerLocalDeclarations() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkInnerLocalDeclarations.kt");

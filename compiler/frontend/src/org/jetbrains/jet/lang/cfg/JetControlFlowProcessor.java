@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
-import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -801,7 +800,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitWhileExpression(@NotNull JetWhileExpression expression) {
-            LoopInfo loopInfo = builder.enterLoop(expression, null, null);
+            LoopInfo loopInfo = builder.enterLoop(expression);
 
             builder.bindLabel(loopInfo.getConditionEntryPoint());
             JetExpression condition = expression.getCondition();
@@ -821,13 +820,14 @@ public class JetControlFlowProcessor {
                 builder.magic(condition, null, values, typePredicates, MagicKind.VALUE_CONSUMER);
             }
 
-            builder.bindLabel(loopInfo.getBodyEntryPoint());
+            builder.enterLoopBody(expression);
             JetExpression body = expression.getBody();
             if (body != null) {
                 generateInstructions(body);
             }
             builder.jump(loopInfo.getEntryPoint(), expression);
-            builder.exitLoop(expression);
+            builder.exitLoopBody(expression);
+            builder.bindLabel(loopInfo.getExitPoint());
             builder.loadUnit(expression);
         }
 
@@ -835,20 +835,21 @@ public class JetControlFlowProcessor {
         public void visitDoWhileExpression(@NotNull JetDoWhileExpression expression) {
             builder.enterLexicalScope(expression);
             mark(expression);
-            LoopInfo loopInfo = builder.enterLoop(expression, null, null);
+            LoopInfo loopInfo = builder.enterLoop(expression);
 
-            builder.bindLabel(loopInfo.getBodyEntryPoint());
+            builder.enterLoopBody(expression);
             JetExpression body = expression.getBody();
             if (body != null) {
                 generateInstructions(body);
             }
+            builder.exitLoopBody(expression);
             builder.bindLabel(loopInfo.getConditionEntryPoint());
             JetExpression condition = expression.getCondition();
             if (condition != null) {
                 generateInstructions(condition);
             }
             builder.jumpOnTrue(loopInfo.getEntryPoint(), expression, builder.getBoundValue(condition));
-            builder.exitLoop(expression);
+            builder.bindLabel(loopInfo.getExitPoint());
             builder.loadUnit(expression);
             builder.exitLexicalScope(expression);
         }
@@ -864,26 +865,24 @@ public class JetControlFlowProcessor {
             declareLoopParameter(expression);
 
             // TODO : primitive cases
-            Label loopExitPoint = builder.createUnboundLabel("'for' loop exit point");
-            Label conditionEntryPoint = builder.createUnboundLabel("'for' loop condition entry point");
+            LoopInfo loopInfo = builder.enterLoop(expression);
 
-            builder.bindLabel(conditionEntryPoint);
-            builder.nondeterministicJump(loopExitPoint, expression, null);
+            builder.bindLabel(loopInfo.getConditionEntryPoint());
+            builder.nondeterministicJump(loopInfo.getExitPoint(), expression, null);
 
-            LoopInfo loopInfo = builder.enterLoop(expression, loopExitPoint, conditionEntryPoint);
 
-            builder.bindLabel(loopInfo.getBodyEntryPoint());
             writeLoopParameterAssignment(expression);
 
             mark(expression);
+            builder.enterLoopBody(expression);
             JetExpression body = expression.getBody();
             if (body != null) {
                 generateInstructions(body);
             }
+            builder.jump(loopInfo.getEntryPoint(), expression);
 
-            builder.nondeterministicJump(loopInfo.getEntryPoint(), expression, null);
-
-            builder.exitLoop(expression);
+            builder.exitLoopBody(expression);
+            builder.bindLabel(loopInfo.getExitPoint());
             builder.loadUnit(expression);
             builder.exitLexicalScope(expression);
         }
@@ -957,9 +956,10 @@ public class JetControlFlowProcessor {
             }
         }
 
+        @Nullable
         private JetElement getCorrespondingLoop(JetExpressionWithLabel expression) {
             String labelName = expression.getLabelName();
-            JetElement loop;
+            JetLoopExpression loop;
             if (labelName != null) {
                 JetSimpleNameExpression targetLabel = expression.getTargetLabel();
                 assert targetLabel != null;
@@ -977,6 +977,12 @@ public class JetControlFlowProcessor {
                 if (loop == null) {
                     trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression));
                 }
+            }
+            if (loop != null && loop.getBody() != null
+                    // the faster version of 'isAncestor' check:
+                    && !loop.getBody().getTextRange().contains(expression.getTextRange())) {
+                trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression));
+                return null;
             }
             return loop;
         }
