@@ -35,17 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractLazyResolveTest extends JetLiteFixture {
-    private ExpectedResolveData expectedResolveData;
-
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        expectedResolveData = getExpectedResolveData();
     }
 
     protected ExpectedResolveData getExpectedResolveData() {
@@ -64,6 +56,8 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
 
     protected void doTest(@NonNls String testFile) throws Exception {
         String text = FileUtil.loadFile(new File(testFile), true);
+
+        final ExpectedResolveData expectedResolveData = getExpectedResolveData();
 
         List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
             @Override
