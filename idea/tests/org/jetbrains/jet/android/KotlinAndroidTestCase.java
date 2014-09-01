@@ -26,10 +26,17 @@ import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper;
 import com.intellij.codeInspection.ex.InspectionManagerEx;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
+import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiManagerEx;
+import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.InspectionTestUtil;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
@@ -40,11 +47,16 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
+import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors"})
@@ -55,6 +67,8 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     private boolean myCreateManifest;
     protected AndroidFacet myFacet;
 
+    private boolean kotlinInternalModeOriginalValue;
+
     public KotlinAndroidTestCase(boolean createManifest) {
         this.myCreateManifest = createManifest;
     }
@@ -62,7 +76,11 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     public KotlinAndroidTestCase() {
         this(true);
     }
-     public static void SHIT() {}
+
+    @NotNull
+    protected String getResRelativePath() {
+        return "res/";
+    }
 
     @Override
     public void setUp() throws Exception {
@@ -120,6 +138,12 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
             // Unit test class loader includes disk directories which security manager does not allow access to
             RenderSecurityManager.sEnabled = false;
         }
+
+        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+
+        kotlinInternalModeOriginalValue = KotlinInternalMode.OBJECT$.getEnabled();
+        KotlinInternalMode.OBJECT$.setEnabled(true);
     }
 
     protected boolean isToAddSdk() {
@@ -200,6 +224,12 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
 
     @Override
     public void tearDown() throws Exception {
+        KotlinInternalMode.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
+        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+
+        Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
+        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
+
         myModule = null;
         myAdditionalModules = null;
         myFixture.tearDown();
@@ -208,7 +238,15 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         if (RenderSecurityManager.RESTRICT_READS) {
             RenderSecurityManager.sEnabled = true;
         }
+
         super.tearDown();
+
+        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
+        // otherwise built-ins psi elements will become invalid in next test.
+        for (JetFile source : builtInsSources) {
+            FileViewProvider provider = source.getViewProvider();
+            fileManager.setViewProvider(provider.getVirtualFile(), provider);
+        }
     }
 
     public AndroidFacet addAndroidFacet(Module module, String sdkPath, String platformDir) {
