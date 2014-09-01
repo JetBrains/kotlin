@@ -163,8 +163,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
  * Returns a stream containing all elements except first *n* elements
  */
 public fun <T> Stream<T>.drop(n: Int): Stream<T> {
-    var count = 0;
-    return FilteringStream(this) { count++ >= n }
+    return DropStream(this, n)
 }
 
 /**
@@ -338,16 +337,7 @@ public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> 
  * Returns a stream containing all elements except first elements that satisfy the given *predicate*
  */
 public fun <T> Stream<T>.dropWhile(predicate: (T) -> Boolean): Stream<T> {
-    var yielding = false
-    return FilteringStream(this) {
-        if (yielding)
-            true
-        else if (!predicate(it)) {
-            yielding = true
-            true
-        } else
-            false
-    }
+    return DropWhileStream(this, predicate)
 }
 
 /**
@@ -1058,8 +1048,7 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
  * Returns a stream containing first *n* elements
  */
 public fun <T> Stream<T>.take(n: Int): Stream<T> {
-    var count = 0
-    return LimitedStream(this) { count++ == n }
+    return TakeStream(this, n)
 }
 
 /**
@@ -1203,7 +1192,7 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
  * Returns a stream containing first elements satisfying the given *predicate*
  */
 public fun <T> Stream<T>.takeWhile(predicate: (T) -> Boolean): Stream<T> {
-    return LimitedStream(this, false, predicate)
+    return TakeWhileStream(this, predicate)
 }
 
 /**
