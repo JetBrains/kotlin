@@ -174,6 +174,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile("idea/testData/quickfix/autoImports/unaryPlusOperator.before.Main.kt");
         }
         
+        @TestMetadata("withAutoCastedQualifier.before.Main.kt")
+        public void testWithAutoCastedQualifier() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/withAutoCastedQualifier.before.Main.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/quickfix/createFromUsage")

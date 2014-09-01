@@ -158,7 +158,7 @@ public class KotlinIndicesHelper(private val project: Project) {
         return allFqNames
                 .filter { nameFilter(it.shortName().asString()) }
                 .toSet()
-                .flatMap { ExpressionTypingUtils.canFindSuitableCall(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor()) }
+                .flatMap { ExpressionTypingUtils.canFindSuitableCall(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor(), context) }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {

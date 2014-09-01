@@ -33,6 +33,8 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -60,6 +62,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
 
 public class ExpressionTypingUtils {
 
@@ -199,7 +202,8 @@ public class ExpressionTypingUtils {
             @NotNull JetExpression receiverExpression,
             @NotNull JetType receiverType,
             @NotNull JetScope scope,
-            @NotNull ModuleDescriptor module
+            @NotNull ModuleDescriptor module,
+            @NotNull BindingContext bindingContext
     ) {
         JetImportDirective importDirective = JetPsiFactory(receiverExpression).createImportDirective(callableFQN.asString());
 
@@ -209,11 +213,13 @@ public class ExpressionTypingUtils {
         List<CallableDescriptor> callableExtensionDescriptors = new ArrayList<CallableDescriptor>();
         ReceiverValue receiverValue = new ExpressionReceiver(receiverExpression, receiverType);
 
+        DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, receiverExpression);
+
         for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
             if (declarationDescriptor instanceof CallableDescriptor) {
                 CallableDescriptor callableDescriptor = (CallableDescriptor) declarationDescriptor;
 
-                if (checkIsExtensionCallable(receiverValue, callableDescriptor)) {
+                if (checkIsExtensionCallable(receiverValue, callableDescriptor, bindingContext, dataFlowInfo)) {
                     callableExtensionDescriptors.add(callableDescriptor);
                 }
             }
@@ -227,15 +233,20 @@ public class ExpressionTypingUtils {
     */
     public static boolean checkIsExtensionCallable (
             @NotNull ReceiverValue receiverArgument,
-            @NotNull CallableDescriptor callableDescriptor
+            @NotNull CallableDescriptor callableDescriptor,
+            @NotNull BindingContext bindingContext,
+            @NotNull DataFlowInfo dataFlowInfo
     ) {
-        JetType type = receiverArgument.getType();
+        List<JetType> types = AutoCastUtils.getAutoCastVariants(receiverArgument, bindingContext, dataFlowInfo);
 
-        if (checkReceiverResolution(receiverArgument, type, callableDescriptor)) return true;
-        if (type.isNullable()) {
-            JetType notNullableType = TypeUtils.makeNotNullable(type);
-            if (checkReceiverResolution(receiverArgument, notNullableType, callableDescriptor)) return true;
+        for (JetType type : types) {
+            if (checkReceiverResolution(receiverArgument, type, callableDescriptor)) return true;
+            if (type.isNullable()) {
+                JetType notNullableType = TypeUtils.makeNotNullable(type);
+                if (checkReceiverResolution(receiverArgument, notNullableType, callableDescriptor)) return true;
+            }
         }
+
         return false;
     }
 

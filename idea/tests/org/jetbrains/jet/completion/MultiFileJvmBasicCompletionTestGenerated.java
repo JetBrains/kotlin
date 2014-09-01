@@ -73,6 +73,11 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest("idea/testData/completion/basic/multifile/ExtensionOnNullable/");
     }
     
+    @TestMetadata("ExtensionsForAutoCasted")
+    public void testExtensionsForAutoCasted() throws Exception {
+        doTest("idea/testData/completion/basic/multifile/ExtensionsForAutoCasted/");
+    }
+    
     @TestMetadata("GroovyClassNameCompletionFromDefaultPackage")
     public void testGroovyClassNameCompletionFromDefaultPackage() throws Exception {
         doTest("idea/testData/completion/basic/multifile/GroovyClassNameCompletionFromDefaultPackage/");
