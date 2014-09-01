@@ -33,6 +33,7 @@ import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
@@ -71,8 +72,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             assert receiver != null;
             assert arguments.size() == 1;
             JsBinaryOperation div = new JsBinaryOperation(JsBinaryOperator.DIV, receiver, arguments.get(0));
-            JsBinaryOperation toInt32 = new JsBinaryOperation(JsBinaryOperator.BIT_OR, div, context.program().getNumberLiteral(0));
-            return toInt32;
+            return JsAstUtils.toInt32(div, context);
         }
     };
 

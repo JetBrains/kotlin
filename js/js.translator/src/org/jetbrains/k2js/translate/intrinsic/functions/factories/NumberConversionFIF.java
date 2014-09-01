@@ -17,24 +17,20 @@
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import com.google.common.collect.Sets;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.subtract;
 
 public final class NumberConversionFIF extends CompositeFIF {
     @NotNull
@@ -81,10 +77,7 @@ public final class NumberConversionFIF extends CompositeFIF {
                 @NotNull TranslationContext context) {
             assert receiver != null;
             assert arguments.isEmpty();
-            JsNameRef toConvertReference = context.declareTemporary(null).reference();
-            JsBinaryOperation fractional =
-                    new JsBinaryOperation(JsBinaryOperator.MOD, toConvertReference, context.program().getNumberLiteral(1));
-            return subtract(assignment(toConvertReference, receiver), fractional);
+            return JsAstUtils.toInt32(receiver, context);
         }
     };
     @NotNull

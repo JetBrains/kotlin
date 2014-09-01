@@ -118,6 +118,11 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsExpression toInt32(@NotNull JsExpression expression, @NotNull TranslationContext context) {
+        return new JsBinaryOperation(JsBinaryOperator.BIT_OR, expression, context.program().getNumberLiteral(0));
+    }
+
+    @NotNull
     public static JsPrefixOperation negated(@NotNull JsExpression expression) {
         return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
     }
