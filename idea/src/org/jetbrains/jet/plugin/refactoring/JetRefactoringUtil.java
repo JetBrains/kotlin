@@ -122,9 +122,11 @@ public class JetRefactoringUtil {
             "fun checkSuperMethods(declaration: JetDeclaration, ignore: Collection<PsiElement>?, actionStringKey: String): MutableList<out PsiElement>?")
     @Nullable
     public static List<? extends PsiElement> checkSuperMethods(
-            @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore, @NotNull String actionStringKey
+            @NotNull JetDeclaration declaration,
+            @Nullable Collection<PsiElement> ignore,
+            @NotNull String actionStringKey
     ) {
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
 
         CallableDescriptor declarationDescriptor =
                 (CallableDescriptor)bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
@@ -133,20 +135,14 @@ public class JetRefactoringUtil {
             return Collections.singletonList(declaration);
         }
 
-        final Project project = declaration.getProject();
-        Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = ContainerUtil.map2Map(
-                OverrideResolver.getAllOverriddenDescriptors(declarationDescriptor),
-                new Function<CallableDescriptor, Pair<PsiElement, CallableDescriptor>>() {
-                    @Override
-                    public Pair<PsiElement, CallableDescriptor> fun(CallableDescriptor descriptor) {
-                        return new Pair<PsiElement, CallableDescriptor>(
-                                DescriptorToDeclarationUtil.getDeclaration(project, descriptor),
-                                descriptor
-                        );
-                    }
-                }
-        );
-        overriddenElementsToDescriptor.remove(null);
+        Project project = declaration.getProject();
+        Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = new HashMap<PsiElement, CallableDescriptor>();
+        for (CallableDescriptor overridenDescriptor : OverrideResolver.getAllOverriddenDescriptors(declarationDescriptor)) {
+            PsiElement overridenDeclaration = DescriptorToDeclarationUtil.getDeclaration(project, overridenDescriptor);
+            if (overridenDeclaration != null) {
+                overriddenElementsToDescriptor.put(overridenDeclaration, overridenDescriptor);
+            }
+        }
         if (ignore != null) {
             overriddenElementsToDescriptor.keySet().removeAll(ignore);
         }
