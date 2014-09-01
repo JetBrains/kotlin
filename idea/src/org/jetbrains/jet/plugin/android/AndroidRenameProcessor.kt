@@ -29,13 +29,14 @@ import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper
 import org.jetbrains.android.util.AndroidResourceUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.impl.light.LightElement
+import org.jetbrains.jet.lang.resolve.android.isRClassField
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
         // either renaming synthetic property, or value in ui xml, or R light class field
         return (element.namedUnwrappedElement is JetProperty &&
                 isAndroidSyntheticElement(element.namedUnwrappedElement)) || element is XmlAttributeValue ||
-                element is LightElement
+                isRClassField(element)
     }
 
     override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
