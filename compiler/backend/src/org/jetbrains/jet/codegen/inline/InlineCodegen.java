@@ -183,7 +183,7 @@ public class InlineCodegen implements CallGenerator {
             MethodContext methodContext = context.getParentContext().intoFunction(functionDescriptor);
             MemberCodegen<?> parentCodegen = codegen.getParentCodegen();
             if (callDefault) {
-                boolean isStatic = isStatic(context.getContextKind());
+                boolean isStatic = AsmUtil.isStaticMethod(context.getContextKind(), functionDescriptor);
                 FunctionCodegen.generateDefaultImplBody(
                         methodContext, jvmSignature, functionDescriptor, isStatic, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
                         (JetNamedFunction) element, parentCodegen, state

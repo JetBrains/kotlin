@@ -301,4 +301,18 @@ public class JvmCodegenUtil {
                ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
                : descriptor;
     }
+
+    public static boolean isPlatformStaticInObject(CallableDescriptor descriptor) {
+        if (DescriptorUtils.isObject(descriptor.getContainingDeclaration())) {
+            return KotlinBuiltIns.getInstance().isPlatformStatic(descriptor);
+        }
+        return false;
+    }
+
+    public static boolean isPlatformStaticInClassObject(CallableDescriptor descriptor) {
+        if (DescriptorUtils.isClassObject(descriptor.getContainingDeclaration())) {
+            return KotlinBuiltIns.getInstance().isPlatformStatic(descriptor);
+        }
+        return false;
+    }
 }

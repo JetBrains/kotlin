@@ -149,6 +149,12 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         generateBridges(functionDescriptor);
 
+
+        if (JvmCodegenUtil.isPlatformStaticInClassObject(functionDescriptor)) {
+            MemberCodegen<?> codegen = getParentCodegen().getParentCodegen();
+            ((ImplementationBodyCodegen) codegen).addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
+        }
+
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES || isAbstractMethod(functionDescriptor, methodContextKind)) {
             generateLocalVariableTable(
                     mv,
@@ -294,7 +300,8 @@ public class FunctionCodegen extends ParentCodegenAware {
             generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
         }
         else {
-            FrameMap frameMap = createFrameMap(parentCodegen.state, functionDescriptor, signature, isStatic(context.getContextKind()));
+            FrameMap frameMap = createFrameMap(parentCodegen.state, functionDescriptor, signature, isStaticMethod(context.getContextKind(),
+                                                                                                                  functionDescriptor));
 
             Label methodEntry = new Label();
             mv.visitLabel(methodEntry);
@@ -582,7 +589,7 @@ public class FunctionCodegen extends ParentCodegenAware {
                 endVisit(mv, "default method delegation", callableDescriptorToDeclaration(functionDescriptor));
             }
             else {
-                generateDefaultImpl(owner, signature, functionDescriptor, isStatic(kind), mv, loadStrategy, function);
+                generateDefaultImpl(owner, signature, functionDescriptor, isStaticMethod(kind, functionDescriptor), mv, loadStrategy, function);
             }
         }
     }
@@ -791,7 +798,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             final ClassDescriptor toClass,
             final StackValue field,
             final JvmMethodSignature jvmDelegateMethodSignature,
-            final JvmMethodSignature jvmOverriddenMethodSignature
+            final JvmMethodSignature jvmDelegatingMethodSignature
     ) {
         generateMethod(
                 OtherOrigin(functionDescriptor), jvmDelegateMethodSignature, functionDescriptor,
@@ -804,7 +811,7 @@ public class FunctionCodegen extends ParentCodegenAware {
                             @NotNull MethodContext context,
                             @NotNull MemberCodegen<?> parentCodegen
                     ) {
-                        Method overriddenMethod = jvmOverriddenMethodSignature.getAsmMethod();
+                        Method overriddenMethod = jvmDelegatingMethodSignature.getAsmMethod();
                         Method delegateMethod = jvmDelegateMethodSignature.getAsmMethod();
 
                         Type[] argTypes = delegateMethod.getArgumentTypes();

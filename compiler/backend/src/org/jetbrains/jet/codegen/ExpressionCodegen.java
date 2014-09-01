@@ -1390,7 +1390,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetType captureReceiver = closure.getCaptureReceiverType();
             if (captureReceiver != null) {
                 Type asmType = typeMapper.mapType(captureReceiver);
-                StackValue.Local capturedReceiver = StackValue.local(context.isStatic() ? 0 : 1, asmType);
+                StackValue.Local capturedReceiver = StackValue.local(AsmUtil.getReceiverIndex(context, context.getContextDescriptor()), asmType);
                 callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
             }
         }
@@ -2305,7 +2305,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
-            if (context.hasThisDescriptor() && context.getThisDescriptor().equals(calleeContainingClass)) {
+            if (context.hasThisDescriptor() &&
+                context.getThisDescriptor().equals(calleeContainingClass) &&
+                !isPlatformStaticInObject(context.getContextDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
             else {

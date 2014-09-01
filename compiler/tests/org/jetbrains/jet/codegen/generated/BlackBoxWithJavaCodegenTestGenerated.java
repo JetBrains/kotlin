@@ -32,16 +32,46 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxWithJava")
 @TestDataPath("$PROJECT_ROOT")
+@InnerTestClasses({BlackBoxWithJavaCodegenTestGenerated.PlatformStatic.class})
 @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithJava() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava"), Pattern.compile("^([^\\.]+)$"), false);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava"), Pattern.compile("^([^\\.]+)$"), true);
     }
     
     @TestMetadata("referenceToJavaFieldOfKotlinSubclass")
     public void testReferenceToJavaFieldOfKotlinSubclass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/referenceToJavaFieldOfKotlinSubclass/");
         doTestWithJava(fileName);
+    }
+    
+    @TestMetadata("compiler/testData/codegen/boxWithJava/platformStatic")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    public static class PlatformStatic extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInPlatformStatic() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/platformStatic"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+        
+        @TestMetadata("annotations")
+        public void testAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/annotations/");
+            doTestWithJava(fileName);
+        }
+        
+        @TestMetadata("classObject")
+        public void testClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/classObject/");
+            doTestWithJava(fileName);
+        }
+        
+        @TestMetadata("object")
+        public void testObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/object/");
+            doTestWithJava(fileName);
+        }
+        
     }
     
 }

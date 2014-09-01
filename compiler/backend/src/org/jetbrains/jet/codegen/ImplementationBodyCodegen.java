@@ -20,9 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
-import kotlin.Function0;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
+import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.backend.common.CodegenUtil;
@@ -94,6 +92,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private List<PropertyAndDefaultValue> classObjectPropertiesToCopy;
 
+    private List<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>> additionalTasks;
+
     public ImplementationBodyCodegen(
             @NotNull JetClassOrObject aClass,
             @NotNull ClassContext context,
@@ -103,6 +103,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         super(aClass, context, v, state, parentCodegen);
         this.classAsmType = typeMapper.mapClass(descriptor);
+        additionalTasks = new ArrayList<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>>();
     }
 
     @Override
@@ -1731,6 +1732,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         classObjectPropertiesToCopy.add(new PropertyAndDefaultValue(descriptor, defaultValue));
     }
 
+    @Override
+    protected void done() {
+        for (Function2<ImplementationBodyCodegen, ClassBuilder, Unit> task : additionalTasks) {
+            task.invoke(this, v);
+        }
+
+        super.done();
+    }
+
     private static class PropertyAndDefaultValue {
         public final PropertyDescriptor descriptor;
         public final Object defaultValue;
@@ -1739,5 +1749,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             this.descriptor = descriptor;
             this.defaultValue = defaultValue;
         }
+    }
+
+    public void addAdditionalTask(Function2<ImplementationBodyCodegen, ClassBuilder, Unit> additionalTask) {
+        additionalTasks.add(additionalTask);
     }
 }

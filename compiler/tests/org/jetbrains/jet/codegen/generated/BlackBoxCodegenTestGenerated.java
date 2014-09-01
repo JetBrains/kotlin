@@ -6062,6 +6062,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("traitWithPrivateExtension.kt")
+        public void testTraitWithPrivateExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/traitWithPrivateExtension.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("compiler/testData/codegen/box/traits/withRequired")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)

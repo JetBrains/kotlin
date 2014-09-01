@@ -1127,22 +1127,23 @@ public abstract class StackValue {
 
             ReceiverValue thisObject = resolvedCall.getThisObject();
             ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
-            int depth;
+            int depth = 0;
             if (thisObject.exists()) {
-                if (receiverArgument.exists()) {
-                    //noinspection ConstantConditions
-                    Type resultType =
-                            callableMethod != null ?
-                            callableMethod.getOwner() :
-                            codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
+                if (!JvmCodegenUtil.isPlatformStaticInObject(descriptor)) {
+                    if (receiverArgument.exists()) {
+                        //noinspection ConstantConditions
+                        Type resultType =
+                                callableMethod != null ?
+                                callableMethod.getOwner() :
+                                codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
 
-                    codegen.generateReceiverValue(thisObject, resultType);
+                        codegen.generateReceiverValue(thisObject, resultType);
+                    }
+                    else {
+                        genReceiver(v, thisObject, type, null, 0);
+                    }
+                    depth = 1;
                 }
-                else {
-                    genReceiver(v, thisObject, type, null, 0);
-                }
-
-                depth = 1;
             }
             else if (isLocalFunCall(callableMethod)) {
                 assert receiver == none() || receiverArgument.exists() :
@@ -1152,9 +1153,6 @@ public abstract class StackValue {
                 value.put(callableMethod.getGenerateCalleeType(), v);
 
                 depth = 1;
-            }
-            else {
-                depth = 0;
             }
 
             if (putReceiverArgumentOnStack && receiverArgument.exists()) {

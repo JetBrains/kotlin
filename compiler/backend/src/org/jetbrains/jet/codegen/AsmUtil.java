@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
+import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -165,11 +166,13 @@ public class AsmUtil {
                && !isStaticMethod(kind, functionDescriptor);
     }
 
-    public static boolean isStaticMethod(OwnerKind kind, FunctionDescriptor functionDescriptor) {
-        return isStatic(kind) || JetTypeMapper.isAccessor(functionDescriptor);
+    public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
+        return isStaticKind(kind) ||
+               JetTypeMapper.isAccessor(functionDescriptor) ||
+               JvmCodegenUtil.isPlatformStaticInObject(functionDescriptor);
     }
 
-    public static boolean isStatic(OwnerKind kind) {
+    public static boolean isStaticKind(OwnerKind kind) {
         return kind == OwnerKind.PACKAGE || kind == OwnerKind.TRAIT_IMPL;
     }
 
@@ -790,5 +793,11 @@ public class AsmUtil {
     @NotNull
     public static Type getArrayOf(@NotNull String internalClassName) {
         return Type.getType("[L" + internalClassName + ";");
+    }
+
+    public static int getReceiverIndex(@NotNull CodegenContext context, @NotNull CallableMemberDescriptor descriptor) {
+        OwnerKind kind = context.getContextKind();
+        //Trait always should have this descriptor
+        return kind != OwnerKind.TRAIT_IMPL && isStaticMethod(kind, descriptor) ? 0 : 1;
     }
 }

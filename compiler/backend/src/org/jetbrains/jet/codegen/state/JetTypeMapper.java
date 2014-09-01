@@ -62,7 +62,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
-import static org.jetbrains.jet.codegen.AsmUtil.isStatic;
+import static org.jetbrains.jet.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
@@ -447,7 +447,7 @@ public class JetTypeMapper {
                 thisClass = mapClass(currentOwner);
             }
             else {
-                if (isAccessor(functionDescriptor)) {
+                if (isAccessor(functionDescriptor) || isPlatformStaticInObject(functionDescriptor)) {
                     invokeOpcode = INVOKESTATIC;
                 }
                 else if (isInterface) {
@@ -632,7 +632,7 @@ public class JetTypeMapper {
         Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
         String descriptor = getDefaultDescriptor(jvmSignature, functionDescriptor.getReceiverParameter() != null);
         boolean isConstructor = "<init>".equals(jvmSignature.getName());
-        if (!isStatic(kind) && !isConstructor) {
+        if (!isStaticMethod(kind, functionDescriptor) && !isConstructor) {
             descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());
         }
 

@@ -106,7 +106,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     protected abstract void generateKotlinAnnotation();
 
-    private void done() {
+    protected void done() {
         if (clInit != null) {
             clInit.v.visitInsn(RETURN);
             FunctionCodegen.endVisit(clInit.v, "static initializer", element);
@@ -375,5 +375,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     public String getClassName() {
         return v.getThisName();
+    }
+
+    @NotNull
+    public FieldOwnerContext<?> getContext() {
+        return context;
     }
 }

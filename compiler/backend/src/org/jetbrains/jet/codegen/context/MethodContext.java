@@ -18,14 +18,20 @@ package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.JvmCodegenUtil;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.org.objectweb.asm.Label;
+import org.jetbrains.org.objectweb.asm.Type;
 
 public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     private final boolean isInliningLambda;
@@ -48,6 +54,13 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     public CodegenContext getParentContext() {
         //noinspection ConstantConditions
         return super.getParentContext();
+    }
+
+    public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
+        assert getCallableDescriptorWithReceiver() != null;
+        @SuppressWarnings("ConstantConditions")
+        Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getReceiverParameter().getType());
+        return StackValue.local(AsmUtil.getReceiverIndex(this, getContextDescriptor()), asmType);
     }
 
     @Override

@@ -334,7 +334,7 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getPlatforStaticAnnotationClass() {
+    public ClassDescriptor getPlatformStaticAnnotationClass() {
         return getBuiltInClassByName("platformStatic");
     }
 
@@ -868,7 +868,7 @@ public class KotlinBuiltIns {
     }
 
     public boolean isPlatformStatic(@NotNull CallableDescriptor callableDescriptor) {
-        return containsAnnotation(callableDescriptor, getPlatforStaticAnnotationClass());
+        return containsAnnotation(callableDescriptor, getPlatformStaticAnnotationClass());
     }
 
     public boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {

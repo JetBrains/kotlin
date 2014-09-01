@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/compileJavaAgainstKotlin")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({CompileJavaAgainstKotlinTestGenerated.Class.class, CompileJavaAgainstKotlinTestGenerated.Method.class, CompileJavaAgainstKotlinTestGenerated.Property.class, CompileJavaAgainstKotlinTestGenerated.StaticFields.class})
+@InnerTestClasses({CompileJavaAgainstKotlinTestGenerated.Class.class, CompileJavaAgainstKotlinTestGenerated.Method.class, CompileJavaAgainstKotlinTestGenerated.PlatformStatic.class, CompileJavaAgainstKotlinTestGenerated.Property.class, CompileJavaAgainstKotlinTestGenerated.StaticFields.class})
 @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAgainstKotlinTest {
     public void testAllFilesPresentInCompileJavaAgainstKotlin() throws Exception {
@@ -416,6 +416,28 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 doTest(fileName);
             }
             
+        }
+        
+    }
+    
+    @TestMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    public static class PlatformStatic extends AbstractCompileJavaAgainstKotlinTest {
+        public void testAllFilesPresentInPlatformStatic() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("simpleClassObject.kt")
+        public void testSimpleClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic/simpleClassObject.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleObject.kt")
+        public void testSimpleObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic/simpleObject.kt");
+            doTest(fileName);
         }
         
     }
