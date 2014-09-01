@@ -1,0 +1,17 @@
+== foo ==
+val foo: Int by throw NullPointerException()
+---------------------
+L0:
+  1 <START>
+    v(val foo: Int by throw NullPointerException())
+    mark(throw NullPointerException())
+    mark(NullPointerException())
+    call(NullPointerException(), <init>) -> <v0>
+    throw (throw NullPointerException()|<v0>)          NEXT:[<ERROR>]
+L1:
+    <END>                                              NEXT:[<SINK>]                                             PREV:[]
+error:
+    <ERROR>                                            PREV:[throw (throw NullPointerException()|<v0>)]
+sink:
+    <SINK>                                             PREV:[<ERROR>, <END>]
+=====================

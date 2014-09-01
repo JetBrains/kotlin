@@ -337,6 +337,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                     doTest("compiler/testData/cfg/declarations/properties/DelegatedProperty.kt");
                 }
                 
+                @TestMetadata("unreachableDelegation.kt")
+                public void testUnreachableDelegation() throws Exception {
+                    doTest("compiler/testData/cfg/declarations/properties/unreachableDelegation.kt");
+                }
+                
             }
             
             public static Test innerSuite() {

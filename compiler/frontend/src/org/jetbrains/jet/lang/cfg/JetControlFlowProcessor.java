@@ -1169,7 +1169,9 @@ public class JetControlFlowProcessor {
             DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             if (!(descriptor instanceof PropertyDescriptor)) return;
 
-            List<PseudoValue> values = Collections.singletonList(builder.getBoundValue(delegate));
+            PseudoValue delegateValue = builder.getBoundValue(delegate);
+            if (delegateValue == null) return;
+
             List<TypePredicate> typePredicates = KotlinPackage.map(
                     ((PropertyDescriptor) descriptor).getAccessors(),
                     new Function1<PropertyAccessorDescriptor, TypePredicate>() {
@@ -1179,9 +1181,10 @@ public class JetControlFlowProcessor {
                         }
                     }
             );
-            Map<PseudoValue, TypePredicate> valuesToTypePredicates =
-                    PseudocodePackage.expectedTypeFor(PseudocodePackage.and(typePredicates), values);
-            builder.magic(property, null, values, valuesToTypePredicates, MagicKind.VALUE_CONSUMER);
+            Map<PseudoValue, TypePredicate> valuesToTypePredicates = SmartFMap
+                    .<PseudoValue, TypePredicate>emptyMap()
+                    .plus(delegateValue, PseudocodePackage.and(typePredicates));
+            builder.magic(property, null, Collections.singletonList(delegateValue), valuesToTypePredicates, MagicKind.VALUE_CONSUMER);
         }
 
         private TypePredicate getTypePredicateByReceiverValue(@Nullable ResolvedCall<?> resolvedCall) {
