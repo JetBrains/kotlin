@@ -131,7 +131,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
             MockLibraryUtil.compileKotlin(sourcesDir, new File(outputDir), CUSTOM_LIBRARY_JAR.getPath());
 
-            List<String> options = Arrays.asList("-d", outputDir);
+            List<String> options = Arrays.asList("-d", outputDir, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath());
             JetTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
 
             IS_TINY_APP_COMPILED = true;
