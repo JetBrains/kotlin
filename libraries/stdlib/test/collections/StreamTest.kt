@@ -12,18 +12,31 @@ fun fibonacci(): Stream<Int> {
     return stream {
         when (index++) { 0 -> a; 1 -> b; else -> {
             val result = a + b; a = b; b = result; result
-        } }
+        }
+        }
     }
 }
 
 public class StreamTest {
 
+    test fun filterEmptyStream() {
+        val stream = streamOf<String>()
+        assertEquals(0, stream.filter { false }.count())
+        assertEquals(0, stream.filter { true }.count())
+    }
+
+    test fun mapEmptyStream() {
+        val stream = streamOf<String>()
+        assertEquals(0, stream.map { false }.count())
+        assertEquals(0, stream.map { true }.count())
+    }
+
     test fun requireNoNulls() {
-        val stream = arrayListOf<String?>("foo", "bar").stream()
+        val stream = streamOf<String?>("foo", "bar")
         val notNull = stream.requireNoNulls()
         assertEquals(arrayListOf("foo", "bar"), notNull.toList())
 
-        val streamWithNulls = arrayListOf("foo", null, "bar").stream()
+        val streamWithNulls = streamOf("foo", null, "bar")
         val notNull2 = streamWithNulls.requireNoNulls() // shouldn't fail yet
         fails {
             // should throw an exception as we have a null
@@ -31,14 +44,20 @@ public class StreamTest {
         }
     }
 
+    test fun filterNullable() {
+        val data = streamOf(null, "foo", null, "bar")
+        val filtered = data.filter { it == null || it == "foo" }
+        assertEquals(arrayListOf(null, "foo", null), filtered.toList())
+    }
+
     test fun filterNotNull() {
-        val data = arrayListOf(null, "foo", null, "bar").stream()
+        val data = streamOf(null, "foo", null, "bar")
         val filtered = data.filterNotNull()
         assertEquals(arrayListOf("foo", "bar"), filtered.toList())
     }
 
     test fun mapNotNull() {
-        val data = arrayListOf(null, "foo", null, "bar").stream()
+        val data = streamOf(null, "foo", null, "bar")
         val foo = data.mapNotNull { it.length }
         assertEquals(arrayListOf(3, 3), foo.toList())
 
@@ -68,13 +87,21 @@ public class StreamTest {
         assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.joinToString(separator = ", ", limit = 5))
     }
 
-    test fun skippingIterator() {
+    test fun drop() {
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
     }
 
-    test
-    fun merge() {
+    test fun take() {
+        assertEquals("0, 1, 1, 2, 3, 5, 8", fibonacci().take(7).joinToString())
+        assertEquals("2, 3, 5, 8", fibonacci().drop(3).take(4).joinToString())
+    }
+
+    test fun dropWhile() {
+        assertEquals("233, 377, 610", fibonacci().dropWhile { it < 200 }.take(3).joinToString(limit = 10))
+    }
+
+    test fun merge() {
         expect(listOf("ab", "bc", "cd")) {
             streamOf("a", "b", "c").merge(streamOf("b", "c", "d")) { a, b -> a + b }.toList()
         }
@@ -87,24 +114,24 @@ public class StreamTest {
     }
 
     test fun plus() {
-        val stream = listOf("foo", "bar").stream()
+        val stream = streamOf("foo", "bar")
         val streamCheese = stream + "cheese"
         assertEquals(listOf("foo", "bar", "cheese"), streamCheese.toList())
 
         // lets use a mutable variable
-        var mi = listOf("a", "b").stream()
+        var mi = streamOf("a", "b")
         mi += "c"
         assertEquals(listOf("a", "b", "c"), mi.toList())
     }
 
     test fun plusCollection() {
-        val a = listOf("foo", "bar")
+        val a = streamOf("foo", "bar")
         val b = listOf("cheese", "wine")
-        val stream = a.stream() + b
+        val stream = a + b
         assertEquals(listOf("foo", "bar", "cheese", "wine"), stream.toList())
 
         // lets use a mutable variable
-        var ml = listOf("a").stream()
+        var ml = streamOf("a")
         ml += a
         ml += "beer"
         ml += b
@@ -114,9 +141,8 @@ public class StreamTest {
 
 
     test fun iterationOverStream() {
-        val c = arrayListOf(0, 1, 2, 3, 4, 5)
         var s = ""
-        for (i in c.stream()) {
+        for (i in streamOf(0, 1, 2, 3, 4, 5)) {
             s = s + i.toString()
         }
         assertEquals("012345", s)
@@ -145,10 +171,38 @@ public class StreamTest {
     }
 
     test fun streamExtensions() {
-        val c = arrayListOf(0, 1, 2, 3, 4, 5)
         val d = ArrayList<Int>()
-        c.stream().takeWhileTo(d, { i -> i < 4 })
+        streamOf(0, 1, 2, 3, 4, 5).takeWhileTo(d, { i -> i < 4 })
         assertEquals(4, d.size())
+    }
+
+    test fun flatMapAndTakeExtractTheTransformedElements() {
+        val expected = arrayListOf(
+                '3', // fibonacci(4) = 3
+                '5', // fibonacci(5) = 5
+                '8', // fibonacci(6) = 8
+                '1', '3', // fibonacci(7) = 13
+                '2', '1', // fibonacci(8) = 21
+                '3', '4', // fibonacci(9) = 34
+                '5' // fibonacci(10) = 55
+                                  )
+
+        assertEquals(expected, fibonacci().drop(4).flatMap { it.toString().stream() }.take(10).toList())
+    }
+
+    test fun flatMap() {
+        val result = streamOf(1, 2).flatMap { streamOf(0..it) }
+        assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
+    }
+
+    test fun flatMapOnEmpty() {
+        val result = streamOf<Int>().flatMap { streamOf(0..it) }
+        assertEquals(listOf<Int>(), result.toList())
+    }
+
+    test fun flatMapWithEmptyItems() {
+        val result = streamOf(1, 2, 4).flatMap { if (it == 2) streamOf<Int>() else streamOf(it - 1..it) }
+        assertEquals(listOf(0, 1, 3, 4), result.toList())
     }
 
     /*
