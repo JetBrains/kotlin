@@ -3781,6 +3781,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/checkNothingIsSubtype.kt");
             }
             
+            @TestMetadata("controlStructuresErrors.kt")
+            public void testControlStructuresErrors() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/controlStructuresErrors.kt");
+            }
+            
             @TestMetadata("inExpr.kt")
             public void testInExpr() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/inExpr.kt");
