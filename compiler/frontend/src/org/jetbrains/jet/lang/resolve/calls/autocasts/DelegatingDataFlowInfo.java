@@ -232,11 +232,6 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
     }
 
     @Override
-    public boolean hasTypeInfoConstraints() {
-        return !typeInfo.isEmpty();
-    }
-
-    @Override
     public String toString() {
         if (typeInfo.isEmpty() && nullabilityInfo.isEmpty()) {
             return "EMPTY";
