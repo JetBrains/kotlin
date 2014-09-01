@@ -974,6 +974,16 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/memberPropertyWithLambda.kt");
                 }
                 
+                @TestMetadata("multiDeclaration.kt")
+                public void testMultiDeclaration() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/multiDeclaration.kt");
+                }
+                
+                @TestMetadata("nestedInMultiDeclaration.kt")
+                public void testNestedInMultiDeclaration() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/nestedInMultiDeclaration.kt");
+                }
+                
                 @TestMetadata("topLevelProperty.kt")
                 public void testTopLevelProperty() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/topLevelProperty.kt");

@@ -66,6 +66,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lang.psi.JetMultiDeclaration
 
 public open class ExtractKotlinFunctionHandlerHelper {
     open fun adjustGeneratorOptions(options: ExtractionGeneratorOptions): ExtractionGeneratorOptions = options
@@ -206,7 +207,7 @@ fun selectElements(
 
         val parent = declaration.getParent()?.let {
             when (it) {
-                is JetProperty -> it.getParent()
+                is JetProperty, is JetMultiDeclaration -> it.getParent()
                 is JetParameterList -> it.getParent()?.getParent()
                 else -> it
             }

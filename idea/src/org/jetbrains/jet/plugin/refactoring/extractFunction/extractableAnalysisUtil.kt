@@ -598,6 +598,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val bodyElement = when (enclosingDeclaration) {
         is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
         is JetWithExpressionInitializer -> enclosingDeclaration.getInitializer()
+        is JetMultiDeclaration -> enclosingDeclaration.getInitializer()
         is JetParameter -> enclosingDeclaration.getDefaultValue()
         is JetClassInitializer -> enclosingDeclaration.getBody()
         is JetClass -> {
