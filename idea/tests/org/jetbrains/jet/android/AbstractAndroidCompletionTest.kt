@@ -38,17 +38,9 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     private var kotlinInternalModeOriginalValue: Boolean = false
 
     override fun setUp() {
-
         System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/androidSDK/")
         System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-17")
-
         super.setUp()
-        myFixture!!.setTestDataPath(getTestDataPath())
-        (StartupManager.getInstance(getProject()) as StartupManagerImpl).runPostStartupActivities()
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory())
-
-        kotlinInternalModeOriginalValue = KotlinInternalMode.enabled
-        KotlinInternalMode.enabled = true
         setAutoCompleteSetting(false)
     }
 
@@ -56,21 +48,6 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
         myFixture!!.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML)
     }
 
-    override fun tearDown() {
-        KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
-        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory())
-
-        val builtInsSources = getProject()!!.getComponent<BuiltInsReferenceResolver>(javaClass<BuiltInsReferenceResolver>())!!.getBuiltInsSources()!!
-        val fileManager = (PsiManager.getInstance(getProject()!!) as PsiManagerEx).getFileManager()
-
-        super.tearDown()
-        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
-        // otherwise built-ins psi elements will become invalid in next test.
-        for (source in builtInsSources) {
-            val provider = source.getViewProvider()
-            fileManager.setViewProvider(provider.getVirtualFile(), provider)
-        }
-    }
     private fun setAutoCompleteSetting(value: Boolean): Boolean {
         val settings = CodeInsightSettings.getInstance()
         val oldValue: Boolean
@@ -88,7 +65,7 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     private fun completionType() = CompletionType.BASIC
 
     fun doTest(testPath: String?) {
-        myFixture!!.copyDirectoryToProject("res/", "res")
+        myFixture!!.copyDirectoryToProject(getResDir()!!, "res")
         myFixture!!.configureByFile(testPath!! + getTestName(true) + ".kt");
         val fileText = FileUtil.loadFile(File(testPath + getTestName(true) + ".kt"), true)
         testCompletion(fileText, TargetPlatform.JVM, {
@@ -100,7 +77,6 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/android/completion/" + getTestName(true) + "/"
     }
-
 
     override fun requireRecentSdk() = true
 
