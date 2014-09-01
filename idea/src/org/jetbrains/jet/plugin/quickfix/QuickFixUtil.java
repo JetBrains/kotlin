@@ -112,9 +112,12 @@ public class QuickFixUtil {
     }
 
     @Nullable
-    public static JetParameter getParameterDeclarationForValueArgument(@NotNull ResolvedCall<?> resolvedCall, @Nullable ValueArgument valueArgument) {
-        ValueParameterDescriptor parameterDescriptor = CallUtilPackage.getParameterForArgument(resolvedCall, valueArgument);
-        return (JetParameter) safeGetDeclaration(parameterDescriptor);
+    public static JetParameter getParameterDeclarationForValueArgument(
+            @NotNull ResolvedCall<?> resolvedCall,
+            @Nullable ValueArgument valueArgument
+    ) {
+        PsiElement declaration = safeGetDeclaration(CallUtilPackage.getParameterForArgument(resolvedCall, valueArgument));
+        return declaration instanceof JetParameter ? (JetParameter) declaration : null;
     }
 
     private static boolean equalOrLastInThenOrElse(JetExpression thenOrElse, JetExpression expression) {
