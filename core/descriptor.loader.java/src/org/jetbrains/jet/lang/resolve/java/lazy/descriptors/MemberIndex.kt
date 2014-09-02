@@ -17,12 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
-import org.jetbrains.jet.lang.resolve.java.structure.JavaField
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMember
 import org.jetbrains.jet.utils.valuesToMap
+import java.util.HashSet
 
 trait MemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
@@ -50,8 +48,33 @@ open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember
     private val fields = jClass.getFields().stream().filter(memberFilter).valuesToMap { m -> m.getName() }
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> = methods[name] ?: listOf()
-    override fun getAllMethodNames(): Collection<Name> = jClass.getAllMethods().stream().filter(methodFilter).map { m -> m.getName() }.toList()
+    override fun getAllMethodNames(): Collection<Name> = jClass.getAllMemberNames(methodFilter) { getMethods() }
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
-    override fun getAllFieldNames() = jClass.getAllFields().stream().filter(memberFilter).map { m -> m.getName() }.toList()
+    override fun getAllFieldNames(): Collection<Name> = jClass.getAllMemberNames(memberFilter) { getFields() }
+}
+
+private fun <M : JavaMember> JavaClass.getAllMemberNames(filter: (M) -> Boolean, getMembers: JavaClass.() -> Collection<M>): Set<Name> {
+    val result = HashSet<Name>()
+    val visitedSuperClasses = HashSet<JavaClass>()
+
+    fun JavaClass.visit(): Unit {
+        if (!visitedSuperClasses.add(this)) return
+
+        for (member in getMembers()) {
+            if (filter(member)) {
+                result.add(member.getName())
+            }
+        }
+
+        for (supertype in getSupertypes()) {
+            val classifier = supertype.getClassifier()
+            if (classifier is JavaClass) {
+                classifier.visit()
+            }
+        }
+    }
+
+    this.visit()
+    return result
 }

@@ -1789,6 +1789,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJavaIncludeObjectMethods(fileName);
         }
         
+        @TestMetadata("EmptyInterface.java")
+        public void testEmptyInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJavaIncludeObjectMethods/EmptyInterface.java");
+            doTestCompiledJavaIncludeObjectMethods(fileName);
+        }
+        
         @TestMetadata("InterfaceWithObjectMethods.java")
         public void testInterfaceWithObjectMethods() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJavaIncludeObjectMethods/InterfaceWithObjectMethods.java");
