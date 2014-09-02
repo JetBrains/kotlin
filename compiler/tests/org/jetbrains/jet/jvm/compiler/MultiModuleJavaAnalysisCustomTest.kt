@@ -26,9 +26,7 @@ import java.io.File
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.*
 import org.junit.Assert
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
@@ -41,9 +39,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmResolverForModule
 import org.jetbrains.jet.analyzer.ResolverForProject
 import org.jetbrains.jet.analyzer.ModuleInfo
 import java.util.HashMap
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.analyzer.ModuleContent
+import org.jetbrains.jet.lang.types.ErrorUtils
 
 public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
@@ -121,11 +118,16 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
     private fun checkClass(classDescriptor: ClassDescriptor) {
         classDescriptor.getDefaultType().getMemberScope().getAllDescriptors().filterIsInstance(javaClass<CallableDescriptor>()).forEach {
-            checkCallable(it, classDescriptor)
+            checkCallable(it)
         }
+
+        checkSupertypes(classDescriptor)
     }
 
-    private fun checkCallable(callable: CallableDescriptor, classDescriptor: ClassDescriptor) {
+    private fun checkCallable(callable: CallableDescriptor) {
+        val name = callable.getName().asString()
+        if (name in setOf("equals", "hashCode", "toString")) return
+
         val returnType = callable.getReturnType()!!
         if (!KotlinBuiltIns.getInstance().isUnit(returnType)) {
             checkDescriptor(returnType.getConstructor().getDeclarationDescriptor()!!, callable)
@@ -138,8 +140,6 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
         callable.getAnnotations().map {
             it.getType().getConstructor().getDeclarationDescriptor()!!
         }.forEach { checkDescriptor(it, callable) }
-
-        checkSupertypes(classDescriptor)
     }
 
     private fun checkSupertypes(classDescriptor: ClassDescriptor) {
@@ -153,6 +153,8 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     }
 
     private fun checkDescriptor(referencedDescriptor: ClassifierDescriptor, context: DeclarationDescriptor) {
+        assert(!ErrorUtils.isError(referencedDescriptor), "Error descriptor: $referencedDescriptor")
+
         val descriptorName = referencedDescriptor.getName().asString()
         val expectedModuleName = "<${descriptorName.toLowerCase().first().toString()}>"
         val moduleName = DescriptorUtils.getContainingModule(referencedDescriptor).getName().asString()
