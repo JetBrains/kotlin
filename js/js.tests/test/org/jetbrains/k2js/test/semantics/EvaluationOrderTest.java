@@ -112,4 +112,8 @@ public class EvaluationOrderTest extends AbstractExpressionTest {
     public void testOrOrWithBreakContinueReturn() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testWhenJsLiteralWithSideEffect() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
