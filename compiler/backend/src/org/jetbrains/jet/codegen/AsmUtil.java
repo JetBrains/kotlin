@@ -339,13 +339,17 @@ public class AsmUtil {
         }
     }
 
-    public static void genThrow(@NotNull MethodVisitor mv, @NotNull String exception, @NotNull String message) {
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        iv.anew(Type.getObjectType(exception));
-        iv.dup();
-        iv.aconst(message);
-        iv.invokespecial(exception, "<init>", "(Ljava/lang/String;)V", false);
-        iv.athrow();
+    public static void genThrow(@NotNull InstructionAdapter v, @NotNull String exception, @Nullable String message) {
+        v.anew(Type.getObjectType(exception));
+        v.dup();
+        if (message != null) {
+            v.aconst(message);
+            v.invokespecial(exception, "<init>", "(Ljava/lang/String;)V", false);
+        }
+        else {
+            v.invokespecial(exception, "<init>", "()V", false);
+        }
+        v.athrow();
     }
 
     public static void genClosureFields(CalculatedClosure closure, ClassBuilder v, JetTypeMapper typeMapper) {

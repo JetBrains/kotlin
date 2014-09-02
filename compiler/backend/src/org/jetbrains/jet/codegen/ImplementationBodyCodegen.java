@@ -565,7 +565,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 MethodVisitor mv = v.newMethod(NO_ORIGIN, access, name, desc, null, null);
                 if (descriptor.getKind() != ClassKind.TRAIT) {
                     mv.visitCode();
-                    genThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
+                    genThrow(new InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection");
                     FunctionCodegen.endVisit(mv, "built-in stub for " + name + desc, null);
                 }
             }
