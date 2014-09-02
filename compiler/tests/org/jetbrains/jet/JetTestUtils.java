@@ -438,7 +438,7 @@ public class JetTestUtils {
                 }
             }
         }
-        LazyResolveTestUtil.resolveEagerly(jetFiles, environment);
+        LazyResolveTestUtil.resolve(jetFiles, environment);
     }
 
     @NotNull

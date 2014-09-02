@@ -61,21 +61,16 @@ public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTe
                 }
         );
 
-        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(files, getEnvironment());
-        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
+        ModuleDescriptor module = LazyResolveTestUtil.resolve(files, getEnvironment());
 
-        FqName test = new FqName("test");
-
-        PackageViewDescriptor actual = lazyModule.getPackage(test);
-        Assert.assertNotNull("Package for name " + test + " is null after lazy resolve", actual);
-
-        PackageViewDescriptor expected = eagerModule.getPackage(test);
-        Assert.assertNotNull("Package for name " + test + " is null after eager resolve", expected);
+        String testedPackage = "test";
+        PackageViewDescriptor testPackage = module.getPackage(new FqName(testedPackage));
+        Assert.assertNotNull("Package for name '" + testedPackage + "' is null after resolve", testPackage);
 
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
-        RecursiveDescriptorComparator.validateAndCompareDescriptors(
-                expected, actual, RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+        RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
+                testPackage, RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
                         .filterRecursion(RecursiveDescriptorComparator.SKIP_BUILT_INS_PACKAGES)
                         .checkPrimaryConstructors(checkPrimaryConstructors)
                         .checkPropertyAccessors(checkPropertyAccessors)

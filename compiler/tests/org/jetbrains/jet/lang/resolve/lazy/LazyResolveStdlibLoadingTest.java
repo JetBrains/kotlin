@@ -48,7 +48,7 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
     ) {
         Set<Name> packageShortNames = LazyResolveTestUtil.getTopLevelPackagesFromFileList(files);
 
-        ModuleDescriptor module = LazyResolveTestUtil.resolveEagerly(files, stdlibEnvironment);
+        ModuleDescriptor module = LazyResolveTestUtil.resolve(files, stdlibEnvironment);
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, stdlibEnvironment);
 
         for (Name name : packageShortNames) {
