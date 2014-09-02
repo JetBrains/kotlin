@@ -28,10 +28,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -290,47 +288,6 @@ public class CodegenBinding {
         Type type = bindingContext.get(ASM_TYPE, klass);
         assert type != null : "Type is not yet recorded for " + klass;
         return type;
-    }
-
-    @NotNull
-    public static Type computeAsmType(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
-        Type alreadyComputedType = bindingContext.get(ASM_TYPE, klass);
-        if (alreadyComputedType != null) {
-            return alreadyComputedType;
-        }
-
-        Type asmType = Type.getObjectType(computeAsmTypeImpl(bindingContext, klass));
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(klass, asmType);
-        return asmType;
-    }
-
-    @NotNull
-    private static String computeAsmTypeImpl(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
-        DeclarationDescriptor container = klass.getContainingDeclaration();
-
-        Name name = SpecialNames.safeIdentifier(klass.getName());
-        if (container instanceof PackageFragmentDescriptor) {
-            String shortName = name.getIdentifier();
-            FqName fqName = ((PackageFragmentDescriptor) container).getFqName();
-            return fqName.isRoot() ? shortName : fqName.asString().replace('.', '/') + '/' + shortName;
-        }
-
-        if (container instanceof ScriptDescriptor) {
-            Type scriptType = asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) container);
-            return scriptType.getInternalName() + "$" + name.getIdentifier();
-        }
-
-        assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
-
-        String containerInternalName = computeAsmTypeImpl(bindingContext, (ClassDescriptor) container);
-        switch (klass.getKind()) {
-            case ENUM_ENTRY:
-                return containerInternalName;
-            case CLASS_OBJECT:
-                return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
-            default:
-                return containerInternalName + "$" + name.getIdentifier();
-        }
     }
 
     @Nullable
