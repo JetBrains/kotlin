@@ -103,6 +103,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/nestedClassAcessedViaInstanceReference.kt");
     }
     
+    @TestMetadata("nestedClassShouldBeQualified.kt")
+    public void testNestedClassShouldBeQualified() throws Exception {
+        doTest("idea/testData/diagnosticMessage/nestedClassShouldBeQualified.kt");
+    }
+    
     @TestMetadata("noneApplicable.kt")
     public void testNoneApplicable() throws Exception {
         doTest("idea/testData/diagnosticMessage/noneApplicable.kt");

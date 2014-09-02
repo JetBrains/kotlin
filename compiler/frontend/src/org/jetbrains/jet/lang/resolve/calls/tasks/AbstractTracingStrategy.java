@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -39,6 +41,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameFromTopLevelClass;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public abstract class AbstractTracingStrategy implements TracingStrategy {
@@ -134,7 +137,15 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             @NotNull ExplicitReceiverKind explicitReceiverKind
     ) {
         if (explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) {
-            trace.report(NESTED_CLASS_SHOULD_BE_QUALIFIED.on(reference, classDescriptor));
+            String qualifiedName;
+            FqName fqName = getFqNameFromTopLevelClass(DescriptorUtilPackage.getImportableDescriptor(classDescriptor));
+            if (reference.getParent() instanceof JetCallableReferenceExpression) {
+                qualifiedName = fqName.parent() + "::" + classDescriptor.getName();
+            }
+            else {
+                qualifiedName = fqName.asString();
+            }
+            trace.report(NESTED_CLASS_SHOULD_BE_QUALIFIED.on(reference, classDescriptor, qualifiedName));
         }
         else {
             trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(reference, classDescriptor));

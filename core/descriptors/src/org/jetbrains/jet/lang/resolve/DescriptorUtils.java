@@ -102,19 +102,29 @@ public class DescriptorUtils {
 
     @NotNull
     private static FqNameUnsafe getFqNameUnsafe(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-
-        if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.CLASS_OBJECT) {
-            DeclarationDescriptor classOfClassObject = containingDeclaration.getContainingDeclaration();
-            assert classOfClassObject != null;
-            return getFqName(classOfClassObject).child(descriptor.getName());
-        }
-
+        DeclarationDescriptor containingDeclaration = getContainingDeclarationSkippingClassObjects(descriptor);
+        assert containingDeclaration != null : "Not package/module descriptor doesn't have containing declaration: " + descriptor;
         return getFqName(containingDeclaration).child(descriptor.getName());
     }
 
     public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
         return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
+    }
+
+    @Nullable
+    private static DeclarationDescriptor getContainingDeclarationSkippingClassObjects(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        return isClassObject(containingDeclaration) ? containingDeclaration.getContainingDeclaration() : containingDeclaration;
+    }
+
+    @NotNull
+    public static FqName getFqNameFromTopLevelClass(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = getContainingDeclarationSkippingClassObjects(descriptor);
+        Name name = descriptor.getName();
+        if (!(containingDeclaration instanceof ClassDescriptor)) {
+            return FqName.topLevel(name);
+        }
+        return getFqNameFromTopLevelClass(containingDeclaration).child(name);
     }
 
     // WARNING! Don't use this method in JVM backend, use JvmCodegenUtil.isCallInsideSameModuleAsDeclared() instead.
@@ -202,7 +212,7 @@ public class DescriptorUtils {
         return descriptor instanceof AnonymousFunctionDescriptor;
     }
 
-    public static boolean isClassObject(@NotNull DeclarationDescriptor descriptor) {
+    public static boolean isClassObject(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.CLASS_OBJECT);
     }
 

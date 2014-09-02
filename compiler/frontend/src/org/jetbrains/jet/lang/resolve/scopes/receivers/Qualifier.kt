@@ -34,13 +34,13 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.diagnostics.Errors.*
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
-import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext
 import org.jetbrains.jet.lang.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getClassObjectReferenceTarget
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
 import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 
 public trait Qualifier {
 
@@ -168,7 +168,7 @@ private fun QualifierReceiver.resolveReferenceTarget(selector: DeclarationDescri
         else -> selector?.getContainingDeclaration()
     }
 
-    if (packageView != null && (containingDeclaration is PackageFragmentDescriptorImpl || containingDeclaration is PackageViewDescriptor)
+    if (packageView != null && (containingDeclaration is PackageFragmentDescriptor || containingDeclaration is PackageViewDescriptor)
             && getFqName(packageView) == getFqName(containingDeclaration)) {
         return packageView
     }

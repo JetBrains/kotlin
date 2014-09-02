@@ -20,6 +20,9 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassKind.ENUM_ENTRY
 import org.jetbrains.jet.lang.descriptors.ClassKind.ENUM_CLASS
 import org.jetbrains.jet.lang.descriptors.ClassKind.OBJECT
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor {
@@ -28,3 +31,6 @@ public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor {
 }
 
 public fun ClassDescriptor.hasSyntheticClassObject(): Boolean = getKind() in setOf(ENUM_ENTRY, ENUM_CLASS, OBJECT)
+
+public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor =
+        if (this is ConstructorDescriptor || DescriptorUtils.isClassObject(this)) getContainingDeclaration()!! else this
