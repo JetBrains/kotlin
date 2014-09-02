@@ -384,9 +384,4 @@ public class CodegenBinding {
 
         return allInnerClasses;
     }
-
-    @NotNull
-    public static String getJvmInternalName(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
-        return getAsmType(bindingContext, classDescriptor).getClassName();
-    }
 }
