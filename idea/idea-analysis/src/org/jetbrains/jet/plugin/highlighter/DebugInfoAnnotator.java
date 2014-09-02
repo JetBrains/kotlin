@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
 
 /**
  * Quick showing possible problems with Kotlin internals in IDEA with tooltips
@@ -42,9 +41,7 @@ public class DebugInfoAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-        if (!isDebugInfoEnabled() ||
-                !ProjectRootsUtil.isInSource(element) ||
-                JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(element)) {
+        if (!isDebugInfoEnabled() || !ProjectRootsUtil.isInSourceWithGradleCheck(element)) {
             return;
         }
 

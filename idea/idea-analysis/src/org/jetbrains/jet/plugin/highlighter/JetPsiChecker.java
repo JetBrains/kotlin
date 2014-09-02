@@ -48,7 +48,6 @@ import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
@@ -94,10 +93,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(ProjectRootsUtil.isInSource(element) || element.getContainingFile() instanceof JetCodeFragment)
-                || JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(element)) {
-            return;
-        }
+        if (!(ProjectRootsUtil.isInSourceWithGradleCheck(element) || element.getContainingFile() instanceof JetCodeFragment)) return;
 
         for (HighlightingVisitor visitor : getBeforeAnalysisVisitors(holder)) {
             element.accept(visitor);
