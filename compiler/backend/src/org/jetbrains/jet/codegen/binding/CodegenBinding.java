@@ -287,19 +287,25 @@ public class CodegenBinding {
 
     @NotNull
     public static Type getAsmType(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
-        klass = (ClassDescriptor) klass.getOriginal();
+        Type type = bindingContext.get(ASM_TYPE, klass);
+        assert type != null : "Type is not yet recorded for " + klass;
+        return type;
+    }
+
+    @NotNull
+    public static Type computeAsmType(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
         Type alreadyComputedType = bindingContext.get(ASM_TYPE, klass);
         if (alreadyComputedType != null) {
             return alreadyComputedType;
         }
 
-        Type asmType = Type.getObjectType(getAsmTypeImpl(bindingContext, klass));
+        Type asmType = Type.getObjectType(computeAsmTypeImpl(bindingContext, klass));
         assert PsiCodegenPredictor.checkPredictedNameFromPsi(klass, asmType);
         return asmType;
     }
 
     @NotNull
-    private static String getAsmTypeImpl(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
+    private static String computeAsmTypeImpl(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
         DeclarationDescriptor container = klass.getContainingDeclaration();
 
         Name name = SpecialNames.safeIdentifier(klass.getName());
@@ -316,7 +322,7 @@ public class CodegenBinding {
 
         assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
 
-        String containerInternalName = getAsmType(bindingContext, (ClassDescriptor) container).getInternalName();
+        String containerInternalName = computeAsmTypeImpl(bindingContext, (ClassDescriptor) container);
         switch (klass.getKind()) {
             case ENUM_ENTRY:
                 return containerInternalName;

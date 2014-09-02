@@ -23,7 +23,10 @@ import com.intellij.util.containers.Stack;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.AsmUtil;
+import org.jetbrains.jet.codegen.JvmRuntimeTypes;
+import org.jetbrains.jet.codegen.SamCodegenUtil;
+import org.jetbrains.jet.codegen.SamType;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.jet.codegen.when.WhenByEnumsMapping;
@@ -261,8 +264,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         recordClosure(expression.getObjectDeclaration(), classDescriptor, name);
 
         pushClassDescriptor(classDescriptor);
-        //noinspection ConstantConditions
-        nameStack.push(bindingContext.get(ASM_TYPE, classDescriptor).getInternalName());
+        nameStack.push(CodegenBinding.getAsmType(bindingContext, classDescriptor).getInternalName());
         super.visitObjectLiteralExpression(expression);
         nameStack.pop();
         popClassDescriptor();
