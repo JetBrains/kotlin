@@ -220,7 +220,7 @@ public class JetTypeMapper {
         if (descriptor instanceof ClassDescriptor) {
             FqNameUnsafe className = DescriptorUtils.getFqName(descriptor);
             if (className.isSafe()) {
-                known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(className.toSafe(), jetType.isNullable());
+                known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(className.toSafe(), TypeUtils.isNullableType(jetType));
             }
         }
 
