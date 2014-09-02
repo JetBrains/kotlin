@@ -4445,7 +4445,8 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             
             @TestMetadata("recursive.kt")
             public void testRecursive() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/generics/recursive.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/recursive.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("RecursiveUpperBoundCheck.kt")
@@ -7776,7 +7777,8 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 
                 @TestMetadata("recursiveGeneric.kt")
                 public void testRecursiveGeneric() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/recursiveGeneric.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/recursiveGeneric.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("stringOrNull.kt")
@@ -7797,7 +7799,8 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 
                 @TestMetadata("entrySet.kt")
                 public void testEntrySet() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/entrySet.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/entrySet.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("int.kt")
@@ -7850,7 +7853,8 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 
                 @TestMetadata("sam.kt")
                 public void testSam() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/sam.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/sam.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("singleton.kt")

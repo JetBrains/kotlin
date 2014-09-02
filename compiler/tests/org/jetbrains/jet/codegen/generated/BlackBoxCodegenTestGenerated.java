@@ -4018,11 +4018,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     
     @TestMetadata("compiler/testData/codegen/box/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({JavaInterop.ObjectMethods.class})
+    @InnerTestClasses({JavaInterop.NotNullAssertions.class, JavaInterop.ObjectMethods.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class JavaInterop extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInJavaInterop() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class NotNullAssertions extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInNotNullAssertions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("mapPut.kt")
+            public void testMapPut() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/mapPut.kt");
+                doTest(fileName);
+            }
+            
         }
         
         @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")

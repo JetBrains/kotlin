@@ -424,11 +424,11 @@ public class TypeUtils {
         if (type.isNullable()) {
             return true;
         }
-        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
-            return hasNullableSuperType(type);
-        }
         if (TypesPackage.isFlexible(type) && isNullableType(((FlexibleType) type).getUpperBound())) {
             return true;
+        }
+        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+            return hasNullableSuperType(type);
         }
         return false;
     }
