@@ -223,7 +223,7 @@ public class AsmUtil {
         }
         Integer defaultMapping = visibilityToAccessFlag.get(descriptor.getVisibility());
         if (defaultMapping == null) {
-            throw new IllegalStateException(descriptor.getVisibility() + " is not a valid visibility in backend. Descriptor: " + descriptor);
+            throw new IllegalStateException(descriptor.getVisibility() + " is not a valid visibility in backend: " + descriptor);
         }
         return defaultMapping;
     }
@@ -263,8 +263,8 @@ public class AsmUtil {
     public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
         if (descriptor instanceof PropertyAccessorDescriptor) {
             return KotlinBuiltIns.getInstance().isDeprecated(descriptor)
-                     ? ACC_DEPRECATED
-                     : getDeprecatedAccessFlag(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
+                   ? ACC_DEPRECATED
+                   : getDeprecatedAccessFlag(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
         }
         else if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
             return ACC_DEPRECATED;
@@ -518,14 +518,17 @@ public class AsmUtil {
         if (stackTop.getSize() == 1) {
             if (afterTop.getSize() == 1) {
                 v.swap();
-            } else {
+            }
+            else {
                 v.dupX2();
                 v.pop();
             }
-        } else {
+        }
+        else {
             if (afterTop.getSize() == 1) {
                 v.dup2X1();
-            } else {
+            }
+            else {
                 v.dup2X2();
             }
             v.pop2();
@@ -645,15 +648,19 @@ public class AsmUtil {
         boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
         if (isDelegate || isExtensionProperty) {
             return ACC_PRIVATE;
-        } else {
-            return areBothAccessorDefault(propertyDescriptor) ?  getVisibilityAccessFlag(descriptorForVisibility(propertyDescriptor)) : ACC_PRIVATE;
+        }
+        else {
+            return areBothAccessorDefault(propertyDescriptor)
+                   ? getVisibilityAccessFlag(descriptorForVisibility(propertyDescriptor))
+                   : ACC_PRIVATE;
         }
     }
 
     private static MemberDescriptor descriptorForVisibility(@NotNull PropertyDescriptor propertyDescriptor) {
-        if (!propertyDescriptor.isVar() ) {
+        if (!propertyDescriptor.isVar()) {
             return propertyDescriptor;
-        } else {
+        }
+        else {
             return propertyDescriptor.getSetter() != null ? propertyDescriptor.getSetter() : propertyDescriptor;
         }
     }
@@ -766,12 +773,17 @@ public class AsmUtil {
     }
 
     @NotNull
-    private static String getOuterClassName(@NotNull ClassDescriptor classDescriptor, @NotNull DeclarationDescriptor originalDescriptor, @NotNull JetTypeMapper typeMapper) {
+    private static String getOuterClassName(
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull DeclarationDescriptor originalDescriptor,
+            @NotNull JetTypeMapper typeMapper
+    ) {
         DeclarationDescriptor container = classDescriptor.getContainingDeclaration();
         while (container != null) {
             if (container instanceof ClassDescriptor) {
-                return typeMapper.mapClass((ClassDescriptor)container).getInternalName();
-            } else if (CodegenBinding.isLocalFunOrLambda(container)) {
+                return typeMapper.mapClass((ClassDescriptor) container).getInternalName();
+            }
+            else if (CodegenBinding.isLocalFunOrLambda(container)) {
                 ClassDescriptor descriptor =
                         CodegenBinding.anonymousClassForFunction(typeMapper.getBindingContext(), (FunctionDescriptor) container);
                 return typeMapper.mapClass(descriptor).getInternalName();

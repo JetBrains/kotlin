@@ -1223,6 +1223,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         CompileTimeConstant<?> compileTimeValue = bindingContext.get(COMPILE_TIME_VALUE, expression);
         if (compileTimeValue instanceof IntegerValueTypeConstant) {
             JetType expectedType = bindingContext.get(EXPRESSION_TYPE, expression);
+            assert expectedType != null : "Expression is not type checked: " + expression.getText();
             return EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) compileTimeValue, expectedType);
         }
         return compileTimeValue;

@@ -626,9 +626,7 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         CallGenerator generator = codegen.getOrCreateCallGenerator(functionDescriptor, function);
 
-        InstructionAdapter iv = new InstructionAdapter(mv);
-
-        loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, isStatic, signature, generator);
+        loadExplicitArgumentsOnStack(OBJECT_TYPE, isStatic, signature, generator);
 
         List<JvmMethodParameterSignature> mappedParameters = signature.getValueParameters();
         int capturedArgumentsCount = 0;
@@ -636,6 +634,8 @@ public class FunctionCodegen extends ParentCodegenAware {
                mappedParameters.get(capturedArgumentsCount).getKind() != JvmMethodParameterKind.VALUE) {
             capturedArgumentsCount++;
         }
+
+        InstructionAdapter iv = new InstructionAdapter(mv);
 
         int maskIndex = 0;
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
@@ -703,7 +703,6 @@ public class FunctionCodegen extends ParentCodegenAware {
     }
 
     private static void loadExplicitArgumentsOnStack(
-            @NotNull InstructionAdapter iv,
             @NotNull Type ownerType,
             boolean isStatic,
             @NotNull JvmMethodSignature signature,

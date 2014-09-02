@@ -27,10 +27,7 @@ import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.backend.common.DataClassMethodGenerator;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
-import org.jetbrains.jet.codegen.context.ClassContext;
-import org.jetbrains.jet.codegen.context.ConstructorContext;
-import org.jetbrains.jet.codegen.context.FieldOwnerContext;
-import org.jetbrains.jet.codegen.context.MethodContext;
+import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -77,9 +74,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorT
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.DelegationToTraitImpl;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.Synthetic;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -93,7 +88,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private List<PropertyAndDefaultValue> classObjectPropertiesToCopy;
 
-    private List<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>> additionalTasks;
+    private final List<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>> additionalTasks =
+            new ArrayList<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>>();
 
     public ImplementationBodyCodegen(
             @NotNull JetClassOrObject aClass,
@@ -104,7 +100,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         super(aClass, context, v, state, parentCodegen);
         this.classAsmType = typeMapper.mapClass(descriptor);
-        additionalTasks = new ArrayList<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>>();
     }
 
     @Override
@@ -969,7 +964,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generateSyntheticAccessors() {
-        Map<DeclarationDescriptor, DeclarationDescriptor> accessors = context.getAccessors();
+        Map<DeclarationDescriptor, DeclarationDescriptor> accessors = ((CodegenContext<?>) context).getAccessors();
         for (Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry : accessors.entrySet()) {
             generateSyntheticAccessor(entry);
         }
@@ -1147,7 +1142,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         field.store(field.type, codegen.v);
     }
 
-    protected void genInitSingleton(ClassDescriptor fieldTypeDescriptor, StackValue.Field field) {
+    private void genInitSingleton(ClassDescriptor fieldTypeDescriptor, StackValue.Field field) {
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             Collection<ConstructorDescriptor> constructors = fieldTypeDescriptor.getConstructors();
             assert constructors.size() == 1 : "Class of singleton object must have only one constructor: " + constructors;
@@ -1349,11 +1344,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             fieldInfo.getStackValue().store(fieldInfo.type, iv);
         }
-    }
-
-    @Nullable
-    private PropertyDescriptor getDelegatePropertyIfAny(JetExpression expression) {
-    	return CodegenUtil.getDelegatePropertyIfAny(expression, descriptor, bindingContext);
     }
 
     private void lookupConstructorExpressionsInClosureIfPresent(final ConstructorContext constructorContext) {

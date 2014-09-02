@@ -793,6 +793,7 @@ public class JetTypeMapper {
                 type = sharedVarType;
             }
             else if (isLocalNamedFun(variableDescriptor)) {
+                //noinspection CastConflictsWithInstanceof
                 type = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) variableDescriptor);
             }
             else {
@@ -886,18 +887,16 @@ public class JetTypeMapper {
     }
 
     public Type getSharedVarType(DeclarationDescriptor descriptor) {
-        if (descriptor instanceof PropertyDescriptor) {
-            return StackValue.sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType()));
-        }
-        else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+        if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
-        else if (descriptor instanceof FunctionDescriptor) {
-            return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType()));
+        else if (descriptor instanceof PropertyDescriptor || descriptor instanceof FunctionDescriptor) {
+            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) descriptor).getReceiverParameter();
+            assert receiverParameter != null : "Callable should have a receiver parameter: " + descriptor;
+            return StackValue.sharedTypeForType(mapType(receiverParameter.getType()));
         }
         else if (descriptor instanceof VariableDescriptor && isVarCapturedInClosure(bindingContext, descriptor)) {
-            JetType outType = ((VariableDescriptor) descriptor).getType();
-            return StackValue.sharedTypeForType(mapType(outType));
+            return StackValue.sharedTypeForType(mapType(((VariableDescriptor) descriptor).getType()));
         }
         return null;
     }
