@@ -8,6 +8,8 @@ fun bar(s: String, value: Boolean): Boolean {
 }
 
 fun box(): String {
+    val a =  if (true || if(bar("A", false)) {2} else {3} == 0) { }
+    assertEquals("", global)
 
     // Simple || Simple
     global = ""

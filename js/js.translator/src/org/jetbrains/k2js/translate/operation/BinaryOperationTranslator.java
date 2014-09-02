@@ -166,8 +166,14 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             return new JsBinaryOperation(operator, leftExpression, rightExpression);
         }
 
-        assert rightExpression instanceof JsNameRef : "expected JsNameRef, but " + expression.getText();
-        JsNameRef result = (JsNameRef) rightExpression; // Reuse tmp variable
+        JsNameRef result;
+        if (rightExpression instanceof JsNameRef) {
+            result = (JsNameRef) rightExpression; // Reuse tmp variable
+        } else {
+            TemporaryVariable resultVar = context().declareTemporary(rightExpression);
+            result = resultVar.reference();
+            rightBlock.getStatements().add(resultVar.assignmentExpression().makeStmt());
+        }
 
         JsIf ifStatement;
         if (token.equals(JetTokens.ANDAND)) {
