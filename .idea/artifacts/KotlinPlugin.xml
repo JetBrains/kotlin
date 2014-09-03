@@ -1,47 +1,45 @@
 <component name="ArtifactManager">
   <artifact name="KotlinPlugin">
-    <output-path>$PROJECT_DIR$/out/artifacts</output-path>
+    <output-path>$PROJECT_DIR$/out/artifacts/Kotlin</output-path>
     <root id="root">
-      <element id="directory" name="Kotlin">
-        <element id="directory" name="lib">
-          <element id="archive" name="kotlin-plugin.jar">
-            <element id="module-output" name="backend" />
-            <element id="module-output" name="frontend" />
-            <element id="module-output" name="descriptors" />
-            <element id="module-output" name="frontend.java" />
-            <element id="module-output" name="descriptor.loader.java" />
-            <element id="module-output" name="idea" />
-            <element id="module-output" name="jet.as.java.psi" />
-            <element id="module-output" name="util" />
-            <element id="module-output" name="util.runtime" />
-            <element id="module-output" name="j2k" />
-            <element id="module-output" name="js.translator" />
-            <element id="module-output" name="js.frontend" />
-            <element id="module-output" name="cli-common" />
-            <element id="module-output" name="ide-compiler-runner" />
-            <element id="module-output" name="preloader" />
-            <element id="module-output" name="serialization" />
-            <element id="module-output" name="serialization.java" />
-            <element id="module-output" name="backend-common" />
-            <element id="library" level="project" name="builtins" />
-            <element id="module-output" name="js.dart-ast" />
-            <element id="directory" name="kotlin">
-              <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/native/kotlin" />
-              <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/src/kotlin" />
-            </element>
-            <element id="module-output" name="eval4j" />
-            <element id="module-output" name="idea-analysis" />
-            <element id="module-output" name="ide-lazy-resolve" />
+      <element id="directory" name="lib">
+        <element id="archive" name="kotlin-plugin.jar">
+          <element id="module-output" name="backend" />
+          <element id="module-output" name="frontend" />
+          <element id="module-output" name="descriptors" />
+          <element id="module-output" name="frontend.java" />
+          <element id="module-output" name="descriptor.loader.java" />
+          <element id="module-output" name="idea" />
+          <element id="module-output" name="jet.as.java.psi" />
+          <element id="module-output" name="util" />
+          <element id="module-output" name="util.runtime" />
+          <element id="module-output" name="j2k" />
+          <element id="module-output" name="js.translator" />
+          <element id="module-output" name="js.frontend" />
+          <element id="module-output" name="cli-common" />
+          <element id="module-output" name="ide-compiler-runner" />
+          <element id="module-output" name="preloader" />
+          <element id="module-output" name="serialization" />
+          <element id="module-output" name="serialization.java" />
+          <element id="module-output" name="backend-common" />
+          <element id="library" level="project" name="builtins" />
+          <element id="module-output" name="js.dart-ast" />
+          <element id="directory" name="kotlin">
+            <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/native/kotlin" />
+            <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/src/kotlin" />
           </element>
-          <element id="library" level="project" name="javax.inject" />
-          <element id="directory" name="jps">
-            <element id="artifact" artifact-name="KotlinJpsPlugin" />
-          </element>
-          <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-runtime.jar" />
+          <element id="module-output" name="eval4j" />
+          <element id="module-output" name="idea-analysis" />
+          <element id="module-output" name="ide-lazy-resolve" />
         </element>
-        <element id="directory" name="kotlinc">
-          <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
+        <element id="library" level="project" name="javax.inject" />
+        <element id="directory" name="jps">
+          <element id="artifact" artifact-name="KotlinJpsPlugin" />
         </element>
+        <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-runtime.jar" />
+      </element>
+      <element id="directory" name="kotlinc">
+        <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
       </element>
     </root>
   </artifact>
