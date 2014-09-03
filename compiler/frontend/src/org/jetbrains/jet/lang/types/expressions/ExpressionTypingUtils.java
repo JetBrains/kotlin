@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -62,7 +61,6 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
 
 public class ExpressionTypingUtils {
 
@@ -187,45 +185,6 @@ public class ExpressionTypingUtils {
                 }
             }
         }
-    }
-
-    /**
-     * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
-     *
-     * @param callableFQN
-     * @param scope
-     * @return
-     */
-    @NotNull
-    public static List<CallableDescriptor> canFindSuitableCall(
-            @NotNull FqName callableFQN,
-            @NotNull JetExpression receiverExpression,
-            @NotNull JetType receiverType,
-            @NotNull JetScope scope,
-            @NotNull ModuleDescriptor module,
-            @NotNull BindingContext bindingContext
-    ) {
-        JetImportDirective importDirective = JetPsiFactory(receiverExpression).createImportDirective(callableFQN.asString());
-
-        Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver()
-                .analyseImportReference(importDirective, scope, new BindingTraceContext(), module);
-
-        List<CallableDescriptor> callableExtensionDescriptors = new ArrayList<CallableDescriptor>();
-        ReceiverValue receiverValue = new ExpressionReceiver(receiverExpression, receiverType);
-
-        DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, receiverExpression);
-
-        for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
-            if (declarationDescriptor instanceof CallableDescriptor) {
-                CallableDescriptor callableDescriptor = (CallableDescriptor) declarationDescriptor;
-
-                if (checkIsExtensionCallable(receiverValue, callableDescriptor, bindingContext, dataFlowInfo)) {
-                    callableExtensionDescriptors.add(callableDescriptor);
-                }
-            }
-        }
-
-        return callableExtensionDescriptors;
     }
 
     /*

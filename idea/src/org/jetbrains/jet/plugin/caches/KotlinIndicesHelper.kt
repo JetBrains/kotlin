@@ -46,6 +46,9 @@ import com.intellij.openapi.project.Project
 import java.util.HashSet
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelNonExtensionPropertyShortNameIndex
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 
 public class KotlinIndicesHelper(private val project: Project) {
     public fun getTopLevelObjects(nameFilter: (String) -> Boolean, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<ClassDescriptor> {
@@ -158,7 +161,27 @@ public class KotlinIndicesHelper(private val project: Project) {
         return allFqNames
                 .filter { nameFilter(it.shortName().asString()) }
                 .toSet()
-                .flatMap { ExpressionTypingUtils.canFindSuitableCall(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor(), context) }
+                .flatMap { findSuitableExtensions(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor(), context) }
+    }
+
+    /**
+     * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
+     */
+    private fun findSuitableExtensions(callableFQN: FqName,
+                                    receiverExpression: JetExpression,
+                                    receiverType: JetType,
+                                    scope: JetScope,
+                                    module: ModuleDescriptor,
+                                    bindingContext: BindingContext): List<CallableDescriptor> {
+        val importDirective = JetPsiFactory(receiverExpression).createImportDirective(callableFQN.asString())
+        val declarationDescriptors = QualifiedExpressionResolver().analyseImportReference(importDirective, scope, BindingTraceContext(), module)
+
+        val receiverValue = ExpressionReceiver(receiverExpression, receiverType)
+        val dataFlowInfo = bindingContext.getDataFlowInfo(receiverExpression)
+
+        return declarationDescriptors
+                .filterIsInstance(javaClass<CallableDescriptor>())
+                .filter { it.getReceiverParameter() != null && ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, bindingContext, dataFlowInfo) }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {
