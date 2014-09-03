@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -61,8 +62,8 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private final NotNullLazyValue<Annotations> annotations;
 
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
-
     private final NestedClassDescriptors nestedClasses;
+    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
 
     private final NotNullLazyValue<DeclarationDescriptor> containingDeclaration;
     private final DeserializedClassTypeConstructor typeConstructor;
@@ -192,6 +193,12 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @Override
     protected JetScope getScopeForMemberLookup() {
         return memberScope;
+    }
+
+    @NotNull
+    @Override
+    public JetScope getStaticScope() {
+        return staticScope;
     }
 
     @Nullable

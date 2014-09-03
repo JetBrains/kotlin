@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
 import org.jetbrains.jet.utils.Printer
 import java.util.ArrayList
 import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass
 
 public class EnumClassObjectDescriptor(
         storageManager: StorageManager,
@@ -52,8 +53,11 @@ public class EnumClassObjectDescriptor(
                                                                       listOf(), listOf(KotlinBuiltIns.getInstance().getAnyType()))
 
     private val scope = EnumClassObjectScope()
+    private val staticScope = StaticScopeForKotlinClass(this)
 
     override fun getScopeForMemberLookup(): JetScope = scope
+
+    override fun getStaticScope(): JetScope = staticScope
 
     override fun getClassObjectDescriptor(): ClassDescriptor? = null
 

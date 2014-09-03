@@ -28,12 +28,14 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor, ClassOrPackageFragmentDescriptor {
-
     @NotNull
     JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
 
     @NotNull
     JetScope getUnsubstitutedInnerClassesScope();
+
+    @NotNull
+    JetScope getStaticScope();
 
     @NotNull
     @ReadOnly

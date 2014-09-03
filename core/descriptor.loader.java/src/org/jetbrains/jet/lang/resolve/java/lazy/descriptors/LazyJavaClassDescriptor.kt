@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
 import org.jetbrains.jet.lang.descriptors.impl.EnumClassObjectDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -89,6 +90,8 @@ class LazyJavaClassDescriptor(
 
     private val _innerClassesScope = InnerClassesScopeWrapper(getScopeForMemberLookup())
     override fun getUnsubstitutedInnerClassesScope(): JetScope = _innerClassesScope
+
+    override fun getStaticScope(): JetScope = StaticScopeForKotlinClass(this) // TODO
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 

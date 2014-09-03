@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeConstructorImpl;
@@ -46,6 +47,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final TypeConstructor typeConstructor;
     private final ConstructorDescriptor primaryConstructor;
     private final JetScope scope;
+    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
     private final EnumEntrySyntheticClassDescriptor classObjectDescriptor;
     private final NotNullLazyValue<Collection<Name>> enumMemberNames;
 
@@ -100,6 +102,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @Override
     protected JetScope getScopeForMemberLookup() {
         return scope;
+    }
+
+    @NotNull
+    @Override
+    public JetScope getStaticScope() {
+        return staticScope;
     }
 
     @NotNull

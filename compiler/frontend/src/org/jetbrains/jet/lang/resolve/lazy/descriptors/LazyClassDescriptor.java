@@ -88,6 +88,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final MemoizedFunctionToNotNull<JetClassObject, ClassDescriptor> extraClassObjectDescriptors;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
+    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
 
     private final NotNullLazyValue<JetScope> scopeForClassHeaderResolution;
     private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
@@ -298,6 +299,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 primaryConstructor,
                 "ScopeForPropertyInitializerResolution: " + getName(),
                 scope, getScopeForMemberDeclarationResolution());
+    }
+
+    @NotNull
+    @Override
+    public JetScope getStaticScope() {
+        return staticScope;
     }
 
     @NotNull

@@ -99,6 +99,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
+    public JetScope getStaticScope() {
+        return original.getStaticScope();
+    }
+
+    @NotNull
+    @Override
     public JetType getDefaultType() {
         throw new UnsupportedOperationException(); // TODO
     }
