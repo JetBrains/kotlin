@@ -18,10 +18,10 @@ package org.jetbrains.jet.generators.injectors;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.di.DependencyInjectorGenerator;
+import org.junit.Assert;
 
 import java.io.IOException;
 

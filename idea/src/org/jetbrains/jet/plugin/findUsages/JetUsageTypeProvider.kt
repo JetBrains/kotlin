@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.psi.PsiPackage
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.references.JetArrayAccessReference
@@ -202,11 +201,10 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
         val descriptor = context[BindingContext.REFERENCE_TARGET, refExpr]
 
         return when (descriptor) {
-            is ClassifierDescriptor -> if (DescriptorUtils.isSingleton(descriptor)) {
+            is ClassifierDescriptor -> when ((descriptor as? ClassDescriptor)?.getKind()) {
                 // Treat object accesses as variables to simulate the old behaviour (when variables were created for objects)
-                getVariableUsageType()
-            } else {
-                getClassUsageType()
+                ClassKind.OBJECT, ClassKind.ENUM_ENTRY -> getVariableUsageType()
+                else -> getClassUsageType()
             }
             is PackageViewDescriptor -> {
                 if (refExpr.getReference()?.resolve() is PsiPackage) getPackageUsageType() else getClassUsageType()

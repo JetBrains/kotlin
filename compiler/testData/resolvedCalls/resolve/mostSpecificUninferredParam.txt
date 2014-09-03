@@ -10,8 +10,8 @@ fun bar() {
 
 Resolved call:
 
-Candidate descriptor: fun <T> doSmth(l: List<T>): Unit
-Resulting descriptor: fun <T> doSmth(l: List<???>): Unit
+Candidate descriptor: fun <T> doSmth(l: List<T>): Unit defined in root package
+Resulting descriptor: fun <T> doSmth(l: List<???>): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER

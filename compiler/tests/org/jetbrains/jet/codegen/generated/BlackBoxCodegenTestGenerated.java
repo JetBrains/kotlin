@@ -685,6 +685,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/classes/classObject.kt");
         }
         
+        @TestMetadata("classObjectAsExtensionReceiver.kt")
+        public void testClassObjectAsExtensionReceiver() throws Exception {
+            doTest("compiler/testData/codegen/box/classes/classObjectAsExtensionReceiver.kt");
+        }
+        
         @TestMetadata("classObjectAsStaticInitializer.kt")
         public void testClassObjectAsStaticInitializer() throws Exception {
             doTest("compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
@@ -2109,11 +2114,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/enum/entrywithinner.kt");
         }
         
-        @TestMetadata("inFunction.kt")
-        public void testInFunction() throws Exception {
-            doTest("compiler/testData/codegen/box/enum/inFunction.kt");
-        }
-        
         @TestMetadata("inPackage.kt")
         public void testInPackage() throws Exception {
             doTest("compiler/testData/codegen/box/enum/inPackage.kt");
@@ -2142,11 +2142,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt2350.kt")
         public void testKt2350() throws Exception {
             doTest("compiler/testData/codegen/box/enum/kt2350.kt");
-        }
-        
-        @TestMetadata("kt2673.kt")
-        public void testKt2673() throws Exception {
-            doTest("compiler/testData/codegen/box/enum/kt2673.kt");
         }
         
         @TestMetadata("name.kt")
@@ -2672,6 +2667,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
         
         @TestMetadata("compiler/testData/codegen/box/functions/invoke")
+        @InnerTestClasses({Invoke.OnObjects.class})
         public static class Invoke extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInInvoke() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2732,6 +2728,70 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/functions/invoke/kt3822invokeOnThis.kt");
             }
             
+            @TestMetadata("compiler/testData/codegen/box/functions/invoke/onObjects")
+            public static class OnObjects extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInOnObjects() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/invoke/onObjects"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("invokeOnClassObject1.kt")
+                public void testInvokeOnClassObject1() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnClassObject1.kt");
+                }
+                
+                @TestMetadata("invokeOnClassObject2.kt")
+                public void testInvokeOnClassObject2() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnClassObject2.kt");
+                }
+                
+                @TestMetadata("invokeOnClassObjectOfNestedClass1.kt")
+                public void testInvokeOnClassObjectOfNestedClass1() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnClassObjectOfNestedClass1.kt");
+                }
+                
+                @TestMetadata("invokeOnClassObjectOfNestedClass2.kt")
+                public void testInvokeOnClassObjectOfNestedClass2() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnClassObjectOfNestedClass2.kt");
+                }
+                
+                @TestMetadata("invokeOnEnum1.kt")
+                public void testInvokeOnEnum1() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnEnum1.kt");
+                }
+                
+                @TestMetadata("invokeOnEnum2.kt")
+                public void testInvokeOnEnum2() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnEnum2.kt");
+                }
+                
+                @TestMetadata("invokeOnImportedEnum1.kt")
+                public void testInvokeOnImportedEnum1() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnImportedEnum1.kt");
+                }
+                
+                @TestMetadata("invokeOnImportedEnum2.kt")
+                public void testInvokeOnImportedEnum2() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnImportedEnum2.kt");
+                }
+                
+                @TestMetadata("invokeOnObject1.kt")
+                public void testInvokeOnObject1() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnObject1.kt");
+                }
+                
+                @TestMetadata("invokeOnObject2.kt")
+                public void testInvokeOnObject2() throws Exception {
+                    doTest("compiler/testData/codegen/box/functions/invoke/onObjects/invokeOnObject2.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Invoke");
+                suite.addTestSuite(Invoke.class);
+                suite.addTestSuite(OnObjects.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/codegen/box/functions/localFunctions")
@@ -2993,7 +3053,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Functions");
             suite.addTestSuite(Functions.class);
-            suite.addTestSuite(Invoke.class);
+            suite.addTest(Invoke.innerSuite());
             suite.addTestSuite(LocalFunctions.class);
             suite.addTestSuite(TailRecursion.class);
             return suite;
@@ -3264,11 +3324,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("anonymousObjectInParameterInitializer.kt")
         public void testAnonymousObjectInParameterInitializer() throws Exception {
             doTest("compiler/testData/codegen/box/localClasses/anonymousObjectInParameterInitializer.kt");
-        }
-        
-        @TestMetadata("enum.kt")
-        public void testEnum() throws Exception {
-            doTest("compiler/testData/codegen/box/localClasses/enum.kt");
         }
         
         @TestMetadata("inExtensionFunction.kt")
@@ -3987,6 +4042,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("nestedObjectWithSuperclass.kt")
         public void testNestedObjectWithSuperclass() throws Exception {
             doTest("compiler/testData/codegen/box/objects/nestedObjectWithSuperclass.kt");
+        }
+        
+        @TestMetadata("objectInLocalAnonymousObject.kt")
+        public void testObjectInLocalAnonymousObject() throws Exception {
+            doTest("compiler/testData/codegen/box/objects/objectInLocalAnonymousObject.kt");
         }
         
         @TestMetadata("objectLiteral.kt")

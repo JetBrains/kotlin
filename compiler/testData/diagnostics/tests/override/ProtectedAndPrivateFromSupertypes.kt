@@ -12,6 +12,6 @@ open class C {
     private val a: String = ""
 }
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>Subject<!> : C(), A, B {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Subject<!> : C(), A, B {
     val c = a
 }

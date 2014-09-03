@@ -4,7 +4,7 @@ class Foo {
     fun bar(param: String): String {
         val local = "world!"
         var a = object {
-            object b {
+            val b = object {
                 val bar = param + local
             }
         }

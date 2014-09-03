@@ -3,7 +3,9 @@ package foo
 fun test() {
   A.d
   A.<!INVISIBLE_MEMBER!>f<!>
-  <!INVISIBLE_MEMBER!>CCC<!>.<!INVISIBLE_MEMBER!>classObjectVar<!>
+  B.<!INVISIBLE_MEMBER!>D<!>
+  <!INVISIBLE_MEMBER!>CCC<!>
+  CCC.<!INVISIBLE_MEMBER!>classObjectVar<!>
 }
 
 class A() {
@@ -13,6 +15,12 @@ class A() {
 
     }
   }
+}
+
+class B {
+    class D {
+        private class object
+    }
 }
 
 class CCC() {

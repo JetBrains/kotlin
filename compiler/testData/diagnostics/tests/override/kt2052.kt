@@ -4,7 +4,7 @@ trait Runnable {
 
 class C {
     fun f() {
-        class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyRunnable<!>(): Runnable {
+        <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyRunnable<!>(): Runnable {
         }
     }
 }

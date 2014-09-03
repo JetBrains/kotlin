@@ -28,17 +28,17 @@ import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.types.JetType
 
+private fun DeclarationDescriptor.getImportableDescriptor() =
+        if (this is ConstructorDescriptor || DescriptorUtils.isClassObject(this)) getContainingDeclaration()!! else this
+
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
-        if (this is ConstructorDescriptor) return getContainingDeclaration().importableFqName
-        val mayBeUnsafe = DescriptorUtils.getFqName(this)
-        return if (mayBeUnsafe.isSafe()) {
-            mayBeUnsafe.toSafe()
-        }
-        else {
-            null
-        }
+        val mayBeUnsafe = DescriptorUtils.getFqName(getImportableDescriptor())
+        return if (mayBeUnsafe.isSafe()) mayBeUnsafe.toSafe() else null
     }
+
+public val DeclarationDescriptor.importableFqNameSafe: FqName
+    get() = DescriptorUtils.getFqNameSafe(getImportableDescriptor())
 
 public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     if (this is PackageViewDescriptor || DescriptorUtils.isTopLevelDeclaration(this)) {

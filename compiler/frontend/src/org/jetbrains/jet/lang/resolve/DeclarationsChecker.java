@@ -76,7 +76,7 @@ public class DeclarationsChecker {
                         jetClass, classDescriptor, classDescriptor.getScopeForClassHeaderResolution(), trace);
             }
             else if (classOrObject instanceof JetObjectDeclaration) {
-                checkObject((JetObjectDeclaration) classOrObject);
+                checkObject((JetObjectDeclaration) classOrObject, classDescriptor);
             }
 
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
@@ -245,8 +245,11 @@ public class DeclarationsChecker {
         public abstract boolean removeNeeded(JetType subject, JetType other);
     }
 
-    private void checkObject(JetObjectDeclaration declaration) {
+    private void checkObject(JetObjectDeclaration declaration, ClassDescriptor classDescriptor) {
         reportErrorIfHasIllegalModifier(declaration);
+        if  (declaration.isLocal() && !declaration.isClassObject() && !declaration.isObjectLiteral()) {
+            trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor));
+        }
     }
 
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
@@ -264,6 +267,9 @@ public class DeclarationsChecker {
         }
         else if (aClass.isEnum()) {
             checkEnumModifiers(aClass);
+            if (aClass.isLocal()) {
+                trace.report(LOCAL_ENUM_NOT_ALLOWED.on(aClass, classDescriptor));
+            }
         }
         else if (aClass instanceof JetEnumEntry) {
             checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
@@ -294,7 +300,7 @@ public class DeclarationsChecker {
         JetModifierList modifierList = aClass.getModifierList();
         if (modifierList == null) return;
         if (modifierList.hasModifier(JetTokens.FINAL_KEYWORD)) {
-            trace.report(Errors.TRAIT_CAN_NOT_BE_FINAL.on(modifierList.getModifierNode(JetTokens.FINAL_KEYWORD).getPsi()));
+            trace.report(Errors.TRAIT_CAN_NOT_BE_FINAL.on(aClass));
         }
         if (modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
             trace.report(Errors.ABSTRACT_MODIFIER_IN_TRAIT.on(aClass));

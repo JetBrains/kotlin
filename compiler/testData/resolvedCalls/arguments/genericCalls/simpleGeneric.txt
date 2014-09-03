@@ -9,8 +9,8 @@ fun bar() {
 
 Resolved call:
 
-Candidate descriptor: fun <T> foo(t: T): Unit
-Resulting descriptor: fun <T> foo(t: A): Unit
+Candidate descriptor: fun <T> foo(t: T): Unit defined in root package
+Resulting descriptor: fun <T> foo(t: A): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 This object = NO_RECEIVER

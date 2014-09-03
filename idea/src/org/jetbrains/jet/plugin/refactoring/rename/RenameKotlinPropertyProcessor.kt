@@ -90,16 +90,16 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
         }
     }
 
+    private enum class UsageKind {
+        SIMPLE_PROPERTY_USAGE
+        GETTER_USAGE
+        SETTER_USAGE
+    }
+
     override fun renameElement(element: PsiElement?, newName: String?, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
         if (element !is JetProperty) {
             super.renameElement(element, newName, usages, listener)
             return
-        }
-
-        enum class UsageKind {
-            SIMPLE_PROPERTY_USAGE
-            GETTER_USAGE
-            SETTER_USAGE
         }
 
         val oldGetterName = PropertyCodegen.getterName(element.getNameAsName())

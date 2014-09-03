@@ -578,4 +578,9 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/WithQualifier.kt");
     }
     
+    @TestMetadata("WrongNumberOfTypeArguments.kt")
+    public void testWrongNumberOfTypeArguments() throws Exception {
+        doTest("idea/testData/completion/smart/WrongNumberOfTypeArguments.kt");
+    }
+    
 }

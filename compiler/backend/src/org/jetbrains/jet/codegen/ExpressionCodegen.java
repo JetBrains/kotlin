@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
+import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
@@ -1692,11 +1693,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
             receiver = StackValue.receiver(resolvedCall, receiver, this, null);
             descriptor = resolvedCall.getResultingDescriptor();
+            if (descriptor instanceof FakeCallableDescriptorForObject) {
+                descriptor = ((FakeCallableDescriptorForObject) descriptor).getReferencedDescriptor();
+            }
         }
-
-        //if (descriptor instanceof VariableAsFunctionDescriptor) {
-        //    descriptor = ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
-        //}
 
         assert descriptor != null : "Couldn't find descriptor for '" + expression.getText() + "'";
         descriptor = descriptor.getOriginal();
@@ -1734,7 +1734,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+            if (classDescriptor.getKind() == ClassKind.OBJECT || classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
                 return StackValue.singleton(classDescriptor, typeMapper);
             }
             if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {

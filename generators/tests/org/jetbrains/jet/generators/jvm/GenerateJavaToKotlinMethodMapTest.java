@@ -18,8 +18,8 @@ package org.jetbrains.jet.generators.jvm;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import junit.framework.Assert;
 import junit.framework.TestCase;
+import org.junit.Assert;
 
 public class GenerateJavaToKotlinMethodMapTest extends TestCase {
     public void testGenerateJavaToKotlinMethodMap() throws Exception {

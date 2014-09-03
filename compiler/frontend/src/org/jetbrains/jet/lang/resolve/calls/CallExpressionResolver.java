@@ -24,8 +24,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
@@ -34,34 +36,27 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
+import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.expressions.BasicExpressionTypingVisitor;
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.utils.Printer;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.psi.JetPsiUtil.isLHSOfDot;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
+import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiversPackage.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class CallExpressionResolver {
@@ -71,156 +66,6 @@ public class CallExpressionResolver {
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
-    }
-
-    @Nullable
-    private JetType lookupPackageOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
-        Name referencedName = expression.getReferencedNameAsName();
-        final ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
-        if (classifier != null) {
-            JetType classObjectType = classifier.getClassObjectType();
-            if (classObjectType != null) {
-                context.trace.record(REFERENCE_TARGET, expression, classifier);
-                JetType result = getExtendedClassObjectType(expression, classObjectType, classifier, context);
-                checkClassObjectVisibility(classifier, expression, context);
-                return result;
-            }
-        }
-        JetType[] result = new JetType[1];
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
-                context.trace, "trace for package/class object lookup of name", referencedName);
-        if (furtherNameLookup(expression, result, context.replaceBindingTrace(temporaryTrace))) {
-            temporaryTrace.commit();
-            return DataFlowUtils.checkType(result[0], expression, context);
-        }
-        // To report NO_CLASS_OBJECT when no package found
-        if (classifier != null) {
-            if (classifier instanceof TypeParameterDescriptor) {
-                if (isLHSOfDot(expression)) {
-                    context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(expression, (TypeParameterDescriptor) classifier));
-                }
-                else {
-                    context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(expression, (TypeParameterDescriptor) classifier));
-                }
-            }
-            else if (!isLHSOfDot(expression)) {
-                context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
-            }
-            context.trace.record(REFERENCE_TARGET, expression, classifier);
-            JetScope scopeForStaticMembersResolution =
-                    classifier instanceof ClassDescriptor
-                    ? getStaticNestedClassesScope((ClassDescriptor) classifier)
-                    : new JetScopeImpl() {
-                            @NotNull
-                            @Override
-                            public DeclarationDescriptor getContainingDeclaration() {
-                                return classifier;
-                            }
-
-                            @Override
-                            public String toString() {
-                                return "Scope for the type parameter on the left hand side of dot";
-                            }
-
-                            @Override
-                            public void printScopeStructure(@NotNull Printer p) {
-                                p.println(toString(), " for ", classifier);
-                            }
-                    };
-            return new PackageType(referencedName, scopeForStaticMembersResolution, NO_RECEIVER);
-        }
-        temporaryTrace.commit();
-        return result[0];
-    }
-
-    private static void checkClassObjectVisibility(
-            @NotNull ClassifierDescriptor classifier,
-            @NotNull JetSimpleNameExpression expression,
-            @NotNull ExpressionTypingContext context
-    ) {
-        if (!(classifier instanceof ClassDescriptor)) return;
-
-        ClassDescriptor classObject = ((ClassDescriptor) classifier).getClassObjectDescriptor();
-        assert classObject != null : "This check should be done only for classes with class objects: " + classifier;
-        DeclarationDescriptor from = context.containingDeclaration;
-        if (!Visibilities.isVisible(classObject, from)) {
-            context.trace.report(INVISIBLE_MEMBER.on(expression, classObject, classObject.getVisibility(), from));
-        }
-    }
-
-    @NotNull
-    private static JetType getExtendedClassObjectType(
-            @NotNull JetSimpleNameExpression expression,
-            @NotNull JetType classObjectType,
-            @NotNull ClassifierDescriptor classifier,
-            @NotNull ResolutionContext context
-    ) {
-        if (!isLHSOfDot(expression) || !(classifier instanceof ClassDescriptor)) {
-            return classObjectType;
-        }
-        ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-
-        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            return classObjectType;
-        }
-
-        List<JetScope> scopes = new ArrayList<JetScope>(3);
-
-        scopes.add(classObjectType.getMemberScope());
-        scopes.add(getStaticNestedClassesScope(classDescriptor));
-
-        Name referencedName = expression.getReferencedNameAsName();
-        PackageViewDescriptor packageView = context.scope.getPackage(referencedName);
-        if (packageView != null) {
-            //for enums loaded from java binaries
-            scopes.add(packageView.getMemberScope());
-        }
-
-        JetScope scope = new ChainedScope(
-                classifier, "Member scope for extended class object type " + classifier, scopes.toArray(new JetScope[scopes.size()])
-        );
-        return new PackageType(referencedName, scope, new ExpressionReceiver(expression, classObjectType));
-    }
-
-    private boolean furtherNameLookup(
-            @NotNull JetSimpleNameExpression expression,
-            @NotNull JetType[] result,
-            @NotNull ResolutionContext context
-    ) {
-        PackageType packageType = lookupPackageType(expression, context);
-        if (packageType == null) {
-            return false;
-        }
-        if (isLHSOfDot(expression)) {
-            result[0] = packageType;
-            return true;
-        }
-        context.trace.report(EXPRESSION_EXPECTED_PACKAGE_FOUND.on(expression));
-        result[0] = ErrorUtils.createErrorType("Type for " + expression.getReferencedNameAsName());
-        return false;
-    }
-
-    @Nullable
-    private PackageType lookupPackageType(@NotNull JetSimpleNameExpression expression, @NotNull ResolutionContext context) {
-        Name name = expression.getReferencedNameAsName();
-        PackageViewDescriptor packageView = context.scope.getPackage(name);
-        if (packageView == null) {
-            return null;
-        }
-        context.trace.record(REFERENCE_TARGET, expression, packageView);
-
-        // Construct a PackageType with everything from the package and with nested classes of the corresponding class (if any)
-        JetScope scope;
-        ClassifierDescriptor classifier = context.scope.getClassifier(name);
-        if (classifier instanceof ClassDescriptor) {
-            scope = new ChainedScope(
-                    packageView, "Package type member scope for " + expression.getText(), packageView.getMemberScope(), getStaticNestedClassesScope((ClassDescriptor) classifier)
-            );
-        }
-        else {
-            scope = packageView.getMemberScope();
-        }
-        return new PackageType(name, scope, NO_RECEIVER);
     }
 
     @Nullable
@@ -253,29 +98,27 @@ public class CallExpressionResolver {
                 context.replaceTraceAndCache(temporaryForVariable),
                 call, CheckValueArgumentsMode.ENABLED);
         OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(contextForVariable);
-        if (resolutionResult.isSuccess()) {
-            temporaryForVariable.commit();
-            checkSuper(receiver, resolutionResult, context.trace, nameExpression);
-            result[0] = true;
-            return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
+
+        // if the expression is a receiver in a qualified expression, it should be resolved after the selector is resolved
+        boolean isLHSOfDot = JetPsiUtil.isLHSOfDot(nameExpression);
+        if (!resolutionResult.isNothing()) {
+            boolean isQualifier = isLHSOfDot && resolutionResult.isSingleResult()
+                                  && resolutionResult.getResultingDescriptor() instanceof FakeCallableDescriptorForObject;
+            if (!isQualifier) {
+                result[0] = true;
+                temporaryForVariable.commit();
+                checkSuper(receiver, resolutionResult, context.trace, nameExpression);
+                return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
+            }
         }
 
-        ExpressionTypingContext newContext = receiver.exists()
-                                             ? context.replaceScope(receiver.getType().getMemberScope())
-                                             : context;
-        TemporaryTraceAndCache temporaryForPackageOrClassObject = TemporaryTraceAndCache.create(
-                context, "trace to resolve as package or class object", nameExpression);
-        JetType jetType = lookupPackageOrClassObject(nameExpression, newContext.replaceTraceAndCache(temporaryForPackageOrClassObject));
-        if (jetType != null) {
-            temporaryForPackageOrClassObject.commit();
-
-            // Uncommitted changes in temp context
-            context.trace.record(RESOLUTION_SCOPE, nameExpression, context.scope);
-            if (context.dataFlowInfo.hasTypeInfoConstraints()) {
-                context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, nameExpression, context.dataFlowInfo);
-            }
+        QualifierReceiver qualifier = createQualifier(nameExpression, receiver, context);
+        if (qualifier != null) {
             result[0] = true;
-            return jetType;
+            if (!isLHSOfDot) {
+                resolveAsStandaloneExpression(qualifier, context);
+            }
+            return null;
         }
         temporaryForVariable.commit();
         result[0] = !resolutionResult.isNothing();
@@ -293,9 +136,6 @@ public class CallExpressionResolver {
         JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
         if (result[0]) {
             temporaryForVariable.commit();
-            if (type instanceof PackageType && !isLHSOfDot(nameExpression)) {
-                type = null;
-            }
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
 
@@ -417,7 +257,7 @@ public class CallExpressionResolver {
     private JetTypeInfo getSelectorReturnTypeInfo(
             @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode,
-            @NotNull JetExpression selectorExpression,
+            @Nullable JetExpression selectorExpression,
             @NotNull ExpressionTypingContext context
     ) {
         if (selectorExpression instanceof JetCallExpression) {
@@ -427,7 +267,7 @@ public class CallExpressionResolver {
         else if (selectorExpression instanceof JetSimpleNameExpression) {
             return getSimpleNameExpressionTypeInfo((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
         }
-        else {
+        else if (selectorExpression != null) {
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
         }
         return JetTypeInfo.create(null, context.dataFlowInfo);
@@ -443,18 +283,22 @@ public class CallExpressionResolver {
         ResolutionContext contextForReceiver = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
         JetType receiverType = receiverTypeInfo.getType();
-        if (selectorExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
+        QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, receiverExpression);
+
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
 
         context = context.replaceDataFlowInfo(receiverTypeInfo.getDataFlowInfo());
 
+        ReceiverValue receiver = qualifierReceiver == null ? new ExpressionReceiver(receiverExpression, receiverType) : qualifierReceiver;
         JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
-                new ExpressionReceiver(receiverExpression, receiverType),
-                expression.getOperationTokenNode(), selectorExpression, context);
+                receiver, expression.getOperationTokenNode(), selectorExpression, context);
         JetType selectorReturnType = selectorReturnTypeInfo.getType();
 
+        resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, expression, context);
+        checkNestedClassAccess(expression, context);
+
         //TODO move further
-        if (!(receiverType instanceof PackageType) && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+        if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
             if (selectorReturnType != null && !KotlinBuiltIns.getInstance().isUnit(selectorReturnType)) {
                 if (receiverType.isNullable()) {
                     selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
@@ -477,5 +321,39 @@ public class CallExpressionResolver {
             DataFlowUtils.checkType(typeInfo, expression, context);
         }
         return typeInfo;
+    }
+
+    private static void resolveDeferredReceiverInQualifiedExpression(
+            @Nullable QualifierReceiver qualifierReceiver,
+            @NotNull JetQualifiedExpression qualifiedExpression,
+            @NotNull ExpressionTypingContext context
+    ) {
+        if (qualifierReceiver == null) return;
+        JetExpression calleeExpression =
+                JetPsiUtil.deparenthesize(CallUtilPackage.getCalleeExpressionIfAny(qualifiedExpression.getSelectorExpression()), false);
+        DeclarationDescriptor selectorDescriptor =
+                calleeExpression instanceof JetReferenceExpression
+                ? context.trace.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpression) : null;
+        ReceiversPackage.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, selectorDescriptor);
+    }
+
+    private static void checkNestedClassAccess(
+            @NotNull JetQualifiedExpression expression,
+            @NotNull ExpressionTypingContext context
+    ) {
+        JetExpression selectorExpression = expression.getSelectorExpression();
+        if (selectorExpression == null) return;
+
+        // A.B - if B is a nested class accessed by outer class, 'A' and 'A.B' were marked as qualifiers
+        // a.B - if B is a nested class accessed by instance reference, 'a.B' was marked as a qualifier, but 'a' was not (it's an expression)
+
+        Qualifier expressionQualifier = context.trace.get(BindingContext.QUALIFIER, expression);
+        Qualifier receiverQualifier = context.trace.get(BindingContext.QUALIFIER, expression.getReceiverExpression());
+
+        if (receiverQualifier == null && expressionQualifier != null) {
+            assert expressionQualifier.getClassifier() instanceof ClassDescriptor :
+                    "Only class can (package cannot) be accessed by instance reference: " + expressionQualifier;
+            context.trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(selectorExpression, (ClassDescriptor)expressionQualifier.getClassifier()));
+        }
     }
 }

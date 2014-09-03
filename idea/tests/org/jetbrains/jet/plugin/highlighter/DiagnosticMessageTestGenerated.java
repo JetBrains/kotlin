@@ -98,6 +98,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/nameInConstraintIsNotATypeParameter.kt");
     }
     
+    @TestMetadata("nestedClassAcessedViaInstanceReference.kt")
+    public void testNestedClassAcessedViaInstanceReference() throws Exception {
+        doTest("idea/testData/diagnosticMessage/nestedClassAcessedViaInstanceReference.kt");
+    }
+    
     @TestMetadata("noneApplicable.kt")
     public void testNoneApplicable() throws Exception {
         doTest("idea/testData/diagnosticMessage/noneApplicable.kt");

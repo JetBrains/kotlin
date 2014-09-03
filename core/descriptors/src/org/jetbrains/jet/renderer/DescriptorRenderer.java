@@ -53,7 +53,6 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
             .setModifiers().build();
 
     DescriptorRenderer COMPACT_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
-            .setWithDefinedIn(false)
             .setModifiers()
             .setShortNames(true)
             .setIncludeSynthesizedParameterNames(false).build();
@@ -87,6 +86,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer HTML_NAMES_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
             .setShortNames(true)
+            .setRenderClassObjectName(true)
             .setTextFormat(TextFormat.HTML).build();
 
     DescriptorRenderer HTML = new DescriptorRendererBuilder().setTextFormat(TextFormat.HTML).build();

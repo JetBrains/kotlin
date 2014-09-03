@@ -18,16 +18,13 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import com.google.common.collect.*;
 import com.intellij.util.containers.BidirectionalMap;
-import jet.runtime.typeinfo.JetValueParameter;
 import kotlin.Function0;
-import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.*;
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MergeInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.AbstractJumpInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction;

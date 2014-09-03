@@ -23,6 +23,6 @@ class Outer {
 
 fun Outer.foo() {
     Outer()
-    <!UNRESOLVED_REFERENCE!>Nested<!>()
+    <!NESTED_CLASS_SHOULD_BE_QUALIFIED!>Nested<!>()
     Inner()
 }

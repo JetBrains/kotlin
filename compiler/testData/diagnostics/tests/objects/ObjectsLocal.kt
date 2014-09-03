@@ -14,7 +14,7 @@ fun test() {
     }
     b.foo()
 
-    object B {
+    <!LOCAL_OBJECT_NOT_ALLOWED!>object B<!> {
         fun foo() {}
     }
     B.foo()

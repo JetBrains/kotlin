@@ -49,6 +49,11 @@ public class KotlinSourceFileCollector {
         dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
             @Override
             public boolean apply(ModuleBuildTarget target, File file, JavaSourceRootDescriptor root) throws IOException {
+                //TODO this is a workaround for bug in JPS: the latter erroneously calls process with invalid parameters
+                if (!root.getTarget().equals(target)) {
+                    return true;
+                }
+
                 if (isKotlinSourceFile(file)) {
                     result.putValue(target, file);
                 }

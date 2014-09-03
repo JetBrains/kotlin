@@ -1,11 +1,11 @@
-fun box(): String {
-    trait Named {
-        fun name(): String
-    }
-    
-    enum class E : Named {
-        OK
-    }
+trait Named {
+    fun name(): String
+}
 
+enum class E : Named {
+    OK
+}
+
+fun box(): String {
     return E.OK.(Named::name)()
 }

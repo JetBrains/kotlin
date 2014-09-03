@@ -25,14 +25,40 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.engine.BasicStepMethodFilter
-import com.intellij.openapi.util.Computable
 import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.InTextDirectivesUtils.*
+import com.intellij.openapi.util.io.FileUtil
+import java.io.File
+import kotlin.properties.Delegates
+import com.intellij.debugger.settings.DebuggerSettings
 
 public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
+    private var oldSettings: DebuggerSettings by Delegates.notNull()
+    private var oldIsFilterForStdlibAlreadyAdded: Boolean by Delegates.notNull()
+    private var oldDisableKoltinInternalClasses: Boolean by Delegates.notNull()
+
+    override fun initApplication() {
+        super<KotlinDebuggerTestCase>.initApplication()
+        saveDefaultSettings()
+    }
+
+    override fun tearDown() {
+        super<KotlinDebuggerTestCase>.tearDown()
+        restoreDefaultSettings()
+    }
 
     protected fun doStepIntoTest(path: String) {
+        val fileText = FileUtil.loadFile(File(path))
+
+        configureSettings(fileText)
+
         createDebugProcess(path)
-        onBreakpoint { stepInto() }
+        val count = findStringWithPrefixes(fileText, "// REPEAT: ")?.toInt() ?: 1
+
+        for (i in 1..count) {
+            onBreakpoint { stepInto() }
+        }
+
         finish()
     }
 
@@ -40,6 +66,37 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
         createDebugProcess(path)
         onBreakpoint { smartStepInto() }
         finish()
+    }
+
+    private fun configureSettings(fileText: String) {
+        val kotlinSettings = KotlinDebuggerSettings.getInstance()
+        kotlinSettings.DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = false
+        kotlinSettings.DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = fileText.getValueForSetting("DISABLE_KOTLIN_INTERNAL_CLASSES", oldDisableKoltinInternalClasses)
+
+        val debuggerSettings = DebuggerSettings.getInstance()!!
+        debuggerSettings.SKIP_CONSTRUCTORS = fileText.getValueForSetting("SKIP_CONSTRUCTORS", oldSettings.SKIP_CONSTRUCTORS)
+        debuggerSettings.SKIP_CLASSLOADERS = fileText.getValueForSetting("SKIP_CLASSLOADERS", oldSettings.SKIP_CLASSLOADERS)
+        debuggerSettings.TRACING_FILTERS_ENABLED = fileText.getValueForSetting("TRACING_FILTERS_ENABLED", oldSettings.TRACING_FILTERS_ENABLED)
+    }
+
+    private fun String.getValueForSetting(name: String, defaultValue: Boolean): Boolean {
+        return findStringWithPrefixes(this, "// $name: ")?.toBoolean() ?: defaultValue
+    }
+
+    private fun saveDefaultSettings() {
+        oldIsFilterForStdlibAlreadyAdded = KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED
+        oldDisableKoltinInternalClasses = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES
+        oldSettings = DebuggerSettings.getInstance()!!.clone()
+    }
+
+    private fun restoreDefaultSettings() {
+        KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = oldIsFilterForStdlibAlreadyAdded
+        KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = oldDisableKoltinInternalClasses
+
+        val debuggerSettings = DebuggerSettings.getInstance()!!
+        debuggerSettings.SKIP_CONSTRUCTORS = oldSettings.SKIP_CONSTRUCTORS
+        debuggerSettings.SKIP_CLASSLOADERS = oldSettings.SKIP_CLASSLOADERS
+        debuggerSettings.TRACING_FILTERS_ENABLED = oldSettings.TRACING_FILTERS_ENABLED
     }
 
     private val dp: DebugProcessImpl

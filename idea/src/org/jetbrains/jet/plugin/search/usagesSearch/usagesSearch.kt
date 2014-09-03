@@ -159,14 +159,14 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
 
 public object UsagesSearch: QueryFactory<PsiReference, UsagesSearchRequest>() {
     {
-        object ExecutorImpl: QueryExecutorBase<PsiReference, UsagesSearchRequest>() {
+        val executorImpl = object : QueryExecutorBase<PsiReference, UsagesSearchRequest>() {
             override fun processQuery(request: UsagesSearchRequest, consumer: Processor<PsiReference>) {
                 val searchHelper = KotlinPsiSearchHelper(request.project)
                 request.items.filter { it.filter != False }.all { searchHelper.processFilesWithText(it, consumer) }
             }
         }
 
-        registerExecutor(ExecutorImpl)
+        registerExecutor(executorImpl)
     }
 
     fun search(request: UsagesSearchRequest): Query<PsiReference> = with(request) {

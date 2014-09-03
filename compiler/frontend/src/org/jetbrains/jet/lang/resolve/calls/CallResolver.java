@@ -20,13 +20,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
@@ -56,8 +53,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.NOT_A_CLASS;
 import static org.jetbrains.jet.lang.diagnostics.Errors.NO_CONSTRUCTOR;
-import static org.jetbrains.jet.lang.resolve.BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
+import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults.Code.*;
@@ -352,7 +348,8 @@ public class CallResolver {
         }
         if (results == null) {
             BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
-            results = doResolveCallAndRecordDebugInfo(newContext, prioritizedTasks, callTransformer, tracing);
+            recordScopeAndDataFlowInfo(newContext, newContext.call.getCalleeExpression());
+            results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
             DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
             if (deltasTraceForTypeInference != null) {
                 deltasTraceForTypeInference.addAllMyDataTo(traceToResolveCall);
@@ -406,22 +403,6 @@ public class CallResolver {
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> checkArgumentTypesAndFail(BasicCallResolutionContext context) {
         argumentTypeResolver.checkTypesWithNoCallee(context);
         return OverloadResolutionResultsImpl.nameNotFound();
-    }
-
-    @NotNull
-    private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallAndRecordDebugInfo(
-            @NotNull BasicCallResolutionContext context,
-            @NotNull List<ResolutionTask<D, F>> prioritizedTasks, // high to low priority
-            @NotNull CallTransformer<D, F> callTransformer,
-            @NotNull TracingStrategy tracing
-    ) {
-        context.trace.record(RESOLUTION_SCOPE, context.call.getCalleeExpression(), context.scope);
-
-        if (context.dataFlowInfo.hasTypeInfoConstraints()) {
-            context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, context.call.getCalleeExpression(), context.dataFlowInfo);
-        }
-
-        return doResolveCall(context, prioritizedTasks, callTransformer, tracing);
     }
 
     @NotNull

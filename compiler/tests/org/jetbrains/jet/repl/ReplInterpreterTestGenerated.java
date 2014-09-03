@@ -186,6 +186,11 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
             doTest("compiler/testData/repl/objects/emptyObject.repl");
         }
         
+        @TestMetadata("localObject.repl")
+        public void testLocalObject() throws Exception {
+            doTest("compiler/testData/repl/objects/localObject.repl");
+        }
+        
         @TestMetadata("simpleObjectDeclaration.repl")
         public void testSimpleObjectDeclaration() throws Exception {
             doTest("compiler/testData/repl/objects/simpleObjectDeclaration.repl");

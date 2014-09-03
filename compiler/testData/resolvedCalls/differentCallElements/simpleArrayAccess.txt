@@ -5,7 +5,7 @@ fun foo(array: Array<Int>) {
 
 Resolved call:
 
-Resulting descriptor: fun get(index: Int): Int
+Resulting descriptor: fun get(index: Int): Int defined in kotlin.Array
 
 Explicit receiver kind = THIS_OBJECT
 This object = array {Array<Int>}

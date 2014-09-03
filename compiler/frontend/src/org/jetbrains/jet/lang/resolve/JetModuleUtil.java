@@ -20,19 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SubpackagesScope;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.PackageType;
 
 public class JetModuleUtil {
-    public static PackageType getRootPackageType(JetElement expression) {
-        // TODO: this is a stub: at least the modules' root packages must be indexed here
-        return new PackageType(SpecialNames.ROOT_PACKAGE, JetScope.EMPTY, ReceiverValue.NO_RECEIVER);
-    }
-
     public static JetScope getSubpackagesOfRootScope(@NotNull ModuleDescriptor module) {
         return getRootPackageScope(module, /* scopeIncludingMembers = */ false);
     }

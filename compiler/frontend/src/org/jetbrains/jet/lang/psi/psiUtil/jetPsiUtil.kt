@@ -229,6 +229,13 @@ public fun JetSimpleNameExpression.getQualifiedElement(): JetElement {
     }
 }
 
+public fun JetSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): JetQualifiedExpression? {
+    return stream<JetExpression>(this) {
+        val parentQualified = it.getParent() as? JetQualifiedExpression
+        if (parentQualified?.getSelectorExpression() == it) parentQualified else null
+    }.last() as? JetQualifiedExpression
+}
+
 /**
  * Returns rightmost selector of the qualified element (null if there is no such selector)
  */

@@ -2,6 +2,6 @@ open class Required
 
 trait Trait : Required
 
-abstract class <!UNMET_TRAIT_REQUIREMENT!>Abstract<!> : Trait
+abstract <!UNMET_TRAIT_REQUIREMENT!>class Abstract<!> : Trait
 
-abstract class <!UNMET_TRAIT_REQUIREMENT!>AbstractDerived<!> : Abstract()
+abstract <!UNMET_TRAIT_REQUIREMENT!>class AbstractDerived<!> : Abstract()

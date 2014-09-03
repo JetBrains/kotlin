@@ -30,14 +30,22 @@ import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration
+import org.jetbrains.jet.lang.psi.JetClassObject
+import org.jetbrains.jet.lang.psi.JetClass
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
+// For class object return enclosing class
 public val PsiReference.unwrappedTargets: Set<PsiElement>
     get() {
         fun PsiElement.adjust(): PsiElement? {
             val target = unwrapped
-            return if (target is JetPropertyAccessor) target.getParentByType(javaClass<JetProperty>()) else target
+            return when {
+                target is JetPropertyAccessor -> target.getParentByType(javaClass<JetProperty>())
+                target is JetObjectDeclaration && target.isClassObject() -> target.getParentByType(javaClass<JetClass>())
+                else -> target
+            }
         }
 
         return when (this) {

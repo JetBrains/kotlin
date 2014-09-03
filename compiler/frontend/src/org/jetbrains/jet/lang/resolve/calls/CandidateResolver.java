@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
+import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -115,6 +116,9 @@ public class CandidateResolver {
                 }
             }
         }
+        if (!checkThisObject(context)) {
+            candidateCall.addStatus(OTHER_ERROR);
+        }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
         if (jetTypeArguments.isEmpty()) {
@@ -138,22 +142,25 @@ public class CandidateResolver {
                         projection.getTypeReference(), context.scope, context.trace, ErrorUtils.createErrorType("Star projection in a call")));
             }
             int expectedTypeArgumentCount = candidate.getTypeParameters().size();
-            if (expectedTypeArgumentCount == jetTypeArguments.size()) {
-
-                checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, context.trace);
-
-                Map<TypeConstructor, TypeProjection>
-                        substitutionContext = FunctionDescriptorUtil
-                        .createSubstitutionContext((FunctionDescriptor) candidate, typeArguments);
-                TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
-                candidateCall.setResultingSubstitutor(substitutor);
-
-                candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
+            for (int index = jetTypeArguments.size(); index < expectedTypeArgumentCount; index++) {
+                typeArguments.add(ErrorUtils.createErrorType(
+                        "Explicit type argument expected for " + candidate.getTypeParameters().get(index).getName()));
             }
-            else {
+            Map<TypeConstructor, TypeProjection> substitutionContext =
+                    FunctionDescriptorUtil.createSubstitutionContext((FunctionDescriptor) candidate, typeArguments);
+            TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
+
+            if (expectedTypeArgumentCount != jetTypeArguments.size()) {
                 candidateCall.addStatus(OTHER_ERROR);
                 context.tracing.wrongNumberOfTypeArguments(context.trace, expectedTypeArgumentCount);
             }
+            else {
+                checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, substitutor, context.trace);
+            }
+
+            candidateCall.setResultingSubstitutor(substitutor);
+
+            candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
         }
 
         task.performAdvancedChecks(candidate, context.trace, context.tracing);
@@ -165,6 +172,31 @@ public class CandidateResolver {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
             candidateCall.addStatus(OTHER_ERROR);
         }
+    }
+
+    private static boolean checkThisObject(@NotNull CallCandidateResolutionContext<?> context) {
+        MutableResolvedCall<? extends CallableDescriptor> candidateCall = context.candidateCall;
+        CallableDescriptor candidateDescriptor = candidateCall.getCandidateDescriptor();
+        ReceiverValue thisObject = candidateCall.getThisObject();
+        if (thisObject.exists()) {
+            ClassDescriptor nestedClass = null;
+            if (candidateDescriptor instanceof ConstructorDescriptor
+                && DescriptorUtils.isStaticNestedClass(candidateDescriptor.getContainingDeclaration())) {
+                nestedClass = (ClassDescriptor) candidateDescriptor.getContainingDeclaration();
+            }
+            else if (candidateDescriptor instanceof FakeCallableDescriptorForObject) {
+                nestedClass = ((FakeCallableDescriptorForObject) candidateDescriptor).getReferencedDescriptor();
+            }
+            if (nestedClass != null) {
+                context.tracing.nestedClassAccessViaInstanceReference(context.trace, nestedClass, candidateCall.getExplicitReceiverKind());
+                return false;
+            }
+        }
+
+        assert (thisObject.exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null))
+                : "Shouldn't happen because of TaskPrioritizer: " + candidateDescriptor;
+
+        return true;
     }
 
     private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {
@@ -619,17 +651,11 @@ public class CandidateResolver {
             @NotNull List<JetTypeProjection> jetTypeArguments,
             @NotNull List<JetType> typeArguments,
             @NotNull CallableDescriptor functionDescriptor,
-            @NotNull BindingTrace trace) {
-        Map<TypeConstructor, TypeProjection> context = Maps.newHashMap();
-
-        List<TypeParameterDescriptor> typeParameters = functionDescriptor.getOriginal().getTypeParameters();
-        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
-            TypeParameterDescriptor typeParameter = typeParameters.get(i);
-            JetType typeArgument = typeArguments.get(i);
-            context.put(typeParameter.getTypeConstructor(), new TypeProjectionImpl(typeArgument));
-        }
-        TypeSubstitutor substitutor = TypeSubstitutor.create(context);
-        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+            @NotNull TypeSubstitutor substitutor,
+            @NotNull BindingTrace trace
+    ) {
+        List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
+        for (int i = 0; i < typeParameters.size(); i++) {
             TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
             JetType typeArgument = typeArguments.get(i);
             JetTypeReference typeReference = jetTypeArguments.get(i).getTypeReference();

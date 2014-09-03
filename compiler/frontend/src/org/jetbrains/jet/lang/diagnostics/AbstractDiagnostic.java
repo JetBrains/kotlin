@@ -27,7 +27,6 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
     private final E psiElement;
     private final DiagnosticFactoryWithPsiElement<E, ?> factory;
     private final Severity severity;
-    private List<TextRange> textRanges;
 
     public AbstractDiagnostic(@NotNull E psiElement,
             @NotNull DiagnosticFactoryWithPsiElement<E, ?> factory,
@@ -64,9 +63,6 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
     @Override
     @NotNull
     public List<TextRange> getTextRanges() {
-        if (textRanges != null) {
-            return textRanges;
-        }
         return getFactory().getTextRanges(this);
     }
 
@@ -74,11 +70,5 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
     public boolean isValid() {
         if (!getFactory().isValid(this)) return false;
         return true;
-    }
-
-    @NotNull
-    public Diagnostic setTextRanges(@NotNull List<TextRange> textRanges) {
-        this.textRanges = textRanges;
-        return this;
     }
 }

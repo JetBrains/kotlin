@@ -12,9 +12,9 @@ fun foo() {
     x.foo()
 }
 
-object <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>Rr<!> : SomeTrait {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object Rr<!> : SomeTrait {}
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>C<!> : SomeTrait {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class C<!> : SomeTrait {}
 
 fun foo2() {
     val <!UNUSED_VARIABLE!>r<!> = <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object<!> : Runnable {} //no error

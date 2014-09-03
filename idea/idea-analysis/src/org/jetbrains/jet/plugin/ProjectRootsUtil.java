@@ -21,9 +21,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetCodeFragment;
+import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
 
 public class ProjectRootsUtil {
-    public static boolean isInSource(@NotNull PsiElement element) {
+    private static boolean isInSource(@NotNull PsiElement element) {
         return isInSource(element, true);
     }
 
@@ -38,5 +40,9 @@ public class ProjectRootsUtil {
         }
         ProjectFileIndex index = ProjectFileIndex.SERVICE.getInstance(element.getProject());
         return includeLibrarySources ? index.isInSource(virtualFile) : index.isInSourceContent(virtualFile);
+    }
+
+    public static boolean isInSourceWithGradleCheck(@NotNull PsiElement element) {
+        return isInSource(element) && !JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(element);
     }
 }

@@ -20,12 +20,13 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiQualifiedNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -48,9 +49,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static junit.framework.Assert.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.junit.Assert.*;
 
 public abstract class ExpectedResolveData {
 
@@ -80,13 +81,9 @@ public abstract class ExpectedResolveData {
     private final Map<String, DeclarationDescriptor> nameToDescriptor;
     private final Map<String, PsiElement> nameToPsiElement;
 
-    @NotNull
-    private final JetCoreEnvironment jetCoreEnvironment;
-
-    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement, @NotNull JetCoreEnvironment environment) {
+    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement) {
         this.nameToDescriptor = nameToDescriptor;
         this.nameToPsiElement = nameToPsiElement;
-        jetCoreEnvironment = environment;
     }
 
     public final JetFile createFileFromMarkedUpText(String fileName, String text) {

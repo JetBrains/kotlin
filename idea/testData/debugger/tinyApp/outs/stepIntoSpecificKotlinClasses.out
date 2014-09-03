@@ -1,0 +1,12 @@
+LineBreakpoint created at stepIntoSpecificKotlinClasses.kt:8
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! stepIntoSpecificKotlinClasses.StepIntoSpecificKotlinClassesPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+stepIntoSpecificKotlinClasses.kt:7
+MyJavaClass.java:11
+stepIntoSpecificKotlinClasses.kt:7
+Intrinsics.class:17
+stepIntoSpecificKotlinClasses.kt:7
+stepIntoSpecificKotlinClasses.kt:8
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

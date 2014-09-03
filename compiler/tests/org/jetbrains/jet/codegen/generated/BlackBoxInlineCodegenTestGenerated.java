@@ -157,9 +157,19 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
         
+        @TestMetadata("defaultInExtension.1.kt")
+        public void testDefaultInExtension() throws Exception {
+            doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/defaultValues/defaultInExtension.1.kt");
+        }
+        
         @TestMetadata("defaultMethod.1.kt")
         public void testDefaultMethod() throws Exception {
             doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/defaultValues/defaultMethod.1.kt");
+        }
+        
+        @TestMetadata("defaultMethodInClass.1.kt")
+        public void testDefaultMethodInClass() throws Exception {
+            doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/defaultValues/defaultMethodInClass.1.kt");
         }
         
         @TestMetadata("inlineInDefaultParameter.1.kt")

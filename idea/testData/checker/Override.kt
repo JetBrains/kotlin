@@ -15,17 +15,17 @@ package override
 
     class MyChildClass : MyClass() {}
 
-    class <error>MyIllegalClass</error> : MyTrait, MyAbstractClass() {}
+    <error>class MyIllegalClass</error> : MyTrait, MyAbstractClass() {}
 
-    class <error>MyIllegalClass2</error> : MyTrait, MyAbstractClass() {
+    <error>class MyIllegalClass2</error> : MyTrait, MyAbstractClass() {
         override fun foo() {}
     }
 
-    class <error>MyIllegalClass3</error> : MyTrait, MyAbstractClass() {
+    <error>class MyIllegalClass3</error> : MyTrait, MyAbstractClass() {
         override fun bar() {}
     }
 
-    class <error>MyIllegalClass4</error> : MyTrait, MyAbstractClass() {
+    <error>class MyIllegalClass4</error> : MyTrait, MyAbstractClass() {
         <error>fun foo()</error> {}
         <error>override</error> fun other() {}
     }

@@ -48,6 +48,7 @@ import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -106,7 +107,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         PackageViewDescriptor packageFromSource = exhaust.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
         assert packageFromSource != null;
-        junit.framework.Assert.assertEquals("test", packageFromSource.getName().asString());
+        Assert.assertEquals("test", packageFromSource.getName().asString());
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), configurationKind).first;

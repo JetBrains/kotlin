@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,18 +76,6 @@ public final class DynamicContext {
             dynamicContext.currentBlock.getStatements().remove(dynamicContext.vars);
             dynamicContext.vars = null;
         }
-    }
-
-    //TODO: replace return type to make it more readable
-    @NotNull
-    public Pair<JsVar, JsExpression> createTemporary(@Nullable JsExpression initExpression) {
-        JsVar var = new JsVar(currentScope.declareTemporary(), initExpression);
-        return Pair.create(var, (JsExpression) new JsNameRef(var.getName()));
-    }
-
-    @NotNull
-    public JsVar createTemporaryVar(@NotNull JsExpression initExpression) {
-        return new JsVar(currentScope.declareTemporary(), initExpression);
     }
 
     @NotNull

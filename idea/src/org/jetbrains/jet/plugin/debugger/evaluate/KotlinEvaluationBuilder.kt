@@ -133,7 +133,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
             // KT-4509
             val outputFiles = (classFileFactory : OutputFileCollection).asList().filter { it.relativePath != "$packageInternalName.class" }
-            if (outputFiles.size() != 1) exception("Expression compiles to more than one class file. Note that lambdas, classes and objects are unsupported yet. List of files: ${outputFiles.makeString(",")}")
+            if (outputFiles.size() != 1) exception("Expression compiles to more than one class file. Note that lambdas, classes and objects are unsupported yet. List of files: ${outputFiles.joinToString(",")}")
 
             val funName = extractedFunction.getName()
             if (funName == null) {
@@ -266,7 +266,7 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
     var fileText = template.replace("!IMPORT_LIST!",
                                     codeFragment.importsToString()
                                             .split(JetCodeFragment.IMPORT_SEPARATOR)
-                                            .makeString("\n"))
+                                            .joinToString("\n"))
 
     val extractedFunctionText = extractedFunction.getText()
     assert(extractedFunctionText != null, "Text of extracted function shouldn't be null")

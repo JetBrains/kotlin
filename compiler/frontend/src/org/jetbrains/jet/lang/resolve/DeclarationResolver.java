@@ -182,7 +182,8 @@ public class DeclarationResolver {
                             scopeForPropertyInitializers,
                             property,
                             trace,
-                            c.getOuterDataFlowInfo());
+                            c.getOuterDataFlowInfo()
+                    );
                     packageLike.addPropertyDescriptor(propertyDescriptor);
                     c.getProperties().put(property, propertyDescriptor);
                     c.registerDeclaringScope(property, scopeForPropertyInitializers);

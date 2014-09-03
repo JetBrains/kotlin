@@ -18,5 +18,8 @@ fun box(): String {
     result = simple()
     if (result != "OK") return "fail2: ${result}"
 
+    var result2 = simpleDoubleFun(2.0)
+    if (result2 != 2.0 + 1.0) return "fail3: ${result2}"
+
     return "OK"
 }

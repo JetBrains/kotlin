@@ -71,6 +71,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                 "Using Kotlin home directory " + paths.getHomePath(), CompilerMessageLocation.NO_LOCATION);
 
         CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
         IncrementalCacheProvider incrementalCacheProvider = (IncrementalCacheProvider) services.get(IncrementalCacheProvider.class);
         if (incrementalCacheProvider != null) {
@@ -105,7 +106,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
         }
         else {
-            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs);
+            CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, arguments.freeArgs);
         }
 
         configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, arguments.script
@@ -113,8 +114,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                                                   : Collections.<AnalyzerScriptParameter>emptyList());
 
         putAdvancedOptions(configuration, arguments);
-
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);

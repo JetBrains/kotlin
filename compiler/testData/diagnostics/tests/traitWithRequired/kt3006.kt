@@ -7,7 +7,7 @@ trait Derived: Base {
     }
 }
 
-class <!UNMET_TRAIT_REQUIREMENT!>DerivedImpl()<!>: Derived {}
-object <!UNMET_TRAIT_REQUIREMENT!>ObjectImpl<!>: Derived {}
+<!UNMET_TRAIT_REQUIREMENT!>class DerivedImpl<!>(): Derived {}
+<!UNMET_TRAIT_REQUIREMENT!>object ObjectImpl<!>: Derived {}
 
 fun f1(b: Base) = b

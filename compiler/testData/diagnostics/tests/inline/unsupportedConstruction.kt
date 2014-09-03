@@ -8,9 +8,9 @@ inline fun unsupported() {
         }
     }<!>
 
-    <!NOT_YET_SUPPORTED_IN_INLINE!>object B{
-        object BInner {}
-    }<!>
+    <!LOCAL_OBJECT_NOT_ALLOWED!>object B<!>{
+        <!LOCAL_OBJECT_NOT_ALLOWED!>object BInner<!> {}
+    }
 
     <!NOT_YET_SUPPORTED_IN_INLINE!>fun local() {
         fun localInner() {}

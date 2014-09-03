@@ -4,5 +4,5 @@ trait First : Required
 
 trait Second : First
 
-class <!UNMET_TRAIT_REQUIREMENT!>Y<!> : Second
+<!UNMET_TRAIT_REQUIREMENT!>class Y<!> : Second
 class Z : Second, Required(":o)")

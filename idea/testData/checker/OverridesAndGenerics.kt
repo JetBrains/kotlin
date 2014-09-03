@@ -23,13 +23,13 @@
         override fun bar(t: String) = t
     }
 
-    class <error>MyIllegalGenericClass1</error><T> : MyTrait<T>, MyAbstractClass<T>() {}
-    class <error>MyIllegalGenericClass2</error><T, R> : MyTrait<T>, MyAbstractClass<R>() {
+    <error>class MyIllegalGenericClass1</error><T> : MyTrait<T>, MyAbstractClass<T>() {}
+    <error>class MyIllegalGenericClass2</error><T, R> : MyTrait<T>, MyAbstractClass<R>() {
         <error>override</error> fun foo(r: R) = r
     }
-    class <error>MyIllegalClass1</error> : MyTrait<Int>, MyAbstractClass<String>() {}
+    <error>class MyIllegalClass1</error> : MyTrait<Int>, MyAbstractClass<String>() {}
 
-    class <error>MyIllegalClass2</error><T> : MyTrait<Int>, MyAbstractClass<Int>() {
+    <error>class MyIllegalClass2</error><T> : MyTrait<Int>, MyAbstractClass<Int>() {
         fun foo(t: T) = t
         fun bar(t: T) = t
     }

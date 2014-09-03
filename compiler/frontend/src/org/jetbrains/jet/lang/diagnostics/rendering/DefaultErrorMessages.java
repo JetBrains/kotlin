@@ -216,6 +216,8 @@ public class DefaultErrorMessages {
 
         MAP.put(MANY_CLASS_OBJECTS, "Only one class object is allowed per class");
         MAP.put(CLASS_OBJECT_NOT_ALLOWED, "A class object is not allowed here");
+        MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
+        MAP.put(LOCAL_ENUM_NOT_ALLOWED, "Enum class ''{0}'' cannot be local", NAME);
         MAP.put(DELEGATION_IN_TRAIT, "Traits cannot use delegation");
         MAP.put(DELEGATION_NOT_TO_TRAIT, "Only traits can be delegated to");
         MAP.put(UNMET_TRAIT_REQUIREMENT, "Super trait ''{0}'' requires subclasses to extend ''{1}''", NAME, NAME);
@@ -259,6 +261,8 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", NAME);
         MAP.put(TYPE_PARAMETER_ON_LHS_OF_DOT, "Type parameter ''{0}'' cannot have or inherit a class object, so it cannot be on the left hand side of dot", NAME);
         MAP.put(NO_GENERICS_IN_SUPERTYPE_SPECIFIER, "Generic arguments of the base type must be specified");
+        MAP.put(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, "Nested {0} accessed via instance reference", RENDER_CLASS_OR_OBJECT_NAME);
+        MAP.put(NESTED_CLASS_SHOULD_BE_QUALIFIED, "Nested {0} should be qualified", RENDER_CLASS_OR_OBJECT_NAME);
 
         MAP.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, "Expression is inaccessible from a nested class ''{0}'', use ''inner'' keyword to make the class inner", NAME);
         MAP.put(NESTED_CLASS_NOT_ALLOWED, "Nested class is not allowed here, use ''inner'' keyword to make the class inner");

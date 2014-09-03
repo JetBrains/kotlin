@@ -1,0 +1,5 @@
+>>> fun foo() {
+...   object Bar {
+...   }
+... }
+ERROR: /line4.kts: (2, 1) Named object 'Bar' is a singleton and cannot be local. Try to use anonymous object instead

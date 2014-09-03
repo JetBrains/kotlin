@@ -4,11 +4,11 @@ class A(
                 open fun s() : String = "O"
             }
 
-            object O: B() {
+            val o = object : B() {
                 override fun s(): String = "K"
             }
 
-            B().s() + O.s()
+            B().s() + o.s()
         }()
 )
 

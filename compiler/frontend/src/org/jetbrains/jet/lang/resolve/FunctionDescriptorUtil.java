@@ -53,15 +53,18 @@ public class FunctionDescriptorUtil {
     private FunctionDescriptorUtil() {
     }
 
-    public static Map<TypeConstructor, TypeProjection> createSubstitutionContext(@NotNull FunctionDescriptor functionDescriptor, List<JetType> typeArguments) {
+    public static Map<TypeConstructor, TypeProjection> createSubstitutionContext(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull List<JetType> typeArguments
+    ) {
         if (functionDescriptor.getTypeParameters().isEmpty()) return Collections.emptyMap();
 
         Map<TypeConstructor, TypeProjection> result = new HashMap<TypeConstructor, TypeProjection>();
 
-        int typeArgumentsSize = typeArguments.size();
         List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
-        assert typeArgumentsSize == typeParameters.size();
-        for (int i = 0; i < typeArgumentsSize; i++) {
+        assert typeArguments.size() >= typeParameters.size() :
+                "Insufficient number of type arguments.\nType arguments: " + typeArguments + "\nType parameters: " + typeParameters;
+        for (int i = 0; i < typeParameters.size(); i++) {
             TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
             JetType typeArgument = typeArguments.get(i);
             result.put(typeParameterDescriptor.getTypeConstructor(), new TypeProjectionImpl(typeArgument));

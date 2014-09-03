@@ -20,10 +20,10 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
-import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
+import org.junit.Assert;
 
 public final class ReferenceUtils {
     private ReferenceUtils() {

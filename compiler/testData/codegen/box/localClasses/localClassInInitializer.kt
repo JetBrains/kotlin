@@ -6,11 +6,11 @@ class A {
             open fun s() : String = "O"
         }
 
-        object O: B() {
+        val o = object : B() {
             override fun s(): String = "K"
         }
 
-        a = B().s() + O.s()
+        a = B().s() + o.s()
     }
 }
 

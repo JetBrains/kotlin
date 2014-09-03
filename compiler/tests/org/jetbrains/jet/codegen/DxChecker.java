@@ -18,14 +18,13 @@ package org.jetbrains.jet.codegen;
 
 import com.android.dx.command.dexer.Main;
 import com.android.dx.dex.cf.CfTranslator;
-import junit.framework.Assert;
 import org.jetbrains.jet.OutputFile;
+import org.junit.Assert;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 public class DxChecker {
 

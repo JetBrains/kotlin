@@ -34,7 +34,27 @@ public final class ForeachTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testLabeledForWithContinue() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testForWithComplexOneStatement() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForIteratesOverLiteralRange() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForIteratesOverNonLiteralRange() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForIteratesOverSomethingWithIterator() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForWithWhile() throws Exception {
         checkFooBoxIsOk();
     }
 }

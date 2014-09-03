@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -29,6 +30,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource;
+import static org.jetbrains.jet.lang.resolve.descriptorUtil.DescriptorUtilPackage.getClassObjectReferenceTarget;
 
 @SuppressWarnings("unchecked")
 public class CallableDescriptorCollectors<D extends CallableDescriptor> implements Iterable<CallableDescriptorCollector<D>> {
@@ -97,6 +99,15 @@ public class CallableDescriptorCollectors<D extends CallableDescriptor> implemen
 
     private static class VariableCollector implements CallableDescriptorCollector<VariableDescriptor> {
 
+        private static void addFakeDescriptorForObject(JetScope scope, Name name, Collection<VariableDescriptor> variables) {
+            ClassifierDescriptor classifier = scope.getClassifier(name);
+            if (!(classifier instanceof ClassDescriptor)) return;
+            JetType classObjectType = classifier.getClassObjectType();
+            if (classObjectType == null) return;
+
+            variables.add(new FakeCallableDescriptorForObject((ClassDescriptor) classifier));
+        }
+
         @NotNull
         @Override
         public Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
@@ -105,19 +116,24 @@ public class CallableDescriptorCollectors<D extends CallableDescriptor> implemen
                 return Collections.singleton(localVariable);
             }
 
-            LinkedHashSet<VariableDescriptor> variables = Sets.newLinkedHashSet();
+            Set<VariableDescriptor> variables = Sets.newLinkedHashSet();
             for (VariableDescriptor variable : scope.getProperties(name)) {
                 if (variable.getReceiverParameter() == null) {
                     variables.add(variable);
                 }
             }
+            addFakeDescriptorForObject(scope, name, variables);
             return variables;
         }
 
         @NotNull
         @Override
         public Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiverType, Name name, @NotNull BindingTrace bindingTrace) {
-            return receiverType.getMemberScope().getProperties(name);
+            JetScope memberScope = receiverType.getMemberScope();
+            Collection<VariableDescriptor> members = Lists.newArrayList();
+            members.addAll(memberScope.getProperties(name));
+            addFakeDescriptorForObject(memberScope, name, members);
+            return members;
         }
 
         @NotNull
@@ -141,7 +157,7 @@ public class CallableDescriptorCollectors<D extends CallableDescriptor> implemen
 
     private static class PropertyCollector implements CallableDescriptorCollector<VariableDescriptor> {
         private static Collection<VariableDescriptor> filterProperties(Collection<? extends VariableDescriptor> variableDescriptors) {
-            ArrayList<VariableDescriptor> properties = Lists.newArrayList();
+            List<VariableDescriptor> properties = Lists.newArrayList();
             for (VariableDescriptor descriptor : variableDescriptors) {
                 if (descriptor instanceof PropertyDescriptor) {
                     properties.add(descriptor);

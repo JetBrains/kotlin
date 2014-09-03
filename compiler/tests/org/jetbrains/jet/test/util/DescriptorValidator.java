@@ -17,7 +17,6 @@
 package org.jetbrains.jet.test.util;
 
 import com.google.common.collect.Lists;
-import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -26,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFra
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.junit.Assert;
 
 import java.io.PrintStream;
 import java.util.Collection;

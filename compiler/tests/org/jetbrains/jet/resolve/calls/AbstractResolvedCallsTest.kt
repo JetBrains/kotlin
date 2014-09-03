@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
-    override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
+    override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
 
     public fun doTest(filePath: String) {
         val text = JetTestUtils.doLoadFile(File(filePath))!!

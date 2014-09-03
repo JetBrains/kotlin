@@ -51,8 +51,8 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackage;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
@@ -63,9 +63,7 @@ import org.jetbrains.jet.utils.KotlinPaths;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class KotlinToJVMBytecodeCompiler {
 
@@ -159,8 +157,11 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull File directory
     ) {
         CompilerConfiguration configuration = base.copy();
+
+        List<String> sourceRoots = Lists.newArrayList();
+
         for (Module module : chunk) {
-            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, getAbsolutePaths(directory, module));
+            sourceRoots.addAll(getAbsolutePaths(directory, module));
 
             for (String classpathRoot : module.getClasspathRoots()) {
                 configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File(classpathRoot));
@@ -172,6 +173,8 @@ public class KotlinToJVMBytecodeCompiler {
 
             configuration.add(JVMConfigurationKeys.MODULE_IDS, module.getModuleName());
         }
+
+        CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, sourceRoots);
 
         return configuration;
     }

@@ -18,7 +18,6 @@ package org.jetbrains.jet.resolve;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
@@ -39,6 +38,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.junit.Assert;
 
 import java.util.Arrays;
 import java.util.HashMap;

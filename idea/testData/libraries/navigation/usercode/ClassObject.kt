@@ -5,6 +5,5 @@ fun foo() {
 }
 
 // main.kt
-//public class <1>WithInnerAndObject {
-//    class object {
+//    class <1>object {
 //        fun <2>foo() {

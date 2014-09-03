@@ -40,12 +40,12 @@ fun test() {
     f(<!INVISIBLE_MEMBER!>D<!>)
 
     A.foo()
-    <!INVISIBLE_MEMBER!>B<!>.<!INVISIBLE_MEMBER!>bar<!>()
-    <!INVISIBLE_MEMBER!>C<!>.<!INVISIBLE_MEMBER!>baz<!>()
-    <!INVISIBLE_MEMBER!>D<!>.<!INVISIBLE_MEMBER!>quux<!>()
+    B.<!INVISIBLE_MEMBER!>bar<!>()
+    C.<!INVISIBLE_MEMBER!>baz<!>()
+    D.<!INVISIBLE_MEMBER!>quux<!>()
 
     a.A.foo()
-    a.<!INVISIBLE_MEMBER!>C<!>.<!INVISIBLE_MEMBER!>baz<!>()
+    a.C.<!INVISIBLE_MEMBER!>baz<!>()
 }
 
 fun f(<!UNUSED_PARAMETER!>unused<!>: Any) {}

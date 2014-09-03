@@ -1,18 +1,18 @@
 class A {
     inner class B {
-        class <!NESTED_CLASS_NOT_ALLOWED!>C<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>class C<!>
     }
     
     fun foo() {
         class B {
-            class <!NESTED_CLASS_NOT_ALLOWED!>C<!>
+            <!NESTED_CLASS_NOT_ALLOWED!>class C<!>
         }
     }
 }
 
 fun foo() {
     class B {
-        class <!NESTED_CLASS_NOT_ALLOWED!>C<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>class C<!>
     }
 }
 

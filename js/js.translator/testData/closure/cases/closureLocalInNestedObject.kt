@@ -3,7 +3,7 @@ package foo
 fun box(): String {
     var boo = "OK"
     var foo = object {
-        object bar {
+        val bar = object {
             val baz = boo
         }
     }

@@ -1,0 +1,6 @@
+<modules>
+    <module name="name" outputDir="whatever">
+        <sources path="duplicateSourcesInModule.kt"/>
+        <sources path="duplicateSourcesInModule.kt"/>
+    </module>
+</modules>

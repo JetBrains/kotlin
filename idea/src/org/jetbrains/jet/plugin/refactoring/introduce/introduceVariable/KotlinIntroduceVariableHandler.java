@@ -40,11 +40,11 @@ import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -125,10 +125,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope != null) {
-            DataFlowInfo dataFlowInfo = bindingContext.get(BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW, expression);
-            if (dataFlowInfo == null) {
-                dataFlowInfo = DataFlowInfo.EMPTY;
-            }
+            DataFlowInfo dataFlowInfo = BindingContextUtilPackage.getDataFlowInfo(bindingContext, expression);
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
             JetType typeNoExpectedType = AnalyzerPackage.computeTypeInfoInContext(
@@ -139,7 +136,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 noTypeInference = true;
             }
         }
-        if (expressionType instanceof PackageType) {
+
+        if (expressionType == null && bindingContext.get(BindingContext.QUALIFIER, expression) != null) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.package.expression"));
             return;
         }

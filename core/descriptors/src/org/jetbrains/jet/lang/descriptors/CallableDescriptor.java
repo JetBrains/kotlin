@@ -32,6 +32,7 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     @Nullable
     ReceiverParameterDescriptor getExpectedThisObject();
 
+    @KotlinSignature("fun getTypeParameters(): List<TypeParameterDescriptor>")
     @NotNull
     List<TypeParameterDescriptor> getTypeParameters();
 
@@ -48,6 +49,7 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     @Override
     CallableDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
+    @KotlinSignature("fun getValueParameters(): List<ValueParameterDescriptor>")
     @NotNull
     List<ValueParameterDescriptor> getValueParameters();
 

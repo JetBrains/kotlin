@@ -22,8 +22,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.*;
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassName;
+import static org.junit.Assert.assertEquals;
 
 public class PackageClassNameTest {
 
@@ -57,11 +57,11 @@ public class PackageClassNameTest {
         doTest(FqName.ROOT.child(Name.identifier("kotlin")), "KotlinPackage", "_DefaultPackage");
     }
 
-    private void doTest(@NotNull String name, @NotNull String expectedForChild, @Nullable String expectedForParent) {
+    private static void doTest(@NotNull String name, @NotNull String expectedForChild, @Nullable String expectedForParent) {
         doTest(new FqName(name), expectedForChild, expectedForParent);
     }
 
-    private void doTest(@NotNull FqName name, @NotNull String expectedForChild, @Nullable String expectedForParent) {
+    private static void doTest(@NotNull FqName name, @NotNull String expectedForChild, @Nullable String expectedForParent) {
         assertEquals("Wrong result for child [" + name + "].", expectedForChild, getPackageClassName(name));
         if (expectedForParent != null) {
             assertEquals("Wrong result for parent [" + name + "].", expectedForParent, getPackageClassName(name.parent()));

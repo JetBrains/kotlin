@@ -12,7 +12,7 @@
     }
     b.foo()
 
-    object B {
+    <error>object B</error> {
       fun foo() {}
     }
     B.foo()

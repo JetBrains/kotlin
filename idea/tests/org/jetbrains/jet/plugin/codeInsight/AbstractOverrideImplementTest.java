@@ -27,7 +27,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.SmartList;
-import junit.framework.Assert;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +43,7 @@ import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
+import org.junit.Assert;
 
 import java.util.*;
 
@@ -124,7 +124,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = classOrObject.getContainingJetFile();
-        final ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession(jetFile);
+        ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession(jetFile);
         Set<CallableMemberDescriptor> descriptors =
                 handler.collectMethodsToGenerate(classOrObject, resolveSession.resolveToElement(classOrObject));
 
@@ -164,7 +164,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
 
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
             @Override
-            protected void run(Result result) throws Throwable {
+            protected void run(@NotNull Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(myFixture.getEditor(), classOrObject,
                         OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride))
                 );
@@ -181,7 +181,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
         BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
         Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
-        final ArrayList<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
+        final List<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
         Collections.sort(descriptorsList, new Comparator<CallableMemberDescriptor>() {
             @Override
             public int compare(@NotNull CallableMemberDescriptor desc1, @NotNull CallableMemberDescriptor desc2) {
@@ -191,7 +191,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
 
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
             @Override
-            protected void run(Result result) throws Throwable {
+            protected void run(@NotNull Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(
                         myFixture.getEditor(), classOrObject,
                         OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, descriptorsList));

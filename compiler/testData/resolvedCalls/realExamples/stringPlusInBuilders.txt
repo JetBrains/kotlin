@@ -41,8 +41,8 @@ val fail: Nothing get() = throw Exception()
 
 Resolved call:
 
-Resulting descriptor: fun String.plus(): Unit
+Resulting descriptor: fun String.plus(): Unit defined in Title
 
 Explicit receiver kind = RECEIVER_ARGUMENT
-This object = TitleExt{fun Title.<anonymous>(): Unit}
+This object = TitleExt{fun Title.<anonymous>(): Unit defined in result.<anonymous>.<anonymous>}
 Receiver argument = "Foo" {String}

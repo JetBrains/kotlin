@@ -1,7 +1,7 @@
 package Jet86
 
-~A~class A {
-  class object {
+class A {
+  class ~A~object {
     ~A.x~val x = 1
   }
 }

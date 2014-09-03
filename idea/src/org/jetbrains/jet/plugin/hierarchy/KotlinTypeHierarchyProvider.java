@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
@@ -55,8 +54,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
             if (file == null) return null;
 
-            if (!ProjectRootsUtil.isInSource(file)) return null;
-            if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file)) return null;
+            if (!ProjectRootsUtil.isInSourceWithGradleCheck(file)) return null;
 
             PsiElement target = TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted());
 

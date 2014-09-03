@@ -24,15 +24,14 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER;
-import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 public class TracingStrategyImpl extends AbstractTracingStrategy {
     private final JetReferenceExpression reference;
@@ -54,9 +53,12 @@ public class TracingStrategyImpl extends AbstractTracingStrategy {
 
     @Override
     public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall) {
-        CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+        DeclarationDescriptor descriptor = resolvedCall.getCandidateDescriptor();
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
+        }
+        if (descriptor instanceof FakeCallableDescriptorForObject) {
+            descriptor = ((FakeCallableDescriptorForObject) descriptor).getReferencedDescriptor();
         }
         DeclarationDescriptor storedReference = trace.get(REFERENCE_TARGET, reference);
         if (storedReference == null || !ErrorUtils.isError(descriptor)) {

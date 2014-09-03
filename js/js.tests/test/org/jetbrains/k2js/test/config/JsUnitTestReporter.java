@@ -17,11 +17,11 @@
 package org.jetbrains.k2js.test.config;
 
 import com.intellij.util.containers.ContainerUtil;
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -118,7 +118,6 @@ public class JsUnitTestReporter {
                         Assert.fail(sb.toString());
                     }
                     eraseTestInfo(getName());
-                    Assert.assertTrue(result);
                 }
             });
         }

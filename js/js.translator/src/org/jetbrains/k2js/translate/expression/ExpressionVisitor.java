@@ -32,7 +32,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
-import org.jetbrains.k2js.translate.expression.foreach.ForTranslator;
+import org.jetbrains.k2js.translate.expression.loopTranslator.LoopTranslatorPackage;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
@@ -216,17 +216,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @NotNull
-    private static JsStatement translateNullableExpressionAsNotNullStatement(
-            @Nullable JetExpression nullableExpression,
-            @NotNull TranslationContext context
-    ) {
-        if (nullableExpression == null) {
-            return context.program().getEmptyStatement();
-        }
-        return Translation.translateAsStatement(nullableExpression, context);
-    }
-
-    @NotNull
     private JsExpression translateConditionExpression(@Nullable JetExpression expression,
             @NotNull TranslationContext context) {
         JsExpression jsCondition = translateNullableExpression(expression, context);
@@ -246,46 +235,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitWhileExpression(@NotNull JetWhileExpression expression, @NotNull TranslationContext context) {
-        return createWhile(false, expression, context);
+        return LoopTranslatorPackage.createWhile(false, expression, context);
     }
 
     @Override
     @NotNull
     public JsNode visitDoWhileExpression(@NotNull JetDoWhileExpression expression, @NotNull TranslationContext context) {
-        return createWhile(true, expression, context);
-    }
-
-    private static JsNode createWhile(boolean doWhile, @NotNull JetWhileExpressionBase expression, @NotNull TranslationContext context) {
-        JetExpression conditionExpression = expression.getCondition();
-        assert conditionExpression != null : "condition expression should not be null: " + expression.getText();
-
-        JsBlock conditionBlock = new JsBlock();
-        JsExpression jsCondition = Translation.translateAsExpression(conditionExpression, context, conditionBlock);
-        JsStatement bodyStatement = translateNullableExpressionAsNotNullStatement(expression.getBody(), context);
-        if (!conditionBlock.isEmpty()) {
-            JsIf IfStatement = new JsIf(not(jsCondition), new JsBreak());
-            JsBlock bodyBlock = JsAstUtils.convertToBlock(bodyStatement);
-            jsCondition = JsLiteral.TRUE;
-            if (doWhile) {
-                // translate to: tmpSecondRun = false; do { if(tmpSecondRun) { <expr> if(!tmpExprVar) break; } else tmpSecondRun=true; <body> } while(true)
-                TemporaryVariable secondRun = context.declareTemporary(JsLiteral.FALSE);
-                context.addStatementToCurrentBlock(secondRun.assignmentExpression().makeStmt());
-                conditionBlock.getStatements().add(IfStatement);
-                bodyBlock.getStatements().add(0,
-                                              new JsIf(secondRun.reference(), conditionBlock,
-                                                       JsAstUtils.assignment(secondRun.reference(), JsLiteral.TRUE).makeStmt())
-                );
-            } else {
-                // translate to: while (true) { <expr> if(!tmpExprVar) break; <body> }
-                conditionBlock.getStatements().add(IfStatement);
-                bodyBlock.getStatements().addAll(0, conditionBlock.getStatements());
-            }
-            bodyStatement = bodyBlock;
-        }
-        JsWhile result = doWhile ? new JsDoWhile() : new JsWhile();
-        result.setCondition(jsCondition);
-        result.setBody(bodyStatement);
-        return result.source(expression);
+        return LoopTranslatorPackage.createWhile(true, expression, context);
     }
 
     @Override
@@ -471,7 +427,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitForExpression(@NotNull JetForExpression expression,
             @NotNull TranslationContext context) {
-        return ForTranslator.translate(expression, context).source(expression);
+        return LoopTranslatorPackage.translateForExpression(expression, context).source(expression);
     }
 
     @Override

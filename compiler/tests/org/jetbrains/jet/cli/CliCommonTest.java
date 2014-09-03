@@ -42,6 +42,18 @@ public class CliCommonTest extends CliBaseTest {
     }
 
     @Test
+    public void duplicateSources() throws Exception {
+        executeCompilerCompareOutputJVM();
+
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
+    }
+
+    @Test
+    public void duplicateSourcesInModule() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
     public void diagnosticsOrder() throws Exception {
         executeCompilerCompareOutputJVM();
     }

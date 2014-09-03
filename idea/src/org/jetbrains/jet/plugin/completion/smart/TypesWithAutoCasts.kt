@@ -35,10 +35,11 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 
 class TypesWithAutoCasts(val bindingContext: BindingContext) {
     public fun calculate(expression: JetExpression, receiver: JetExpression?): (DeclarationDescriptor) -> Iterable<JetType> {
-        val dataFlowInfo = bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, expression]
+        val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
         val (variableToTypes: Map<VariableDescriptor, Collection<JetType>>, notNullVariables: Set<VariableDescriptor>)
             = processDataFlowInfo(dataFlowInfo, receiver)
 
@@ -77,8 +78,8 @@ class TypesWithAutoCasts(val bindingContext: BindingContext) {
             val notNullVariables: Set<VariableDescriptor> = Collections.emptySet()
     )
 
-    private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpression?): ProcessDataFlowInfoResult {
-        if (dataFlowInfo == null) return ProcessDataFlowInfoResult()
+    private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo, receiver: JetExpression?): ProcessDataFlowInfoResult {
+        if (dataFlowInfo == DataFlowInfo.EMPTY) return ProcessDataFlowInfoResult()
 
         val dataFlowValueToVariable: (DataFlowValue) -> VariableDescriptor?
         if (receiver != null) {

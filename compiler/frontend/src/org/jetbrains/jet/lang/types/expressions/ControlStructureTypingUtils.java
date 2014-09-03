@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -451,6 +452,14 @@ public class ControlStructureTypingUtils {
 
         @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {
+            throwError();
+        }
+
+        @Override
+        public void nestedClassAccessViaInstanceReference(
+                @NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor,
+                @NotNull ExplicitReceiverKind explicitReceiverKind
+        ) {
             throwError();
         }
 
