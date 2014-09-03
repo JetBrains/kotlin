@@ -32,6 +32,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -54,10 +55,7 @@ import org.jetbrains.jet.utils.UtilsPackage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.unwrapFakeOverride;
 
@@ -67,7 +65,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     private volatile BindingContext bindingContext;
     private volatile Set<JetFile> builtInsSources;
-    private volatile MutablePackageFragmentDescriptor builtinsPackageFragment;
+    private volatile PackageFragmentDescriptor builtinsPackageFragment;
 
     public BuiltInsReferenceResolver(Project project) {
         super(project);
@@ -112,7 +110,11 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 TopDownAnalyzer analyzer = injector.getTopDownAnalyzer();
                 analyzer.analyzeFiles(topDownAnalysisParameters, jetBuiltInsFiles);
 
-                builtinsPackageFragment = analyzer.getPackageFragmentProvider().getOrCreateFragment(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+                List<PackageFragmentDescriptor> fragments =
+                        module.getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+
+                builtinsPackageFragment = KotlinPackage.single(fragments);
+
                 builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
                 bindingContext = trace.getBindingContext();
             }
