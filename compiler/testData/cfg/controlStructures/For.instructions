@@ -15,7 +15,7 @@ L0:
     v(i)
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3 [loop exit point])                        NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>]    PREV:[v(i), jmp(L2 [loop entry point])]
+    jmp?(L3)                                          NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>]    PREV:[v(i), jmp(L2)]
     magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>
     w(i|<v3>)
     mark(for (i in 1..2) { doSmth(i) })
@@ -24,10 +24,10 @@ L4 [body entry point]:
     r(i) -> <v4>
     mark(doSmth(i))
     call(doSmth(i), doSmth|<v4>) -> <v5>
-  3 jmp(L2 [loop entry point])                        NEXT:[jmp?(L3 [loop exit point])]
+  3 jmp(L2)                                           NEXT:[jmp?(L3)]
 L3 [loop exit point]:
 L5 [body exit point]:
-    read (Unit)                                       PREV:[jmp?(L3 [loop exit point])]
+    read (Unit)                                       PREV:[jmp?(L3)]
 L1:
   1 <END>                                             NEXT:[<SINK>]
 error:

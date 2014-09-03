@@ -21,12 +21,12 @@ L0:
     call(toLong(), toLong|<v3>) -> <v4>
     mark(x == 0.toLong())
     call(x == 0.toLong(), equals|<v2>, <v4>) -> <v5>
-    jf(L2 [else branch]|<v5>)                                               NEXT:[read (Unit), r(sum) -> <v6>]
+    jf(L2|<v5>)                                                             NEXT:[read (Unit), r(sum) -> <v6>]
     r(sum) -> <v6>
     ret(*|<v6>) L1                                                          NEXT:[<END>]
--   jmp(L3 ['if' expression result])                                        NEXT:[merge(if (x == 0.toLong()) return sum|!<v7>) -> <v8>]                    PREV:[]
+-   jmp(L3)                                                                 NEXT:[merge(if (x == 0.toLong()) return sum|!<v7>) -> <v8>]                    PREV:[]
 L2 [else branch]:
-    read (Unit)                                                             PREV:[jf(L2 [else branch]|<v5>)]
+    read (Unit)                                                             PREV:[jf(L2|<v5>)]
 L3 ['if' expression result]:
     merge(if (x == 0.toLong()) return sum|!<v7>) -> <v8>
     r(x) -> <v9>

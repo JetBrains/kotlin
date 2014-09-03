@@ -25,35 +25,35 @@ L0:
     v(var u: String)
     mark(if (b) { u = "s" })
     r(b) -> <v1>
-    jf(L2 [else branch]|<v1>)                                                                                           NEXT:[read (Unit), mark({ u = "s" })]
+    jf(L2|<v1>)                                                                                                         NEXT:[read (Unit), mark({ u = "s" })]
   3 mark({ u = "s" })
     mark("s")
     r("s") -> <v2>
     w(u|<v2>)
-  2 jmp(L3 ['if' expression result])                                                                                    NEXT:[merge(if (b) { u = "s" }|!<v3>) -> <v4>]
+  2 jmp(L3)                                                                                                             NEXT:[merge(if (b) { u = "s" }|!<v3>) -> <v4>]
 L2 [else branch]:
-    read (Unit)                                                                                                         PREV:[jf(L2 [else branch]|<v1>)]
+    read (Unit)                                                                                                         PREV:[jf(L2|<v1>)]
 L3 ['if' expression result]:
-    merge(if (b) { u = "s" }|!<v3>) -> <v4>                                                                             PREV:[jmp(L3 ['if' expression result]), read (Unit)]
+    merge(if (b) { u = "s" }|!<v3>) -> <v4>                                                                             PREV:[jmp(L3), read (Unit)]
     r(u) -> <v5>
     mark(doSmth(u))
     call(doSmth(u), doSmth|<v5>) -> <v6>
     v(var r: String)
     mark(if (b) { r = "s" } else { r = "t" })
     r(b) -> <v7>
-    jf(L4 [else branch]|<v7>)                                                                                           NEXT:[mark({ r = "t" }), mark({ r = "s" })]
+    jf(L4|<v7>)                                                                                                         NEXT:[mark({ r = "t" }), mark({ r = "s" })]
   3 mark({ r = "s" })
     mark("s")
     r("s") -> <v8>
     w(r|<v8>)
-  2 jmp(L5 ['if' expression result])                                                                                    NEXT:[merge(if (b) { r = "s" } else { r = "t" }|!<v9>, !<v11>) -> <v12>]
+  2 jmp(L5)                                                                                                             NEXT:[merge(if (b) { r = "s" } else { r = "t" }|!<v9>, !<v11>) -> <v12>]
 L4 [else branch]:
-  3 mark({ r = "t" })                                                                                                   PREV:[jf(L4 [else branch]|<v7>)]
+  3 mark({ r = "t" })                                                                                                   PREV:[jf(L4|<v7>)]
     mark("t")
     r("t") -> <v10>
     w(r|<v10>)
 L5 ['if' expression result]:
-  2 merge(if (b) { r = "s" } else { r = "t" }|!<v9>, !<v11>) -> <v12>                                                   PREV:[jmp(L5 ['if' expression result]), w(r|<v10>)]
+  2 merge(if (b) { r = "s" } else { r = "t" }|!<v9>, !<v11>) -> <v12>                                                   PREV:[jmp(L5), w(r|<v10>)]
     r(r) -> <v13>
     mark(doSmth(r))
     call(doSmth(r), doSmth|<v13>) -> <v14>
@@ -87,12 +87,12 @@ L0:
     w(i|<v1>)
     mark(if (b) { return; })
     r(b) -> <v2>
-    jf(L2 [else branch]|<v2>)                                                     NEXT:[read (Unit), mark({ return; })]
+    jf(L2|<v2>)                                                                   NEXT:[read (Unit), mark({ return; })]
   3 mark({ return; })
     ret L1                                                                        NEXT:[<END>]
-- 2 jmp(L3 ['if' expression result])                                              NEXT:[merge(if (b) { return; }|!<v3>) -> <v4>]                                       PREV:[]
+- 2 jmp(L3)                                                                       NEXT:[merge(if (b) { return; }|!<v3>) -> <v4>]                                       PREV:[]
 L2 [else branch]:
-    read (Unit)                                                                   PREV:[jf(L2 [else branch]|<v2>)]
+    read (Unit)                                                                   PREV:[jf(L2|<v2>)]
 L3 ['if' expression result]:
     merge(if (b) { return; }|!<v3>) -> <v4>
     r(i) -> <v5>
@@ -102,12 +102,12 @@ L3 ['if' expression result]:
     mark(i is Int)
     r(i) -> <v7>
     magic[IS](i is Int|<v7>) -> <v8>
-    jf(L4 [else branch]|<v8>)                                                     NEXT:[read (Unit), mark({ return; })]
+    jf(L4|<v8>)                                                                   NEXT:[read (Unit), mark({ return; })]
   3 mark({ return; })
     ret L1                                                                        NEXT:[<END>]
-- 2 jmp(L5 ['if' expression result])                                              NEXT:[merge(if (i is Int) { return; }|!<v9>) -> <v10>]                               PREV:[]
+- 2 jmp(L5)                                                                       NEXT:[merge(if (i is Int) { return; }|!<v9>) -> <v10>]                               PREV:[]
 L4 [else branch]:
-    read (Unit)                                                                   PREV:[jf(L4 [else branch]|<v8>)]
+    read (Unit)                                                                   PREV:[jf(L4|<v8>)]
 L5 ['if' expression result]:
     merge(if (i is Int) { return; }|!<v9>) -> <v10>
 L1:

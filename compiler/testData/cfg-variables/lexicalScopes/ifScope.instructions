@@ -17,12 +17,12 @@ L0:
     r("before") -> <v0>
     mark(if (true) { val a = 1 } else { val b = 2 })
     r(true) -> <v1>
-    jf(L2 [else branch]|<v1>)
+    jf(L2|<v1>)
   3 mark({ val a = 1 })
     v(val a = 1)                                                              INIT: in: {} out: {a=D}
     r(1) -> <v2>                                                              INIT: in: {a=D} out: {a=D}
     w(a|<v2>)                                                                 INIT: in: {a=D} out: {a=ID}
-  2 jmp(L3 ['if' expression result])                                          INIT: in: {} out: {}
+  2 jmp(L3)                                                                   INIT: in: {} out: {}
 L2 [else branch]:
   3 mark({ val b = 2 })
     v(val b = 2)                                                              INIT: in: {} out: {b=D}

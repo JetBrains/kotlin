@@ -188,7 +188,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
             Instruction instruction = instructions.get(i);
             for (PseudocodeImpl.PseudocodeLabel label: labels) {
                 if (label.getTargetInstructionIndex() == i) {
-                    out.append(label.getName()).append(":\n");
+                    out.append(label).append(":\n");
                 }
             }
 

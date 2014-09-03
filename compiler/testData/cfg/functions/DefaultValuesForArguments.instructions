@@ -4,10 +4,10 @@ fun foo(i: Int = 1, j: Int) = i + j
 L0:
   1 <START>
     v(i: Int = 1)
-    jmp?(L2 [after default value for parameter i])    NEXT:[magic[FAKE_INITIALIZER](i: Int = 1) -> <v1>, r(1) -> <v0>]
+    jmp?(L2)                                       NEXT:[magic[FAKE_INITIALIZER](i: Int = 1) -> <v1>, r(1) -> <v0>]
     r(1) -> <v0>
 L2 [after default value for parameter i]:
-    magic[FAKE_INITIALIZER](i: Int = 1) -> <v1>       PREV:[jmp?(L2 [after default value for parameter i]), r(1) -> <v0>]
+    magic[FAKE_INITIALIZER](i: Int = 1) -> <v1>    PREV:[jmp?(L2), r(1) -> <v0>]
     merge(i: Int = 1|<v0>, <v1>) -> <v2>
     w(i|<v2>)
     v(j: Int)
@@ -19,9 +19,9 @@ L2 [after default value for parameter i]:
     call(i + j, plus|<v4>, <v5>) -> <v6>
     ret(*|<v6>) L1
 L1:
-    <END>                                             NEXT:[<SINK>]
+    <END>                                          NEXT:[<SINK>]
 error:
-    <ERROR>                                           PREV:[]
+    <ERROR>                                        PREV:[]
 sink:
-    <SINK>                                            PREV:[<ERROR>, <END>]
+    <SINK>                                         PREV:[<ERROR>, <END>]
 =====================

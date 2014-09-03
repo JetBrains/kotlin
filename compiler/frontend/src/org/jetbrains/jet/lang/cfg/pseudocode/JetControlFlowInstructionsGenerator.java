@@ -117,8 +117,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         private JetControlFlowInstructionsGeneratorWorker(@NotNull JetElement scopingElement, @NotNull JetElement returnSubroutine) {
             this.pseudocode = new PseudocodeImpl(scopingElement);
-            this.error = pseudocode.createLabel("error");
-            this.sink = pseudocode.createLabel("sink");
+            this.error = pseudocode.createLabel("error", null);
+            this.sink = pseudocode.createLabel("sink", null);
             this.returnSubroutine = returnSubroutine;
         }
 
@@ -133,29 +133,28 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public final Label createUnboundLabel() {
-            return pseudocode.createLabel("L" + labelCount++);
+            return pseudocode.createLabel("L" + labelCount++, null);
         }
 
         @NotNull
         @Override
         public Label createUnboundLabel(@NotNull String name) {
-            return pseudocode.createLabel("L" + labelCount++ + " [" + name + "]");
+            return pseudocode.createLabel("L" + labelCount++, name);
         }
 
         @NotNull
         @Override
         public final LoopInfo enterLoop(@NotNull JetLoopExpression expression) {
-            Label loopEntryLabel = createUnboundLabel("loop entry point");
-            bindLabel(loopEntryLabel);
-            LoopInfo blockInfo = new LoopInfo(
+            LoopInfo info = new LoopInfo(
                     expression,
-                    loopEntryLabel,
+                    createUnboundLabel("loop entry point"),
                     createUnboundLabel("loop exit point"),
                     createUnboundLabel("body entry point"),
                     createUnboundLabel("body exit point"),
                     createUnboundLabel("condition entry point"));
-            elementToBlockInfo.put(expression, blockInfo);
-            return blockInfo;
+            bindLabel(info.getEntryPoint());
+            elementToBlockInfo.put(expression, info);
+            return info;
         }
 
         @Override
@@ -181,12 +180,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public void enterSubroutine(@NotNull JetElement subroutine) {
-            Label entryPoint = createUnboundLabel();
-            BreakableBlockInfo blockInfo = new BreakableBlockInfo(subroutine, entryPoint, createUnboundLabel());
-//            subroutineInfo.push(blockInfo);
+            BreakableBlockInfo blockInfo = new BreakableBlockInfo(
+                    subroutine,
+                    /* entry point */ createUnboundLabel(),
+                    /* exit point  */ createUnboundLabel());
             elementToBlockInfo.put(subroutine, blockInfo);
             allBlocks.push(blockInfo);
-            bindLabel(entryPoint);
+            bindLabel(blockInfo.getEntryPoint());
             add(new SubroutineEnterInstruction(subroutine, getCurrentScope()));
         }
 
@@ -408,7 +408,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
-            pseudocode.repeatPart(startLabel, finishLabel);
+            labelCount = pseudocode.repeatPart(startLabel, finishLabel, labelCount);
         }
 
         @NotNull
