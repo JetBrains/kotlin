@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTest {
     @TestMetadata("compiler/testData/cli/jvm")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Jvm.WrongAbiVersionLib.class})
+    @InnerTestClasses({Jvm.WrongAbiVersionLib.class, Jvm.WrongKotlinSignatureLib.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Jvm extends AbstractKotlincExecutableTest {
         public void testAllFilesPresentInJvm() throws Exception {
@@ -151,6 +151,16 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         public static class WrongAbiVersionLib extends AbstractKotlincExecutableTest {
             public void testAllFilesPresentInWrongAbiVersionLib() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm/wrongAbiVersionLib"), Pattern.compile("^(.+)\\.args$"), true);
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/cli/jvm/wrongKotlinSignatureLib")
+        @TestDataPath("$PROJECT_ROOT")
+        @InnerTestClasses({})
+        public static class WrongKotlinSignatureLib extends AbstractKotlincExecutableTest {
+            public void testAllFilesPresentInWrongKotlinSignatureLib() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm/wrongKotlinSignatureLib"), Pattern.compile("^(.+)\\.args$"), true);
             }
             
         }

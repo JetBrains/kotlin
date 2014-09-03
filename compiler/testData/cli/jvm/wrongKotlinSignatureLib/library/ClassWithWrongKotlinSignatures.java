@@ -1,3 +1,5 @@
+package library
+
 import jet.runtime.typeinfo.KotlinSignature;
 
 public class ClassWithWrongKotlinSignatures {
