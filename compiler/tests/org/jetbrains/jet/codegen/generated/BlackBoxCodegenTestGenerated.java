@@ -3678,6 +3678,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("extensionToNested.kt")
+        public void testExtensionToNested() throws Exception {
+            doTest("compiler/testData/codegen/box/innerNested/extensionToNested.kt");
+        }
+        
         @TestMetadata("importNestedClass.kt")
         public void testImportNestedClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/importNestedClass.kt");
