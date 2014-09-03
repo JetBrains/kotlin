@@ -43,7 +43,7 @@ public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescrip
             if (compileTimeConstant is StringValue) {
                 "\\\"${compileTimeConstant.getValue()}\\\""
             } else {
-                compileTimeConstant.toString()
+                "$compileTimeConstant"
             }
         }
     }

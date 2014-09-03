@@ -554,7 +554,7 @@ private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
         is CharValue,
         is DoubleValue, is FloatValue,
         is BooleanValue,
-        is NullValue -> StringValue(value.getValue().toString(), value.canBeUsedInAnnotations(), value.usesVariableAsConstant())
+        is NullValue -> StringValue("${value.getValue()}", value.canBeUsedInAnnotations(), value.usesVariableAsConstant())
         else -> null
     }
 }
