@@ -18,16 +18,9 @@ package org.jetbrains.jet.plugin.completion.smart
 
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.jet.lang.descriptors.Visibilities
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.renderer.DescriptorRenderer
@@ -95,12 +88,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             collection.addLookupElements(expectedInfos, classifier, { createLookupElement(descriptor, classDescriptor) })
         }
 
-        if (classDescriptor is JavaClassDescriptor) {
-            val pseudoPackage = classDescriptor.getCorrespondingPackageFragment()
-            if (pseudoPackage != null) {
-                pseudoPackage.getMemberScope().getAllDescriptors().forEach(::processMember)
-            }
-        }
+        classDescriptor.getStaticScope().getAllDescriptors().forEach(::processMember)
 
         val classObject = classDescriptor.getClassObjectDescriptor()
         if (classObject != null) {

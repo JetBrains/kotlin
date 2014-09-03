@@ -24,14 +24,10 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-
 import java.util.HashSet;
 import com.intellij.psi.util.PsiTreeUtil
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaClass
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
@@ -245,19 +241,9 @@ public object ShortenReferences {
                 refExpression: JetReferenceExpression,
                 bindingContext: BindingContext
         ): PsiElement {
-            val receiverExpression = qualifiedExpression.getReceiverExpression()
             val target = bindingContext[BindingContext.REFERENCE_TARGET, refExpression]
-            if (target != null) {
-                if ((target is JavaPropertyDescriptor || target is JavaMethodDescriptor) && receiverExpression is JetDotQualifiedExpression) {
-                    val containingDescriptor = target.getContainingDeclaration()
-                    if (containingDescriptor is LazyPackageFragmentForJavaClass) {
-                        return shortenIfPossibleByDescriptor(receiverExpression, containingDescriptor.getCorrespondingClass(), bindingContext)
-                    }
-                }
-
-                return shortenIfPossibleByDescriptor(qualifiedExpression, target, bindingContext)
-            }
-            return qualifiedExpression
+            if (target == null) return qualifiedExpression
+            return shortenIfPossibleByDescriptor(qualifiedExpression, target, bindingContext)
         }
 
         private fun instantiatedClass(calleeExpression: JetReferenceExpression): ClassDescriptor? {

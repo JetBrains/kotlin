@@ -280,10 +280,6 @@ public class SingleAbstractMethodUtils {
         return new TypeParameters(typeParameters, typeParametersSubstitutor);
     }
 
-    public static boolean isSamInterface(@NotNull JavaClass javaClass) {
-        return getSamInterfaceMethod(javaClass) != null;
-    }
-
     // Returns null if not SAM interface
     @Nullable
     public static JavaMethod getSamInterfaceMethod(@NotNull JavaClass javaClass) {

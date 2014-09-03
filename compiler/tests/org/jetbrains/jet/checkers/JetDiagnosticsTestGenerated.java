@@ -6151,6 +6151,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("privateNestedClassStaticMember.kt")
+            public void testPrivateNestedClassStaticMember() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/privateNestedClassStaticMember.kt");
+            }
+            
             @TestMetadata("protectedStaticSamePackage.kt")
             public void testProtectedStaticSamePackage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/protectedStaticSamePackage.kt");

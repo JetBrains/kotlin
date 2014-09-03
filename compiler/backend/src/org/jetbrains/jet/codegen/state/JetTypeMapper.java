@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
@@ -110,10 +109,7 @@ public class JetTypeMapper {
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        if (container instanceof JavaClassStaticsPackageFragmentDescriptor) {
-            return mapClass(((JavaClassStaticsPackageFragmentDescriptor) container).getCorrespondingClass());
-        }
-        else if (container instanceof PackageFragmentDescriptor) {
+        if (container instanceof PackageFragmentDescriptor) {
             return Type.getObjectType(internalNameForPackage(
                     (PackageFragmentDescriptor) container,
                     (CallableMemberDescriptor) descriptor,

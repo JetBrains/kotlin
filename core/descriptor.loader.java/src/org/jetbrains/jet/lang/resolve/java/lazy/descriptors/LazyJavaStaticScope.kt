@@ -28,7 +28,6 @@ import org.jetbrains.jet.utils.flatten
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.kotlin.util.inn
 import org.jetbrains.kotlin.util.sure
-import org.jetbrains.jet.lang.resolve.java.lazy.findJavaClass
 import org.jetbrains.jet.lang.resolve.java.lazy.findClassInJava
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
@@ -40,16 +39,16 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.name.SpecialNames
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 
-public abstract class LazyJavaPackageFragmentScope(
+public abstract class LazyJavaStaticScope(
         c: LazyJavaResolverContext,
-        packageFragment: LazyJavaPackageFragment
-) : LazyJavaMemberScope(c.withTypes(), packageFragment) {
+        descriptor: ClassOrPackageFragmentDescriptor
+) : LazyJavaMemberScope(c.withTypes(), descriptor) {
     
-    protected val fqName: FqName = DescriptorUtils.getFqName(packageFragment).toSafe()
+    protected val fqName: FqName = DescriptorUtils.getFqName(descriptor).toSafe()
 
     protected fun computeMemberIndexForSamConstructors(delegate: MemberIndex): MemberIndex = object : MemberIndex by delegate {
         override fun getAllMethodNames(): Collection<Name> {
-            val jClass = c.findJavaClass(fqName)
+            val jClass = c.findClassInJava(fqName).jClass
             return delegate.getAllMethodNames() +
                    // For SAM-constructors
                    getAllClassNames() +
@@ -76,11 +75,11 @@ public abstract class LazyJavaPackageFragmentScope(
         //no undeclared properties
     }
 
-    override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaPackageFragment
+    override fun getContainingDeclaration() = super.getContainingDeclaration() as ClassOrPackageFragmentDescriptor
 
     fun ClassifierDescriptor.createSamConstructor(): SamConstructorDescriptor? {
         if (this is LazyJavaClassDescriptor && this.getFunctionTypeForSamInterface() != null) {
-            return SingleAbstractMethodUtils.createSamConstructorFunction(this@LazyJavaPackageFragmentScope.getContainingDeclaration(), this)
+            return SingleAbstractMethodUtils.createSamConstructorFunction(this@LazyJavaStaticScope.getContainingDeclaration(), this)
         }
         return null
     }
@@ -89,8 +88,8 @@ public abstract class LazyJavaPackageFragmentScope(
 public class LazyPackageFragmentScopeForJavaPackage(
         c: LazyJavaResolverContext,
         private val jPackage: JavaPackage,
-        packageFragment: LazyPackageFragmentForJavaPackage
-) : LazyJavaPackageFragmentScope(c, packageFragment) {
+        packageFragment: LazyJavaPackageFragment
+) : LazyJavaStaticScope(c, packageFragment) {
 
     // TODO: Storing references is a temporary hack until modules infrastructure is implemented.
     // See JetTypeMapperWithOutDirectories for details
@@ -143,7 +142,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
                                     listOf(
                                         // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
                                         // and there's no harm in having some names in the result that can not be resolved
-                                        jPackage.getClasses().map { c -> c.getFqName().sure("Toplevel class has no fqName: $c}") },
+                                        jPackage.getClasses().map { c -> c.getFqName().sure("Toplevel class has no fqName: $c") },
                                         jPackage.getSubPackages().map { sp -> sp.getFqName() }
                                     ).flatten()
                                 },
@@ -162,32 +161,30 @@ public class LazyPackageFragmentScopeForJavaPackage(
     override fun getAllPropertyNames() = Collections.emptyList<Name>()
 }
 
-public class LazyPackageFragmentScopeForJavaClass(
+public class LazyJavaStaticClassScope(
         c: LazyJavaResolverContext,
         private val jClass: JavaClass,
-        packageFragment: LazyPackageFragmentForJavaClass
-) : LazyJavaPackageFragmentScope(c, packageFragment) {
+        descriptor: LazyJavaClassDescriptor
+) : LazyJavaStaticScope(c, descriptor) {
 
     override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(ClassMemberIndex(jClass, { m -> m.isStatic() }))
 
-    // nested classes are loaded as members of their outer classes, not packages
     override fun getAllClassNames(): Collection<Name> = listOf()
     override fun getClassifier(name: Name): ClassifierDescriptor? = null
 
     // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
     // and there's no harm in having some names in the result that can not be resolved
     override fun getSubPackages(): Collection<FqName> = jClass.getInnerClasses().stream()
-                                                                .filter { c -> c.isStatic() }
-                                                                .map { c -> c.getFqName().sure("Nested class has no fqName: $c}") }.toList()
+            .filter { c -> c.isStatic() }
+            .map { c -> c.getFqName().sure("Nested class has no fqName: $c") }.toList()
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         //NOTE: assuming that all sam constructors are created for interfaces which are static and should be placed in this scope
-        val samConstructor = getContainingDeclaration().getCorrespondingClass().getUnsubstitutedInnerClassesScope().getClassifier(name)
-                ?.createSamConstructor()
+        val samConstructor = getContainingDeclaration().getUnsubstitutedInnerClassesScope().getClassifier(name)?.createSamConstructor()
         if (samConstructor != null) {
             result.add(samConstructor)
         }
     }
 
-    override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyPackageFragmentForJavaClass
+    override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaClassDescriptor
 }

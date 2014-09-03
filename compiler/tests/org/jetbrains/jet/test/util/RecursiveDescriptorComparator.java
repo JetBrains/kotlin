@@ -95,6 +95,12 @@ public class RecursiveDescriptorComparator {
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor klass = (ClassDescriptor) descriptor;
                 appendSubDescriptors(klass.getDefaultType().getMemberScope(), getConstructorsAndClassObject(klass), printer);
+                JetScope staticScope = klass.getStaticScope();
+                if (!staticScope.getAllDescriptors().isEmpty()) {
+                    printer.println();
+                    printer.println("// Static members");
+                    appendSubDescriptors(staticScope, Collections.<DeclarationDescriptor>emptyList(), printer);
+                }
             }
             else if (descriptor instanceof PackageFragmentDescriptor) {
                 appendSubDescriptors(((PackageFragmentDescriptor) descriptor).getMemberScope(),

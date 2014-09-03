@@ -21,13 +21,9 @@ import org.jetbrains.jet.storage.MemoizedFunctionToNullable
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaPackage
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaClass
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.*
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaClassDescriptor
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
@@ -53,20 +49,15 @@ public class LazyJavaPackageFragmentProvider(
 
     override fun getModule() = _module
 
-    private val _packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> = c.storageManager.createMemoizedFunctionWithNullableValues {
-        fqName ->
-        val jPackage = c.finder.findPackage(fqName)
-        if (jPackage != null) {
-            LazyPackageFragmentForJavaPackage(c, _module, jPackage)
-        }
-        else {
-            val jClass = c.findJavaClass(fqName)
-            if (jClass != null) {
-                packageFragmentsForClasses(jClass)
+    private val _packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
+            c.storageManager.createMemoizedFunctionWithNullableValues {
+                fqName ->
+                val jPackage = c.finder.findPackage(fqName)
+                if (jPackage != null) {
+                    LazyJavaPackageFragment(c, _module, jPackage)
+                }
+                else null
             }
-            else null
-        }
-    }
 
     private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues @lambda {
         (jClass: JavaClass): LazyJavaClassDescriptor? ->
@@ -84,17 +75,7 @@ public class LazyJavaPackageFragmentProvider(
         )
     }
 
-    private val packageFragmentsForClasses: MemoizedFunctionToNullable<JavaClass, LazyPackageFragmentForJavaClass> = c.storageManager.createMemoizedFunctionWithNullableValues {
-        jClass ->
-        if (DescriptorResolverUtils.hasStaticMembers(jClass)) {
-            val correspondingClass = c.javaClassResolver.resolveClass(jClass)
-            if (correspondingClass != null) LazyPackageFragmentForJavaClass(c, _module, jClass) else null
-        }
-        else null
-    }
-
-    override fun getPackageFragment(fqName: FqName) = _packageFragments(fqName)
-    fun getPackageFragment(javaClass: JavaClass) = packageFragmentsForClasses(javaClass)
+    fun getPackageFragment(fqName: FqName) = _packageFragments(fqName)
 
     override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)}.orEmpty()
 

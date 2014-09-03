@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParamete
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 
@@ -64,8 +63,6 @@ class LazyJavaTypeParameterResolver(
         return resolve(javaTypeParameter) ?: c.typeParameterResolver.resolveTypeParameter(javaTypeParameter)
     }
 }
-
-fun LazyJavaResolverContext.findJavaClass(fqName: FqName): JavaClass? = findClassInJava(fqName).jClass
 
 data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: ClassDescriptor? = null)
 

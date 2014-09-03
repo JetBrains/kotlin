@@ -16,28 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.java
 
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.java.structure.JavaField
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMember
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.sources.JavaSourceElement
-import org.jetbrains.jet.lang.resolve.java.structure.JavaElement
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithSource
 
 public class JavaDescriptorResolver(public val packageFragmentProvider: LazyJavaPackageFragmentProvider, private val module: ModuleDescriptor) {
     public fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
         return packageFragmentProvider.getClass(javaClass)
-    }
-
-    public fun getPackageFragment(javaClass: JavaClass): PackageFragmentDescriptor? {
-        return packageFragmentProvider.getPackageFragment(javaClass)
     }
 }
 
@@ -54,12 +41,12 @@ public fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescri
     return getContainingScope(field)?.getProperties(field.getName())?.findByJavaElement(field) as? PropertyDescriptor
 }
 
-private fun JavaDescriptorResolver.getContainingScope(method: JavaMember): JetScope? {
-    val containingClass = method.getContainingClass()
-    return if (method.isStatic())
-        getPackageFragment(containingClass)?.getMemberScope()
+private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): JetScope? {
+    val containingClass = resolveClass(member.getContainingClass())
+    return if (member.isStatic())
+        containingClass?.getStaticScope()
     else
-        resolveClass(containingClass)?.getDefaultType()?.getMemberScope()
+        containingClass?.getDefaultType()?.getMemberScope()
 }
 
 private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElement(javaElement: JavaElement): T? {

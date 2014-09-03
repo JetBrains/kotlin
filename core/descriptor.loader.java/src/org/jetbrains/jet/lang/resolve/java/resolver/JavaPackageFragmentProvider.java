@@ -17,16 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface JavaPackageFragmentProvider extends PackageFragmentProvider {
-    @Nullable
-    JavaPackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName);
-
     @NotNull
     ModuleDescriptor getModule();
 }

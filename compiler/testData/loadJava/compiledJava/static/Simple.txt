@@ -3,8 +3,7 @@ package test
 public open class Simple {
     public constructor Simple()
     public open fun foo(): kotlin.Unit
-}
-
-package test.Simple {
+    
+    // Static members
     public open fun bar(): kotlin.Unit
 }

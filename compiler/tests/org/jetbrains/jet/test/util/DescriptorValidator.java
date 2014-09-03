@@ -20,8 +20,6 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -170,13 +168,6 @@ public class DescriptorValidator {
         public Boolean visitPackageFragmentDescriptor(
                 PackageFragmentDescriptor descriptor, DiagnosticCollector collector
         ) {
-            if (descriptor instanceof JavaClassStaticsPackageFragmentDescriptor) {
-                JavaClassDescriptor correspondingClass = ((JavaClassStaticsPackageFragmentDescriptor) descriptor).getCorrespondingClass();
-                JavaClassStaticsPackageFragmentDescriptor correspondingPackageFragment = correspondingClass.getCorrespondingPackageFragment();
-                if (correspondingPackageFragment != descriptor) {
-                    report(collector, descriptor, "Corresponding class bound to another descriptor: " + correspondingPackageFragment);
-                }
-            }
             validateScope(descriptor.getMemberScope(), collector);
             return true;
         }
@@ -248,17 +239,6 @@ public class DescriptorValidator {
                 if (!descriptor.getConstructors().contains(primaryConstructor)) {
                     report(collector, primaryConstructor,
                            "Primary constructor not in getConstructors() result: " + descriptor.getConstructors());
-                }
-            }
-
-            if (descriptor instanceof JavaClassDescriptor) {
-                JavaClassStaticsPackageFragmentDescriptor
-                        correspondingPackageFragment = ((JavaClassDescriptor) descriptor).getCorrespondingPackageFragment();
-                if (correspondingPackageFragment != null) {
-                    JavaClassDescriptor correspondingClass = correspondingPackageFragment.getCorrespondingClass();
-                    if (correspondingClass != descriptor) {
-                        report(collector, descriptor, "Corresponding package bound to another descriptor: " + correspondingClass);
-                    }
                 }
             }
 

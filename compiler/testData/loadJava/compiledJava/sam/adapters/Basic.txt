@@ -4,9 +4,8 @@ public open class Basic {
     public constructor Basic()
     public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
     public open fun foo(/*0*/ p0: java.lang.Runnable?): kotlin.Unit
-}
 
-package test.Basic {
-    public /*synthesized*/ fun bar(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
+    // Static members
+    public final /*synthesized*/ fun bar(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
     public open fun bar(/*0*/ p0: java.lang.Runnable?): kotlin.Unit
 }

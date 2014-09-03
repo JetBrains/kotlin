@@ -17,10 +17,8 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
 
 public class JavaVisibilities {
     private JavaVisibilities() {
@@ -61,20 +59,9 @@ public class JavaVisibilities {
             ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
             if (fromClass == null) return false;
 
-            ClassDescriptor whatClass;
-            // protected static class
-            if (what instanceof ClassDescriptor) {
-                DeclarationDescriptor containingDeclaration = what.getContainingDeclaration();
-                assert containingDeclaration instanceof ClassDescriptor : "Only static nested classes can have protected_static visibility";
-                whatClass = (ClassDescriptor) containingDeclaration;
-            }
-            // protected static function or property
-            else {
-                DeclarationDescriptor whatDeclarationDescriptor = what.getContainingDeclaration();
-                assert whatDeclarationDescriptor instanceof JavaClassStaticsPackageFragmentDescriptor
-                        : "Only static declarations can have protected_static visibility";
-                whatClass = ((JavaClassStaticsPackageFragmentDescriptor) whatDeclarationDescriptor).getCorrespondingClass();
-            }
+            DeclarationDescriptor containingDeclaration = what.getContainingDeclaration();
+            assert containingDeclaration instanceof ClassDescriptor : "Only class members can have protected_static visibility";
+            ClassDescriptor whatClass = (ClassDescriptor) containingDeclaration;
 
             if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
                 return true;
@@ -134,18 +121,8 @@ public class JavaVisibilities {
     };
 
     private static boolean areInSamePackage(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        PackageFragmentDescriptor whatPackage = getPackageStaticsAware(first);
-        PackageFragmentDescriptor fromPackage = getPackageStaticsAware(second);
+        PackageFragmentDescriptor whatPackage = DescriptorUtils.getParentOfType(first, PackageFragmentDescriptor.class, false);
+        PackageFragmentDescriptor fromPackage = DescriptorUtils.getParentOfType(second, PackageFragmentDescriptor.class, false);
         return fromPackage != null && whatPackage != null && whatPackage.getFqName().equals(fromPackage.getFqName());
-    }
-
-    @Nullable
-    private static PackageFragmentDescriptor getPackageStaticsAware(@NotNull DeclarationDescriptor member) {
-        PackageFragmentDescriptor packageFragment = DescriptorUtils.getParentOfType(member, PackageFragmentDescriptor.class, false);
-        if (packageFragment instanceof JavaClassStaticsPackageFragmentDescriptor) {
-            ClassDescriptor classForPackage = ((JavaClassStaticsPackageFragmentDescriptor) packageFragment).getCorrespondingClass();
-            return DescriptorUtils.getParentOfType(classForPackage, PackageFragmentDescriptor.class, false);
-        }
-        return packageFragment;
     }
 }
