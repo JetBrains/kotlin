@@ -16,21 +16,11 @@
 
 package org.jetbrains.jet.plugin.debugger.filter
 
-import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.ui.classFilter.ClassFilter
-import org.jetbrains.jet.plugin.debugger.KotlinDebuggerSettings
-import org.jetbrains.jet.plugin.debugger.filter.setSteppingFilters
+import com.intellij.debugger.settings.DebuggerSettings
 
-private val KOTLIN_STDLIB_FILTER = "kotlin.*"
-
-public fun addKotlinStdlibDebugFilterIfNeeded() {
-    if (!KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED) {
-        val settings = DebuggerSettings.getInstance()!!
-        val newFilters = (settings.getSteppingFilters() + ClassFilter(KOTLIN_STDLIB_FILTER)).copyToArray()
-
-        settings.setSteppingFilters(newFilters)
-
-        KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = true
-    }
+fun DebuggerSettings.setSteppingFilters(newFilters: Array<ClassFilter>) {
+    val method = javaClass<DebuggerSettings>().getDeclaredMethod("setSteppingFilters", newFilters.javaClass)
+    method.setAccessible(true)
+    method.invoke(this, newFilters)
 }
-

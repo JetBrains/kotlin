@@ -21,16 +21,11 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.options.Configurable
-import com.intellij.openapi.options.SimpleConfigurable
 import com.intellij.openapi.util.Getter
 import com.intellij.util.xmlb.XmlSerializerUtil
-import com.intellij.xdebugger.settings.DebuggerSettingsCategory
 import com.intellij.xdebugger.settings.XDebuggerSettings
 
 import com.intellij.xdebugger.XDebuggerUtil
-import com.intellij.ui.classFilter.ClassFilter
-import com.intellij.debugger.settings.DebuggerSettings
-import java.util.Arrays
 
 State(name = "KotlinDebuggerSettings", storages = array(Storage(file = StoragePathMacros.APP_CONFIG + "/kotlin_debug.xml")))
 public class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin_debugger"), Getter<KotlinDebuggerSettings> {
@@ -43,16 +38,8 @@ public class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>(
         }
     }
 
-    override fun createConfigurables(category: DebuggerSettingsCategory): Collection<Configurable?> {
-        return when (category) {
-            DebuggerSettingsCategory.STEPPING ->
-                listOf(SimpleConfigurable.create(
-                        "reference.idesettings.debugger.kotlin",
-                        "Kotlin",
-                        javaClass<KotlinSteppingConfigurableUi>(),
-                        this))
-            else -> listOf()
-        }
+    override fun createConfigurable(): Configurable {
+        return KotlinSteppingConfigurableUi(this)
     }
 
     override fun getState() = this

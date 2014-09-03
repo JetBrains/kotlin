@@ -17,34 +17,79 @@
 package org.jetbrains.jet.plugin.debugger;
 
 
-import com.intellij.openapi.options.ConfigurableUi;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class KotlinSteppingConfigurableUi implements ConfigurableUi<KotlinDebuggerSettings> {
+public class KotlinSteppingConfigurableUi implements SearchableConfigurable {
     private JCheckBox ignoreKotlinMethods;
     private JPanel myPanel;
+    private boolean isModified = false;
+    private final KotlinDebuggerSettings mySettings;
 
-    @Override
-    public void reset(@NotNull KotlinDebuggerSettings settings) {
-        boolean flag = settings.getDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES();
-        ignoreKotlinMethods.setSelected(flag);
+    public KotlinSteppingConfigurableUi(KotlinDebuggerSettings settings) {
+        mySettings = settings;
+        ignoreKotlinMethods.setSelected(settings.getDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES());
+
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(@NotNull ActionEvent e) {
+                isModified = mySettings.getDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES() != ignoreKotlinMethods.isSelected();
+            }
+        };
+        ignoreKotlinMethods.addActionListener(listener);
     }
 
     @Override
-    public boolean isModified(@NotNull KotlinDebuggerSettings settings) {
-        return settings.getDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES() != ignoreKotlinMethods.isSelected();
+    public String getDisplayName() {
+        return "Kotlin";
     }
 
     @Override
-    public void apply(@NotNull KotlinDebuggerSettings settings) {
-        settings.setDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES(ignoreKotlinMethods.isSelected());
-    }
-
     @NotNull
+    public String getHelpTopic() {
+        return "reference.idesettings.debugger.kotlin";
+    }
+
     @Override
-    public JComponent getComponent() {
+    @NotNull
+    public String getId() {
+        return getHelpTopic();
+    }
+
+    @Override
+    public Runnable enableSearch(String option) {
+        return null;
+    }
+
+    @Override
+    public JComponent createComponent() {
         return myPanel;
+    }
+
+    @Override
+    public boolean isModified() {
+        return isModified;
+    }
+
+    @Override
+    public void apply() throws ConfigurationException {
+        if (isModified) {
+            mySettings.setDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES(ignoreKotlinMethods.isSelected());
+        }
+        isModified = false;
+    }
+
+    @Override
+    public void reset() {
+        ignoreKotlinMethods.setSelected(mySettings.getDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES());
+    }
+
+    @Override
+    public void disposeUIResources() {
     }
 }
