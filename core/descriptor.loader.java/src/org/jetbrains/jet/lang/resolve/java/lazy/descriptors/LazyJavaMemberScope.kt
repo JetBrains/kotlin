@@ -43,7 +43,6 @@ import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
-import java.util.Collections
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.utils.*
@@ -58,7 +57,7 @@ public abstract class LazyJavaMemberScope(
             //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
             //    it, in turn, asks JavaElementFinder for subpackages of Kotlin package foo, which calls getAllPackageNames() recursively
             //    when on recursive call we return an empty collection, recursion collapses gracefully
-            Collections.emptyList()
+            listOf()
     )
 
     override fun getContainingDeclaration() = _containingDeclaration
@@ -70,6 +69,8 @@ public abstract class LazyJavaMemberScope(
     protected abstract fun computeMemberIndex(): MemberIndex
 
     protected abstract fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name)
+
+    protected abstract fun getExpectedThisObject(): ReceiverParameterDescriptor?
 
     private val _functions = c.storageManager.createMemoizedFunction {
         (name: Name): Collection<FunctionDescriptor>
@@ -138,7 +139,7 @@ public abstract class LazyJavaMemberScope(
 
         functionDescriptorImpl.initialize(
                 effectiveSignature.getReceiverType(),
-                DescriptorUtils.getExpectedThisObjectIfNeeded(_containingDeclaration),
+                getExpectedThisObject(),
                 effectiveSignature.getTypeParameters(),
                 effectiveSignature.getValueParameters(),
                 effectiveSignature.getReturnType(),
@@ -256,7 +257,7 @@ public abstract class LazyJavaMemberScope(
             c.externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors)
         }
 
-        propertyDescriptor.setType(effectiveSignature.getReturnType(), Collections.emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(getContainingDeclaration()), null : JetType?)
+        propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getExpectedThisObject(), null : JetType?)
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.getType())) {
             propertyDescriptor.setCompileTimeInitializer(

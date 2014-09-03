@@ -21,6 +21,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import kotlin.jvm.KotlinSignature;
+import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -232,35 +233,42 @@ public class QualifiedExpressionResolver {
             @NotNull LookupMode lookupMode,
             boolean storeResult
     ) {
-        Set<SuccessfulLookupResult> results = Sets.newHashSet();
+        Set<SuccessfulLookupResult> results = Sets.newLinkedHashSet();
         for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
             if (declarationDescriptor instanceof PackageViewDescriptor) {
                 addResult(results, lookupSimpleNameReference(selector, ((PackageViewDescriptor) declarationDescriptor).getMemberScope(),
                                                              lookupMode, true));
             }
             if (declarationDescriptor instanceof ClassDescriptor) {
-                addResult(results, lookupSimpleNameReference(selector, getAppropriateScope((ClassDescriptor) declarationDescriptor,
-                                                                                           lookupMode), lookupMode, false));
-                ClassDescriptor classObjectDescriptor = ((ClassDescriptor) declarationDescriptor).getClassObjectDescriptor();
-                if (classObjectDescriptor != null) {
-                    addResult(results, lookupSimpleNameReference(selector, getAppropriateScope(classObjectDescriptor, lookupMode),
-                                                                 lookupMode, false));
-                }
+                addResultsForClass(results, selector, lookupMode, (ClassDescriptor) declarationDescriptor);
             }
         }
         return filterAndStoreResolutionResult(results, selector, trace, scopeToCheckVisibility, lookupMode, storeResult);
     }
 
-    @NotNull
-    private static JetScope getAppropriateScope(@NotNull ClassDescriptor classDescriptor, @NotNull LookupMode lookupMode) {
-        return lookupMode == LookupMode.ONLY_CLASSES
-               ? classDescriptor.getUnsubstitutedInnerClassesScope()
-               : classDescriptor.getDefaultType().getMemberScope();
+    private static void addResultsForClass(
+            @NotNull @Mutable Set<SuccessfulLookupResult> results,
+            @NotNull JetSimpleNameExpression selector,
+            @NotNull LookupMode lookupMode,
+            @NotNull ClassDescriptor descriptor
+    ) {
+        JetScope scope = lookupMode == LookupMode.ONLY_CLASSES
+                         ? descriptor.getUnsubstitutedInnerClassesScope()
+                         : descriptor.getDefaultType().getMemberScope();
+        addResult(results, lookupSimpleNameReference(selector, scope, lookupMode, false));
+
+        addResult(results, lookupSimpleNameReference(selector, descriptor.getStaticScope(), lookupMode, true));
+
+        ClassDescriptor classObject = descriptor.getClassObjectDescriptor();
+        if (classObject != null) {
+            addResultsForClass(results, selector, lookupMode, classObject);
+        }
     }
 
     private static void addResult(@NotNull Set<SuccessfulLookupResult> results, @NotNull LookupResult result) {
-        if (result == LookupResult.EMPTY) return;
-        results.add((SuccessfulLookupResult) result);
+        if (result != LookupResult.EMPTY) {
+            results.add((SuccessfulLookupResult) result);
+        }
     }
 
 

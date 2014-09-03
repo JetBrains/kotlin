@@ -16,13 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.scopes.receivers
 
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName
 import org.jetbrains.jet.lang.resolve.name.Name
@@ -30,17 +27,13 @@ import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 import java.util.ArrayList
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.BindingContext.*
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.diagnostics.Errors.*
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext
 import org.jetbrains.jet.lang.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getClassObjectReferenceTarget
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
 import kotlin.properties.Delegates
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 
 public trait Qualifier {
 
@@ -81,18 +74,22 @@ class QualifierReceiver (
             classifier?.getClassObjectType()?.let { ExpressionReceiver(referenceExpression, it) } ?: ReceiverValue.NO_RECEIVER
 
     fun getNestedClassesAndPackageMembersScope(): JetScope {
-        val scopes = ArrayList<JetScope>(3)
-
-        val classObjectDescriptor = (classifier as? ClassDescriptor)?.getClassObjectDescriptor()
-        if (classObjectDescriptor != null) {
-            // non-static members are resolved through class object receiver
-            scopes.add(DescriptorUtils.getStaticNestedClassesScope(classObjectDescriptor))
-        }
+        val scopes = ArrayList<JetScope>(4)
 
         scopes.addIfNotNull(packageView?.getMemberScope())
 
-        if (classifier is ClassDescriptor && classifier.getKind() != ClassKind.ENUM_ENTRY) {
-            scopes.add(DescriptorUtils.getStaticNestedClassesScope(classifier))
+        if (classifier is ClassDescriptor) {
+            scopes.add(classifier.getStaticScope())
+
+            val classObjectDescriptor = classifier.getClassObjectDescriptor()
+            if (classObjectDescriptor != null) {
+                // non-static members are resolved through class object receiver
+                scopes.add(DescriptorUtils.getStaticNestedClassesScope(classObjectDescriptor))
+            }
+
+            if (classifier.getKind() != ClassKind.ENUM_ENTRY) {
+                scopes.add(DescriptorUtils.getStaticNestedClassesScope(classifier))
+            }
         }
 
         return ChainedScope(descriptor, "Static scope for " + name + " as package or class or object", *scopes.copyToArray())

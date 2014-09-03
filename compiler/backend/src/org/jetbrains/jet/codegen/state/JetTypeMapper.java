@@ -443,7 +443,9 @@ public class JetTypeMapper {
                 thisClass = mapClass(currentOwner);
             }
             else {
-                if (isAccessor(functionDescriptor) || isPlatformStaticInObject(functionDescriptor)) {
+                if (isStaticDeclaration(functionDescriptor) ||
+                    isAccessor(functionDescriptor) ||
+                    isPlatformStaticInObject(functionDescriptor)) {
                     invokeOpcode = INVOKESTATIC;
                 }
                 else if (isInterface) {

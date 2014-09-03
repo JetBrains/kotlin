@@ -39,7 +39,9 @@ public val DeclarationDescriptor.importableFqNameSafe: FqName
     get() = DescriptorUtils.getFqNameSafe(getImportableDescriptor())
 
 public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
-    if (this is PackageViewDescriptor || DescriptorUtils.isTopLevelDeclaration(this)) {
+    if (this is PackageViewDescriptor ||
+        DescriptorUtils.isTopLevelDeclaration(this) ||
+        (this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this))) {
         return true
     }
     val parent = getContainingDeclaration()!!

@@ -68,6 +68,7 @@ public class LazyJavaClassMemberScope(
             emptyOrSingletonList(createDefaultConstructor())
         }
     }
+
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val functionsFromSupertypes = getFunctionsFromSupertypes(name, getContainingDeclaration())
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.errorReporter))
@@ -236,6 +237,9 @@ public class LazyJavaClassMemberScope(
             )
         }
     }
+
+    override fun getExpectedThisObject(): ReceiverParameterDescriptor? =
+            DescriptorUtils.getExpectedThisObjectIfNeeded(getContainingDeclaration())
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = nestedClasses(name)
     override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet() + enumEntryIndex().keySet()

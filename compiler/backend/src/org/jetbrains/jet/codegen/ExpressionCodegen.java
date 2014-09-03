@@ -1869,7 +1869,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
         boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
-        boolean isStatic = containingDeclaration instanceof PackageFragmentDescriptor;
+        boolean isStatic = DescriptorUtils.isStaticDeclaration(propertyDescriptor);
         boolean isSuper = superExpression != null;
         boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
 

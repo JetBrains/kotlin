@@ -44,6 +44,8 @@ public abstract class LazyJavaStaticScope(
     
     protected val fqName: FqName = DescriptorUtils.getFqName(descriptor).toSafe()
 
+    override fun getExpectedThisObject() = null
+
     protected fun computeMemberIndexForSamConstructors(delegate: MemberIndex): MemberIndex = object : MemberIndex by delegate {
         override fun getAllMethodNames(): Collection<Name> {
             val jClass = c.findClassInJava(fqName).jClass

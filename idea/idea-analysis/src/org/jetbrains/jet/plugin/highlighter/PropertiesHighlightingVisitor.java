@@ -77,21 +77,22 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         super.visitParameter(parameter);
     }
 
-    private void highlightProperty(@NotNull PsiElement elementToHighlight,
+    private void highlightProperty(
+            @NotNull PsiElement elementToHighlight,
             @NotNull PropertyDescriptor descriptor,
-            boolean withBackingField) {
-        boolean inPackage = DescriptorUtils.isTopLevelDeclaration(descriptor);
-        JetPsiChecker.highlightName(holder, elementToHighlight,
-                                    inPackage ? JetHighlightingColors.PACKAGE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
+            boolean withBackingField
+    ) {
+        boolean isStatic = DescriptorUtils.isStaticDeclaration(descriptor);
+        JetPsiChecker.highlightName(
+                holder, elementToHighlight,
+                isStatic ? JetHighlightingColors.PACKAGE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
         );
         if (descriptor.getReceiverParameter() != null) {
             JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
         }
         if (withBackingField) {
-            holder.createInfoAnnotation(
-                elementToHighlight,
-                "This property has a backing field")
-                .setTextAttributes(JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD);
+            holder.createInfoAnnotation(elementToHighlight, "This property has a backing field")
+                    .setTextAttributes(JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD);
         }
     }
 }
