@@ -21,6 +21,7 @@ import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil.*
+import kotlin.properties.Delegates
 
 enum class TryCatchPosition {
     START
@@ -28,19 +29,39 @@ enum class TryCatchPosition {
     INNER
 }
 
-class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess: Boolean)
+trait IntervalWithHandler {
+    val startLabel: LabelNode
+    val endLabel: LabelNode
+    val handler: LabelNode
+    val `type`: String?
+}
 
-class TryCatchBlockNodePosition(val nodeInfo: TryCatchBlockNodeInfo, var position: TryCatchPosition)
+class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess: Boolean) : IntervalWithHandler {
 
-class TryBlockCluster(val blocks: MutableList<TryCatchBlockNodeInfo>)
+    override val startLabel: LabelNode
+            get() = node.start
+    override val endLabel: LabelNode
+            get() = node.end
+    override val handler: LabelNode
+            get() = node.handler!!
+    override val `type`: String?
+            get() = node.`type`
+}
+
+class TryCatchBlockNodePosition(val nodeInfo: TryCatchBlockNodeInfo, var position: TryCatchPosition): IntervalWithHandler by nodeInfo
+
+class TryBlockCluster<T : IntervalWithHandler>(val blocks: MutableList<T>) {
+    val defaultHandler: T?
+        get() = blocks.firstOrNull() { it.`type` == null }
+}
 
 
-fun doClustering(blocks: List<TryCatchBlockNodeInfo>) : List<TryBlockCluster> {
+fun <T: IntervalWithHandler> doClustering(blocks: List<T>) : List<TryBlockCluster<T>> {
     [data] class TryBlockInterval(val startLabel: LabelNode, val endLabel: LabelNode)
 
-    val clusters = linkedMapOf<TryBlockInterval, TryBlockCluster>()
+    val clusters = linkedMapOf<TryBlockInterval, TryBlockCluster<T>>()
     blocks.forEach { block ->
-        val interval = TryBlockInterval(firstLabelInChain(block.node.start), firstLabelInChain(block.node.end))
+        val interval = TryBlockInterval(firstLabelInChain(block.startLabel), firstLabelInChain(block.endLabel))
         val cluster = clusters.getOrPut(interval, {TryBlockCluster(arrayListOf())})
         cluster.blocks.add(block)
     }
