@@ -40,6 +40,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -226,13 +227,15 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         }
 
         ControlFlow controlFlow = descriptor.getControlFlow();
-        if (controlFlow instanceof ParameterUpdate) {
-            ParameterUpdate parameterUpdate = (ParameterUpdate) controlFlow;
-            controlFlow = new ParameterUpdate(
-                    oldToNewParameters.get(parameterUpdate.getParameter()),
-                    parameterUpdate.getDeclarationsToCopy()
-            );
+        List<OutputValue> outputValues = new ArrayList<OutputValue>(controlFlow.getOutputValues());
+        for (int i = 0; i < outputValues.size(); i++) {
+            OutputValue outputValue = outputValues.get(i);
+            if (outputValue instanceof OutputValue.ParameterUpdate) {
+                OutputValue.ParameterUpdate parameterUpdate = (OutputValue.ParameterUpdate) outputValue;
+                outputValues.set(i, new OutputValue.ParameterUpdate(oldToNewParameters.get(parameterUpdate.getParameter())));
+            }
         }
+        controlFlow = new ControlFlow(outputValues, controlFlow.getBoxerFactory(), controlFlow.getDeclarationsToCopy());
 
         Map<Integer, Replacement> replacementMap = ContainerUtil.newHashMap();
         for (Map.Entry<Integer, Replacement> e : descriptor.getReplacementMap().entrySet()) {

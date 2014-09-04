@@ -41,6 +41,29 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.types.CommonSupertypes
+import org.jetbrains.jet.lang.types.TypeSubstitutor
+import org.jetbrains.jet.lang.types.JetTypeImpl
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import java.util.Collections
+import org.jetbrains.jet.lang.types.TypeProjectionImpl
+import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.types.TypeProjection
+import org.jetbrains.jet.lang.types.TypeConstructor
+import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.ExpressionValue
+import org.jetbrains.jet.lang.psi.JetReturnExpression
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.jet.lang.types.TypeUtils
+import kotlin.properties.Delegates
+import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.lang.psi.JetCallElement
+import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 
 trait Parameter {
     val argumentText: String
@@ -99,61 +122,170 @@ class FqNameReplacement(val fqName: FqName): Replacement {
     }
 }
 
-trait ControlFlow {
-    val returnType: JetType
-    val declarationsToCopy: List<JetDeclaration>
+trait OutputValue {
+    val valueType: JetType
 
-    fun toDefault(): ControlFlow = DefaultControlFlow(returnType, declarationsToCopy)
+    class ExpressionValue(
+            val callSiteReturn: Boolean,
+            override val valueType: JetType
+    ): OutputValue
+
+    class Jump(
+            val elementsToReplace: List<JetElement>,
+            val elementToInsertAfterCall: JetElement,
+            val conditional: Boolean
+    ): OutputValue {
+        override val valueType: JetType = with(KotlinBuiltIns.getInstance()) { if (conditional) getBooleanType() else getUnitType() }
+    }
+
+    class ParameterUpdate(val parameter: Parameter): OutputValue {
+        override val valueType: JetType get() = parameter.parameterType
+    }
+
+    class Initializer(
+            val initializedDeclaration: JetProperty,
+            override val valueType: JetType
+    ): OutputValue
 }
 
-class DefaultControlFlow(
-        override val returnType: JetType = DEFAULT_RETURN_TYPE,
-        override val declarationsToCopy: List<JetDeclaration>
-): ControlFlow
+abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
+    val outputValueTypes: List<JetType> get() = outputValues.map { it.valueType }
 
-trait JumpBasedControlFlow : ControlFlow {
-    val elementsToReplace: List<JetElement>
-    val elementToInsertAfterCall: JetElement
+    abstract val returnType: JetType
+
+    protected abstract fun getBoxingExpressionText(arguments: List<String>): String?
+
+    fun getReturnExpression(arguments: List<String>, psiFactory: JetPsiFactory): JetReturnExpression? {
+        return getBoxingExpressionText(arguments)?.let { psiFactory.createReturn(it) }
+    }
+
+    protected abstract fun extractExpressionByIndex(boxedExpression: JetExpression, index: Int): JetExpression?
+
+    protected fun extractArgumentExpressionByIndex(boxedExpression: JetExpression, index: Int): JetExpression? {
+        val call: JetCallExpression? = when (boxedExpression) {
+            is JetCallExpression -> boxedExpression
+            is JetQualifiedExpression -> boxedExpression.getSelectorExpression() as? JetCallExpression
+            else -> null
+        }
+        val arguments = call?.getValueArguments()
+        if (arguments == null || arguments.size <= index) return null
+
+        return arguments[index].getArgumentExpression()
+    }
+
+    fun extractExpressionByValue(boxedExpression: JetExpression, value: OutputValue): JetExpression? {
+        val index = outputValues.indexOf(value)
+        if (index < 0) return null
+
+        return extractExpressionByIndex(boxedExpression, index)
+    }
+
+    abstract fun getUnboxingExpressions(boxedText: String): Map<OutputValue, String>
+
+    class AsTuple(
+            outputValues: List<OutputValue>,
+            val module: ModuleDescriptor
+    ) : OutputValueBoxer(outputValues) {
+        {
+            assert(outputValues.size <= 3, "At most 3 output values are supported")
+        }
+
+        class object {
+            private val selectors = array("first", "second", "third")
+        }
+
+        override val returnType: JetType by Delegates.lazy {
+            fun getType(): JetType {
+                val boxingClass = when (outputValues.size) {
+                    1 -> return outputValues.first().valueType
+                    2 -> ResolveSessionUtils.getClassDescriptorsByFqName(module, FqName("kotlin.Pair")).first()
+                    3 -> ResolveSessionUtils.getClassDescriptorsByFqName(module, FqName("kotlin.Triple")).first()
+                    else -> return DEFAULT_RETURN_TYPE
+                }
+                return TypeUtils.substituteParameters(boxingClass, outputValueTypes)
+            }
+
+            getType()
+        }
+
+        override fun getBoxingExpressionText(arguments: List<String>): String? {
+            return when (arguments.size) {
+                0 -> null
+                1 -> arguments.first()
+                else -> {
+                    val constructorName = DescriptorUtils.getFqName(returnType.getConstructor().getDeclarationDescriptor()!!).asString()
+                    return arguments.joinToString(prefix = "$constructorName(", separator = ", ", postfix = ")")
+                }
+            }
+        }
+
+        override fun extractExpressionByIndex(boxedExpression: JetExpression, index: Int): JetExpression? {
+            if (outputValues.size() == 1) return boxedExpression
+            return extractArgumentExpressionByIndex(boxedExpression, index)
+        }
+
+        override fun getUnboxingExpressions(boxedText: String): Map<OutputValue, String> {
+            return when (outputValues.size) {
+                0 -> Collections.emptyMap()
+                1 -> Collections.singletonMap(outputValues.first(), boxedText)
+                else -> {
+                    var i = 0
+                    ContainerUtil.newMapFromKeys(outputValues.iterator()) { "$boxedText.${selectors[i++]}" }
+                }
+            }
+        }
+    }
+
+    class AsList(outputValues: List<OutputValue>): OutputValueBoxer(outputValues) {
+        override val returnType: JetType by Delegates.lazy {
+            if (outputValues.isEmpty()) DEFAULT_RETURN_TYPE
+            else TypeUtils.substituteParameters(
+                    KotlinBuiltIns.getInstance().getList(),
+                    Collections.singletonList(CommonSupertypes.commonSupertype(outputValues.map { it.valueType }))
+            )
+        }
+
+        override fun getBoxingExpressionText(arguments: List<String>): String? {
+            if (arguments.isEmpty()) return null
+            return arguments.joinToString(prefix = "kotlin.listOf(", separator = ", ", postfix = ")")
+        }
+
+        override fun extractExpressionByIndex(boxedExpression: JetExpression, index: Int): JetExpression? {
+            return extractArgumentExpressionByIndex(boxedExpression, index)
+        }
+
+        override fun getUnboxingExpressions(boxedText: String): Map<OutputValue, String> {
+            var i = 0
+            return ContainerUtil.newMapFromKeys(outputValues.iterator()) { "$boxedText[${i++}]" }
+        }
+    }
 }
 
-class ConditionalJump(
-        override val elementsToReplace: List<JetElement>,
-        override val elementToInsertAfterCall: JetElement,
-        override val declarationsToCopy: List<JetDeclaration>
-): JumpBasedControlFlow {
-    override val returnType: JetType get() = KotlinBuiltIns.getInstance().getBooleanType()
+data class ControlFlow(
+        val outputValues: List<OutputValue>,
+        val boxerFactory: (List<OutputValue>) -> OutputValueBoxer,
+        val declarationsToCopy: List<JetDeclaration>
+) {
+    val outputValueBoxer = boxerFactory(outputValues)
+
+    val defaultOutputValue: ExpressionValue? = with(outputValues.filterIsInstance(javaClass<ExpressionValue>())) {
+        if (size > 1) throw IllegalArgumentException("Multiple expression values: ${outputValues.joinToString()}") else firstOrNull()
+    }
+
+    val jumpOutputValue: Jump? = with(outputValues.filterIsInstance(javaClass<Jump>())) {
+        when {
+            isEmpty() ->
+                null
+            outputValues.size > size || size > 1 ->
+                throw IllegalArgumentException("Jump values must be the only value if it's present: ${outputValues.joinToString()}")
+            else ->
+                first()
+        }
+    }
 }
 
-class UnconditionalJump(
-        override val elementsToReplace: List<JetElement>,
-        override val elementToInsertAfterCall: JetElement,
-        override val declarationsToCopy: List<JetDeclaration>
-): JumpBasedControlFlow {
-    override val returnType: JetType get() = KotlinBuiltIns.getInstance().getUnitType()
-}
-
-class ExpressionEvaluation(
-        override val returnType: JetType,
-        override val declarationsToCopy: List<JetDeclaration>
-): ControlFlow
-
-class ExpressionEvaluationWithCallSiteReturn(
-        override val returnType: JetType,
-        override val declarationsToCopy: List<JetDeclaration>
-): ControlFlow
-
-class ParameterUpdate(
-        val parameter: Parameter,
-        override val declarationsToCopy: List<JetDeclaration>
-): ControlFlow {
-    override val returnType: JetType get() = parameter.parameterType
-}
-
-class Initializer(
-        val initializedDeclaration: JetProperty,
-        override val returnType: JetType,
-        override val declarationsToCopy: List<JetDeclaration>
-): ControlFlow
+fun ControlFlow.toDefault(): ControlFlow =
+        copy(outputValues = outputValues.filterNot { it is OutputValue.Jump || it is OutputValue.ExpressionValue })
 
 data class ExtractableCodeDescriptor(
         val extractionData: ExtractionData,

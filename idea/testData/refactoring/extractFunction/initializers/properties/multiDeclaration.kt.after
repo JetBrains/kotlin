@@ -1,6 +1,4 @@
-data class Pair<A, B>(val a: A, val b: B)
-fun <A, B> A.to(b: B) = Pair(this, b)
-
+// WITH_RUNTIME
 // SIBLING:
 fun foo() {
     val (a, b) = pair()

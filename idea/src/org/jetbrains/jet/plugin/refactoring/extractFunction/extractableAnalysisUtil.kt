@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.cfg.Label
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.utils.DFS
@@ -61,6 +62,24 @@ import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.imports.importableFqNameSafe
+import org.jetbrains.jet.lang.psi.psiUtil.isFunctionLiteralOutsideParentheses
+import org.jetbrains.jet.plugin.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
+import org.jetbrains.jet.lang.resolve.name.Name
+import gnu.trove.THashSet
+import gnu.trove.TObjectHashingStrategy
+import gnu.trove.THashMap
+import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Initializer
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.ParameterUpdate
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.ExpressionValue
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.MarkInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.CompilationErrorInstruction
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverseFollowingInstructions
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsList
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.getStartInstruction
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -81,6 +100,28 @@ private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingC
     return this
             .map {if (it is WriteValueInstruction) PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext) else null}
             .filterNotNullTo(HashSet<VariableDescriptor>())
+}
+
+private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext: BindingContext): Set<VariableDescriptor> {
+    val accessedAfterwards = HashSet<VariableDescriptor>()
+    val visitedInstructions = HashSet<Instruction>()
+
+    fun doTraversal(instruction: Instruction) {
+        traverseFollowingInstructions(instruction, visitedInstructions, TraversalOrder.FORWARD) {
+            when {
+                it is AccessValueInstruction && it !in this ->
+                    PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext)?.let { accessedAfterwards.add(it) }
+
+                it is LocalFunctionDeclarationInstruction ->
+                    doTraversal(it.body.getEnterInstruction())
+            }
+
+            true
+        }
+    }
+
+    forEach(::doTraversal)
+    return accessedAfterwards
 }
 
 private fun List<Instruction>.getExitPoints(): List<Instruction> =
@@ -139,6 +180,7 @@ private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
 private fun ExtractionData.analyzeControlFlow(
         localInstructions: List<Instruction>,
         pseudocode: Pseudocode,
+        module: ModuleDescriptor,
         bindingContext: BindingContext,
         modifiedVarDescriptors: Set<VariableDescriptor>,
         options: ExtractionOptions,
@@ -202,74 +244,91 @@ private fun ExtractionData.analyzeControlFlow(
     val typeOfDefaultFlow = defaultExits.getResultType(bindingContext, options)
     val returnValueType = valuedReturnExits.getResultType(bindingContext, options)
 
-    val defaultReturnType = if (returnValueType.isMeaningful()) returnValueType else typeOfDefaultFlow
-    if (defaultReturnType.isError()) return Pair(DefaultControlFlow(DEFAULT_RETURN_TYPE, declarationsToCopy), ErrorMessage.ERROR_TYPES)
+    val emptyControlFlow =
+            ControlFlow(Collections.emptyList(), { OutputValueBoxer.AsTuple(it, module) }, declarationsToCopy)
 
-    val defaultControlFlow = DefaultControlFlow(defaultReturnType, declarationsToCopy)
+    val defaultReturnType = if (returnValueType.isMeaningful()) returnValueType else typeOfDefaultFlow
+    if (defaultReturnType.isError()) return emptyControlFlow to ErrorMessage.ERROR_TYPES
+
+    val controlFlow = if (defaultReturnType.isMeaningful()) {
+        emptyControlFlow.copy(outputValues = Collections.singletonList(ExpressionValue(false, defaultReturnType)))
+    }
+    else {
+        emptyControlFlow
+    }
 
     if (declarationsToReport.isNotEmpty()) {
         val localVarStr = declarationsToReport.map { it.renderForMessage(bindingContext)!! }.distinct().sort()
-        return Pair(defaultControlFlow, ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE.addAdditionalInfo(localVarStr))
+        return controlFlow to ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE.addAdditionalInfo(localVarStr)
     }
 
+    val outParameters =
+            parameters.filter { it.mirrorVarName != null && it.originalDescriptor in modifiedVarDescriptors }.sortBy { it.nameForRef }
     val outDeclarations =
             declarationsToCopy.filter { bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] in modifiedVarDescriptors }
+    val modifiedValueCount = outParameters.size + outDeclarations.size
 
-    val outParameters = parameters.filterTo(HashSet<Parameter>()) { it.mirrorVarName != null }
-    val outValuesCount = outDeclarations.size + outParameters.size
-    when {
-        outValuesCount > 1 -> {
-            val outValuesStr =
-                    (outParameters.map { it.originalDescriptor.renderForMessage() }
-                            + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sort()
-            return Pair(defaultControlFlow, ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr))
-        }
+    val outputValues = ArrayList<OutputValue>()
 
-        outValuesCount == 1 -> {
-            if (returnValueType.isMeaningful() || typeOfDefaultFlow.isMeaningful() || jumpExits.isNotEmpty()) {
-                return Pair(defaultControlFlow, ErrorMessage.OUTPUT_AND_EXIT_POINT)
-            }
-
-            val controlFlow =
-                    outDeclarations.firstOrNull()?.let {
-                        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? CallableDescriptor
-                        Initializer(it as JetProperty, descriptor?.getReturnType() ?: DEFAULT_PARAMETER_TYPE, declarationsToCopy)
-                    } ?: ParameterUpdate(outParameters.first(), declarationsToCopy)
-            return Pair(controlFlow, null)
-        }
-    }
-
-    val multipleExitsError = Pair(defaultControlFlow, ErrorMessage.MULTIPLE_EXIT_POINTS)
+    val multipleExitsError = controlFlow to ErrorMessage.MULTIPLE_EXIT_POINTS
+    val outputAndExitsError = controlFlow to ErrorMessage.OUTPUT_AND_EXIT_POINT
 
     if (typeOfDefaultFlow.isMeaningful()) {
         if (valuedReturnExits.isNotEmpty() || jumpExits.isNotEmpty()) return multipleExitsError
 
-        return Pair(ExpressionEvaluation(typeOfDefaultFlow, declarationsToCopy), null)
+        outputValues.add(ExpressionValue(false, typeOfDefaultFlow))
     }
-
-    if (valuedReturnExits.isNotEmpty()) {
+    else if (valuedReturnExits.isNotEmpty()) {
         if (jumpExits.isNotEmpty()) return multipleExitsError
 
         if (defaultExits.isNotEmpty()) {
+            if (modifiedValueCount != 0) return outputAndExitsError
             if (valuedReturnExits.size != 1) return multipleExitsError
 
             val element = valuedReturnExits.first!!.element
-            return Pair(ConditionalJump(listOf(element), element, declarationsToCopy), null)
+            return controlFlow.copy(outputValues = Collections.singletonList(Jump(listOf(element), element, true))) to null
         }
 
         if (!valuedReturnExits.checkEquivalence(false)) return multipleExitsError
-        return Pair(ExpressionEvaluationWithCallSiteReturn(returnValueType, declarationsToCopy), null)
+        outputValues.add(ExpressionValue(true, returnValueType))
+    }
+
+    outDeclarations.mapTo(outputValues) {
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? CallableDescriptor
+        Initializer(it as JetProperty, descriptor?.getReturnType() ?: DEFAULT_PARAMETER_TYPE)
+    }
+    outParameters.mapTo(outputValues) { ParameterUpdate(it) }
+
+    if (outputValues.isNotEmpty()) {
+        if (jumpExits.isNotEmpty()) return outputAndExitsError
+
+        val boxerFactory: (List<OutputValue>) -> OutputValueBoxer = when {
+            outputValues.size > 3 -> {
+                if (!options.enableListBoxing) {
+                    val outValuesStr =
+                            (outParameters.map { it.originalDescriptor.renderForMessage() }
+                             + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sort()
+                    return controlFlow to ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
+                }
+                OutputValueBoxer::AsList
+            }
+
+            else -> controlFlow.boxerFactory
+        }
+
+        return controlFlow.copy(outputValues = outputValues, boxerFactory = boxerFactory) to null
     }
 
     if (jumpExits.isNotEmpty()) {
         if (!jumpExits.checkEquivalence(true)) return multipleExitsError
 
         val elements = jumpExits.map { it.element }
-        if (defaultExits.isNotEmpty()) return Pair(ConditionalJump(elements, elements.first!!, declarationsToCopy), null)
-        return Pair(UnconditionalJump(elements, elements.first!!, declarationsToCopy), null)
+        return controlFlow.copy(
+                outputValues = Collections.singletonList(Jump(elements, elements.first(), defaultExits.isNotEmpty()))
+        ) to null
     }
 
-    return Pair(defaultControlFlow, null)
+    return controlFlow to null
 }
 
 fun ExtractionData.createTemporaryDeclaration(functionText: String): JetNamedDeclaration {
@@ -545,20 +604,18 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
         bindingContext: BindingContext
 ): ErrorMessage? {
     val declarationsOutOfScope = HashSet<JetNamedDeclaration>()
-    if (controlFlow is JumpBasedControlFlow) {
-        controlFlow.elementToInsertAfterCall.accept(
-                object: JetTreeVisitorVoid() {
-                    override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                        val target = expression.getReference()?.resolve()
-                        if (target is JetNamedDeclaration
-                                && target.isInsideOf(originalElements)
-                                && target.getParentByType(javaClass<JetDeclaration>(), true) == enclosingDeclaration) {
-                            declarationsOutOfScope.add(target)
-                        }
+    controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
+            object : JetTreeVisitorVoid() {
+                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                    val target = expression.getReference()?.resolve()
+                    if (target is JetNamedDeclaration
+                        && target.isInsideOf(originalElements)
+                        && target.getParentByType(javaClass<JetDeclaration>(), true) == enclosingDeclaration) {
+                        declarationsOutOfScope.add(target)
                     }
                 }
-        )
-    }
+            }
+    )
 
     if (declarationsOutOfScope.isNotEmpty()) {
         val declStr = declarationsOutOfScope.map { it.renderForMessage(bindingContext)!! }.sort()
@@ -607,7 +664,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         }
         else -> return noContainerError
     }
-    val bindingContext = originalFile.getLazyResolveSession().resolveToElement(bodyElement)
+    val resolveSession = originalFile.getLazyResolveSession()
+    val bindingContext = resolveSession.resolveToElement(bodyElement)
 
     val pseudocodeDeclaration = PsiTreeUtil.getParentOfType(
             commonParent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>()
@@ -626,10 +684,18 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val messages = ArrayList<ErrorMessage>()
 
     val (controlFlow, controlFlowMessage) =
-            analyzeControlFlow(localInstructions, pseudocode, bindingContext, modifiedVarDescriptors, options, paramsInfo.parameters)
+            analyzeControlFlow(
+                    localInstructions,
+                    pseudocode,
+                    resolveSession.getModuleDescriptor(),
+                    bindingContext,
+                    modifiedVarDescriptors intersect localInstructions.getVarDescriptorsAccessedAfterwards(bindingContext),
+                    options,
+                    paramsInfo.parameters
+            )
     controlFlowMessage?.let { messages.add(it) }
 
-    controlFlow.returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes)
+    controlFlow.outputValueBoxer.returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes)
 
     if (paramsInfo.nonDenotableTypes.isNotEmpty()) {
         val typeStr = paramsInfo.nonDenotableTypes.map {it.renderForMessage()}.sort()
@@ -648,17 +714,18 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
                     JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
             )
-    val functionName = JetNameSuggester.suggestNames(controlFlow.returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()
+    val functionName = JetNameSuggester.suggestNames(
+            controlFlow.outputValueBoxer.returnType,
+            functionNameValidator, DEFAULT_FUNCTION_NAME
+    ).first()
 
-    if (controlFlow is JumpBasedControlFlow) {
-        controlFlow.elementToInsertAfterCall.accept(
-                object: JetTreeVisitorVoid() {
-                    override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                        paramsInfo.originalRefToParameter[expression]?.let { it.refCount-- }
-                    }
+    controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
+            object : JetTreeVisitorVoid() {
+                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                    paramsInfo.originalRefToParameter[expression]?.let { it.refCount-- }
                 }
-        )
-    }
+            }
+    )
     val adjustedParameters = paramsInfo.parameters.filterTo(HashSet<Parameter>()) { it.refCount > 0 }
 
     val receiverCandidates = adjustedParameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }

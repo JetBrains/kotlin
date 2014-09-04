@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // SIBLING:
 fun foo() {
     <selection>val a = 1

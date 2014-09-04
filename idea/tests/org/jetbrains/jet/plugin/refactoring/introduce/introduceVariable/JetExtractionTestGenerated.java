@@ -715,21 +715,69 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/outputValues"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
-                @TestMetadata("multipleOutputValues.kt")
-                public void testMultipleOutputValues() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/multipleOutputValues.kt");
+                @TestMetadata("genericPair.kt")
+                public void testGenericPair() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/genericPair.kt");
                     doExtractFunctionTest(fileName);
                 }
                 
-                @TestMetadata("multipleOutputValuesWithIf.kt")
-                public void testMultipleOutputValuesWithIf() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/multipleOutputValuesWithIf.kt");
+                @TestMetadata("initializersAndUpdate.kt")
+                public void testInitializersAndUpdate() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/initializersAndUpdate.kt");
                     doExtractFunctionTest(fileName);
                 }
                 
-                @TestMetadata("multipleOutputValuesWithWhen.kt")
-                public void testMultipleOutputValuesWithWhen() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/multipleOutputValuesWithWhen.kt");
+                @TestMetadata("nestedNonInlinableCall.kt")
+                public void testNestedNonInlinableCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/nestedNonInlinableCall.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("outputValueWithExpression.kt")
+                public void testOutputValueWithExpression() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/outputValueWithExpression.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("outputValueWithReturn.kt")
+                public void testOutputValueWithReturn() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/outputValueWithReturn.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("outputValuesWithExpression.kt")
+                public void testOutputValuesWithExpression() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/outputValuesWithExpression.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("pair.kt")
+                public void testPair() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/pair.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("pairOfInitalizersWithNonLocalUsages.kt")
+                public void testPairOfInitalizersWithNonLocalUsages() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/pairOfInitalizersWithNonLocalUsages.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("pairWithIf.kt")
+                public void testPairWithIf() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/pairWithIf.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("pairWithNameClash.kt")
+                public void testPairWithNameClash() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/pairWithNameClash.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("pairWithWhen.kt")
+                public void testPairWithWhen() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/pairWithWhen.kt");
                     doExtractFunctionTest(fileName);
                 }
                 
@@ -760,6 +808,30 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("singleOutputValueWithWhenElse.kt")
                 public void testSingleOutputValueWithWhenElse() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithWhenElse.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("tooManyOutputValues.kt")
+                public void testTooManyOutputValues() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/tooManyOutputValues.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("tooManyOutputValuesAsList.kt")
+                public void testTooManyOutputValuesAsList() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/tooManyOutputValuesAsList.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("triple.kt")
+                public void testTriple() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/triple.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("usedAndUnusedOutputValues.kt")
+                public void testUsedAndUnusedOutputValues() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/usedAndUnusedOutputValues.kt");
                     doExtractFunctionTest(fileName);
                 }
                 
@@ -849,12 +921,6 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
                 
-                @TestMetadata("multipleInitalizersWithNonLocalUsages.kt")
-                public void testMultipleInitalizersWithNonLocalUsages() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleInitalizersWithNonLocalUsages.kt");
-                    doExtractFunctionTest(fileName);
-                }
-                
                 @TestMetadata("multipleJumps.kt")
                 public void testMultipleJumps() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleJumps.kt");
@@ -864,18 +930,6 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("multipleReturnsWithDefault.kt")
                 public void testMultipleReturnsWithDefault() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleReturnsWithDefault.kt");
-                    doExtractFunctionTest(fileName);
-                }
-                
-                @TestMetadata("outputValueWithExpression.kt")
-                public void testOutputValueWithExpression() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithExpression.kt");
-                    doExtractFunctionTest(fileName);
-                }
-                
-                @TestMetadata("outputValueWithReturn.kt")
-                public void testOutputValueWithReturn() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithReturn.kt");
                     doExtractFunctionTest(fileName);
                 }
                 

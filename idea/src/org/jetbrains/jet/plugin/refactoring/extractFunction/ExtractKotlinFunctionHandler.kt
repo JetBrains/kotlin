@@ -69,6 +69,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetMultiDeclaration
 
 public open class ExtractKotlinFunctionHandlerHelper {
+    open fun adjustExtractionData(data: ExtractionData): ExtractionData = data
     open fun adjustGeneratorOptions(options: ExtractionGeneratorOptions): ExtractionGeneratorOptions = options
     open fun adjustDescriptor(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor = descriptor
 
@@ -88,7 +89,7 @@ public class ExtractKotlinFunctionHandler(
     ) {
         val project = file.getProject()
 
-        val analysisResult = ExtractionData(file, elements, targetSibling).performAnalysis()
+        val analysisResult = helper.adjustExtractionData(ExtractionData(file, elements, targetSibling)).performAnalysis()
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode() && analysisResult.status != Status.SUCCESS) {
             throw ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
