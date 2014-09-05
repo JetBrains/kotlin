@@ -24,10 +24,8 @@ import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.lazy.withTypes
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.utils.flatten
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.kotlin.util.inn
-import org.jetbrains.kotlin.util.sure
 import org.jetbrains.jet.lang.resolve.java.lazy.findClassInJava
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
@@ -138,16 +136,12 @@ public class LazyPackageFragmentScopeForJavaPackage(
     }
 
     private val _subPackages = c.storageManager.createRecursionTolerantLazyValue(
-                                {
-                                    listOf(
-                                        // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
-                                        // and there's no harm in having some names in the result that can not be resolved
-                                        jPackage.getClasses().map { c -> c.getFqName().sure("Toplevel class has no fqName: $c") },
-                                        jPackage.getSubPackages().map { sp -> sp.getFqName() }
-                                    ).flatten()
-                                },
-                                // This breaks infinite recursion between loading Java descriptors and building light classes
-                                onRecursiveCall = listOf())
+            {
+                jPackage.getSubPackages().map { sp -> sp.getFqName() }
+            },
+            // This breaks infinite recursion between loading Java descriptors and building light classes
+            onRecursiveCall = listOf()
+    )
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val samConstructor = getClassifier(name)?.createSamConstructor()
@@ -172,11 +166,7 @@ public class LazyJavaStaticClassScope(
     override fun getAllClassNames(): Collection<Name> = listOf()
     override fun getClassifier(name: Name): ClassifierDescriptor? = null
 
-    // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
-    // and there's no harm in having some names in the result that can not be resolved
-    override fun getSubPackages(): Collection<FqName> = jClass.getInnerClasses().stream()
-            .filter { c -> c.isStatic() }
-            .map { c -> c.getFqName().sure("Nested class has no fqName: $c") }.toList()
+    override fun getSubPackages(): Collection<FqName> = listOf()
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         //NOTE: assuming that all sam constructors are created for interfaces which are static and should be placed in this scope
