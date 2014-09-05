@@ -96,12 +96,14 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         return DO_NOTHING
     }
 
-    public fun clearCacheForRemovedFiles(removedSourceFiles: Collection<String>, outDirectory: File) {
+    public fun clearCacheForRemovedFiles(removedSourceFiles: Collection<String>, outDirectory: File, compilationSuccessful: Boolean) {
         removedSourceFiles.forEach { packagePartMap.remove(it) }
 
-        inlineFunctionsMap.clearOutdated(outDirectory)
-        constantsMap.clearOutdated(outDirectory)
-        protoMap.clearOutdated(outDirectory)
+        if (compilationSuccessful) {
+            inlineFunctionsMap.clearOutdated(outDirectory)
+            constantsMap.clearOutdated(outDirectory)
+            protoMap.clearOutdated(outDirectory)
+        }
     }
 
     public override fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String>): Collection<String> {

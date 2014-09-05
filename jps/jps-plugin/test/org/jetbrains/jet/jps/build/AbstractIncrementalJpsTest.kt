@@ -32,6 +32,7 @@ import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import kotlin.test.fail
 import java.util.HashMap
 import org.jetbrains.jet.utils.keysToMap
+import org.jetbrains.jps.incremental.messages.BuildMessage
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     private var testDataDir: File by Delegates.notNull()
@@ -52,8 +53,13 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         val logger = MyLogger(FileUtil.toSystemIndependentName(workDir.getAbsolutePath()))
         val descriptor = createProjectDescriptor(BuildLoggingManager(logger))
         try {
-            doBuild(descriptor, scope)!!.assertSuccessful()
-            return logger.log
+            val buildResult = doBuild(descriptor, scope)!!
+            if (!buildResult.isSuccessful()) {
+                return logger.log + "COMPILATION FAILED\n" + buildResult.getMessages(BuildMessage.Kind.ERROR).joinToString("\n") + "\n"
+            }
+            else {
+                return logger.log
+            }
         } finally {
             descriptor.release()
         }
