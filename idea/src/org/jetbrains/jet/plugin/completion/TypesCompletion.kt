@@ -81,7 +81,7 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
             if (JetFromJavaDescriptorHelper.getCompiledClassKind(aClass) != ClassKind.CLASS_OBJECT) {
                 val qualifiedName = aClass.getQualifiedName()
                 if (qualifiedName != null) {
-                    result.addDescriptorElements(ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession, FqName(qualifiedName)))
+                    result.addDescriptorElements(ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession.getModuleDescriptor(), FqName(qualifiedName)))
                 }
             }
 

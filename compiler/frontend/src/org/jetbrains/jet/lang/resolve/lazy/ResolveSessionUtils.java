@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedDeclarationUtil;
@@ -57,13 +58,13 @@ public class ResolveSessionUtils {
     }
 
     @NotNull
-    public static Collection<ClassDescriptor> getClassDescriptorsByFqName(@NotNull KotlinCodeAnalyzer analyzer, @NotNull FqName fqName) {
-        return getClassOrObjectDescriptorsByFqName(analyzer, fqName, NON_SINGLETON_FILTER);
+    public static Collection<ClassDescriptor> getClassDescriptorsByFqName(@NotNull ModuleDescriptor moduleDescriptor, @NotNull FqName fqName) {
+        return getClassOrObjectDescriptorsByFqName(moduleDescriptor, fqName, NON_SINGLETON_FILTER);
     }
 
     @NotNull
     public static Collection<ClassDescriptor> getClassOrObjectDescriptorsByFqName(
-            @NotNull KotlinCodeAnalyzer analyzer,
+            @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull FqName fqName,
             @NotNull Predicate<ClassDescriptor> filter
     ) {
@@ -73,7 +74,7 @@ public class ResolveSessionUtils {
 
         FqName packageFqName = fqName.parent();
         while (true) {
-            PackageViewDescriptor packageDescriptor = analyzer.getModuleDescriptor().getPackage(packageFqName);
+            PackageViewDescriptor packageDescriptor = moduleDescriptor.getPackage(packageFqName);
             if (packageDescriptor != null) {
                 FqName classInPackagePath = NamePackage.tail(fqName, packageFqName);
                 ClassDescriptor classDescriptor = findByQualifiedName(packageDescriptor.getMemberScope(), classInPackagePath, filter);
