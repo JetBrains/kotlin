@@ -424,10 +424,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitDoWhileExpression(@NotNull JetDoWhileExpression expression, StackValue receiver) {
-        Label continueLabel = new Label();
-        v.mark(continueLabel);
+        Label beginLoopLabel = new Label();
+        v.mark(beginLoopLabel);
 
         Label breakLabel = new Label();
+        Label continueLabel = new Label();
 
         blockStackElements.push(new LoopBlockStackElement(breakLabel, continueLabel, targetLabel(expression)));
 
@@ -444,17 +445,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
-            conditionValue = generateBlock(statements, true);
+            conditionValue = generateBlock(statements, true, continueLabel);
         }
         else {
             if (body != null) {
                 gen(body, Type.VOID_TYPE);
             }
-
+            v.mark(continueLabel);
             conditionValue = gen(condition);
         }
 
-        conditionValue.condJump(continueLabel, false, v);
+        conditionValue.condJump(beginLoopLabel, false, v);
         v.mark(breakLabel);
 
         blockStackElements.pop();
@@ -1411,6 +1412,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateBlock(List<JetElement> statements, boolean lastStatementIsExpression) {
+        return generateBlock(statements, lastStatementIsExpression, null);
+    }
+
+    private StackValue generateBlock(List<JetElement> statements, boolean lastStatementIsExpression, Label labelBeforeLastExpression) {
         Label blockEnd = new Label();
 
         List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
@@ -1443,6 +1448,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
 
             boolean isExpression = !iterator.hasNext() && lastStatementIsExpression;
+            if (isExpression && labelBeforeLastExpression != null) {
+                v.mark(labelBeforeLastExpression);
+            }
 
             StackValue result = isExpression ? gen(statement) : genStatement(statement);
 

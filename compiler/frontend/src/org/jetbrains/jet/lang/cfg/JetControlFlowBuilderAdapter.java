@@ -183,6 +183,12 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
         return getDelegateBuilder().getExitPoint(labelElement);
     }
 
+    @NotNull
+    @Override
+    public Label getConditionEntryPoint(@NotNull JetElement labelElement) {
+        return getDelegateBuilder().getConditionEntryPoint(labelElement);
+    }
+
     @Override
     public LoopInfo enterLoop(@NotNull JetExpression expression, @Nullable Label loopExitPoint, Label conditionEntryPoint) {
         return getDelegateBuilder().enterLoop(expression, loopExitPoint, conditionEntryPoint);
