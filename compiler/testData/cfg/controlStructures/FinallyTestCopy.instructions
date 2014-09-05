@@ -107,6 +107,7 @@ L7 [start finally]:
 L8 [finish finally]:
 - 2 jmp(error)                                                                                                                                                NEXT:[<ERROR>]                                                                                                                             PREV:[]
 L6 [skipFinallyToErrorBlock]:
+L9 [copy of L3, onExceptionToFinallyBlock]:
   3 mark({ return 1 })                                                                                                                                        PREV:[jmp(L6)]
     r(1) -> <v5>
     ret(*|<v5>) L1                                                                                                                                            NEXT:[<END>]
@@ -190,6 +191,7 @@ L14 ['if' expression result]:
 L15 [finish finally]:
 - 3 jmp(error)                                                                                                                                                                         NEXT:[<ERROR>]                                                                                                                                                                            PREV:[]
 L11 [skipFinallyToErrorBlock]:
+L16 [copy of L8, onExceptionToFinallyBlock]:
   4 mark({ if (cond()) return else continue })                                                                                                                                         PREV:[jmp(L11)]
     mark(if (cond()) return else continue)
     mark(cond())
@@ -197,7 +199,9 @@ L11 [skipFinallyToErrorBlock]:
     jf(L17|<v6>)                                                                                                                                                                       NEXT:[jmp(L6), ret L1]
     ret L1                                                                                                                                                                             NEXT:[<END>]
 -   jmp(L18)                                                                                                                                                                           NEXT:[merge(if (cond()) return else continue|!<v7>, !<v8>) -> <v9>]                                                                                                                       PREV:[]
+L17 [copy of L13, else branch]:
     jmp(L6)                                                                                                                                                                            NEXT:[mark(cond())]                                                                                                                                                                       PREV:[jf(L17|<v6>)]
+L18 [copy of L14, 'if' expression result]:
 -   merge(if (cond()) return else continue|!<v7>, !<v8>) -> <v9>                                                                                                                       PREV:[]
 - 3 merge(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue }|<v1>, <v3>, <v5>) -> <v10>    PREV:[]
 - 2 jmp(L2)                                                                                                                                                                            NEXT:[mark(cond())]                                                                                                                                                                       PREV:[]
@@ -273,12 +277,18 @@ L11 [body exit point]:
 L13 [finish finally]:
   2 jmp(error)                                                                                                                                                       NEXT:[<ERROR>]
 L6 [skipFinallyToErrorBlock]:
+L14 [copy of L3, onExceptionToFinallyBlock]:
   3 mark({ while (cond()); })                                                                                                                                        PREV:[jmp(L6)]
+L15 [copy of L8, loop entry point]:
+L19 [copy of L12, condition entry point]:
     mark(cond())                                                                                                                                                     PREV:[mark({ while (cond()); }), jmp(L15)]
     call(cond(), cond) -> <v5>
     mark(while (cond()))
     jf(L16|<v5>)                                                                                                                                                     NEXT:[read (Unit), jmp(L15)]
+L17 [copy of L10, body entry point]:
     jmp(L15)                                                                                                                                                         NEXT:[mark(cond())]
+L16 [copy of L9, loop exit point]:
+L18 [copy of L11, body exit point]:
     read (Unit)                                                                                                                                                      PREV:[jf(L16|<v5>)]
   2 merge(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { while (cond()); }|<v0>, <v2>, <v4>) -> <v7>
 L1:
@@ -330,6 +340,7 @@ L6 ['if' expression result]:
 L7 [finish finally]:
   2 jmp(error)                                                               NEXT:[<ERROR>]
 L3 [skipFinallyToErrorBlock]:
+L8 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ if(list != null) { } })                                           PREV:[jmp(L3)]
     mark(if(list != null) { })
     r(list) -> <v2>
@@ -340,7 +351,9 @@ L3 [skipFinallyToErrorBlock]:
   4 mark({ })
     read (Unit)
   3 jmp(L10)                                                                 NEXT:[merge(if(list != null) { }|!<v5>) -> <v6>]
+L9 [copy of L5, else branch]:
     read (Unit)                                                              PREV:[jf(L9|<v4>)]
+L10 [copy of L6, 'if' expression result]:
     merge(if(list != null) { }|!<v5>) -> <v6>                                PREV:[jmp(L10), read (Unit)]
   2 merge(try { doSmth() } finally { if(list != null) { } }|<v1>) -> <v7>
 L1:

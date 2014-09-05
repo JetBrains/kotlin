@@ -460,7 +460,7 @@ public class PseudocodeImpl implements Pseudocode {
         Integer finishIndex = ((PseudocodeLabel) finishLabel).getTargetInstructionIndex();
         assert finishIndex != null;
 
-        Map<Label, Label> originalToCopy = Maps.newHashMap();
+        Map<Label, Label> originalToCopy = Maps.newLinkedHashMap();
         Multimap<Instruction, Label> originalLabelsForInstruction = HashMultimap.create();
         for (PseudocodeLabel label : labels) {
             Integer index = label.getTargetInstructionIndex();
@@ -471,6 +471,9 @@ public class PseudocodeImpl implements Pseudocode {
                 originalToCopy.put(label, label.copy(labelCount++));
                 originalLabelsForInstruction.put(getJumpTarget(label), label);
             }
+        }
+        for (Label label : originalToCopy.values()) {
+            labels.add((PseudocodeLabel) label);
         }
         for (int index = startIndex; index < finishIndex; index++) {
             Instruction originalInstruction = mutableInstructionList.get(index);

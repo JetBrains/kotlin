@@ -24,6 +24,7 @@ L4 [start finally]:
 L5 [finish finally]:
 - 2 jmp(error)                                                              NEXT:[<ERROR>]                                                      PREV:[]
 L3 [skipFinallyToErrorBlock]:
+L6 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ return test() })                                                 PREV:[jmp(L3)]
     mark(test())
     call(test(), test) -> <v0>

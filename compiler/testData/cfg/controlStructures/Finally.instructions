@@ -22,6 +22,7 @@ L4 [start finally]:
 L5 [finish finally]:
   2 jmp(error)                                     NEXT:[<ERROR>]
 L3 [skipFinallyToErrorBlock]:
+L6 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ 2 })                                    PREV:[jmp(L3)]
     r(2) -> <v1>
   2 merge(try { 1 } finally { 2 }|<v0>) -> <v2>
@@ -119,6 +120,7 @@ L9 [start finally]:
 L10 [finish finally]:
   2 jmp(error)                                                                         NEXT:[<ERROR>]
 L8 [skipFinallyToErrorBlock]:
+L11 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ 2 })                                                                        PREV:[jmp(L8)]
     r(2) -> <v2>
   2 merge(try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }|<v1>) -> <v3>
@@ -363,6 +365,7 @@ L11 [start finally]:
 L12 [finish finally]:
   2 jmp(error)                                                                                   NEXT:[<ERROR>]
 L10 [skipFinallyToErrorBlock]:
+L13 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ 2 })                                                                                  PREV:[jmp(L10)]
     r(2) -> <v10>
   2 merge(try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 }|<v9>) -> <v11>
@@ -427,6 +430,7 @@ L11 [start finally]:
 L12 [finish finally]:
   2 jmp(error)                                                                                  NEXT:[<ERROR>]
 L10 [skipFinallyToErrorBlock]:
+L13 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ 2 })                                                                                 PREV:[jmp(L10)]
     r(2) -> <v9>
   2 merge(try { @l while(true) { 1 if (2 > 3) { break @l } } } finally { 2 }|!<v8>) -> <v10>
@@ -577,6 +581,7 @@ L11 [start finally]:
 L12 [finish finally]:
   2 jmp(error)                                                                                           NEXT:[<ERROR>]
 L10 [skipFinallyToErrorBlock]:
+L13 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ 2 })                                                                                          PREV:[jmp(L10)]
     r(2) -> <v13>
   2 merge(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 }|<v12>) -> <v14>
@@ -650,6 +655,7 @@ L11 [start finally]:
 L12 [finish finally]:
   2 jmp(error)                                                                                          NEXT:[<ERROR>]
 L10 [skipFinallyToErrorBlock]:
+L13 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ 2 })                                                                                         PREV:[jmp(L10)]
     r(2) -> <v12>
   2 merge(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 }|!<v11>) -> <v13>
