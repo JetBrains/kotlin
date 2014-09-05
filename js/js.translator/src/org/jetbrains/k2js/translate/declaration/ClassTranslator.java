@@ -42,11 +42,9 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
-import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createClassObjectInitializer;
 import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction;
@@ -135,10 +133,15 @@ public final class ClassTranslator extends AbstractTranslator {
         DeclarationBodyVisitor bodyVisitor = new DeclarationBodyVisitor(properties, staticProperties);
         bodyVisitor.traverseContainer(classDeclaration, declarationContext);
         delegationTranslator.generateDelegated(properties);
-        mayBeAddEnumEntry(bodyVisitor.getEnumEntryList(), staticProperties, declarationContext);
 
         if (KotlinBuiltIns.getInstance().isData(descriptor)) {
             new JsDataClassGenerator(classDeclaration, declarationContext, properties).generate();
+        }
+
+        if (isEnumClass(descriptor)) {
+            JsObjectLiteral enumEntries = new JsObjectLiteral(bodyVisitor.getEnumEntryList(), true);
+            JsFunction function = simpleReturnFunction(declarationContext.getScopeForDescriptor(descriptor), enumEntries);
+            invocationArguments.add(function);
         }
 
         boolean hasStaticProperties = !staticProperties.isEmpty();
@@ -158,6 +161,7 @@ public final class ClassTranslator extends AbstractTranslator {
             invocationArguments.add(new JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, qualifiedReference));
             invocationArguments.add(new JsObjectLiteral(staticProperties, true));
         }
+
         return invocationArguments;
     }
 
@@ -179,21 +183,6 @@ public final class ClassTranslator extends AbstractTranslator {
         }
 
         return declarationContext;
-    }
-
-    private void mayBeAddEnumEntry(@NotNull List<JsPropertyInitializer> enumEntryList,
-            @NotNull List<JsPropertyInitializer> staticProperties,
-            @NotNull TranslationContext declarationContext
-    ) {
-        if (descriptor.getKind() == ClassKind.ENUM_CLASS) {
-            JsInvocation invocation = context().namer().enumEntriesObjectCreateInvocation();
-            invocation.getArguments().add(new JsObjectLiteral(enumEntryList, true));
-
-            JsFunction fun = simpleReturnFunction(declarationContext.getScopeForDescriptor(descriptor), invocation);
-            staticProperties.add(createClassObjectInitializer(fun, declarationContext));
-        } else {
-            assert enumEntryList.isEmpty(): "Only enum class may have enum entry. Class kind is: " + descriptor.getKind();
-        }
     }
 
     private JsExpression getSuperclassReferences(@NotNull TranslationContext declarationContext) {

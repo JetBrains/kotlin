@@ -28,6 +28,8 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
@@ -169,5 +171,19 @@ public class CodegenUtil {
 
     private static boolean rawTypeMatches(JetType type, ClassifierDescriptor classifier) {
         return type.getConstructor().getDeclarationDescriptor().getOriginal() == classifier.getOriginal();
+    }
+
+    public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
+        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
+        JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
+        return "valueOf".equals(functionDescriptor.getName().asString())
+               && methodTypeParameters.size() == 1
+               && JetTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
+    }
+
+    public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor functionDescriptor) {
+        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
+        return "values".equals(functionDescriptor.getName().asString())
+               && methodTypeParameters.isEmpty();
     }
 }

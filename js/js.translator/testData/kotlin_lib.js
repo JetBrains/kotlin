@@ -231,34 +231,8 @@
             toString: function () {
                 return this.name();
             }
-    });
-    (function () {
-        function valueOf(name) {
-            return this[name];
         }
-
-        function getValues() {
-            return this.values$;
-        }
-
-        Kotlin.createEnumEntries = function (enumEntryList) {
-            var i = 0;
-            var values = [];
-            for (var entryName in enumEntryList) {
-                if (enumEntryList.hasOwnProperty(entryName)) {
-                    var entryObject = enumEntryList[entryName];
-                    values[i] = entryObject;
-                    entryObject.ordinal$ = i;
-                    entryObject.name$ = entryName;
-                    i++;
-                }
-            }
-            enumEntryList.values$ = values;
-            enumEntryList.valueOf_61zpoe$ = valueOf;
-            enumEntryList.values = getValues;
-            return enumEntryList;
-        };
-    })();
+    );
 
     Kotlin.PropertyMetadata = Kotlin.createClassNow(null,
         function (name) {

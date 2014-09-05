@@ -19,12 +19,9 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
-
-import static org.jetbrains.jet.lang.descriptors.ClassKind.TRAIT;
 
 /**
  * Encapuslates different types of constants and naming conventions.
@@ -40,9 +37,9 @@ public final class Namer {
     private static final String APPLY_FUNCTION = "apply";
 
     private static final String CLASS_OBJECT_NAME = "createClass";
+    private static final String ENUM_CLASS_OBJECT_NAME = "createEnumClass";
     private static final String TRAIT_OBJECT_NAME = "createTrait";
     private static final String OBJECT_OBJECT_NAME = "createObject";
-    private static final String ENUM_ENTRIES_NAME = "createEnumEntries";
     private static final String CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME = "getCallableRefForMemberFunction";
     private static final String CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME = "getCallableRefForExtensionFunction";
     private static final String CALLABLE_REF_FOR_CONSTRUCTOR_NAME = "getCallableRefForConstructor";
@@ -178,6 +175,8 @@ public final class Namer {
     @NotNull
     private final JsName className;
     @NotNull
+    private final JsName enumClassName;
+    @NotNull
     private final JsName traitName;
     @NotNull
     private final JsExpression definePackage;
@@ -185,8 +184,6 @@ public final class Namer {
     private final JsExpression defineRootPackage;
     @NotNull
     private final JsName objectName;
-    @NotNull
-    private final JsName enumEntriesName;
     @NotNull
     private final JsName callableRefForMemberFunctionName;
     @NotNull
@@ -221,7 +218,7 @@ public final class Namer {
         callSetProperty = kotlin("callSetter");
 
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
-        enumEntriesName = kotlinScope.declareName(ENUM_ENTRIES_NAME);
+        enumClassName = kotlinScope.declareName(ENUM_CLASS_OBJECT_NAME);
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
         callableRefForMemberFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME);
         callableRefForExtensionFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME);
@@ -241,8 +238,8 @@ public final class Namer {
     }
 
     @NotNull
-    public JsExpression enumEntriesCreationMethodReference() {
-        return kotlin(enumEntriesName);
+    public JsExpression enumClassCreationMethodReference() {
+        return kotlin(enumClassName);
     }
 
     @NotNull
@@ -321,7 +318,7 @@ public final class Namer {
     }
 
     @NotNull
-        /*package*/ JsScope getKotlinScope() {
+    /*package*/ JsScope getKotlinScope() {
         return kotlinScope;
     }
 
@@ -332,21 +329,24 @@ public final class Namer {
 
     @NotNull
     public JsExpression classCreateInvocation(@NotNull ClassDescriptor descriptor) {
-        ClassKind kind = descriptor.getKind();
-        if (kind == TRAIT) {
-            return traitCreationMethodReference();
+        switch (descriptor.getKind()) {
+            case TRAIT:
+                return traitCreationMethodReference();
+            case ENUM_CLASS:
+                return enumClassCreationMethodReference();
+            case ENUM_ENTRY:
+            case OBJECT:
+            case CLASS_OBJECT:
+                return objectCreationMethodReference();
+            case ANNOTATION_CLASS:
+                throw new IllegalStateException("Can't create annotation class instance: " + descriptor);
+            case CLASS:
+                return DescriptorUtils.isAnonymousObject(descriptor)
+                       ? objectCreationMethodReference()
+                       : classCreationMethodReference();
+            default:
+                throw new UnsupportedOperationException("Unsupported class kind: " + descriptor);
         }
-
-        if (kind.isSingleton() || DescriptorUtils.isAnonymousObject(descriptor)) {
-            return objectCreationMethodReference();
-        }
-
-        return classCreationMethodReference();
-    }
-
-    @NotNull
-    public JsInvocation enumEntriesObjectCreateInvocation() {
-        return new JsInvocation(enumEntriesCreationMethodReference());
     }
 
     @NotNull

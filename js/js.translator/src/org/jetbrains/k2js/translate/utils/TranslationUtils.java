@@ -22,10 +22,10 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -41,7 +41,8 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isAnonymousObject;
 import static org.jetbrains.k2js.translate.context.Namer.getKotlinBackingFieldName;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.createDataDescriptor;
 
 public final class TranslationUtils {
     public static final Comparator<FunctionDescriptor> OVERLOADED_FUNCTION_COMPARATOR = new OverloadedFunctionComparator();
@@ -177,8 +178,13 @@ public final class TranslationUtils {
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
-            // Use stable mangling when it inside a overridable declaration for avoid clashing names when inheritance.
+            // Use stable mangling when it's inside an overridable declaration to avoid clashing names on inheritance.
             if (classDescriptor.getModality().isOverridable()) {
+                return true;
+            }
+
+            // valueOf() is created in the library with a mangled name for every enum class
+            if (CodegenUtil.isEnumValueOfMethod(descriptor)) {
                 return true;
             }
 

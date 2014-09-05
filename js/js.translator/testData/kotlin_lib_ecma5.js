@@ -224,6 +224,41 @@ var Kotlin = {};
 
     /**
      * @param {(function():Array.<*>)|null} basesFun
+     * @param {?=} constructor
+     * @param {function():Object} enumEntries
+     * @param {Object=} properties
+     * @returns {*}
+     */
+    Kotlin.createEnumClass = function (basesFun, constructor, enumEntries, properties) {
+        return Kotlin.createClass(
+            basesFun, constructor, properties, {
+            object_initializer$: function () {
+                var enumEntryList = enumEntries()
+                var i = 0;
+                var values = [];
+                for (var entryName in enumEntryList) {
+                    if (enumEntryList.hasOwnProperty(entryName)) {
+                        var entryObject = enumEntryList[entryName];
+                        values[i] = entryObject;
+                        entryObject.ordinal$ = i;
+                        entryObject.name$ = entryName;
+                        i++;
+                    }
+                }
+                enumEntryList.values$ = values;
+                return enumEntryList;
+            },
+            values: function() {
+                return this.object.values$;
+            },
+            valueOf_61zpoe$: function(name) {
+                return this.object[name];
+            }
+        })
+    };
+
+    /**
+     * @param {(function():Array.<*>)|null} basesFun
      * @param {Object=} properties
      * @param {Object=} staticProperties
      * @returns {*}

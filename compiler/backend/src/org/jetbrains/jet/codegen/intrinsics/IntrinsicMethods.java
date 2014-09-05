@@ -19,7 +19,7 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.JvmCodegenUtil;
+import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -203,11 +203,11 @@ public class IntrinsicMethods {
             DeclarationDescriptor container = descriptor.getContainingDeclaration();
             //noinspection ConstantConditions
             if (isClassObject(container) && isEnumClass(container.getContainingDeclaration())) {
-                if (JvmCodegenUtil.isEnumValuesMethod(functionDescriptor)) {
+                if (CodegenUtil.isEnumValuesMethod(functionDescriptor)) {
                     return ENUM_VALUES;
                 }
 
-                if (JvmCodegenUtil.isEnumValueOfMethod(functionDescriptor)) {
+                if (CodegenUtil.isEnumValueOfMethod(functionDescriptor)) {
                     return ENUM_VALUE_OF;
                 }
             }
