@@ -20,12 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.PropertyGetterDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.PropertySetterDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 
@@ -81,6 +80,31 @@ public class DescriptorFactory {
 
     public static boolean isDefaultPrimaryConstructor(@NotNull ConstructorDescriptor constructor) {
         return constructor instanceof DefaultConstructorDescriptor;
+    }
+
+    @NotNull
+    public static SimpleFunctionDescriptor createEnumValuesMethod(@NotNull ClassDescriptor enumClass) {
+        SimpleFunctionDescriptorImpl values =
+                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.EMPTY, Name.identifier("values"),
+                                                    CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE);
+        return values.initialize(null, NO_RECEIVER_PARAMETER, Collections.<TypeParameterDescriptor>emptyList(),
+                                 Collections.<ValueParameterDescriptor>emptyList(),
+                                 KotlinBuiltIns.getInstance().getArrayType(enumClass.getDefaultType()), Modality.FINAL,
+                                 Visibilities.PUBLIC);
+    }
+
+    @NotNull
+    public static SimpleFunctionDescriptor createEnumValueOfMethod(@NotNull ClassDescriptor enumClass) {
+        SimpleFunctionDescriptorImpl valueOf =
+                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.EMPTY, Name.identifier("valueOf"),
+                                                    CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE);
+        ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
+                valueOf, null, 0, Annotations.EMPTY, Name.identifier("value"), KotlinBuiltIns.getInstance().getStringType(), false, null,
+                SourceElement.NO_SOURCE
+        );
+        return valueOf.initialize(null, NO_RECEIVER_PARAMETER, Collections.<TypeParameterDescriptor>emptyList(),
+                                  Collections.singletonList(parameterDescriptor), enumClass.getDefaultType(), Modality.FINAL,
+                                  Visibilities.PUBLIC);
     }
 
     @Nullable

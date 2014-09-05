@@ -299,13 +299,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isSyntheticClassObject(@NotNull DeclarationDescriptor descriptor) {
-        if (isClassObject(descriptor)) {
-            DeclarationDescriptor containing = descriptor.getContainingDeclaration();
-            if (containing != null) {
-                return isEnumClass(containing) || isObject(containing) || isEnumEntry(containing);
-            }
-        }
-        return false;
+        return isClassObject(descriptor) && isSingleton(descriptor.getContainingDeclaration());
     }
 
     @NotNull

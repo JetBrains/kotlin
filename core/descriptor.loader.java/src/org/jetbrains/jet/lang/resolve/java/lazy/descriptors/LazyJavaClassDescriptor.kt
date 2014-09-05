@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import java.util.ArrayList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
-import org.jetbrains.jet.lang.descriptors.impl.EnumClassObjectDescriptor
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -88,14 +87,7 @@ class LazyJavaClassDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 
-    private val _classObjectDescriptor = c.storageManager.createNullableLazyValue {
-        if (jClass.isEnum()) {
-            EnumClassObjectDescriptor(c.storageManager, this)
-        }
-        else null
-    }
-
-    override fun getClassObjectDescriptor(): ClassDescriptor? = _classObjectDescriptor()
+    override fun getClassObjectDescriptor(): ClassDescriptor? = null
     override fun getClassObjectType(): JetType? = getClassObjectDescriptor()?.let { d -> d.getDefaultType() }
 
     override fun getConstructors() = _scopeForMemberLookup._constructors()

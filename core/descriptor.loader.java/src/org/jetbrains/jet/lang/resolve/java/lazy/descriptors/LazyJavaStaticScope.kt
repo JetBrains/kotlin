@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.name.SpecialNames
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.jet.lang.resolve.DescriptorFactory.*
 
 public abstract class LazyJavaStaticScope(
         c: LazyJavaResolverContext,
@@ -131,6 +132,8 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(EMPTY_MEMBER_INDEX)
 
+    override fun computeAdditionalFunctions(name: Name) = listOf<SimpleFunctionDescriptor>()
+
     override fun getAllClassNames(): Collection<Name> {
         return jPackage.getClasses().stream()
                 .filter { c -> c.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS }
@@ -164,6 +167,21 @@ public class LazyJavaStaticClassScope(
 ) : LazyJavaStaticScope(c, descriptor) {
 
     override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(ClassMemberIndex(jClass, { m -> m.isStatic() }))
+
+    override fun getAllFunctionNames(): Collection<Name> {
+        if (jClass.isEnum()) {
+            return super.getAllFunctionNames() + listOf(Name.identifier("valueOf"), Name.identifier("values"))
+        }
+        return super.getAllFunctionNames()
+    }
+
+    override fun computeAdditionalFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
+        if (jClass.isEnum()) {
+            if (name.asString() == "valueOf") return listOf(createEnumValueOfMethod(getContainingDeclaration()))
+            if (name.asString() == "values") return listOf(createEnumValuesMethod(getContainingDeclaration()))
+        }
+        return listOf()
+    }
 
     override fun getAllClassNames(): Collection<Name> = listOf()
     override fun getClassifier(name: Name): ClassifierDescriptor? = null

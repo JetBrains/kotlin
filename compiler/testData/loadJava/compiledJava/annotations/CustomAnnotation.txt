@@ -12,12 +12,6 @@ public trait CustomAnnotation {
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
 
-        public class object <class-object-for-MyEnum> {
-            private constructor <class-object-for-MyEnum>()
-            public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.CustomAnnotation.MyEnum
-            public final /*synthesized*/ fun values(): kotlin.Array<test.CustomAnnotation.MyEnum>
-        }
-
         public enum entry ONE : test.CustomAnnotation.MyEnum {
             private constructor ONE()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
@@ -29,6 +23,10 @@ public trait CustomAnnotation {
                 public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             }
         }
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.CustomAnnotation.MyEnum
+        public final /*synthesized*/ fun values(): kotlin.Array<test.CustomAnnotation.MyEnum>
     }
 
     test.CustomAnnotation.MyAnnotation(value = MyEnum.ONE: test.CustomAnnotation.MyEnum) public open class MyTest {

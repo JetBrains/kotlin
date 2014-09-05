@@ -963,13 +963,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @NotNull
-    private FunctionDescriptor findEnumFunction(@NotNull String name, Function1<FunctionDescriptor, Boolean> predicate) {
-        ClassDescriptor enumClassObject = descriptor.getClassObjectDescriptor();
-        assert enumClassObject != null : "No class object in " + descriptor;
-        Collection<FunctionDescriptor> valuesFunctions = enumClassObject.getDefaultType().getMemberScope().getFunctions(Name.identifier(name));
-        FunctionDescriptor valuesFunction = KotlinPackage.firstOrNull(valuesFunctions, predicate);
-        assert valuesFunction != null : "No " + name + "() function found for " + descriptor;
-        return valuesFunction;
+    private FunctionDescriptor findEnumFunction(@NotNull String name, @NotNull Function1<FunctionDescriptor, Boolean> predicate) {
+        Collection<FunctionDescriptor> functions = descriptor.getStaticScope().getFunctions(Name.identifier(name));
+        FunctionDescriptor function = KotlinPackage.firstOrNull(functions, predicate);
+        assert function != null : "No " + name + "() function found for " + descriptor;
+        return function;
     }
 
     protected void generateSyntheticAccessors() {
@@ -1073,7 +1071,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (isEnumClass(descriptor) || isEnumEntry(descriptor)) return;
+        if (isEnumEntry(descriptor)) return;
 
         ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
         ClassDescriptor fieldTypeDescriptor;

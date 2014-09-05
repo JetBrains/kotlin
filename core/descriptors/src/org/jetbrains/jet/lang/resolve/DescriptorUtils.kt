@@ -16,21 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.descriptorUtil
 
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassKind.ENUM_ENTRY
-import org.jetbrains.jet.lang.descriptors.ClassKind.ENUM_CLASS
-import org.jetbrains.jet.lang.descriptors.ClassKind.OBJECT
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-
+import org.jetbrains.jet.lang.descriptors.ClassKind.*
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor {
     val classObjectDescriptor = getClassObjectDescriptor()
     return if (classObjectDescriptor == null || hasSyntheticClassObject()) this else classObjectDescriptor
 }
 
-public fun ClassDescriptor.hasSyntheticClassObject(): Boolean = getKind() in setOf(ENUM_ENTRY, ENUM_CLASS, OBJECT)
+public fun ClassDescriptor.hasSyntheticClassObject(): Boolean = getKind() in setOf(ENUM_ENTRY, OBJECT)
 
 public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor =
         if (this is ConstructorDescriptor || DescriptorUtils.isClassObject(this)) getContainingDeclaration()!! else this

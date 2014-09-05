@@ -87,6 +87,8 @@ public class LazyJavaClassMemberScope(
                                                                    c.errorReporter))
     }
 
+    override fun computeAdditionalFunctions(name: Name) = listOf<SimpleFunctionDescriptor>()
+
     private fun getPropertiesFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
         return descriptor.getTypeConstructor().getSupertypes().flatMap {
             it.getMemberScope().getProperties(name).map { p -> p as PropertyDescriptor }

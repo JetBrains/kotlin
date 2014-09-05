@@ -777,12 +777,6 @@ public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
 
-    public class object <class-object-for-InlineOption> {
-        /*primary*/ private constructor <class-object-for-InlineOption>()
-        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineOption
-        public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineOption>
-    }
-
     public enum entry LOCAL_CONTINUE_AND_BREAK : kotlin.InlineOption {
         /*primary*/ private constructor LOCAL_CONTINUE_AND_BREAK()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
@@ -806,18 +800,16 @@ public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineOption
+    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineOption>
 }
 
 public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
     /*primary*/ private constructor InlineStrategy()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
-    public class object <class-object-for-InlineStrategy> {
-        /*primary*/ private constructor <class-object-for-InlineStrategy>()
-        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineStrategy
-        public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineStrategy>
-    }
     
     public enum entry AS_FUNCTION : kotlin.InlineStrategy {
         /*primary*/ private constructor AS_FUNCTION()
@@ -842,6 +834,10 @@ public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineStrategy
+    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineStrategy>
 }
 
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {

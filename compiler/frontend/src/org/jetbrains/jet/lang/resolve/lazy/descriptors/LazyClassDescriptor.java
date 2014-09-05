@@ -31,7 +31,6 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
-import org.jetbrains.jet.lang.descriptors.impl.EnumClassObjectDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -353,9 +352,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Nullable
     private ClassDescriptor computeClassObjectDescriptor(@Nullable JetClassObject classObject) {
-        if (getKind() == ClassKind.ENUM_CLASS) {
-            return new EnumClassObjectDescriptor(resolveSession.getStorageManager(), this);
-        }
         JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
         if (classObjectInfo != null) {
             return new LazyClassDescriptor(resolveSession, this, getClassObjectName(getName()), classObjectInfo);
@@ -366,12 +362,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Nullable
     private JetClassLikeInfo getClassObjectInfo(@Nullable JetClassObject classObject) {
         if (classObject != null) {
-            if (getKind() != ClassKind.CLASS && getKind() != ClassKind.TRAIT && getKind() != ClassKind.ANNOTATION_CLASS || isInner()) {
+            if (getKind().isSingleton() || isInner()) {
                 resolveSession.getTrace().report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
             }
 
-            JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
-            return JetClassInfoUtil.createClassLikeInfo(objectDeclaration);
+            return JetClassInfoUtil.createClassLikeInfo(classObject.getObjectDeclaration());
         }
         else if (getKind() == ClassKind.OBJECT || getKind() == ClassKind.ENUM_ENTRY) {
             return new SyntheticClassObjectInfo(originalClassInfo, this);

@@ -19,20 +19,33 @@ package org.jetbrains.jet.lang.resolve.scopes
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.utils.Printer
+import java.util.ArrayList
+import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.resolve.DescriptorFactory.*
 
 public class StaticScopeForKotlinClass(
         private val containingClass: ClassDescriptor
 ) : JetScope {
     override fun getClassifier(name: Name) = null // TODO
 
-    override fun getAllDescriptors() = listOf<DeclarationDescriptor>() // TODO
+    private val functions: List<FunctionDescriptor> by Delegates.lazy {
+        if (containingClass.getKind() != ClassKind.ENUM_CLASS) {
+            listOf<FunctionDescriptor>()
+        }
+        else {
+            listOf(createEnumValueOfMethod(containingClass), createEnumValuesMethod(containingClass))
+        }
+    }
 
-    override fun getOwnDeclaredDescriptors() = listOf<DeclarationDescriptor>() // TODO
+    override fun getAllDescriptors() = functions
+
+    override fun getOwnDeclaredDescriptors() = functions
+
+    override fun getFunctions(name: Name) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }
 
     override fun getPackage(name: Name) = null
     override fun getProperties(name: Name) = listOf<VariableDescriptor>()
     override fun getLocalVariable(name: Name) = null
-    override fun getFunctions(name: Name) = listOf<FunctionDescriptor>()
     override fun getContainingDeclaration() = containingClass
     override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
     override fun getImplicitReceiversHierarchy() = listOf<ReceiverParameterDescriptor>()

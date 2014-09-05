@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.EnumClassObjectDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
@@ -236,10 +235,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private ClassDescriptor computeClassObjectDescriptor() {
         if (!classProto.hasClassObject()) {
             return null;
-        }
-
-        if (getKind() == ClassKind.ENUM_CLASS) {
-            return new EnumClassObjectDescriptor(context.getStorageManager(), this);
         }
 
         if (getKind() == ClassKind.OBJECT) {

@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.java.lazy.hasMutableAnnotation
 import org.jetbrains.jet.lang.resolve.java.lazy.hasReadOnlyAnnotation
 import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter
 import java.util.ArrayList
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
@@ -72,23 +71,25 @@ public abstract class LazyJavaMemberScope(
 
     protected abstract fun getExpectedThisObject(): ReceiverParameterDescriptor?
 
+    protected abstract fun computeAdditionalFunctions(name: Name): Collection<SimpleFunctionDescriptor>
+
     private val _functions = c.storageManager.createMemoizedFunction {
-        (name: Name): Collection<FunctionDescriptor>
-        ->
+        (name: Name): Collection<FunctionDescriptor> ->
         val methods = memberIndex().findMethodsByName(name)
         val functions = LinkedHashSet<SimpleFunctionDescriptor>(
                 methods.stream()
-                      // values() and valueOf() are added manually, see LazyJavaClassDescriptor::getClassObjectDescriptor()
-                      .filter{ m -> !DescriptorResolverUtils.shouldBeInEnumClassObject(m) }
-                      .flatMap {
-                              m ->
-                              val function = resolveMethodToFunctionDescriptor(m, true)
-                              val samAdapter = resolveSamAdapter(function)
-                              if (samAdapter != null)
-                                  listOf(function, samAdapter).stream()
-                              else
-                                  listOf(function).stream()
-                      }.toList())
+                        .flatMap {
+                            m ->
+                            val function = resolveMethodToFunctionDescriptor(m, true)
+                            val samAdapter = resolveSamAdapter(function)
+                            if (samAdapter != null)
+                                listOf(function, samAdapter).stream()
+                            else
+                                listOf(function).stream()
+                        }
+                        .plus(computeAdditionalFunctions(name))
+                        .toList()
+        )
 
         computeNonDeclaredFunctions(functions, name)
 
