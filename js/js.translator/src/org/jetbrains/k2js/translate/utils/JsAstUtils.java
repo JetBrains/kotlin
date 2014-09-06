@@ -124,6 +124,16 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsExpression toShort(@NotNull JsExpression expression) {
+        return new JsInvocation(new JsNameRef(OperatorConventions.SHORT.getIdentifier(), Namer.KOTLIN_OBJECT_REF), expression);
+    }
+
+    @NotNull
+    public static JsExpression toByte(@NotNull JsExpression expression) {
+        return new JsInvocation(new JsNameRef(OperatorConventions.BYTE.getIdentifier(), Namer.KOTLIN_OBJECT_REF), expression);
+    }
+
+    @NotNull
     public static JsExpression compareTo(@NotNull JsExpression left, @NotNull JsExpression right) {
         return new JsInvocation(new JsNameRef(OperatorConventions.COMPARE_TO.getIdentifier(), Namer.KOTLIN_OBJECT_REF), left, right);
     }

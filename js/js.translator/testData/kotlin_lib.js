@@ -89,6 +89,14 @@
         return a < b ? -1 : a > b ? 1 : 0;
     };
 
+    Kotlin.toShort = function(a) {
+        return (a & 0xFFFF) << 16 >> 16;
+    };
+
+    Kotlin.toByte = function(a) {
+        return (a & 0xFF) << 24 >> 24;
+    };
+
     Kotlin.intUpto = function (from, to) {
         return new Kotlin.NumberRange(from, to);
     };

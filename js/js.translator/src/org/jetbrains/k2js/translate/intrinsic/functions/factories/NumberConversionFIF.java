@@ -16,47 +16,32 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
-import com.google.common.collect.Sets;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
-import java.util.Set;
 
-import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
+//TODO: support longs and chars
 public final class NumberConversionFIF extends CompositeFIF {
-    @NotNull
-    private static final NamePredicate SUPPORTED_CONVERSIONS;
-
-    static {
-        Set<Name> supportedConversions = Sets.newHashSet(NUMBER_CONVERSIONS);
-        //TODO: support longs and chars
-        supportedConversions.remove(CHAR);
-        supportedConversions.remove(LONG);
-        SUPPORTED_CONVERSIONS = new NamePredicate(supportedConversions);
-    }
-
-    @NotNull
-    private static final NamePredicate FLOATING_POINT_CONVERSIONS = new NamePredicate(FLOAT, DOUBLE);
-
-    @NotNull
-    private static final NamePredicate INTEGER_CONVERSIONS = new NamePredicate(INT, SHORT, BYTE);
 
     @NotNull
     private static final FunctionIntrinsic RETURN_RECEIVER = new FunctionIntrinsic() {
         @NotNull
         @Override
-        public JsExpression apply(@Nullable JsExpression receiver,
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
                 @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context) {
+                @NotNull TranslationContext context
+        ) {
             assert receiver != null;
             assert arguments.isEmpty();
             return receiver;
@@ -65,27 +50,68 @@ public final class NumberConversionFIF extends CompositeFIF {
 
     @NotNull
     public static final String INTEGER_NUMBER_TYPES = "Int|Byte|Short";
-    //NOTE: treat Number as if it is floating point type
+
     @NotNull
-    private static final String FLOATING_POINT_NUMBER_TYPES = "Float|Double|Number";
-    @NotNull
-    private static final FunctionIntrinsic GET_INTEGER_PART = new FunctionIntrinsic() {
+    private static final FunctionIntrinsic TO_INT32 = new FunctionIntrinsic() {
         @NotNull
         @Override
-        public JsExpression apply(@Nullable JsExpression receiver,
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
                 @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context) {
+                @NotNull TranslationContext context
+        ) {
             assert receiver != null;
             assert arguments.isEmpty();
             return JsAstUtils.toInt32(receiver, context);
         }
     };
+
+    @NotNull
+    private static final FunctionIntrinsic TO_SHORT = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            assert arguments.isEmpty();
+            return JsAstUtils.toShort(receiver);
+        }
+    };
+
+    @NotNull
+    private static final FunctionIntrinsic TO_BYTE = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            assert arguments.isEmpty();
+            return JsAstUtils.toByte(receiver);
+        }
+    };
+
+    @NotNull
+    private static final Predicate<FunctionDescriptor> returnReceiverPredicate = Predicates.or(
+            pattern("Int.toInt|toFloat|toDouble"),
+            pattern("Short.toShort|toInt|toFloat|toDouble"),
+            pattern("Byte.toByte|toShort|toInt|toFloat|toDouble"),
+            pattern("Float|Double|Number.toFloat|toDouble")
+    );
+
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new NumberConversionFIF();
 
+    //NOTE: treat Number as if it is floating point type
     private NumberConversionFIF() {
-        add(pattern(INTEGER_NUMBER_TYPES, SUPPORTED_CONVERSIONS), RETURN_RECEIVER);
-        add(pattern(FLOATING_POINT_NUMBER_TYPES, INTEGER_CONVERSIONS), GET_INTEGER_PART);
-        add(pattern(FLOATING_POINT_NUMBER_TYPES, FLOATING_POINT_CONVERSIONS), RETURN_RECEIVER);
+        add(returnReceiverPredicate, RETURN_RECEIVER);
+        add(pattern("Float|Double|Number.toInt"), TO_INT32);
+        add(pattern("Int|Float|Double|Number.toShort"), TO_SHORT);
+        add(pattern("Short|Int|Float|Double|Number.toByte"), TO_BYTE);
     }
 }

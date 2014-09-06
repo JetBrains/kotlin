@@ -87,7 +87,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         ) {
             assert receiver != null;
             assert arguments.size() == 1;
-            return JsAstUtils.compareTo(receiver, arguments.get(0), context);
+            return JsAstUtils.compareTo(receiver, arguments.get(0));
         }
     };
 

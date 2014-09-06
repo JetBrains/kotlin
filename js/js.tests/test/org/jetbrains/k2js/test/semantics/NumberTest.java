@@ -69,4 +69,12 @@ public final class NumberTest extends SingleFileTranslationTest {
     public void testNumberCompareTo() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testConversionsWithoutTruncation() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testConversionsWithTruncation() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
