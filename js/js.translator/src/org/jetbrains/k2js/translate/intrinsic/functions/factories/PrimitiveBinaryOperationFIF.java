@@ -39,7 +39,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.factories.NumberConversionFIF.INTEGER_NUMBER_TYPES;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.setArguments;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
 public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     INSTANCE;
@@ -77,8 +77,25 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     };
 
     @NotNull
+    private static final FunctionIntrinsic NUMBER_COMPARE_TO_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            assert arguments.size() == 1;
+            return JsAstUtils.compareTo(receiver, arguments.get(0), context);
+        }
+    };
+
+    @NotNull
     private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorConventions.BINARY_OPERATION_NAMES.values());
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_BINARY_OPERATIONS = pattern(NamePredicate.PRIMITIVE_NUMBERS, BINARY_OPERATIONS);
+    private static final DescriptorPredicate PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS =
+            pattern(NamePredicate.PRIMITIVE_NUMBERS, "compareTo");
     private static final DescriptorPredicate INT_WITH_BIT_OPERATIONS = pattern("Int.or|and|xor|shl|shr|ushr");
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
     private static final DescriptorPredicate STRING_PLUS = pattern("String.plus");
@@ -93,13 +110,18 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             .build();
 
     private static final Predicate<FunctionDescriptor> PREDICATE = Predicates.or(PRIMITIVE_NUMBERS_BINARY_OPERATIONS, BOOLEAN_OPERATIONS,
-                                                                                 STRING_PLUS, INT_WITH_BIT_OPERATIONS);
+                                                                                 STRING_PLUS, INT_WITH_BIT_OPERATIONS,
+                                                                                 PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS);
 
     @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
         if (!PREDICATE.apply(descriptor)) {
             return null;
+        }
+
+        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.apply(descriptor)) {
+            return NUMBER_COMPARE_TO_INTRINSIC;
         }
 
         if (pattern(INTEGER_NUMBER_TYPES + ".div").apply(descriptor)) {

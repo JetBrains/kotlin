@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -123,6 +124,11 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsExpression compareTo(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsInvocation(new JsNameRef(OperatorConventions.COMPARE_TO.getIdentifier(), Namer.KOTLIN_OBJECT_REF), left, right);
+    }
+
+    @NotNull
     public static JsPrefixOperation negated(@NotNull JsExpression expression) {
         return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
     }
@@ -169,6 +175,16 @@ public final class JsAstUtils {
     @NotNull
     public static JsBinaryOperation lessThanEq(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.LTE, arg1, arg2);
+    }
+
+    @NotNull
+    public static JsBinaryOperation lessThan(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.LT, arg1, arg2);
+    }
+
+    @NotNull
+    public static JsBinaryOperation greaterThan(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.GT, arg1, arg2);
     }
 
     @NotNull

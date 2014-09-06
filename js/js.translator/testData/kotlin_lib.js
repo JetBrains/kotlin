@@ -85,6 +85,10 @@
         return "[" + a.join(", ") + "]";
     };
 
+    Kotlin.compareTo = function(a, b) {
+        return a < b ? -1 : a > b ? 1 : 0;
+    };
+
     Kotlin.intUpto = function (from, to) {
         return new Kotlin.NumberRange(from, to);
     };
