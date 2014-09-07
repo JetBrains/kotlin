@@ -31,10 +31,10 @@ class AndroidXmlHandler(private val resourceManager: AndroidResourceManager, pri
     }
 
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-        val hashMap = attributes.toMap()
-        val s = hashMap[resourceManager.idAttributeNoNamespace]
-        val className = hashMap[resourceManager.classAttributeNoNamespace] ?: localName
-        if (resourceManager.isResourceDeclarationOrUsage(s)) elementCallback(resourceManager.idToName(s), className)
+        val attributesMap = attributes.toMap()
+        val idAttr = attributesMap[resourceManager.idAttributeNoNamespace]
+        val classNameAttr = attributesMap[resourceManager.classAttributeNoNamespace] ?: localName
+        if (resourceManager.isResourceDeclarationOrUsage(idAttr)) elementCallback(resourceManager.idToName(idAttr), classNameAttr)
     }
 
     override fun endElement(uri: String?, localName: String, qName: String) {

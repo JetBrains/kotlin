@@ -36,13 +36,15 @@ import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import org.jetbrains.jet.JetTestCaseBuilder
 import com.intellij.openapi.startup.StartupManager
+import com.android.SdkConstants
+import com.intellij.openapi.application.PathManager
 
-public abstract class AbstractCrossParserTest : LightCodeInsightFixtureTestCase() {
+public abstract class AbstractCrossParserTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
-        val project = myFixture.getProject()
+        val project = myFixture!!.getProject()
         project.putUserData(TestConst.TESTDATA_PATH, path)
-        myFixture.copyDirectoryToProject(getTestName(true), "")
-        val cliParser = CliAndroidUIXmlProcessor(project, path + "/layout", path + "AndroidManifest.xml")
+        myFixture!!.copyDirectoryToProject(getResDir()!!, "res")
+        val cliParser = CliAndroidUIXmlProcessor(project, path + getResDir() + "/layout/", path + "../AndroidManifest.xml")
         val ideParser = IDEAndroidUIXmlProcessor(project)
 
         val cliResult = cliParser.parseToPsi(project)!!.getText()
@@ -51,10 +53,9 @@ public abstract class AbstractCrossParserTest : LightCodeInsightFixtureTestCase(
         assertEquals(cliResult, ideResult)
     }
     override fun setUp() {
+        System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/androidSDK/")
+        System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-17")
         super.setUp()
-        myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/android/crossParser")
-        (StartupManager.getInstance(getProject()) as StartupManagerImpl).runPostStartupActivities()
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory())
     }
 
     private fun getEnvironment(testPath: String): JetCoreEnvironment {
@@ -63,7 +64,14 @@ public abstract class AbstractCrossParserTest : LightCodeInsightFixtureTestCase(
                 configuration.put<String>(JVMConfigurationKeys.ANDROID_MANIFEST, testPath + "/AndroidManifest.xml")
         return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration)
     }
+
     override fun getTestDataPath(): String? {
-        return PluginTestCaseBase.getTestDataPathBase() + "/android/crossParser/"
+        return PluginTestCaseBase.getTestDataPathBase() + "/android/crossParser/" + getTestName(true) + "/"
     }
+
+    override fun createManifest() {
+        myFixture!!.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML)
+    }
+
+    override fun requireRecentSdk() = true
 }

@@ -114,7 +114,6 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         createManifest();
 
         myFacet = addAndroidFacet(myModule, sdkPath, getPlatformDir(), isToAddSdk());
-        myFixture.copyDirectoryToProject(getResDir(), "res");
 
         myAdditionalModules = new ArrayList<Module>();
 
