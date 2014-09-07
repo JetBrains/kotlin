@@ -36,7 +36,8 @@ class AndroidXmlVisitor(val resourceManager: AndroidResourceManager, val element
     override fun visitXmlTag(tag: XmlTag?) {
         val attribute = tag?.getAttribute(resourceManager.idAttribute)
         if (attribute != null && attribute.getValue() != null) {
-            elementCallback(resourceManager.idToName(attribute.getValue()), tag!!.getLocalName(), attribute)
+            val classNameAttr = tag?.getAttribute(resourceManager.classAttributeNoNamespace)?.getValue() ?: tag?.getLocalName()
+            elementCallback(resourceManager.idToName(attribute.getValue()), classNameAttr!!, attribute)
         }
         tag?.acceptChildren(this)
     }
