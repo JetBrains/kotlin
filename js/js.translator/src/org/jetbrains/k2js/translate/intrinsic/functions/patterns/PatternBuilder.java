@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
@@ -84,7 +85,8 @@ public final class PatternBuilder {
 
         return new DescriptorPredicate() {
             @Override
-            public boolean apply(@NotNull FunctionDescriptor descriptor) {
+            public boolean apply(@Nullable FunctionDescriptor descriptor) {
+                assert descriptor != null : "argument for DescriptorPredicate.apply should not be null, checkers=" + checkersWithPrefixChecker;
                 //TODO: no need to wrap if we check beforehand
                 try {
                     return doApply(descriptor);
@@ -167,7 +169,9 @@ public final class PatternBuilder {
         }
 
         @Override
-        public boolean apply(@NotNull FunctionDescriptor functionDescriptor) {
+        public boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
+            assert functionDescriptor != null :
+                    "argument for DescriptorPredicate.apply should not be null, receiverFqName=" + receiverFqName + " names=" + Arrays.asList(names);
             ReceiverParameterDescriptor actualReceiver = functionDescriptor.getReceiverParameter();
             if (actualReceiver != null) {
                 if (receiverFqName == null) return false;

@@ -53,7 +53,8 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     private static final DescriptorPredicate NO_PARAMETERS = new DescriptorPredicate() {
         @Override
-        public boolean apply(@NotNull FunctionDescriptor descriptor) {
+        public boolean apply(@Nullable FunctionDescriptor descriptor) {
+            assert descriptor != null : "argument for DescriptorPredicate.apply should not be null";
             return !JsDescriptorUtils.hasParameters(descriptor);
         }
     };
