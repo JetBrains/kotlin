@@ -6140,6 +6140,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("packagePrivateClassStaticMember.kt")
+            public void testPackagePrivateClassStaticMember() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/packagePrivateClassStaticMember.kt");
+            }
+            
             @TestMetadata("packageVisibility.kt")
             public void testPackageVisibility() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/packageVisibility.kt");
