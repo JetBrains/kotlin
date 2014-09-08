@@ -1,0 +1,13 @@
+package test
+
+kotlin.data() internal final class A {
+    /*primary*/ public constructor A(/*0*/ foo: kotlin.String, /*1*/ bar: kotlin.Int, /*2*/ other: kotlin.Long)
+    internal final val bar: kotlin.Int
+        internal final fun <get-bar>(): kotlin.Int
+    internal final val foo: kotlin.String
+        internal final fun <get-foo>(): kotlin.String
+    internal final val other: kotlin.Long
+        internal final fun <get-other>(): kotlin.Long
+    internal final /*synthesized*/ fun component1(): kotlin.Int
+    internal final /*synthesized*/ fun copy(/*0*/ foo: kotlin.String, /*1*/ bar: kotlin.Int = ..., /*2*/ other: kotlin.Long): test.A
+}

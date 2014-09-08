@@ -157,19 +157,26 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         ConstructorDescriptor constructor = getPrimaryConstructor();
         if (constructor == null) return;
 
-        int parameterIndex = 0;
+        List<? extends JetParameter> primaryConstructorParameters = declarationProvider.getOwnerInfo().getPrimaryConstructorParameters();
+        assert constructor.getValueParameters().size() == primaryConstructorParameters.size()
+                : "From descriptor: " + constructor.getValueParameters().size() + " but from PSI: " + primaryConstructorParameters.size();
+
+        int componentIndex = 0;
         for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
             if (parameter.getType().isError()) continue;
+            if (!primaryConstructorParameters.get(parameter.getIndex()).hasValOrVarNode()) continue;
+
             Set<VariableDescriptor> properties = getProperties(parameter.getName());
             if (properties.isEmpty()) continue;
             assert properties.size() == 1 : "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter;
             PropertyDescriptor property = (PropertyDescriptor) properties.iterator().next();
             if (property == null) continue;
-            ++parameterIndex;
 
-            if (name.equals(Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + parameterIndex))) {
+            ++componentIndex;
+
+            if (name.equals(Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + componentIndex))) {
                 SimpleFunctionDescriptor functionDescriptor =
-                        DescriptorResolver.createComponentFunctionDescriptor(parameterIndex, property,
+                        DescriptorResolver.createComponentFunctionDescriptor(componentIndex, property,
                                                                              parameter, thisDescriptor, trace);
                 result.add(functionDescriptor);
                 break;

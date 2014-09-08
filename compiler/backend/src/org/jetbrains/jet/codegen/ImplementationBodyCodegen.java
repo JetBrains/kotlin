@@ -806,7 +806,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             FunctionCodegen.endVisit(mv, "toString", myClass);
         }
 
-        private Type genPropertyOnStack(InstructionAdapter iv, MethodContext context, PropertyDescriptor propertyDescriptor, int index) {
+        private Type genPropertyOnStack(InstructionAdapter iv, MethodContext context, @NotNull PropertyDescriptor propertyDescriptor, int index) {
             iv.load(index, classAsmType);
             if (couldUseDirectAccessToProperty(propertyDescriptor, /* forGetter = */ true, /* isDelegated = */ false, context)) {
                 Type type = typeMapper.mapType(propertyDescriptor.getType());
@@ -839,6 +839,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     if (!componentType.equals(Type.VOID_TYPE)) {
                         PropertyDescriptor property =
                                 bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, descriptorToDeclaration(parameter));
+                        assert property != null : "Property descriptor is not found for primary constructor parameter: " + parameter;
+
                         genPropertyOnStack(iv, context, property, 0);
                     }
                     iv.areturn(componentType);

@@ -959,6 +959,12 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                 doTest(fileName);
             }
             
+            @TestMetadata("ParamNameSameToField.kt")
+            public void testParamNameSameToField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/ParamNameSameToField.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("TwoVals.kt")
             public void testTwoVals() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/TwoVals.kt");

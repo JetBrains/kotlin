@@ -2151,6 +2151,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("paramNameSameToField.kt")
+            public void testParamNameSameToField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/paramNameSameToField.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("secondParamIsVal.kt")
             public void testSecondParamIsVal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/secondParamIsVal.kt");
