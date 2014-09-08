@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.utils.Printer;
 
@@ -153,6 +154,12 @@ public class SimpleTestClassModel implements TestClassModel {
     @Override
     public String getDataString() {
         return JetTestUtils.getFilePath(rootFile);
+    }
+
+    @Nullable
+    @Override
+    public String getDataPathRoot() {
+        return "$PROJECT_ROOT";
     }
 
     @Override

@@ -35,6 +35,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
@@ -668,6 +669,10 @@ public class JetTestUtils {
             }
         }
         return builder.toString();
+    }
+
+    public static String navigationMetadata(@TestDataFile String testFile) {
+        return testFile;
     }
 
     public static void assertAllTestsPresentByMetadata(

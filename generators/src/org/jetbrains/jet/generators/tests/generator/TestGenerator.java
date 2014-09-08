@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.GeneratorsFileUtil;
 import org.jetbrains.jet.utils.Printer;
@@ -32,6 +33,8 @@ import java.util.Collections;
 import java.util.Set;
 
 public class TestGenerator {
+    public static final String NAVIGATION_METADATA = "navigationMetadata";
+
     private static final Set<String> GENERATED_FILES = ContainerUtil.newHashSet();
 
     private final String suiteClassPackage;
@@ -66,6 +69,7 @@ public class TestGenerator {
         p.println(FileUtil.loadFile(new File("injector-generator/copyright.txt")));
         p.println("package ", suiteClassPackage, ";");
         p.println();
+        p.println("import com.intellij.testFramework.TestDataPath;");
         p.println("import junit.framework.Test;");
         p.println("import junit.framework.TestSuite;");
         p.println("import org.jetbrains.jet.JetTestUtils;");
@@ -115,6 +119,12 @@ public class TestGenerator {
                 public String getDataString() {
                     return null;
                 }
+
+                @Nullable
+                @Override
+                public String getDataPathRoot() {
+                    return null;
+                }
             }, false);
         }
 
@@ -125,6 +135,8 @@ public class TestGenerator {
     private void generateTestClass(Printer p, TestClassModel testClassModel, boolean isStatic) {
         String staticModifier = isStatic ? "static " : "";
         generateMetadata(p, testClassModel);
+
+        generateTestDataPath(p, testClassModel);
 
         generateInnerClassesAnnotation(p, testClassModel);
 
@@ -196,6 +208,13 @@ public class TestGenerator {
         String dataString = testDataSource.getDataString();
         if (dataString != null) {
             p.println("@TestMetadata(\"", dataString, "\")");
+        }
+    }
+
+    private static void generateTestDataPath(Printer p, TestClassModel testClassModel) {
+        String dataPathRoot = testClassModel.getDataPathRoot();
+        if (dataPathRoot != null) {
+            p.println("@TestDataPath(\"", dataPathRoot, "\")");
         }
     }
 

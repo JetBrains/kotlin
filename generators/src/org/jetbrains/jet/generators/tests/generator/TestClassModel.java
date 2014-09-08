@@ -17,6 +17,7 @@
 package org.jetbrains.jet.generators.tests.generator;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -29,4 +30,7 @@ public interface TestClassModel extends TestEntityModel {
     Collection<TestMethodModel> getTestMethods();
 
     boolean isEmpty();
+
+    @Nullable
+    String getDataPathRoot();
 }
