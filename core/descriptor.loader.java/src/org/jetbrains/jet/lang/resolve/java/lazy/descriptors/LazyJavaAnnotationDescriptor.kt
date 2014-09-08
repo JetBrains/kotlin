@@ -19,36 +19,26 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
 import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.resolve.constants.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
-import org.jetbrains.jet.lang.types.JetTypeImpl
-import org.jetbrains.jet.lang.types.TypeConstructor
-import org.jetbrains.jet.lang.types.TypeProjection
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaType
 import org.jetbrains.jet.utils.valuesToMap
-import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jet.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.resolve.java.lazy.resolveTopLevelClassInModule
+import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 
 private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
     override fun getName(): Name? = null
@@ -162,7 +152,7 @@ class LazyJavaAnnotationDescriptor(
         // Class type is never nullable in 'Foo.class' in Java
         val `type` = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()))
 
-        val jlClass = c.resolveTopLevelClassInModule(FqName("java.lang.Class"))
+        val jlClass = c.packageFragmentProvider.module.resolveTopLevelClass(FqName("java.lang.Class"))
         if (jlClass == null) return null
 
         val arguments = listOf(TypeProjectionImpl(`type`))

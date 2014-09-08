@@ -22,13 +22,13 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.*
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
-        private val _module: ModuleDescriptor
-) : JavaPackageFragmentProvider {
+        val module: ModuleDescriptor
+) : PackageFragmentProvider {
 
     private val c = LazyJavaResolverContext(
             this,
@@ -47,14 +47,12 @@ public class LazyJavaPackageFragmentProvider(
             outerContext.moduleClassResolver
     )
 
-    override fun getModule() = _module
-
     private val _packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
             c.storageManager.createMemoizedFunctionWithNullableValues {
                 fqName ->
                 val jPackage = c.finder.findPackage(fqName)
                 if (jPackage != null) {
-                    LazyJavaPackageFragment(c, _module, jPackage)
+                    LazyJavaPackageFragment(c, module, jPackage)
                 }
                 else null
             }
