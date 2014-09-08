@@ -511,7 +511,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         int access = descriptor.getKind() == ClassKind.TRAIT ?
                      ACC_PUBLIC | ACC_ABSTRACT :
                      ACC_PUBLIC;
-        if (JvmCodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
+        if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
             MethodVisitor mv = v.newMethod(NO_ORIGIN, access, "toArray", "()[Ljava/lang/Object;", null, null);
 
             if (descriptor.getKind() != ClassKind.TRAIT) {
@@ -556,7 +556,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ) {
             // avoid generating same signature twice
             if (!generatedSignatures.add(name + desc)) return;
-            if (JvmCodegenUtil.getDeclaredFunctionByRawSignature(
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(
                     descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers) == null) {
                 int access = descriptor.getKind() == ClassKind.TRAIT ?
                              ACC_PUBLIC | ACC_ABSTRACT :

@@ -35,21 +35,16 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentScopeForJavaPackage;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.jet.lang.descriptors.Modality.FINAL;
@@ -77,43 +72,6 @@ public class JvmCodegenUtil {
 
     public static <T> T peekFromStack(Stack<T> stack) {
         return stack.empty() ? null : stack.peek();
-    }
-
-    @Nullable
-    public static FunctionDescriptor getDeclaredFunctionByRawSignature(
-            @NotNull ClassDescriptor owner,
-            @NotNull Name name,
-            @NotNull ClassifierDescriptor returnedClassifier,
-            @NotNull ClassifierDescriptor... valueParameterClassifiers
-    ) {
-        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name);
-        for (FunctionDescriptor function : functions) {
-            if (!CallResolverUtil.isOrOverridesSynthesized(function)
-                && function.getTypeParameters().isEmpty()
-                && valueParameterClassesMatch(function.getValueParameters(), Arrays.asList(valueParameterClassifiers))
-                && rawTypeMatches(function.getReturnType(), returnedClassifier)) {
-                return function;
-            }
-        }
-        return null;
-    }
-
-    private static boolean valueParameterClassesMatch(
-            @NotNull List<ValueParameterDescriptor> parameters,
-            @NotNull List<ClassifierDescriptor> classifiers) {
-        if (parameters.size() != classifiers.size()) return false;
-        for (int i = 0; i < parameters.size(); i++) {
-            ValueParameterDescriptor parameterDescriptor = parameters.get(i);
-            ClassifierDescriptor classDescriptor = classifiers.get(i);
-            if (!rawTypeMatches(parameterDescriptor.getType(), classDescriptor)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean rawTypeMatches(JetType type, ClassifierDescriptor classifier) {
-        return type.getConstructor().equals(classifier.getTypeConstructor());
     }
 
     private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {

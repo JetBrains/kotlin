@@ -170,7 +170,7 @@ public class CodegenUtil {
     }
 
     private static boolean rawTypeMatches(JetType type, ClassifierDescriptor classifier) {
-        return type.getConstructor().getDeclarationDescriptor().getOriginal() == classifier.getOriginal();
+        return type.getConstructor().equals(classifier.getTypeConstructor());
     }
 
     public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
