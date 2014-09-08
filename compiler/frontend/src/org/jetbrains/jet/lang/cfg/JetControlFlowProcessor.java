@@ -1189,7 +1189,7 @@ public class JetControlFlowProcessor {
             );
             Map<PseudoValue, TypePredicate> valuesToTypePredicates = SmartFMap
                     .<PseudoValue, TypePredicate>emptyMap()
-                    .plus(delegateValue, PseudocodePackage.and(typePredicates));
+                    .plus(delegateValue, PseudocodePackage.and(KotlinPackage.filterNotNull(typePredicates)));
             builder.magic(property, null, Collections.singletonList(delegateValue), valuesToTypePredicates, MagicKind.VALUE_CONSUMER);
         }
 
