@@ -35,12 +35,10 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentScopeForJavaPackage;
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -128,7 +126,8 @@ public class JvmCodegenUtil {
             @NotNull DeserializedCallableMemberDescriptor descriptor,
             @Nullable File outDirectory
     ) {
-        if (descriptor.getContainingDeclaration() instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
+        DeclarationDescriptor packageFragment = descriptor.getContainingDeclaration();
+        if (packageFragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
             return true;
         }
 
@@ -136,16 +135,11 @@ public class JvmCodegenUtil {
             return false;
         }
 
-        if (!(descriptor.getContainingDeclaration() instanceof JavaPackageFragmentDescriptor)) {
+        if (!(packageFragment instanceof LazyJavaPackageFragment)) {
             return false;
         }
-        JavaPackageFragmentDescriptor packageFragment = (JavaPackageFragmentDescriptor) descriptor.getContainingDeclaration();
-        JetScope packageScope = packageFragment.getMemberScope();
-        if (!(packageScope instanceof LazyPackageFragmentScopeForJavaPackage)) {
-            return false;
-        }
-        KotlinJvmBinaryClass binaryClass = ((LazyPackageFragmentScopeForJavaPackage) packageScope).getKotlinBinaryClass();
 
+        KotlinJvmBinaryClass binaryClass = ((LazyJavaPackageFragment) packageFragment).getMemberScope().getKotlinBinaryClass();
         if (binaryClass instanceof VirtualFileKotlinClass) {
             VirtualFile file = ((VirtualFileKotlinClass) binaryClass).getFile();
             if (file.getFileSystem().getProtocol() == StandardFileSystems.FILE_PROTOCOL) {
@@ -153,6 +147,7 @@ public class JvmCodegenUtil {
                 return ioFile.getAbsolutePath().startsWith(outDirectory.getAbsolutePath() + File.separator);
             }
         }
+
         return false;
     }
 

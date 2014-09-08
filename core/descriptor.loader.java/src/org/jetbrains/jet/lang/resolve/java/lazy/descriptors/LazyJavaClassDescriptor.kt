@@ -46,7 +46,7 @@ class LazyJavaClassDescriptor(
         internal val fqName: FqName,
         private val jClass: JavaClass
 ) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName(),
-                        outerC.sourceElementFactory.source(jClass)), LazyJavaDescriptor, JavaClassDescriptor {
+                        outerC.sourceElementFactory.source(jClass)), JavaClassDescriptor {
 
     private val c: LazyJavaResolverContextWithTypes = outerC.child(this, jClass.getTypeParameters().toSet());
 

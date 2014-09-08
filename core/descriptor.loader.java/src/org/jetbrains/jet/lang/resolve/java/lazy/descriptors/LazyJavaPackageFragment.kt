@@ -18,18 +18,13 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import kotlin.properties.Delegates
 
 class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
-        module: ModuleDescriptor,
         private val jPackage: JavaPackage
-) : PackageFragmentDescriptorImpl(module, jPackage.getFqName()),
-    JavaPackageFragmentDescriptor, LazyJavaDescriptor
-{
+) : PackageFragmentDescriptorImpl(c.packageFragmentProvider.module, jPackage.getFqName()) {
     private val _memberScope by Delegates.lazy { LazyPackageFragmentScopeForJavaPackage(c, jPackage, this) }
 
     override fun getMemberScope() = _memberScope

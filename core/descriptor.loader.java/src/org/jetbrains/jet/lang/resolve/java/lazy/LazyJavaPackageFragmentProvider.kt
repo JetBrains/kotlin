@@ -52,7 +52,7 @@ public class LazyJavaPackageFragmentProvider(
                 fqName ->
                 val jPackage = c.finder.findPackage(fqName)
                 if (jPackage != null) {
-                    LazyJavaPackageFragment(c, module, jPackage)
+                    LazyJavaPackageFragment(c, jPackage)
                 }
                 else null
             }
