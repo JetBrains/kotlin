@@ -227,10 +227,14 @@ public class DeclarationResolver {
             JetClassOrObject klass = entry.getKey();
             MutableClassDescriptor classDescriptor = (MutableClassDescriptor) entry.getValue();
 
-            if (klass instanceof JetClass && klass.hasPrimaryConstructor() && KotlinBuiltIns.getInstance().isData(classDescriptor)) {
-                ConstructorDescriptor constructor = getConstructorOfDataClass(classDescriptor);
-                createComponentFunctions(classDescriptor, constructor);
-                createCopyFunction(classDescriptor, constructor);
+            if (klass instanceof JetClass && KotlinBuiltIns.getInstance().isData(classDescriptor)) {
+                List<ValueParameterDescriptor> parameters =
+                        klass.hasPrimaryConstructor() ?
+                        getConstructorOfDataClass(classDescriptor).getValueParameters() :
+                        Collections.<ValueParameterDescriptor>emptyList();
+
+                createComponentFunctions(classDescriptor, parameters);
+                createCopyFunction(classDescriptor, parameters);
             }
         }
     }
@@ -242,9 +246,9 @@ public class DeclarationResolver {
         return constructors.iterator().next();
     }
 
-    private void createComponentFunctions(@NotNull MutableClassDescriptor classDescriptor, @NotNull ConstructorDescriptor constructorDescriptor) {
+    private void createComponentFunctions(@NotNull MutableClassDescriptor classDescriptor, List<ValueParameterDescriptor> parameters) {
         int parameterIndex = 0;
-        for (ValueParameterDescriptor parameter : constructorDescriptor.getValueParameters()) {
+        for (ValueParameterDescriptor parameter : parameters) {
             if (!parameter.getType().isError()) {
                 PropertyDescriptor property = trace.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter);
                 if (property != null) {
@@ -259,9 +263,9 @@ public class DeclarationResolver {
         }
     }
 
-    private void createCopyFunction(@NotNull MutableClassDescriptor classDescriptor, @NotNull ConstructorDescriptor constructorDescriptor) {
+    private void createCopyFunction(@NotNull MutableClassDescriptor classDescriptor, List<ValueParameterDescriptor> parameters) {
         SimpleFunctionDescriptor functionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(
-                constructorDescriptor.getValueParameters(), classDescriptor, trace);
+                parameters, classDescriptor, trace);
 
         classDescriptor.getBuilder().addFunctionDescriptor(functionDescriptor);
     }

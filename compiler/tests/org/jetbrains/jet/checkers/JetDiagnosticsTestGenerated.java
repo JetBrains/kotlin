@@ -2127,6 +2127,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("noConstructor.kt")
+            public void testNoConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/noConstructor.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("notADataClass.kt")
             public void testNotADataClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/notADataClass.kt");

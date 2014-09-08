@@ -175,7 +175,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 break;
             }
         }
-        if (!constructor.getValueParameters().isEmpty() && name.equals(DescriptorResolver.COPY_METHOD_NAME)) {
+        if (name.equals(DescriptorResolver.COPY_METHOD_NAME)) {
             SimpleFunctionDescriptor copyFunctionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(
                     constructor.getValueParameters(),
                     thisDescriptor, trace);
