@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight.moveUpDown;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({CodeMoverTestGenerated.ClassBodyDeclarations.class, CodeMoverTestGenerated.ClosingBraces.class, CodeMoverTestGenerated.Expressions.class})
 public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
     @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations")
+    @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({ClassBodyDeclarations.Accessors.class, ClassBodyDeclarations.Class.class, ClassBodyDeclarations.ClassInitializer.class, ClassBodyDeclarations.Enums.class, ClassBodyDeclarations.Function.class, ClassBodyDeclarations.FunctionAnchors.class, ClassBodyDeclarations.Property.class, ClassBodyDeclarations.PropertyAnchors.class})
     public static class ClassBodyDeclarations extends AbstractCodeMoverTest {
         public void testAllFilesPresentInClassBodyDeclarations() throws Exception {
@@ -37,25 +39,30 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/accessors")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Accessors extends AbstractCodeMoverTest {
             @TestMetadata("accessor1.kt")
             public void testAccessor1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/accessors/accessor1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/accessors/accessor1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("accessor2.kt")
             public void testAccessor2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/accessors/accessor2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/accessors/accessor2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("accessor3.kt")
             public void testAccessor3() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/accessors/accessor3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/accessors/accessor3.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("accessor4.kt")
             public void testAccessor4() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/accessors/accessor4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/accessors/accessor4.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             public void testAllFilesPresentInAccessors() throws Exception {
@@ -65,6 +72,7 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Class extends AbstractCodeMoverTest {
             public void testAllFilesPresentInClass() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -72,107 +80,128 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("classAtBrace1.kt")
             public void testClassAtBrace1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtBrace2.kt")
             public void testClassAtBrace2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtBrace3.kt")
             public void testClassAtBrace3() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace3.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtBrace4.kt")
             public void testClassAtBrace4() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace4.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtBrace5.kt")
             public void testClassAtBrace5() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace5.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace5.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtBrace6.kt")
             public void testClassAtBrace6() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace6.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtBrace6.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtClass1.kt")
             public void testClassAtClass1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtClass1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtClass1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtClass2.kt")
             public void testClassAtClass2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtClass2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtClass2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtClassInitializer1.kt")
             public void testClassAtClassInitializer1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtClassInitializer1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtClassInitializer1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtClassInitializer2.kt")
             public void testClassAtClassInitializer2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtClassInitializer2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtClassInitializer2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtEmptyLine1.kt")
             public void testClassAtEmptyLine1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtEmptyLine1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtEmptyLine1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtEmptyLine2.kt")
             public void testClassAtEmptyLine2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtEmptyLine2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtEmptyLine2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtFunction1.kt")
             public void testClassAtFunction1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtFunction1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtFunction1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtFunction2.kt")
             public void testClassAtFunction2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtFunction2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtFunction2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtProperty1.kt")
             public void testClassAtProperty1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtProperty1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtProperty1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classAtProperty2.kt")
             public void testClassAtProperty2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtProperty2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtProperty2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classWithoutBody1.kt")
             public void testClassWithoutBody1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classWithoutBody2.kt")
             public void testClassWithoutBody2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classWithoutBody3.kt")
             public void testClassWithoutBody3() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody3.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classWithoutBody4.kt")
             public void testClassWithoutBody4() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody4.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer")
+        @TestDataPath("$PROJECT_ROOT")
         public static class ClassInitializer extends AbstractCodeMoverTest {
             public void testAllFilesPresentInClassInitializer() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -180,67 +209,80 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("classInitializerAtBrace1.kt")
             public void testClassInitializerAtBrace1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtBrace1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtBrace1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtBrace2.kt")
             public void testClassInitializerAtBrace2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtBrace2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtBrace2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtClass1.kt")
             public void testClassInitializerAtClass1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtClass1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtClass1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtClass2.kt")
             public void testClassInitializerAtClass2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtClass2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtClass2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtClassInitializer1.kt")
             public void testClassInitializerAtClassInitializer1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtClassInitializer1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtClassInitializer1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtClassInitializer2.kt")
             public void testClassInitializerAtClassInitializer2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtClassInitializer2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtClassInitializer2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtEmptyLine1.kt")
             public void testClassInitializerAtEmptyLine1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtEmptyLine1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtEmptyLine1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtEmptyLine2.kt")
             public void testClassInitializerAtEmptyLine2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtEmptyLine2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtEmptyLine2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtFunction1.kt")
             public void testClassInitializerAtFunction1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtFunction1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtFunction1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtFunction2.kt")
             public void testClassInitializerAtFunction2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtFunction2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtFunction2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtProperty1.kt")
             public void testClassInitializerAtProperty1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtProperty1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtProperty1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("classInitializerAtProperty2.kt")
             public void testClassInitializerAtProperty2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtProperty2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer/classInitializerAtProperty2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Enums extends AbstractCodeMoverTest {
             public void testAllFilesPresentInEnums() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -248,37 +290,44 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("enum1.kt")
             public void testEnum1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("enum2.kt")
             public void testEnum2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("enum3.kt")
             public void testEnum3() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum3.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("enum4.kt")
             public void testEnum4() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum4.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("enum5.kt")
             public void testEnum5() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum5.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum5.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("enum6.kt")
             public void testEnum6() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum6.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum6.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Function extends AbstractCodeMoverTest {
             public void testAllFilesPresentInFunction() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -286,87 +335,104 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("functionAtBrace1.kt")
             public void testFunctionAtBrace1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtBrace2.kt")
             public void testFunctionAtBrace2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtBrace3.kt")
             public void testFunctionAtBrace3() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace3.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtBrace4.kt")
             public void testFunctionAtBrace4() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace4.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtBrace5.kt")
             public void testFunctionAtBrace5() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace5.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace5.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtBrace6.kt")
             public void testFunctionAtBrace6() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace6.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtBrace6.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtClass1.kt")
             public void testFunctionAtClass1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtClass1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtClass1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtClass2.kt")
             public void testFunctionAtClass2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtClass2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtClass2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtClassInitializer1.kt")
             public void testFunctionAtClassInitializer1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtClassInitializer1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtClassInitializer1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtClassInitializer2.kt")
             public void testFunctionAtClassInitializer2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtClassInitializer2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtClassInitializer2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtEmptyLine1.kt")
             public void testFunctionAtEmptyLine1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtEmptyLine1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtEmptyLine1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtEmptyLine2.kt")
             public void testFunctionAtEmptyLine2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtEmptyLine2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtEmptyLine2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtFunction1.kt")
             public void testFunctionAtFunction1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtFunction1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtFunction1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtFunction2.kt")
             public void testFunctionAtFunction2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtFunction2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtFunction2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtProperty1.kt")
             public void testFunctionAtProperty1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtProperty1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtProperty1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("functionAtProperty2.kt")
             public void testFunctionAtProperty2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtProperty2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtProperty2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors")
+        @TestDataPath("$PROJECT_ROOT")
         public static class FunctionAnchors extends AbstractCodeMoverTest {
             public void testAllFilesPresentInFunctionAnchors() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -374,97 +440,116 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("keyword.kt")
             public void testKeyword() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/keyword.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/keyword.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("name.kt")
             public void testName() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/name.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/name.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("returnType.kt")
             public void testReturnType() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/returnType.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/returnType.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("typeParams1.kt")
             public void testTypeParams1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("typeParams2.kt")
             public void testTypeParams2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("typeParams3.kt")
             public void testTypeParams3() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams3.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueArgs1.kt")
             public void testValueArgs1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueArgs2.kt")
             public void testValueArgs2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueArgs3.kt")
             public void testValueArgs3() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs3.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueArgs4.kt")
             public void testValueArgs4() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs4.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueArgs5.kt")
             public void testValueArgs5() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs5.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs5.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueArgs6.kt")
             public void testValueArgs6() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs6.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs6.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueParams1.kt")
             public void testValueParams1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueParams2.kt")
             public void testValueParams2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueParams3.kt")
             public void testValueParams3() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams3.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueParams4.kt")
             public void testValueParams4() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams4.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueParams5.kt")
             public void testValueParams5() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams5.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams5.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("valueParams6.kt")
             public void testValueParams6() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams6.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams6.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Property extends AbstractCodeMoverTest {
             public void testAllFilesPresentInProperty() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -472,87 +557,104 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("propertyAtBrace1.kt")
             public void testPropertyAtBrace1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtBrace2.kt")
             public void testPropertyAtBrace2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtBrace3.kt")
             public void testPropertyAtBrace3() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace3.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtBrace4.kt")
             public void testPropertyAtBrace4() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace4.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtBrace5.kt")
             public void testPropertyAtBrace5() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace5.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace5.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtBrace6.kt")
             public void testPropertyAtBrace6() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace6.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtBrace6.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtClass1.kt")
             public void testPropertyAtClass1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtClass1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtClass1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtClass2.kt")
             public void testPropertyAtClass2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtClass2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtClass2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtClassInitializer1.kt")
             public void testPropertyAtClassInitializer1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtClassInitializer1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtClassInitializer1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtClassInitializer2.kt")
             public void testPropertyAtClassInitializer2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtClassInitializer2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtClassInitializer2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtEmptyLine1.kt")
             public void testPropertyAtEmptyLine1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtEmptyLine1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtEmptyLine1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtEmptyLine2.kt")
             public void testPropertyAtEmptyLine2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtEmptyLine2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtEmptyLine2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtFunction1.kt")
             public void testPropertyAtFunction1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtFunction1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtFunction1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtFunction2.kt")
             public void testPropertyAtFunction2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtFunction2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtFunction2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtProperty1.kt")
             public void testPropertyAtProperty1() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtProperty1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtProperty1.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("propertyAtProperty2.kt")
             public void testPropertyAtProperty2() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtProperty2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property/propertyAtProperty2.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors")
+        @TestDataPath("$PROJECT_ROOT")
         public static class PropertyAnchors extends AbstractCodeMoverTest {
             public void testAllFilesPresentInPropertyAnchors() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -560,17 +662,20 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("keyword.kt")
             public void testKeyword() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors/keyword.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors/keyword.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("name.kt")
             public void testName() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors/name.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors/name.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
             @TestMetadata("returnType.kt")
             public void testReturnType() throws Exception {
-                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors/returnType.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors/returnType.kt");
+                doTestClassBodyDeclaration(fileName);
             }
             
         }
@@ -591,6 +696,7 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
     }
     
     @TestMetadata("idea/testData/codeInsight/moveUpDown/closingBraces")
+    @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({ClosingBraces.For.class, ClosingBraces.Function.class, ClosingBraces.If.class, ClosingBraces.Nested.class, ClosingBraces.When.class, ClosingBraces.While.class})
     public static class ClosingBraces extends AbstractCodeMoverTest {
         public void testAllFilesPresentInClosingBraces() throws Exception {
@@ -598,6 +704,7 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/for")
+        @TestDataPath("$PROJECT_ROOT")
         public static class For extends AbstractCodeMoverTest {
             public void testAllFilesPresentInFor() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/closingBraces/for"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -605,17 +712,20 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("for1.kt")
             public void testFor1() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/for/for1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/for/for1.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("for2.kt")
             public void testFor2() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/for/for2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/for/for2.kt");
+                doTestExpression(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/function")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Function extends AbstractCodeMoverTest {
             public void testAllFilesPresentInFunction() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/closingBraces/function"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -623,27 +733,32 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("function1.kt")
             public void testFunction1() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/function/function1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/function/function1.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("function2.kt")
             public void testFunction2() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/function/function2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/function/function2.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("function3.kt")
             public void testFunction3() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/function/function3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/function/function3.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("function4.kt")
             public void testFunction4() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/function/function4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/function/function4.kt");
+                doTestExpression(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/if")
+        @TestDataPath("$PROJECT_ROOT")
         public static class If extends AbstractCodeMoverTest {
             public void testAllFilesPresentInIf() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/closingBraces/if"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -651,27 +766,32 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("if1.kt")
             public void testIf1() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/if/if1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/if/if1.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("if2.kt")
             public void testIf2() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/if/if2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/if/if2.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("if3.kt")
             public void testIf3() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/if/if3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/if/if3.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("if4.kt")
             public void testIf4() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/if/if4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/if/if4.kt");
+                doTestExpression(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/nested")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Nested extends AbstractCodeMoverTest {
             public void testAllFilesPresentInNested() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/closingBraces/nested"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -679,17 +799,20 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("nested1.kt")
             public void testNested1() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/nested/nested1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/nested/nested1.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("nested2.kt")
             public void testNested2() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/nested/nested2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/nested/nested2.kt");
+                doTestExpression(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/when")
+        @TestDataPath("$PROJECT_ROOT")
         public static class When extends AbstractCodeMoverTest {
             public void testAllFilesPresentInWhen() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/closingBraces/when"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -697,37 +820,44 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("when1.kt")
             public void testWhen1() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/when/when1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/when/when1.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("when2.kt")
             public void testWhen2() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/when/when2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/when/when2.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("whenEntry1.kt")
             public void testWhenEntry1() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/when/whenEntry1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/when/whenEntry1.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("whenEntry2.kt")
             public void testWhenEntry2() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/when/whenEntry2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/when/whenEntry2.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("whenEntry3.kt")
             public void testWhenEntry3() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/when/whenEntry3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/when/whenEntry3.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("whenEntry4.kt")
             public void testWhenEntry4() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/when/whenEntry4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/when/whenEntry4.kt");
+                doTestExpression(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/while")
+        @TestDataPath("$PROJECT_ROOT")
         public static class While extends AbstractCodeMoverTest {
             public void testAllFilesPresentInWhile() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/closingBraces/while"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -735,22 +865,26 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
             @TestMetadata("while1.kt")
             public void testWhile1() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/while/while1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/while/while1.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("while2.kt")
             public void testWhile2() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/while/while2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/while/while2.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("while3.kt")
             public void testWhile3() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/while/while3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/while/while3.kt");
+                doTestExpression(fileName);
             }
             
             @TestMetadata("while4.kt")
             public void testWhile4() throws Exception {
-                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/while/while4.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/while/while4.kt");
+                doTestExpression(fileName);
             }
             
         }
@@ -769,6 +903,7 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
     }
     
     @TestMetadata("idea/testData/codeInsight/moveUpDown/expressions")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Expressions extends AbstractCodeMoverTest {
         public void testAllFilesPresentInExpressions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -776,337 +911,404 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
         
         @TestMetadata("binaryExpr1.kt")
         public void testBinaryExpr1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/binaryExpr1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/binaryExpr1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("binaryExpr2.kt")
         public void testBinaryExpr2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/binaryExpr2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/binaryExpr2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureBlockBoundary1.kt")
         public void testClosureBlockBoundary1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureBlockBoundary1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureBlockBoundary1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureBlockBoundary2.kt")
         public void testClosureBlockBoundary2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureBlockBoundary2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureBlockBoundary2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureInDoWhile1.kt")
         public void testClosureInDoWhile1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInDoWhile1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureInDoWhile1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureInDoWhile2.kt")
         public void testClosureInDoWhile2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInDoWhile2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureInDoWhile2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureInFor1.kt")
         public void testClosureInFor1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInFor1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureInFor1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureInFor2.kt")
         public void testClosureInFor2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInFor2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureInFor2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureInIf1.kt")
         public void testClosureInIf1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInIf1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureInIf1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureInIf2.kt")
         public void testClosureInIf2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInIf2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureInIf2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureInWhile1.kt")
         public void testClosureInWhile1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInWhile1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureInWhile1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureInWhile2.kt")
         public void testClosureInWhile2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInWhile2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureInWhile2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureWthoutSpaces1.kt")
         public void testClosureWthoutSpaces1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureWthoutSpaces1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureWthoutSpaces1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("closureWthoutSpaces2.kt")
         public void testClosureWthoutSpaces2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureWthoutSpaces2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/closureWthoutSpaces2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("declaration1.kt")
         public void testDeclaration1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/declaration1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/declaration1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("declaration2.kt")
         public void testDeclaration2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/declaration2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/declaration2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("If1.kt")
         public void testIf1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/If1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/If1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("if2.kt")
         public void testIf2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/if2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/if2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("if3.kt")
         public void testIf3() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/if3.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/if3.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("if4.kt")
         public void testIf4() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/if4.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/if4.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("ifExprToBlock1.kt")
         public void testIfExprToBlock1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/ifExprToBlock1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/ifExprToBlock1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("ifExprToBlock2.kt")
         public void testIfExprToBlock2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/ifExprToBlock2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/ifExprToBlock2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("ifToBlock1.kt")
         public void testIfToBlock1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/ifToBlock1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/ifToBlock1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("ifToBlock2.kt")
         public void testIfToBlock2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/ifToBlock2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/ifToBlock2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("insideExpression1.kt")
         public void testInsideExpression1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/insideExpression1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/insideExpression1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("insideExpression2.kt")
         public void testInsideExpression2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/insideExpression2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/insideExpression2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("insideExpression3.kt")
         public void testInsideExpression3() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/insideExpression3.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/insideExpression3.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("insideExpression4.kt")
         public void testInsideExpression4() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/insideExpression4.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/insideExpression4.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("intoClosure1.kt")
         public void testIntoClosure1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoClosure1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoClosure1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("intoClosure2.kt")
         public void testIntoClosure2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoClosure2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoClosure2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("intoClosureWithParams1.kt")
         public void testIntoClosureWithParams1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoClosureWithParams1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoClosureWithParams1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("intoElse1.kt")
         public void testIntoElse1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoElse1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoElse1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("intoElse2.kt")
         public void testIntoElse2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoElse2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoElse2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("intoNestedClosure1.kt")
         public void testIntoNestedClosure1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosure1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosure1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("intoNestedClosure2.kt")
         public void testIntoNestedClosure2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosure2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosure2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("intoNestedClosureWithParams1.kt")
         public void testIntoNestedClosureWithParams1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosureWithParams1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosureWithParams1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("lambda1.kt")
         public void testLambda1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/lambda1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/lambda1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("lambda2.kt")
         public void testLambda2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/lambda2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/lambda2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("lambda3.kt")
         public void testLambda3() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/lambda3.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/lambda3.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("multilineComment1.kt")
         public void testMultilineComment1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineComment1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("multilineComment2.kt")
         public void testMultilineComment2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineComment2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("multilineComment3.kt")
         public void testMultilineComment3() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment3.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineComment3.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("multilineComment4.kt")
         public void testMultilineComment4() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment4.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineComment4.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("multilineComment5.kt")
         public void testMultilineComment5() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment5.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineComment5.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("multilineComment6.kt")
         public void testMultilineComment6() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment6.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineComment6.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("outOfClosure1.kt")
         public void testOutOfClosure1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfClosure1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfClosure1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("outOfClosure2.kt")
         public void testOutOfClosure2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfClosure2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfClosure2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("outOfClosureWithParams1.kt")
         public void testOutOfClosureWithParams1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfClosureWithParams1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfClosureWithParams1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("outOfElse1.kt")
         public void testOutOfElse1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfElse1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfElse1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("outOfElse2.kt")
         public void testOutOfElse2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfElse2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfElse2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("outOfNestedClosure1.kt")
         public void testOutOfNestedClosure1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosure1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosure1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("outOfNestedClosure2.kt")
         public void testOutOfNestedClosure2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosure2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosure2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("outOfNestedClosureWithParams1.kt")
         public void testOutOfNestedClosureWithParams1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosureWithParams1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosureWithParams1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("qualifiedCall1.kt")
         public void testQualifiedCall1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/qualifiedCall1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/qualifiedCall1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("qualifiedCall2.kt")
         public void testQualifiedCall2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/qualifiedCall2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/qualifiedCall2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("when1.kt")
         public void testWhen1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/when1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/when1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("when2.kt")
         public void testWhen2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/when2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/when2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("whenEntry1.kt")
         public void testWhenEntry1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whenEntry1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/whenEntry1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("whenEntry2.kt")
         public void testWhenEntry2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whenEntry2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/whenEntry2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("whenEntry3.kt")
         public void testWhenEntry3() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whenEntry3.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/whenEntry3.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("whenEntry4.kt")
         public void testWhenEntry4() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whenEntry4.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/whenEntry4.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("whenEntry5.kt")
         public void testWhenEntry5() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whenEntry5.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/whenEntry5.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("whenEntry6.kt")
         public void testWhenEntry6() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whenEntry6.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/whenEntry6.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("while1.kt")
         public void testWhile1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/while1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/while1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("while2.kt")
         public void testWhile2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/while2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/while2.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("whileToBlock1.kt")
         public void testWhileToBlock1() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whileToBlock1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/whileToBlock1.kt");
+            doTestExpression(fileName);
         }
         
         @TestMetadata("whileToBlock2.kt")
         public void testWhileToBlock2() throws Exception {
-            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whileToBlock2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/whileToBlock2.kt");
+            doTestExpression(fileName);
         }
         
     }

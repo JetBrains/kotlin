@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.cfg;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({PseudoValueTestGenerated.Cfg.class, PseudoValueTestGenerated.Cfg_variables.class})
 public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
     @TestMetadata("compiler/testData/cfg")
+    @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Cfg.Arrays.class, Cfg.Basic.class, Cfg.Bugs.class, Cfg.ControlStructures.class, Cfg.Conventions.class, Cfg.DeadCode.class, Cfg.Declarations.class, Cfg.Expressions.class, Cfg.Functions.class, Cfg.TailCalls.class})
     public static class Cfg extends AbstractPseudoValueTest {
         public void testAllFilesPresentInCfg() throws Exception {
@@ -37,6 +39,7 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
         }
         
         @TestMetadata("compiler/testData/cfg/arrays")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Arrays extends AbstractPseudoValueTest {
             public void testAllFilesPresentInArrays() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/arrays"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -44,37 +47,44 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("ArrayAccess.kt")
             public void testArrayAccess() throws Exception {
-                doTest("compiler/testData/cfg/arrays/ArrayAccess.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/ArrayAccess.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("arrayAccessExpression.kt")
             public void testArrayAccessExpression() throws Exception {
-                doTest("compiler/testData/cfg/arrays/arrayAccessExpression.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arrayAccessExpression.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("arrayInc.kt")
             public void testArrayInc() throws Exception {
-                doTest("compiler/testData/cfg/arrays/arrayInc.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arrayInc.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("ArrayOfFunctions.kt")
             public void testArrayOfFunctions() throws Exception {
-                doTest("compiler/testData/cfg/arrays/ArrayOfFunctions.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/ArrayOfFunctions.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("arraySet.kt")
             public void testArraySet() throws Exception {
-                doTest("compiler/testData/cfg/arrays/arraySet.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arraySet.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("arraySetPlusAssign.kt")
             public void testArraySetPlusAssign() throws Exception {
-                doTest("compiler/testData/cfg/arrays/arraySetPlusAssign.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arraySetPlusAssign.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg/basic")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Basic extends AbstractPseudoValueTest {
             public void testAllFilesPresentInBasic() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/basic"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -82,22 +92,26 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("Basic.kt")
             public void testBasic() throws Exception {
-                doTest("compiler/testData/cfg/basic/Basic.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/basic/Basic.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("EmptyFunction.kt")
             public void testEmptyFunction() throws Exception {
-                doTest("compiler/testData/cfg/basic/EmptyFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/basic/EmptyFunction.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("ShortFunction.kt")
             public void testShortFunction() throws Exception {
-                doTest("compiler/testData/cfg/basic/ShortFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/basic/ShortFunction.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg/bugs")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Bugs extends AbstractPseudoValueTest {
             public void testAllFilesPresentInBugs() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/bugs"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -105,12 +119,14 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("jumpToOuterScope.kt")
             public void testJumpToOuterScope() throws Exception {
-                doTest("compiler/testData/cfg/bugs/jumpToOuterScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/bugs/jumpToOuterScope.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg/controlStructures")
+        @TestDataPath("$PROJECT_ROOT")
         public static class ControlStructures extends AbstractPseudoValueTest {
             public void testAllFilesPresentInControlStructures() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -118,57 +134,68 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("continueInDoWhile.kt")
             public void testContinueInDoWhile() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/continueInDoWhile.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/continueInDoWhile.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("continueInFor.kt")
             public void testContinueInFor() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/continueInFor.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/continueInFor.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("continueInWhile.kt")
             public void testContinueInWhile() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/continueInWhile.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/continueInWhile.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("Finally.kt")
             public void testFinally() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/Finally.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/Finally.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("FinallyTestCopy.kt")
             public void testFinallyTestCopy() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/FinallyTestCopy.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/FinallyTestCopy.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("For.kt")
             public void testFor() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/For.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/For.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("If.kt")
             public void testIf() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/If.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/If.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("OnlyWhileInFunctionBody.kt")
             public void testOnlyWhileInFunctionBody() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/OnlyWhileInFunctionBody.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/OnlyWhileInFunctionBody.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("returnsInWhen.kt")
             public void testReturnsInWhen() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/returnsInWhen.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/returnsInWhen.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("whenConditions.kt")
             public void testWhenConditions() throws Exception {
-                doTest("compiler/testData/cfg/controlStructures/whenConditions.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/whenConditions.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg/conventions")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Conventions extends AbstractPseudoValueTest {
             public void testAllFilesPresentInConventions() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/conventions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -176,32 +203,38 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("bothReceivers.kt")
             public void testBothReceivers() throws Exception {
-                doTest("compiler/testData/cfg/conventions/bothReceivers.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/bothReceivers.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("equals.kt")
             public void testEquals() throws Exception {
-                doTest("compiler/testData/cfg/conventions/equals.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/equals.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("incrementAtTheEnd.kt")
             public void testIncrementAtTheEnd() throws Exception {
-                doTest("compiler/testData/cfg/conventions/incrementAtTheEnd.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/incrementAtTheEnd.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("invoke.kt")
             public void testInvoke() throws Exception {
-                doTest("compiler/testData/cfg/conventions/invoke.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/invoke.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("notEqual.kt")
             public void testNotEqual() throws Exception {
-                doTest("compiler/testData/cfg/conventions/notEqual.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/notEqual.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg/deadCode")
+        @TestDataPath("$PROJECT_ROOT")
         public static class DeadCode extends AbstractPseudoValueTest {
             public void testAllFilesPresentInDeadCode() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/deadCode"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -209,22 +242,26 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("DeadCode.kt")
             public void testDeadCode() throws Exception {
-                doTest("compiler/testData/cfg/deadCode/DeadCode.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/deadCode/DeadCode.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("returnInElvis.kt")
             public void testReturnInElvis() throws Exception {
-                doTest("compiler/testData/cfg/deadCode/returnInElvis.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/deadCode/returnInElvis.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("stringTemplate.kt")
             public void testStringTemplate() throws Exception {
-                doTest("compiler/testData/cfg/deadCode/stringTemplate.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/deadCode/stringTemplate.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg/declarations")
+        @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({Declarations.ClassesAndObjects.class, Declarations.FunctionLiterals.class, Declarations.Functions.class, Declarations.Local.class, Declarations.MultiDeclaration.class, Declarations.Properties.class})
         public static class Declarations extends AbstractPseudoValueTest {
             public void testAllFilesPresentInDeclarations() throws Exception {
@@ -232,6 +269,7 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             }
             
             @TestMetadata("compiler/testData/cfg/declarations/classesAndObjects")
+            @TestDataPath("$PROJECT_ROOT")
             public static class ClassesAndObjects extends AbstractPseudoValueTest {
                 public void testAllFilesPresentInClassesAndObjects() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/classesAndObjects"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -239,22 +277,26 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 
                 @TestMetadata("AnonymousInitializers.kt")
                 public void testAnonymousInitializers() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/classesAndObjects/AnonymousInitializers.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/classesAndObjects/AnonymousInitializers.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("delegationByExpression.kt")
                 public void testDelegationByExpression() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/classesAndObjects/delegationByExpression.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/classesAndObjects/delegationByExpression.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("delegationBySuperCall.kt")
                 public void testDelegationBySuperCall() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/classesAndObjects/delegationBySuperCall.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/classesAndObjects/delegationBySuperCall.kt");
+                    doTest(fileName);
                 }
                 
             }
             
             @TestMetadata("compiler/testData/cfg/declarations/functionLiterals")
+            @TestDataPath("$PROJECT_ROOT")
             public static class FunctionLiterals extends AbstractPseudoValueTest {
                 public void testAllFilesPresentInFunctionLiterals() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -262,12 +304,14 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 
                 @TestMetadata("unusedFunctionLiteral.kt")
                 public void testUnusedFunctionLiteral() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/functionLiterals/unusedFunctionLiteral.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/functionLiterals/unusedFunctionLiteral.kt");
+                    doTest(fileName);
                 }
                 
             }
             
             @TestMetadata("compiler/testData/cfg/declarations/functions")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Functions extends AbstractPseudoValueTest {
                 public void testAllFilesPresentInFunctions() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/functions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -275,17 +319,20 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 
                 @TestMetadata("FailFunction.kt")
                 public void testFailFunction() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/functions/FailFunction.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/functions/FailFunction.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("typeParameter.kt")
                 public void testTypeParameter() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/functions/typeParameter.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/functions/typeParameter.kt");
+                    doTest(fileName);
                 }
                 
             }
             
             @TestMetadata("compiler/testData/cfg/declarations/local")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Local extends AbstractPseudoValueTest {
                 public void testAllFilesPresentInLocal() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/local"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -293,27 +340,32 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 
                 @TestMetadata("localClass.kt")
                 public void testLocalClass() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/local/localClass.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/local/localClass.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("LocalDeclarations.kt")
                 public void testLocalDeclarations() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/local/LocalDeclarations.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/local/LocalDeclarations.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("localProperty.kt")
                 public void testLocalProperty() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/local/localProperty.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/local/localProperty.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("ObjectExpression.kt")
                 public void testObjectExpression() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/local/ObjectExpression.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/local/ObjectExpression.kt");
+                    doTest(fileName);
                 }
                 
             }
             
             @TestMetadata("compiler/testData/cfg/declarations/multiDeclaration")
+            @TestDataPath("$PROJECT_ROOT")
             public static class MultiDeclaration extends AbstractPseudoValueTest {
                 public void testAllFilesPresentInMultiDeclaration() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/multiDeclaration"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -321,17 +373,20 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 
                 @TestMetadata("MultiDecl.kt")
                 public void testMultiDecl() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/multiDeclaration/MultiDecl.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/multiDeclaration/MultiDecl.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("multiDeclarationWithError.kt")
                 public void testMultiDeclarationWithError() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/multiDeclaration/multiDeclarationWithError.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/multiDeclaration/multiDeclarationWithError.kt");
+                    doTest(fileName);
                 }
                 
             }
             
             @TestMetadata("compiler/testData/cfg/declarations/properties")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Properties extends AbstractPseudoValueTest {
                 public void testAllFilesPresentInProperties() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/properties"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -339,22 +394,26 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 
                 @TestMetadata("backingFieldAccess.kt")
                 public void testBackingFieldAccess() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/properties/backingFieldAccess.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/properties/backingFieldAccess.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("backingFieldQualifiedWithThis.kt")
                 public void testBackingFieldQualifiedWithThis() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/properties/backingFieldQualifiedWithThis.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/properties/backingFieldQualifiedWithThis.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("DelegatedProperty.kt")
                 public void testDelegatedProperty() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/properties/DelegatedProperty.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/properties/DelegatedProperty.kt");
+                    doTest(fileName);
                 }
                 
                 @TestMetadata("unreachableDelegation.kt")
                 public void testUnreachableDelegation() throws Exception {
-                    doTest("compiler/testData/cfg/declarations/properties/unreachableDelegation.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/properties/unreachableDelegation.kt");
+                    doTest(fileName);
                 }
                 
             }
@@ -373,6 +432,7 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
         }
         
         @TestMetadata("compiler/testData/cfg/expressions")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Expressions extends AbstractPseudoValueTest {
             public void testAllFilesPresentInExpressions() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -380,107 +440,128 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("assignmentToThis.kt")
             public void testAssignmentToThis() throws Exception {
-                doTest("compiler/testData/cfg/expressions/assignmentToThis.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/assignmentToThis.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("Assignments.kt")
             public void testAssignments() throws Exception {
-                doTest("compiler/testData/cfg/expressions/Assignments.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/Assignments.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("callableReferences.kt")
             public void testCallableReferences() throws Exception {
-                doTest("compiler/testData/cfg/expressions/callableReferences.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/callableReferences.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("casts.kt")
             public void testCasts() throws Exception {
-                doTest("compiler/testData/cfg/expressions/casts.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/casts.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("chainedQualifiedExpression.kt")
             public void testChainedQualifiedExpression() throws Exception {
-                doTest("compiler/testData/cfg/expressions/chainedQualifiedExpression.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/chainedQualifiedExpression.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("expressionAsFunction.kt")
             public void testExpressionAsFunction() throws Exception {
-                doTest("compiler/testData/cfg/expressions/expressionAsFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/expressionAsFunction.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("incdec.kt")
             public void testIncdec() throws Exception {
-                doTest("compiler/testData/cfg/expressions/incdec.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/incdec.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("invalidVariableCall.kt")
             public void testInvalidVariableCall() throws Exception {
-                doTest("compiler/testData/cfg/expressions/invalidVariableCall.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/invalidVariableCall.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("LazyBooleans.kt")
             public void testLazyBooleans() throws Exception {
-                doTest("compiler/testData/cfg/expressions/LazyBooleans.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/LazyBooleans.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("nothingExpr.kt")
             public void testNothingExpr() throws Exception {
-                doTest("compiler/testData/cfg/expressions/nothingExpr.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/nothingExpr.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("parenthesizedSelector.kt")
             public void testParenthesizedSelector() throws Exception {
-                doTest("compiler/testData/cfg/expressions/parenthesizedSelector.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/parenthesizedSelector.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("propertySafeCall.kt")
             public void testPropertySafeCall() throws Exception {
-                doTest("compiler/testData/cfg/expressions/propertySafeCall.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/propertySafeCall.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("qualifiedExpressionWithoutSelector.kt")
             public void testQualifiedExpressionWithoutSelector() throws Exception {
-                doTest("compiler/testData/cfg/expressions/qualifiedExpressionWithoutSelector.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/qualifiedExpressionWithoutSelector.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("ReturnFromExpression.kt")
             public void testReturnFromExpression() throws Exception {
-                doTest("compiler/testData/cfg/expressions/ReturnFromExpression.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/ReturnFromExpression.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("thisExpression.kt")
             public void testThisExpression() throws Exception {
-                doTest("compiler/testData/cfg/expressions/thisExpression.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/thisExpression.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("unresolvedCall.kt")
             public void testUnresolvedCall() throws Exception {
-                doTest("compiler/testData/cfg/expressions/unresolvedCall.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/unresolvedCall.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("unresolvedProperty.kt")
             public void testUnresolvedProperty() throws Exception {
-                doTest("compiler/testData/cfg/expressions/unresolvedProperty.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/unresolvedProperty.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("unresolvedWriteLHS.kt")
             public void testUnresolvedWriteLHS() throws Exception {
-                doTest("compiler/testData/cfg/expressions/unresolvedWriteLHS.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/unresolvedWriteLHS.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("unsupportedReturns.kt")
             public void testUnsupportedReturns() throws Exception {
-                doTest("compiler/testData/cfg/expressions/unsupportedReturns.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/unsupportedReturns.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("unusedExpressionSimpleName.kt")
             public void testUnusedExpressionSimpleName() throws Exception {
-                doTest("compiler/testData/cfg/expressions/unusedExpressionSimpleName.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/unusedExpressionSimpleName.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg/functions")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Functions extends AbstractPseudoValueTest {
             public void testAllFilesPresentInFunctions() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/functions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -488,17 +569,20 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("DefaultValuesForArguments.kt")
             public void testDefaultValuesForArguments() throws Exception {
-                doTest("compiler/testData/cfg/functions/DefaultValuesForArguments.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/functions/DefaultValuesForArguments.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("unmappedArgs.kt")
             public void testUnmappedArgs() throws Exception {
-                doTest("compiler/testData/cfg/functions/unmappedArgs.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/functions/unmappedArgs.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg/tailCalls")
+        @TestDataPath("$PROJECT_ROOT")
         public static class TailCalls extends AbstractPseudoValueTest {
             public void testAllFilesPresentInTailCalls() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/tailCalls"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -506,27 +590,32 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("finally.kt")
             public void testFinally() throws Exception {
-                doTest("compiler/testData/cfg/tailCalls/finally.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/tailCalls/finally.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("finallyWithReturn.kt")
             public void testFinallyWithReturn() throws Exception {
-                doTest("compiler/testData/cfg/tailCalls/finallyWithReturn.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/tailCalls/finallyWithReturn.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("sum.kt")
             public void testSum() throws Exception {
-                doTest("compiler/testData/cfg/tailCalls/sum.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/tailCalls/sum.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("try.kt")
             public void testTry() throws Exception {
-                doTest("compiler/testData/cfg/tailCalls/try.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/tailCalls/try.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("tryCatchFinally.kt")
             public void testTryCatchFinally() throws Exception {
-                doTest("compiler/testData/cfg/tailCalls/tryCatchFinally.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/tailCalls/tryCatchFinally.kt");
+                doTest(fileName);
             }
             
         }
@@ -549,6 +638,7 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
     }
     
     @TestMetadata("compiler/testData/cfg-variables")
+    @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Cfg_variables.Basic.class, Cfg_variables.Bugs.class, Cfg_variables.LexicalScopes.class})
     public static class Cfg_variables extends AbstractPseudoValueTest {
         public void testAllFilesPresentInCfg_variables() throws Exception {
@@ -556,6 +646,7 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
         }
         
         @TestMetadata("compiler/testData/cfg-variables/basic")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Basic extends AbstractPseudoValueTest {
             public void testAllFilesPresentInBasic() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/basic"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -563,32 +654,38 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("IfWithUninitialized.kt")
             public void testIfWithUninitialized() throws Exception {
-                doTest("compiler/testData/cfg-variables/basic/IfWithUninitialized.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/IfWithUninitialized.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("InitializedNotDeclared.kt")
             public void testInitializedNotDeclared() throws Exception {
-                doTest("compiler/testData/cfg-variables/basic/InitializedNotDeclared.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/InitializedNotDeclared.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("UsageInFunctionLiteral.kt")
             public void testUsageInFunctionLiteral() throws Exception {
-                doTest("compiler/testData/cfg-variables/basic/UsageInFunctionLiteral.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/UsageInFunctionLiteral.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("VariablesInitialization.kt")
             public void testVariablesInitialization() throws Exception {
-                doTest("compiler/testData/cfg-variables/basic/VariablesInitialization.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/VariablesInitialization.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("VariablesUsage.kt")
             public void testVariablesUsage() throws Exception {
-                doTest("compiler/testData/cfg-variables/basic/VariablesUsage.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/VariablesUsage.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg-variables/bugs")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Bugs extends AbstractPseudoValueTest {
             public void testAllFilesPresentInBugs() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/bugs"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -596,22 +693,26 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("referenceToPropertyInitializer.kt")
             public void testReferenceToPropertyInitializer() throws Exception {
-                doTest("compiler/testData/cfg-variables/bugs/referenceToPropertyInitializer.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/referenceToPropertyInitializer.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("varInitializationInIf.kt")
             public void testVarInitializationInIf() throws Exception {
-                doTest("compiler/testData/cfg-variables/bugs/varInitializationInIf.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/varInitializationInIf.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("varInitializationInIfInCycle.kt")
             public void testVarInitializationInIfInCycle() throws Exception {
-                doTest("compiler/testData/cfg-variables/bugs/varInitializationInIfInCycle.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/varInitializationInIfInCycle.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("compiler/testData/cfg-variables/lexicalScopes")
+        @TestDataPath("$PROJECT_ROOT")
         public static class LexicalScopes extends AbstractPseudoValueTest {
             public void testAllFilesPresentInLexicalScopes() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/lexicalScopes"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -619,62 +720,74 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
             @TestMetadata("doWhileScope.kt")
             public void testDoWhileScope() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/doWhileScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/doWhileScope.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("forScope.kt")
             public void testForScope() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/forScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/forScope.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("functionLiteralScope.kt")
             public void testFunctionLiteralScope() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/functionLiteralScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/functionLiteralScope.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("ifScope.kt")
             public void testIfScope() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/ifScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/ifScope.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("localClass.kt")
             public void testLocalClass() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/localClass.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/localClass.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("localFunctionScope.kt")
             public void testLocalFunctionScope() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/localFunctionScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/localFunctionScope.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("localFunctionScopeWithoutBody.kt")
             public void testLocalFunctionScopeWithoutBody() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/localFunctionScopeWithoutBody.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/localFunctionScopeWithoutBody.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("localObject.kt")
             public void testLocalObject() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/localObject.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/localObject.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("objectLiteralScope.kt")
             public void testObjectLiteralScope() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/objectLiteralScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/objectLiteralScope.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("propertyAccessorScope.kt")
             public void testPropertyAccessorScope() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/propertyAccessorScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/propertyAccessorScope.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("tryScope.kt")
             public void testTryScope() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/tryScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/tryScope.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("whileScope.kt")
             public void testWhileScope() throws Exception {
-                doTest("compiler/testData/cfg-variables/lexicalScopes/whileScope.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/whileScope.kt");
+                doTest(fileName);
             }
             
         }

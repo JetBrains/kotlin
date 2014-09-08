@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.configuration;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({ConfigureProjectByChangingFileTestGenerated.Android_gradle.class, ConfigureProjectByChangingFileTestGenerated.Gradle.class, ConfigureProjectByChangingFileTestGenerated.Maven.class})
 public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigureProjectByChangingFileTest {
     @TestMetadata("idea/testData/configuration/android-gradle")
+    @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Android_gradle.GradleExamples.class})
     public static class Android_gradle extends AbstractConfigureProjectByChangingFileTest {
         public void testAllFilesPresentInAndroid_gradle() throws Exception {
@@ -38,60 +40,72 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
         
         @TestMetadata("androidStudioDefault_before.gradle")
         public void testAndroidStudioDefault() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/androidStudioDefault_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/androidStudioDefault_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("androidStudioDefaultShapshot_before.gradle")
         public void testAndroidStudioDefaultShapshot() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/androidStudioDefaultShapshot_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/androidStudioDefaultShapshot_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("buildConfigs_before.gradle")
         public void testBuildConfigs() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/buildConfigs_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/buildConfigs_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("emptyDependencyList_before.gradle")
         public void testEmptyDependencyList() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/emptyDependencyList_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/emptyDependencyList_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("emptyFile_before.gradle")
         public void testEmptyFile() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/emptyFile_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/emptyFile_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("helloWorld_before.gradle")
         public void testHelloWorld() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/helloWorld_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/helloWorld_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("libraryFile_before.gradle")
         public void testLibraryFile() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/libraryFile_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/libraryFile_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("missedApplyAndroidStatement_before.gradle")
         public void testMissedApplyAndroidStatement() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/missedApplyAndroidStatement_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/missedApplyAndroidStatement_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("missedBuildscriptBlock_before.gradle")
         public void testMissedBuildscriptBlock() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/missedBuildscriptBlock_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/missedBuildscriptBlock_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("missedRepositoriesInBuildscriptBlock_before.gradle")
         public void testMissedRepositoriesInBuildscriptBlock() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/missedRepositoriesInBuildscriptBlock_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/missedRepositoriesInBuildscriptBlock_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("productFlavor_before.gradle")
         public void testProductFlavor() throws Exception {
-            doTestAndroidGradle("idea/testData/configuration/android-gradle/productFlavor_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/productFlavor_before.gradle");
+            doTestAndroidGradle(fileName);
         }
         
         @TestMetadata("idea/testData/configuration/android-gradle/gradleExamples")
+        @TestDataPath("$PROJECT_ROOT")
         public static class GradleExamples extends AbstractConfigureProjectByChangingFileTest {
             public void testAllFilesPresentInGradleExamples() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gradle/gradleExamples"), Pattern.compile("(\\w+)_before\\.gradle$"), true);
@@ -99,47 +113,56 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
             
             @TestMetadata("gradleExample0_before.gradle")
             public void testGradleExample0() throws Exception {
-                doTestAndroidGradle("idea/testData/configuration/android-gradle/gradleExamples/gradleExample0_before.gradle");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/gradleExamples/gradleExample0_before.gradle");
+                doTestAndroidGradle(fileName);
             }
             
             @TestMetadata("gradleExample18_before.gradle")
             public void testGradleExample18() throws Exception {
-                doTestAndroidGradle("idea/testData/configuration/android-gradle/gradleExamples/gradleExample18_before.gradle");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/gradleExamples/gradleExample18_before.gradle");
+                doTestAndroidGradle(fileName);
             }
             
             @TestMetadata("gradleExample22_before.gradle")
             public void testGradleExample22() throws Exception {
-                doTestAndroidGradle("idea/testData/configuration/android-gradle/gradleExamples/gradleExample22_before.gradle");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/gradleExamples/gradleExample22_before.gradle");
+                doTestAndroidGradle(fileName);
             }
             
             @TestMetadata("gradleExample44_before.gradle")
             public void testGradleExample44() throws Exception {
-                doTestAndroidGradle("idea/testData/configuration/android-gradle/gradleExamples/gradleExample44_before.gradle");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/gradleExamples/gradleExample44_before.gradle");
+                doTestAndroidGradle(fileName);
             }
             
             @TestMetadata("gradleExample5_before.gradle")
             public void testGradleExample5() throws Exception {
-                doTestAndroidGradle("idea/testData/configuration/android-gradle/gradleExamples/gradleExample5_before.gradle");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/gradleExamples/gradleExample5_before.gradle");
+                doTestAndroidGradle(fileName);
             }
             
             @TestMetadata("gradleExample50_before.gradle")
             public void testGradleExample50() throws Exception {
-                doTestAndroidGradle("idea/testData/configuration/android-gradle/gradleExamples/gradleExample50_before.gradle");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/gradleExamples/gradleExample50_before.gradle");
+                doTestAndroidGradle(fileName);
             }
             
             @TestMetadata("gradleExample58_before.gradle")
             public void testGradleExample58() throws Exception {
-                doTestAndroidGradle("idea/testData/configuration/android-gradle/gradleExamples/gradleExample58_before.gradle");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/gradleExamples/gradleExample58_before.gradle");
+                doTestAndroidGradle(fileName);
             }
             
             @TestMetadata("gradleExample65_before.gradle")
             public void testGradleExample65() throws Exception {
-                doTestAndroidGradle("idea/testData/configuration/android-gradle/gradleExamples/gradleExample65_before.gradle");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/gradleExamples/gradleExample65_before.gradle");
+                doTestAndroidGradle(fileName);
             }
             
             @TestMetadata("gradleExample8_before.gradle")
             public void testGradleExample8() throws Exception {
-                doTestAndroidGradle("idea/testData/configuration/android-gradle/gradleExamples/gradleExample8_before.gradle");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/android-gradle/gradleExamples/gradleExample8_before.gradle");
+                doTestAndroidGradle(fileName);
             }
             
         }
@@ -153,6 +176,7 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
     }
     
     @TestMetadata("idea/testData/configuration/gradle")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Gradle extends AbstractConfigureProjectByChangingFileTest {
         public void testAllFilesPresentInGradle() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/gradle"), Pattern.compile("(\\w+)_before\\.gradle$"), true);
@@ -160,17 +184,20 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
         
         @TestMetadata("default_before.gradle")
         public void testDefault() throws Exception {
-            doTestGradle("idea/testData/configuration/gradle/default_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/gradle/default_before.gradle");
+            doTestGradle(fileName);
         }
         
         @TestMetadata("missedLibrary_before.gradle")
         public void testMissedLibrary() throws Exception {
-            doTestGradle("idea/testData/configuration/gradle/missedLibrary_before.gradle");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/gradle/missedLibrary_before.gradle");
+            doTestGradle(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/configuration/maven")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Maven extends AbstractConfigureProjectByChangingFileTest {
         public void testAllFilesPresentInMaven() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/maven"), Pattern.compile("^([^\\.]+)$"), false);
@@ -178,22 +205,26 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
         
         @TestMetadata("libraryMissed")
         public void testLibraryMissed() throws Exception {
-            doTestWithMaven("idea/testData/configuration/maven/libraryMissed/");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/maven/libraryMissed/");
+            doTestWithMaven(fileName);
         }
         
         @TestMetadata("pluginMissed")
         public void testPluginMissed() throws Exception {
-            doTestWithMaven("idea/testData/configuration/maven/pluginMissed/");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/maven/pluginMissed/");
+            doTestWithMaven(fileName);
         }
         
         @TestMetadata("simpleProject")
         public void testSimpleProject() throws Exception {
-            doTestWithMaven("idea/testData/configuration/maven/simpleProject/");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/maven/simpleProject/");
+            doTestWithMaven(fileName);
         }
         
         @TestMetadata("simpleProjectSnapshot")
         public void testSimpleProjectSnapshot() throws Exception {
-            doTestWithMaven("idea/testData/configuration/maven/simpleProjectSnapshot/");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/configuration/maven/simpleProjectSnapshot/");
+            doTestWithMaven(fileName);
         }
         
     }

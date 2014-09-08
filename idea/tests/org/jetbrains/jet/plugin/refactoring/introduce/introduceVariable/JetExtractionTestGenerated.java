@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({JetExtractionTestGenerated.IntroduceVariable.class, JetExtractionTestGenerated.ExtractFunction.class})
 public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
     @TestMetadata("idea/testData/refactoring/introduceVariable")
+    @TestDataPath("$PROJECT_ROOT")
     public static class IntroduceVariable extends AbstractJetExtractionTest {
         public void testAllFilesPresentInIntroduceVariable() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceVariable"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -37,177 +39,212 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         
         @TestMetadata("ArrayAccessExpr.kt")
         public void testArrayAccessExpr() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/ArrayAccessExpr.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ArrayAccessExpr.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("ClassBody.kt")
         public void testClassBody() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/ClassBody.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ClassBody.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("DoWhileAddBlock.kt")
         public void testDoWhileAddBlock() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/DoWhileAddBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/DoWhileAddBlock.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("DoWhileAddBlockInner.kt")
         public void testDoWhileAddBlockInner() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/DoWhileAddBlockInner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/DoWhileAddBlockInner.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("FewOccurrences.kt")
         public void testFewOccurrences() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/FewOccurrences.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/FewOccurrences.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("FunctionAddBlock.kt")
         public void testFunctionAddBlock() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/FunctionAddBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/FunctionAddBlock.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("FunctionAddBlockInner.kt")
         public void testFunctionAddBlockInner() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/FunctionAddBlockInner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/FunctionAddBlockInner.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("FunctionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/FunctionLiteral.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/FunctionLiteral.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("FunctionLiteralFromExpected.kt")
         public void testFunctionLiteralFromExpected() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/FunctionLiteralFromExpected.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/FunctionLiteralFromExpected.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("IfCondition.kt")
         public void testIfCondition() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/IfCondition.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IfCondition.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("IfElseAddBlock.kt")
         public void testIfElseAddBlock() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/IfElseAddBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IfElseAddBlock.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("IfElseAddBlockInner.kt")
         public void testIfElseAddBlockInner() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/IfElseAddBlockInner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IfElseAddBlockInner.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("IfThenAddBlock.kt")
         public void testIfThenAddBlock() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/IfThenAddBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IfThenAddBlock.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("IfThenAddBlockInner.kt")
         public void testIfThenAddBlockInner() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/IfThenAddBlockInner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IfThenAddBlockInner.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("It.kt")
         public void testIt() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/It.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/It.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("LoopRange.kt")
         public void testLoopRange() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/LoopRange.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/LoopRange.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("ManyInnerOccurences.kt")
         public void testManyInnerOccurences() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/ManyInnerOccurences.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ManyInnerOccurences.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("ManyOccurrences.kt")
         public void testManyOccurrences() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/ManyOccurrences.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ManyOccurrences.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("noConflictWithInnerVariable.kt")
         public void testNoConflictWithInnerVariable() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/noConflictWithInnerVariable.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/noConflictWithInnerVariable.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("NoExplicitReceivers.kt")
         public void testNoExplicitReceivers() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/NoExplicitReceivers.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/NoExplicitReceivers.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("NoExplicitReceiversUnresolved.kt")
         public void testNoExplicitReceiversUnresolved() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/NoExplicitReceiversUnresolved.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/NoExplicitReceiversUnresolved.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("nonEquivalentReceivers.kt")
         public void testNonEquivalentReceivers() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/nonEquivalentReceivers.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/nonEquivalentReceivers.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("OneExplicitReceiver.kt")
         public void testOneExplicitReceiver() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/OneExplicitReceiver.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/OneExplicitReceiver.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("ReplaceOccurence.kt")
         public void testReplaceOccurence() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/ReplaceOccurence.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ReplaceOccurence.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/Simple.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/Simple.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("SimpleCreateValue.kt")
         public void testSimpleCreateValue() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/SimpleCreateValue.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/SimpleCreateValue.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("StringInjection.kt")
         public void testStringInjection() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/StringInjection.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/StringInjection.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("TwoExplicitReceivers.kt")
         public void testTwoExplicitReceivers() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/TwoExplicitReceivers.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/TwoExplicitReceivers.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("WhenAddBlock.kt")
         public void testWhenAddBlock() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/WhenAddBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenAddBlock.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("WhenAddBlockInner.kt")
         public void testWhenAddBlockInner() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/WhenAddBlockInner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenAddBlockInner.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("WhenParts.kt")
         public void testWhenParts() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/WhenParts.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenParts.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("WhileAddBlock.kt")
         public void testWhileAddBlock() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/WhileAddBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhileAddBlock.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("WhileAddBlockInner.kt")
         public void testWhileAddBlockInner() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/WhileAddBlockInner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhileAddBlockInner.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("WhileCondition.kt")
         public void testWhileCondition() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/WhileCondition.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhileCondition.kt");
+            doIntroduceVariableTest(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/refactoring/extractFunction")
+    @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({ExtractFunction.AsProperty.class, ExtractFunction.Basic.class, ExtractFunction.ControlFlow.class, ExtractFunction.DefaultContainer.class, ExtractFunction.Delegation.class, ExtractFunction.Initializers.class, ExtractFunction.Parameters.class, ExtractFunction.TypeParameters.class})
     public static class ExtractFunction extends AbstractJetExtractionTest {
         public void testAllFilesPresentInExtractFunction() throws Exception {
@@ -215,6 +252,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/asProperty")
+        @TestDataPath("$PROJECT_ROOT")
         public static class AsProperty extends AbstractJetExtractionTest {
             public void testAllFilesPresentInAsProperty() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/asProperty"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -222,27 +260,32 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             
             @TestMetadata("extractToClass.kt")
             public void testExtractToClass() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/asProperty/extractToClass.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractToClass.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("extractToFile.kt")
             public void testExtractToFile() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/asProperty/extractToFile.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractToFile.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("extractToFunction.kt")
             public void testExtractToFunction() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/asProperty/extractToFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractToFunction.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("extractWithParams.kt")
             public void testExtractWithParams() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/asProperty/extractWithParams.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractWithParams.kt");
+                doExtractFunctionTest(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/basic")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Basic extends AbstractJetExtractionTest {
             public void testAllFilesPresentInBasic() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/basic"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -250,97 +293,116 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             
             @TestMetadata("fragmentWithComment.kt")
             public void testFragmentWithComment() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/fragmentWithComment.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/fragmentWithComment.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("fragmentWithMultilineComment.kt")
             public void testFragmentWithMultilineComment() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/fragmentWithMultilineComment.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/fragmentWithMultilineComment.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localClassExtraction.kt")
             public void testLocalClassExtraction() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassExtraction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localClassExtraction.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localClassFunctionRef.kt")
             public void testLocalClassFunctionRef() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassFunctionRef.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localClassFunctionRef.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localClassPropertyRef.kt")
             public void testLocalClassPropertyRef() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassPropertyRef.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localClassPropertyRef.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localExtraction.kt")
             public void testLocalExtraction() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localExtraction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localExtraction.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localFunExtraction.kt")
             public void testLocalFunExtraction() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localFunExtraction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localFunExtraction.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localFunctionRef.kt")
             public void testLocalFunctionRef() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localFunctionRef.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localFunctionRef.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localObjectRef.kt")
             public void testLocalObjectRef() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localObjectRef.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localObjectRef.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("malformedExpression.kt")
             public void testMalformedExpression() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/malformedExpression.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/malformedExpression.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("malformedStatements.kt")
             public void testMalformedStatements() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/malformedStatements.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/malformedStatements.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("misdirectedRef.kt")
             public void testMisdirectedRef() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/misdirectedRef.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/misdirectedRef.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("noConflictWithInnerFunction.kt")
             public void testNoConflictWithInnerFunction() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/noConflictWithInnerFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/noConflictWithInnerFunction.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("privateMemberInClassObject.kt")
             public void testPrivateMemberInClassObject() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateMemberInClassObject.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/privateMemberInClassObject.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("privateMemberRef.kt")
             public void testPrivateMemberRef() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateMemberRef.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/privateMemberRef.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("privateNestedClass.kt")
             public void testPrivateNestedClass() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateNestedClass.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/privateNestedClass.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("privateSetter.kt")
             public void testPrivateSetter() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateSetter.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/privateSetter.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("refInReturn.kt")
             public void testRefInReturn() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/refInReturn.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/refInReturn.kt");
+                doExtractFunctionTest(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow")
+        @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({ControlFlow.ConditionalJumps.class, ControlFlow.Default.class, ControlFlow.DefiniteReturns.class, ControlFlow.EvaluateExpression.class, ControlFlow.Initializer.class, ControlFlow.OutputValues.class, ControlFlow.Throws.class, ControlFlow.Unextractable.class})
         public static class ControlFlow extends AbstractJetExtractionTest {
             public void testAllFilesPresentInControlFlow() throws Exception {
@@ -348,6 +410,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps")
+            @TestDataPath("$PROJECT_ROOT")
             public static class ConditionalJumps extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInConditionalJumps() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -355,57 +418,68 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("conditionalBreakWithIf.kt")
                 public void testConditionalBreakWithIf() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIf.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIf.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("conditionalBreakWithIfAndExtraVars.kt")
                 public void testConditionalBreakWithIfAndExtraVars() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIfAndExtraVars.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIfAndExtraVars.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("conditionalBreakWithIfElse.kt")
                 public void testConditionalBreakWithIfElse() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIfElse.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithIfElse.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("conditionalBreakWithWhen.kt")
                 public void testConditionalBreakWithWhen() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithWhen.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalBreakWithWhen.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("conditionalReturnWithIf.kt")
                 public void testConditionalReturnWithIf() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalReturnWithIf.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalReturnWithIf.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("conditionalReturnWithIfElse.kt")
                 public void testConditionalReturnWithIfElse() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalReturnWithIfElse.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalReturnWithIfElse.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("conditionalReturnWithWhen.kt")
                 public void testConditionalReturnWithWhen() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalReturnWithWhen.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/conditionalReturnWithWhen.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("unconditionalBreakWithIf.kt")
                 public void testUnconditionalBreakWithIf() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/unconditionalBreakWithIf.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/unconditionalBreakWithIf.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("unconditionalBreakWithIfElse.kt")
                 public void testUnconditionalBreakWithIfElse() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/unconditionalBreakWithIfElse.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/unconditionalBreakWithIfElse.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("unconditionalBreakWithWhen.kt")
                 public void testUnconditionalBreakWithWhen() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/unconditionalBreakWithWhen.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/conditionalJumps/unconditionalBreakWithWhen.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/default")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Default extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInDefault() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/default"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -413,42 +487,50 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("defaultCF.kt")
                 public void testDefaultCF() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCF.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCF.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("defaultCFWithExtraVars.kt")
                 public void testDefaultCFWithExtraVars() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCFWithExtraVars.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCFWithExtraVars.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("defaultCFWithJumps.kt")
                 public void testDefaultCFWithJumps() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCFWithJumps.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/default/defaultCFWithJumps.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("ignoredReturnValueWithIf.kt")
                 public void testIgnoredReturnValueWithIf() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/ignoredReturnValueWithIf.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/default/ignoredReturnValueWithIf.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("ignoredReturnValueWithIfNoBlocks.kt")
                 public void testIgnoredReturnValueWithIfNoBlocks() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/ignoredReturnValueWithIfNoBlocks.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/default/ignoredReturnValueWithIfNoBlocks.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("ignoredReturnValueWithWhen.kt")
                 public void testIgnoredReturnValueWithWhen() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/ignoredReturnValueWithWhen.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/default/ignoredReturnValueWithWhen.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("ignoredReturnValueWithWhenNoBlocks.kt")
                 public void testIgnoredReturnValueWithWhenNoBlocks() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/default/ignoredReturnValueWithWhenNoBlocks.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/default/ignoredReturnValueWithWhenNoBlocks.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns")
+            @TestDataPath("$PROJECT_ROOT")
             public static class DefiniteReturns extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInDefiniteReturns() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -456,22 +538,26 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("definiteReturnWithIf.kt")
                 public void testDefiniteReturnWithIf() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/definiteReturnWithIf.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/definiteReturnWithIf.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("definiteReturnWithWhen.kt")
                 public void testDefiniteReturnWithWhen() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/definiteReturnWithWhen.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/definiteReturnWithWhen.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("singleDefiniteReturn.kt")
                 public void testSingleDefiniteReturn() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/singleDefiniteReturn.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/singleDefiniteReturn.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression")
+            @TestDataPath("$PROJECT_ROOT")
             public static class EvaluateExpression extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInEvaluateExpression() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -479,72 +565,86 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("evalExprInIfCondition.kt")
                 public void testEvalExprInIfCondition() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInIfCondition.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInIfCondition.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalExprInIfElse.kt")
                 public void testEvalExprInIfElse() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInIfElse.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInIfElse.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalExprInIfThen.kt")
                 public void testEvalExprInIfThen() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInIfThen.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInIfThen.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalExprInWhenBranch.kt")
                 public void testEvalExprInWhenBranch() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInWhenBranch.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInWhenBranch.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalExprInWhenCondition.kt")
                 public void testEvalExprInWhenCondition() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInWhenCondition.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInWhenCondition.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalExprInWhenSubject.kt")
                 public void testEvalExprInWhenSubject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInWhenSubject.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExprInWhenSubject.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalExpressionBodyFunction.kt")
                 public void testEvalExpressionBodyFunction() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExpressionBodyFunction.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalExpressionBodyFunction.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalIfExpr.kt")
                 public void testEvalIfExpr() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalIfExpr.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalIfExpr.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalWhenExpr.kt")
                 public void testEvalWhenExpr() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalWhenExpr.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/evalWhenExpr.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("simpleEvalExpr.kt")
                 public void testSimpleEvalExpr() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/simpleEvalExpr.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/simpleEvalExpr.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("trailingLambdaEmptyArgList.kt")
                 public void testTrailingLambdaEmptyArgList() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaEmptyArgList.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaEmptyArgList.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("trailingLambdaNoArgList.kt")
                 public void testTrailingLambdaNoArgList() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNoArgList.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNoArgList.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("trailingLambdaNonEmptyArgList.kt")
                 public void testTrailingLambdaNonEmptyArgList() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNonEmptyArgList.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNonEmptyArgList.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Initializer extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInInitializer() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/initializer"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -552,42 +652,50 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("propertyWithInitializer.kt")
                 public void testPropertyWithInitializer() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializer.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializer.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("propertyWithInitializerAndExtraVars.kt")
                 public void testPropertyWithInitializerAndExtraVars() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializerAndExtraVars.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializerAndExtraVars.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("propertyWithInitializerAndUnusedVars.kt")
                 public void testPropertyWithInitializerAndUnusedVars() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializerAndUnusedVars.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithInitializerAndUnusedVars.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("propertyWithSeparateInitializer.kt")
                 public void testPropertyWithSeparateInitializer() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithSeparateInitializer.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer/propertyWithSeparateInitializer.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("valueUsedInAnonymousObject.kt")
                 public void testValueUsedInAnonymousObject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInAnonymousObject.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInAnonymousObject.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("valueUsedInLambda.kt")
                 public void testValueUsedInLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("valueUsedInLocalFunction.kt")
                 public void testValueUsedInLocalFunction() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInLocalFunction.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer/valueUsedInLocalFunction.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues")
+            @TestDataPath("$PROJECT_ROOT")
             public static class OutputValues extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInOutputValues() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/outputValues"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -595,57 +703,68 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("multipleOutputValues.kt")
                 public void testMultipleOutputValues() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/multipleOutputValues.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/multipleOutputValues.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("multipleOutputValuesWithIf.kt")
                 public void testMultipleOutputValuesWithIf() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/multipleOutputValuesWithIf.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/multipleOutputValuesWithIf.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("multipleOutputValuesWithWhen.kt")
                 public void testMultipleOutputValuesWithWhen() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/multipleOutputValuesWithWhen.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/multipleOutputValuesWithWhen.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("singleOutputValue.kt")
                 public void testSingleOutputValue() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValue.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValue.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("singleOutputValueWithIf.kt")
                 public void testSingleOutputValueWithIf() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithIf.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithIf.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("singleOutputValueWithIfElse.kt")
                 public void testSingleOutputValueWithIfElse() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithIfElse.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithIfElse.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("singleOutputValueWithWhen.kt")
                 public void testSingleOutputValueWithWhen() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithWhen.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithWhen.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("singleOutputValueWithWhenElse.kt")
                 public void testSingleOutputValueWithWhenElse() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithWhenElse.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/singleOutputValueWithWhenElse.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("valuesUsedInLambdaOnly.kt")
                 public void testValuesUsedInLambdaOnly() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/valuesUsedInLambdaOnly.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/valuesUsedInLambdaOnly.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("valuesUsedInNestedBlock.kt")
                 public void testValuesUsedInNestedBlock() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/valuesUsedInNestedBlock.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/valuesUsedInNestedBlock.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Throws extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInThrows() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/throws"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -653,37 +772,44 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("breakWithThrow.kt")
                 public void testBreakWithThrow() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/throws/breakWithThrow.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws/breakWithThrow.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("continueWithThrow.kt")
                 public void testContinueWithThrow() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/throws/continueWithThrow.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws/continueWithThrow.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalExpressionWithThrow.kt")
                 public void testEvalExpressionWithThrow() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/throws/evalExpressionWithThrow.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws/evalExpressionWithThrow.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("nonValuedReturnWithThrow.kt")
                 public void testNonValuedReturnWithThrow() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/throws/nonValuedReturnWithThrow.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws/nonValuedReturnWithThrow.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("outputValueWithThrow.kt")
                 public void testOutputValueWithThrow() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/throws/outputValueWithThrow.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws/outputValueWithThrow.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("returnWithThrow.kt")
                 public void testReturnWithThrow() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/throws/returnWithThrow.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws/returnWithThrow.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Unextractable extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInUnextractable() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/unextractable"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -691,47 +817,56 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("anonymousObject.kt")
                 public void testAnonymousObject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/anonymousObject.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/anonymousObject.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("evalExpressionWithReturn.kt")
                 public void testEvalExpressionWithReturn() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/evalExpressionWithReturn.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/evalExpressionWithReturn.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("jumpsAndReturns.kt")
                 public void testJumpsAndReturns() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/jumpsAndReturns.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/jumpsAndReturns.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("multipleInitalizersWithNonLocalUsages.kt")
                 public void testMultipleInitalizersWithNonLocalUsages() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleInitalizersWithNonLocalUsages.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleInitalizersWithNonLocalUsages.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("multipleJumps.kt")
                 public void testMultipleJumps() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleJumps.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleJumps.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("multipleReturnsWithDefault.kt")
                 public void testMultipleReturnsWithDefault() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleReturnsWithDefault.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleReturnsWithDefault.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("outputValueWithExpression.kt")
                 public void testOutputValueWithExpression() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithExpression.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithExpression.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("outputValueWithReturn.kt")
                 public void testOutputValueWithReturn() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithReturn.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/outputValueWithReturn.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("variablesOutOfScope.kt")
                 public void testVariablesOutOfScope() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/unextractable/variablesOutOfScope.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/variablesOutOfScope.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
@@ -752,6 +887,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/defaultContainer")
+        @TestDataPath("$PROJECT_ROOT")
         public static class DefaultContainer extends AbstractJetExtractionTest {
             public void testAllFilesPresentInDefaultContainer() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/defaultContainer"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -759,42 +895,50 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             
             @TestMetadata("anonymousObject.kt")
             public void testAnonymousObject() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/anonymousObject.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/defaultContainer/anonymousObject.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("classFunction.kt")
             public void testClassFunction() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/classFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/defaultContainer/classFunction.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("lambda.kt")
             public void testLambda() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/lambda.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/defaultContainer/lambda.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localClass.kt")
             public void testLocalClass() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/localClass.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/defaultContainer/localClass.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localFunction.kt")
             public void testLocalFunction() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/localFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/defaultContainer/localFunction.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("nestedLambda.kt")
             public void testNestedLambda() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/nestedLambda.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/defaultContainer/nestedLambda.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("topLevelFunction.kt")
             public void testTopLevelFunction() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/defaultContainer/topLevelFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/defaultContainer/topLevelFunction.kt");
+                doExtractFunctionTest(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/delegation")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Delegation extends AbstractJetExtractionTest {
             public void testAllFilesPresentInDelegation() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/delegation"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -802,22 +946,26 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             
             @TestMetadata("delegationByExpression.kt")
             public void testDelegationByExpression() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/delegation/delegationByExpression.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/delegation/delegationByExpression.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("delegationByExpressionFull.kt")
             public void testDelegationByExpressionFull() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/delegation/delegationByExpressionFull.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/delegation/delegationByExpressionFull.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("delegationBySuperCall.kt")
             public void testDelegationBySuperCall() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/delegation/delegationBySuperCall.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/delegation/delegationBySuperCall.kt");
+                doExtractFunctionTest(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/initializers")
+        @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({Initializers.Accessors.class, Initializers.Classes.class, Initializers.Functions.class, Initializers.Properties.class})
         public static class Initializers extends AbstractJetExtractionTest {
             public void testAllFilesPresentInInitializers() throws Exception {
@@ -825,6 +973,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/initializers/accessors")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Accessors extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInAccessors() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/initializers/accessors"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -832,27 +981,32 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("memberProperty.kt")
                 public void testMemberProperty() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/accessors/memberProperty.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/accessors/memberProperty.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("memberPropertyWithLambda.kt")
                 public void testMemberPropertyWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/accessors/memberPropertyWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/accessors/memberPropertyWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("topLevelProperty.kt")
                 public void testTopLevelProperty() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/accessors/topLevelProperty.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/accessors/topLevelProperty.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("topLevelPropertyWithLambda.kt")
                 public void testTopLevelPropertyWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/accessors/topLevelPropertyWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/accessors/topLevelPropertyWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/initializers/classes")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Classes extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInClasses() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/initializers/classes"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -860,27 +1014,32 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("classInitializer.kt")
                 public void testClassInitializer() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/classes/classInitializer.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/classes/classInitializer.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("classInitializerWithLambda.kt")
                 public void testClassInitializerWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/classes/classInitializerWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/classes/classInitializerWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("classParameters.kt")
                 public void testClassParameters() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/classes/classParameters.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/classes/classParameters.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("classParametersWithLambda.kt")
                 public void testClassParametersWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/classes/classParametersWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/classes/classParametersWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/initializers/functions")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Functions extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInFunctions() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/initializers/functions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -888,67 +1047,80 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("localFunction.kt")
                 public void testLocalFunction() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/localFunction.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/localFunction.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("localFunctionParameters.kt")
                 public void testLocalFunctionParameters() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/localFunctionParameters.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/localFunctionParameters.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("localFunctionParametersWithLambda.kt")
                 public void testLocalFunctionParametersWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/localFunctionParametersWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/localFunctionParametersWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("localFunctionWithLambda.kt")
                 public void testLocalFunctionWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/localFunctionWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/localFunctionWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("memberFunction.kt")
                 public void testMemberFunction() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/memberFunction.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/memberFunction.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("memberFunctionParameters.kt")
                 public void testMemberFunctionParameters() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/memberFunctionParameters.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/memberFunctionParameters.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("memberFunctionParametersWithLambda.kt")
                 public void testMemberFunctionParametersWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/memberFunctionParametersWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/memberFunctionParametersWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("memberFunctionWithLambda.kt")
                 public void testMemberFunctionWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/memberFunctionWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/memberFunctionWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("topLevelFunction.kt")
                 public void testTopLevelFunction() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunction.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunction.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("topLevelFunctionParameters.kt")
                 public void testTopLevelFunctionParameters() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunctionParameters.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunctionParameters.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("topLevelFunctionParametersWithLambda.kt")
                 public void testTopLevelFunctionParametersWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunctionParametersWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunctionParametersWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("topLevelFunctionWithLambda.kt")
                 public void testTopLevelFunctionWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunctionWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/functions/topLevelFunctionWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/initializers/properties")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Properties extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInProperties() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/initializers/properties"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -956,42 +1128,50 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("localProperty.kt")
                 public void testLocalProperty() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/localProperty.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/properties/localProperty.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("localPropertyWithLambda.kt")
                 public void testLocalPropertyWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/localPropertyWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/properties/localPropertyWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("memberProperty.kt")
                 public void testMemberProperty() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/memberProperty.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/properties/memberProperty.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("memberPropertyWithLambda.kt")
                 public void testMemberPropertyWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/memberPropertyWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/properties/memberPropertyWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("multiDeclaration.kt")
                 public void testMultiDeclaration() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/multiDeclaration.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/properties/multiDeclaration.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("nestedInMultiDeclaration.kt")
                 public void testNestedInMultiDeclaration() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/nestedInMultiDeclaration.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/properties/nestedInMultiDeclaration.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("topLevelProperty.kt")
                 public void testTopLevelProperty() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/topLevelProperty.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/properties/topLevelProperty.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("topLevelPropertyWithLambda.kt")
                 public void testTopLevelPropertyWithLambda() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/initializers/properties/topLevelPropertyWithLambda.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/initializers/properties/topLevelPropertyWithLambda.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
@@ -1008,6 +1188,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/parameters")
+        @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({Parameters.CandidateTypes.class, Parameters.ExtractSuper.class, Parameters.ExtractThis.class, Parameters.It.class, Parameters.Misc.class, Parameters.NonDenotableTypes.class})
         public static class Parameters extends AbstractJetExtractionTest {
             public void testAllFilesPresentInParameters() throws Exception {
@@ -1015,6 +1196,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes")
+            @TestDataPath("$PROJECT_ROOT")
             public static class CandidateTypes extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInCandidateTypes() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/parameters/candidateTypes"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1022,37 +1204,44 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("nonNullableTypes.kt")
                 public void testNonNullableTypes() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/nonNullableTypes.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/nonNullableTypes.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("nullableTypes.kt")
                 public void testNullableTypes() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/nullableTypes.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/nullableTypes.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("typeHierarchy1.kt")
                 public void testTypeHierarchy1() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy1.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy1.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("typeHierarchy2.kt")
                 public void testTypeHierarchy2() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy2.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy2.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("typeHierarchy3.kt")
                 public void testTypeHierarchy3() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy3.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy3.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("typeHierarchy4.kt")
                 public void testTypeHierarchy4() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy4.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy4.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/extractSuper")
+            @TestDataPath("$PROJECT_ROOT")
             public static class ExtractSuper extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInExtractSuper() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/parameters/extractSuper"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1060,27 +1249,32 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("labeledSuperPropertyCall.kt")
                 public void testLabeledSuperPropertyCall() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractSuper/labeledSuperPropertyCall.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractSuper/labeledSuperPropertyCall.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("superFunctionCall.kt")
                 public void testSuperFunctionCall() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractSuper/superFunctionCall.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractSuper/superFunctionCall.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("superLabeledFunctionCall.kt")
                 public void testSuperLabeledFunctionCall() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractSuper/superLabeledFunctionCall.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractSuper/superLabeledFunctionCall.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("superPropertyCall.kt")
                 public void testSuperPropertyCall() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractSuper/superPropertyCall.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractSuper/superPropertyCall.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis")
+            @TestDataPath("$PROJECT_ROOT")
             public static class ExtractThis extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInExtractThis() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/parameters/extractThis"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1088,42 +1282,50 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("explicitLabeledThisInMember.kt")
                 public void testExplicitLabeledThisInMember() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractThis/explicitLabeledThisInMember.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/explicitLabeledThisInMember.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("explicitThisInExtension.kt")
                 public void testExplicitThisInExtension() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractThis/explicitThisInExtension.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/explicitThisInExtension.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("explicitThisInMember.kt")
                 public void testExplicitThisInMember() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractThis/explicitThisInMember.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/explicitThisInMember.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("implicitAndExplicitLabeledThisInMember.kt")
                 public void testImplicitAndExplicitLabeledThisInMember() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitAndExplicitLabeledThisInMember.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitAndExplicitLabeledThisInMember.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("implicitAndExplicitThisInExtension.kt")
                 public void testImplicitAndExplicitThisInExtension() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitAndExplicitThisInExtension.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitAndExplicitThisInExtension.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("implicitThisInExtension.kt")
                 public void testImplicitThisInExtension() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitThisInExtension.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitThisInExtension.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("implicitThisInMember.kt")
                 public void testImplicitThisInMember() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitThisInMember.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitThisInMember.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/it")
+            @TestDataPath("$PROJECT_ROOT")
             public static class It extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInIt() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/parameters/it"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1131,27 +1333,32 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("innerIt.kt")
                 public void testInnerIt() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/innerIt.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/it/innerIt.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("lambdaWithIt.kt")
                 public void testLambdaWithIt() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/lambdaWithIt.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/it/lambdaWithIt.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("outerIt.kt")
                 public void testOuterIt() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/outerIt.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/it/outerIt.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("simpleIt.kt")
                 public void testSimpleIt() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/it/simpleIt.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/it/simpleIt.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/misc")
+            @TestDataPath("$PROJECT_ROOT")
             public static class Misc extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInMisc() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/parameters/misc"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1159,92 +1366,110 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("classObject.kt")
                 public void testClassObject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/classObject.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/classObject.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("innerClassObject.kt")
                 public void testInnerClassObject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/innerClassObject.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/innerClassObject.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("kt5001.kt")
                 public void testKt5001() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/kt5001.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/kt5001.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("multiDeclaration.kt")
                 public void testMultiDeclaration() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/multiDeclaration.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/multiDeclaration.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("multipleOccurrences.kt")
                 public void testMultipleOccurrences() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/multipleOccurrences.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/multipleOccurrences.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("qualifiedAnnotation.kt")
                 public void testQualifiedAnnotation() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedAnnotation.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedAnnotation.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("qualifiedClassObject.kt")
                 public void testQualifiedClassObject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedClassObject.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedClassObject.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("qualifiedEnum.kt")
                 public void testQualifiedEnum() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedEnum.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedEnum.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("qualifiedObject.kt")
                 public void testQualifiedObject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedObject.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedObject.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("qualifiedPackage.kt")
                 public void testQualifiedPackage() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedPackage.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedPackage.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("qualifiedTypeArg.kt")
                 public void testQualifiedTypeArg() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeArg.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeArg.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("qualifiedTypeInValueArg.kt")
                 public void testQualifiedTypeInValueArg() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeInValueArg.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeInValueArg.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("qualifiedTypeRef.kt")
                 public void testQualifiedTypeRef() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeRef.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeRef.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("reducedParameterList.kt")
                 public void testReducedParameterList() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/reducedParameterList.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/reducedParameterList.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("typeRef.kt")
                 public void testTypeRef() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/typeRef.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/typeRef.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("usagesInCallArgs.kt")
                 public void testUsagesInCallArgs() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/usagesInCallArgs.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/usagesInCallArgs.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("variableAsFunction.kt")
                 public void testVariableAsFunction() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/variableAsFunction.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/variableAsFunction.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes")
+            @TestDataPath("$PROJECT_ROOT")
             public static class NonDenotableTypes extends AbstractJetExtractionTest {
                 public void testAllFilesPresentInNonDenotableTypes() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1252,12 +1477,14 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("anonymousObject.kt")
                 public void testAnonymousObject() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/anonymousObject.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/anonymousObject.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("localClass.kt")
                 public void testLocalClass() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClass.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClass.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
             }
@@ -1276,6 +1503,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         }
         
         @TestMetadata("idea/testData/refactoring/extractFunction/typeParameters")
+        @TestDataPath("$PROJECT_ROOT")
         public static class TypeParameters extends AbstractJetExtractionTest {
             public void testAllFilesPresentInTypeParameters() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1283,62 +1511,74 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             
             @TestMetadata("localClassInBound.kt")
             public void testLocalClassInBound() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/localClassInBound.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/localClassInBound.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("localClassInTypeConstraint.kt")
             public void testLocalClassInTypeConstraint() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/localClassInTypeConstraint.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/localClassInTypeConstraint.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("simpleTypeParameter.kt")
             public void testSimpleTypeParameter() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/simpleTypeParameter.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/simpleTypeParameter.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("simpleTypeParameterWithConstraint.kt")
             public void testSimpleTypeParameterWithConstraint() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/simpleTypeParameterWithConstraint.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/simpleTypeParameterWithConstraint.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("typeParamInArgument.kt")
             public void testTypeParamInArgument() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParamInArgument.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParamInArgument.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("typeParametersAndConstraintsCombined1.kt")
             public void testTypeParametersAndConstraintsCombined1() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersAndConstraintsCombined1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParametersAndConstraintsCombined1.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("typeParametersAndConstraintsCombined2.kt")
             public void testTypeParametersAndConstraintsCombined2() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersAndConstraintsCombined2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParametersAndConstraintsCombined2.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("typeParametersAndConstraintsCombined3.kt")
             public void testTypeParametersAndConstraintsCombined3() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersAndConstraintsCombined3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParametersAndConstraintsCombined3.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("typeParametersCombined1.kt")
             public void testTypeParametersCombined1() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombined1.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombined1.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("typeParametersCombined2.kt")
             public void testTypeParametersCombined2() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombined2.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombined2.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("typeParametersCombined3.kt")
             public void testTypeParametersCombined3() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombined3.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombined3.kt");
+                doExtractFunctionTest(fileName);
             }
             
             @TestMetadata("typeParametersCombinedAndThis.kt")
             public void testTypeParametersCombinedAndThis() throws Exception {
-                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombinedAndThis.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombinedAndThis.kt");
+                doExtractFunctionTest(fileName);
             }
             
         }

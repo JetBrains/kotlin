@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.debugger;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({KotlinSteppingTestGenerated.StepInto.class, KotlinSteppingTestGenerated.SmartStepInto.class, KotlinSteppingTestGenerated.Filters.class})
 public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
     @TestMetadata("idea/testData/debugger/tinyApp/src/stepInto")
+    @TestDataPath("$PROJECT_ROOT")
     public static class StepInto extends AbstractKotlinSteppingTest {
         public void testAllFilesPresentInStepInto() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepInto"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -37,72 +39,86 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         
         @TestMetadata("classObjectFunFromClass.kt")
         public void testClassObjectFunFromClass() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/classObjectFunFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/classObjectFunFromClass.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("classObjectFunFromTopLevel.kt")
         public void testClassObjectFunFromTopLevel() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/classObjectFunFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/classObjectFunFromTopLevel.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("extFun.kt")
         public void testExtFun() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/extFun.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/extFun.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("javaFun.kt")
         public void testJavaFun() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/javaFun.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/javaFun.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("memberFunFromClass.kt")
         public void testMemberFunFromClass() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/memberFunFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/memberFunFromClass.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("memberFunFromTopLevel.kt")
         public void testMemberFunFromTopLevel() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/memberFunFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/memberFunFromTopLevel.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("memberGetterFromClass.kt")
         public void testMemberGetterFromClass() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/memberGetterFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/memberGetterFromClass.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("memberGetterFromTopLevel.kt")
         public void testMemberGetterFromTopLevel() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/memberGetterFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/memberGetterFromTopLevel.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("objectFun.kt")
         public void testObjectFun() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/objectFun.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/objectFun.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("topLevelFunFromClass.kt")
         public void testTopLevelFunFromClass() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/topLevelFunFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/topLevelFunFromClass.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("topLevelFunFromTopLevel.kt")
         public void testTopLevelFunFromTopLevel() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/topLevelFunFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/topLevelFunFromTopLevel.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("topLevelGetterFromClass.kt")
         public void testTopLevelGetterFromClass() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/topLevelGetterFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/topLevelGetterFromClass.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("topLevelGetterFromTopLevel.kt")
         public void testTopLevelGetterFromTopLevel() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/topLevelGetterFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/topLevelGetterFromTopLevel.kt");
+            doStepIntoTest(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/debugger/tinyApp/src/stepInto")
+    @TestDataPath("$PROJECT_ROOT")
     public static class SmartStepInto extends AbstractKotlinSteppingTest {
         public void testAllFilesPresentInSmartStepInto() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepInto"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -110,72 +126,86 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         
         @TestMetadata("classObjectFunFromClass.kt")
         public void testClassObjectFunFromClass() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/classObjectFunFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/classObjectFunFromClass.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("classObjectFunFromTopLevel.kt")
         public void testClassObjectFunFromTopLevel() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/classObjectFunFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/classObjectFunFromTopLevel.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("extFun.kt")
         public void testExtFun() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/extFun.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/extFun.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("javaFun.kt")
         public void testJavaFun() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/javaFun.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/javaFun.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("memberFunFromClass.kt")
         public void testMemberFunFromClass() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/memberFunFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/memberFunFromClass.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("memberFunFromTopLevel.kt")
         public void testMemberFunFromTopLevel() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/memberFunFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/memberFunFromTopLevel.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("memberGetterFromClass.kt")
         public void testMemberGetterFromClass() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/memberGetterFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/memberGetterFromClass.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("memberGetterFromTopLevel.kt")
         public void testMemberGetterFromTopLevel() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/memberGetterFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/memberGetterFromTopLevel.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("objectFun.kt")
         public void testObjectFun() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/objectFun.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/objectFun.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("topLevelFunFromClass.kt")
         public void testTopLevelFunFromClass() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/topLevelFunFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/topLevelFunFromClass.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("topLevelFunFromTopLevel.kt")
         public void testTopLevelFunFromTopLevel() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/topLevelFunFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/topLevelFunFromTopLevel.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("topLevelGetterFromClass.kt")
         public void testTopLevelGetterFromClass() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/topLevelGetterFromClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/topLevelGetterFromClass.kt");
+            doSmartStepIntoTest(fileName);
         }
         
         @TestMetadata("topLevelGetterFromTopLevel.kt")
         public void testTopLevelGetterFromTopLevel() throws Exception {
-            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/topLevelGetterFromTopLevel.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/topLevelGetterFromTopLevel.kt");
+            doSmartStepIntoTest(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/debugger/tinyApp/src/filters")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Filters extends AbstractKotlinSteppingTest {
         public void testAllFilesPresentInFilters() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/filters"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -183,52 +213,62 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         
         @TestMetadata("checkNotNull.kt")
         public void testCheckNotNull() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/checkNotNull.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/checkNotNull.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("doNotSkipClassloader.kt")
         public void testDoNotSkipClassloader() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/doNotSkipClassloader.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/doNotSkipClassloader.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("doNotSkipConstructors.kt")
         public void testDoNotSkipConstructors() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/doNotSkipConstructors.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/doNotSkipConstructors.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("npe.kt")
         public void testNpe() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/npe.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/npe.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("reflectKClass.kt")
         public void testReflectKClass() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/reflectKClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/reflectKClass.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("skipClassloader.kt")
         public void testSkipClassloader() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/skipClassloader.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/skipClassloader.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("skipConstructors.kt")
         public void testSkipConstructors() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/skipConstructors.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/skipConstructors.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("stdlibStep.kt")
         public void testStdlibStep() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/stdlibStep.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/stdlibStep.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("stepIntoSpecificKotlinClasses.kt")
         public void testStepIntoSpecificKotlinClasses() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/stepIntoSpecificKotlinClasses.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/stepIntoSpecificKotlinClasses.kt");
+            doStepIntoTest(fileName);
         }
         
         @TestMetadata("stepIntoStdlib.kt")
         public void testStepIntoStdlib() throws Exception {
-            doStepIntoTest("idea/testData/debugger/tinyApp/src/filters/stepIntoStdlib.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/filters/stepIntoStdlib.kt");
+            doStepIntoTest(fileName);
         }
         
     }

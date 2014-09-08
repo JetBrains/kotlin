@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({InsertImportOnPasteTestGenerated.Copy.class, InsertImportOnPasteTestGenerated.Cut.class})
 public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPasteTest {
     @TestMetadata("idea/testData/copyPaste/imports")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Copy extends AbstractInsertImportOnPasteTest {
         public void testAllFilesPresentInCopy() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^\\.]+)\\.kt$"), false);
@@ -37,282 +39,338 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         
         @TestMetadata("AlreadyImportedViaStar.kt")
         public void testAlreadyImportedViaStar() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/AlreadyImportedViaStar.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/AlreadyImportedViaStar.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ClassAlreadyImported.kt")
         public void testClassAlreadyImported() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ClassAlreadyImported.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassAlreadyImported.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ClassMember.kt")
         public void testClassMember() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ClassMember.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassMember.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ClassObject.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassObject.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ClassObjectFunInsideClass.kt")
         public void testClassObjectFunInsideClass() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ClassObjectFunInsideClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassObjectFunInsideClass.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ClassObjectInner.kt")
         public void testClassObjectInner() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ClassObjectInner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassObjectInner.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ClassResolvedToPackage.kt")
         public void testClassResolvedToPackage() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ClassResolvedToPackage.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassResolvedToPackage.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ClassType.kt")
         public void testClassType() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ClassType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassType.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Conflict.kt")
         public void testConflict() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Conflict.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Conflict.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ConflictForTypeWithTypeParameter.kt")
         public void testConflictForTypeWithTypeParameter() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ConflictForTypeWithTypeParameter.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictForTypeWithTypeParameter.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ConflictWithClass.kt")
         public void testConflictWithClass() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ConflictWithClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictWithClass.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ConflictWithFun.kt")
         public void testConflictWithFun() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ConflictWithFun.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictWithFun.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Constructor.kt")
         public void testConstructor() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Constructor.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Constructor.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("DeepInnerClasses.kt")
         public void testDeepInnerClasses() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/DeepInnerClasses.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DeepInnerClasses.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("DefaultPackage.kt")
         public void testDefaultPackage() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/DefaultPackage.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DefaultPackage.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("DelegatedProperty.kt")
         public void testDelegatedProperty() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/DelegatedProperty.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DelegatedProperty.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("DependencyOnJava.kt")
         public void testDependencyOnJava() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/DependencyOnJava.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DependencyOnJava.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("DependencyOnKotlinLibrary.kt")
         public void testDependencyOnKotlinLibrary() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/DependencyOnKotlinLibrary.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DependencyOnKotlinLibrary.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("DependencyOnStdLib.kt")
         public void testDependencyOnStdLib() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/DependencyOnStdLib.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DependencyOnStdLib.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("EnumEntries.kt")
         public void testEnumEntries() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/EnumEntries.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/EnumEntries.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Extension.kt")
         public void testExtension() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Extension.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Extension.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ExtensionAsInfixOrOperator.kt")
         public void testExtensionAsInfixOrOperator() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ExtensionAsInfixOrOperator.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ExtensionAsInfixOrOperator.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ExtensionCannotBeImportedOrLengthened.kt")
         public void testExtensionCannotBeImportedOrLengthened() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ExtensionCannotBeImportedOrLengthened.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ExtensionCannotBeImportedOrLengthened.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ExtensionConflict.kt")
         public void testExtensionConflict() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ExtensionConflict.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ExtensionConflict.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ForLoop.kt")
         public void testForLoop() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ForLoop.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ForLoop.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("FullyQualified.kt")
         public void testFullyQualified() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/FullyQualified.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/FullyQualified.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Function.kt")
         public void testFunction() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Function.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Function.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("FunctionAlreadyImported.kt")
         public void testFunctionAlreadyImported() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/FunctionAlreadyImported.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/FunctionAlreadyImported.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("FunctionParameter.kt")
         public void testFunctionParameter() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/FunctionParameter.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/FunctionParameter.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("GetExpression.kt")
         public void testGetExpression() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/GetExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/GetExpression.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ImportDependency.kt")
         public void testImportDependency() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ImportDependency.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ImportDependency.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ImportDirective.kt")
         public void testImportDirective() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ImportDirective.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ImportDirective.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ImportableEntityInExtensionLiteral.kt")
         public void testImportableEntityInExtensionLiteral() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ImportableEntityInExtensionLiteral.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ImportableEntityInExtensionLiteral.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ImportedElementCopied.kt")
         public void testImportedElementCopied() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ImportedElementCopied.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ImportedElementCopied.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Inner.kt")
         public void testInner() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Inner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Inner.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Invoke.kt")
         public void testInvoke() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Invoke.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Invoke.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("JavaStaticViaClass.kt")
         public void testJavaStaticViaClass() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/JavaStaticViaClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/JavaStaticViaClass.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Local.kt")
         public void testLocal() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Local.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Local.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("MultiDeclaration.kt")
         public void testMultiDeclaration() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/MultiDeclaration.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/MultiDeclaration.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("MultiReferencePartiallyCopied.kt")
         public void testMultiReferencePartiallyCopied() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/MultiReferencePartiallyCopied.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/MultiReferencePartiallyCopied.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("NoImportForBuiltIns.kt")
         public void testNoImportForBuiltIns() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/NoImportForBuiltIns.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/NoImportForBuiltIns.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("NoImportForSamePackage.kt")
         public void testNoImportForSamePackage() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/NoImportForSamePackage.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/NoImportForSamePackage.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("NotReferencePosition.kt")
         public void testNotReferencePosition() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/NotReferencePosition.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/NotReferencePosition.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("NotReferencePosition2.kt")
         public void testNotReferencePosition2() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/NotReferencePosition2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/NotReferencePosition2.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Object.kt")
         public void testObject() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Object.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Object.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("PackageView.kt")
         public void testPackageView() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/PackageView.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PackageView.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("PartiallyQualified.kt")
         public void testPartiallyQualified() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/PartiallyQualified.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PartiallyQualified.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("PropertyResolvedToPackage.kt")
         public void testPropertyResolvedToPackage() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/PropertyResolvedToPackage.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PropertyResolvedToPackage.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("QualifiedTypeConflict.kt")
         public void testQualifiedTypeConflict() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/QualifiedTypeConflict.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/QualifiedTypeConflict.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ReferencedElementAlsoCopied.kt")
         public void testReferencedElementAlsoCopied() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ReferencedElementAlsoCopied.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ReferencedElementAlsoCopied.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Super.kt")
         public void testSuper() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Super.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Super.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("ThisReference.kt")
         public void testThisReference() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/ThisReference.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ThisReference.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("TopLevelProperty.kt")
         public void testTopLevelProperty() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/TopLevelProperty.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/TopLevelProperty.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("Trait.kt")
         public void testTrait() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/Trait.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Trait.kt");
+            doTestCopy(fileName);
         }
         
         @TestMetadata("TypeParameter.kt")
         public void testTypeParameter() throws Exception {
-            doTestCopy("idea/testData/copyPaste/imports/TypeParameter.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/TypeParameter.kt");
+            doTestCopy(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/copyPaste/imports")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Cut extends AbstractInsertImportOnPasteTest {
         public void testAllFilesPresentInCut() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^\\.]+)\\.kt$"), false);
@@ -320,277 +378,332 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         
         @TestMetadata("AlreadyImportedViaStar.kt")
         public void testAlreadyImportedViaStar() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/AlreadyImportedViaStar.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/AlreadyImportedViaStar.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ClassAlreadyImported.kt")
         public void testClassAlreadyImported() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ClassAlreadyImported.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassAlreadyImported.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ClassMember.kt")
         public void testClassMember() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ClassMember.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassMember.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ClassObject.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassObject.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ClassObjectFunInsideClass.kt")
         public void testClassObjectFunInsideClass() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ClassObjectFunInsideClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassObjectFunInsideClass.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ClassObjectInner.kt")
         public void testClassObjectInner() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ClassObjectInner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassObjectInner.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ClassResolvedToPackage.kt")
         public void testClassResolvedToPackage() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ClassResolvedToPackage.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassResolvedToPackage.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ClassType.kt")
         public void testClassType() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ClassType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ClassType.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Conflict.kt")
         public void testConflict() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Conflict.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Conflict.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ConflictForTypeWithTypeParameter.kt")
         public void testConflictForTypeWithTypeParameter() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ConflictForTypeWithTypeParameter.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictForTypeWithTypeParameter.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ConflictWithClass.kt")
         public void testConflictWithClass() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ConflictWithClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictWithClass.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ConflictWithFun.kt")
         public void testConflictWithFun() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ConflictWithFun.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictWithFun.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Constructor.kt")
         public void testConstructor() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Constructor.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Constructor.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("DeepInnerClasses.kt")
         public void testDeepInnerClasses() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/DeepInnerClasses.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DeepInnerClasses.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("DefaultPackage.kt")
         public void testDefaultPackage() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/DefaultPackage.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DefaultPackage.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("DelegatedProperty.kt")
         public void testDelegatedProperty() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/DelegatedProperty.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DelegatedProperty.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("DependencyOnJava.kt")
         public void testDependencyOnJava() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/DependencyOnJava.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DependencyOnJava.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("DependencyOnKotlinLibrary.kt")
         public void testDependencyOnKotlinLibrary() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/DependencyOnKotlinLibrary.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DependencyOnKotlinLibrary.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("DependencyOnStdLib.kt")
         public void testDependencyOnStdLib() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/DependencyOnStdLib.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DependencyOnStdLib.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("EnumEntries.kt")
         public void testEnumEntries() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/EnumEntries.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/EnumEntries.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Extension.kt")
         public void testExtension() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Extension.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Extension.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ExtensionAsInfixOrOperator.kt")
         public void testExtensionAsInfixOrOperator() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ExtensionAsInfixOrOperator.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ExtensionAsInfixOrOperator.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ExtensionCannotBeImportedOrLengthened.kt")
         public void testExtensionCannotBeImportedOrLengthened() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ExtensionCannotBeImportedOrLengthened.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ExtensionCannotBeImportedOrLengthened.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ExtensionConflict.kt")
         public void testExtensionConflict() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ExtensionConflict.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ExtensionConflict.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ForLoop.kt")
         public void testForLoop() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ForLoop.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ForLoop.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("FullyQualified.kt")
         public void testFullyQualified() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/FullyQualified.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/FullyQualified.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Function.kt")
         public void testFunction() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Function.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Function.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("FunctionAlreadyImported.kt")
         public void testFunctionAlreadyImported() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/FunctionAlreadyImported.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/FunctionAlreadyImported.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("FunctionParameter.kt")
         public void testFunctionParameter() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/FunctionParameter.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/FunctionParameter.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("GetExpression.kt")
         public void testGetExpression() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/GetExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/GetExpression.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ImportDependency.kt")
         public void testImportDependency() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ImportDependency.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ImportDependency.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ImportDirective.kt")
         public void testImportDirective() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ImportDirective.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ImportDirective.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ImportableEntityInExtensionLiteral.kt")
         public void testImportableEntityInExtensionLiteral() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ImportableEntityInExtensionLiteral.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ImportableEntityInExtensionLiteral.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ImportedElementCopied.kt")
         public void testImportedElementCopied() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ImportedElementCopied.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ImportedElementCopied.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Inner.kt")
         public void testInner() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Inner.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Inner.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Invoke.kt")
         public void testInvoke() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Invoke.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Invoke.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("JavaStaticViaClass.kt")
         public void testJavaStaticViaClass() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/JavaStaticViaClass.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/JavaStaticViaClass.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Local.kt")
         public void testLocal() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Local.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Local.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("MultiDeclaration.kt")
         public void testMultiDeclaration() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/MultiDeclaration.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/MultiDeclaration.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("MultiReferencePartiallyCopied.kt")
         public void testMultiReferencePartiallyCopied() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/MultiReferencePartiallyCopied.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/MultiReferencePartiallyCopied.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("NoImportForBuiltIns.kt")
         public void testNoImportForBuiltIns() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/NoImportForBuiltIns.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/NoImportForBuiltIns.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("NoImportForSamePackage.kt")
         public void testNoImportForSamePackage() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/NoImportForSamePackage.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/NoImportForSamePackage.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("NotReferencePosition.kt")
         public void testNotReferencePosition() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/NotReferencePosition.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/NotReferencePosition.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("NotReferencePosition2.kt")
         public void testNotReferencePosition2() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/NotReferencePosition2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/NotReferencePosition2.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Object.kt")
         public void testObject() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Object.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Object.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("PackageView.kt")
         public void testPackageView() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/PackageView.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PackageView.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("PartiallyQualified.kt")
         public void testPartiallyQualified() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/PartiallyQualified.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PartiallyQualified.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("PropertyResolvedToPackage.kt")
         public void testPropertyResolvedToPackage() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/PropertyResolvedToPackage.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PropertyResolvedToPackage.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("QualifiedTypeConflict.kt")
         public void testQualifiedTypeConflict() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/QualifiedTypeConflict.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/QualifiedTypeConflict.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ReferencedElementAlsoCopied.kt")
         public void testReferencedElementAlsoCopied() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ReferencedElementAlsoCopied.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ReferencedElementAlsoCopied.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Super.kt")
         public void testSuper() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Super.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Super.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("ThisReference.kt")
         public void testThisReference() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/ThisReference.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ThisReference.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("TopLevelProperty.kt")
         public void testTopLevelProperty() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/TopLevelProperty.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/TopLevelProperty.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("Trait.kt")
         public void testTrait() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/Trait.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Trait.kt");
+            doTestCut(fileName);
         }
         
         @TestMetadata("TypeParameter.kt")
         public void testTypeParameter() throws Exception {
-            doTestCut("idea/testData/copyPaste/imports/TypeParameter.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/TypeParameter.kt");
+            doTestCut(fileName);
         }
         
     }

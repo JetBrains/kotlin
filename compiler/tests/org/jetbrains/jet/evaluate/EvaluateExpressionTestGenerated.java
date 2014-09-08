@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.evaluate;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({EvaluateExpressionTestGenerated.Constant.class, EvaluateExpressionTestGenerated.IsPure.class, EvaluateExpressionTestGenerated.UsesVariableAsConstant.class})
 public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionTest {
     @TestMetadata("compiler/testData/evaluate/constant")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Constant extends AbstractEvaluateExpressionTest {
         public void testAllFilesPresentInConstant() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/constant"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -37,102 +39,122 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
         
         @TestMetadata("classObjectProperty.kt")
         public void testClassObjectProperty() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/classObjectProperty.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/classObjectProperty.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("compareTo.kt")
         public void testCompareTo() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/compareTo.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/compareTo.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("differentTypes.kt")
         public void testDifferentTypes() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/differentTypes.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/differentTypes.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("divideByZero.kt")
         public void testDivideByZero() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/divideByZero.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/divideByZero.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("equals.kt")
         public void testEquals() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/equals.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/equals.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("exceptionWhenEvaluate.kt")
         public void testExceptionWhenEvaluate() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/exceptionWhenEvaluate.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/exceptionWhenEvaluate.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("finalProperty.kt")
         public void testFinalProperty() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/finalProperty.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/finalProperty.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("float.kt")
         public void testFloat() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/float.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/float.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("floatsAndDoubles.kt")
         public void testFloatsAndDoubles() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/floatsAndDoubles.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/floatsAndDoubles.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("integer.kt")
         public void testInteger() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/integer.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/integer.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("integers.kt")
         public void testIntegers() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/integers.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/integers.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("localVal.kt")
         public void testLocalVal() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/localVal.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/localVal.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("localVar.kt")
         public void testLocalVar() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/localVar.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/localVar.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("nonFinalProperty.kt")
         public void testNonFinalProperty() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/nonFinalProperty.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/nonFinalProperty.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("strings.kt")
         public void testStrings() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/strings.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/strings.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("topLevelVal.kt")
         public void testTopLevelVal() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/topLevelVal.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/topLevelVal.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("topLevelVar.kt")
         public void testTopLevelVar() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/topLevelVar.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/topLevelVar.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("unaryMinusIndepWoExpType.kt")
         public void testUnaryMinusIndepWoExpType() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/unaryMinusIndepWoExpType.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/unaryMinusIndepWoExpType.kt");
+            doConstantTest(fileName);
         }
         
         @TestMetadata("unaryMinusIndependentExpType.kt")
         public void testUnaryMinusIndependentExpType() throws Exception {
-            doConstantTest("compiler/testData/evaluate/constant/unaryMinusIndependentExpType.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/unaryMinusIndependentExpType.kt");
+            doConstantTest(fileName);
         }
         
     }
     
     @TestMetadata("compiler/testData/evaluate/isPure")
+    @TestDataPath("$PROJECT_ROOT")
     public static class IsPure extends AbstractEvaluateExpressionTest {
         public void testAllFilesPresentInIsPure() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/isPure"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -140,32 +162,38 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
         
         @TestMetadata("innerToType.kt")
         public void testInnerToType() throws Exception {
-            doIsPureTest("compiler/testData/evaluate/isPure/innerToType.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/isPure/innerToType.kt");
+            doIsPureTest(fileName);
         }
         
         @TestMetadata("namedConstants.kt")
         public void testNamedConstants() throws Exception {
-            doIsPureTest("compiler/testData/evaluate/isPure/namedConstants.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/isPure/namedConstants.kt");
+            doIsPureTest(fileName);
         }
         
         @TestMetadata("toType.kt")
         public void testToType() throws Exception {
-            doIsPureTest("compiler/testData/evaluate/isPure/toType.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/isPure/toType.kt");
+            doIsPureTest(fileName);
         }
         
         @TestMetadata("unaryMinusIndepWoExpType.kt")
         public void testUnaryMinusIndepWoExpType() throws Exception {
-            doIsPureTest("compiler/testData/evaluate/isPure/unaryMinusIndepWoExpType.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/isPure/unaryMinusIndepWoExpType.kt");
+            doIsPureTest(fileName);
         }
         
         @TestMetadata("unaryMinusIndependentExpType.kt")
         public void testUnaryMinusIndependentExpType() throws Exception {
-            doIsPureTest("compiler/testData/evaluate/isPure/unaryMinusIndependentExpType.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/isPure/unaryMinusIndependentExpType.kt");
+            doIsPureTest(fileName);
         }
         
     }
     
     @TestMetadata("compiler/testData/evaluate/usesVariableAsConstant")
+    @TestDataPath("$PROJECT_ROOT")
     public static class UsesVariableAsConstant extends AbstractEvaluateExpressionTest {
         public void testAllFilesPresentInUsesVariableAsConstant() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/usesVariableAsConstant"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -173,22 +201,26 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
         
         @TestMetadata("binaryTypes.kt")
         public void testBinaryTypes() throws Exception {
-            doUsesVariableAsConstantTest("compiler/testData/evaluate/usesVariableAsConstant/binaryTypes.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/usesVariableAsConstant/binaryTypes.kt");
+            doUsesVariableAsConstantTest(fileName);
         }
         
         @TestMetadata("NamedConstants.kt")
         public void testNamedConstants() throws Exception {
-            doUsesVariableAsConstantTest("compiler/testData/evaluate/usesVariableAsConstant/NamedConstants.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/usesVariableAsConstant/NamedConstants.kt");
+            doUsesVariableAsConstantTest(fileName);
         }
         
         @TestMetadata("OtherTypes.kt")
         public void testOtherTypes() throws Exception {
-            doUsesVariableAsConstantTest("compiler/testData/evaluate/usesVariableAsConstant/OtherTypes.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/usesVariableAsConstant/OtherTypes.kt");
+            doUsesVariableAsConstantTest(fileName);
         }
         
         @TestMetadata("simpleTypes.kt")
         public void testSimpleTypes() throws Exception {
-            doUsesVariableAsConstantTest("compiler/testData/evaluate/usesVariableAsConstant/simpleTypes.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/usesVariableAsConstant/simpleTypes.kt");
+            doUsesVariableAsConstantTest(fileName);
         }
         
     }

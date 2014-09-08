@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.formatter;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({JetFormatterTestGenerated.Formatter.class, JetFormatterTestGenerated.FormatterInverted.class})
 public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     @TestMetadata("idea/testData/formatter")
+    @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Formatter.ModifierList.class})
     public static class Formatter extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatter() throws Exception {
@@ -38,340 +40,408 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         
         @TestMetadata("ArrayAccess.after.kt")
         public void testArrayAccess() throws Exception {
-            doTest("idea/testData/formatter/ArrayAccess.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ArrayAccess.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("BinaryExpressionAlignmentSpread.after.kt")
         public void testBinaryExpressionAlignmentSpread() throws Exception {
-            doTest("idea/testData/formatter/BinaryExpressionAlignmentSpread.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionAlignmentSpread.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("BinaryExpressions.after.kt")
         public void testBinaryExpressions() throws Exception {
-            doTest("idea/testData/formatter/BinaryExpressions.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressions.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("BinaryExpressionsBoolean.after.kt")
         public void testBinaryExpressionsBoolean() throws Exception {
-            doTest("idea/testData/formatter/BinaryExpressionsBoolean.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsBoolean.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("BinaryExpressionsWithoutAlignment.after.kt")
         public void testBinaryExpressionsWithoutAlignment() throws Exception {
-            doTest("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("BlockFor.after.kt")
         public void testBlockFor() throws Exception {
-            doTest("idea/testData/formatter/BlockFor.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/BlockFor.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("CatchFinallyOnNewLine.after.kt")
         public void testCatchFinallyOnNewLine() throws Exception {
-            doTest("idea/testData/formatter/CatchFinallyOnNewLine.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/CatchFinallyOnNewLine.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Class.after.kt")
         public void testClass() throws Exception {
-            doTest("idea/testData/formatter/Class.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Class.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ClassLineBreak.after.kt")
         public void testClassLineBreak() throws Exception {
-            doTest("idea/testData/formatter/ClassLineBreak.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ClassLineBreak.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ColonSpaces.after.kt")
         public void testColonSpaces() throws Exception {
-            doTest("idea/testData/formatter/ColonSpaces.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ColonSpaces.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("CommentInFunctionLiteral.after.kt")
         public void testCommentInFunctionLiteral() throws Exception {
-            doTest("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ConsecutiveCalls.after.kt")
         public void testConsecutiveCalls() throws Exception {
-            doTest("idea/testData/formatter/ConsecutiveCalls.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ConsecutiveCalls.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ConsecutiveSafeCallsIndent.after.kt")
         public void testConsecutiveSafeCallsIndent() throws Exception {
-            doTest("idea/testData/formatter/ConsecutiveSafeCallsIndent.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ConsecutiveSafeCallsIndent.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("DelegationList.after.kt")
         public void testDelegationList() throws Exception {
-            doTest("idea/testData/formatter/DelegationList.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/DelegationList.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("DoWhileLineBreak.after.kt")
         public void testDoWhileLineBreak() throws Exception {
-            doTest("idea/testData/formatter/DoWhileLineBreak.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/DoWhileLineBreak.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("DoWhileSpacing.after.kt")
         public void testDoWhileSpacing() throws Exception {
-            doTest("idea/testData/formatter/DoWhileSpacing.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/DoWhileSpacing.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ElseOnNewLine.after.kt")
         public void testElseOnNewLine() throws Exception {
-            doTest("idea/testData/formatter/ElseOnNewLine.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ElseOnNewLine.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Elvis.after.kt")
         public void testElvis() throws Exception {
-            doTest("idea/testData/formatter/Elvis.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Elvis.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("EmptyLineAfterPackage.after.kt")
         public void testEmptyLineAfterPackage() throws Exception {
-            doTest("idea/testData/formatter/EmptyLineAfterPackage.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineAfterPackage.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ForLineBreak.after.kt")
         public void testForLineBreak() throws Exception {
-            doTest("idea/testData/formatter/ForLineBreak.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ForLineBreak.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ForNoBraces.after.kt")
         public void testForNoBraces() throws Exception {
-            doTest("idea/testData/formatter/ForNoBraces.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ForNoBraces.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ForSpacing.after.kt")
         public void testForSpacing() throws Exception {
-            doTest("idea/testData/formatter/ForSpacing.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ForSpacing.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("FunctionCallParametersAlign.after.kt")
         public void testFunctionCallParametersAlign() throws Exception {
-            doTest("idea/testData/formatter/FunctionCallParametersAlign.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionCallParametersAlign.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("FunctionDefParametersAlign.after.kt")
         public void testFunctionDefParametersAlign() throws Exception {
-            doTest("idea/testData/formatter/FunctionDefParametersAlign.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionDefParametersAlign.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("FunctionLineBreak.after.kt")
         public void testFunctionLineBreak() throws Exception {
-            doTest("idea/testData/formatter/FunctionLineBreak.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionLineBreak.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("FunctionLiteralsInChainCalls.after.kt")
         public void testFunctionLiteralsInChainCalls() throws Exception {
-            doTest("idea/testData/formatter/FunctionLiteralsInChainCalls.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionLiteralsInChainCalls.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("FunctionWithInference.after.kt")
         public void testFunctionWithInference() throws Exception {
-            doTest("idea/testData/formatter/FunctionWithInference.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionWithInference.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("FunctionalType.after.kt")
         public void testFunctionalType() throws Exception {
-            doTest("idea/testData/formatter/FunctionalType.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionalType.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("GetterAndSetter.after.kt")
         public void testGetterAndSetter() throws Exception {
-            doTest("idea/testData/formatter/GetterAndSetter.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/GetterAndSetter.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("If.after.kt")
         public void testIf() throws Exception {
-            doTest("idea/testData/formatter/If.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/If.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("IfElseRemoveLineBreak.after.kt")
         public void testIfElseRemoveLineBreak() throws Exception {
-            doTest("idea/testData/formatter/IfElseRemoveLineBreak.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/IfElseRemoveLineBreak.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("IfElseWithLineBreak.after.kt")
         public void testIfElseWithLineBreak() throws Exception {
-            doTest("idea/testData/formatter/IfElseWithLineBreak.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/IfElseWithLineBreak.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("IfElseWithTrickyComments.after.kt")
         public void testIfElseWithTrickyComments() throws Exception {
-            doTest("idea/testData/formatter/IfElseWithTrickyComments.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/IfElseWithTrickyComments.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("IfSpacing.after.kt")
         public void testIfSpacing() throws Exception {
-            doTest("idea/testData/formatter/IfSpacing.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/IfSpacing.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("KDoc.after.kt")
         public void testKDoc() throws Exception {
-            doTest("idea/testData/formatter/KDoc.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/KDoc.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("LambdaArrow.after.kt")
         public void testLambdaArrow() throws Exception {
-            doTest("idea/testData/formatter/LambdaArrow.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/LambdaArrow.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("LoopParameterWithExplicitType.after.kt")
         public void testLoopParameterWithExplicitType() throws Exception {
-            doTest("idea/testData/formatter/LoopParameterWithExplicitType.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/LoopParameterWithExplicitType.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Multideclaration.after.kt")
         public void testMultideclaration() throws Exception {
-            doTest("idea/testData/formatter/Multideclaration.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Multideclaration.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("MultilineFunctionLiteral.after.kt")
         public void testMultilineFunctionLiteral() throws Exception {
-            doTest("idea/testData/formatter/MultilineFunctionLiteral.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/MultilineFunctionLiteral.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("MultilineFunctionLiteralWithParams.after.kt")
         public void testMultilineFunctionLiteralWithParams() throws Exception {
-            doTest("idea/testData/formatter/MultilineFunctionLiteralWithParams.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/MultilineFunctionLiteralWithParams.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Parameters.after.kt")
         public void testParameters() throws Exception {
-            doTest("idea/testData/formatter/Parameters.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Parameters.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("PropertyWithInference.after.kt")
         public void testPropertyWithInference() throws Exception {
-            doTest("idea/testData/formatter/PropertyWithInference.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/PropertyWithInference.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ReferenceExpressionFunctionLiteral.after.kt")
         public void testReferenceExpressionFunctionLiteral() throws Exception {
-            doTest("idea/testData/formatter/ReferenceExpressionFunctionLiteral.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ReferenceExpressionFunctionLiteral.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("RemoveSpacesAroundOperations.after.kt")
         public void testRemoveSpacesAroundOperations() throws Exception {
-            doTest("idea/testData/formatter/RemoveSpacesAroundOperations.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/RemoveSpacesAroundOperations.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ReturnExpression.after.kt")
         public void testReturnExpression() throws Exception {
-            doTest("idea/testData/formatter/ReturnExpression.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ReturnExpression.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("RightBracketOnNewLine.after.kt")
         public void testRightBracketOnNewLine() throws Exception {
-            doTest("idea/testData/formatter/RightBracketOnNewLine.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/RightBracketOnNewLine.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SaveSpacesInDocComments.after.kt")
         public void testSaveSpacesInDocComments() throws Exception {
-            doTest("idea/testData/formatter/SaveSpacesInDocComments.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SaveSpacesInDocComments.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Script.after.kts")
         public void testScript() throws Exception {
-            doTest("idea/testData/formatter/Script.after.kts");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Script.after.kts");
+            doTest(fileName);
         }
         
         @TestMetadata("SingleLineFunctionLiteral.after.kt")
         public void testSingleLineFunctionLiteral() throws Exception {
-            doTest("idea/testData/formatter/SingleLineFunctionLiteral.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SingleLineFunctionLiteral.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SpaceAroundExtendColon.after.kt")
         public void testSpaceAroundExtendColon() throws Exception {
-            doTest("idea/testData/formatter/SpaceAroundExtendColon.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColon.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SpaceAroundExtendColonInEnums.after.kt")
         public void testSpaceAroundExtendColonInEnums() throws Exception {
-            doTest("idea/testData/formatter/SpaceAroundExtendColonInEnums.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInEnums.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SpaceAroundExtendColonInObjects.after.kt")
         public void testSpaceAroundExtendColonInObjects() throws Exception {
-            doTest("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SpaceBeforeFunctionLiteral.after.kt")
         public void testSpaceBeforeFunctionLiteral() throws Exception {
-            doTest("idea/testData/formatter/SpaceBeforeFunctionLiteral.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeFunctionLiteral.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SpacesAroundOperations.after.kt")
         public void testSpacesAroundOperations() throws Exception {
-            doTest("idea/testData/formatter/SpacesAroundOperations.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpacesAroundOperations.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SpacesAroundUnaryOperations.after.kt")
         public void testSpacesAroundUnaryOperations() throws Exception {
-            doTest("idea/testData/formatter/SpacesAroundUnaryOperations.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpacesAroundUnaryOperations.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SpacesInDeclarations.after.kt")
         public void testSpacesInDeclarations() throws Exception {
-            doTest("idea/testData/formatter/SpacesInDeclarations.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpacesInDeclarations.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SpacesInQualifiedExpressions.after.kt")
         public void testSpacesInQualifiedExpressions() throws Exception {
-            doTest("idea/testData/formatter/SpacesInQualifiedExpressions.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpacesInQualifiedExpressions.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("TryCatchLineBreak.after.kt")
         public void testTryCatchLineBreak() throws Exception {
-            doTest("idea/testData/formatter/TryCatchLineBreak.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/TryCatchLineBreak.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("UnnecessarySpacesInParametersLists.after.kt")
         public void testUnnecessarySpacesInParametersLists() throws Exception {
-            doTest("idea/testData/formatter/UnnecessarySpacesInParametersLists.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/UnnecessarySpacesInParametersLists.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("When.after.kt")
         public void testWhen() throws Exception {
-            doTest("idea/testData/formatter/When.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/When.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("WhenArrow.after.kt")
         public void testWhenArrow() throws Exception {
-            doTest("idea/testData/formatter/WhenArrow.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhenArrow.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("WhenEntryExpr.after.kt")
         public void testWhenEntryExpr() throws Exception {
-            doTest("idea/testData/formatter/WhenEntryExpr.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhenEntryExpr.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("WhenLineBreak.after.kt")
         public void testWhenLineBreak() throws Exception {
-            doTest("idea/testData/formatter/WhenLineBreak.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhenLineBreak.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("WhenLinesBeforeLbrace.after.kt")
         public void testWhenLinesBeforeLbrace() throws Exception {
-            doTest("idea/testData/formatter/WhenLinesBeforeLbrace.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhenLinesBeforeLbrace.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("WhileLineBreak.after.kt")
         public void testWhileLineBreak() throws Exception {
-            doTest("idea/testData/formatter/WhileLineBreak.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhileLineBreak.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("WhileOnNewLine.after.kt")
         public void testWhileOnNewLine() throws Exception {
-            doTest("idea/testData/formatter/WhileOnNewLine.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhileOnNewLine.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("WhileSpacing.after.kt")
         public void testWhileSpacing() throws Exception {
-            doTest("idea/testData/formatter/WhileSpacing.after.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhileSpacing.after.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("idea/testData/formatter/modifierList")
+        @TestDataPath("$PROJECT_ROOT")
         public static class ModifierList extends AbstractJetFormatterTest {
             public void testAllFilesPresentInModifierList() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/modifierList"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
@@ -379,82 +449,98 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             
             @TestMetadata("funAnnotationBeforeAnnotation.after.kt")
             public void testFunAnnotationBeforeAnnotation() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funAnnotationBeforeAnnotation.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationBeforeAnnotation.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("funAnnotationBeforeAnnotationEntry.after.kt")
             public void testFunAnnotationBeforeAnnotationEntry() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funAnnotationBeforeAnnotationEntry.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationBeforeAnnotationEntry.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("funAnnotationBeforeModifiers.after.kt")
             public void testFunAnnotationBeforeModifiers() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funAnnotationBeforeModifiers.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationBeforeModifiers.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("funAnnotationEntryBeforeAnnotation.after.kt")
             public void testFunAnnotationEntryBeforeAnnotation() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funAnnotationEntryBeforeAnnotation.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationEntryBeforeAnnotation.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("funAnnotationEntryBeforeAnnotationEntry.after.kt")
             public void testFunAnnotationEntryBeforeAnnotationEntry() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funAnnotationEntryBeforeAnnotationEntry.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationEntryBeforeAnnotationEntry.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("funAnnotationEntryBeforeModifiers.after.kt")
             public void testFunAnnotationEntryBeforeModifiers() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funAnnotationEntryBeforeModifiers.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationEntryBeforeModifiers.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("funModifierBeforeAnnotation.after.kt")
             public void testFunModifierBeforeAnnotation() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funModifierBeforeAnnotation.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funModifierBeforeAnnotation.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("funModifierBeforeAnnotationEntry.after.kt")
             public void testFunModifierBeforeAnnotationEntry() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funModifierBeforeAnnotationEntry.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funModifierBeforeAnnotationEntry.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("funModifierBeforeModifiers.after.kt")
             public void testFunModifierBeforeModifiers() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funModifierBeforeModifiers.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funModifierBeforeModifiers.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("funTheOnlyModifier.after.kt")
             public void testFunTheOnlyModifier() throws Exception {
-                doTest("idea/testData/formatter/modifierList/funTheOnlyModifier.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funTheOnlyModifier.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("memberFunTheOnlyModifier.after.kt")
             public void testMemberFunTheOnlyModifier() throws Exception {
-                doTest("idea/testData/formatter/modifierList/memberFunTheOnlyModifier.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/memberFunTheOnlyModifier.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("memberValTheOnlyModifier.after.kt")
             public void testMemberValTheOnlyModifier() throws Exception {
-                doTest("idea/testData/formatter/modifierList/memberValTheOnlyModifier.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/memberValTheOnlyModifier.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("memberVarTheOnlyModifier.after.kt")
             public void testMemberVarTheOnlyModifier() throws Exception {
-                doTest("idea/testData/formatter/modifierList/memberVarTheOnlyModifier.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/memberVarTheOnlyModifier.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("secondMemberFunTheOnlyModifier.after.kt")
             public void testSecondMemberFunTheOnlyModifier() throws Exception {
-                doTest("idea/testData/formatter/modifierList/secondMemberFunTheOnlyModifier.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/secondMemberFunTheOnlyModifier.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("secondMemberValTheOnlyModifier.after.kt")
             public void testSecondMemberValTheOnlyModifier() throws Exception {
-                doTest("idea/testData/formatter/modifierList/secondMemberValTheOnlyModifier.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/secondMemberValTheOnlyModifier.after.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("secondMemberVarTheOnlyModifier.after.kt")
             public void testSecondMemberVarTheOnlyModifier() throws Exception {
-                doTest("idea/testData/formatter/modifierList/secondMemberVarTheOnlyModifier.after.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/secondMemberVarTheOnlyModifier.after.kt");
+                doTest(fileName);
             }
             
         }
@@ -468,6 +554,7 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     }
     
     @TestMetadata("idea/testData/formatter")
+    @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({})
     public static class FormatterInverted extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatterInverted() throws Exception {
@@ -476,157 +563,188 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         
         @TestMetadata("BinaryExpressions.after.inv.kt")
         public void testBinaryExpressions() throws Exception {
-            doTestInverted("idea/testData/formatter/BinaryExpressions.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressions.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("BinaryExpressionsBoolean.after.inv.kt")
         public void testBinaryExpressionsBoolean() throws Exception {
-            doTestInverted("idea/testData/formatter/BinaryExpressionsBoolean.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsBoolean.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("BinaryExpressionsWithoutAlignment.after.inv.kt")
         public void testBinaryExpressionsWithoutAlignment() throws Exception {
-            doTestInverted("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("CatchFinallyOnNewLine.after.inv.kt")
         public void testCatchFinallyOnNewLine() throws Exception {
-            doTestInverted("idea/testData/formatter/CatchFinallyOnNewLine.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/CatchFinallyOnNewLine.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("ClassLineBreak.after.inv.kt")
         public void testClassLineBreak() throws Exception {
-            doTestInverted("idea/testData/formatter/ClassLineBreak.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ClassLineBreak.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("ColonSpaces.after.inv.kt")
         public void testColonSpaces() throws Exception {
-            doTestInverted("idea/testData/formatter/ColonSpaces.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ColonSpaces.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("DelegationList.after.inv.kt")
         public void testDelegationList() throws Exception {
-            doTestInverted("idea/testData/formatter/DelegationList.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/DelegationList.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("DoWhileLineBreak.after.inv.kt")
         public void testDoWhileLineBreak() throws Exception {
-            doTestInverted("idea/testData/formatter/DoWhileLineBreak.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/DoWhileLineBreak.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("ElseOnNewLine.after.inv.kt")
         public void testElseOnNewLine() throws Exception {
-            doTestInverted("idea/testData/formatter/ElseOnNewLine.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ElseOnNewLine.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("Elvis.after.inv.kt")
         public void testElvis() throws Exception {
-            doTestInverted("idea/testData/formatter/Elvis.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Elvis.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("EmptyBlocks.after.inv.kt")
         public void testEmptyBlocks() throws Exception {
-            doTestInverted("idea/testData/formatter/EmptyBlocks.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyBlocks.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("ForLineBreak.after.inv.kt")
         public void testForLineBreak() throws Exception {
-            doTestInverted("idea/testData/formatter/ForLineBreak.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ForLineBreak.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("FunctionLineBreak.after.inv.kt")
         public void testFunctionLineBreak() throws Exception {
-            doTestInverted("idea/testData/formatter/FunctionLineBreak.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionLineBreak.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("FunctionalType.after.inv.kt")
         public void testFunctionalType() throws Exception {
-            doTestInverted("idea/testData/formatter/FunctionalType.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionalType.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("IfElseWithTrickyComments.after.inv.kt")
         public void testIfElseWithTrickyComments() throws Exception {
-            doTestInverted("idea/testData/formatter/IfElseWithTrickyComments.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/IfElseWithTrickyComments.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("LambdaArrow.after.inv.kt")
         public void testLambdaArrow() throws Exception {
-            doTestInverted("idea/testData/formatter/LambdaArrow.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/LambdaArrow.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("MultilineFunctionLiteralWithParams.after.inv.kt")
         public void testMultilineFunctionLiteralWithParams() throws Exception {
-            doTestInverted("idea/testData/formatter/MultilineFunctionLiteralWithParams.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/MultilineFunctionLiteralWithParams.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("Parameters.after.inv.kt")
         public void testParameters() throws Exception {
-            doTestInverted("idea/testData/formatter/Parameters.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Parameters.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("RightBracketOnNewLine.after.inv.kt")
         public void testRightBracketOnNewLine() throws Exception {
-            doTestInverted("idea/testData/formatter/RightBracketOnNewLine.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/RightBracketOnNewLine.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("SingleLineFunctionLiteral.after.inv.kt")
         public void testSingleLineFunctionLiteral() throws Exception {
-            doTestInverted("idea/testData/formatter/SingleLineFunctionLiteral.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SingleLineFunctionLiteral.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("SpaceAroundExtendColon.after.inv.kt")
         public void testSpaceAroundExtendColon() throws Exception {
-            doTestInverted("idea/testData/formatter/SpaceAroundExtendColon.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColon.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("SpaceAroundExtendColonInEnums.after.inv.kt")
         public void testSpaceAroundExtendColonInEnums() throws Exception {
-            doTestInverted("idea/testData/formatter/SpaceAroundExtendColonInEnums.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInEnums.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("SpaceAroundExtendColonInObjects.after.inv.kt")
         public void testSpaceAroundExtendColonInObjects() throws Exception {
-            doTestInverted("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("SpacesAroundOperations.after.inv.kt")
         public void testSpacesAroundOperations() throws Exception {
-            doTestInverted("idea/testData/formatter/SpacesAroundOperations.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpacesAroundOperations.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("SpacesAroundUnaryOperations.after.inv.kt")
         public void testSpacesAroundUnaryOperations() throws Exception {
-            doTestInverted("idea/testData/formatter/SpacesAroundUnaryOperations.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpacesAroundUnaryOperations.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("TryCatchLineBreak.after.inv.kt")
         public void testTryCatchLineBreak() throws Exception {
-            doTestInverted("idea/testData/formatter/TryCatchLineBreak.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/TryCatchLineBreak.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("When.after.inv.kt")
         public void testWhen() throws Exception {
-            doTestInverted("idea/testData/formatter/When.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/When.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("WhenArrow.after.inv.kt")
         public void testWhenArrow() throws Exception {
-            doTestInverted("idea/testData/formatter/WhenArrow.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhenArrow.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("WhenLineBreak.after.inv.kt")
         public void testWhenLineBreak() throws Exception {
-            doTestInverted("idea/testData/formatter/WhenLineBreak.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhenLineBreak.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("WhileLineBreak.after.inv.kt")
         public void testWhileLineBreak() throws Exception {
-            doTestInverted("idea/testData/formatter/WhileLineBreak.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhileLineBreak.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         @TestMetadata("WhileOnNewLine.after.inv.kt")
         public void testWhileOnNewLine() throws Exception {
-            doTestInverted("idea/testData/formatter/WhileOnNewLine.after.inv.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/WhileOnNewLine.after.inv.kt");
+            doTestInverted(fileName);
         }
         
         public static Test innerSuite() {

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.debugger.evaluate;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({CodeFragmentHighlightingTestGenerated.CodeFragments.class, CodeFragmentHighlightingTestGenerated.Imports.class})
 public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentHighlightingTest {
     @TestMetadata("idea/testData/checker/codeFragments")
+    @TestDataPath("$PROJECT_ROOT")
     public static class CodeFragments extends AbstractCodeFragmentHighlightingTest {
         public void testAllFilesPresentInCodeFragments() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments"), Pattern.compile("^(.+)\\.kt$"), false);
@@ -37,57 +39,68 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
         
         @TestMetadata("binaryExpression.kt")
         public void testBinaryExpression() throws Exception {
-            doTest("idea/testData/checker/codeFragments/binaryExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/binaryExpression.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("blockCodeFragment.kt")
         public void testBlockCodeFragment() throws Exception {
-            doTest("idea/testData/checker/codeFragments/blockCodeFragment.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/blockCodeFragment.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("callExpression.kt")
         public void testCallExpression() throws Exception {
-            doTest("idea/testData/checker/codeFragments/callExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/callExpression.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("contextElementAsStatement.kt")
         public void testContextElementAsStatement() throws Exception {
-            doTest("idea/testData/checker/codeFragments/contextElementAsStatement.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/contextElementAsStatement.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("privateFunArgumentsResolve.kt")
         public void testPrivateFunArgumentsResolve() throws Exception {
-            doTest("idea/testData/checker/codeFragments/privateFunArgumentsResolve.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/privateFunArgumentsResolve.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("privateFunTypeArguments.kt")
         public void testPrivateFunTypeArguments() throws Exception {
-            doTest("idea/testData/checker/codeFragments/privateFunTypeArguments.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/privateFunTypeArguments.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("privateMember.kt")
         public void testPrivateMember() throws Exception {
-            doTest("idea/testData/checker/codeFragments/privateMember.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/privateMember.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("protectedMember.kt")
         public void testProtectedMember() throws Exception {
-            doTest("idea/testData/checker/codeFragments/protectedMember.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/protectedMember.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("simpleNameExpression.kt")
         public void testSimpleNameExpression() throws Exception {
-            doTest("idea/testData/checker/codeFragments/simpleNameExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/simpleNameExpression.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("smartCasts.kt")
         public void testSmartCasts() throws Exception {
-            doTest("idea/testData/checker/codeFragments/smartCasts.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/smartCasts.kt");
+            doTest(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/checker/codeFragments/imports")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Imports extends AbstractCodeFragmentHighlightingTest {
         public void testAllFilesPresentInImports() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments/imports"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -95,7 +108,8 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
         
         @TestMetadata("hashMap.kt")
         public void testHashMap() throws Exception {
-            doTestWithImport("idea/testData/checker/codeFragments/imports/hashMap.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/imports/hashMap.kt");
+            doTestWithImport(fileName);
         }
         
     }

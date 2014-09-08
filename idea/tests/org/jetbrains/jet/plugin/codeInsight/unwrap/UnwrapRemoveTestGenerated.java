@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight.unwrap;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({UnwrapRemoveTestGenerated.RemoveExpression.class, UnwrapRemoveTestGenerated.UnwrapThen.class, UnwrapRemoveTestGenerated.UnwrapElse.class, UnwrapRemoveTestGenerated.RemoveElse.class, UnwrapRemoveTestGenerated.UnwrapLoop.class, UnwrapRemoveTestGenerated.UnwrapTry.class, UnwrapRemoveTestGenerated.UnwrapCatch.class, UnwrapRemoveTestGenerated.RemoveCatch.class, UnwrapRemoveTestGenerated.UnwrapFinally.class, UnwrapRemoveTestGenerated.RemoveFinally.class, UnwrapRemoveTestGenerated.UnwrapLambda.class})
 public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/removeExpression")
+    @TestDataPath("$PROJECT_ROOT")
     public static class RemoveExpression extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInRemoveExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeExpression"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -37,32 +39,38 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("ifInBlock.kt")
         public void testIfInBlock() throws Exception {
-            doTestExpressionRemover("idea/testData/codeInsight/unwrapAndRemove/removeExpression/ifInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/removeExpression/ifInBlock.kt");
+            doTestExpressionRemover(fileName);
         }
         
         @TestMetadata("ifInExpressionInReturn.kt")
         public void testIfInExpressionInReturn() throws Exception {
-            doTestExpressionRemover("idea/testData/codeInsight/unwrapAndRemove/removeExpression/ifInExpressionInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/removeExpression/ifInExpressionInReturn.kt");
+            doTestExpressionRemover(fileName);
         }
         
         @TestMetadata("ifInReturn.kt")
         public void testIfInReturn() throws Exception {
-            doTestExpressionRemover("idea/testData/codeInsight/unwrapAndRemove/removeExpression/ifInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/removeExpression/ifInReturn.kt");
+            doTestExpressionRemover(fileName);
         }
         
         @TestMetadata("tryInBlock.kt")
         public void testTryInBlock() throws Exception {
-            doTestExpressionRemover("idea/testData/codeInsight/unwrapAndRemove/removeExpression/tryInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/removeExpression/tryInBlock.kt");
+            doTestExpressionRemover(fileName);
         }
         
         @TestMetadata("tryInReturn.kt")
         public void testTryInReturn() throws Exception {
-            doTestExpressionRemover("idea/testData/codeInsight/unwrapAndRemove/removeExpression/tryInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/removeExpression/tryInReturn.kt");
+            doTestExpressionRemover(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapThen")
+    @TestDataPath("$PROJECT_ROOT")
     public static class UnwrapThen extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapThen() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapThen"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -70,22 +78,26 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("thenCompoundInBlock.kt")
         public void testThenCompoundInBlock() throws Exception {
-            doTestThenUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapThen/thenCompoundInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapThen/thenCompoundInBlock.kt");
+            doTestThenUnwrapper(fileName);
         }
         
         @TestMetadata("thenCompoundInReturn.kt")
         public void testThenCompoundInReturn() throws Exception {
-            doTestThenUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapThen/thenCompoundInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapThen/thenCompoundInReturn.kt");
+            doTestThenUnwrapper(fileName);
         }
         
         @TestMetadata("thenSimpleInReturn.kt")
         public void testThenSimpleInReturn() throws Exception {
-            doTestThenUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapThen/thenSimpleInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapThen/thenSimpleInReturn.kt");
+            doTestThenUnwrapper(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapElse")
+    @TestDataPath("$PROJECT_ROOT")
     public static class UnwrapElse extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapElse() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapElse"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -93,22 +105,26 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("elseCompoundInBlock.kt")
         public void testElseCompoundInBlock() throws Exception {
-            doTestElseUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapElse/elseCompoundInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapElse/elseCompoundInBlock.kt");
+            doTestElseUnwrapper(fileName);
         }
         
         @TestMetadata("elseCompoundInReturn.kt")
         public void testElseCompoundInReturn() throws Exception {
-            doTestElseUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapElse/elseCompoundInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapElse/elseCompoundInReturn.kt");
+            doTestElseUnwrapper(fileName);
         }
         
         @TestMetadata("elseSimpleInReturn.kt")
         public void testElseSimpleInReturn() throws Exception {
-            doTestElseUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapElse/elseSimpleInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapElse/elseSimpleInReturn.kt");
+            doTestElseUnwrapper(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/removeElse")
+    @TestDataPath("$PROJECT_ROOT")
     public static class RemoveElse extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInRemoveElse() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeElse"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -116,12 +132,14 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("else.kt")
         public void testElse() throws Exception {
-            doTestElseRemover("idea/testData/codeInsight/unwrapAndRemove/removeElse/else.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/removeElse/else.kt");
+            doTestElseRemover(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop")
+    @TestDataPath("$PROJECT_ROOT")
     public static class UnwrapLoop extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapLoop() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -129,22 +147,26 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("doWhile.kt")
         public void testDoWhile() throws Exception {
-            doTestLoopUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop/doWhile.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop/doWhile.kt");
+            doTestLoopUnwrapper(fileName);
         }
         
         @TestMetadata("for.kt")
         public void testFor() throws Exception {
-            doTestLoopUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop/for.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop/for.kt");
+            doTestLoopUnwrapper(fileName);
         }
         
         @TestMetadata("while.kt")
         public void testWhile() throws Exception {
-            doTestLoopUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop/while.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop/while.kt");
+            doTestLoopUnwrapper(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapTry")
+    @TestDataPath("$PROJECT_ROOT")
     public static class UnwrapTry extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapTry() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapTry"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -152,22 +174,26 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("tryCompoundInBlock.kt")
         public void testTryCompoundInBlock() throws Exception {
-            doTestTryUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapTry/tryCompoundInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapTry/tryCompoundInBlock.kt");
+            doTestTryUnwrapper(fileName);
         }
         
         @TestMetadata("tryCompoundInReturn.kt")
         public void testTryCompoundInReturn() throws Exception {
-            doTestTryUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapTry/tryCompoundInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapTry/tryCompoundInReturn.kt");
+            doTestTryUnwrapper(fileName);
         }
         
         @TestMetadata("trySimpleInReturn.kt")
         public void testTrySimpleInReturn() throws Exception {
-            doTestTryUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapTry/trySimpleInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapTry/trySimpleInReturn.kt");
+            doTestTryUnwrapper(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch")
+    @TestDataPath("$PROJECT_ROOT")
     public static class UnwrapCatch extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapCatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -175,22 +201,26 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("catchCompoundInBlock.kt")
         public void testCatchCompoundInBlock() throws Exception {
-            doTestCatchUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch/catchCompoundInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch/catchCompoundInBlock.kt");
+            doTestCatchUnwrapper(fileName);
         }
         
         @TestMetadata("catchCompoundInReturn.kt")
         public void testCatchCompoundInReturn() throws Exception {
-            doTestCatchUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch/catchCompoundInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch/catchCompoundInReturn.kt");
+            doTestCatchUnwrapper(fileName);
         }
         
         @TestMetadata("catchSimpleInReturn.kt")
         public void testCatchSimpleInReturn() throws Exception {
-            doTestCatchUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch/catchSimpleInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch/catchSimpleInReturn.kt");
+            doTestCatchUnwrapper(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/removeCatch")
+    @TestDataPath("$PROJECT_ROOT")
     public static class RemoveCatch extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInRemoveCatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeCatch"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -198,12 +228,14 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("catch.kt")
         public void testCatch() throws Exception {
-            doTestCatchRemover("idea/testData/codeInsight/unwrapAndRemove/removeCatch/catch.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/removeCatch/catch.kt");
+            doTestCatchRemover(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally")
+    @TestDataPath("$PROJECT_ROOT")
     public static class UnwrapFinally extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapFinally() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -211,22 +243,26 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("finallyCompoundInBlock.kt")
         public void testFinallyCompoundInBlock() throws Exception {
-            doTestFinallyUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally/finallyCompoundInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally/finallyCompoundInBlock.kt");
+            doTestFinallyUnwrapper(fileName);
         }
         
         @TestMetadata("finallyCompoundInReturn.kt")
         public void testFinallyCompoundInReturn() throws Exception {
-            doTestFinallyUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally/finallyCompoundInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally/finallyCompoundInReturn.kt");
+            doTestFinallyUnwrapper(fileName);
         }
         
         @TestMetadata("finallySimpleInReturn.kt")
         public void testFinallySimpleInReturn() throws Exception {
-            doTestFinallyUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally/finallySimpleInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally/finallySimpleInReturn.kt");
+            doTestFinallyUnwrapper(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/removeFinally")
+    @TestDataPath("$PROJECT_ROOT")
     public static class RemoveFinally extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInRemoveFinally() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeFinally"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -234,17 +270,20 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("finallyInBlock.kt")
         public void testFinallyInBlock() throws Exception {
-            doTestFinallyRemover("idea/testData/codeInsight/unwrapAndRemove/removeFinally/finallyInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/removeFinally/finallyInBlock.kt");
+            doTestFinallyRemover(fileName);
         }
         
         @TestMetadata("finallyInReturn.kt")
         public void testFinallyInReturn() throws Exception {
-            doTestFinallyRemover("idea/testData/codeInsight/unwrapAndRemove/removeFinally/finallyInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/removeFinally/finallyInReturn.kt");
+            doTestFinallyRemover(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda")
+    @TestDataPath("$PROJECT_ROOT")
     public static class UnwrapLambda extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapLambda() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -252,52 +291,62 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         
         @TestMetadata("lambdaCallCompoundInBlock.kt")
         public void testLambdaCallCompoundInBlock() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallCompoundInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallCompoundInBlock.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
         @TestMetadata("lambdaCallCompoundInReturn.kt")
         public void testLambdaCallCompoundInReturn() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallCompoundInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallCompoundInReturn.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
         @TestMetadata("lambdaCallInBlock.kt")
         public void testLambdaCallInBlock() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallInBlock.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
         @TestMetadata("lambdaCallInBlock2.kt")
         public void testLambdaCallInBlock2() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallInBlock2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallInBlock2.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
         @TestMetadata("lambdaCallSimpleInReturn.kt")
         public void testLambdaCallSimpleInReturn() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallSimpleInReturn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaCallSimpleInReturn.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
         @TestMetadata("lambdaInBlock.kt")
         public void testLambdaInBlock() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaInBlock.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
         @TestMetadata("lambdaNonLocalPropertyCompoundInBlock.kt")
         public void testLambdaNonLocalPropertyCompoundInBlock() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaNonLocalPropertyCompoundInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaNonLocalPropertyCompoundInBlock.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
         @TestMetadata("lambdaNonLocalPropertyInBlock.kt")
         public void testLambdaNonLocalPropertyInBlock() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaNonLocalPropertyInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaNonLocalPropertyInBlock.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
         @TestMetadata("lambdaPropertyCompoundInBlock.kt")
         public void testLambdaPropertyCompoundInBlock() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaPropertyCompoundInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaPropertyCompoundInBlock.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
         @TestMetadata("lambdaPropertyInBlock.kt")
         public void testLambdaPropertyInBlock() throws Exception {
-            doTestLambdaUnwrapper("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaPropertyInBlock.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda/lambdaPropertyInBlock.kt");
+            doTestLambdaUnwrapper(fileName);
         }
         
     }

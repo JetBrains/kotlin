@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.checkers;
 
+import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,10 +31,12 @@ import java.util.regex.Pattern;
 @InnerTestClasses({JetPsiCheckerTestGenerated.Checker.class, JetPsiCheckerTestGenerated.Regression.class, JetPsiCheckerTestGenerated.Recovery.class, JetPsiCheckerTestGenerated.Rendering.class, JetPsiCheckerTestGenerated.DuplicateJvmSignature.class, JetPsiCheckerTestGenerated.Infos.class})
 public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     @TestMetadata("idea/testData/checker")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Checker extends AbstractJetPsiCheckerTest {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
-            doTest("idea/testData/checker/Abstract.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Abstract.kt");
+            doTest(fileName);
         }
         
         public void testAllFilesPresentInChecker() throws Exception {
@@ -42,252 +45,302 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         
         @TestMetadata("AnonymousInitializers.kt")
         public void testAnonymousInitializers() throws Exception {
-            doTest("idea/testData/checker/AnonymousInitializers.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/AnonymousInitializers.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("BinaryCallsOnNullableValues.kt")
         public void testBinaryCallsOnNullableValues() throws Exception {
-            doTest("idea/testData/checker/BinaryCallsOnNullableValues.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/BinaryCallsOnNullableValues.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Bounds.kt")
         public void testBounds() throws Exception {
-            doTest("idea/testData/checker/Bounds.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Bounds.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Bounds2.kt")
         public void testBounds2() throws Exception {
-            doTest("idea/testData/checker/Bounds2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Bounds2.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("BoundsWithSubstitutors.kt")
         public void testBoundsWithSubstitutors() throws Exception {
-            doTest("idea/testData/checker/BoundsWithSubstitutors.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/BoundsWithSubstitutors.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("BreakContinue.kt")
         public void testBreakContinue() throws Exception {
-            doTest("idea/testData/checker/BreakContinue.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/BreakContinue.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Builders.kt")
         public void testBuilders() throws Exception {
-            doTest("idea/testData/checker/Builders.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Builders.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Casts.kt")
         public void testCasts() throws Exception {
-            doTest("idea/testData/checker/Casts.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Casts.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ClassObjects.kt")
         public void testClassObjects() throws Exception {
-            doTest("idea/testData/checker/ClassObjects.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/ClassObjects.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Constants.kt")
         public void testConstants() throws Exception {
-            doTest("idea/testData/checker/Constants.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Constants.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Constructors.kt")
         public void testConstructors() throws Exception {
-            doTest("idea/testData/checker/Constructors.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Constructors.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("CyclicHierarchy.kt")
         public void testCyclicHierarchy() throws Exception {
-            doTest("idea/testData/checker/CyclicHierarchy.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/CyclicHierarchy.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ExtensionFunctions.kt")
         public void testExtensionFunctions() throws Exception {
-            doTest("idea/testData/checker/ExtensionFunctions.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/ExtensionFunctions.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ForRangeConventions.kt")
         public void testForRangeConventions() throws Exception {
-            doTest("idea/testData/checker/ForRangeConventions.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/ForRangeConventions.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("FunctionReturnTypes.kt")
         public void testFunctionReturnTypes() throws Exception {
-            doTest("idea/testData/checker/FunctionReturnTypes.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/FunctionReturnTypes.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("GenericArgumentConsistency.kt")
         public void testGenericArgumentConsistency() throws Exception {
-            doTest("idea/testData/checker/GenericArgumentConsistency.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/GenericArgumentConsistency.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("IncDec.kt")
         public void testIncDec() throws Exception {
-            doTest("idea/testData/checker/IncDec.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/IncDec.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("IsExpressions.kt")
         public void testIsExpressions() throws Exception {
-            doTest("idea/testData/checker/IsExpressions.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/IsExpressions.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("LocalObjects.kt")
         public void testLocalObjects() throws Exception {
-            doTest("idea/testData/checker/LocalObjects.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/LocalObjects.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("MultipleBounds.kt")
         public void testMultipleBounds() throws Exception {
-            doTest("idea/testData/checker/MultipleBounds.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/MultipleBounds.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("NestedObjects.kt")
         public void testNestedObjects() throws Exception {
-            doTest("idea/testData/checker/NestedObjects.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/NestedObjects.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("NotFinishedGenericDeclaration.kt")
         public void testNotFinishedGenericDeclaration() throws Exception {
-            doTest("idea/testData/checker/NotFinishedGenericDeclaration.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/NotFinishedGenericDeclaration.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Nullability.kt")
         public void testNullability() throws Exception {
-            doTest("idea/testData/checker/Nullability.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Nullability.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Objects.kt")
         public void testObjects() throws Exception {
-            doTest("idea/testData/checker/Objects.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Objects.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Override.kt")
         public void testOverride() throws Exception {
-            doTest("idea/testData/checker/Override.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Override.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("OverridesAndGenerics.kt")
         public void testOverridesAndGenerics() throws Exception {
-            doTest("idea/testData/checker/OverridesAndGenerics.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/OverridesAndGenerics.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("PackageAsExpression.kt")
         public void testPackageAsExpression() throws Exception {
-            doTest("idea/testData/checker/PackageAsExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/PackageAsExpression.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("PackageQualified.kt")
         public void testPackageQualified() throws Exception {
-            doTest("idea/testData/checker/PackageQualified.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/PackageQualified.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("PrimaryConstructors.kt")
         public void testPrimaryConstructors() throws Exception {
-            doTest("idea/testData/checker/PrimaryConstructors.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/PrimaryConstructors.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ProjectionsInSupertypes.kt")
         public void testProjectionsInSupertypes() throws Exception {
-            doTest("idea/testData/checker/ProjectionsInSupertypes.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/ProjectionsInSupertypes.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Properties.kt")
         public void testProperties() throws Exception {
-            doTest("idea/testData/checker/Properties.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Properties.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("QualifiedExpressions.kt")
         public void testQualifiedExpressions() throws Exception {
-            doTest("idea/testData/checker/QualifiedExpressions.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/QualifiedExpressions.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("QualifiedThis.kt")
         public void testQualifiedThis() throws Exception {
-            doTest("idea/testData/checker/QualifiedThis.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/QualifiedThis.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("QualifiedThisInClosures.kt")
         public void testQualifiedThisInClosures() throws Exception {
-            doTest("idea/testData/checker/QualifiedThisInClosures.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/QualifiedThisInClosures.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("RecursiveTypeInference.kt")
         public void testRecursiveTypeInference() throws Exception {
-            doTest("idea/testData/checker/RecursiveTypeInference.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/RecursiveTypeInference.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Redeclaration.kt")
         public void testRedeclaration() throws Exception {
-            doTest("idea/testData/checker/Redeclaration.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Redeclaration.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Redeclarations.kt")
         public void testRedeclarations() throws Exception {
-            doTest("idea/testData/checker/Redeclarations.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Redeclarations.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ResolveToJava.kt")
         public void testResolveToJava() throws Exception {
-            doTest("idea/testData/checker/ResolveToJava.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/ResolveToJava.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Shadowing.kt")
         public void testShadowing() throws Exception {
-            doTest("idea/testData/checker/Shadowing.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Shadowing.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("StringTemplates.kt")
         public void testStringTemplates() throws Exception {
-            doTest("idea/testData/checker/StringTemplates.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/StringTemplates.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SupertypeListChecks.kt")
         public void testSupertypeListChecks() throws Exception {
-            doTest("idea/testData/checker/SupertypeListChecks.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/SupertypeListChecks.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("TraitSupertypeList.kt")
         public void testTraitSupertypeList() throws Exception {
-            doTest("idea/testData/checker/TraitSupertypeList.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/TraitSupertypeList.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("trivialHierarchyLoop.kt")
         public void testTrivialHierarchyLoop() throws Exception {
-            doTest("idea/testData/checker/trivialHierarchyLoop.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/trivialHierarchyLoop.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("unmetTraitRequirements.kt")
         public void testUnmetTraitRequirements() throws Exception {
-            doTest("idea/testData/checker/unmetTraitRequirements.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/unmetTraitRequirements.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("UnreachableCode.kt")
         public void testUnreachableCode() throws Exception {
-            doTest("idea/testData/checker/UnreachableCode.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/UnreachableCode.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Unresolved.kt")
         public void testUnresolved() throws Exception {
-            doTest("idea/testData/checker/Unresolved.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Unresolved.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Variance.kt")
         public void testVariance() throws Exception {
-            doTest("idea/testData/checker/Variance.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Variance.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("When.kt")
         public void testWhen() throws Exception {
-            doTest("idea/testData/checker/When.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/When.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("WhenInEnumInExtensionProperty.kt")
         public void testWhenInEnumInExtensionProperty() throws Exception {
-            doTest("idea/testData/checker/WhenInEnumInExtensionProperty.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/WhenInEnumInExtensionProperty.kt");
+            doTest(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/checker/regression")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Regression extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInRegression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -295,127 +348,152 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         
         @TestMetadata("AmbiguityOnLazyTypeComputation.kt")
         public void testAmbiguityOnLazyTypeComputation() throws Exception {
-            doTest("idea/testData/checker/regression/AmbiguityOnLazyTypeComputation.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/AmbiguityOnLazyTypeComputation.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("AssignmentsUnderOperators.kt")
         public void testAssignmentsUnderOperators() throws Exception {
-            doTest("idea/testData/checker/regression/AssignmentsUnderOperators.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/AssignmentsUnderOperators.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("CoercionToUnit.kt")
         public void testCoercionToUnit() throws Exception {
-            doTest("idea/testData/checker/regression/CoercionToUnit.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/CoercionToUnit.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("createInnerInstance.kt")
         public void testCreateInnerInstance() throws Exception {
-            doTest("idea/testData/checker/regression/createInnerInstance.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/createInnerInstance.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("DoubleDefine.kt")
         public void testDoubleDefine() throws Exception {
-            doTest("idea/testData/checker/regression/DoubleDefine.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/DoubleDefine.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("extensionMemberInClassObject.kt")
         public void testExtensionMemberInClassObject() throws Exception {
-            doTest("idea/testData/checker/regression/extensionMemberInClassObject.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/extensionMemberInClassObject.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet11.kt")
         public void testJet11() throws Exception {
-            doTest("idea/testData/checker/regression/Jet11.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet11.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet121.kt")
         public void testJet121() throws Exception {
-            doTest("idea/testData/checker/regression/Jet121.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet121.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet124.kt")
         public void testJet124() throws Exception {
-            doTest("idea/testData/checker/regression/Jet124.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet124.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet169.kt")
         public void testJet169() throws Exception {
-            doTest("idea/testData/checker/regression/Jet169.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet169.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet17.kt")
         public void testJet17() throws Exception {
-            doTest("idea/testData/checker/regression/Jet17.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet17.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet183.kt")
         public void testJet183() throws Exception {
-            doTest("idea/testData/checker/regression/Jet183.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet183.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet183-1.kt")
         public void testJet183_1() throws Exception {
-            doTest("idea/testData/checker/regression/Jet183-1.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet183-1.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet53.kt")
         public void testJet53() throws Exception {
-            doTest("idea/testData/checker/regression/Jet53.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet53.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet67.kt")
         public void testJet67() throws Exception {
-            doTest("idea/testData/checker/regression/Jet67.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet67.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet68.kt")
         public void testJet68() throws Exception {
-            doTest("idea/testData/checker/regression/Jet68.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet68.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet69.kt")
         public void testJet69() throws Exception {
-            doTest("idea/testData/checker/regression/Jet69.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet69.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("Jet72.kt")
         public void testJet72() throws Exception {
-            doTest("idea/testData/checker/regression/Jet72.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/Jet72.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("kt251.kt")
         public void testKt251() throws Exception {
-            doTest("idea/testData/checker/regression/kt251.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/kt251.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("kt303.kt")
         public void testKt303() throws Exception {
-            doTest("idea/testData/checker/regression/kt303.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/kt303.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("OverrideResolution.kt")
         public void testOverrideResolution() throws Exception {
-            doTest("idea/testData/checker/regression/OverrideResolution.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/OverrideResolution.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("ScopeForSecondaryConstructors.kt")
         public void testScopeForSecondaryConstructors() throws Exception {
-            doTest("idea/testData/checker/regression/ScopeForSecondaryConstructors.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/ScopeForSecondaryConstructors.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("SpecififcityByReceiver.kt")
         public void testSpecififcityByReceiver() throws Exception {
-            doTest("idea/testData/checker/regression/SpecififcityByReceiver.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/SpecififcityByReceiver.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("WrongTraceInCallResolver.kt")
         public void testWrongTraceInCallResolver() throws Exception {
-            doTest("idea/testData/checker/regression/WrongTraceInCallResolver.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/WrongTraceInCallResolver.kt");
+            doTest(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/checker/recovery")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Recovery extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInRecovery() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/recovery"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -423,17 +501,20 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         
         @TestMetadata("namelessMembers.kt")
         public void testNamelessMembers() throws Exception {
-            doTest("idea/testData/checker/recovery/namelessMembers.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/recovery/namelessMembers.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("namelessToplevelDeclarations.kt")
         public void testNamelessToplevelDeclarations() throws Exception {
-            doTest("idea/testData/checker/recovery/namelessToplevelDeclarations.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/recovery/namelessToplevelDeclarations.kt");
+            doTest(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/checker/rendering")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Rendering extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInRendering() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -441,12 +522,14 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         
         @TestMetadata("TypeInferenceError.kt")
         public void testTypeInferenceError() throws Exception {
-            doTest("idea/testData/checker/rendering/TypeInferenceError.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/rendering/TypeInferenceError.kt");
+            doTest(fileName);
         }
         
     }
     
     @TestMetadata("idea/testData/checker/duplicateJvmSignature")
+    @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({DuplicateJvmSignature.Fields.class, DuplicateJvmSignature.FunctionAndProperty.class, DuplicateJvmSignature.TraitImpl.class})
     public static class DuplicateJvmSignature extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
@@ -454,6 +537,7 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         }
         
         @TestMetadata("idea/testData/checker/duplicateJvmSignature/fields")
+        @TestDataPath("$PROJECT_ROOT")
         public static class Fields extends AbstractJetPsiCheckerTest {
             public void testAllFilesPresentInFields() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/fields"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -461,12 +545,14 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             
             @TestMetadata("classObjectCopiedFieldObject.kt")
             public void testClassObjectCopiedFieldObject() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/fields/classObjectCopiedFieldObject.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/fields/classObjectCopiedFieldObject.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty")
+        @TestDataPath("$PROJECT_ROOT")
         public static class FunctionAndProperty extends AbstractJetPsiCheckerTest {
             public void testAllFilesPresentInFunctionAndProperty() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -474,47 +560,56 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             
             @TestMetadata("class.kt")
             public void testClass() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/class.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/class.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("classObject.kt")
             public void testClassObject() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/classObject.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/classObject.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("localClass.kt")
             public void testLocalClass() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/localClass.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/localClass.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("nestedClass.kt")
             public void testNestedClass() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/nestedClass.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/nestedClass.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("object.kt")
             public void testObject() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/object.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/object.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("objectExpression.kt")
             public void testObjectExpression() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/objectExpression.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/objectExpression.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("topLevel.kt")
             public void testTopLevel() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/topLevel.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/topLevel.kt");
+                doTest(fileName);
             }
             
             @TestMetadata("trait.kt")
             public void testTrait() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/trait.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/trait.kt");
+                doTest(fileName);
             }
             
         }
         
         @TestMetadata("idea/testData/checker/duplicateJvmSignature/traitImpl")
+        @TestDataPath("$PROJECT_ROOT")
         public static class TraitImpl extends AbstractJetPsiCheckerTest {
             public void testAllFilesPresentInTraitImpl() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -522,7 +617,8 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             
             @TestMetadata("twoTraits.kt")
             public void testTwoTraits() throws Exception {
-                doTest("idea/testData/checker/duplicateJvmSignature/traitImpl/twoTraits.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/traitImpl/twoTraits.kt");
+                doTest(fileName);
             }
             
         }
@@ -538,6 +634,7 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     }
     
     @TestMetadata("idea/testData/checker/infos")
+    @TestDataPath("$PROJECT_ROOT")
     public static class Infos extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInInfos() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -545,32 +642,38 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         
         @TestMetadata("Autocasts.kt")
         public void testAutocasts() throws Exception {
-            doTestWithInfos("idea/testData/checker/infos/Autocasts.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/Autocasts.kt");
+            doTestWithInfos(fileName);
         }
         
         @TestMetadata("CapturedInInlinedClosure.kt")
         public void testCapturedInInlinedClosure() throws Exception {
-            doTestWithInfos("idea/testData/checker/infos/CapturedInInlinedClosure.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/CapturedInInlinedClosure.kt");
+            doTestWithInfos(fileName);
         }
         
         @TestMetadata("PropertiesWithBackingFields.kt")
         public void testPropertiesWithBackingFields() throws Exception {
-            doTestWithInfos("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
+            doTestWithInfos(fileName);
         }
         
         @TestMetadata("SmartCastsWithSafeAccess.kt")
         public void testSmartCastsWithSafeAccess() throws Exception {
-            doTestWithInfos("idea/testData/checker/infos/SmartCastsWithSafeAccess.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastsWithSafeAccess.kt");
+            doTestWithInfos(fileName);
         }
         
         @TestMetadata("Typos.kt")
         public void testTypos() throws Exception {
-            doTestWithInfos("idea/testData/checker/infos/Typos.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/Typos.kt");
+            doTestWithInfos(fileName);
         }
         
         @TestMetadata("WrapIntoRef.kt")
         public void testWrapIntoRef() throws Exception {
-            doTestWithInfos("idea/testData/checker/infos/WrapIntoRef.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/WrapIntoRef.kt");
+            doTestWithInfos(fileName);
         }
         
     }
