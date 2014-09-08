@@ -26,7 +26,6 @@ import org.jetbrains.k2js.translate.callTranslator.CallTranslator
 import org.jetbrains.k2js.translate.context.TemporaryVariable
 import org.jetbrains.k2js.translate.context.TranslationContext
 import org.jetbrains.k2js.translate.expression.MultiDeclarationTranslator
-import org.jetbrains.k2js.translate.general.AbstractTranslator
 import org.jetbrains.k2js.translate.general.Translation
 import org.jetbrains.k2js.translate.intrinsic.functions.factories.CompositeFIF
 import org.jetbrains.k2js.translate.utils.BindingUtils.*
@@ -44,7 +43,7 @@ public fun createWhile(doWhile: Boolean, expression: JetWhileExpressionBase, con
     val body = expression.getBody()
     var bodyStatement =
         if (body != null)
-            Translation.translateAsStatement(body, context)
+            Translation.translateAsStatementAndMergeInBlockIfNeeded(body, context)
         else
             context.getEmptyStatement()
 
@@ -121,7 +120,7 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
     val parameterName: JsName = declareParameter()
 
     fun translateBody(itemValue: JsExpression?): JsStatement {
-        val realBody = Translation.translateAsStatement(getLoopBody(expression), context)
+        val realBody = Translation.translateAsStatementAndMergeInBlockIfNeeded(getLoopBody(expression), context)
         if (itemValue == null && multiParameter == null) {
             return realBody
         }

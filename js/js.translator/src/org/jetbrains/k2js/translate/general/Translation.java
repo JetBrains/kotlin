@@ -55,7 +55,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.toStringLiteralList;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 /**
@@ -138,9 +139,7 @@ public final class Translation {
 
     @NotNull
     public static JsStatement translateAsStatement(@NotNull JetExpression expression, @NotNull TranslationContext context) {
-        JsBlock block = new JsBlock();
-        JsNode node = translateExpression(expression, context, block);
-        return JsAstUtils.mergeStatementInBlockIfNeeded(convertToStatement(node), block);
+        return translateAsStatement(expression, context, context.dynamicContext().jsBlock());
     }
 
     @NotNull
@@ -149,6 +148,16 @@ public final class Translation {
             @NotNull TranslationContext context,
             @NotNull JsBlock block) {
         return convertToStatement(translateExpression(expression, context, block));
+    }
+
+    @NotNull
+    public static JsStatement translateAsStatementAndMergeInBlockIfNeeded(
+            @NotNull JetExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        JsBlock block = new JsBlock();
+        JsNode node = translateExpression(expression, context, block);
+        return JsAstUtils.mergeStatementInBlockIfNeeded(convertToStatement(node), block);
     }
 
     @NotNull

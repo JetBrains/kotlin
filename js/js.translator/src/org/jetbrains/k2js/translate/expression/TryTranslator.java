@@ -16,7 +16,10 @@
 
 package org.jetbrains.k2js.translate.expression;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsBlock;
+import com.google.dart.compiler.backend.js.ast.JsCatch;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsTry;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,12 +60,12 @@ public final class TryTranslator extends AbstractTranslator {
         JetFinallySection finallyBlock = expression.getFinallyBlock();
         if (finallyBlock == null) return null;
 
-        return convertToBlock(Translation.translateAsStatement(finallyBlock.getFinalExpression(), context()));
+        return convertToBlock(Translation.translateAsStatementAndMergeInBlockIfNeeded(finallyBlock.getFinalExpression(), context()));
     }
 
     @NotNull
     private JsBlock translateTryBlock() {
-        return convertToBlock(Translation.translateAsStatement(expression.getTryBlock(), context()));
+        return convertToBlock(Translation.translateAsStatementAndMergeInBlockIfNeeded(expression.getTryBlock(), context()));
     }
 
     @NotNull
@@ -91,7 +94,7 @@ public final class TryTranslator extends AbstractTranslator {
         if (catchBody == null) {
             return convertToBlock(context().getEmptyStatement());
         }
-        return convertToBlock(Translation.translateAsStatement(catchBody, context()));
+        return convertToBlock(Translation.translateAsStatementAndMergeInBlockIfNeeded(catchBody, context()));
     }
 
 }
