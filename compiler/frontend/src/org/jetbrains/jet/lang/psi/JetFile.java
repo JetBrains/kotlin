@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetPlaceHolderStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -39,7 +40,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class JetFile extends PsiFileBase implements JetDeclarationContainer, JetElement, PsiClassOwner {
+public class JetFile extends PsiFileBase implements JetDeclarationContainer, JetAnnotated, JetElement, PsiClassOwner {
 
     private final boolean isCompiled;
 
@@ -80,12 +81,25 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
 
     @Nullable
     public JetImportList getImportList() {
+        return findChildByTypeOrClass(JetStubElementTypes.IMPORT_LIST, JetImportList.class);
+    }
+
+    @Nullable
+    public JetFileAnnotationList getFileAnnotationList() {
+        return findChildByTypeOrClass(JetStubElementTypes.FILE_ANNOTATION_LIST, JetFileAnnotationList.class);
+    }
+
+    @Nullable
+    public <T extends JetElementImplStub<? extends StubElement<?>>> T findChildByTypeOrClass(
+            @NotNull JetPlaceHolderStubElementType<T> elementType,
+            @NotNull Class<T> elementClass
+    ) {
         PsiJetFileStub stub = getStub();
         if (stub != null) {
-            StubElement<JetImportList> importListStub = stub.findChildStubByType(JetStubElementTypes.IMPORT_LIST);
+            StubElement<T> importListStub = stub.findChildStubByType(elementType);
             return importListStub != null ? importListStub.getPsi() : null;
         }
-        return findChildByClass(JetImportList.class);
+        return findChildByClass(elementClass);
     }
 
     @NotNull
@@ -204,5 +218,23 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitJetFile(this, data);
+    }
+
+    @NotNull
+    @Override
+    public List<JetAnnotation> getAnnotations() {
+        JetFileAnnotationList fileAnnotationList = getFileAnnotationList();
+        if (fileAnnotationList == null) return Collections.emptyList();
+
+        return fileAnnotationList.getAnnotations();
+    }
+
+    @NotNull
+    @Override
+    public List<JetAnnotationEntry> getAnnotationEntries() {
+        JetFileAnnotationList fileAnnotationList = getFileAnnotationList();
+        if (fileAnnotationList == null) return Collections.emptyList();
+
+        return fileAnnotationList.getAnnotationEntries();
     }
 }
