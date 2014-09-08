@@ -22,11 +22,12 @@ fun foo(a: Int): Int {
 private fun triple(a: Int, b: Int, c: Int): Triple<Int, Int, Int> {
     var b1 = b
     var c1 = c
-    return Triple(if (a > 0) {
+    val i = if (a > 0) {
         b1 += a
         c1 -= b1
         b1
     } else {
         a
-    }, b1, c1)
+    }
+    return Triple(i, b1, c1)
 }

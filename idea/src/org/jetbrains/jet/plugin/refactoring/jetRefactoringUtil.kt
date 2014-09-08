@@ -271,18 +271,7 @@ fun PsiElement.getLineCount(): Int {
         return endLine - startLine
     }
 
-    var lineCount = 1
-    accept(
-            object: JetTreeVisitorVoid() {
-                override fun visitWhiteSpace(space: PsiWhiteSpace) {
-                    if ("\n" in space.getText() ?: "") {
-                        lineCount++
-                    }
-                }
-            }
-    )
-
-    return lineCount
+    return (getText() ?: "").count { it == '\n' } + 1
 }
 
 fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1

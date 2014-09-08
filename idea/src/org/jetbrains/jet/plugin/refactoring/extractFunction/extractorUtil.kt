@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.psi.psiUtil.prependElement
 import org.jetbrains.jet.lang.psi.psiUtil.appendElement
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
 import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypesAndPredicate
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.ParameterUpdate
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
@@ -52,6 +51,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Expressi
 import org.jetbrains.jet.lang.psi.JetReturnExpression
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
+import org.jetbrains.jet.plugin.refactoring.isMultiLine
 
 fun ExtractableCodeDescriptor.getDeclarationText(
         options: ExtractionGeneratorOptions = ExtractionGeneratorOptions.DEFAULT,
@@ -140,7 +140,8 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
 
     fun replaceWithReturn(
             originalExpression: JetExpression,
-            replacingExpression: JetReturnExpression
+            replacingExpression: JetReturnExpression,
+            expressionToUnifyWith: JetExpression?
     ) {
         val currentResultExpression =
                 if (originalExpression is JetReturnExpression) originalExpression.getReturnedExpression() else originalExpression
@@ -154,7 +155,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
             throw AssertionError("Can' replace '${originalExpression.getText()}' with '${replacingExpression.getText()}'")
         }
 
-        val counterpartMap = createNameCounterpartMap(currentResultExpression, newResultExpression)
+        val counterpartMap = createNameCounterpartMap(currentResultExpression, expressionToUnifyWith ?: newResultExpression)
         nameByOffset.entrySet().forEach { e -> counterpartMap[e.getValue()]?.let { e.setValue(it) } }
     }
 
@@ -225,19 +226,32 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
             }
         }
 
+        val defaultValue = controlFlow.defaultOutputValue
+
         val lastExpression = body.getStatements().lastOrNull() as? JetExpression
         if (lastExpression is JetReturnExpression) return
 
-        val returnExpression = controlFlow.outputValueBoxer.getReturnExpression(getReturnArguments(lastExpression), psiFactory)
+        val (defaultExpression, expressionToUnifyWith) =
+                if (!options.inTempFile && defaultValue != null && controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
+                    val varNameValidator = JetNameValidatorImpl(body, lastExpression, JetNameValidatorImpl.Target.PROPERTIES)
+                    val resultVal = JetNameSuggester.suggestNames(defaultValue.valueType, varNameValidator, null).first()
+                    val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.getText()}"), lastExpression) as JetProperty
+                    body.addBefore(psiFactory.createNewLine(), lastExpression)
+                    psiFactory.createExpression(resultVal) to newDecl.getInitializer()!!
+                }
+                else {
+                    lastExpression to null
+                }
+
+        val returnExpression = controlFlow.outputValueBoxer.getReturnExpression(getReturnArguments(defaultExpression), psiFactory)
         if (returnExpression == null) return
 
-        val defaultValue = controlFlow.defaultOutputValue
         when {
             defaultValue == null ->
                 body.appendElement(returnExpression)
 
             !defaultValue.callSiteReturn ->
-                replaceWithReturn(lastExpression!!, returnExpression)
+                replaceWithReturn(lastExpression!!, returnExpression, expressionToUnifyWith)
         }
     }
 
@@ -386,13 +400,12 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
         }
     }
 
-    val declaration = createDeclaration()
+    val declaration = createDeclaration().let { if (options.inTempFile) it else insertDeclaration(it) }
     adjustDeclarationBody(declaration)
 
     if (options.inTempFile) return ExtractionResult(declaration, nameByOffset)
 
-    val declarationInPlace = insertDeclaration(declaration)
-    makeCall(declarationInPlace)
-    ShortenReferences.process(declarationInPlace)
+    makeCall(declaration)
+    ShortenReferences.process(declaration)
     return ExtractionResult(declaration, nameByOffset)
 }

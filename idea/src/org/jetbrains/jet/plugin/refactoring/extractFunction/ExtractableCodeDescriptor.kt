@@ -155,6 +155,8 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
     protected abstract fun getBoxingExpressionText(arguments: List<String>): String?
 
+    abstract val boxingRequired: Boolean
+
     fun getReturnExpression(arguments: List<String>, psiFactory: JetPsiFactory): JetReturnExpression? {
         return getBoxingExpressionText(arguments)?.let { psiFactory.createReturn(it) }
     }
@@ -208,6 +210,8 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             getType()
         }
 
+        override val boxingRequired: Boolean = outputValues.size > 1
+
         override fun getBoxingExpressionText(arguments: List<String>): String? {
             return when (arguments.size) {
                 0 -> null
@@ -244,6 +248,8 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
                     Collections.singletonList(CommonSupertypes.commonSupertype(outputValues.map { it.valueType }))
             )
         }
+
+        override val boxingRequired: Boolean = outputValues.size > 0
 
         override fun getBoxingExpressionText(arguments: List<String>): String? {
             if (arguments.isEmpty()) return null

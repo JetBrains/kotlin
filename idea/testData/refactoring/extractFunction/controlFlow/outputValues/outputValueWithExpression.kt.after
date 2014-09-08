@@ -17,10 +17,11 @@ fun foo(a: Int): Int {
 
 private fun pair(a: Int, b: Int): Pair<Int, Int> {
     var b1 = b
-    return Pair(if (a > 0) {
+    val i = if (a > 0) {
         b1 += a
         b1
     } else {
         a
-    }, b1)
+    }
+    return Pair(i, b1)
 }

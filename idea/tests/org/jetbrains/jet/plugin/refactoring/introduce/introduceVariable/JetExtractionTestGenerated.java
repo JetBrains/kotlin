@@ -747,7 +747,8 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 
                 @TestMetadata("outputValueWithSingleLineExpression.kt")
                 public void testOutputValueWithSingleLineExpression() throws Exception {
-                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/controlFlow/outputValues/outputValueWithSingleLineExpression.kt");
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/outputValueWithSingleLineExpression.kt");
+                    doExtractFunctionTest(fileName);
                 }
                 
                 @TestMetadata("outputValuesWithExpression.kt")
