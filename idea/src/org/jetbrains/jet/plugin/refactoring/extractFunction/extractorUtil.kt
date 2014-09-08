@@ -52,6 +52,7 @@ import org.jetbrains.jet.lang.psi.JetReturnExpression
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.plugin.refactoring.isMultiLine
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsTuple
 
 fun ExtractableCodeDescriptor.getDeclarationText(
         options: ExtractionGeneratorOptions = ExtractionGeneratorOptions.DEFAULT,
@@ -310,6 +311,24 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
         val block = (anchorInBlock?.getParent() as? JetBlockExpression) ?: anchorParent
 
         val newLine = psiFactory.createNewLine()
+
+        if (controlFlow.outputValueBoxer is AsTuple && controlFlow.outputValues.size > 1 && controlFlow.outputValues.all { it is Initializer }) {
+            val declarationsToMerge = controlFlow.outputValues.map { (it as Initializer).initializedDeclaration }
+            val isVar = declarationsToMerge.first().isVar()
+            if (declarationsToMerge.all { it.isVar() == isVar }) {
+                controlFlow.declarationsToCopy.subtract(declarationsToMerge).forEach {
+                    block.addBefore(psiFactory.createDeclaration<JetDeclaration>(it.getText()!!), anchorInBlock) as JetDeclaration
+                    block.addBefore(newLine, anchorInBlock)
+                }
+
+                val entries = declarationsToMerge.map { p -> p.getName() + (p.getTypeRef()?.let { ": ${it.getText()}" } ?: "") }
+                anchorInBlock?.replace(
+                        psiFactory.createDeclaration("${if (isVar) "var" else "val"} (${entries.joinToString()}) = $callText")
+                )
+
+                return
+            }
+        }
 
         val inlinableCall = controlFlow.outputValues.size <= 1
         val unboxingExpressions =

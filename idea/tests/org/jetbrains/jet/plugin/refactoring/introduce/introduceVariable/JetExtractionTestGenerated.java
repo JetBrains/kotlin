@@ -769,6 +769,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
                 
+                @TestMetadata("pairOfVarInitalizersWithNonLocalUsages.kt")
+                public void testPairOfVarInitalizersWithNonLocalUsages() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/pairOfVarInitalizersWithNonLocalUsages.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
                 @TestMetadata("pairWithIf.kt")
                 public void testPairWithIf() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/pairWithIf.kt");
@@ -838,6 +844,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("usedAndUnusedOutputValues.kt")
                 public void testUsedAndUnusedOutputValues() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/usedAndUnusedOutputValues.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
+                @TestMetadata("valAndVarInitalizersWithNonLocalUsages.kt")
+                public void testValAndVarInitalizersWithNonLocalUsages() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/outputValues/valAndVarInitalizersWithNonLocalUsages.kt");
                     doExtractFunctionTest(fileName);
                 }
                 
