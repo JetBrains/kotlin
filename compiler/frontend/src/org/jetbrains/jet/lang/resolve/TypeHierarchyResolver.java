@@ -204,7 +204,7 @@ public class TypeHierarchyResolver {
 
             ClassKind kind = descriptor.getKind();
             if (kind == ClassKind.ENUM_ENTRY || kind == ClassKind.OBJECT) {
-                MutableClassDescriptor classObject = (MutableClassDescriptor) descriptor.getClassObjectDescriptor();
+                MutableClassDescriptor classObject = descriptor.getClassObjectDescriptor();
                 assert classObject != null : "Enum entries and named objects should have class objects: " + classOrObject.getText();
 
                 // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.

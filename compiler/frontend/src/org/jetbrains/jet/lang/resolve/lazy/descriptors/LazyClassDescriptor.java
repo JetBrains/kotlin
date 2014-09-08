@@ -83,7 +83,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final boolean isInner;
 
     private final Annotations annotations;
-    private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
+    private final NullableLazyValue<LazyClassDescriptor> classObjectDescriptor;
     private final MemoizedFunctionToNotNull<JetClassObject, ClassDescriptor> extraClassObjectDescriptors;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
@@ -158,9 +158,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             this.annotations = Annotations.EMPTY;
         }
 
-        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<ClassDescriptor>() {
+        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<LazyClassDescriptor>() {
             @Override
-            public ClassDescriptor invoke() {
+            public LazyClassDescriptor invoke() {
                 return computeClassObjectDescriptor(declarationProvider.getOwnerInfo().getClassObject());
             }
         });
@@ -324,7 +324,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Override
-    public ClassDescriptor getClassObjectDescriptor() {
+    public LazyClassDescriptor getClassObjectDescriptor() {
         return classObjectDescriptor.invoke();
     }
 
@@ -351,7 +351,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Nullable
-    private ClassDescriptor computeClassObjectDescriptor(@Nullable JetClassObject classObject) {
+    private LazyClassDescriptor computeClassObjectDescriptor(@Nullable JetClassObject classObject) {
         JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
         if (classObjectInfo != null) {
             return new LazyClassDescriptor(resolveSession, this, getClassObjectName(getName()), classObjectInfo);
