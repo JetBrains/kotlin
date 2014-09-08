@@ -855,7 +855,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     @NotNull
-    private static String getClassKindPrefix(@NotNull ClassDescriptor klass) {
+    public static String getClassKindPrefix(@NotNull ClassDescriptor klass) {
         switch (klass.getKind()) {
             case CLASS:
                 return "class";
