@@ -51,6 +51,10 @@ import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler
 import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.jps.android.AndroidJpsUtil
+import org.jetbrains.jps.android.model.JpsAndroidModuleExtension
+import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.jps.model.module.JpsModule
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -190,6 +194,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
             val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(project)
 
+            k2JvmArguments.androidRes = getAndroidResPath(representativeTarget.getModule(), context)
+            k2JvmArguments.androidManifest = getAndroidManifest(representativeTarget.getModule())
+
             runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
             moduleFile.delete()
         }
@@ -250,6 +257,17 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         return OK
+    }
+
+    private fun getAndroidResPath(module: JpsModule, context: CompileContext): String {
+        val extension = AndroidJpsUtil.getExtension(module)!!
+        val path = AndroidJpsUtil.getResourceDirForCompilationPath(extension)
+        return File(path!!.getAbsolutePath() + "/layout").getAbsolutePath()
+    }
+
+    private fun getAndroidManifest(module: JpsModule): String {
+        val extension = AndroidJpsUtil.getExtension(module)!!
+        return AndroidJpsUtil.getManifestFileForCompilationPath(extension)!!.getAbsolutePath()
     }
 
     public class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
