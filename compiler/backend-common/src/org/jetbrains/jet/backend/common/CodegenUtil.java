@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -176,14 +177,14 @@ public class CodegenUtil {
     public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
         JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
-        return "valueOf".equals(functionDescriptor.getName().asString())
+        return DescriptorUtils.ENUM_VALUE_OF.equals(functionDescriptor.getName())
                && methodTypeParameters.size() == 1
                && JetTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
     }
 
     public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        return "values".equals(functionDescriptor.getName().asString())
+        return DescriptorUtils.ENUM_VALUES.equals(functionDescriptor.getName())
                && methodTypeParameters.isEmpty();
     }
 }

@@ -27,6 +27,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.ENUM_VALUES;
+
 public class EnumValues extends IntrinsicMethod {
     @NotNull
     @Override
@@ -38,7 +40,7 @@ public class EnumValues extends IntrinsicMethod {
             @Nullable List<JetExpression> arguments,
             StackValue receiver
     ) {
-        v.invokestatic(returnType.getElementType().getInternalName(), "values", "()" + returnType, false);
+        v.invokestatic(returnType.getElementType().getInternalName(), ENUM_VALUES.asString(), "()" + returnType, false);
         return returnType;
     }
 }

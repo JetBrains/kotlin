@@ -170,15 +170,17 @@ public class LazyJavaStaticClassScope(
 
     override fun getAllFunctionNames(): Collection<Name> {
         if (jClass.isEnum()) {
-            return super.getAllFunctionNames() + listOf(Name.identifier("valueOf"), Name.identifier("values"))
+            return super.getAllFunctionNames() + listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES)
         }
         return super.getAllFunctionNames()
     }
 
     override fun computeAdditionalFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
         if (jClass.isEnum()) {
-            if (name.asString() == "valueOf") return listOf(createEnumValueOfMethod(getContainingDeclaration()))
-            if (name.asString() == "values") return listOf(createEnumValuesMethod(getContainingDeclaration()))
+            when (name) {
+                DescriptorUtils.ENUM_VALUE_OF -> return listOf(createEnumValueOfMethod(getContainingDeclaration()))
+                DescriptorUtils.ENUM_VALUES -> return listOf(createEnumValuesMethod(getContainingDeclaration()))
+            }
         }
         return listOf()
     }

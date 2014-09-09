@@ -27,6 +27,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.ENUM_VALUE_OF;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 
 public class EnumValueOf extends IntrinsicMethod {
@@ -42,7 +43,7 @@ public class EnumValueOf extends IntrinsicMethod {
     ) {
         assert arguments != null;
         codegen.gen(arguments.get(0), JAVA_STRING_TYPE);
-        v.invokestatic(returnType.getInternalName(), "valueOf", "(Ljava/lang/String;)" + returnType.getDescriptor(), false);
+        v.invokestatic(returnType.getInternalName(), ENUM_VALUE_OF.asString(), "(Ljava/lang/String;)" + returnType.getDescriptor(), false);
         return returnType;
     }
 }

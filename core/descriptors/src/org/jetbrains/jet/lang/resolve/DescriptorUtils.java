@@ -41,6 +41,9 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 public class DescriptorUtils {
+    public static final Name ENUM_VALUES = Name.identifier("values");
+    public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
+
     private DescriptorUtils() {
     }
 

@@ -83,7 +83,7 @@ import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrig
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
-    private static final String VALUES = "$VALUES";
+    private static final String ENUM_VALUES_FIELD_NAME = "$VALUES";
     private JetDelegatorToSuperCall superCall;
     private Type superClassAsmType;
     @Nullable // null means java/lang/Object
@@ -925,17 +925,19 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateEnumValuesMethod() {
         Type type = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
 
-        FunctionDescriptor valuesFunction = findEnumFunction("values", new Function1<FunctionDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(FunctionDescriptor descriptor) {
-                return CodegenUtil.isEnumValuesMethod(descriptor);
-            }
-        });
-        MethodVisitor mv = v.newMethod(OtherOrigin(myClass, valuesFunction), ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
+        FunctionDescriptor valuesFunction =
+                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUES), new Function1<FunctionDescriptor, Boolean>() {
+                    @Override
+                    public Boolean invoke(FunctionDescriptor descriptor) {
+                        return CodegenUtil.isEnumValuesMethod(descriptor);
+                    }
+                });
+        MethodVisitor mv = v.newMethod(OtherOrigin(myClass, valuesFunction), ACC_PUBLIC | ACC_STATIC, ENUM_VALUES.asString(),
+                                       "()" + type.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();
-        mv.visitFieldInsn(GETSTATIC, classAsmType.getInternalName(), VALUES, type.getDescriptor());
+        mv.visitFieldInsn(GETSTATIC, classAsmType.getInternalName(), ENUM_VALUES_FIELD_NAME, type.getDescriptor());
         mv.visitMethodInsn(INVOKEVIRTUAL, type.getInternalName(), "clone", "()Ljava/lang/Object;", false);
         mv.visitTypeInsn(CHECKCAST, type.getInternalName());
         mv.visitInsn(ARETURN);
@@ -943,14 +945,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateEnumValueOfMethod() {
-        FunctionDescriptor valueOfFunction = findEnumFunction("valueOf", new Function1<FunctionDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(FunctionDescriptor descriptor) {
-                return CodegenUtil.isEnumValueOfMethod(descriptor);
-            }
-        });
-        MethodVisitor mv = v.newMethod(OtherOrigin(myClass, valueOfFunction),
-                                       ACC_PUBLIC | ACC_STATIC, "valueOf", "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null, null);
+        FunctionDescriptor valueOfFunction =
+                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUE_OF), new Function1<FunctionDescriptor, Boolean>() {
+                    @Override
+                    public Boolean invoke(FunctionDescriptor descriptor) {
+                        return CodegenUtil.isEnumValueOfMethod(descriptor);
+                    }
+                });
+        MethodVisitor mv = v.newMethod(OtherOrigin(myClass, valueOfFunction), ACC_PUBLIC | ACC_STATIC, ENUM_VALUE_OF.asString(),
+                                       "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();
@@ -960,14 +963,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitTypeInsn(CHECKCAST, classAsmType.getInternalName());
         mv.visitInsn(ARETURN);
         FunctionCodegen.endVisit(mv, "valueOf()", myClass);
-    }
-
-    @NotNull
-    private FunctionDescriptor findEnumFunction(@NotNull String name, @NotNull Function1<FunctionDescriptor, Boolean> predicate) {
-        Collection<FunctionDescriptor> functions = descriptor.getStaticScope().getFunctions(Name.identifier(name));
-        FunctionDescriptor function = KotlinPackage.firstOrNull(functions, predicate);
-        assert function != null : "No " + name + "() function found for " + descriptor;
-        return function;
     }
 
     protected void generateSyntheticAccessors() {
@@ -1633,7 +1628,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         InstructionAdapter iv = codegen.v;
 
         Type arrayAsmType = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
-        v.newField(OtherOrigin(myClass), ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, VALUES, arrayAsmType.getDescriptor(), null, null);
+        v.newField(OtherOrigin(myClass), ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, ENUM_VALUES_FIELD_NAME,
+                   arrayAsmType.getDescriptor(), null, null);
 
         iv.iconst(myEnumConstants.size());
         iv.newarray(classAsmType);
@@ -1645,7 +1641,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        iv.putstatic(classAsmType.getInternalName(), VALUES, arrayAsmType.getDescriptor());
+        iv.putstatic(classAsmType.getInternalName(), ENUM_VALUES_FIELD_NAME, arrayAsmType.getDescriptor());
     }
 
     private void initializeEnumConstant(@NotNull ExpressionCodegen codegen, int ordinal) {
