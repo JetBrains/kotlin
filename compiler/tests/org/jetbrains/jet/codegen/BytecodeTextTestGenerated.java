@@ -19,9 +19,11 @@ package org.jetbrains.jet.codegen;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/bytecodeText")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("accessorForProtected.kt")
     public void testAccessorForProtected() throws Exception {
@@ -182,6 +185,7 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     
     @TestMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class BoxingOptimization extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInBoxingOptimization() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxingOptimization"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -257,6 +261,7 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     
     @TestMetadata("compiler/testData/codegen/bytecodeText/constants")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Constants extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInConstants() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constants"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -284,6 +289,7 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     
     @TestMetadata("compiler/testData/codegen/bytecodeText/directInvoke")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DirectInvoke extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInDirectInvoke() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/directInvoke"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -311,6 +317,7 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     
     @TestMetadata("compiler/testData/codegen/bytecodeText/statements")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Statements extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInStatements() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/statements"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -356,6 +363,7 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     
     @TestMetadata("compiler/testData/codegen/bytecodeText/when")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class When extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInWhen() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/when"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -371,6 +379,7 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     
     @TestMetadata("compiler/testData/codegen/bytecodeText/whenEnumOptimization")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class WhenEnumOptimization extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInWhenEnumOptimization() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenEnumOptimization"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -434,6 +443,7 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     
     @TestMetadata("compiler/testData/codegen/bytecodeText/whenStringOptimization")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class WhenStringOptimization extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInWhenStringOptimization() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenStringOptimization"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -489,16 +499,4 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("BytecodeTextTestGenerated");
-        suite.addTestSuite(BytecodeTextTestGenerated.class);
-        suite.addTestSuite(BoxingOptimization.class);
-        suite.addTestSuite(Constants.class);
-        suite.addTestSuite(DirectInvoke.class);
-        suite.addTestSuite(Statements.class);
-        suite.addTestSuite(When.class);
-        suite.addTestSuite(WhenEnumOptimization.class);
-        suite.addTestSuite(WhenStringOptimization.class);
-        return suite;
-    }
 }

@@ -19,9 +19,11 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/quickfix")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({QuickFixTestGenerated.Abstract.class, QuickFixTestGenerated.AddStarProjections.class, QuickFixTestGenerated.AutoImports.class, QuickFixTestGenerated.ChangeSignature.class, QuickFixTestGenerated.CheckArguments.class, QuickFixTestGenerated.CreateFromUsage.class, QuickFixTestGenerated.Expressions.class, QuickFixTestGenerated.Migration.class, QuickFixTestGenerated.Modifiers.class, QuickFixTestGenerated.Nullables.class, QuickFixTestGenerated.Override.class, QuickFixTestGenerated.PlatformClasses.class, QuickFixTestGenerated.Supercalls.class, QuickFixTestGenerated.SupertypeInitialization.class, QuickFixTestGenerated.Suppress.class, QuickFixTestGenerated.TypeAddition.class, QuickFixTestGenerated.TypeImports.class, QuickFixTestGenerated.TypeMismatch.class, QuickFixTestGenerated.TypeProjection.class, QuickFixTestGenerated.UselessImports.class, QuickFixTestGenerated.Variables.class, QuickFixTestGenerated.When.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class QuickFixTestGenerated extends AbstractQuickFixTest {
     public void testAllFilesPresentInQuickfix() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -38,6 +41,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/abstract")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Abstract extends AbstractQuickFixTest {
         @TestMetadata("beforeAbstractFunctionInNonAbstractClass.kt")
         public void testAbstractFunctionInNonAbstractClass() throws Exception {
@@ -168,6 +172,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestMetadata("idea/testData/quickfix/addStarProjections")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({AddStarProjections.Cast.class, AddStarProjections.CheckType.class, AddStarProjections.JavaClass.class, AddStarProjections.When.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class AddStarProjections extends AbstractQuickFixTest {
         public void testAllFilesPresentInAddStarProjections() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -211,6 +216,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/addStarProjections/cast")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Cast extends AbstractQuickFixTest {
             public void testAllFilesPresentInCast() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/cast"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -232,6 +238,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/addStarProjections/checkType")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class CheckType extends AbstractQuickFixTest {
             public void testAllFilesPresentInCheckType() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/checkType"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -259,6 +266,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/addStarProjections/javaClass")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class JavaClass extends AbstractQuickFixTest {
             public void testAllFilesPresentInJavaClass() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/javaClass"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -292,6 +300,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/addStarProjections/when")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class When extends AbstractQuickFixTest {
             public void testAllFilesPresentInWhen() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/when"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -335,19 +344,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("AddStarProjections");
-            suite.addTestSuite(AddStarProjections.class);
-            suite.addTestSuite(Cast.class);
-            suite.addTestSuite(CheckType.class);
-            suite.addTestSuite(JavaClass.class);
-            suite.addTestSuite(When.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/quickfix/autoImports")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class AutoImports extends AbstractQuickFixTest {
         public void testAllFilesPresentInAutoImports() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -423,6 +424,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/changeSignature")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ChangeSignature extends AbstractQuickFixTest {
         @TestMetadata("beforeAddConstructorParameter.kt")
         public void testAddConstructorParameter() throws Exception {
@@ -558,6 +560,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/checkArguments")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CheckArguments extends AbstractQuickFixTest {
         public void testAllFilesPresentInCheckArguments() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -616,6 +619,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({CreateFromUsage.Component.class, CreateFromUsage.Get.class, CreateFromUsage.HasNext.class, CreateFromUsage.Iterator.class, CreateFromUsage.Next.class, CreateFromUsage.Set.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CreateFromUsage extends AbstractQuickFixTest {
         public void testAllFilesPresentInCreateFromUsage() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -623,6 +627,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/createFromUsage/component")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Component extends AbstractQuickFixTest {
             public void testAllFilesPresentInComponent() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/component"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -650,6 +655,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/createFromUsage/get")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Get extends AbstractQuickFixTest {
             public void testAllFilesPresentInGet() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/get"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -731,6 +737,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/createFromUsage/hasNext")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class HasNext extends AbstractQuickFixTest {
             public void testAllFilesPresentInHasNext() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/hasNext"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -752,6 +759,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/createFromUsage/iterator")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Iterator extends AbstractQuickFixTest {
             public void testAllFilesPresentInIterator() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/iterator"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -779,6 +787,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/createFromUsage/next")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Next extends AbstractQuickFixTest {
             public void testAllFilesPresentInNext() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/next"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -800,6 +809,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/createFromUsage/set")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Set extends AbstractQuickFixTest {
             public void testAllFilesPresentInSet() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/set"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -819,21 +829,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("CreateFromUsage");
-            suite.addTestSuite(CreateFromUsage.class);
-            suite.addTestSuite(Component.class);
-            suite.addTestSuite(Get.class);
-            suite.addTestSuite(HasNext.class);
-            suite.addTestSuite(Iterator.class);
-            suite.addTestSuite(Next.class);
-            suite.addTestSuite(Set.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/quickfix/expressions")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Expressions extends AbstractQuickFixTest {
         public void testAllFilesPresentInExpressions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/expressions"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -909,6 +909,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/migration")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Migration extends AbstractQuickFixTest {
         @TestMetadata("beforeAddOverrideToEqualsHashCodeToString.kt")
         public void testAddOverrideToEqualsHashCodeToString() throws Exception {
@@ -931,6 +932,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestMetadata("idea/testData/quickfix/modifiers")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Modifiers.AddOpenToClassDeclaration.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Modifiers extends AbstractQuickFixTest {
         @TestMetadata("beforeAddInnerModifier.kt")
         public void testAddInnerModifier() throws Exception {
@@ -1071,6 +1073,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({AddOpenToClassDeclaration.FinalJavaClass.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class AddOpenToClassDeclaration extends AbstractQuickFixTest {
             public void testAllFilesPresentInAddOpenToClassDeclaration() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1133,6 +1136,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass")
             @TestDataPath("$PROJECT_ROOT")
             @InnerTestClasses({FinalJavaClass.JavaCode.class})
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class FinalJavaClass extends AbstractQuickFixTest {
                 public void testAllFilesPresentInFinalJavaClass() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1141,45 +1145,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode")
                 @TestDataPath("$PROJECT_ROOT")
                 @InnerTestClasses({})
+                @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
                 public static class JavaCode extends AbstractQuickFixTest {
                     public void testAllFilesPresentInJavaCode() throws Exception {
                         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode"), Pattern.compile("^before(\\w+)\\.kt$"), true);
                     }
                     
-                    public static Test innerSuite() {
-                        TestSuite suite = new TestSuite("JavaCode");
-                        suite.addTestSuite(JavaCode.class);
-                        return suite;
-                    }
                 }
                 
-                public static Test innerSuite() {
-                    TestSuite suite = new TestSuite("FinalJavaClass");
-                    suite.addTestSuite(FinalJavaClass.class);
-                    suite.addTest(JavaCode.innerSuite());
-                    return suite;
-                }
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("AddOpenToClassDeclaration");
-                suite.addTestSuite(AddOpenToClassDeclaration.class);
-                suite.addTest(FinalJavaClass.innerSuite());
-                return suite;
-            }
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Modifiers");
-            suite.addTestSuite(Modifiers.class);
-            suite.addTest(AddOpenToClassDeclaration.innerSuite());
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/quickfix/nullables")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Nullables.UnsafeInfixCall.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Nullables extends AbstractQuickFixTest {
         public void testAllFilesPresentInNullables() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1211,6 +1194,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/nullables/unsafeInfixCall")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class UnsafeInfixCall extends AbstractQuickFixTest {
             public void testAllFilesPresentInUnsafeInfixCall() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables/unsafeInfixCall"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1224,17 +1208,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Nullables");
-            suite.addTestSuite(Nullables.class);
-            suite.addTestSuite(UnsafeInfixCall.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/quickfix/override")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Override.NothingToOverride.class, Override.TypeMismatchOnOverride.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Override extends AbstractQuickFixTest {
         public void testAllFilesPresentInOverride() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1320,6 +1299,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/override/nothingToOverride")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class NothingToOverride extends AbstractQuickFixTest {
             @TestMetadata("beforeAddFunction.kt")
             public void testAddFunction() throws Exception {
@@ -1503,6 +1483,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/override/typeMismatchOnOverride")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class TypeMismatchOnOverride extends AbstractQuickFixTest {
             public void testAllFilesPresentInTypeMismatchOnOverride() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override/typeMismatchOnOverride"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1612,17 +1593,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Override");
-            suite.addTestSuite(Override.class);
-            suite.addTestSuite(NothingToOverride.class);
-            suite.addTestSuite(TypeMismatchOnOverride.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/quickfix/platformClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class PlatformClasses extends AbstractQuickFixTest {
         public void testAllFilesPresentInPlatformClasses() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/platformClasses"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1656,6 +1631,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/supercalls")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Supercalls extends AbstractQuickFixTest {
         public void testAllFilesPresentInSupercalls() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/supercalls"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1671,6 +1647,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/supertypeInitialization")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SupertypeInitialization extends AbstractQuickFixTest {
         public void testAllFilesPresentInSupertypeInitialization() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/supertypeInitialization"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1711,6 +1688,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestMetadata("idea/testData/quickfix/suppress")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Suppress.AnnotationPosition.class, Suppress.Availability.class, Suppress.DeclarationKinds.class, Suppress.ErrorRecovery.class, Suppress.ForStatement.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Suppress extends AbstractQuickFixTest {
         public void testAllFilesPresentInSuppress() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1718,6 +1696,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/suppress/annotationPosition")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class AnnotationPosition extends AbstractQuickFixTest {
             public void testAllFilesPresentInAnnotationPosition() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/annotationPosition"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1799,6 +1778,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/suppress/availability")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Availability extends AbstractQuickFixTest {
             public void testAllFilesPresentInAvailability() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/availability"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1868,6 +1848,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/suppress/declarationKinds")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class DeclarationKinds extends AbstractQuickFixTest {
             public void testAllFilesPresentInDeclarationKinds() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/declarationKinds"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1943,6 +1924,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/suppress/errorRecovery")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ErrorRecovery extends AbstractQuickFixTest {
             public void testAllFilesPresentInErrorRecovery() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/errorRecovery"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1965,6 +1947,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("idea/testData/quickfix/suppress/forStatement")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({ForStatement.Unavailable.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ForStatement extends AbstractQuickFixTest {
             public void testAllFilesPresentInForStatement() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/forStatement"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2206,6 +2189,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
             @TestMetadata("idea/testData/quickfix/suppress/forStatement/unavailable")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Unavailable extends AbstractQuickFixTest {
                 public void testAllFilesPresentInUnavailable() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/forStatement/unavailable"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2279,28 +2263,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("ForStatement");
-                suite.addTestSuite(ForStatement.class);
-                suite.addTestSuite(Unavailable.class);
-                return suite;
-            }
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Suppress");
-            suite.addTestSuite(Suppress.class);
-            suite.addTestSuite(AnnotationPosition.class);
-            suite.addTestSuite(Availability.class);
-            suite.addTestSuite(DeclarationKinds.class);
-            suite.addTestSuite(ErrorRecovery.class);
-            suite.addTest(ForStatement.innerSuite());
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/quickfix/typeAddition")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TypeAddition extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeAddition() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeAddition"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2382,6 +2351,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/typeImports")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TypeImports extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeImports() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeImports"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2422,6 +2392,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestMetadata("idea/testData/quickfix/typeMismatch")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({TypeMismatch.Casts.class, TypeMismatch.ComponentFunctionReturnTypeMismatch.class, TypeMismatch.FixOverloadedOperator.class, TypeMismatch.ParameterTypeMismatch.class, TypeMismatch.TypeMismatchOnReturnedExpression.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TypeMismatch extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2507,6 +2478,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/typeMismatch/casts")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Casts extends AbstractQuickFixTest {
             public void testAllFilesPresentInCasts() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/casts"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2570,6 +2542,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ComponentFunctionReturnTypeMismatch extends AbstractQuickFixTest {
             public void testAllFilesPresentInComponentFunctionReturnTypeMismatch() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2609,6 +2582,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/typeMismatch/fixOverloadedOperator")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class FixOverloadedOperator extends AbstractQuickFixTest {
             public void testAllFilesPresentInFixOverloadedOperator() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/fixOverloadedOperator"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2636,6 +2610,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/typeMismatch/parameterTypeMismatch")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ParameterTypeMismatch extends AbstractQuickFixTest {
             public void testAllFilesPresentInParameterTypeMismatch() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/parameterTypeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2687,6 +2662,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class TypeMismatchOnReturnedExpression extends AbstractQuickFixTest {
             public void testAllFilesPresentInTypeMismatchOnReturnedExpression() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2790,20 +2766,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("TypeMismatch");
-            suite.addTestSuite(TypeMismatch.class);
-            suite.addTestSuite(Casts.class);
-            suite.addTestSuite(ComponentFunctionReturnTypeMismatch.class);
-            suite.addTestSuite(FixOverloadedOperator.class);
-            suite.addTestSuite(ParameterTypeMismatch.class);
-            suite.addTestSuite(TypeMismatchOnReturnedExpression.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/quickfix/typeProjection")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TypeProjection extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeProjection() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeProjection"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2855,6 +2822,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/uselessImports")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class UselessImports extends AbstractQuickFixTest {
         public void testAllFilesPresentInUselessImports() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/uselessImports"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2877,6 +2845,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestMetadata("idea/testData/quickfix/variables")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Variables.ChangeMutability.class, Variables.ChangeToBackingField.class, Variables.ChangeToFunctionInvocation.class, Variables.ChangeToPropertyName.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Variables extends AbstractQuickFixTest {
         public void testAllFilesPresentInVariables() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2896,6 +2865,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/variables/changeMutability")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ChangeMutability extends AbstractQuickFixTest {
             public void testAllFilesPresentInChangeMutability() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2935,6 +2905,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/variables/changeToBackingField")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ChangeToBackingField extends AbstractQuickFixTest {
             public void testAllFilesPresentInChangeToBackingField() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToBackingField"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2956,6 +2927,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/variables/changeToFunctionInvocation")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ChangeToFunctionInvocation extends AbstractQuickFixTest {
             public void testAllFilesPresentInChangeToFunctionInvocation() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToFunctionInvocation"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -2971,6 +2943,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/variables/changeToPropertyName")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ChangeToPropertyName extends AbstractQuickFixTest {
             @TestMetadata("beforeAbstractProperty.kt")
             public void testAbstractProperty() throws Exception {
@@ -3008,19 +2981,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Variables");
-            suite.addTestSuite(Variables.class);
-            suite.addTestSuite(ChangeMutability.class);
-            suite.addTestSuite(ChangeToBackingField.class);
-            suite.addTestSuite(ChangeToFunctionInvocation.class);
-            suite.addTestSuite(ChangeToPropertyName.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/quickfix/when")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class When extends AbstractQuickFixTest {
         public void testAllFilesPresentInWhen() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/when"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -3052,31 +3017,4 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("QuickFixTestGenerated");
-        suite.addTestSuite(QuickFixTestGenerated.class);
-        suite.addTestSuite(Abstract.class);
-        suite.addTest(AddStarProjections.innerSuite());
-        suite.addTestSuite(AutoImports.class);
-        suite.addTestSuite(ChangeSignature.class);
-        suite.addTestSuite(CheckArguments.class);
-        suite.addTest(CreateFromUsage.innerSuite());
-        suite.addTestSuite(Expressions.class);
-        suite.addTestSuite(Migration.class);
-        suite.addTest(Modifiers.innerSuite());
-        suite.addTest(Nullables.innerSuite());
-        suite.addTest(Override.innerSuite());
-        suite.addTestSuite(PlatformClasses.class);
-        suite.addTestSuite(Supercalls.class);
-        suite.addTestSuite(SupertypeInitialization.class);
-        suite.addTest(Suppress.innerSuite());
-        suite.addTestSuite(TypeAddition.class);
-        suite.addTestSuite(TypeImports.class);
-        suite.addTest(TypeMismatch.innerSuite());
-        suite.addTestSuite(TypeProjection.class);
-        suite.addTestSuite(UselessImports.class);
-        suite.addTest(Variables.innerSuite());
-        suite.addTestSuite(When.class);
-        return suite;
-    }
 }

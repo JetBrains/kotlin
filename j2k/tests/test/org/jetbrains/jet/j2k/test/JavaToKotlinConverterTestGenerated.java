@@ -19,9 +19,11 @@ package org.jetbrains.jet.j2k.test;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("j2k/tests/testData/ast")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({JavaToKotlinConverterTestGenerated.Annotations.class, JavaToKotlinConverterTestGenerated.AnonymousBlock.class, JavaToKotlinConverterTestGenerated.ArrayAccessExpression.class, JavaToKotlinConverterTestGenerated.ArrayInitializerExpression.class, JavaToKotlinConverterTestGenerated.ArrayType.class, JavaToKotlinConverterTestGenerated.AssertStatement.class, JavaToKotlinConverterTestGenerated.AssignmentExpression.class, JavaToKotlinConverterTestGenerated.BinaryExpression.class, JavaToKotlinConverterTestGenerated.Blocks.class, JavaToKotlinConverterTestGenerated.BoxedType.class, JavaToKotlinConverterTestGenerated.BreakStatement.class, JavaToKotlinConverterTestGenerated.CallChainExpression.class, JavaToKotlinConverterTestGenerated.Class.class, JavaToKotlinConverterTestGenerated.ClassExpression.class, JavaToKotlinConverterTestGenerated.Comments.class, JavaToKotlinConverterTestGenerated.ConditionalExpression.class, JavaToKotlinConverterTestGenerated.Constructors.class, JavaToKotlinConverterTestGenerated.ContinueStatement.class, JavaToKotlinConverterTestGenerated.DeclarationStatement.class, JavaToKotlinConverterTestGenerated.DoWhileStatement.class, JavaToKotlinConverterTestGenerated.Enum.class, JavaToKotlinConverterTestGenerated.Equals.class, JavaToKotlinConverterTestGenerated.Field.class, JavaToKotlinConverterTestGenerated.For.class, JavaToKotlinConverterTestGenerated.ForeachStatement.class, JavaToKotlinConverterTestGenerated.Formatting.class, JavaToKotlinConverterTestGenerated.Function.class, JavaToKotlinConverterTestGenerated.Identifier.class, JavaToKotlinConverterTestGenerated.IfStatement.class, JavaToKotlinConverterTestGenerated.ImportStatement.class, JavaToKotlinConverterTestGenerated.InProjectionType.class, JavaToKotlinConverterTestGenerated.Inheritance.class, JavaToKotlinConverterTestGenerated.IsOperator.class, JavaToKotlinConverterTestGenerated.Issues.class, JavaToKotlinConverterTestGenerated.KotlinApiAccess.class, JavaToKotlinConverterTestGenerated.LabelStatement.class, JavaToKotlinConverterTestGenerated.List.class, JavaToKotlinConverterTestGenerated.LiteralExpression.class, JavaToKotlinConverterTestGenerated.LocalVariable.class, JavaToKotlinConverterTestGenerated.MethodCallExpression.class, JavaToKotlinConverterTestGenerated.Misc.class, JavaToKotlinConverterTestGenerated.NewClassExpression.class, JavaToKotlinConverterTestGenerated.Nullability.class, JavaToKotlinConverterTestGenerated.ObjectLiteral.class, JavaToKotlinConverterTestGenerated.OutProjectionType.class, JavaToKotlinConverterTestGenerated.PackageStatement.class, JavaToKotlinConverterTestGenerated.ParenthesizedExpression.class, JavaToKotlinConverterTestGenerated.PolyadicExpression.class, JavaToKotlinConverterTestGenerated.PostfixOperator.class, JavaToKotlinConverterTestGenerated.PrefixOperator.class, JavaToKotlinConverterTestGenerated.RawGenerics.class, JavaToKotlinConverterTestGenerated.ReturnStatement.class, JavaToKotlinConverterTestGenerated.Settings.class, JavaToKotlinConverterTestGenerated.StarProjectionType.class, JavaToKotlinConverterTestGenerated.StaticMembers.class, JavaToKotlinConverterTestGenerated.SuperExpression.class, JavaToKotlinConverterTestGenerated.Switch.class, JavaToKotlinConverterTestGenerated.SynchronizedStatement.class, JavaToKotlinConverterTestGenerated.ThisExpression.class, JavaToKotlinConverterTestGenerated.ThrowStatement.class, JavaToKotlinConverterTestGenerated.ToKotlinClasses.class, JavaToKotlinConverterTestGenerated.Trait.class, JavaToKotlinConverterTestGenerated.TryStatement.class, JavaToKotlinConverterTestGenerated.TryWithResource.class, JavaToKotlinConverterTestGenerated.TypeCastExpression.class, JavaToKotlinConverterTestGenerated.TypeParameters.class, JavaToKotlinConverterTestGenerated.VarArg.class, JavaToKotlinConverterTestGenerated.WhileStatement.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConverterTest {
     public void testAllFilesPresentInAst() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast"), Pattern.compile("^(.+)\\.java$"), true);
@@ -38,6 +41,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/annotations")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/annotations"), Pattern.compile("^(.+)\\.java$"), true);
@@ -89,6 +93,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/anonymousBlock")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class AnonymousBlock extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInAnonymousBlock() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/anonymousBlock"), Pattern.compile("^(.+)\\.java$"), true);
@@ -110,6 +115,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/arrayAccessExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ArrayAccessExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInArrayAccessExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/arrayAccessExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -137,6 +143,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/arrayInitializerExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ArrayInitializerExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInArrayInitializerExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/arrayInitializerExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -218,6 +225,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/arrayType")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ArrayType extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInArrayType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/arrayType"), Pattern.compile("^(.+)\\.java$"), true);
@@ -287,6 +295,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/assertStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class AssertStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInAssertStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/assertStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -320,6 +329,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/assignmentExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class AssignmentExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInAssignmentExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/assignmentExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -419,6 +429,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/binaryExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class BinaryExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInBinaryExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/binaryExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -536,6 +547,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/blocks")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Blocks extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInBlocks() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/blocks"), Pattern.compile("^(.+)\\.java$"), true);
@@ -551,6 +563,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/boxedType")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class BoxedType extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInBoxedType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/boxedType"), Pattern.compile("^(.+)\\.java$"), true);
@@ -626,6 +639,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/breakStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class BreakStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInBreakStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/breakStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -647,6 +661,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/callChainExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CallChainExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInCallChainExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/callChainExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -692,6 +707,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/class")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Class extends AbstractJavaToKotlinConverterTest {
         @TestMetadata("abstractClass.java")
         public void testAbstractClass() throws Exception {
@@ -869,6 +885,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/classExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ClassExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInClassExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/classExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -902,6 +919,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/comments")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Comments extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInComments() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/comments"), Pattern.compile("^(.+)\\.java$"), true);
@@ -941,6 +959,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/conditionalExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConditionalExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInConditionalExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/conditionalExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -962,6 +981,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/constructors")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Constructors extends AbstractJavaToKotlinConverterTest {
         @TestMetadata("allCallsPrimary.java")
         public void testAllCallsPrimary() throws Exception {
@@ -1193,6 +1213,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/continueStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ContinueStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInContinueStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/continueStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1214,6 +1235,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/declarationStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DeclarationStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInDeclarationStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/declarationStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1259,6 +1281,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/doWhileStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DoWhileStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInDoWhileStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/doWhileStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1292,6 +1315,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/enum")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Enum extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInEnum() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/enum"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1391,6 +1415,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/equals")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Equals extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInEquals() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/equals"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1430,6 +1455,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/field")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Field extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInField() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/field"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1511,6 +1537,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/for")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class For extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInFor() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/for"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1628,6 +1655,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/foreachStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ForeachStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInForeachStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/foreachStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1667,6 +1695,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/formatting")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Formatting extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInFormatting() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/formatting"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1700,6 +1729,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/function")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Function extends AbstractJavaToKotlinConverterTest {
         @TestMetadata("abstractMethod.java")
         public void testAbstractMethod() throws Exception {
@@ -1883,6 +1913,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/identifier")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Identifier extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInIdentifier() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/identifier"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1910,6 +1941,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/ifStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class IfStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInIfStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/ifStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1955,6 +1987,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/importStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ImportStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInImportStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/importStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1994,6 +2027,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/inProjectionType")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class InProjectionType extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInInProjectionType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/inProjectionType"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2009,6 +2043,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/inheritance")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Inheritance extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInInheritance() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/inheritance"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2042,6 +2077,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/isOperator")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class IsOperator extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInIsOperator() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/isOperator"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2063,6 +2099,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/issues")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Issues extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInIssues() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/issues"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2294,6 +2331,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/kotlinApiAccess")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class KotlinApiAccess extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInKotlinApiAccess() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/kotlinApiAccess"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2381,6 +2419,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/labelStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class LabelStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInLabelStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/labelStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2396,6 +2435,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/list")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class List extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInList() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/list"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2417,6 +2457,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/literalExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class LiteralExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInLiteralExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/literalExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2462,6 +2503,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/localVariable")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class LocalVariable extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInLocalVariable() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/localVariable"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2525,6 +2567,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/methodCallExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class MethodCallExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInMethodCallExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/methodCallExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2582,6 +2625,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/misc")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Misc extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInMisc() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/misc"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2627,6 +2671,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/newClassExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class NewClassExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInNewClassExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/newClassExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2714,6 +2759,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/nullability")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Nullability extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInNullability() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/nullability"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2903,6 +2949,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/objectLiteral")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ObjectLiteral extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInObjectLiteral() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/objectLiteral"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2918,6 +2965,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/outProjectionType")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class OutProjectionType extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInOutProjectionType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/outProjectionType"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2933,6 +2981,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/packageStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class PackageStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInPackageStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/packageStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2948,6 +2997,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/parenthesizedExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ParenthesizedExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInParenthesizedExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/parenthesizedExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -2969,6 +3019,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/polyadicExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class PolyadicExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInPolyadicExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/polyadicExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3014,6 +3065,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/postfixOperator")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class PostfixOperator extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInPostfixOperator() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/postfixOperator"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3035,6 +3087,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/prefixOperator")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class PrefixOperator extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInPrefixOperator() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/prefixOperator"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3080,6 +3133,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/rawGenerics")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class RawGenerics extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInRawGenerics() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/rawGenerics"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3113,6 +3167,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/returnStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ReturnStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInReturnStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/returnStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3152,6 +3207,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/settings")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Settings extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInSettings() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/settings"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3185,6 +3241,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/starProjectionType")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class StarProjectionType extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInStarProjectionType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/starProjectionType"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3200,6 +3257,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/staticMembers")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class StaticMembers extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInStaticMembers() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/staticMembers"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3239,6 +3297,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/superExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SuperExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInSuperExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/superExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3266,6 +3325,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/switch")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Switch extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInSwitch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/switch"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3341,6 +3401,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/synchronizedStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SynchronizedStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInSynchronizedStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/synchronizedStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3356,6 +3417,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/thisExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ThisExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInThisExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/thisExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3377,6 +3439,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/throwStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ThrowStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInThrowStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/throwStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3392,6 +3455,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/toKotlinClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ToKotlinClasses extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInToKotlinClasses() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/toKotlinClasses"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3425,6 +3489,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/trait")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Trait extends AbstractJavaToKotlinConverterTest {
         @TestMetadata("abstactInterface.java")
         public void testAbstactInterface() throws Exception {
@@ -3500,6 +3565,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/tryStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TryStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInTryStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/tryStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3539,6 +3605,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/tryWithResource")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TryWithResource extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInTryWithResource() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/tryWithResource"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3608,6 +3675,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/typeCastExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TypeCastExpression extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInTypeCastExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/typeCastExpression"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3665,6 +3733,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TypeParameters extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInTypeParameters() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/typeParameters"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3764,6 +3833,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/varArg")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class VarArg extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInVarArg() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/varArg"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3785,6 +3855,7 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     
     @TestMetadata("j2k/tests/testData/ast/whileStatement")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class WhileStatement extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInWhileStatement() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/whileStatement"), Pattern.compile("^(.+)\\.java$"), true);
@@ -3816,77 +3887,4 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("JavaToKotlinConverterTestGenerated");
-        suite.addTestSuite(JavaToKotlinConverterTestGenerated.class);
-        suite.addTestSuite(Annotations.class);
-        suite.addTestSuite(AnonymousBlock.class);
-        suite.addTestSuite(ArrayAccessExpression.class);
-        suite.addTestSuite(ArrayInitializerExpression.class);
-        suite.addTestSuite(ArrayType.class);
-        suite.addTestSuite(AssertStatement.class);
-        suite.addTestSuite(AssignmentExpression.class);
-        suite.addTestSuite(BinaryExpression.class);
-        suite.addTestSuite(Blocks.class);
-        suite.addTestSuite(BoxedType.class);
-        suite.addTestSuite(BreakStatement.class);
-        suite.addTestSuite(CallChainExpression.class);
-        suite.addTestSuite(Class.class);
-        suite.addTestSuite(ClassExpression.class);
-        suite.addTestSuite(Comments.class);
-        suite.addTestSuite(ConditionalExpression.class);
-        suite.addTestSuite(Constructors.class);
-        suite.addTestSuite(ContinueStatement.class);
-        suite.addTestSuite(DeclarationStatement.class);
-        suite.addTestSuite(DoWhileStatement.class);
-        suite.addTestSuite(Enum.class);
-        suite.addTestSuite(Equals.class);
-        suite.addTestSuite(Field.class);
-        suite.addTestSuite(For.class);
-        suite.addTestSuite(ForeachStatement.class);
-        suite.addTestSuite(Formatting.class);
-        suite.addTestSuite(Function.class);
-        suite.addTestSuite(Identifier.class);
-        suite.addTestSuite(IfStatement.class);
-        suite.addTestSuite(ImportStatement.class);
-        suite.addTestSuite(InProjectionType.class);
-        suite.addTestSuite(Inheritance.class);
-        suite.addTestSuite(IsOperator.class);
-        suite.addTestSuite(Issues.class);
-        suite.addTestSuite(KotlinApiAccess.class);
-        suite.addTestSuite(LabelStatement.class);
-        suite.addTestSuite(List.class);
-        suite.addTestSuite(LiteralExpression.class);
-        suite.addTestSuite(LocalVariable.class);
-        suite.addTestSuite(MethodCallExpression.class);
-        suite.addTestSuite(Misc.class);
-        suite.addTestSuite(NewClassExpression.class);
-        suite.addTestSuite(Nullability.class);
-        suite.addTestSuite(ObjectLiteral.class);
-        suite.addTestSuite(OutProjectionType.class);
-        suite.addTestSuite(PackageStatement.class);
-        suite.addTestSuite(ParenthesizedExpression.class);
-        suite.addTestSuite(PolyadicExpression.class);
-        suite.addTestSuite(PostfixOperator.class);
-        suite.addTestSuite(PrefixOperator.class);
-        suite.addTestSuite(RawGenerics.class);
-        suite.addTestSuite(ReturnStatement.class);
-        suite.addTestSuite(Settings.class);
-        suite.addTestSuite(StarProjectionType.class);
-        suite.addTestSuite(StaticMembers.class);
-        suite.addTestSuite(SuperExpression.class);
-        suite.addTestSuite(Switch.class);
-        suite.addTestSuite(SynchronizedStatement.class);
-        suite.addTestSuite(ThisExpression.class);
-        suite.addTestSuite(ThrowStatement.class);
-        suite.addTestSuite(ToKotlinClasses.class);
-        suite.addTestSuite(Trait.class);
-        suite.addTestSuite(TryStatement.class);
-        suite.addTestSuite(TryWithResource.class);
-        suite.addTestSuite(TypeCastExpression.class);
-        suite.addTestSuite(TypeParameters.class);
-        suite.addTestSuite(VarArg.class);
-        suite.addTestSuite(WhileStatement.class);
-        return suite;
-    }
 }

@@ -19,9 +19,11 @@ package org.jetbrains.jet.checkers;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({JetDiagnosticsTestWithStdLibGenerated.Annotations.class, JetDiagnosticsTestWithStdLibGenerated.CallableReference.class, JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class, JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class, JetDiagnosticsTestWithStdLibGenerated.KotlinSignature.class, JetDiagnosticsTestWithStdLibGenerated.NonLocalReturns.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnosticsTestWithStdLib {
     public void testAllFilesPresentInTestsWithStdLib() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -39,6 +42,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Annotations.AnnotationApplicability.class, Annotations.AnnotationParameterMustBeConstant.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -52,6 +56,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class AnnotationApplicability extends AbstractJetDiagnosticsTestWithStdLib {
             public void testAllFilesPresentInAnnotationApplicability() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -73,6 +78,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class AnnotationParameterMustBeConstant extends AbstractJetDiagnosticsTestWithStdLib {
             public void testAllFilesPresentInAnnotationParameterMustBeConstant() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -104,18 +110,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Annotations");
-            suite.addTestSuite(Annotations.class);
-            suite.addTestSuite(AnnotationApplicability.class);
-            suite.addTestSuite(AnnotationParameterMustBeConstant.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({CallableReference.Function.class, CallableReference.Property.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInCallableReference() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -129,6 +129,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Function extends AbstractJetDiagnosticsTestWithStdLib {
             @TestMetadata("abstractClassConstructors.kt")
             public void testAbstractClassConstructors() throws Exception {
@@ -432,6 +433,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Property extends AbstractJetDiagnosticsTestWithStdLib {
             @TestMetadata("abstractPropertyViaSubclasses.kt")
             public void testAbstractPropertyViaSubclasses() throws Exception {
@@ -517,17 +519,11 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("CallableReference");
-            suite.addTestSuite(CallableReference.class);
-            suite.addTestSuite(Function.class);
-            suite.addTestSuite(Property.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DuplicateJvmSignature extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -555,6 +551,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/functionLiterals")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class FunctionLiterals extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInFunctionLiterals() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -570,6 +567,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class KotlinSignature extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInKotlinSignature() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -591,6 +589,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class NonLocalReturns extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInNonLocalReturns() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -604,15 +603,4 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("JetDiagnosticsTestWithStdLibGenerated");
-        suite.addTestSuite(JetDiagnosticsTestWithStdLibGenerated.class);
-        suite.addTest(Annotations.innerSuite());
-        suite.addTest(CallableReference.innerSuite());
-        suite.addTestSuite(DuplicateJvmSignature.class);
-        suite.addTestSuite(FunctionLiterals.class);
-        suite.addTestSuite(KotlinSignature.class);
-        suite.addTestSuite(NonLocalReturns.class);
-        return suite;
-    }
 }

@@ -19,9 +19,11 @@ package org.jetbrains.jet.cfg;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/cfg")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({ControlFlowTestGenerated.Arrays.class, ControlFlowTestGenerated.Basic.class, ControlFlowTestGenerated.Bugs.class, ControlFlowTestGenerated.ControlStructures.class, ControlFlowTestGenerated.Conventions.class, ControlFlowTestGenerated.DeadCode.class, ControlFlowTestGenerated.Declarations.class, ControlFlowTestGenerated.Expressions.class, ControlFlowTestGenerated.Functions.class, ControlFlowTestGenerated.TailCalls.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     public void testAllFilesPresentInCfg() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -38,6 +41,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     
     @TestMetadata("compiler/testData/cfg/arrays")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Arrays extends AbstractControlFlowTest {
         public void testAllFilesPresentInArrays() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/arrays"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -83,6 +87,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     
     @TestMetadata("compiler/testData/cfg/basic")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Basic extends AbstractControlFlowTest {
         public void testAllFilesPresentInBasic() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/basic"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -110,6 +115,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     
     @TestMetadata("compiler/testData/cfg/bugs")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Bugs extends AbstractControlFlowTest {
         public void testAllFilesPresentInBugs() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/bugs"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -125,6 +131,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     
     @TestMetadata("compiler/testData/cfg/controlStructures")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ControlStructures extends AbstractControlFlowTest {
         public void testAllFilesPresentInControlStructures() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -194,6 +201,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     
     @TestMetadata("compiler/testData/cfg/conventions")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Conventions extends AbstractControlFlowTest {
         public void testAllFilesPresentInConventions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/conventions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -233,6 +241,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     
     @TestMetadata("compiler/testData/cfg/deadCode")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DeadCode extends AbstractControlFlowTest {
         public void testAllFilesPresentInDeadCode() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/deadCode"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -261,6 +270,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     @TestMetadata("compiler/testData/cfg/declarations")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Declarations.ClassesAndObjects.class, Declarations.FunctionLiterals.class, Declarations.Functions.class, Declarations.Local.class, Declarations.MultiDeclaration.class, Declarations.Properties.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Declarations extends AbstractControlFlowTest {
         public void testAllFilesPresentInDeclarations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -268,6 +278,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         
         @TestMetadata("compiler/testData/cfg/declarations/classesAndObjects")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ClassesAndObjects extends AbstractControlFlowTest {
             public void testAllFilesPresentInClassesAndObjects() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/classesAndObjects"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -295,6 +306,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         
         @TestMetadata("compiler/testData/cfg/declarations/functionLiterals")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class FunctionLiterals extends AbstractControlFlowTest {
             public void testAllFilesPresentInFunctionLiterals() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -310,6 +322,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         
         @TestMetadata("compiler/testData/cfg/declarations/functions")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Functions extends AbstractControlFlowTest {
             public void testAllFilesPresentInFunctions() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/functions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -331,6 +344,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         
         @TestMetadata("compiler/testData/cfg/declarations/local")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Local extends AbstractControlFlowTest {
             public void testAllFilesPresentInLocal() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/local"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -364,6 +378,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         
         @TestMetadata("compiler/testData/cfg/declarations/multiDeclaration")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class MultiDeclaration extends AbstractControlFlowTest {
             public void testAllFilesPresentInMultiDeclaration() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/multiDeclaration"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -385,6 +400,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         
         @TestMetadata("compiler/testData/cfg/declarations/properties")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Properties extends AbstractControlFlowTest {
             public void testAllFilesPresentInProperties() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/properties"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -416,21 +432,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Declarations");
-            suite.addTestSuite(Declarations.class);
-            suite.addTestSuite(ClassesAndObjects.class);
-            suite.addTestSuite(FunctionLiterals.class);
-            suite.addTestSuite(Functions.class);
-            suite.addTestSuite(Local.class);
-            suite.addTestSuite(MultiDeclaration.class);
-            suite.addTestSuite(Properties.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/cfg/expressions")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Expressions extends AbstractControlFlowTest {
         public void testAllFilesPresentInExpressions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -560,6 +566,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     
     @TestMetadata("compiler/testData/cfg/functions")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Functions extends AbstractControlFlowTest {
         public void testAllFilesPresentInFunctions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/functions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -581,6 +588,7 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     
     @TestMetadata("compiler/testData/cfg/tailCalls")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TailCalls extends AbstractControlFlowTest {
         public void testAllFilesPresentInTailCalls() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/tailCalls"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -618,19 +626,4 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("ControlFlowTestGenerated");
-        suite.addTestSuite(ControlFlowTestGenerated.class);
-        suite.addTestSuite(Arrays.class);
-        suite.addTestSuite(Basic.class);
-        suite.addTestSuite(Bugs.class);
-        suite.addTestSuite(ControlStructures.class);
-        suite.addTestSuite(Conventions.class);
-        suite.addTestSuite(DeadCode.class);
-        suite.addTest(Declarations.innerSuite());
-        suite.addTestSuite(Expressions.class);
-        suite.addTestSuite(Functions.class);
-        suite.addTestSuite(TailCalls.class);
-        return suite;
-    }
 }

@@ -19,9 +19,11 @@ package org.jetbrains.jet.codegen.generated;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxInline")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({BlackBoxInlineCodegenTestGenerated.AnonymousObject.class, BlackBoxInlineCodegenTestGenerated.Builders.class, BlackBoxInlineCodegenTestGenerated.Capture.class, BlackBoxInlineCodegenTestGenerated.Complex.class, BlackBoxInlineCodegenTestGenerated.DefaultValues.class, BlackBoxInlineCodegenTestGenerated.LambdaClassClash.class, BlackBoxInlineCodegenTestGenerated.LambdaTransformation.class, BlackBoxInlineCodegenTestGenerated.LocalFunInLambda.class, BlackBoxInlineCodegenTestGenerated.NoInline.class, BlackBoxInlineCodegenTestGenerated.NonLocalReturns.class, BlackBoxInlineCodegenTestGenerated.Simple.class, BlackBoxInlineCodegenTestGenerated.Special.class, BlackBoxInlineCodegenTestGenerated.Trait.class, BlackBoxInlineCodegenTestGenerated.TryCatchFinally.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxInline() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -38,6 +41,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class AnonymousObject extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInAnonymousObject() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -71,6 +75,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/builders")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Builders extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInBuilders() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -92,6 +97,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/capture")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Capture extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInCapture() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -137,6 +143,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/complex")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Complex extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInComplex() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -176,6 +183,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/defaultValues")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DefaultValues extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInDefaultValues() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -215,6 +223,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/lambdaClassClash")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class LambdaClassClash extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInLambdaClassClash() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -236,6 +245,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/lambdaTransformation")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class LambdaTransformation extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInLambdaTransformation() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -275,6 +285,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/localFunInLambda")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class LocalFunInLambda extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInLocalFunInLambda() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -290,6 +301,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/noInline")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class NoInline extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInNoInline() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -324,6 +336,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({NonLocalReturns.Deparenthesize.class, NonLocalReturns.TryFinally.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class NonLocalReturns extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInNonLocalReturns() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -373,6 +386,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
         
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Deparenthesize extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInDeparenthesize() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -394,6 +408,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
         
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class TryFinally extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInTryFinally() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -407,17 +422,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("NonLocalReturns");
-            suite.addTestSuite(NonLocalReturns.class);
-            suite.addTestSuite(Deparenthesize.class);
-            suite.addTestSuite(TryFinally.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/codegen/boxInline/simple")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Simple extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInSimple() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -505,6 +514,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/special")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Special extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInSpecial() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -550,6 +560,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/trait")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Trait extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInTrait() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -565,6 +576,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("compiler/testData/codegen/boxInline/tryCatchFinally")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class TryCatchFinally extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInTryCatchFinally() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.1.kt$"), true);
@@ -590,23 +602,4 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("BlackBoxInlineCodegenTestGenerated");
-        suite.addTestSuite(BlackBoxInlineCodegenTestGenerated.class);
-        suite.addTestSuite(AnonymousObject.class);
-        suite.addTestSuite(Builders.class);
-        suite.addTestSuite(Capture.class);
-        suite.addTestSuite(Complex.class);
-        suite.addTestSuite(DefaultValues.class);
-        suite.addTestSuite(LambdaClassClash.class);
-        suite.addTestSuite(LambdaTransformation.class);
-        suite.addTestSuite(LocalFunInLambda.class);
-        suite.addTestSuite(NoInline.class);
-        suite.addTest(NonLocalReturns.innerSuite());
-        suite.addTestSuite(Simple.class);
-        suite.addTestSuite(Special.class);
-        suite.addTestSuite(Trait.class);
-        suite.addTestSuite(TryCatchFinally.class);
-        return suite;
-    }
 }

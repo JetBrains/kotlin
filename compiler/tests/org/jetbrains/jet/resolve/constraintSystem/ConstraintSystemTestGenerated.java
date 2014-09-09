@@ -19,9 +19,11 @@ package org.jetbrains.jet.resolve.constraintSystem;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/constraintSystem")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({ConstraintSystemTestGenerated.CheckStatus.class, ConstraintSystemTestGenerated.ComputeValues.class, ConstraintSystemTestGenerated.IntegerValueTypes.class, ConstraintSystemTestGenerated.SeveralVariables.class, ConstraintSystemTestGenerated.Variance.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest {
     public void testAllFilesPresentInConstraintSystem() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem"), Pattern.compile("^(.+)\\.bounds$"), true);
@@ -38,6 +41,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     
     @TestMetadata("compiler/testData/constraintSystem/checkStatus")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CheckStatus extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInCheckStatus() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/checkStatus"), Pattern.compile("^(.+)\\.bounds$"), true);
@@ -77,6 +81,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     
     @TestMetadata("compiler/testData/constraintSystem/computeValues")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ComputeValues extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInComputeValues() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/computeValues"), Pattern.compile("^(.+)\\.bounds$"), true);
@@ -110,6 +115,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     
     @TestMetadata("compiler/testData/constraintSystem/integerValueTypes")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class IntegerValueTypes extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInIntegerValueTypes() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/integerValueTypes"), Pattern.compile("^(.+)\\.bounds$"), true);
@@ -167,6 +173,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     
     @TestMetadata("compiler/testData/constraintSystem/severalVariables")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SeveralVariables extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInSeveralVariables() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables"), Pattern.compile("^(.+)\\.bounds$"), true);
@@ -182,6 +189,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     
     @TestMetadata("compiler/testData/constraintSystem/variance")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Variance extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInVariance() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/variance"), Pattern.compile("^(.+)\\.bounds$"), true);
@@ -207,14 +215,4 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("ConstraintSystemTestGenerated");
-        suite.addTestSuite(ConstraintSystemTestGenerated.class);
-        suite.addTestSuite(CheckStatus.class);
-        suite.addTestSuite(ComputeValues.class);
-        suite.addTestSuite(IntegerValueTypes.class);
-        suite.addTestSuite(SeveralVariables.class);
-        suite.addTestSuite(Variance.class);
-        return suite;
-    }
 }

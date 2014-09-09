@@ -19,9 +19,11 @@ package org.jetbrains.jet.codegen.flags;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/writeFlags")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({WriteFlagsTestGenerated.Class.class, WriteFlagsTestGenerated.Function.class, WriteFlagsTestGenerated.InnerClass.class, WriteFlagsTestGenerated.Property.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     public void testAllFilesPresentInWriteFlags() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -39,6 +42,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestMetadata("compiler/testData/writeFlags/class")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Class.AccessFlags.class, Class.DeprecatedFlag.class, Class.Visibility.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Class extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInClass() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -46,6 +50,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         
         @TestMetadata("compiler/testData/writeFlags/class/accessFlags")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class AccessFlags extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInAccessFlags() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -85,6 +90,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         
         @TestMetadata("compiler/testData/writeFlags/class/deprecatedFlag")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -125,6 +131,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestMetadata("compiler/testData/writeFlags/class/visibility")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({Visibility.Internal.class, Visibility.Private.class, Visibility.Public.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -132,6 +139,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             
             @TestMetadata("compiler/testData/writeFlags/class/visibility/internal")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Internal extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInInternal() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/internal"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -189,6 +197,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             
             @TestMetadata("compiler/testData/writeFlags/class/visibility/private")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Private extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInPrivate() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/private"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -246,6 +255,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             
             @TestMetadata("compiler/testData/writeFlags/class/visibility/public")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Public extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInPublic() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/public"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -301,29 +311,14 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("Visibility");
-                suite.addTestSuite(Visibility.class);
-                suite.addTestSuite(Internal.class);
-                suite.addTestSuite(Private.class);
-                suite.addTestSuite(Public.class);
-                return suite;
-            }
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Class");
-            suite.addTestSuite(Class.class);
-            suite.addTestSuite(AccessFlags.class);
-            suite.addTestSuite(DeprecatedFlag.class);
-            suite.addTest(Visibility.innerSuite());
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/writeFlags/function")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Function.ClassObjectPrivate.class, Function.Constructors.class, Function.DeprecatedFlag.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Function extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInFunction() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -331,6 +326,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         
         @TestMetadata("compiler/testData/writeFlags/function/classObjectPrivate")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ClassObjectPrivate extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInClassObjectPrivate() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/classObjectPrivate"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -358,6 +354,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         
         @TestMetadata("compiler/testData/writeFlags/function/constructors")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Constructors extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInConstructors() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/constructors"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -391,6 +388,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         
         @TestMetadata("compiler/testData/writeFlags/function/deprecatedFlag")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -470,19 +468,12 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Function");
-            suite.addTestSuite(Function.class);
-            suite.addTestSuite(ClassObjectPrivate.class);
-            suite.addTestSuite(Constructors.class);
-            suite.addTestSuite(DeprecatedFlag.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/writeFlags/innerClass")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({InnerClass.Visibility.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class InnerClass extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInInnerClass() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -490,6 +481,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         
         @TestMetadata("compiler/testData/writeFlags/innerClass/visibility")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -533,17 +525,12 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("InnerClass");
-            suite.addTestSuite(InnerClass.class);
-            suite.addTestSuite(Visibility.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/writeFlags/property")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Property.ClassObject.class, Property.DeprecatedFlag.class, Property.Visibility.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Property extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInProperty() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -552,6 +539,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestMetadata("compiler/testData/writeFlags/property/classObject")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({ClassObject.Class.class, ClassObject.Rename.class, ClassObject.Trait.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ClassObject extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInClassObject() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -559,6 +547,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             
             @TestMetadata("compiler/testData/writeFlags/property/classObject/class")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Class extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInClass() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/class"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -670,6 +659,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             
             @TestMetadata("compiler/testData/writeFlags/property/classObject/rename")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Rename extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInRename() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/rename"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -703,6 +693,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             
             @TestMetadata("compiler/testData/writeFlags/property/classObject/trait")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Trait extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInTrait() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/trait"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -812,18 +803,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("ClassObject");
-                suite.addTestSuite(ClassObject.class);
-                suite.addTestSuite(Class.class);
-                suite.addTestSuite(Rename.class);
-                suite.addTestSuite(Trait.class);
-                return suite;
-            }
         }
         
         @TestMetadata("compiler/testData/writeFlags/property/deprecatedFlag")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -845,6 +829,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         
         @TestMetadata("compiler/testData/writeFlags/property/visibility")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -870,23 +855,6 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Property");
-            suite.addTestSuite(Property.class);
-            suite.addTest(ClassObject.innerSuite());
-            suite.addTestSuite(DeprecatedFlag.class);
-            suite.addTestSuite(Visibility.class);
-            return suite;
-        }
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("WriteFlagsTestGenerated");
-        suite.addTestSuite(WriteFlagsTestGenerated.class);
-        suite.addTest(Class.innerSuite());
-        suite.addTest(Function.innerSuite());
-        suite.addTest(InnerClass.innerSuite());
-        suite.addTest(Property.innerSuite());
-        return suite;
-    }
 }

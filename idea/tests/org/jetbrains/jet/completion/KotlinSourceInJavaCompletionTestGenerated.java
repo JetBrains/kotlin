@@ -19,9 +19,11 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/completion/injava")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class KotlinSourceInJavaCompletionTestGenerated extends AbstractKotlinSourceInJavaCompletionTest {
     public void testAllFilesPresentInInjava() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/injava"), Pattern.compile("^(.+)\\.java$"), true);
@@ -102,9 +105,4 @@ public class KotlinSourceInJavaCompletionTestGenerated extends AbstractKotlinSou
         doTest(fileName);
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("KotlinSourceInJavaCompletionTestGenerated");
-        suite.addTestSuite(KotlinSourceInJavaCompletionTestGenerated.class);
-        return suite;
-    }
 }

@@ -19,9 +19,11 @@ package org.jetbrains.jet.cfg;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/cfg-variables")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({DataFlowTestGenerated.Basic.class, DataFlowTestGenerated.Bugs.class, DataFlowTestGenerated.LexicalScopes.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class DataFlowTestGenerated extends AbstractDataFlowTest {
     public void testAllFilesPresentInCfg_variables() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -38,6 +41,7 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
     
     @TestMetadata("compiler/testData/cfg-variables/basic")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Basic extends AbstractDataFlowTest {
         public void testAllFilesPresentInBasic() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/basic"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -77,6 +81,7 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
     
     @TestMetadata("compiler/testData/cfg-variables/bugs")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Bugs extends AbstractDataFlowTest {
         public void testAllFilesPresentInBugs() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/bugs"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -104,6 +109,7 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
     
     @TestMetadata("compiler/testData/cfg-variables/lexicalScopes")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class LexicalScopes extends AbstractDataFlowTest {
         public void testAllFilesPresentInLexicalScopes() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/lexicalScopes"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -183,12 +189,4 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("DataFlowTestGenerated");
-        suite.addTestSuite(DataFlowTestGenerated.class);
-        suite.addTestSuite(Basic.class);
-        suite.addTestSuite(Bugs.class);
-        suite.addTestSuite(LexicalScopes.class);
-        return suite;
-    }
 }

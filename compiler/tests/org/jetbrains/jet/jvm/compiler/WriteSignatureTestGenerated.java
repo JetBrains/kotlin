@@ -19,9 +19,11 @@ package org.jetbrains.jet.jvm.compiler;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/writeSignature")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({WriteSignatureTestGenerated.Constructor.class, WriteSignatureTestGenerated.DeclarationSiteVariance.class, WriteSignatureTestGenerated.Nothing.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     public void testAllFilesPresentInWriteSignature() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -122,6 +125,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     
     @TestMetadata("compiler/testData/writeSignature/constructor")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractWriteSignatureTest {
         public void testAllFilesPresentInConstructor() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -155,6 +159,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     
     @TestMetadata("compiler/testData/writeSignature/declarationSiteVariance")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DeclarationSiteVariance extends AbstractWriteSignatureTest {
         public void testAllFilesPresentInDeclarationSiteVariance() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -296,6 +301,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     
     @TestMetadata("compiler/testData/writeSignature/nothing")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Nothing extends AbstractWriteSignatureTest {
         public void testAllFilesPresentInNothing() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/nothing"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -315,12 +321,4 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("WriteSignatureTestGenerated");
-        suite.addTestSuite(WriteSignatureTestGenerated.class);
-        suite.addTestSuite(Constructor.class);
-        suite.addTestSuite(DeclarationSiteVariance.class);
-        suite.addTestSuite(Nothing.class);
-        return suite;
-    }
 }

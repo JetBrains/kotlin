@@ -19,9 +19,11 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/highlighter")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({HighlightingTestGenerated.Deprecated.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class HighlightingTestGenerated extends AbstractHighlightingTest {
     public void testAllFilesPresentInHighlighter() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -80,6 +83,7 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     
     @TestMetadata("idea/testData/highlighter/deprecated")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Deprecated extends AbstractHighlightingTest {
         public void testAllFilesPresentInDeprecated() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -171,10 +175,4 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("HighlightingTestGenerated");
-        suite.addTestSuite(HighlightingTestGenerated.class);
-        suite.addTestSuite(Deprecated.class);
-        return suite;
-    }
 }

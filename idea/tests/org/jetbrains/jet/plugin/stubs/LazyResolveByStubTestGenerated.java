@@ -19,9 +19,11 @@ package org.jetbrains.jet.plugin.stubs;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/loadJava/compiledKotlin")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({LazyResolveByStubTestGenerated.Annotations.class, LazyResolveByStubTestGenerated.Class.class, LazyResolveByStubTestGenerated.ClassFun.class, LazyResolveByStubTestGenerated.ClassObject.class, LazyResolveByStubTestGenerated.Constructor.class, LazyResolveByStubTestGenerated.DataClass.class, LazyResolveByStubTestGenerated.Enum.class, LazyResolveByStubTestGenerated.FromLoadJava.class, LazyResolveByStubTestGenerated.Fun.class, LazyResolveByStubTestGenerated.Inline.class, LazyResolveByStubTestGenerated.Prop.class, LazyResolveByStubTestGenerated.Type.class, LazyResolveByStubTestGenerated.Visibility.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTest {
     public void testAllFilesPresentInCompiledKotlin() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -39,6 +42,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class, Annotations.PackageMembers.class, Annotations.Parameters.class, Annotations.PropertiesWithoutBackingFields.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -64,6 +68,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ClassMembers extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInClassMembers() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -115,6 +120,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Classes extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInClasses() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -208,6 +214,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class PackageMembers extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInPackageMembers() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -265,6 +272,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Parameters extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInParameters() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -340,6 +348,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class PropertiesWithoutBackingFields extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInPropertiesWithoutBackingFields() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -395,21 +404,12 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Annotations");
-            suite.addTestSuite(Annotations.class);
-            suite.addTestSuite(ClassMembers.class);
-            suite.addTestSuite(Classes.class);
-            suite.addTestSuite(PackageMembers.class);
-            suite.addTestSuite(Parameters.class);
-            suite.addTestSuite(PropertiesWithoutBackingFields.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/class")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Class.JavaBean.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Class extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInClass() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -615,6 +615,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/class/javaBean")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class JavaBean extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInJavaBean() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class/javaBean"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -658,16 +659,11 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Class");
-            suite.addTestSuite(Class.class);
-            suite.addTestSuite(JavaBean.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/classFun")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ClassFun extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInClassFun() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -713,6 +709,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
     
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/classObject")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ClassObject extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInClassObject() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -795,6 +792,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/constructor")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Constructor.Vararg.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInConstructor() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -898,6 +896,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/constructor/vararg")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Vararg extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInVararg() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -917,16 +916,11 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Constructor");
-            suite.addTestSuite(Constructor.class);
-            suite.addTestSuite(Vararg.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/dataClass")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DataClass extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInDataClass() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -978,6 +972,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
     
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/enum")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Enum extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInEnum() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1018,6 +1013,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({FromLoadJava.KotlinSignature.class, FromLoadJava.Library.class, FromLoadJava.Modality.class, FromLoadJava.NotNull.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class FromLoadJava extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInFromLoadJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1230,6 +1226,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({KotlinSignature.Error.class, KotlinSignature.Propagation.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class KotlinSignature extends AbstractLazyResolveByStubTest {
             @TestMetadata("AllBoundsInWhen.kt")
             public void testAllBoundsInWhen() throws Exception {
@@ -1333,6 +1330,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
             
             @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Error extends AbstractLazyResolveByStubTest {
                 @TestMetadata("AddingNullability.kt")
                 public void testAddingNullability() throws Exception {
@@ -1505,6 +1503,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
             @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation")
             @TestDataPath("$PROJECT_ROOT")
             @InnerTestClasses({Propagation.Parameter.class, Propagation.Return.class, Propagation.TypeParameter.class})
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Propagation extends AbstractLazyResolveByStubTest {
                 public void testAllFilesPresentInPropagation() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1518,6 +1517,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
                 
                 @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter")
                 @TestDataPath("$PROJECT_ROOT")
+                @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
                 public static class Parameter extends AbstractLazyResolveByStubTest {
                     public void testAllFilesPresentInParameter() throws Exception {
                         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1683,6 +1683,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
                 
                 @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return")
                 @TestDataPath("$PROJECT_ROOT")
+                @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
                 public static class Return extends AbstractLazyResolveByStubTest {
                     @TestMetadata("AddNotNullJavaSubtype.kt")
                     public void testAddNotNullJavaSubtype() throws Exception {
@@ -1896,6 +1897,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
                 
                 @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter")
                 @TestDataPath("$PROJECT_ROOT")
+                @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
                 public static class TypeParameter extends AbstractLazyResolveByStubTest {
                     public void testAllFilesPresentInTypeParameter() throws Exception {
                         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1957,27 +1959,13 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
                     
                 }
                 
-                public static Test innerSuite() {
-                    TestSuite suite = new TestSuite("Propagation");
-                    suite.addTestSuite(Propagation.class);
-                    suite.addTestSuite(Parameter.class);
-                    suite.addTestSuite(Return.class);
-                    suite.addTestSuite(TypeParameter.class);
-                    return suite;
-                }
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("KotlinSignature");
-                suite.addTestSuite(KotlinSignature.class);
-                suite.addTestSuite(Error.class);
-                suite.addTest(Propagation.innerSuite());
-                return suite;
-            }
         }
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Library extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInLibrary() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2005,6 +1993,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Modality extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInModality() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2020,6 +2009,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class NotNull extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInNotNull() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2057,20 +2047,12 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("FromLoadJava");
-            suite.addTestSuite(FromLoadJava.class);
-            suite.addTest(KotlinSignature.innerSuite());
-            suite.addTestSuite(Library.class);
-            suite.addTestSuite(Modality.class);
-            suite.addTestSuite(NotNull.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Fun.GenericWithTypeVariables.class, Fun.GenericWithoutTypeVariables.class, Fun.NonGeneric.class, Fun.Vararg.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Fun extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInFun() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2138,6 +2120,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class GenericWithTypeVariables extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInGenericWithTypeVariables() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2207,6 +2190,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class GenericWithoutTypeVariables extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInGenericWithoutTypeVariables() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2246,6 +2230,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class NonGeneric extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInNonGeneric() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2351,6 +2336,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun/vararg")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Vararg extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInVararg() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2376,19 +2362,11 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Fun");
-            suite.addTestSuite(Fun.class);
-            suite.addTestSuite(GenericWithTypeVariables.class);
-            suite.addTestSuite(GenericWithoutTypeVariables.class);
-            suite.addTestSuite(NonGeneric.class);
-            suite.addTestSuite(Vararg.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/inline")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Inline extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInInline() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2405,6 +2383,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/prop")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Prop.DefaultAccessors.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Prop extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInProp() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2604,6 +2583,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class DefaultAccessors extends AbstractLazyResolveByStubTest {
             public void testAllFilesPresentInDefaultAccessors() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2671,16 +2651,11 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Prop");
-            suite.addTestSuite(Prop.class);
-            suite.addTestSuite(DefaultAccessors.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/type")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Type extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/type"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2864,6 +2839,7 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
     
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/visibility")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Visibility extends AbstractLazyResolveByStubTest {
         public void testAllFilesPresentInVisibility() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2949,22 +2925,4 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("LazyResolveByStubTestGenerated");
-        suite.addTestSuite(LazyResolveByStubTestGenerated.class);
-        suite.addTest(Annotations.innerSuite());
-        suite.addTest(Class.innerSuite());
-        suite.addTestSuite(ClassFun.class);
-        suite.addTestSuite(ClassObject.class);
-        suite.addTest(Constructor.innerSuite());
-        suite.addTestSuite(DataClass.class);
-        suite.addTestSuite(Enum.class);
-        suite.addTest(FromLoadJava.innerSuite());
-        suite.addTest(Fun.innerSuite());
-        suite.addTestSuite(Inline.class);
-        suite.addTest(Prop.innerSuite());
-        suite.addTestSuite(Type.class);
-        suite.addTestSuite(Visibility.class);
-        return suite;
-    }
 }

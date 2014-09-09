@@ -19,9 +19,11 @@ package org.jetbrains.jet.shortenRefs;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/shortenRefs")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({ShortenRefsTestGenerated.Constructor.class, ShortenRefsTestGenerated.Imports.class, ShortenRefsTestGenerated.Java.class, ShortenRefsTestGenerated.Type.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     public void testAllFilesPresentInShortenRefs() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
@@ -56,6 +59,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     
     @TestMetadata("idea/testData/shortenRefs/constructor")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractShortenRefsTest {
         public void testAllFilesPresentInConstructor() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/constructor"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
@@ -149,6 +153,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     
     @TestMetadata("idea/testData/shortenRefs/imports")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Imports extends AbstractShortenRefsTest {
         public void testAllFilesPresentInImports() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/imports"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
@@ -176,6 +181,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     
     @TestMetadata("idea/testData/shortenRefs/java")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Java extends AbstractShortenRefsTest {
         public void testAllFilesPresentInJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/java"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
@@ -233,6 +239,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     
     @TestMetadata("idea/testData/shortenRefs/type")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Type extends AbstractShortenRefsTest {
         public void testAllFilesPresentInType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/type"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
@@ -342,13 +349,4 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("ShortenRefsTestGenerated");
-        suite.addTestSuite(ShortenRefsTestGenerated.class);
-        suite.addTestSuite(Constructor.class);
-        suite.addTestSuite(Imports.class);
-        suite.addTestSuite(Java.class);
-        suite.addTestSuite(Type.class);
-        return suite;
-    }
 }

@@ -19,9 +19,11 @@ package org.jetbrains.jet.resolve;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/resolve")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({ResolveTestGenerated.CandidatesPriority.class, ResolveTestGenerated.DelegatedProperty.class, ResolveTestGenerated.Imports.class, ResolveTestGenerated.Labels.class, ResolveTestGenerated.Regressions.class, ResolveTestGenerated.Varargs.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class ResolveTestGenerated extends AbstractResolveTest {
     public void testAllFilesPresentInResolve() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve"), Pattern.compile("^(.+)\\.resolve$"), true);
@@ -206,6 +209,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     
     @TestMetadata("compiler/testData/resolve/candidatesPriority")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CandidatesPriority extends AbstractResolveTest {
         public void testAllFilesPresentInCandidatesPriority() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/candidatesPriority"), Pattern.compile("^(.+)\\.resolve$"), true);
@@ -317,6 +321,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     
     @TestMetadata("compiler/testData/resolve/delegatedProperty")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DelegatedProperty extends AbstractResolveTest {
         public void testAllFilesPresentInDelegatedProperty() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/delegatedProperty"), Pattern.compile("^(.+)\\.resolve$"), true);
@@ -368,6 +373,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     
     @TestMetadata("compiler/testData/resolve/imports")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Imports extends AbstractResolveTest {
         public void testAllFilesPresentInImports() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/imports"), Pattern.compile("^(.+)\\.resolve$"), true);
@@ -449,6 +455,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     
     @TestMetadata("compiler/testData/resolve/labels")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Labels extends AbstractResolveTest {
         public void testAllFilesPresentInLabels() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/labels"), Pattern.compile("^(.+)\\.resolve$"), true);
@@ -470,6 +477,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     
     @TestMetadata("compiler/testData/resolve/regressions")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Regressions extends AbstractResolveTest {
         public void testAllFilesPresentInRegressions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/regressions"), Pattern.compile("^(.+)\\.resolve$"), true);
@@ -485,6 +493,7 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     
     @TestMetadata("compiler/testData/resolve/varargs")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Varargs extends AbstractResolveTest {
         public void testAllFilesPresentInVarargs() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/varargs"), Pattern.compile("^(.+)\\.resolve$"), true);
@@ -510,15 +519,4 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("ResolveTestGenerated");
-        suite.addTestSuite(ResolveTestGenerated.class);
-        suite.addTestSuite(CandidatesPriority.class);
-        suite.addTestSuite(DelegatedProperty.class);
-        suite.addTestSuite(Imports.class);
-        suite.addTestSuite(Labels.class);
-        suite.addTestSuite(Regressions.class);
-        suite.addTestSuite(Varargs.class);
-        return suite;
-    }
 }

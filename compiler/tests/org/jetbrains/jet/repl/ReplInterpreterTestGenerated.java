@@ -19,9 +19,11 @@ package org.jetbrains.jet.repl;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/repl")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({ReplInterpreterTestGenerated.Classes.class, ReplInterpreterTestGenerated.Multiline.class, ReplInterpreterTestGenerated.Objects.class, ReplInterpreterTestGenerated.PrimitiveTypes.class, ReplInterpreterTestGenerated.Reflection.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     public void testAllFilesPresentInRepl() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl"), Pattern.compile("^(.+)\\.repl$"), true);
@@ -110,6 +113,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     
     @TestMetadata("compiler/testData/repl/classes")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Classes extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInClasses() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/classes"), Pattern.compile("^(.+)\\.repl$"), true);
@@ -173,6 +177,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     
     @TestMetadata("compiler/testData/repl/multiline")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Multiline extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInMultiline() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/multiline"), Pattern.compile("^(.+)\\.repl$"), true);
@@ -206,6 +211,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     
     @TestMetadata("compiler/testData/repl/objects")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Objects extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInObjects() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/objects"), Pattern.compile("^(.+)\\.repl$"), true);
@@ -233,6 +239,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     
     @TestMetadata("compiler/testData/repl/primitiveTypes")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class PrimitiveTypes extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInPrimitiveTypes() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/primitiveTypes"), Pattern.compile("^(.+)\\.repl$"), true);
@@ -254,6 +261,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     
     @TestMetadata("compiler/testData/repl/reflection")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Reflection extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInReflection() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/reflection"), Pattern.compile("^(.+)\\.repl$"), true);
@@ -267,14 +275,4 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("ReplInterpreterTestGenerated");
-        suite.addTestSuite(ReplInterpreterTestGenerated.class);
-        suite.addTestSuite(Classes.class);
-        suite.addTestSuite(Multiline.class);
-        suite.addTestSuite(Objects.class);
-        suite.addTestSuite(PrimitiveTypes.class);
-        suite.addTestSuite(Reflection.class);
-        return suite;
-    }
 }

@@ -19,9 +19,11 @@ package org.jetbrains.jet.resolve.calls;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/resolvedCalls")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({ResolvedCallsTestGenerated.Arguments.class, ResolvedCallsTestGenerated.DifferentCallElements.class, ResolvedCallsTestGenerated.FunctionTypes.class, ResolvedCallsTestGenerated.Invoke.class, ResolvedCallsTestGenerated.ObjectsAndClassObjects.class, ResolvedCallsTestGenerated.RealExamples.class, ResolvedCallsTestGenerated.Resolve.class, ResolvedCallsTestGenerated.ThisOrSuper.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     public void testAllFilesPresentInResolvedCalls() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -87,6 +90,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestMetadata("compiler/testData/resolvedCalls/arguments")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Arguments.FunctionLiterals.class, Arguments.GenericCalls.class, Arguments.NamedArguments.class, Arguments.OneArgument.class, Arguments.RealExamples.class, Arguments.SeveralCandidates.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Arguments extends AbstractResolvedCallsTest {
         public void testAllFilesPresentInArguments() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -94,6 +98,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         
         @TestMetadata("compiler/testData/resolvedCalls/arguments/functionLiterals")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class FunctionLiterals extends AbstractResolvedCallsTest {
             public void testAllFilesPresentInFunctionLiterals() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -139,6 +144,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         
         @TestMetadata("compiler/testData/resolvedCalls/arguments/genericCalls")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class GenericCalls extends AbstractResolvedCallsTest {
             public void testAllFilesPresentInGenericCalls() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/genericCalls"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -172,6 +178,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         
         @TestMetadata("compiler/testData/resolvedCalls/arguments/namedArguments")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class NamedArguments extends AbstractResolvedCallsTest {
             public void testAllFilesPresentInNamedArguments() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/namedArguments"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -193,6 +200,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         
         @TestMetadata("compiler/testData/resolvedCalls/arguments/oneArgument")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class OneArgument extends AbstractResolvedCallsTest {
             public void testAllFilesPresentInOneArgument() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/oneArgument"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -226,6 +234,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         
         @TestMetadata("compiler/testData/resolvedCalls/arguments/realExamples")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class RealExamples extends AbstractResolvedCallsTest {
             public void testAllFilesPresentInRealExamples() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/realExamples"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -247,6 +256,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         
         @TestMetadata("compiler/testData/resolvedCalls/arguments/severalCandidates")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class SeveralCandidates extends AbstractResolvedCallsTest {
             public void testAllFilesPresentInSeveralCandidates() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/severalCandidates"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -260,21 +270,11 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Arguments");
-            suite.addTestSuite(Arguments.class);
-            suite.addTestSuite(FunctionLiterals.class);
-            suite.addTestSuite(GenericCalls.class);
-            suite.addTestSuite(NamedArguments.class);
-            suite.addTestSuite(OneArgument.class);
-            suite.addTestSuite(RealExamples.class);
-            suite.addTestSuite(SeveralCandidates.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/resolvedCalls/differentCallElements")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DifferentCallElements extends AbstractResolvedCallsTest {
         public void testAllFilesPresentInDifferentCallElements() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/differentCallElements"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -302,6 +302,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     
     @TestMetadata("compiler/testData/resolvedCalls/functionTypes")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class FunctionTypes extends AbstractResolvedCallsTest {
         public void testAllFilesPresentInFunctionTypes() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/functionTypes"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -347,6 +348,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     
     @TestMetadata("compiler/testData/resolvedCalls/invoke")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Invoke extends AbstractResolvedCallsTest {
         public void testAllFilesPresentInInvoke() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -416,6 +418,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     
     @TestMetadata("compiler/testData/resolvedCalls/objectsAndClassObjects")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ObjectsAndClassObjects extends AbstractResolvedCallsTest {
         public void testAllFilesPresentInObjectsAndClassObjects() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/objectsAndClassObjects"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -443,6 +446,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     
     @TestMetadata("compiler/testData/resolvedCalls/realExamples")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class RealExamples extends AbstractResolvedCallsTest {
         public void testAllFilesPresentInRealExamples() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/realExamples"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -458,6 +462,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     
     @TestMetadata("compiler/testData/resolvedCalls/resolve")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Resolve extends AbstractResolvedCallsTest {
         public void testAllFilesPresentInResolve() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -479,6 +484,7 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     
     @TestMetadata("compiler/testData/resolvedCalls/thisOrSuper")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ThisOrSuper extends AbstractResolvedCallsTest {
         public void testAllFilesPresentInThisOrSuper() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/thisOrSuper"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -516,17 +522,4 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("ResolvedCallsTestGenerated");
-        suite.addTestSuite(ResolvedCallsTestGenerated.class);
-        suite.addTest(Arguments.innerSuite());
-        suite.addTestSuite(DifferentCallElements.class);
-        suite.addTestSuite(FunctionTypes.class);
-        suite.addTestSuite(Invoke.class);
-        suite.addTestSuite(ObjectsAndClassObjects.class);
-        suite.addTestSuite(RealExamples.class);
-        suite.addTestSuite(Resolve.class);
-        suite.addTestSuite(ThisOrSuper.class);
-        return suite;
-    }
 }

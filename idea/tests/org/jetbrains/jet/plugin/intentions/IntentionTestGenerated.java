@@ -19,9 +19,11 @@ package org.jetbrains.jet.plugin.intentions;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/intentions")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({IntentionTestGenerated.AddBraces.class, IntentionTestGenerated.AttributeCallReplacements.class, IntentionTestGenerated.Branched.class, IntentionTestGenerated.ConvertAssertToIf.class, IntentionTestGenerated.ConvertIfToAssert.class, IntentionTestGenerated.ConvertNegatedBooleanSequence.class, IntentionTestGenerated.ConvertNegatedExpressionWithDemorgansLaw.class, IntentionTestGenerated.ConvertToBlockBody.class, IntentionTestGenerated.ConvertToConcatenatedStringIntention.class, IntentionTestGenerated.ConvertToExpressionBody.class, IntentionTestGenerated.ConvertToForEachFunctionCall.class, IntentionTestGenerated.ConvertToForEachLoop.class, IntentionTestGenerated.ConvertToStringTemplateIntention.class, IntentionTestGenerated.Declarations.class, IntentionTestGenerated.InsertCurlyBracesToTemplate.class, IntentionTestGenerated.InsertExplicitTypeArguments.class, IntentionTestGenerated.InvertIfCondition.class, IntentionTestGenerated.MakeTypeExplicitInLambda.class, IntentionTestGenerated.MakeTypeImplicitInLambda.class, IntentionTestGenerated.MoveLambdaInsideParentheses.class, IntentionTestGenerated.MoveLambdaOutsideParentheses.class, IntentionTestGenerated.OperatorToFunction.class, IntentionTestGenerated.ReconstructedType.class, IntentionTestGenerated.RemoveBraces.class, IntentionTestGenerated.RemoveCurlyBracesFromTemplate.class, IntentionTestGenerated.RemoveExplicitTypeArguments.class, IntentionTestGenerated.RemoveUnnecessaryParentheses.class, IntentionTestGenerated.ReplaceExplicitFunctionLiteralParamWithIt.class, IntentionTestGenerated.ReplaceItWithExplicitFunctionLiteralParam.class, IntentionTestGenerated.ReplaceWithDotQualifiedMethodCall.class, IntentionTestGenerated.ReplaceWithInfixFunctionCall.class, IntentionTestGenerated.ReplaceWithOperatorAssign.class, IntentionTestGenerated.ReplaceWithTraditionalAssignment.class, IntentionTestGenerated.SimplifyBooleanWithConstants.class, IntentionTestGenerated.SimplifyNegatedBinaryExpressionIntention.class, IntentionTestGenerated.SpecifyType.class, IntentionTestGenerated.SplitIf.class, IntentionTestGenerated.SwapBinaryExpression.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class IntentionTestGenerated extends AbstractIntentionTest {
     public void testAllFilesPresentInIntentions() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -38,6 +41,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/addBraces")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class AddBraces extends AbstractIntentionTest {
         @TestMetadata("addBracesForDoWhile.kt")
         public void testAddBracesForDoWhile() throws Exception {
@@ -96,6 +100,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestMetadata("idea/testData/intentions/attributeCallReplacements")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({AttributeCallReplacements.ReplaceBinaryInfixIntention.class, AttributeCallReplacements.ReplaceContainsIntention.class, AttributeCallReplacements.ReplaceGetIntention.class, AttributeCallReplacements.ReplaceInvokeIntention.class, AttributeCallReplacements.ReplaceUnaryPrefixIntention.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class AttributeCallReplacements extends AbstractIntentionTest {
         public void testAllFilesPresentInAttributeCallReplacements() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/attributeCallReplacements"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -103,6 +108,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         
         @TestMetadata("idea/testData/intentions/attributeCallReplacements/replaceBinaryInfixIntention")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ReplaceBinaryInfixIntention extends AbstractIntentionTest {
             @TestMetadata("acceptableVararg1.kt")
             public void testAcceptableVararg1() throws Exception {
@@ -214,6 +220,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         
         @TestMetadata("idea/testData/intentions/attributeCallReplacements/replaceContainsIntention")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ReplaceContainsIntention extends AbstractIntentionTest {
             @TestMetadata("acceptableVararg.kt")
             public void testAcceptableVararg() throws Exception {
@@ -332,6 +339,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ReplaceGetIntention extends AbstractIntentionTest {
             @TestMetadata("acceptableVararg.kt")
             public void testAcceptableVararg() throws Exception {
@@ -433,15 +441,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("ReplaceGetIntention");
-                suite.addTestSuite(ReplaceGetIntention.class);
-                return suite;
-            }
         }
         
         @TestMetadata("idea/testData/intentions/attributeCallReplacements/replaceInvokeIntention")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ReplaceInvokeIntention extends AbstractIntentionTest {
             public void testAllFilesPresentInReplaceInvokeIntention() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/attributeCallReplacements/replaceInvokeIntention"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -511,6 +515,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         
         @TestMetadata("idea/testData/intentions/attributeCallReplacements/replaceUnaryPrefixIntention")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ReplaceUnaryPrefixIntention extends AbstractIntentionTest {
             @TestMetadata("acceptableVararg.kt")
             public void testAcceptableVararg() throws Exception {
@@ -596,21 +601,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("AttributeCallReplacements");
-            suite.addTestSuite(AttributeCallReplacements.class);
-            suite.addTestSuite(ReplaceBinaryInfixIntention.class);
-            suite.addTestSuite(ReplaceContainsIntention.class);
-            suite.addTest(ReplaceGetIntention.innerSuite());
-            suite.addTestSuite(ReplaceInvokeIntention.class);
-            suite.addTestSuite(ReplaceUnaryPrefixIntention.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/intentions/branched")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Branched.DoubleBangToIfThen.class, Branched.ElvisToIfThen.class, Branched.Folding.class, Branched.IfThenToDoubleBang.class, Branched.IfThenToElvis.class, Branched.IfThenToSafeAccess.class, Branched.IfWhen.class, Branched.SafeAccessToIfThen.class, Branched.Unfolding.class, Branched.When.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Branched extends AbstractIntentionTest {
         public void testAllFilesPresentInBranched() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -618,6 +614,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         
         @TestMetadata("idea/testData/intentions/branched/doubleBangToIfThen")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class DoubleBangToIfThen extends AbstractIntentionTest {
             public void testAllFilesPresentInDoubleBangToIfThen() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/doubleBangToIfThen"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -699,6 +696,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         
         @TestMetadata("idea/testData/intentions/branched/elvisToIfThen")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ElvisToIfThen extends AbstractIntentionTest {
             public void testAllFilesPresentInElvisToIfThen() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/elvisToIfThen"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -775,6 +773,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("idea/testData/intentions/branched/folding")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({Folding.IfToAssignment.class, Folding.IfToReturn.class, Folding.IfToReturnAsymmetrically.class, Folding.WhenToAssignment.class, Folding.WhenToReturn.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Folding extends AbstractIntentionTest {
             public void testAllFilesPresentInFolding() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -782,6 +781,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/folding/ifToAssignment")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class IfToAssignment extends AbstractIntentionTest {
                 public void testAllFilesPresentInIfToAssignment() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/ifToAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -845,6 +845,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/folding/ifToReturn")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class IfToReturn extends AbstractIntentionTest {
                 public void testAllFilesPresentInIfToReturn() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/ifToReturn"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -872,6 +873,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/folding/ifToReturnAsymmetrically")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class IfToReturnAsymmetrically extends AbstractIntentionTest {
                 public void testAllFilesPresentInIfToReturnAsymmetrically() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/ifToReturnAsymmetrically"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -899,6 +901,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/folding/whenToAssignment")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class WhenToAssignment extends AbstractIntentionTest {
                 public void testAllFilesPresentInWhenToAssignment() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/whenToAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -944,6 +947,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/folding/whenToReturn")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class WhenToReturn extends AbstractIntentionTest {
                 public void testAllFilesPresentInWhenToReturn() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/whenToReturn"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -969,20 +973,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("Folding");
-                suite.addTestSuite(Folding.class);
-                suite.addTestSuite(IfToAssignment.class);
-                suite.addTestSuite(IfToReturn.class);
-                suite.addTestSuite(IfToReturnAsymmetrically.class);
-                suite.addTestSuite(WhenToAssignment.class);
-                suite.addTestSuite(WhenToReturn.class);
-                return suite;
-            }
         }
         
         @TestMetadata("idea/testData/intentions/branched/ifThenToDoubleBang")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class IfThenToDoubleBang extends AbstractIntentionTest {
             @TestMetadata("acceptableEmptyElseBlockForStatement.kt")
             public void testAcceptableEmptyElseBlockForStatement() throws Exception {
@@ -1197,6 +1192,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("idea/testData/intentions/branched/ifThenToElvis")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class IfThenToElvis extends AbstractIntentionTest {
             public void testAllFilesPresentInIfThenToElvis() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifThenToElvis"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1388,16 +1384,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("IfThenToElvis");
-                suite.addTestSuite(IfThenToElvis.class);
-                return suite;
-            }
         }
         
         @TestMetadata("idea/testData/intentions/branched/ifThenToSafeAccess")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class IfThenToSafeAccess extends AbstractIntentionTest {
             public void testAllFilesPresentInIfThenToSafeAccess() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifThenToSafeAccess"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1607,16 +1599,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("IfThenToSafeAccess");
-                suite.addTestSuite(IfThenToSafeAccess.class);
-                return suite;
-            }
         }
         
         @TestMetadata("idea/testData/intentions/branched/ifWhen")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({IfWhen.IfToWhen.class, IfWhen.WhenToIf.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class IfWhen extends AbstractIntentionTest {
             public void testAllFilesPresentInIfWhen() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifWhen"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1624,6 +1612,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class IfToWhen extends AbstractIntentionTest {
                 public void testAllFilesPresentInIfToWhen() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifWhen/ifToWhen"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1693,6 +1682,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/ifWhen/whenToIf")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class WhenToIf extends AbstractIntentionTest {
                 public void testAllFilesPresentInWhenToIf() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifWhen/whenToIf"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1766,17 +1756,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("IfWhen");
-                suite.addTestSuite(IfWhen.class);
-                suite.addTestSuite(IfToWhen.class);
-                suite.addTestSuite(WhenToIf.class);
-                return suite;
-            }
         }
         
         @TestMetadata("idea/testData/intentions/branched/safeAccessToIfThen")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class SafeAccessToIfThen extends AbstractIntentionTest {
             public void testAllFilesPresentInSafeAccessToIfThen() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/safeAccessToIfThen"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1919,6 +1903,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("idea/testData/intentions/branched/unfolding")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({Unfolding.AssignmentToIf.class, Unfolding.AssignmentToWhen.class, Unfolding.PropertyToIf.class, Unfolding.PropertyToWhen.class, Unfolding.ReturnToIf.class, Unfolding.ReturnToWhen.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Unfolding extends AbstractIntentionTest {
             public void testAllFilesPresentInUnfolding() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/unfolding"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1926,6 +1911,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/unfolding/assignmentToIf")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class AssignmentToIf extends AbstractIntentionTest {
                 public void testAllFilesPresentInAssignmentToIf() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/unfolding/assignmentToIf"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1977,6 +1963,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/unfolding/assignmentToWhen")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class AssignmentToWhen extends AbstractIntentionTest {
                 public void testAllFilesPresentInAssignmentToWhen() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/unfolding/assignmentToWhen"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2010,6 +1997,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/unfolding/propertyToIf")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class PropertyToIf extends AbstractIntentionTest {
                 public void testAllFilesPresentInPropertyToIf() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/unfolding/propertyToIf"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2073,6 +2061,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/unfolding/propertyToWhen")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class PropertyToWhen extends AbstractIntentionTest {
                 public void testAllFilesPresentInPropertyToWhen() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/unfolding/propertyToWhen"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2124,6 +2113,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/unfolding/returnToIf")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class ReturnToIf extends AbstractIntentionTest {
                 public void testAllFilesPresentInReturnToIf() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/unfolding/returnToIf"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2151,6 +2141,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/unfolding/returnToWhen")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class ReturnToWhen extends AbstractIntentionTest {
                 public void testAllFilesPresentInReturnToWhen() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/unfolding/returnToWhen"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2176,22 +2167,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("Unfolding");
-                suite.addTestSuite(Unfolding.class);
-                suite.addTestSuite(AssignmentToIf.class);
-                suite.addTestSuite(AssignmentToWhen.class);
-                suite.addTestSuite(PropertyToIf.class);
-                suite.addTestSuite(PropertyToWhen.class);
-                suite.addTestSuite(ReturnToIf.class);
-                suite.addTestSuite(ReturnToWhen.class);
-                return suite;
-            }
         }
         
         @TestMetadata("idea/testData/intentions/branched/when")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({When.EliminateSubject.class, When.Flatten.class, When.IntroduceSubject.class, When.Merge.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class When extends AbstractIntentionTest {
             public void testAllFilesPresentInWhen() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/when"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2199,6 +2180,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/when/eliminateSubject")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class EliminateSubject extends AbstractIntentionTest {
                 public void testAllFilesPresentInEliminateSubject() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/when/eliminateSubject"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2256,6 +2238,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/when/flatten")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Flatten extends AbstractIntentionTest {
                 public void testAllFilesPresentInFlatten() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/when/flatten"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2283,6 +2266,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/when/introduceSubject")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class IntroduceSubject extends AbstractIntentionTest {
                 public void testAllFilesPresentInIntroduceSubject() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/when/introduceSubject"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2358,6 +2342,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
             @TestMetadata("idea/testData/intentions/branched/when/merge")
             @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
             public static class Merge extends AbstractIntentionTest {
                 public void testAllFilesPresentInMerge() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/when/merge"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2467,36 +2452,13 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("When");
-                suite.addTestSuite(When.class);
-                suite.addTestSuite(EliminateSubject.class);
-                suite.addTestSuite(Flatten.class);
-                suite.addTestSuite(IntroduceSubject.class);
-                suite.addTestSuite(Merge.class);
-                return suite;
-            }
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Branched");
-            suite.addTestSuite(Branched.class);
-            suite.addTestSuite(DoubleBangToIfThen.class);
-            suite.addTestSuite(ElvisToIfThen.class);
-            suite.addTest(Folding.innerSuite());
-            suite.addTestSuite(IfThenToDoubleBang.class);
-            suite.addTest(IfThenToElvis.innerSuite());
-            suite.addTest(IfThenToSafeAccess.innerSuite());
-            suite.addTest(IfWhen.innerSuite());
-            suite.addTestSuite(SafeAccessToIfThen.class);
-            suite.addTest(Unfolding.innerSuite());
-            suite.addTest(When.innerSuite());
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/intentions/convertAssertToIf")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertAssertToIf extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertAssertToIf() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertAssertToIf"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2620,6 +2582,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/convertIfToAssert")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertIfToAssert extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertIfToAssert() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertIfToAssert"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2707,6 +2670,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/convertNegatedBooleanSequence")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertNegatedBooleanSequence extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertNegatedBooleanSequence() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertNegatedBooleanSequence"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2776,6 +2740,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertNegatedExpressionWithDemorgansLaw extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertNegatedExpressionWithDemorgansLaw() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2869,6 +2834,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/convertToBlockBody")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertToBlockBody extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertToBlockBody() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToBlockBody"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2956,6 +2922,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/convertToConcatenatedStringIntention")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertToConcatenatedStringIntention extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertToConcatenatedStringIntention() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToConcatenatedStringIntention"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3109,6 +3076,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/convertToExpressionBody")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertToExpressionBody extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertToExpressionBody() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToExpressionBody"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3220,6 +3188,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/convertToForEachFunctionCall")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertToForEachFunctionCall extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertToForEachFunctionCall() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToForEachFunctionCall"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3271,6 +3240,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/convertToForEachLoop")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertToForEachLoop extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertToForEachLoop() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToForEachLoop"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3340,6 +3310,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/convertToStringTemplateIntention")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ConvertToStringTemplateIntention extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertToStringTemplateIntention() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToStringTemplateIntention"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3512,6 +3483,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestMetadata("idea/testData/intentions/declarations")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Declarations.ConvertMemberToExtension.class, Declarations.Split.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Declarations extends AbstractIntentionTest {
         public void testAllFilesPresentInDeclarations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3519,6 +3491,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         
         @TestMetadata("idea/testData/intentions/declarations/convertMemberToExtension")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class ConvertMemberToExtension extends AbstractIntentionTest {
             @TestMetadata("abstract.kt")
             public void testAbstract() throws Exception {
@@ -3738,6 +3711,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         
         @TestMetadata("idea/testData/intentions/declarations/split")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Split extends AbstractIntentionTest {
             public void testAllFilesPresentInSplit() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/declarations/split"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3817,17 +3791,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Declarations");
-            suite.addTestSuite(Declarations.class);
-            suite.addTestSuite(ConvertMemberToExtension.class);
-            suite.addTestSuite(Split.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/intentions/insertCurlyBracesToTemplate")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class InsertCurlyBracesToTemplate extends AbstractIntentionTest {
         public void testAllFilesPresentInInsertCurlyBracesToTemplate() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/insertCurlyBracesToTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3873,6 +3841,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/insertExplicitTypeArguments")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class InsertExplicitTypeArguments extends AbstractIntentionTest {
         public void testAllFilesPresentInInsertExplicitTypeArguments() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/insertExplicitTypeArguments"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3996,6 +3965,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/invertIfCondition")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class InvertIfCondition extends AbstractIntentionTest {
         public void testAllFilesPresentInInvertIfCondition() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/invertIfCondition"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4083,6 +4053,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/makeTypeExplicitInLambda")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class MakeTypeExplicitInLambda extends AbstractIntentionTest {
         public void testAllFilesPresentInMakeTypeExplicitInLambda() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/makeTypeExplicitInLambda"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4200,6 +4171,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/makeTypeImplicitInLambda")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class MakeTypeImplicitInLambda extends AbstractIntentionTest {
         public void testAllFilesPresentInMakeTypeImplicitInLambda() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/makeTypeImplicitInLambda"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4263,6 +4235,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/moveLambdaInsideParentheses")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class MoveLambdaInsideParentheses extends AbstractIntentionTest {
         public void testAllFilesPresentInMoveLambdaInsideParentheses() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveLambdaInsideParentheses"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4368,6 +4341,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/moveLambdaOutsideParentheses")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class MoveLambdaOutsideParentheses extends AbstractIntentionTest {
         public void testAllFilesPresentInMoveLambdaOutsideParentheses() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveLambdaOutsideParentheses"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4455,6 +4429,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/operatorToFunction")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class OperatorToFunction extends AbstractIntentionTest {
         public void testAllFilesPresentInOperatorToFunction() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/operatorToFunction"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4584,6 +4559,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/reconstructedType")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ReconstructedType extends AbstractIntentionTest {
         public void testAllFilesPresentInReconstructedType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/reconstructedType"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4623,6 +4599,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/removeBraces")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class RemoveBraces extends AbstractIntentionTest {
         public void testAllFilesPresentInRemoveBraces() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeBraces"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4704,6 +4681,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/removeCurlyBracesFromTemplate")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class RemoveCurlyBracesFromTemplate extends AbstractIntentionTest {
         public void testAllFilesPresentInRemoveCurlyBracesFromTemplate() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeCurlyBracesFromTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4780,6 +4758,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestMetadata("idea/testData/intentions/removeExplicitTypeArguments")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class RemoveExplicitTypeArguments extends AbstractIntentionTest {
         public void testAllFilesPresentInRemoveExplicitTypeArguments() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitTypeArguments"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4899,15 +4878,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("RemoveExplicitTypeArguments");
-            suite.addTestSuite(RemoveExplicitTypeArguments.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/intentions/removeUnnecessaryParentheses")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class RemoveUnnecessaryParentheses extends AbstractIntentionTest {
         public void testAllFilesPresentInRemoveUnnecessaryParentheses() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeUnnecessaryParentheses"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4995,6 +4970,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ReplaceExplicitFunctionLiteralParamWithIt extends AbstractIntentionTest {
         public void testAllFilesPresentInReplaceExplicitFunctionLiteralParamWithIt() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5052,6 +5028,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/replaceItWithExplicitFunctionLiteralParam")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ReplaceItWithExplicitFunctionLiteralParam extends AbstractIntentionTest {
         public void testAllFilesPresentInReplaceItWithExplicitFunctionLiteralParam() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceItWithExplicitFunctionLiteralParam"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5091,6 +5068,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/replaceWithDotQualifiedMethodCall")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ReplaceWithDotQualifiedMethodCall extends AbstractIntentionTest {
         public void testAllFilesPresentInReplaceWithDotQualifiedMethodCall() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithDotQualifiedMethodCall"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5136,6 +5114,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/replaceWithInfixFunctionCall")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ReplaceWithInfixFunctionCall extends AbstractIntentionTest {
         public void testAllFilesPresentInReplaceWithInfixFunctionCall() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithInfixFunctionCall"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5259,6 +5238,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/replaceWithOperatorAssign")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ReplaceWithOperatorAssign extends AbstractIntentionTest {
         public void testAllFilesPresentInReplaceWithOperatorAssign() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithOperatorAssign"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5322,6 +5302,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/replaceWithTraditionalAssignment")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ReplaceWithTraditionalAssignment extends AbstractIntentionTest {
         public void testAllFilesPresentInReplaceWithTraditionalAssignment() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithTraditionalAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5355,6 +5336,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/simplifyBooleanWithConstants")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SimplifyBooleanWithConstants extends AbstractIntentionTest {
         public void testAllFilesPresentInSimplifyBooleanWithConstants() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/simplifyBooleanWithConstants"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5485,6 +5467,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SimplifyNegatedBinaryExpressionIntention extends AbstractIntentionTest {
         public void testAllFilesPresentInSimplifyNegatedBinaryExpressionIntention() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5562,15 +5545,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("SimplifyNegatedBinaryExpressionIntention");
-            suite.addTestSuite(SimplifyNegatedBinaryExpressionIntention.class);
-            return suite;
-        }
     }
     
     @TestMetadata("idea/testData/intentions/specifyType")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SpecifyType extends AbstractIntentionTest {
         public void testAllFilesPresentInSpecifyType() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/specifyType"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5652,6 +5631,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/splitIf")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SplitIf extends AbstractIntentionTest {
         public void testAllFilesPresentInSplitIf() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/splitIf"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5805,6 +5785,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     
     @TestMetadata("idea/testData/intentions/swapBinaryExpression")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SwapBinaryExpression extends AbstractIntentionTest {
         public void testAllFilesPresentInSwapBinaryExpression() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/swapBinaryExpression"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -6118,47 +6099,4 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("IntentionTestGenerated");
-        suite.addTestSuite(IntentionTestGenerated.class);
-        suite.addTestSuite(AddBraces.class);
-        suite.addTest(AttributeCallReplacements.innerSuite());
-        suite.addTest(Branched.innerSuite());
-        suite.addTestSuite(ConvertAssertToIf.class);
-        suite.addTestSuite(ConvertIfToAssert.class);
-        suite.addTestSuite(ConvertNegatedBooleanSequence.class);
-        suite.addTestSuite(ConvertNegatedExpressionWithDemorgansLaw.class);
-        suite.addTestSuite(ConvertToBlockBody.class);
-        suite.addTestSuite(ConvertToConcatenatedStringIntention.class);
-        suite.addTestSuite(ConvertToExpressionBody.class);
-        suite.addTestSuite(ConvertToForEachFunctionCall.class);
-        suite.addTestSuite(ConvertToForEachLoop.class);
-        suite.addTestSuite(ConvertToStringTemplateIntention.class);
-        suite.addTest(Declarations.innerSuite());
-        suite.addTestSuite(InsertCurlyBracesToTemplate.class);
-        suite.addTestSuite(InsertExplicitTypeArguments.class);
-        suite.addTestSuite(InvertIfCondition.class);
-        suite.addTestSuite(MakeTypeExplicitInLambda.class);
-        suite.addTestSuite(MakeTypeImplicitInLambda.class);
-        suite.addTestSuite(MoveLambdaInsideParentheses.class);
-        suite.addTestSuite(MoveLambdaOutsideParentheses.class);
-        suite.addTestSuite(OperatorToFunction.class);
-        suite.addTestSuite(ReconstructedType.class);
-        suite.addTestSuite(RemoveBraces.class);
-        suite.addTestSuite(RemoveCurlyBracesFromTemplate.class);
-        suite.addTest(RemoveExplicitTypeArguments.innerSuite());
-        suite.addTestSuite(RemoveUnnecessaryParentheses.class);
-        suite.addTestSuite(ReplaceExplicitFunctionLiteralParamWithIt.class);
-        suite.addTestSuite(ReplaceItWithExplicitFunctionLiteralParam.class);
-        suite.addTestSuite(ReplaceWithDotQualifiedMethodCall.class);
-        suite.addTestSuite(ReplaceWithInfixFunctionCall.class);
-        suite.addTestSuite(ReplaceWithOperatorAssign.class);
-        suite.addTestSuite(ReplaceWithTraditionalAssignment.class);
-        suite.addTestSuite(SimplifyBooleanWithConstants.class);
-        suite.addTest(SimplifyNegatedBinaryExpressionIntention.innerSuite());
-        suite.addTestSuite(SpecifyType.class);
-        suite.addTestSuite(SplitIf.class);
-        suite.addTestSuite(SwapBinaryExpression.class);
-        return suite;
-    }
 }

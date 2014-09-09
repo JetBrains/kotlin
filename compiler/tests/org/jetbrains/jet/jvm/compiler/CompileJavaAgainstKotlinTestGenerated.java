@@ -19,9 +19,11 @@ package org.jetbrains.jet.jvm.compiler;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/compileJavaAgainstKotlin")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({CompileJavaAgainstKotlinTestGenerated.Class.class, CompileJavaAgainstKotlinTestGenerated.Method.class, CompileJavaAgainstKotlinTestGenerated.Property.class, CompileJavaAgainstKotlinTestGenerated.StaticFields.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAgainstKotlinTest {
     public void testAllFilesPresentInCompileJavaAgainstKotlin() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -38,6 +41,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/class")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Class extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInClass() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/class"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -120,6 +124,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Method.PlatformName.class, Method.PrimitiveOverride.class, Method.Throws.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Method extends AbstractCompileJavaAgainstKotlinTest {
         @TestMetadata("AccessorGenericSignature.kt")
         public void testAccessorGenericSignature() throws Exception {
@@ -271,6 +276,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         
         @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/platformName")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class PlatformName extends AbstractCompileJavaAgainstKotlinTest {
             public void testAllFilesPresentInPlatformName() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/platformName"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -286,6 +292,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         
         @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class PrimitiveOverride extends AbstractCompileJavaAgainstKotlinTest {
             public void testAllFilesPresentInPrimitiveOverride() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -361,6 +368,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         
         @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Throws extends AbstractCompileJavaAgainstKotlinTest {
             public void testAllFilesPresentInThrows() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/throws"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -410,19 +418,12 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Method");
-            suite.addTestSuite(Method.class);
-            suite.addTestSuite(PlatformName.class);
-            suite.addTestSuite(PrimitiveOverride.class);
-            suite.addTestSuite(Throws.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/property")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Property.PlatformName.class})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Property extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInProperty() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -442,6 +443,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         
         @TestMetadata("compiler/testData/compileJavaAgainstKotlin/property/platformName")
         @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class PlatformName extends AbstractCompileJavaAgainstKotlinTest {
             public void testAllFilesPresentInPlatformName() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property/platformName"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -455,16 +457,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Property");
-            suite.addTestSuite(Property.class);
-            suite.addTestSuite(PlatformName.class);
-            return suite;
-        }
     }
     
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class StaticFields extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInStaticFields() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/staticFields"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -502,13 +499,4 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("CompileJavaAgainstKotlinTestGenerated");
-        suite.addTestSuite(CompileJavaAgainstKotlinTestGenerated.class);
-        suite.addTestSuite(Class.class);
-        suite.addTest(Method.innerSuite());
-        suite.addTest(Property.innerSuite());
-        suite.addTestSuite(StaticFields.class);
-        return suite;
-    }
 }

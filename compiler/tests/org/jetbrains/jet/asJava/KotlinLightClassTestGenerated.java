@@ -19,9 +19,11 @@ package org.jetbrains.jet.asJava;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/asJava/lightClasses")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({KotlinLightClassTestGenerated.Delegation.class, KotlinLightClassTestGenerated.NullabilityAnnotations.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest {
     public void testAllFilesPresentInLightClasses() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -38,6 +41,7 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
     
     @TestMetadata("compiler/testData/asJava/lightClasses/delegation")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Delegation extends AbstractKotlinLightClassTest {
         public void testAllFilesPresentInDelegation() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/delegation"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -59,6 +63,7 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
     
     @TestMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class NullabilityAnnotations extends AbstractKotlinLightClassTest {
         public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -174,11 +179,4 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("KotlinLightClassTestGenerated");
-        suite.addTestSuite(KotlinLightClassTestGenerated.class);
-        suite.addTestSuite(Delegation.class);
-        suite.addTestSuite(NullabilityAnnotations.class);
-        return suite;
-    }
 }

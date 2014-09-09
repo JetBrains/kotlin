@@ -19,9 +19,11 @@ package org.jetbrains.jet.plugin.refactoring.inline;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/refactoring/inline")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({InlineTestGenerated.AddParenthesis.class, InlineTestGenerated.ExplicateParameterTypes.class, InlineTestGenerated.ExplicateTypeArgument.class, InlineTestGenerated.Property.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class InlineTestGenerated extends AbstractInlineTest {
     public void testAllFilesPresentInInline() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -110,6 +113,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
     
     @TestMetadata("idea/testData/refactoring/inline/addParenthesis")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class AddParenthesis extends AbstractInlineTest {
         public void testAllFilesPresentInAddParenthesis() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/addParenthesis"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -299,6 +303,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
     
     @TestMetadata("idea/testData/refactoring/inline/explicateParameterTypes")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ExplicateParameterTypes extends AbstractInlineTest {
         public void testAllFilesPresentInExplicateParameterTypes() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateParameterTypes"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -350,6 +355,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
     
     @TestMetadata("idea/testData/refactoring/inline/explicateTypeArgument")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ExplicateTypeArgument extends AbstractInlineTest {
         public void testAllFilesPresentInExplicateTypeArgument() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateTypeArgument"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -413,6 +419,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
     
     @TestMetadata("idea/testData/refactoring/inline/property")
     @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Property extends AbstractInlineTest {
         public void testAllFilesPresentInProperty() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/property"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -468,13 +475,4 @@ public class InlineTestGenerated extends AbstractInlineTest {
         
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("InlineTestGenerated");
-        suite.addTestSuite(InlineTestGenerated.class);
-        suite.addTestSuite(AddParenthesis.class);
-        suite.addTestSuite(ExplicateParameterTypes.class);
-        suite.addTestSuite(ExplicateTypeArgument.class);
-        suite.addTestSuite(Property.class);
-        return suite;
-    }
 }
