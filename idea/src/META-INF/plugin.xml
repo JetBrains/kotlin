@@ -207,6 +207,9 @@
         implementation="org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsHandler"
         order="before kotlin.moveFilesOrDirectories"/>
     <moveFileHandler implementation="org.jetbrains.jet.plugin.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
+    <refactoring.moveInnerClassUsagesHandler
+        implementationClass="org.jetbrains.jet.plugin.refactoring.move.MoveJavaInnerClassKotlinUsagesHandler"
+        language="jet" />
     <refactoring.copyHandler implementation="org.jetbrains.jet.plugin.refactoring.copy.JetCopyClassHandler"/>
     <refactoring.changeSignatureUsageProcessor implementation="org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureUsageProcessor"/>
     <inlineActionHandler implementation="org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler"/>

@@ -86,6 +86,18 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest(fileName);
     }
     
+    @TestMetadata("java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance/moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance.test")
+    public void testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance/moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance.test");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda/moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda.test")
+    public void testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda/moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda.test");
+        doTest(fileName);
+    }
+    
     @TestMetadata("java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackageAndRename/moveNestedClassToTopLevelInTheSamePackageAndRename.test")
     public void testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndRename_MoveNestedClassToTopLevelInTheSamePackageAndRename() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackageAndRename/moveNestedClassToTopLevelInTheSamePackageAndRename.test");
