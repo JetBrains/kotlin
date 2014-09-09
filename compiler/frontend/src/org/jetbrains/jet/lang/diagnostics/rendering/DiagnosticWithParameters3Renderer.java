@@ -21,12 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters3;
 import org.jetbrains.jet.renderer.Renderer;
 
-import java.text.MessageFormat;
-
 import static org.jetbrains.jet.lang.diagnostics.rendering.RenderingPackage.renderParameter;
 
-public class DiagnosticWithParameters3Renderer<A, B, C> implements DiagnosticRenderer<DiagnosticWithParameters3<?, A, B, C>> {
-    private final MessageFormat messageFormat;
+public class DiagnosticWithParameters3Renderer<A, B, C> extends AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters3<?, A, B, C>> {
     private final Renderer<? super A> rendererForA;
     private final Renderer<? super B> rendererForB;
     private final Renderer<? super C> rendererForC;
@@ -35,7 +32,7 @@ public class DiagnosticWithParameters3Renderer<A, B, C> implements DiagnosticRen
             @Nullable Renderer<? super A> rendererForA,
             @Nullable Renderer<? super B> rendererForB,
             @Nullable Renderer<? super C> rendererForC) {
-        this.messageFormat = new MessageFormat(message);
+        super(message);
         this.rendererForA = rendererForA;
         this.rendererForB = rendererForB;
         this.rendererForC = rendererForC;
@@ -43,10 +40,10 @@ public class DiagnosticWithParameters3Renderer<A, B, C> implements DiagnosticRen
 
     @NotNull
     @Override
-    public String render(@NotNull DiagnosticWithParameters3<?, A, B, C> diagnostic) {
-        return messageFormat.format(new Object[]{
+    public Object[] renderParameters(@NotNull DiagnosticWithParameters3<?, A, B, C> diagnostic) {
+        return new Object[]{
                 renderParameter(diagnostic.getA(), rendererForA),
                 renderParameter(diagnostic.getB(), rendererForB),
-                renderParameter(diagnostic.getC(), rendererForC)});
+                renderParameter(diagnostic.getC(), rendererForC)};
     }
 }
