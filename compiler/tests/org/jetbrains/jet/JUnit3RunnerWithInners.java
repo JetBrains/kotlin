@@ -27,6 +27,7 @@ import org.junit.internal.MethodSorter;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 
 import java.lang.reflect.Method;
@@ -37,12 +38,12 @@ import java.util.*;
  * This runner runs class with all inners test classes, but monitors situation when those classes are planned to be executed
  * with IDEA package test runner.
  */
-public class JUnit3RunnerWithInners extends Runner {
+public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortable {
     private static final Set<Class> requestedRunners = new HashSet<Class>();
 
-    private Runner delegateRunner;
+    private JUnit38ClassRunner delegateRunner;
     private final Class<?> klass;
-    private Test test;
+    private boolean isFakeTest = false;
 
     private static class FakeEmptyClassTest implements Test {
         private final Class<?> klass;
@@ -79,50 +80,61 @@ public class JUnit3RunnerWithInners extends Runner {
 
     @Override
     public void run(RunNotifier notifier) {
-        getDelegateRunner().run(notifier);
+        initialize();
+        delegateRunner.run(notifier);
     }
 
     @Override
     public Description getDescription() {
-        if (getCollectedTests() instanceof FakeEmptyClassTest) {
-            return Description.EMPTY;
-        }
-
-        return getDelegateRunner().getDescription();
+        initialize();
+        return isFakeTest ? Description.EMPTY : delegateRunner.getDescription();
     }
 
-    private Test getCollectedTests() {
-        if (test == null) {
-            List<Class> innerClasses = collectDeclaredClasses(klass, false);
-            Set<Class> unprocessedInnerClasses = unprocessedClasses(innerClasses);
+    @Override
+    public void filter(Filter filter) throws NoTestsRemainException {
+        initialize();
+        delegateRunner.filter(filter);
+    }
 
-            if (unprocessedInnerClasses.isEmpty()) {
-                if (!innerClasses.isEmpty() && !hasTestMethods(klass)) {
-                    test = new FakeEmptyClassTest(klass);
-                }
-                else {
-                    test = new TestSuite(klass.asSubclass(TestCase.class));
-                }
+    @Override
+    public void sort(Sorter sorter) {
+        initialize();
+        delegateRunner.sort(sorter);
+    }
+
+    protected void initialize() {
+        if (delegateRunner != null) return;
+        delegateRunner = new JUnit38ClassRunner(getCollectedTests());
+    }
+
+    protected Test getCollectedTests() {
+        List<Class> innerClasses = collectDeclaredClasses(klass, false);
+        Set<Class> unprocessedInnerClasses = unprocessedClasses(innerClasses);
+
+        if (unprocessedInnerClasses.isEmpty()) {
+            if (!innerClasses.isEmpty() && !hasTestMethods(klass)) {
+                isFakeTest = true;
+                return new FakeEmptyClassTest(klass);
             }
             else {
-                List<Class> classes = Lists.newArrayList();
-                classes.add(klass);
-                classes.addAll(unprocessedInnerClasses);
-
-                List<Class> filtered = KotlinPackage.filter(classes, new Function1<Class, Boolean>() {
-                    @Override
-                    public Boolean invoke(Class aClass) {
-                        boolean hasInnerClasses = aClass.getDeclaredClasses().length > 0;
-                        return !hasInnerClasses || hasTestMethods(aClass);
-                    }
-                });
-
-
-                test = new TestSuite(filtered.toArray(new Class[filtered.size()]));
+                return new TestSuite(klass.asSubclass(TestCase.class));
             }
         }
+        else {
+            List<Class> classes = Lists.newArrayList();
+            classes.add(klass);
+            classes.addAll(unprocessedInnerClasses);
 
-        return test;
+            List<Class> filtered = KotlinPackage.filter(classes, new Function1<Class, Boolean>() {
+                @Override
+                public Boolean invoke(Class aClass) {
+                    boolean hasInnerClasses = aClass.getDeclaredClasses().length > 0;
+                    return !hasInnerClasses || hasTestMethods(aClass);
+                }
+            });
+
+            return new TestSuite(filtered.toArray(new Class[filtered.size()]));
+        }
     }
 
     private static Set<Class> unprocessedClasses(Collection<Class> classes) {
@@ -134,14 +146,6 @@ public class JUnit3RunnerWithInners extends Runner {
         }
 
         return result;
-    }
-
-    private Runner getDelegateRunner() {
-        if (delegateRunner == null) {
-            delegateRunner = new JUnit38ClassRunner(getCollectedTests());
-        }
-
-        return delegateRunner;
     }
 
     private static List<Class> collectDeclaredClasses(Class klass, boolean withItself) {
