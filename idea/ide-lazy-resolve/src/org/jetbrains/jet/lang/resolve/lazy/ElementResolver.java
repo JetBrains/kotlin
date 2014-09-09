@@ -388,9 +388,9 @@ public class ElementResolver {
             if (expression.getParent() instanceof JetUserType) {
                 JetUserType qualifier = ((JetUserType) expression.getParent()).getQualifier();
                 if (qualifier != null) {
-                    Collection<? extends DeclarationDescriptor> descriptors = qualifiedExpressionResolver
-                            .lookupDescriptorsForUserType(qualifier, getExpressionResolutionScope(resolveSession, expression), trace);
-
+                    JetScope resolutionScope = getExpressionResolutionScope(resolveSession, expression);
+                    Collection<DeclarationDescriptor> descriptors =
+                            qualifiedExpressionResolver.lookupDescriptorsForUserType(qualifier, resolutionScope, trace);
                     for (DeclarationDescriptor descriptor : descriptors) {
                         if (descriptor instanceof LazyPackageDescriptor) {
                             return ((LazyPackageDescriptor) descriptor).getMemberScope();
