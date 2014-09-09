@@ -2514,7 +2514,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("classObjectInEnum.kt")
         public void testClassObjectInEnum() throws Exception {
-            doTest("compiler/testData/codegen/box/enum/classObjectInEnum.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/classObjectInEnum.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("emptyEnumValuesValueOf.kt")
@@ -3685,7 +3686,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("extensionToNested.kt")
         public void testExtensionToNested() throws Exception {
-            doTest("compiler/testData/codegen/box/innerNested/extensionToNested.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/extensionToNested.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("importNestedClass.kt")

@@ -46,7 +46,8 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     
     @TestMetadata("ClassObjectInEnum.A.kt")
     public void testClassObjectInEnum() throws Exception {
-        doTest("compiler/testData/compileKotlinAgainstKotlin/ClassObjectInEnum.A.kt");
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ClassObjectInEnum.A.kt");
+        doTest(fileName);
     }
     
     @TestMetadata("ClassObjectMember.A.kt")

@@ -158,6 +158,7 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         @TestMetadata("compiler/testData/cli/jvm/wrongKotlinSignatureLib")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class WrongKotlinSignatureLib extends AbstractKotlincExecutableTest {
             public void testAllFilesPresentInWrongKotlinSignatureLib() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm/wrongKotlinSignatureLib"), Pattern.compile("^(.+)\\.args$"), true);
