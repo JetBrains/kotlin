@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.renderer.MultiRenderer;
 import org.jetbrains.jet.renderer.Renderer;
 
 import java.util.HashMap;
@@ -44,6 +45,11 @@ public final class DiagnosticFactoryToRendererMap {
     public <E extends PsiElement, A> void put(@NotNull DiagnosticFactory1<E, A> factory, @NotNull String message, @Nullable Renderer<? super A> rendererA) {
         checkMutability();
         map.put(factory, new DiagnosticWithParameters1Renderer<A>(message, rendererA));
+    }
+
+    public <E extends PsiElement, A> void put(@NotNull DiagnosticFactory1<E, A> factory, @NotNull String message, @NotNull MultiRenderer<? super A> rendererA) {
+        checkMutability();
+        map.put(factory, new DiagnosticWithMultiParametersRenderer<A>(message, rendererA));
     }
 
     public <E extends PsiElement, A, B> void put(@NotNull DiagnosticFactory2<E, A, B> factory,
