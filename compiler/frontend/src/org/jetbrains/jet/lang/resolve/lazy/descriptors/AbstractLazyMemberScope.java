@@ -184,7 +184,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                            DataFlowInfo.EMPTY
                     );
             result.add(propertyDescriptor);
-            AnnotationResolver.resolveAnnotationsArguments(propertyDescriptor, trace);
+            AnnotationResolver.resolveAnnotationsArguments(propertyDescriptor.getAnnotations(), trace);
         }
 
         getNonDeclaredProperties(name, result);

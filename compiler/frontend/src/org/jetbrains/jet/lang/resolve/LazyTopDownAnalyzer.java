@@ -263,6 +263,8 @@ public class LazyTopDownAnalyzer {
 
         resolveImportsInAllFiles(c, resolveSession);
 
+        declarationResolver.resolveAnnotationsOnFiles(c, resolveSession.getScopeProvider());
+
         overloadResolver.process(c);
 
         bodyResolver.resolveBodies(c);

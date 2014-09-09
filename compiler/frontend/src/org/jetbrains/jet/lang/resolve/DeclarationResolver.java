@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -41,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -95,6 +97,17 @@ public class DeclarationResolver {
         CallsPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
         checkRedeclarationsInPackages(c);
         checkRedeclarationsInInnerClassNames(c);
+    }
+
+    public void resolveAnnotationsOnFiles(@NotNull TopDownAnalysisContext c, @NotNull final ScopeProvider scopeProvider) {
+        Map<JetFile, JetScope> file2scope = UtilsPackage.keysToMap(c.getFiles(), new Function1<JetFile, JetScope>() {
+            @Override
+            public JetScope invoke(JetFile file) {
+                return scopeProvider.getFileScope(file);
+            }
+        });
+
+        resolveAnnotationsOnFiles(file2scope);
     }
 
     private void resolveAnnotationsOnFiles(@NotNull Map<JetFile, ? extends JetScope> file2scope) {

@@ -28,6 +28,7 @@ import org.jetbrains.jet.di.InjectorForBodyResolve;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -231,16 +232,23 @@ public class ElementResolver {
     }
 
     private static void annotationAdditionalResolve(ResolveSession resolveSession, JetAnnotationEntry jetAnnotationEntry) {
+        Annotations annotations = null;
+
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(jetAnnotationEntry, JetDeclaration.class);
         if (declaration != null) {
             Annotated descriptor = resolveSession.resolveToDescriptor(declaration);
+            annotations = descriptor.getAnnotations();
+        }
+        else {
+            JetFileAnnotationList fileAnnotationList = PsiTreeUtil.getParentOfType(jetAnnotationEntry, JetFileAnnotationList.class);
+            if (fileAnnotationList != null) {
+                annotations = resolveSession.getFileAnnotations(fileAnnotationList.getContainingJetFile());
+            }
+        }
 
-            AnnotationResolver.resolveAnnotationsArguments(
-                    descriptor,
-                    resolveSession.getTrace()
-            );
-
-            ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
+        if (annotations != null) {
+            AnnotationResolver.resolveAnnotationsArguments(annotations, resolveSession.getTrace());
+            ForceResolveUtil.forceResolveAllContents(annotations);
         }
     }
 
