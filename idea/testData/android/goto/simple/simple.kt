@@ -7,4 +7,3 @@ class MyActivity: Activity() {
     val button = this.login<caret>
 }
 
-// EXIST: login
