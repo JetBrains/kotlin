@@ -3826,6 +3826,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("valuesValueOfAndEntriesAccessibility.kt")
+            public void testValuesValueOfAndEntriesAccessibility() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/valuesValueOfAndEntriesAccessibility.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/enum/inner")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)

@@ -255,7 +255,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 thisScope,
                 getScopeForMemberLookup(),
                 getScopeForClassHeaderResolution(),
-                classObjectAdapterScope);
+                classObjectAdapterScope,
+                getStaticScope()
+        );
     }
 
     @Override
