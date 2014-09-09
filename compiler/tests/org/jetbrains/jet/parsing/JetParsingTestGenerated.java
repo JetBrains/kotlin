@@ -48,12 +48,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi"), Pattern.compile("^(.*)\\.kts?$"), true);
         }
         
-        @TestMetadata("AnnotatedExpressions.kt")
-        public void testAnnotatedExpressions() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/AnnotatedExpressions.kt");
-            doParsingTest(fileName);
-        }
-        
         @TestMetadata("AnonymousInitializer.kt")
         public void testAnonymousInitializer() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/AnonymousInitializer.kt");
@@ -63,24 +57,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("AssertNotNull.kt")
         public void testAssertNotNull() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/AssertNotNull.kt");
-            doParsingTest(fileName);
-        }
-        
-        @TestMetadata("Attributes.kt")
-        public void testAttributes() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Attributes.kt");
-            doParsingTest(fileName);
-        }
-        
-        @TestMetadata("AttributesOnPatterns.kt")
-        public void testAttributesOnPatterns() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/AttributesOnPatterns.kt");
-            doParsingTest(fileName);
-        }
-        
-        @TestMetadata("Attributes_ERR.kt")
-        public void testAttributes_ERR() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Attributes_ERR.kt");
             doParsingTest(fileName);
         }
         
@@ -432,12 +408,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
         
-        @TestMetadata("ShortAnnotations.kt")
-        public void testShortAnnotations() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ShortAnnotations.kt");
-            doParsingTest(fileName);
-        }
-        
         @TestMetadata("SimpleClassMembers.kt")
         public void testSimpleClassMembers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/SimpleClassMembers.kt");
@@ -498,12 +468,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
         
-        @TestMetadata("TypeAnnotations.kt")
-        public void testTypeAnnotations() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/TypeAnnotations.kt");
-            doParsingTest(fileName);
-        }
-        
         @TestMetadata("TypeConstraints.kt")
         public void testTypeConstraints() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/TypeConstraints.kt");
@@ -553,6 +517,42 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         public static class Annotation extends AbstractJetParsingTest {
             public void testAllFilesPresentInAnnotation() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation"), Pattern.compile("^(.*)\\.kts?$"), true);
+            }
+            
+            @TestMetadata("AnnotatedExpressions.kt")
+            public void testAnnotatedExpressions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/AnnotatedExpressions.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("Attributes.kt")
+            public void testAttributes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/Attributes.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("AttributesOnPatterns.kt")
+            public void testAttributesOnPatterns() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/AttributesOnPatterns.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("Attributes_ERR.kt")
+            public void testAttributes_ERR() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/Attributes_ERR.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("ShortAnnotations.kt")
+            public void testShortAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/ShortAnnotations.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("TypeAnnotations.kt")
+            public void testTypeAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/TypeAnnotations.kt");
+                doParsingTest(fileName);
             }
             
             @TestMetadata("compiler/testData/psi/annotation/onFile")
