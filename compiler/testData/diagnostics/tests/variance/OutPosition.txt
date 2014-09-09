@@ -1,0 +1,60 @@
+package 
+
+internal trait In</*0*/ in T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Inv</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Out</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Pair</*0*/ out X, /*1*/ out Y> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal abstract fun neOk1(): I
+    internal abstract fun neOk10(): Inv<in O>
+    internal abstract fun neOk11(): Inv<out I>
+    internal abstract fun neOk2(): In<O>
+    internal abstract fun neOk3(): In<In<I>>
+    internal abstract fun neOk30(): Pair<I, [ERROR : No type element]>
+    internal abstract fun neOk31(): Pair<I, [ERROR : Inv]>
+    internal abstract fun neOk32(): [ERROR : Inv]
+    internal abstract fun neOk33(): Inv<[ERROR : No type element]>
+    internal abstract fun neOk34(): Inv<[ERROR : C]>
+    internal abstract fun neOk35(): [ERROR : Inv<P, P>]
+    internal abstract fun neOk4(): Inv<I>
+    internal abstract fun neOk5(): Inv<O>
+    internal abstract fun neOk6(): Pair<In<O>, I>
+    internal abstract fun neOk7(): Inv<in O>
+    internal abstract fun neOk8(): Out<in I>
+    internal abstract fun ok1(): O
+    internal abstract fun ok10(): Inv<in I>
+    internal abstract fun ok11(): Inv<out O>
+    internal abstract fun ok12(): Inv<in P>
+    internal abstract fun ok13(): Inv<out P>
+    internal abstract fun ok2(): In<I>
+    internal abstract fun ok3(): In<In<O>>
+    internal abstract fun ok4(): Inv<P>
+    internal abstract fun ok5(): P
+    internal abstract fun ok6(): Out<O>
+    internal abstract fun ok7(): Out<P>
+    internal abstract fun ok8(): Out<In<P>>
+    internal abstract fun ok9(): Pair<In<I>, O>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

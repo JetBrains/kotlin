@@ -1,0 +1,67 @@
+package
+
+internal fun </*0*/ T> getT(): T
+
+internal final class Delegate</*0*/ T> {
+    public constructor Delegate</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun get(/*0*/ t: kotlin.Any, /*1*/ p: kotlin.PropertyMetadata): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun set(/*0*/ t: kotlin.Any, /*1*/ p: kotlin.PropertyMetadata, /*2*/ varue: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait In</*0*/ in T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Inv</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Out</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal abstract class Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
+    public constructor Test</*0*/ in I, /*1*/ out O, /*2*/ P>()
+    internal final var delegateType1: I
+    internal final var delegateType2: O
+    internal final var delegateType3: P
+    internal final var delegateType4: In<I>
+    internal final var delegateType5: In<O>
+    internal final var implicitType1: I
+    internal final var implicitType2: O
+    internal final var implicitType3: P
+    internal final var implicitType4: In<I>
+    internal final var implicitType5: In<O>
+    internal abstract var type1: I
+    internal abstract var type2: O
+    internal abstract var type3: P
+    internal abstract var type4: In<I>
+    internal abstract var type5: In<O>
+    internal final var </*0*/ X : In<O>> typeParameter0: kotlin.Int
+    internal final var </*0*/ X : I> typeParameter1: kotlin.Int
+    internal final var </*0*/ X : O> typeParameter2: kotlin.Int
+    internal final var </*0*/ X : P> typeParameter3: kotlin.Int
+    internal final var </*0*/ X : In<I>> typeParameter4: kotlin.Int
+    internal final var </*0*/ X : In<O>> typeParameter5: kotlin.Int
+    internal final var </*0*/ X : I> typeParameter6: kotlin.Int
+    internal final var </*0*/ X : O> typeParameter7: kotlin.Int
+    internal final var </*0*/ X : P> typeParameter8: kotlin.Int
+    internal final var </*0*/ X : In<I>> typeParameter9: kotlin.Int
+    internal abstract var I.receiver1: kotlin.Int
+    internal abstract var O.receiver2: kotlin.Int
+    internal abstract var P.receiver3: kotlin.Int
+    internal abstract var In<I>.receiver4: kotlin.Int
+    internal abstract var In<O>.receiver5: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

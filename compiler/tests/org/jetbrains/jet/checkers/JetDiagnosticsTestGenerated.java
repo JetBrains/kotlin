@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Delegation.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.DynamicTypes.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndSmartCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.PlatformTypes.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Delegation.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.DynamicTypes.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndSmartCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.PlatformTypes.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.Variance.class, Tests.When.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
@@ -10208,6 +10208,69 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("varargsAndFunctionLiterals.kt")
             public void testVarargsAndFunctionLiterals() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/varargsAndFunctionLiterals.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/variance")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Variance extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInVariance() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/variance"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("Class.kt")
+            public void testClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/Class.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Function.kt")
+            public void testFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/Function.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InPosition.kt")
+            public void testInPosition() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/InPosition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InvariantPosition.kt")
+            public void testInvariantPosition() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/InvariantPosition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OutPosition.kt")
+            public void testOutPosition() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/OutPosition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PrimaryConstructor.kt")
+            public void testPrimaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/PrimaryConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ValProperty.kt")
+            public void testValProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/ValProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VarProperty.kt")
+            public void testVarProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/VarProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Visibility.kt")
+            public void testVisibility() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/Visibility.kt");
                 doTest(fileName);
             }
         }
