@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
+import org.jetbrains.jet.lang.resolve.java.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
@@ -94,6 +95,12 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
                                                    returnType, typeParameters, hasSuperMethods);
 
         if (data.isAnnotated() && !data.hasErrors()) {
+            if (JavaPackage.getPLATFORM_TYPES()) {
+                // We only take parameter names from the @KotlinSignature
+                return new AlternativeMethodSignature(returnType, receiverType,
+                                                      AlternativeMethodSignatureData.updateNames(valueParameters, data.getValueParameters()),
+                                                      typeParameters, Collections.<String>emptyList(), true);
+            }
             return new AlternativeMethodSignature(data.getReturnType(), receiverType, data.getValueParameters(), data.getTypeParameters(),
                                                   Collections.<String>emptyList(), true);
         }
@@ -113,6 +120,9 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
                 new AlternativeFieldSignatureData(externalAnnotationResolver, field, returnType, project, isVar);
 
         if (data.isAnnotated() && !data.hasErrors()) {
+            if (JavaPackage.getPLATFORM_TYPES()) {
+                return new AlternativeFieldSignature(returnType, null);
+            }
             return new AlternativeFieldSignature(data.getReturnType(), null);
         }
 

@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.resolve.java.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.types.JetType;
@@ -41,7 +40,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
             @NotNull Project project,
             boolean isVar
     ) {
-        String signature = JavaPackage.getPLATFORM_TYPES() ? null : SignaturesUtil.getKotlinSignature(externalAnnotationResolver, field);
+        String signature = SignaturesUtil.getKotlinSignature(externalAnnotationResolver, field);
 
         if (signature == null) {
             setAnnotated(false);
