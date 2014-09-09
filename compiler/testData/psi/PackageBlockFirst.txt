@@ -1,16 +1,9 @@
 JetFile: PackageBlockFirst.kt
   PACKAGE_DIRECTIVE
-    <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(package)('package')
-  PsiWhiteSpace(' ')
-  MODIFIER_LIST
-    ANNOTATION_ENTRY
-      CONSTRUCTOR_CALLEE
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foobar')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('foobar')
   PsiWhiteSpace(' ')
   PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(LBRACE)('{')

@@ -194,19 +194,7 @@ public class JetParsing extends AbstractJetParsing {
         if (at(PACKAGE_KEYWORD)) {
             advance(); // PACKAGE_KEYWORD
 
-
             parsePackageName();
-
-            if (at(LBRACE)) {
-                // Because it's blocked package and it will be parsed as one of top level objects
-                packageDirective.drop();
-                firstEntry.rollbackTo();
-
-                parseFileAnnotationList(/*reportErrorForNonFileAnnotations =*/ false);
-                packageDirective = mark();
-                packageDirective.done(PACKAGE_DIRECTIVE);
-                return;
-            }
 
             firstEntry.drop();
 
