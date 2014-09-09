@@ -7743,6 +7743,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("intVsIntegerAmbiguity.kt")
+            public void testIntVsIntegerAmbiguity() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/intVsIntegerAmbiguity.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("override.kt")
             public void testOverride() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/override.kt");

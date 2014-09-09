@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.jet.lang.types.BoundsSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -239,8 +240,24 @@ public class OverloadingConflictResolver {
     }
 
     private boolean typeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
-        return JetTypeChecker.DEFAULT.isSubtypeOf(specific, general) ||
+        boolean isSubtype = JetTypeChecker.DEFAULT.isSubtypeOf(specific, general) ||
                             numericTypeMoreSpecific(specific, general);
+        if (!isSubtype) return false;
+
+        boolean specificIsFlexible = TypesPackage.isFlexible(specific);
+        boolean generalIsFlexible = TypesPackage.isFlexible(general);
+
+        if (specificIsFlexible && !generalIsFlexible) {
+            // Int! lessSpecific Int
+            // Int! >< Int?
+            return false;
+        }
+        else if (!specificIsFlexible && generalIsFlexible) {
+            // Int? >< Int!
+            if (specific.isNullable()) return false;
+        }
+
+        return true;
     }
 
     private boolean numericTypeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
