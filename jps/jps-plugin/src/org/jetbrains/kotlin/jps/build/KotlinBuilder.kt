@@ -64,7 +64,10 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.jps.android.AndroidJpsUtil
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.jps.build.KotlinJpsCompilerArgumentsProvider
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -428,6 +431,17 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         moduleFile.delete()
 
         return outputItemCollector
+    }
+
+    private fun getAndroidResPath(module: JpsModule, context: CompileContext): String {
+        val extension = AndroidJpsUtil.getExtension(module)!!
+        val path = AndroidJpsUtil.getResourceDirForCompilationPath(extension)
+        return File(path!!.getAbsolutePath() + "/layout").getAbsolutePath()
+    }
+
+    private fun getAndroidManifest(module: JpsModule): String {
+        val extension = AndroidJpsUtil.getExtension(module)!!
+        return AndroidJpsUtil.getManifestFileForCompilationPath(extension)!!.getAbsolutePath()
     }
 
     public class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
