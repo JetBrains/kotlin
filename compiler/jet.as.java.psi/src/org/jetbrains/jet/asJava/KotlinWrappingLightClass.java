@@ -24,13 +24,14 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.impl.light.LightField;
-import org.jetbrains.jet.asJava.light.KotlinLightField;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.source.ClassInnerStuffCache;
 import com.intellij.psi.impl.source.PsiExtensibleClass;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.asJava.light.KotlinLightField;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetProperty;
 
@@ -131,5 +132,11 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                        : new LightMethod(myManager, method, KotlinWrappingLightClass.this);
             }
         });
+    }
+
+    @Override
+    public String getText() {
+        JetClassOrObject origin = getOrigin();
+        return origin == null ? null : origin.getText();
     }
 }
