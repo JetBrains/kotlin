@@ -147,6 +147,7 @@ import org.jetbrains.jet.android.AbstractCrossParserTest
 import org.jetbrains.jet.lang.resolve.android.AbstractAndroidBoxTest
 import org.jetbrains.jet.android.AbstractAndroidCompletionTest
 import org.jetbrains.jet.android.AbstractAndroidGotoTest
+import org.jetbrains.jet.jps.build.android.AbstractAndroidJpsTestCase
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -749,6 +750,10 @@ fun main(args: Array<String>) {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
+        }
+
+        testClass(javaClass<AbstractAndroidJpsTestCase>()) {
+            model("android", recursive = false, extension = null)
         }
     }
 

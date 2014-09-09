@@ -41,12 +41,11 @@ public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
     override fun requireRecentSdk() = true
 
     public fun doTest(path: String) {
-        val f = myFixture!!
-        f.copyDirectoryToProject(getResDir()!!, "res")
-        f.configureByFile(path + getTestName(true) + ".kt");
+        myFixture!!.copyDirectoryToProject(getResDir()!!, "res")
+        myFixture!!.configureByFile(path + getTestName(true) + ".kt");
 
-        val asf = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
-        f.getEditor().toString()
+        val asf = GotoDeclarationAction.findTargetElement(myFixture!!.getProject(), myFixture!!.getEditor(), myFixture!!.getCaretOffset())
+        myFixture!!.getEditor().toString()
         fail("this test doesn't work yet")
     }
 }
