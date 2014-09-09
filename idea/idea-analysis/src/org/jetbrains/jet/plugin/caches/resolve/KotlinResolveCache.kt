@@ -231,9 +231,7 @@ private object KotlinResolveDataProvider {
             }
 
             val file = analyzableElement.getContainingJetFile()
-            val virtualFile = file.getVirtualFile()
-            if (LightClassUtil.belongsToKotlinBuiltIns(file)
-                || virtualFile != null && LibraryUtil.findLibraryEntry(virtualFile, file.getProject()) != null) {
+            if (LightClassUtil.belongsToKotlinBuiltIns(file) || file.getModuleInfo() is LibrarySourceInfo) {
                 // Library sources: mark file to skip
                 file.putUserData(LibrarySourceHacks.SKIP_TOP_LEVEL_MEMBERS, true)
             }
