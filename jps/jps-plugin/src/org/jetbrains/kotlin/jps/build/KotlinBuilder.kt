@@ -434,13 +434,15 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     }
 
     private fun getAndroidResPath(module: JpsModule, context: CompileContext): String {
-        val extension = AndroidJpsUtil.getExtension(module)!!
+        val extension = AndroidJpsUtil.getExtension(module)
+        if (extension == null) return ""
         val path = AndroidJpsUtil.getResourceDirForCompilationPath(extension)
         return File(path!!.getAbsolutePath() + "/layout").getAbsolutePath()
     }
 
     private fun getAndroidManifest(module: JpsModule): String {
-        val extension = AndroidJpsUtil.getExtension(module)!!
+        val extension = AndroidJpsUtil.getExtension(module)
+        if (extension == null) return ""
         return AndroidJpsUtil.getManifestFileForCompilationPath(extension)!!.getAbsolutePath()
     }
 

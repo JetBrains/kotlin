@@ -23,5 +23,18 @@
     <orderEntry type="library" scope="PROVIDED" name="android" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="preloader" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../ideaSDK/plugins/gradle/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../ideaSDK/plugins/gradle/lib" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../ideaSDK/plugins/gradle/lib" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../ideaSDK/plugins/gradle/lib" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>
