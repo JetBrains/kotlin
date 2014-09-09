@@ -22,6 +22,7 @@ import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.GeneratorsFileUtil;
 import org.jetbrains.jet.utils.Printer;
@@ -36,6 +37,7 @@ public class TestGenerator {
     public static final String NAVIGATION_METADATA = "navigationMetadata";
 
     private static final Set<String> GENERATED_FILES = ContainerUtil.newHashSet();
+    private static final Class RUNNER = JUnit3RunnerWithInners.class;
 
     private final String suiteClassPackage;
     private final String suiteClassName;
@@ -72,9 +74,12 @@ public class TestGenerator {
         p.println("import com.intellij.testFramework.TestDataPath;");
         p.println("import junit.framework.Test;");
         p.println("import junit.framework.TestSuite;");
+        p.println("import org.junit.runner.RunWith;");
         p.println("import org.jetbrains.jet.JetTestUtils;");
         p.println("import org.jetbrains.jet.test.InnerTestClasses;");
         p.println("import org.jetbrains.jet.test.TestMetadata;");
+        p.println("import ", RUNNER.getCanonicalName(), ";");
+
         p.println();
         p.println("import java.io.File;");
         p.println("import java.util.regex.Pattern;");
@@ -134,11 +139,11 @@ public class TestGenerator {
 
     private void generateTestClass(Printer p, TestClassModel testClassModel, boolean isStatic) {
         String staticModifier = isStatic ? "static " : "";
+
         generateMetadata(p, testClassModel);
-
         generateTestDataPath(p, testClassModel);
-
         generateInnerClassesAnnotation(p, testClassModel);
+        p.println("@RunWith(", RUNNER.getName(), ".class)");
 
         p.println("public " + staticModifier + "class ", testClassModel.getName(), " extends ", baseTestClassName, " {");
         p.pushIndent();
@@ -158,36 +163,6 @@ public class TestGenerator {
             generateTestClass(p, innerTestClass, true);
             p.println();
         }
-
-        if (!innerTestClasses.isEmpty()) {
-            generateSuiteMethod(p, testClassModel, isStatic);
-        }
-
-        p.popIndent();
-        p.println("}");
-    }
-
-    private static void generateSuiteMethod(Printer p, TestClassModel testClassModel, boolean innerClass) {
-        String name = innerClass ? "innerSuite" : "suite";
-        p.println("public static Test " + name + "() {");
-        p.pushIndent();
-
-        p.println("TestSuite suite = new TestSuite(\"", testClassModel.getName(), "\");");
-        if (!testClassModel.getTestMethods().isEmpty()) {
-            p.println("suite.addTestSuite(", testClassModel.getName(), ".class);");
-        }
-        for (TestClassModel innerTestClass : testClassModel.getInnerTestClasses()) {
-            if (innerTestClass.isEmpty()) {
-                continue;
-            }
-            if (innerTestClass.getInnerTestClasses().isEmpty()) {
-                p.println("suite.addTestSuite(", innerTestClass.getName(), ".class);");
-            }
-            else {
-                p.println("suite.addTest(", innerTestClass.getName(), ".innerSuite());");
-            }
-        }
-        p.println("return suite;");
 
         p.popIndent();
         p.println("}");
