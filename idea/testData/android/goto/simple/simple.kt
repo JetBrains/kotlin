@@ -1,9 +1,13 @@
 package com.myapp
 
 import android.app.Activity
+import android.os.Bundle
+import java.io.File
 
 
-class MyActivity: Activity() {
-    val button = this.login<caret>
+public class MyActivity : Activity() {
+    override fun onCreate(savedInstanceState: <caret>Bundle?) {}
+    //val button = login
+    val shit = File("")
 }
 

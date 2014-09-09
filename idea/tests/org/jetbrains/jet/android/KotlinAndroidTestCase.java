@@ -1,17 +1,17 @@
 /*
- * Copyright 2000-2009 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.jetbrains.jet.android;
@@ -29,8 +29,15 @@ import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.FileViewProvider;
@@ -39,18 +46,19 @@ import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.InspectionTestUtil;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
-import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
-import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
-import com.intellij.testFramework.fixtures.TestFixtureBuilder;
+import com.intellij.testFramework.fixtures.*;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
+import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,52 +90,53 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         return "res/";
     }
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    class LightAndroidProjectDescriptor extends JetLightProjectDescriptor {
+        @Override
+        public Sdk getSdk() {
+            androidSdk = createAndroidSdk(getTestSdkPath(), getPlatformDir());
+            return androidSdk;
+        }
 
-        // this will throw an exception if we don't have a full Android SDK, so we need to do this first thing before any other setup
+        @Override
+        public void configureModule(
+                Module module, ModifiableRootModel model, ContentEntry contentEntry
+        ) {
+            NewLibraryEditor editor = new NewLibraryEditor();
+            editor.setName("android.jar");
+            editor.addRoot(androidSdk.getSdkModificator().getRoots(OrderRootType.CLASSES)[0], OrderRootType.CLASSES);
+
+            ConfigLibraryUtil.addLibrary(editor, model);
+        }
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
         String sdkPath = getTestSdkPath();
 
-        final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder =
-                IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName());
-        myFixture = JavaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
-        final JavaModuleFixtureBuilder moduleFixtureBuilder = projectBuilder.addModule(JavaModuleFixtureBuilder.class);
+
+        IdeaTestFixtureFactory factory = IdeaTestFixtureFactory.getFixtureFactory();
+        //TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder(JetLightProjectDescriptor.INSTANCE);
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder(new LightAndroidProjectDescriptor());
+        //final TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder(getName());
+        final IdeaProjectTestFixture fixture = fixtureBuilder.getFixture();
+        myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(fixture, new LightTempDirTestFixtureImpl(true));
+
         final String dirPath = myFixture.getTempDirPath() + getContentRootPath();
         final File dir = new File(dirPath);
 
         if (!dir.exists()) {
             assertTrue(dir.mkdirs());
         }
-        tuneModule(moduleFixtureBuilder, dirPath);
-
-        final ArrayList<MyAdditionalModuleData> modules = new ArrayList<MyAdditionalModuleData>();
-        configureAdditionalModules(projectBuilder, modules);
 
         myFixture.setUp();
         myFixture.setTestDataPath(getTestDataPath());
-        myModule = moduleFixtureBuilder.getFixture().getModule();
 
-        // Must be done before addAndroidFacet, and must always be done, even if !myCreateManifest.
-        // We will delete it at the end of setUp; this is needed when unit tests want to rewrite
-        // the manifest on their own.
+        myModule = myFixture.getModule();
+
         createManifest();
 
         myFacet = addAndroidFacet(myModule, sdkPath, getPlatformDir(), isToAddSdk());
-
-        myAdditionalModules = new ArrayList<Module>();
-
-        for (MyAdditionalModuleData data : modules) {
-            final Module additionalModule = data.myModuleFixtureBuilder.getFixture().getModule();
-            myAdditionalModules.add(additionalModule);
-            final AndroidFacet facet = addAndroidFacet(additionalModule, sdkPath, getPlatformDir());
-            facet.setLibraryProject(data.myLibrary);
-            final String rootPath = getContentRootPath(data.myDirName);
-            myFixture.copyDirectoryToProject("res", rootPath + "/res");
-            myFixture.copyFileToProject(SdkConstants.FN_ANDROID_MANIFEST_XML,
-                                        rootPath + '/' + SdkConstants.FN_ANDROID_MANIFEST_XML);
-            ModuleRootModificationUtil.addDependency(myModule, additionalModule);
-        }
 
         if (!myCreateManifest) {
             deleteManifest();

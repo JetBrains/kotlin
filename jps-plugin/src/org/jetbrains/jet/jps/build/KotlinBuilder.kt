@@ -55,6 +55,7 @@ import org.jetbrains.jps.android.AndroidJpsUtil
 import org.jetbrains.jps.android.model.JpsAndroidModuleExtension
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.model.module.JpsModule
+import org.gradle.tooling.BuildException
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -260,13 +261,15 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     }
 
     private fun getAndroidResPath(module: JpsModule, context: CompileContext): String {
-        val extension = AndroidJpsUtil.getExtension(module)!!
+        val extension = AndroidJpsUtil.getExtension(module)
+        if (extension == null) return ""
         val path = AndroidJpsUtil.getResourceDirForCompilationPath(extension)
         return File(path!!.getAbsolutePath() + "/layout").getAbsolutePath()
     }
 
     private fun getAndroidManifest(module: JpsModule): String {
-        val extension = AndroidJpsUtil.getExtension(module)!!
+        val extension = AndroidJpsUtil.getExtension(module)
+        if (extension == null) return ""
         return AndroidJpsUtil.getManifestFileForCompilationPath(extension)!!.getAbsolutePath()
     }
 

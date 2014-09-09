@@ -36,6 +36,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.IdeaTestCase;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper;
 import org.jetbrains.android.sdk.*;
@@ -53,7 +54,9 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
     /** Environment variable or system property pointing to the directory name of the platform inside $sdk/platforms, e.g. "android-17" */
     public static final String PLATFORM_DIR_PROPERTY = "ADT_TEST_PLATFORM";
 
-    protected JavaCodeInsightTestFixture myFixture;
+    protected CodeInsightTestFixture myFixture;
+
+    protected Sdk androidSdk;
 
     protected KotlinAndroidTestCaseBase() {
         IdeaTestCase.initPlatformPrefix();
@@ -136,7 +139,7 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
     }
 
     protected void addAndroidSdk(Module module, String sdkPath, String platformDir) {
-        Sdk androidSdk = createAndroidSdk(sdkPath, platformDir);
+        assert androidSdk != null : "android sdk must be initialized";
         ModuleRootModificationUtil.setModuleSdk(module, androidSdk);
     }
 
@@ -184,6 +187,11 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
         }
         assertNotNull(target);
         data.setBuildTarget(target);
+        data.setJavaSdk(PluginTestCaseBase.fullJdk());
+        // Srsly, WTF? Why do i have to manually add jdk classes to android sdk roots? Even with setJavaSdk(PluginTestCaseBase.fullJdk())
+        for (VirtualFile f : PluginTestCaseBase.fullJdk().getRootProvider().getFiles(OrderRootType.CLASSES)) {
+            sdkModificator.addRoot(f, OrderRootType.CLASSES);
+        }
         sdkModificator.setSdkAdditionalData(data);
         sdkModificator.commitChanges();
         return sdk;
