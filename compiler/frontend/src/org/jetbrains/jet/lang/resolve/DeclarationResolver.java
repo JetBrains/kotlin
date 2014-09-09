@@ -85,6 +85,7 @@ public class DeclarationResolver {
         resolveConstructorHeaders(c);
         resolveAnnotationStubsOnClassesAndConstructors(c);
         resolveFunctionAndPropertyHeaders(c);
+        resolveAnnotationsOnFiles(c.getFileScopes());
 
         // SCRIPT: Resolve script declarations
         resolveScriptDeclarations(c);
@@ -94,6 +95,14 @@ public class DeclarationResolver {
         CallsPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
         checkRedeclarationsInPackages(c);
         checkRedeclarationsInInnerClassNames(c);
+    }
+
+    private void resolveAnnotationsOnFiles(@NotNull Map<JetFile, ? extends JetScope> file2scope) {
+        for (Map.Entry<JetFile, ? extends JetScope> entry : file2scope.entrySet()) {
+            JetFile file = entry.getKey();
+            JetScope fileScope = entry.getValue();
+            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), trace);
+        }
     }
 
     private void resolveAnnotationConstructors(@NotNull TopDownAnalysisContext c) {
