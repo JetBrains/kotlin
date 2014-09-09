@@ -334,24 +334,40 @@ public abstract class BaseDiagnosticsTest extends
                                        jvmSignatureDiagnostics),
                     whatDiagnosticsToConsider
             );
-            CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
+
+            Map<Diagnostic, CheckerTestUtil.TextDiagnostic> diagnosticToExpectedDiagnostic = ContainerUtil.newHashMap();
+            CheckerTestUtil.diagnosticsDiff(diagnosticToExpectedDiagnostic, diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
 
                 @Override
-                public void missingDiagnostic(String type, int expectedStart, int expectedEnd) {
-                    String message = "Missing " + type + DiagnosticUtils.atLocation(jetFile, new TextRange(expectedStart, expectedEnd));
+                public void missingDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int expectedStart, int expectedEnd) {
+                    String message = "Missing " + diagnostic.getName() + DiagnosticUtils.atLocation(jetFile, new TextRange(expectedStart, expectedEnd));
                     System.err.println(message);
                     ok[0] = false;
                 }
 
                 @Override
-                public void unexpectedDiagnostic(String type, int actualStart, int actualEnd) {
-                    String message = "Unexpected " + type + DiagnosticUtils.atLocation(jetFile, new TextRange(actualStart, actualEnd));
+                public void wrongParametersDiagnostic(
+                        CheckerTestUtil.TextDiagnostic expectedDiagnostic,
+                        CheckerTestUtil.TextDiagnostic actualDiagnostic,
+                        int start,
+                        int end
+                ) {
+                    String message = "Parameters of diagnostic not equal at position "
+                                     + DiagnosticUtils.atLocation(jetFile, new TextRange(start, end))
+                                     + ". Expected: " + expectedDiagnostic.asString() + ", actual: " + actualDiagnostic.asString();
+                    System.err.println(message);
+                    ok[0] = false;
+                }
+
+                @Override
+                public void unexpectedDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int actualStart, int actualEnd) {
+                    String message = "Unexpected " + diagnostic.getName() + DiagnosticUtils.atLocation(jetFile, new TextRange(actualStart, actualEnd));
                     System.err.println(message);
                     ok[0] = false;
                 }
             });
 
-            actualText.append(CheckerTestUtil.addDiagnosticMarkersToText(jetFile, diagnostics, new Function<PsiFile, String>() {
+            actualText.append(CheckerTestUtil.addDiagnosticMarkersToText(jetFile, diagnostics, diagnosticToExpectedDiagnostic, new Function<PsiFile, String>() {
                 @Override
                 public String fun(PsiFile file) {
                     return file.getText();

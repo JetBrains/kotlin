@@ -17,16 +17,20 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.checkers.CheckerTestUtil.DiagnosedRange;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,7 +54,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
     public void testEquals() throws Exception {
         doTest(new TheTest() {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
             }
         });
     }
@@ -59,7 +63,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         final DiagnosticData typeMismatch1 = diagnostics.get(1);
         doTest(new TheTest(missing(typeMismatch1)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnostics.remove(typeMismatch1.index);
             }
         });
@@ -69,7 +73,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         final DiagnosticData typeMismatch1 = diagnostics.get(1);
         doTest(new TheTest(unexpected(typeMismatch1)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.remove(typeMismatch1.index);
             }
         });
@@ -80,7 +84,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         final DiagnosticData unresolvedReference = diagnostics.get(6);
         doTest(new TheTest(unexpected(typeMismatch1), missing(unresolvedReference)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.remove(typeMismatch1.rangeIndex);
                 diagnostics.remove(unresolvedReference.index);
             }
@@ -92,11 +96,43 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         final DiagnosticData typeMismatch3 = diagnostics.get(5);
         doTest(new TheTest(unexpected(noneApplicable), missing(typeMismatch3)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.remove(noneApplicable.rangeIndex);
                 diagnostics.remove(typeMismatch3.index);
             }
         });
+    }
+
+    public void testWrongParameters() throws Exception {
+        final DiagnosticData unused = diagnostics.get(2);
+        String unusedDiagnostic = asTextDiagnostic(unused, "i");
+        final DiagnosedRange range = asDiagnosticRange(unused, unusedDiagnostic);
+        doTest(new TheTest(wrongParameters(unusedDiagnostic, "UNUSED_VARIABLE(a)", unused.startOffset, unused.endOffset)) {
+            @Override
+            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+                diagnosedRanges.set(unused.rangeIndex, range);
+            }
+        });
+    }
+
+    public void testWrongParameterInMultiRange() throws Exception {
+        final DiagnosticData unresolvedReference = diagnostics.get(6);
+        String unusedDiagnostic = asTextDiagnostic(unresolvedReference, "i");
+        String toManyArguments = asTextDiagnostic(diagnostics.get(7));
+        final DiagnosedRange range = asDiagnosticRange(unresolvedReference, unusedDiagnostic, toManyArguments);
+        doTest(new TheTest(wrongParameters(unusedDiagnostic, "UNRESOLVED_REFERENCE(xx)", unresolvedReference.startOffset, unresolvedReference.endOffset)) {
+            @Override
+            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+                diagnosedRanges.set(unresolvedReference.rangeIndex, range);
+            }
+        });
+    }
+
+    public void testAbstractJetDiagnosticsTest() throws Exception {
+        AbstractJetDiagnosticsTest test = new AbstractJetDiagnosticsTest() {
+            {setUp();}
+        };
+        test.doTest(myFullDataPath + File.separatorChar + "test_with_diagnostic.kt");
     }
 
     private static abstract class TheTest {
@@ -113,9 +149,9 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
             String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile)).toString();
 
-            List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
+            List<DiagnosedRange> diagnosedRanges = Lists.newArrayList();
             CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
-            for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
+            for (DiagnosedRange diagnosedRange : diagnosedRanges) {
                 diagnosedRange.setFile(psiFile);
             }
 
@@ -127,23 +163,34 @@ public class CheckerTestUtilTest extends JetLiteFixture {
             List<String> expectedMessages = Lists.newArrayList(expected);
             final List<String> actualMessages = Lists.newArrayList();
 
-            CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
+            CheckerTestUtil.diagnosticsDiff(ContainerUtil.<Diagnostic, CheckerTestUtil.TextDiagnostic>newHashMap(),
+                                            diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
 
                 @Override
-                public void missingDiagnostic(String type, int expectedStart, int expectedEnd) {
-                    actualMessages.add(missing(type, expectedStart, expectedEnd));
+                public void missingDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int expectedStart, int expectedEnd) {
+                    actualMessages.add(missing(diagnostic.getName(), expectedStart, expectedEnd));
                 }
 
                 @Override
-                public void unexpectedDiagnostic(String type, int actualStart, int actualEnd) {
-                    actualMessages.add(unexpected(type, actualStart, actualEnd));
+                public void wrongParametersDiagnostic(
+                        CheckerTestUtil.TextDiagnostic expectedDiagnostic,
+                        CheckerTestUtil.TextDiagnostic actualDiagnostic,
+                        int start,
+                        int end
+                ) {
+                    actualMessages.add(wrongParameters(expectedDiagnostic.asString(), actualDiagnostic.asString(), start, end));
+                }
+
+                @Override
+                public void unexpectedDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int actualStart, int actualEnd) {
+                    actualMessages.add(unexpected(diagnostic.getName(), actualStart, actualEnd));
                 }
             });
 
             assertEquals(listToString(expectedMessages), listToString(actualMessages));
         }
 
-        private String listToString(List<String> expectedMessages) {
+        private static String listToString(List<String> expectedMessages) {
             StringBuilder stringBuilder = new StringBuilder();
             for (String expectedMessage : expectedMessages) {
                 stringBuilder.append(expectedMessage).append("\n");
@@ -151,7 +198,11 @@ public class CheckerTestUtilTest extends JetLiteFixture {
             return stringBuilder.toString();
         }
 
-        protected abstract void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges);
+        protected abstract void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges);
+    }
+
+    private static String wrongParameters(String expected, String actual, int start, int end) {
+        return "Wrong parameters " + expected + " != " + actual +" at " + start + " to " + end;
     }
 
     private static String unexpected(String type, int actualStart, int actualEnd) {
@@ -168,6 +219,18 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
     private static String missing(DiagnosticData data) {
         return missing(data.name, data.startOffset, data.endOffset);
+    }
+
+    private static String asTextDiagnostic(DiagnosticData diagnosticData, String... params) {
+        return diagnosticData.name + "(" + StringUtil.join(params, "; ") + ")";
+    }
+
+    private static DiagnosedRange asDiagnosticRange(DiagnosticData diagnosticData, String... textDiagnostics) {
+        DiagnosedRange range = new DiagnosedRange(diagnosticData.startOffset);
+        range.setEnd(diagnosticData.endOffset);
+        for (String textDiagnostic : textDiagnostics)
+            range.addDiagnostic(textDiagnostic);
+        return range;
     }
 
     private static class DiagnosticData {

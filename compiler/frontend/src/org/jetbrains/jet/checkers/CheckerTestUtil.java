@@ -19,16 +19,24 @@ package org.jetbrains.jet.checkers;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
+import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.diagnostics.rendering.AbstractDiagnosticWithParametersRenderer;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
+import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
+import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -64,11 +72,18 @@ public class CheckerTestUtil {
             return ranges1.size() - ranges2.size();
         }
     };
-    private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!\\w+(,\\s*\\w+)*!>)|(<!>)");
-    private static final Pattern INDIVIDUAL_DIAGNOSTIC_PATTERN = Pattern.compile("\\w+");
+
+    private static final String IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE";
+    private static final String DIAGNOSTIC_PARAMETER = "[^\\)\\(\\s;]+";
+    private static final String INDIVIDUAL_DIAGNOSTIC = "(\\w+)(\\(" + DIAGNOSTIC_PARAMETER + "(;\\s*" + DIAGNOSTIC_PARAMETER + ")*\\))?";
+    private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!"+
+                                                                              INDIVIDUAL_DIAGNOSTIC +"(,\\s*"+
+                                                                              INDIVIDUAL_DIAGNOSTIC +")*!>)|(<!>)");
+    private static final Pattern INDIVIDUAL_DIAGNOSTIC_PATTERN = Pattern.compile(INDIVIDUAL_DIAGNOSTIC);
+    private static final Pattern INDIVIDUAL_PARAMETER_PATTERN = Pattern.compile(DIAGNOSTIC_PARAMETER);
 
     public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(BindingContext bindingContext, final PsiElement root) {
-        ArrayList<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
+        List<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
         diagnostics.addAll(Collections2.filter(bindingContext.getDiagnostics().all(),
                                                new Predicate<Diagnostic>() {
                                                    @Override
@@ -117,11 +132,13 @@ public class CheckerTestUtil {
     }
 
     public interface DiagnosticDiffCallbacks {
-        void missingDiagnostic(String type, int expectedStart, int expectedEnd);
-        void unexpectedDiagnostic(String type, int actualStart, int actualEnd);
+        void missingDiagnostic(TextDiagnostic diagnostic, int expectedStart, int expectedEnd);
+        void wrongParametersDiagnostic(TextDiagnostic expectedDiagnostic, TextDiagnostic actualDiagnostic, int start, int end);
+        void unexpectedDiagnostic(TextDiagnostic diagnostic, int actualStart, int actualEnd);
     }
 
     public static void diagnosticsDiff(
+            Map<Diagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic,
             List<DiagnosedRange> expected,
             Collection<Diagnostic> actual,
             DiagnosticDiffCallbacks callbacks
@@ -164,23 +181,7 @@ public class CheckerTestUtil {
                         currentActual = safeAdvance(actualDiagnostics);
                     }
                     else {
-                        assert expectedStart == actualStart && expectedEnd == actualEnd;
-                        Multiset<String> actualDiagnosticTypes = currentActual.getDiagnosticTypeStrings();
-                        Multiset<String> expectedDiagnosticTypes = currentExpected.getDiagnostics();
-                        if (!actualDiagnosticTypes.equals(expectedDiagnosticTypes)) {
-                            Multiset<String> notInActualTypes = HashMultiset.create(expectedDiagnosticTypes);
-                            Multisets.removeOccurrences(notInActualTypes, actualDiagnosticTypes);
-
-                            Multiset<String> notInExpectedTypes = HashMultiset.create(actualDiagnosticTypes);
-                            Multisets.removeOccurrences(notInExpectedTypes, expectedDiagnosticTypes);
-
-                            for (String type : notInActualTypes) {
-                                callbacks.missingDiagnostic(type, expectedStart, expectedEnd);
-                            }
-                            for (String type : notInExpectedTypes) {
-                                callbacks.unexpectedDiagnostic(type, actualStart, actualEnd);
-                            }
-                        }
+                        compareDiagnostics(callbacks, currentExpected, currentActual, diagnosticToExpectedDiagnostic);
                         currentExpected = safeAdvance(expectedDiagnostics);
                         currentActual = safeAdvance(actualDiagnostics);
                     }
@@ -196,6 +197,61 @@ public class CheckerTestUtil {
         }
     }
 
+    private static void compareDiagnostics(
+            @NotNull DiagnosticDiffCallbacks callbacks,
+            @NotNull DiagnosedRange currentExpected,
+            @NotNull DiagnosticDescriptor currentActual,
+            @NotNull Map<Diagnostic, TextDiagnostic> diagnosticToInput
+    ) {
+        int expectedStart = currentExpected.getStart();
+        int expectedEnd = currentExpected.getEnd();
+
+        int actualStart = currentActual.getStart();
+        int actualEnd = currentActual.getEnd();
+        assert expectedStart == actualStart && expectedEnd == actualEnd;
+
+        Map<Diagnostic, TextDiagnostic> actualDiagnostics = currentActual.getTextDiagnosticsMap();
+        List<TextDiagnostic> expectedDiagnostics = currentExpected.getDiagnostics();
+
+        for (TextDiagnostic expectedDiagnostic : expectedDiagnostics) {
+            boolean diagnosticFound = false;
+            for (Diagnostic actualDiagnostic : actualDiagnostics.keySet()) {
+                TextDiagnostic actualTextDiagnostic = actualDiagnostics.get(actualDiagnostic);
+                if (expectedDiagnostic.getName().equals(actualTextDiagnostic.getName())) {
+                    if (!compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic)) {
+                        callbacks.wrongParametersDiagnostic(expectedDiagnostic, actualTextDiagnostic, expectedStart, expectedEnd);
+                    }
+
+                    actualDiagnostics.remove(actualDiagnostic);
+                    diagnosticToInput.put(actualDiagnostic, expectedDiagnostic);
+                    diagnosticFound = true;
+                    break;
+                }
+            }
+            if (!diagnosticFound) callbacks.missingDiagnostic(expectedDiagnostic, expectedStart, expectedEnd);
+        }
+
+        for (TextDiagnostic unexpectedDiagnostic : actualDiagnostics.values()) {
+            callbacks.unexpectedDiagnostic(unexpectedDiagnostic, actualStart, actualEnd);
+        }
+    }
+
+    private static boolean compareTextDiagnostic(@NotNull TextDiagnostic expected, @NotNull TextDiagnostic actual) {
+        if (!expected.getName().equals(actual.getName())) return false;
+
+        if (expected.getParameters() == null) return true;
+        if (actual.getParameters() == null || expected.getParameters().size() != actual.getParameters().size()) return false;
+
+        for (int index = 0; index < expected.getParameters().size(); index++) {
+            String expectedParameter = expected.getParameters().get(index);
+            String actualParameter = actual.getParameters().get(index);
+            if (!expectedParameter.equals(IGNORE_DIAGNOSTIC_PARAMETER) && !expectedParameter.equals(actualParameter)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static void assertSameFile(Collection<Diagnostic> actual) {
         if (actual.isEmpty()) return;
         PsiFile file = actual.iterator().next().getPsiElement().getContainingFile();
@@ -209,14 +265,14 @@ public class CheckerTestUtil {
         for (Diagnostic diagnostic : actual) {
             List<TextRange> textRanges = diagnostic.getTextRanges();
             for (TextRange textRange : textRanges) {
-                callbacks.unexpectedDiagnostic(diagnostic.getFactory().getName(), textRange.getStartOffset(), textRange.getEndOffset());
+                callbacks.unexpectedDiagnostic(TextDiagnostic.asTextDiagnostic(diagnostic), textRange.getStartOffset(), textRange.getEndOffset());
             }
         }
     }
 
     private static void missingDiagnostics(DiagnosticDiffCallbacks callbacks, DiagnosedRange currentExpected) {
-        for (String type : currentExpected.getDiagnostics()) {
-            callbacks.missingDiagnostic(type, currentExpected.getStart(), currentExpected.getEnd());
+        for (TextDiagnostic diagnostic : currentExpected.getDiagnostics()) {
+            callbacks.missingDiagnostic(diagnostic, currentExpected.getStart(), currentExpected.getEnd());
         }
     }
 
@@ -255,8 +311,8 @@ public class CheckerTestUtil {
         return matcher.replaceAll("");
     }
     
-    public static StringBuffer addDiagnosticMarkersToText(@NotNull final PsiFile psiFile, @NotNull Collection<Diagnostic> diagnostics) {
-        return addDiagnosticMarkersToText(psiFile, diagnostics, new Function<PsiFile, String>() {
+    public static StringBuffer addDiagnosticMarkersToText(@NotNull PsiFile psiFile, @NotNull Collection<Diagnostic> diagnostics) {
+        return addDiagnosticMarkersToText(psiFile, diagnostics, Collections.<Diagnostic, TextDiagnostic>emptyMap(), new Function<PsiFile, String>() {
             @Override
             public String fun(PsiFile file) {
                 return file.getText();
@@ -267,6 +323,7 @@ public class CheckerTestUtil {
     public static StringBuffer addDiagnosticMarkersToText(
             @NotNull final PsiFile psiFile,
             @NotNull Collection<Diagnostic> diagnostics,
+            @NotNull Map<Diagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic,
             @NotNull Function<PsiFile, String> getFileText
     ) {
         String text = getFileText.fun(psiFile);
@@ -291,7 +348,7 @@ public class CheckerTestUtil {
                     opened.pop();
                 }
                 while (currentDescriptor != null && i == currentDescriptor.start) {
-                    openDiagnosticsString(result, currentDescriptor);
+                    openDiagnosticsString(result, currentDescriptor, diagnosticToExpectedDiagnostic);
                     if (currentDescriptor.getEnd() == i) {
                         closeDiagnosticString(result);
                     }
@@ -311,7 +368,7 @@ public class CheckerTestUtil {
             if (currentDescriptor != null) {
                 assert currentDescriptor.start == text.length();
                 assert currentDescriptor.end == text.length();
-                openDiagnosticsString(result, currentDescriptor);
+                openDiagnosticsString(result, currentDescriptor, diagnosticToExpectedDiagnostic);
                 opened.push(currentDescriptor);
             }
             
@@ -329,11 +386,25 @@ public class CheckerTestUtil {
         return result;
     }
 
-    private static void openDiagnosticsString(StringBuffer result, DiagnosticDescriptor currentDescriptor) {
+    private static void openDiagnosticsString(
+            StringBuffer result,
+            DiagnosticDescriptor currentDescriptor,
+            Map<Diagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic
+    ) {
         result.append("<!");
         for (Iterator<Diagnostic> iterator = currentDescriptor.diagnostics.iterator(); iterator.hasNext(); ) {
             Diagnostic diagnostic = iterator.next();
-            result.append(diagnostic.getFactory().getName());
+            if (diagnosticToExpectedDiagnostic.containsKey(diagnostic)) {
+                TextDiagnostic expectedDiagnostic = diagnosticToExpectedDiagnostic.get(diagnostic);
+                TextDiagnostic actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic);
+                if (compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic)) {
+                    result.append(expectedDiagnostic.asString());
+                } else {
+                    result.append(actualTextDiagnostic.asString());
+                }
+            } else {
+                result.append(diagnostic.getFactory().getName());
+            }
             if (iterator.hasNext()) {
                 result.append(", ");
             }
@@ -455,7 +526,7 @@ public class CheckerTestUtil {
         }
         Collections.sort(diagnosticDescriptors, new Comparator<DiagnosticDescriptor>() {
             @Override
-            public int compare(DiagnosticDescriptor d1, DiagnosticDescriptor d2) {
+            public int compare(@NotNull DiagnosticDescriptor d1, @NotNull DiagnosticDescriptor d2) {
                 // Start early -- go first; start at the same offset, the one who end later is the outer, i.e. goes first
                 return (d1.start != d2.start) ? d1.start - d2.start : d2.end - d1.end;
             }
@@ -474,12 +545,12 @@ public class CheckerTestUtil {
             this.diagnostics = diagnostics;
         }
 
-        public Multiset<String> getDiagnosticTypeStrings() {
-            Multiset<String> actualDiagnosticTypes = HashMultiset.create();
+        public Map<Diagnostic, TextDiagnostic> getTextDiagnosticsMap() {
+            Map<Diagnostic, TextDiagnostic> diagnosticMap = new IdentityHashMap<Diagnostic, TextDiagnostic>();
             for (Diagnostic diagnostic : diagnostics) {
-                actualDiagnosticTypes.add(diagnostic.getFactory().getName());
+                diagnosticMap.put(diagnostic, TextDiagnostic.asTextDiagnostic(diagnostic));
             }
-            return actualDiagnosticTypes;
+            return diagnosticMap;
         }
 
         public int getStart() {
@@ -499,13 +570,110 @@ public class CheckerTestUtil {
         }
     }
 
+    public static class TextDiagnostic {
+        @NotNull
+        private static TextDiagnostic parseDiagnostic(String text) {
+            Matcher matcher = INDIVIDUAL_DIAGNOSTIC_PATTERN.matcher(text);
+            if (!matcher.find())
+                throw new IllegalArgumentException("Could not parse diagnostic: " + text);
+            String name = matcher.group(1);
+
+            String parameters = matcher.group(2);
+            if (parameters == null) {
+                return new TextDiagnostic(name, null);
+            }
+
+            List<String> parsedParameters = new SmartList<String>();
+            Matcher parametersMatcher = INDIVIDUAL_PARAMETER_PATTERN.matcher(parameters);
+            while (parametersMatcher.find())
+                parsedParameters.add(parametersMatcher.group());
+            return new TextDiagnostic(name, parsedParameters);
+        }
+
+        @NotNull
+        public static TextDiagnostic asTextDiagnostic(@NotNull Diagnostic diagnostic) {
+            DiagnosticRenderer renderer = getRenderer(diagnostic);
+            String diagnosticName = diagnostic.getFactory().getName();
+            if (renderer instanceof AbstractDiagnosticWithParametersRenderer) {
+                //noinspection unchecked
+                Object[] renderParameters = ((AbstractDiagnosticWithParametersRenderer) renderer).renderParameters(diagnostic);
+                List<String> parameters = ContainerUtil.map(renderParameters, new Function<Object, String>() {
+                    @Override
+                    public String fun(Object o) {
+                        return o != null ? o.toString() : "null";
+                    }
+                });
+                return new TextDiagnostic(diagnosticName, parameters);
+            }
+            return new TextDiagnostic(diagnosticName, null);
+        }
+
+        @Nullable
+        private static DiagnosticRenderer getRenderer(@NotNull Diagnostic diagnostic) {
+            for (DiagnosticFactoryToRendererMap map : DefaultErrorMessages.MAPS) {
+                DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
+                if (renderer != null)
+                    return renderer;
+            }
+            return null;
+        }
+
+
+        @NotNull
+        private final String name;
+        @Nullable
+        private final List<String> parameters;
+
+        public TextDiagnostic(@NotNull String name, @Nullable List<String> parameters) {
+            this.name = name;
+            this.parameters = parameters;
+        }
+
+        @NotNull
+        public String getName() {
+            return name;
+        }
+
+        @Nullable
+        public List<String> getParameters() {
+            return parameters;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            TextDiagnostic that = (TextDiagnostic) o;
+
+            if (!name.equals(that.name)) return false;
+            if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = name.hashCode();
+            result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+            return result;
+        }
+
+        @NotNull
+        public String asString() {
+            if (parameters == null)
+                return name;
+            return name + '(' + StringUtil.join(parameters, "; ") + ')';
+        }
+    }
+
     public static class DiagnosedRange {
         private final int start;
         private int end;
-        private final Multiset<String> diagnostics = HashMultiset.create();
+        private final List<TextDiagnostic> diagnostics = ContainerUtil.newSmartList();
         private PsiFile file;
 
-        private DiagnosedRange(int start) {
+        protected DiagnosedRange(int start) {
             this.start = start;
         }
 
@@ -517,7 +685,7 @@ public class CheckerTestUtil {
             return end;
         }
 
-        public Multiset<String> getDiagnostics() {
+        public List<TextDiagnostic> getDiagnostics() {
             return diagnostics;
         }
 
@@ -526,7 +694,7 @@ public class CheckerTestUtil {
         }
         
         public void addDiagnostic(String diagnostic) {
-            diagnostics.add(diagnostic);
+            diagnostics.add(TextDiagnostic.parseDiagnostic(diagnostic));
         }
 
         public void setFile(@NotNull PsiFile file) {
