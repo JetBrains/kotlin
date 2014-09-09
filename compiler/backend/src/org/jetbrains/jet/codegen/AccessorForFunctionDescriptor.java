@@ -30,7 +30,10 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
-public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl {
+public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl implements AccessorForCallableDescriptor<FunctionDescriptor> {
+
+    private final FunctionDescriptor calleeDescriptor;
+
     public AccessorForFunctionDescriptor(
             @NotNull FunctionDescriptor descriptor,
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -39,6 +42,7 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
         super(containingDeclaration, null, Annotations.EMPTY,
               Name.identifier((descriptor instanceof ConstructorDescriptor ? "$init" : descriptor.getName()) + "$b$" + index),
               Kind.DECLARATION, SourceElement.NO_SOURCE);
+        this.calleeDescriptor = descriptor;
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getReceiverParameter()),
                    descriptor instanceof ConstructorDescriptor ? NO_RECEIVER_PARAMETER : descriptor.getExpectedThisObject(),
@@ -75,5 +79,11 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
             result.add(valueParameter.copy(this, valueParameter.getName()));
         }
         return result;
+    }
+
+    @NotNull
+    @Override
+    public FunctionDescriptor getCalleeDescriptor() {
+        return calleeDescriptor;
     }
 }

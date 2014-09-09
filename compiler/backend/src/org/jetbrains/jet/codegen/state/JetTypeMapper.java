@@ -500,10 +500,7 @@ public class JetTypeMapper {
     }
 
     public static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {
-        return descriptor instanceof AccessorForFunctionDescriptor ||
-               descriptor instanceof AccessorForPropertyDescriptor ||
-               descriptor instanceof AccessorForPropertyDescriptor.Getter ||
-               descriptor instanceof AccessorForPropertyDescriptor.Setter;
+        return descriptor instanceof AccessorForCallableDescriptor<?>;
     }
 
     @NotNull
