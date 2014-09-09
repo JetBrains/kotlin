@@ -87,6 +87,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
     
+    @TestMetadata("EnumValues.kt")
+    public void testEnumValues() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/EnumValues.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("FakeJavaLang1.kt")
     public void testFakeJavaLang1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/FakeJavaLang1.kt");
@@ -168,6 +174,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("JavaEnumEntry.kt")
     public void testJavaEnumEntry() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/JavaEnumEntry.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("JavaEnumValueOf.kt")
+    public void testJavaEnumValueOf() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/JavaEnumValueOf.kt");
         doTest(fileName);
     }
     

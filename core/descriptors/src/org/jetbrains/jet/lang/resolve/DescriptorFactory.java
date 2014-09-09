@@ -86,7 +86,7 @@ public class DescriptorFactory {
     public static SimpleFunctionDescriptor createEnumValuesMethod(@NotNull ClassDescriptor enumClass) {
         SimpleFunctionDescriptorImpl values =
                 SimpleFunctionDescriptorImpl.create(enumClass, Annotations.EMPTY, DescriptorUtils.ENUM_VALUES,
-                                                    CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE);
+                                                    CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         return values.initialize(null, NO_RECEIVER_PARAMETER, Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  KotlinBuiltIns.getInstance().getArrayType(enumClass.getDefaultType()), Modality.FINAL,
@@ -97,10 +97,10 @@ public class DescriptorFactory {
     public static SimpleFunctionDescriptor createEnumValueOfMethod(@NotNull ClassDescriptor enumClass) {
         SimpleFunctionDescriptorImpl valueOf =
                 SimpleFunctionDescriptorImpl.create(enumClass, Annotations.EMPTY, DescriptorUtils.ENUM_VALUE_OF,
-                                                    CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE);
+                                                    CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
                 valueOf, null, 0, Annotations.EMPTY, Name.identifier("value"), KotlinBuiltIns.getInstance().getStringType(), false, null,
-                SourceElement.NO_SOURCE
+                enumClass.getSource()
         );
         return valueOf.initialize(null, NO_RECEIVER_PARAMETER, Collections.<TypeParameterDescriptor>emptyList(),
                                   Collections.singletonList(parameterDescriptor), enumClass.getDefaultType(), Modality.FINAL,
