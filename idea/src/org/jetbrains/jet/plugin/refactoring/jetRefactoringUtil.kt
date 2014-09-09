@@ -62,6 +62,10 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.ui.components.JBList
 import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
+import com.intellij.openapi.editor.Document
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiWhiteSpace
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -255,3 +259,30 @@ public class SelectionAwareScopeHighlighter(val editor: Editor) {
         highlighters.clear()
     }
 }
+
+fun PsiElement.getLineCount(): Int {
+    val doc = getContainingFile()?.let { file -> PsiDocumentManager.getInstance(getProject()).getDocument(file) }
+    if (doc != null) {
+        val spaceRange = getTextRange() ?: TextRange.EMPTY_RANGE
+
+        val startLine = doc.getLineNumber(spaceRange.getStartOffset())
+        val endLine = doc.getLineNumber(spaceRange.getEndOffset())
+
+        return endLine - startLine
+    }
+
+    var lineCount = 1
+    accept(
+            object: JetTreeVisitorVoid() {
+                override fun visitWhiteSpace(space: PsiWhiteSpace) {
+                    if ("\n" in space.getText() ?: "") {
+                        lineCount++
+                    }
+                }
+            }
+    )
+
+    return lineCount
+}
+
+fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1

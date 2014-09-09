@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.refactoring.RefactoringPackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,7 +183,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
     @Override
     protected PsiElement adjustElement(PsiElement element, Editor editor, boolean first) {
-        return first ? getTopmostSiblingCommentOrOriginal(element, editor) : element;
+        return first ? getTopmostSiblingCommentOrOriginal(element) : element;
     }
 
     @Nullable
@@ -255,7 +256,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         if (target instanceof JetPropertyAccessor && !(sibling instanceof JetPropertyAccessor)) return null;
 
         if (!down && start instanceof JetDeclaration) {
-            start = getTopmostSiblingCommentOrOriginal(start, editor);
+            start = getTopmostSiblingCommentOrOriginal(start);
         }
         else if (start != null && start.getFirstChild() != null) {
             start = skipInsignificantElements(start.getFirstChild(), true);
@@ -311,11 +312,11 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
     }
 
     @NotNull
-    private static PsiElement getTopmostSiblingCommentOrOriginal(@NotNull PsiElement originalElement, @NotNull Editor editor) {
+    private static PsiElement getTopmostSiblingCommentOrOriginal(@NotNull PsiElement originalElement) {
         PsiElement element = originalElement;
         PsiElement sibling = element.getPrevSibling();
         while (sibling instanceof PsiComment
-               || (sibling instanceof PsiWhiteSpace && getElementLineCount(sibling, editor) <= 1)
+               || (sibling instanceof PsiWhiteSpace && !RefactoringPackage.isMultiLine(sibling))
                || (sibling != null && (sibling.getText() == null || sibling.getText().isEmpty()))) {
             if (sibling instanceof PsiComment) {
                 element = sibling;
