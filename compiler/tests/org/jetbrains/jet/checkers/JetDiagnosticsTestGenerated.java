@@ -7755,6 +7755,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("samConstructor.kt")
+            public void testSamConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/samConstructor.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
