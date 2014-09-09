@@ -556,7 +556,7 @@ private fun ExtractionData.inferParametersInfo(
                 if (!parameterType.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes)) continue
 
                 val parameterTypePredicate =
-                        pseudocode.getElementValue(originalRef)?.let { getExpectedTypePredicate(it, bindingContext) } ?: AllTypes
+                        and(pseudocode.getElementValuesRecursively(originalRef).map { getExpectedTypePredicate(it, bindingContext) })
 
                 val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
                     val parameterName =

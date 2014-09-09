@@ -162,3 +162,17 @@ private fun Instruction.calcSideEffectFree(): Boolean {
         else -> false
     }
 }
+
+fun Pseudocode.getElementValuesRecursively(element: JetElement): List<PseudoValue> {
+    val results = ArrayList<PseudoValue>()
+
+    fun Pseudocode.collectValues() {
+        getElementValue(element)?.let { results.add(it) }
+        for (localFunction in getLocalDeclarations()) {
+            localFunction.body.collectValues()
+        }
+    }
+
+    collectValues()
+    return results
+}
