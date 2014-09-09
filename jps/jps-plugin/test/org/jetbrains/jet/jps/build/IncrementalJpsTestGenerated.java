@@ -19,9 +19,11 @@ package org.jetbrains.jet.jps.build;
 import com.intellij.testFramework.TestDataPath;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @TestMetadata("jps-plugin/testData/incremental")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({IncrementalJpsTestGenerated.CircularDependency.class, IncrementalJpsTestGenerated.PureKotlin.class})
+@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     public void testAllFilesPresentInIncremental() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental"), Pattern.compile("^([^\\.]+)$"), true);
@@ -39,6 +42,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @TestMetadata("jps-plugin/testData/incremental/circularDependency")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CircularDependency extends AbstractIncrementalJpsTest {
         public void testAllFilesPresentInCircularDependency() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/circularDependency"), Pattern.compile("^([^\\.]+)$"), true);
@@ -50,16 +54,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("CircularDependency");
-            suite.addTestSuite(CircularDependency.class);
-            return suite;
-        }
     }
     
     @TestMetadata("jps-plugin/testData/incremental/pureKotlin")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class PureKotlin extends AbstractIncrementalJpsTest {
         @TestMetadata("accessingFunctionsViaPackagePart")
         public void testAccessingFunctionsViaPackagePart() throws Exception {
@@ -287,18 +287,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("PureKotlin");
-            suite.addTestSuite(PureKotlin.class);
-            return suite;
-        }
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite("IncrementalJpsTestGenerated");
-        suite.addTestSuite(IncrementalJpsTestGenerated.class);
-        suite.addTest(CircularDependency.innerSuite());
-        suite.addTest(PureKotlin.innerSuite());
-        return suite;
-    }
 }
