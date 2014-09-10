@@ -69,13 +69,13 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        PsiModifierListOwner annotationOwner = findAnnotationOwner(file, editor);
-        if (annotationOwner == null) {
+        PsiMember memberUnderCaret = findMemberUnderCaret(file, editor);
+        if (memberUnderCaret == null) {
             return false;
         }
 
-        PsiModifierList modifierList = annotationOwner.getModifierList();
-        if (modifierList == null || modifierList.hasExplicitModifier(PsiModifier.PRIVATE)) {
+        PsiModifierListOwner annotationOwner = KotlinSignatureUtil.getAnalyzableAnnotationOwner(memberUnderCaret);
+        if (annotationOwner == null) {
             return false;
         }
 
@@ -97,7 +97,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
 
     @Override
     public void invoke(@NotNull final Project project, final Editor editor, PsiFile file) throws IncorrectOperationException {
-        final PsiMember annotatedElement = findAnnotationOwner(file, editor);
+        final PsiMember annotatedElement = findMemberUnderCaret(file, editor);
 
         assert annotatedElement != null;
 
@@ -106,7 +106,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
             return;
         }
 
-        String signature = getDefaultSignature(project, (PsiMember) KotlinSignatureUtil.getAnnotationOwner(annotatedElement));
+        String signature = getDefaultSignature(project, annotatedElement);
 
         final MessageBusConnection busConnection = project.getMessageBus().connect();
         busConnection.subscribe(ExternalAnnotationsManager.TOPIC, new ExternalAnnotationsListener.Adapter() {
@@ -142,21 +142,24 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     }
 
     @NotNull
-    private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMember psiMember) {
-        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.INSTANCE$.getResolver(project, psiMember);
+    private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMember element) {
+        PsiMember analyzableAnnotationOwner = KotlinSignatureUtil.getAnalyzableAnnotationOwner(element);
+        assert analyzableAnnotationOwner != null;
+        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.INSTANCE$.getResolver(project, analyzableAnnotationOwner);
 
-        if (psiMember instanceof PsiMethod) {
-            PsiMethod psiMethod = (PsiMethod) psiMember;
+        if (analyzableAnnotationOwner instanceof PsiMethod) {
+            PsiMethod psiMethod = (PsiMethod) analyzableAnnotationOwner;
             FunctionDescriptor functionDescriptor = JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(psiMethod));
-            assert functionDescriptor != null: "Couldn't find function descriptor for " + renderMember(psiMember);
+            assert functionDescriptor != null : "Couldn't find function descriptor for " + renderMember(analyzableAnnotationOwner);
             return functionDescriptor instanceof ConstructorDescriptor
                     ? getDefaultConstructorAnnotation((ConstructorDescriptor) functionDescriptor)
                     : RENDERER.render(functionDescriptor);
         }
 
-        if (psiMember instanceof PsiField) {
-            VariableDescriptor variableDescriptor = JavaPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) psiMember));
-            assert variableDescriptor != null: "Couldn't find variable descriptor for field " + renderMember(psiMember);
+        if (analyzableAnnotationOwner instanceof PsiField) {
+            VariableDescriptor variableDescriptor =
+                    JavaPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) analyzableAnnotationOwner));
+            assert variableDescriptor != null : "Couldn't find variable descriptor for field " + renderMember(analyzableAnnotationOwner);
             return RENDERER.render(variableDescriptor);
         }
 
@@ -168,7 +171,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     }
 
     @Nullable
-    private static PsiMember findAnnotationOwner(@NotNull PsiElement file, Editor editor) {
+    private static PsiMember findMemberUnderCaret(@NotNull PsiElement file, Editor editor) {
         int offset = editor.getCaretModel().getOffset();
         PsiMember methodMember = findMethod(file, offset);
         if (methodMember != null) {

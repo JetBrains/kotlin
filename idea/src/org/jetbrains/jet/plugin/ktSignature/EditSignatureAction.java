@@ -73,7 +73,7 @@ public class EditSignatureAction extends AnAction {
             }
         }
         else {
-            PsiModifierListOwner annotationOwner = KotlinSignatureUtil.getAnnotationOwner(elementInEditor);
+            PsiModifierListOwner annotationOwner = KotlinSignatureUtil.getAnalyzableAnnotationOwner(elementInEditor);
             boolean editable = KotlinSignatureUtil.isAnnotationEditable(elementInEditor);
             //noinspection ConstantConditions
             EditSignatureBalloon balloon = new EditSignatureBalloon(annotationOwner, KotlinSignatureUtil.getKotlinSignature(annotation),
