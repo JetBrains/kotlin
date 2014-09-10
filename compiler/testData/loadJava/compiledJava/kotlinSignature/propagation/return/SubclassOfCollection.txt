@@ -1,13 +1,13 @@
 package test
 
-public trait SubclassOfCollection</*0*/ E> : kotlin.MutableCollection<E> {
-    public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e: E): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+public trait SubclassOfCollection</*0*/ E> : kotlin.MutableCollection<E!> {
+    public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e: E!): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<E!>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
-    public abstract override /*1*/ fun iterator(): kotlin.MutableIterator<E>
+    public abstract override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
     public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean

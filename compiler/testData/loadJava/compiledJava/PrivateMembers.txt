@@ -10,18 +10,18 @@ public open class PrivateMembers {
     private open inner class Inner {
         private constructor Inner()
     }
-    
+
     private open class Nested {
         private constructor Nested()
-        
+
         // Static members
         private open fun staticMethodInNested(): kotlin.Unit
     }
-    
+
     private trait SamInterface {
         public abstract fun foo(): kotlin.Unit
     }
-    
+
     // Static members
     private final var staticField: kotlin.Int
     private final /*synthesized*/ fun SamInterface(/*0*/ function: () -> kotlin.Unit): test.PrivateMembers.SamInterface

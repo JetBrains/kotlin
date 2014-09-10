@@ -2,7 +2,7 @@ package test
 
 public open class PropertyArrayTypes</*0*/ T> {
     public constructor PropertyArrayTypes</*0*/ T>()
-    public final var array: kotlin.Array<kotlin.String>
-    public final var arrayOfArrays: kotlin.Array<kotlin.Array<kotlin.String>>
-    public final var genericArray: kotlin.Array<T>
+    public final var array: kotlin.Array<(out) kotlin.String!>!
+    public final var arrayOfArrays: kotlin.Array<(out) kotlin.Array<(out) kotlin.String!>!>!
+    public final var genericArray: kotlin.Array<(out) T!>!
 }

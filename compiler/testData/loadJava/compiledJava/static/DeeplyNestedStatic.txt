@@ -2,13 +2,13 @@ package test
 
 public open class DeeplyNestedStatic {
     public constructor DeeplyNestedStatic()
-    
+
     public open class Foo {
         public constructor Foo()
-        
+
         public open class Bar {
             public constructor Bar()
-            
+
             // Static members
             public open fun method(): kotlin.Unit
         }

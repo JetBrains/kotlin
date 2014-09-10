@@ -4,16 +4,16 @@ public trait TwoSuperclassesInvariantAndCovariantInferMutability {
 
     public trait Sub : test.TwoSuperclassesInvariantAndCovariantInferMutability.Super1, test.TwoSuperclassesInvariantAndCovariantInferMutability.Super2 {
         public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*2*/ fun foo(): kotlin.MutableList<kotlin.MutableList<kotlin.String>>
+        public abstract override /*2*/ fun foo(): kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!
     }
 
     public trait Super1 {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(): kotlin.List<kotlin.List<kotlin.String>>
+        public abstract fun foo(): kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!
     }
 
     public trait Super2 {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(): kotlin.MutableList<kotlin.MutableList<kotlin.String>>
+        public abstract fun foo(): kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!
     }
 }

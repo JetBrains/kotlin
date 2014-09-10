@@ -2,5 +2,5 @@ package test
 
 public open class CustomProjectionKind {
     public constructor CustomProjectionKind()
-    public open fun foo(): kotlin.MutableList<out kotlin.Number>
+    public open fun foo(): kotlin.(Mutable)List<kotlin.Number!>!
 }

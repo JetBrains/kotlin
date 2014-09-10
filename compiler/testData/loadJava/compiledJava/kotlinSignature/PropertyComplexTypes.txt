@@ -2,8 +2,8 @@ package test
 
 public open class PropertyComplexTypes</*0*/ T> {
     public constructor PropertyComplexTypes</*0*/ T>()
-    public final var genericType: T
-    public final var listDefinedGeneric: java.util.ArrayList<kotlin.String>
-    public final var listGeneric: java.util.ArrayList<T>
-    public final var listOfGenericList: java.util.ArrayList<java.util.ArrayList<T>>
+    public final var genericType: T!
+    public final var listDefinedGeneric: java.util.ArrayList<kotlin.String!>!
+    public final var listGeneric: java.util.ArrayList<T!>!
+    public final var listOfGenericList: java.util.ArrayList<java.util.ArrayList<T!>!>!
 }

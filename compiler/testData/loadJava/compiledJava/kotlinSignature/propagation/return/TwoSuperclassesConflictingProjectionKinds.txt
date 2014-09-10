@@ -4,16 +4,16 @@ public trait TwoSuperclassesConflictingProjectionKinds {
 
     public trait Sub : test.TwoSuperclassesConflictingProjectionKinds.Super1, test.TwoSuperclassesConflictingProjectionKinds.Super2 {
         public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*2*/ fun foo(): kotlin.MutableCollection<kotlin.CharSequence>
+        public abstract override /*2*/ fun foo(): kotlin.(Mutable)Collection<kotlin.CharSequence!>!
     }
 
     public trait Super1 {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(): kotlin.MutableCollection<kotlin.CharSequence>
+        public abstract fun foo(): kotlin.(Mutable)Collection<kotlin.CharSequence!>!
     }
 
     public trait Super2 {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(): kotlin.MutableCollection<out kotlin.CharSequence>
+        public abstract fun foo(): kotlin.(Mutable)Collection<kotlin.CharSequence!>!
     }
 }

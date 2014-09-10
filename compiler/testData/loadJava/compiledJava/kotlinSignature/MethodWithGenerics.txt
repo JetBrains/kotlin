@@ -2,5 +2,5 @@ package test
 
 public open class MethodWithGenerics {
     public constructor MethodWithGenerics()
-    public open fun foo(/*0*/ a: kotlin.String, /*1*/ b: kotlin.List<kotlin.Map.Entry<kotlin.String?, kotlin.String>?>): kotlin.String
+    public open fun foo(/*0*/ a: kotlin.String!, /*1*/ b: kotlin.(Mutable)List<kotlin.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.String!>!>!): kotlin.String!
 }
