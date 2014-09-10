@@ -21,9 +21,7 @@ import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.DependencyScope
-import com.intellij.testFramework.UsefulTestCase
 import junit.framework.Assert
-import com.intellij.openapi.roots.libraries.LibraryTable
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.command.WriteCommandAction
@@ -156,31 +154,25 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         b.source.assertDependenciesEqual(b.source, a.source, lib.classes)
     }
 
-
-    //NOTE: wrapper classes to reduce boilerplate in test cases
-    private class ModuleDef(val ideaModule: Module) {
-        val source = ideaModule.toSourceInfo()
-    }
-
-    private inner class LibraryDef(val ideaLibrary: Library) {
-        val classes = LibraryInfo(getProject()!!, ideaLibrary)
-    }
-
-    private fun ModuleDef.addDependency(
-            other: ModuleDef,
+    private fun Module.addDependency(
+            other: Module,
             dependencyScope: DependencyScope = DependencyScope.COMPILE,
             exported: Boolean = false
-    ) = ModuleRootModificationUtil.addDependency(this.ideaModule, other.ideaModule, dependencyScope, exported)
+    ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 
-    private fun ModuleDef.addDependency(
-            lib: LibraryDef,
+    private val Module.source: ModuleProductionSourceInfo
+            get() = productionSourceInfo()
+    private val Library.classes: LibraryInfo
+            get() = LibraryInfo(getProject()!!, this)
+
+    private fun Module.addDependency(
+            lib: Library,
             dependencyScope: DependencyScope = DependencyScope.COMPILE,
             exported: Boolean = false
-    ) = ModuleRootModificationUtil.addDependency(this.ideaModule, lib.ideaLibrary, dependencyScope, exported)
+    ) = ModuleRootModificationUtil.addDependency(this, lib, dependencyScope, exported)
 
-    private fun module(name: String): ModuleDef {
-        val ideaModule = createModuleFromTestData(createTempDirectory()!!.getAbsolutePath(), name, StdModuleTypes.JAVA, false)!!
-        return ModuleDef(ideaModule)
+    private fun module(name: String): Module {
+        return createModuleFromTestData(createTempDirectory()!!.getAbsolutePath(), name, StdModuleTypes.JAVA, false)!!
     }
 
     private fun modules(name1: String = "a", name2: String = "b", name3: String = "c") = Triple(module(name1), module(name2), module(name3))
@@ -189,11 +181,10 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         Assert.assertEquals(dependencies.toList(), this.dependencies())
     }
 
-    private fun projectLibrary(name: String = "lib"): LibraryDef {
+    private fun projectLibrary(name: String = "lib"): Library {
         val libraryTable = ProjectLibraryTable.getInstance(myProject)!!
-        val library = WriteCommandAction.runWriteCommandAction<Library>(myProject) {
+        return WriteCommandAction.runWriteCommandAction<Library>(myProject) {
             libraryTable.createLibrary(name)
         }!!
-        return LibraryDef(library)
     }
 }
