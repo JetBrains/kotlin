@@ -15,7 +15,7 @@ public interface AddNullabilitySameGenericType2 {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Auto type 'kotlin.MutableList<kotlin.String>' is not-null, while type in alternative signature is nullable: 'MutableList<String>?'")
+        //@ExpectLoadError("Auto type 'kotlin.MutableList<kotlin.String>' is not-null, while type in alternative signature is nullable: 'MutableList<String>?'")
         @KotlinSignature("fun foo(): MutableList<String>?")
         List<String> foo();
     }

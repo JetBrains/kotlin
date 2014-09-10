@@ -15,7 +15,7 @@ public interface ChangeProjectionKind2 {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Parameter type changed for method which overrides another: MutableList<in String>, was: MutableList<String>")
+        //@ExpectLoadError("Parameter type changed for method which overrides another: MutableList<in String>, was: MutableList<String>")
         @KotlinSignature("fun foo(p: MutableList<in String>)")
         void foo(List<String> p);
     }

@@ -13,7 +13,7 @@ public interface NotNullToNullable {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Auto type 'kotlin.String' is not-null, while type in alternative signature is nullable: 'String?'")
+        //@ExpectLoadError("Auto type 'kotlin.String' is not-null, while type in alternative signature is nullable: 'String?'")
         @KotlinSignature("fun foo(p: String?)")
         void foo(String p);
     }

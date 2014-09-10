@@ -23,7 +23,7 @@ public interface TwoSuperclassesConflictingProjectionKinds {
     }
 
     public interface Sub extends Super1, Super2 {
-        @ExpectLoadError("Incompatible projection kinds in type arguments of super methods' return types: [CharSequence, out CharSequence]")
+        //@ExpectLoadError("Incompatible projection kinds in type arguments of super methods' return types: [CharSequence, out CharSequence]")
         public Collection<CharSequence> foo();
     }
 }

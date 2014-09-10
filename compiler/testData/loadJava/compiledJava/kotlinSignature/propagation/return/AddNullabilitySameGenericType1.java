@@ -15,7 +15,7 @@ public interface AddNullabilitySameGenericType1 {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Return type is changed to not subtype for method which overrides another: MutableList<String?>, was: MutableList<String>")
+        //@ExpectLoadError("Return type is changed to not subtype for method which overrides another: MutableList<String?>, was: MutableList<String>")
         @KotlinSignature("fun foo(): MutableList<String?>")
         List<String> foo();
     }

@@ -14,7 +14,7 @@ public interface NullableToNotNullKotlinSignature {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Parameter type changed for method which overrides another: String, was: String?")
+        //@ExpectLoadError("Parameter type changed for method which overrides another: String, was: String?")
         @KotlinSignature("fun foo(p: String)")
         void foo(String p);
     }

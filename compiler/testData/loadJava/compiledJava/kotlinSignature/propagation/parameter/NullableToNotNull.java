@@ -13,7 +13,7 @@ public interface NullableToNotNull {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("In superclass type is nullable: [String?], in subclass it is not: String")
+        //@ExpectLoadError("In superclass type is nullable: [String?], in subclass it is not: String")
         void foo(@NotNull String p);
     }
 }
