@@ -279,6 +279,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             doTestAgainstJava(fileName);
         }
         
+        @TestMetadata("referenceToJavaFieldViaBridge.kt")
+        public void testReferenceToJavaFieldViaBridge() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/property/referenceToJavaFieldViaBridge.kt");
+            doTestAgainstJava(fileName);
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/reflection")

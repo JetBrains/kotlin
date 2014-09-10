@@ -547,6 +547,18 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
         
+        @TestMetadata("platformStaticInClassObject.kt")
+        public void testPlatformStaticInClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformStaticInClassObject.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("platformStaticInObject.kt")
+        public void testPlatformStaticInObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformStaticInObject.kt");
+            doTest(fileName);
+        }
+        
     }
     
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/functionLiterals")

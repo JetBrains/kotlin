@@ -23,7 +23,6 @@ import org.jetbrains.jet.codegen.SignatureCollectingClassBuilderFactory
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.resolve.java.diagnostics.*
 import java.util.*
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION
@@ -59,20 +58,31 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         }
     }
 
-    override fun onClassDone(classOrigin: JvmDeclarationOrigin, classInternalName: String?, hasDuplicateSignatures: Boolean) {
+    override fun onClassDone(
+            classOrigin: JvmDeclarationOrigin,
+            classInternalName: String?,
+            signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
+    ) {
         val descriptor = classOrigin.descriptor
         if (descriptor !is ClassDescriptor) return
 
-        val groupedBySignature = groupDescriptorsBySignature(descriptor)
+        val groupedBySignature = groupMembersDescriptorsBySignature(descriptor)
+        for ((rawSignature, origins) in signatures.entrySet()) {
+            for (origin in origins) {
+                if (origin.originKind == JvmDeclarationOriginKind.SYNTHETIC) {
+                    groupedBySignature.putValue(rawSignature, origin)
+                }
+            }
+        }
 
         @signatures
-        for ((rawSignature, members) in groupedBySignature.entrySet()!!) {
-            if (members.size() <= 1) continue
+        for ((rawSignature, origins) in groupedBySignature.entrySet()) {
+            if (origins.size() <= 1) continue
 
             var memberElement: PsiElement? = null
             var nonFakeCount = 0
-            for (member in members) {
-                if (member.getKind() != FAKE_OVERRIDE) {
+            for (member in origins.stream().map { it.descriptor as? CallableMemberDescriptor? }) {
+                if (member != null && member.getKind() != FAKE_OVERRIDE) {
                     nonFakeCount++
                     // If there's more than one real element, the clashing signature is already reported.
                     // Only clashes between fake overrides are interesting here
@@ -91,13 +101,13 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             val elementToReportOn = memberElement ?: classOrigin.element
             if (elementToReportOn == null) return // TODO: it'd be better to report this error without any element at all
 
-            val data = ConflictingJvmDeclarationsData(classInternalName, classOrigin, rawSignature, members.map { OtherOrigin(it) })
+            val data = ConflictingJvmDeclarationsData(classInternalName, classOrigin, rawSignature, origins)
             diagnostics.report(ErrorsJvm.ACCIDENTAL_OVERRIDE.on(elementToReportOn, data))
         }
     }
 
-    private fun groupDescriptorsBySignature(descriptor: ClassDescriptor): MultiMap<RawSignature, CallableMemberDescriptor> {
-        val groupedBySignature = MultiMap.create<RawSignature, CallableMemberDescriptor>()
+    private fun groupMembersDescriptorsBySignature(descriptor: ClassDescriptor): MultiMap<RawSignature, JvmDeclarationOrigin> {
+        val groupedBySignature = MultiMap.create<RawSignature, JvmDeclarationOrigin>()
 
         fun processMember(member: DeclarationDescriptor?) {
             // a member of super is not visible: no override
@@ -113,7 +123,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
                 val methodSignature = typeMapper.mapSignature(member)
                 val rawSignature = RawSignature(
                         methodSignature.getAsmMethod().getName()!!, methodSignature.getAsmMethod().getDescriptor()!!, MemberKind.METHOD)
-                groupedBySignature.putValue(rawSignature, member)
+                groupedBySignature.putValue(rawSignature, OtherOrigin(member))
             }
         }
 

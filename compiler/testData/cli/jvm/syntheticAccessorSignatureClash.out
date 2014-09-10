@@ -1,0 +1,20 @@
+WARNING: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (34, 17) Variable 's' is never used
+ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (15, 5) Accidental override: The following declarations have the same JVM signature (foo$b$0(LDerived;)V):
+    fun foo$b$0(d: Derived): kotlin.Unit
+    fun foo(): kotlin.Unit
+ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (18, 9) Accidental override: The following declarations have the same JVM signature (getBar$b$1(LDerived;)I):
+    fun getBar$b$1(d: Derived): kotlin.Int
+    fun <get-bar>(): kotlin.Int
+ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (19, 9) Accidental override: The following declarations have the same JVM signature (setBar$b$1(LDerived;I)V):
+    fun setBar$b$1(d: Derived, i: kotlin.Int): kotlin.Unit
+    fun <set-bar>(<set-?>: kotlin.Int): kotlin.Unit
+ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (21, 5) Accidental override: The following declarations have the same JVM signature (getBaz$b$2(LDerived;)I):
+    fun getBaz$b$2(d: Derived): kotlin.Int
+    fun <get-baz>(): kotlin.Int
+ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (23, 5) Accidental override: The following declarations have the same JVM signature (getBoo$b$3(LDerived;)I):
+    fun getBoo$b$3(d: Derived): kotlin.Int
+    fun <get-boo>(): kotlin.Int
+ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (27, 9) Accidental override: The following declarations have the same JVM signature (setBar1$b$4(LDerived;I)V):
+    fun setBar1$b$4(d: Derived, i: kotlin.Int): kotlin.Unit
+    fun <set-bar1>(<set-?>: kotlin.Int): kotlin.Unit
+COMPILATION_ERROR

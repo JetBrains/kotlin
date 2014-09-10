@@ -17,18 +17,12 @@
 package org.jetbrains.jet.codegen
 
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.codegen.state.JetTypeMapper
-import org.jetbrains.jet.codegen.context.CodegenContext
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.jet.lang.resolve.java.diagnostics.OtherOrigin
 import org.jetbrains.jet.codegen.state.GenerationState
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.jet.lang.resolve.java.diagnostics.Synthetic
 
 class PlatformStaticGenerator(
         val descriptor: FunctionDescriptor,
@@ -40,7 +34,12 @@ class PlatformStaticGenerator(
         val typeMapper = state.getTypeMapper()
         val callable = typeMapper.mapToCallableMethod(descriptor, false, p1.getContext())
         val asmMethod = callable.getAsmMethod()
-        val methodVisitor = p2.newMethod(OtherOrigin(declarationOrigin.element, declarationOrigin.descriptor), Opcodes.ACC_STATIC or AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION), asmMethod.getName()!!, asmMethod.getDescriptor()!!, null, null)
+        val methodVisitor = p2.newMethod(
+                Synthetic(declarationOrigin.element, descriptor),
+                Opcodes.ACC_STATIC or AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION),
+                asmMethod.getName()!!,
+                asmMethod.getDescriptor()!!,
+                null, null)
 
         AnnotationCodegen.forMethod(methodVisitor, typeMapper)!!.genAnnotations(descriptor, asmMethod.getReturnType())
 

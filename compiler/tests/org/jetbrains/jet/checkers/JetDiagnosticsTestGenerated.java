@@ -3235,6 +3235,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("defaultFunction.kt")
+                public void testDefaultFunction() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/defaultFunction.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("delegatedFunctionOverriddenByProperty.kt")
                 public void testDelegatedFunctionOverriddenByProperty() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/delegatedFunctionOverriddenByProperty.kt");
