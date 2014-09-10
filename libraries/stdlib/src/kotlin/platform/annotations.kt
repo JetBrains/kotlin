@@ -17,3 +17,5 @@
 package kotlin.platform
 
 public annotation class platformName(public val name: String)
+
+public annotation class platformStatic

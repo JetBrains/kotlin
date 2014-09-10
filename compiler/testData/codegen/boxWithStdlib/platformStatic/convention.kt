@@ -1,3 +1,5 @@
+import kotlin.platform.platformStatic
+
 class B(var s: Int = 0) {
 
 }

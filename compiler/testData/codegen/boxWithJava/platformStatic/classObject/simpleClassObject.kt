@@ -1,3 +1,5 @@
+import kotlin.platform.platformStatic
+
 class A {
 
     class object {

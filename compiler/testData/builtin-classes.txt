@@ -1493,10 +1493,6 @@ public final annotation class noinline : kotlin.Annotation {
     /*primary*/ public constructor noinline()
 }
 
-public final annotation class platformStatic : kotlin.Annotation {
-    /*primary*/ public constructor platformStatic()
-}
-
 public final annotation class suppress : kotlin.Annotation {
     /*primary*/ public constructor suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<kotlin.String>*/)
     internal final val names: kotlin.Array<kotlin.String>

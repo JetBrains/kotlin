@@ -1,3 +1,5 @@
+import kotlin.platform.platformStatic
+
 object A {
 
     val b: String = "OK"

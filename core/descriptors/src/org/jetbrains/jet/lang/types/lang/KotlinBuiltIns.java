@@ -334,11 +334,6 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getPlatformStaticAnnotationClass() {
-        return getBuiltInClassByName("platformStatic");
-    }
-
-    @NotNull
     public ClassDescriptor getDeprecatedAnnotation() {
         return getBuiltInClassByName("deprecated");
     }
@@ -865,10 +860,6 @@ public class KotlinBuiltIns {
 
     public boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
         return containsAnnotation(declarationDescriptor, getTailRecursiveAnnotationClass());
-    }
-
-    public boolean isPlatformStatic(@NotNull CallableDescriptor callableDescriptor) {
-        return containsAnnotation(callableDescriptor, getPlatformStaticAnnotationClass());
     }
 
     public boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {

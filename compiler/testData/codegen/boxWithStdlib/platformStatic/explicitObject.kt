@@ -1,3 +1,5 @@
+import kotlin.platform.platformStatic
+
 object AX {
 
     platformStatic fun aStatic(): String {
