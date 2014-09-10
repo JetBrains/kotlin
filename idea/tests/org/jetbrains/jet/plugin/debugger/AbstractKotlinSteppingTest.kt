@@ -33,7 +33,7 @@ import com.intellij.debugger.settings.DebuggerSettings
 public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
     private var oldSettings: DebuggerSettings by Delegates.notNull()
     private var oldIsFilterForStdlibAlreadyAdded: Boolean by Delegates.notNull()
-    private var oldDisableKoltinInternalClasses: Boolean by Delegates.notNull()
+    private var oldDisableKotlinInternalClasses: Boolean by Delegates.notNull()
 
     override fun initApplication() {
         super.initApplication()
@@ -69,7 +69,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
     private fun configureSettings(fileText: String) {
         val kotlinSettings = KotlinDebuggerSettings.getInstance()
         kotlinSettings.DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = false
-        kotlinSettings.DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = fileText.getValueForSetting("DISABLE_KOTLIN_INTERNAL_CLASSES", oldDisableKoltinInternalClasses)
+        kotlinSettings.DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = fileText.getValueForSetting("DISABLE_KOTLIN_INTERNAL_CLASSES", oldDisableKotlinInternalClasses)
 
         val debuggerSettings = DebuggerSettings.getInstance()!!
         debuggerSettings.SKIP_CONSTRUCTORS = fileText.getValueForSetting("SKIP_CONSTRUCTORS", oldSettings.SKIP_CONSTRUCTORS)
@@ -83,13 +83,13 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
 
     private fun saveDefaultSettings() {
         oldIsFilterForStdlibAlreadyAdded = KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED
-        oldDisableKoltinInternalClasses = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES
+        oldDisableKotlinInternalClasses = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES
         oldSettings = DebuggerSettings.getInstance()!!.clone()
     }
 
     private fun restoreDefaultSettings() {
         KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = oldIsFilterForStdlibAlreadyAdded
-        KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = oldDisableKoltinInternalClasses
+        KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = oldDisableKotlinInternalClasses
 
         val debuggerSettings = DebuggerSettings.getInstance()!!
         debuggerSettings.SKIP_CONSTRUCTORS = oldSettings.SKIP_CONSTRUCTORS
