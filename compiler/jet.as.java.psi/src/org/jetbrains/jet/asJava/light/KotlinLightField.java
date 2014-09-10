@@ -26,84 +26,83 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement;
 
-// Copy of com.intellij.psi.impl.light.LightField
-@SuppressWarnings("UnnecessaryFinalOnLocalVariableOrParameter")
-public class KotlinLightField extends LightElement implements PsiField, KotlinLightElement<JetProperty, PsiField> {
-    private final JetProperty myOriginalProperty;
-    private final PsiField myField;
-    private final PsiClass myContainingClass;
+// Copied from com.intellij.psi.impl.light.LightField
+public abstract class KotlinLightField<T extends JetDeclaration, D extends PsiField> extends LightElement
+        implements PsiField, KotlinLightElement<T, D> {
+    private final T origin;
+    private final D delegate;
+    private final PsiClass containingClass;
 
-    public KotlinLightField(
-            @NotNull final PsiManager manager,
-            @NotNull final JetProperty originalProperty,
-            @NotNull final PsiField field,
-            @NotNull final PsiClass containingClass
-    ) {
+    public KotlinLightField(@NotNull PsiManager manager, @NotNull T origin, @NotNull D delegate, @NotNull PsiClass containingClass) {
         super(manager, JavaLanguage.INSTANCE);
-        myOriginalProperty = originalProperty;
-        myField = field;
-        myContainingClass = containingClass;
+        this.origin = origin;
+        this.delegate = delegate;
+        this.containingClass = containingClass;
     }
 
+    @NotNull
     @Override
-    public void setInitializer(@Nullable final PsiExpression initializer) throws IncorrectOperationException {
+    public abstract KotlinLightField<T, D> copy();
+
+    @Override
+    public void setInitializer(@Nullable PsiExpression initializer) throws IncorrectOperationException {
         throw new IncorrectOperationException("Not supported");
     }
 
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        return myField.getUseScope();
+        return delegate.getUseScope();
     }
 
     @Override
     public String getName() {
-        return myField.getName();
+        return delegate.getName();
     }
 
     @NotNull
     @Override
     public PsiIdentifier getNameIdentifier() {
-        return myField.getNameIdentifier();
+        return delegate.getNameIdentifier();
     }
 
     @Override
     public PsiDocComment getDocComment() {
-        return myField.getDocComment();
+        return delegate.getDocComment();
     }
 
     @Override
     public boolean isDeprecated() {
-        return myField.isDeprecated();
+        return delegate.isDeprecated();
     }
 
     @Override
     public PsiClass getContainingClass() {
-        return myContainingClass;
+        return containingClass;
     }
 
     @NotNull
     @Override
     public PsiType getType() {
-        return myField.getType();
+        return delegate.getType();
     }
 
     @Override
     public PsiTypeElement getTypeElement() {
-        return myField.getTypeElement();
+        return delegate.getTypeElement();
     }
 
     @Override
     public PsiExpression getInitializer() {
-        return myField.getInitializer();
+        return delegate.getInitializer();
     }
 
     @Override
     public boolean hasInitializer() {
-        return myField.hasInitializer();
+        return delegate.hasInitializer();
     }
 
     @Override
@@ -113,33 +112,27 @@ public class KotlinLightField extends LightElement implements PsiField, KotlinLi
 
     @Override
     public Object computeConstantValue() {
-        return myField.computeConstantValue();
+        return delegate.computeConstantValue();
     }
 
     @Override
-    public PsiElement setName(@NonNls @NotNull final String name) throws IncorrectOperationException {
+    public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
         throw new IncorrectOperationException("Not supported");
     }
 
     @Override
     public PsiModifierList getModifierList() {
-        return myField.getModifierList();
+        return delegate.getModifierList();
     }
 
     @Override
-    public boolean hasModifierProperty(@NonNls @NotNull final String name) {
-        return myField.hasModifierProperty(name);
+    public boolean hasModifierProperty(@NonNls @NotNull String name) {
+        return delegate.hasModifierProperty(name);
     }
 
     @Override
     public String getText() {
-        return myField.getText();
-    }
-
-    @NotNull
-    @Override
-    public PsiElement copy() {
-        return new KotlinLightField(myManager, myOriginalProperty, (PsiField)myField.copy(), myContainingClass);
+        return delegate.getText();
     }
 
     @Override
@@ -149,7 +142,7 @@ public class KotlinLightField extends LightElement implements PsiField, KotlinLi
 
     @Override
     public boolean isValid() {
-        return myContainingClass.isValid();
+        return containingClass.isValid();
     }
 
     @Override
@@ -159,14 +152,14 @@ public class KotlinLightField extends LightElement implements PsiField, KotlinLi
 
     @NotNull
     @Override
-    public JetProperty getOrigin() {
-        return myOriginalProperty;
+    public T getOrigin() {
+        return origin;
     }
 
     @NotNull
     @Override
-    public PsiField getDelegate() {
-        return myField;
+    public D getDelegate() {
+        return delegate;
     }
 
     @NotNull

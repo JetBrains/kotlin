@@ -28,10 +28,9 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.light.KotlinLightField;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.asJava.light.KotlinLightEnumConstant;
+import org.jetbrains.jet.asJava.light.KotlinLightFieldForDeclaration;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.List;
 
@@ -111,9 +110,16 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
             @Override
             public PsiField fun(PsiField field) {
                 JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(field);
-                return declaration instanceof JetProperty
-                       ? new KotlinLightField(myManager, (JetProperty) declaration, field, KotlinWrappingLightClass.this)
-                       : new LightField(myManager, field, KotlinWrappingLightClass.this);
+                if (declaration instanceof JetEnumEntry) {
+                    assert field instanceof PsiEnumConstant : "Field delegate should be an enum constant (" + field.getName() + "):\n" +
+                                                              JetPsiUtil.getElementTextWithContext(declaration);
+                    return new KotlinLightEnumConstant(myManager, (JetEnumEntry) declaration, ((PsiEnumConstant) field),
+                                                       KotlinWrappingLightClass.this);
+                }
+                if (declaration instanceof JetProperty) {
+                    return new KotlinLightFieldForDeclaration(myManager, (JetProperty) declaration, field, KotlinWrappingLightClass.this);
+                }
+                return new LightField(myManager, field, KotlinWrappingLightClass.this);
             }
         });
     }
