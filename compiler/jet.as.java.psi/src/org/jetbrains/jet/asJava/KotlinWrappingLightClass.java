@@ -17,16 +17,14 @@
 package org.jetbrains.jet.asJava;
 
 import com.intellij.lang.Language;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.impl.light.LightField;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.source.ClassInnerStuffCache;
 import com.intellij.psi.impl.source.PsiExtensibleClass;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -114,8 +112,8 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
             public PsiField fun(PsiField field) {
                 JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(field);
                 return declaration instanceof JetProperty
-                        ? new KotlinLightField(myManager, (JetProperty) declaration, field, KotlinWrappingLightClass.this)
-                        : new LightField(myManager, field, KotlinWrappingLightClass.this);
+                       ? new KotlinLightField(myManager, (JetProperty) declaration, field, KotlinWrappingLightClass.this)
+                       : new LightField(myManager, field, KotlinWrappingLightClass.this);
             }
         });
     }
@@ -132,6 +130,17 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                        : new LightMethod(myManager, method, KotlinWrappingLightClass.this);
             }
         });
+    }
+
+    @Override
+    public boolean processDeclarations(
+            @NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place
+    ) {
+        if (isEnum()) {
+            if (!PsiClassImplUtil.processDeclarationsInEnum(processor, state, myInnersCache)) return false;
+        }
+
+        return super.processDeclarations(processor, state, lastParent, place);
     }
 
     @Override
