@@ -65,7 +65,14 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
 
     val module = projectFileIndex.getModuleForFile(virtualFile)
-    if (module != null) return module.toSourceInfo()
+    if (module != null) {
+        if (projectFileIndex.isInTestSourceContent(virtualFile)) {
+            return module.testSourceInfo()
+        }
+        else {
+            return module.productionSourceInfo()
+        }
+    }
 
     val orderEntries = projectFileIndex.getOrderEntriesForFile(virtualFile)
 

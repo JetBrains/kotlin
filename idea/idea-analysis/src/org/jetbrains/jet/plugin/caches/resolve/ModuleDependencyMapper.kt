@@ -83,7 +83,7 @@ fun createModuleResolverProvider(
 
 private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
     val ideaModules = ModuleManager.getInstance(project).getModules().toList()
-    val modulesSourcesInfos = ideaModules.map { it.toSourceInfo() }
+    val modulesSourcesInfos = ideaModules.flatMap { listOf(it.productionSourceInfo(), it.testSourceInfo()) }
 
     //TODO: (module refactoring) include libraries that are not among dependencies of any module
     val ideaLibraries = ideaModules.flatMap {

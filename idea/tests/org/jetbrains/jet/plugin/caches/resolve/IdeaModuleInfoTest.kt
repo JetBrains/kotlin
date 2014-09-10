@@ -32,8 +32,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         val (a, b) = modules()
         b.addDependency(a)
 
-        b.source.assertDependenciesEqual(b.source, a.source)
-        assertDoesntContain(a.source.dependencies(), b.source)
+        b.production.assertDependenciesEqual(b.production, a.production)
+        assertDoesntContain(a.production.dependencies(), b.production)
     }
 
     fun testCircularDependency() {
@@ -42,8 +42,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         b.addDependency(a)
         a.addDependency(b)
 
-        a.source.assertDependenciesEqual(a.source, b.source)
-        b.source.assertDependenciesEqual(b.source, a.source)
+        a.production.assertDependenciesEqual(a.production, b.production)
+        b.production.assertDependenciesEqual(b.production, a.production)
     }
 
     fun testExportedDependency() {
@@ -52,9 +52,9 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         b.addDependency(a, exported = true)
         c.addDependency(b)
 
-        a.source.assertDependenciesEqual(a.source)
-        b.source.assertDependenciesEqual(b.source, a.source)
-        c.source.assertDependenciesEqual(c.source, b.source, a.source)
+        a.production.assertDependenciesEqual(a.production)
+        b.production.assertDependenciesEqual(b.production, a.production)
+        c.production.assertDependenciesEqual(c.production, b.production, a.production)
     }
 
     fun testRedundantExportedDependency() {
@@ -64,9 +64,9 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         c.addDependency(a)
         c.addDependency(b)
 
-        a.source.assertDependenciesEqual(a.source)
-        b.source.assertDependenciesEqual(b.source, a.source)
-        c.source.assertDependenciesEqual(c.source, a.source, b.source)
+        a.production.assertDependenciesEqual(a.production)
+        b.production.assertDependenciesEqual(b.production, a.production)
+        c.production.assertDependenciesEqual(c.production, a.production, b.production)
     }
 
     fun testCircularExportedDependency() {
@@ -76,9 +76,9 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         c.addDependency(b, exported = true)
         a.addDependency(c, exported = true)
 
-        a.source.assertDependenciesEqual(a.source, c.source, b.source)
-        b.source.assertDependenciesEqual(b.source, a.source, c.source)
-        c.source.assertDependenciesEqual(c.source, b.source, a.source)
+        a.production.assertDependenciesEqual(a.production, c.production, b.production)
+        b.production.assertDependenciesEqual(b.production, a.production, c.production)
+        c.production.assertDependenciesEqual(c.production, b.production, a.production)
     }
 
     fun testSimpleLibDependency() {
@@ -86,7 +86,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         val lib = projectLibrary()
         a.addDependency(lib)
 
-        a.source.assertDependenciesEqual(a.source, lib.classes)
+        a.production.assertDependenciesEqual(a.production, lib.classes)
     }
 
     fun testCircularExportedDependencyWithLib() {
@@ -103,9 +103,9 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         b.addDependency(lib)
         c.addDependency(lib)
 
-        a.source.assertDependenciesEqual(a.source, lib.classes, c.source, b.source)
-        b.source.assertDependenciesEqual(b.source, a.source, c.source, lib.classes)
-        c.source.assertDependenciesEqual(c.source, b.source, a.source, lib.classes)
+        a.production.assertDependenciesEqual(a.production, lib.classes, c.production, b.production)
+        b.production.assertDependenciesEqual(b.production, a.production, c.production, lib.classes)
+        c.production.assertDependenciesEqual(c.production, b.production, a.production, lib.classes)
     }
 
     fun testSeveralModulesExportLibs() {
@@ -119,7 +119,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         c.addDependency(a)
         c.addDependency(b)
 
-        c.source.assertDependenciesEqual(c.source, a.source, lib1.classes, b.source, lib2.classes)
+        c.production.assertDependenciesEqual(c.production, a.production, lib1.classes, b.production, lib2.classes)
     }
 
     fun testSeveralModulesExportSameLib() {
@@ -132,7 +132,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         c.addDependency(a)
         c.addDependency(b)
 
-        c.source.assertDependenciesEqual(c.source, a.source, lib.classes, b.source)
+        c.production.assertDependenciesEqual(c.production, a.production, lib.classes, b.production)
     }
 
     fun testRuntimeDependency() {
@@ -141,7 +141,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         b.addDependency(a, dependencyScope = DependencyScope.RUNTIME)
         b.addDependency(projectLibrary(), dependencyScope = DependencyScope.RUNTIME)
 
-        b.source.assertDependenciesEqual(b.source)
+        b.production.assertDependenciesEqual(b.production)
     }
 
     fun testProvidedDependency() {
@@ -151,7 +151,35 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         b.addDependency(a, dependencyScope = DependencyScope.PROVIDED)
         b.addDependency(lib, dependencyScope = DependencyScope.PROVIDED)
 
-        b.source.assertDependenciesEqual(b.source, a.source, lib.classes)
+        b.production.assertDependenciesEqual(b.production, a.production, lib.classes)
+    }
+
+    fun testSimpleTestDependency() {
+        val (a, b) = modules()
+        b.addDependency(a, dependencyScope = DependencyScope.TEST)
+
+        a.production.assertDependenciesEqual(a.production)
+        a.test.assertDependenciesEqual(a.test, a.production)
+        b.production.assertDependenciesEqual(b.production)
+        b.test.assertDependenciesEqual(b.test, b.production, a.test, a.production)
+    }
+
+    fun testLibTestDependency() {
+        val a = module("a")
+        val lib = projectLibrary()
+        a.addDependency(lib, dependencyScope = DependencyScope.TEST)
+
+        a.production.assertDependenciesEqual(a.production)
+        a.test.assertDependenciesEqual(a.test, a.production, lib.classes)
+    }
+
+    fun testExportedTestDependency() {
+        val (a, b, c) = modules()
+        b.addDependency(a, exported = true)
+        c.addDependency(b, dependencyScope = DependencyScope.TEST)
+
+        c.production.assertDependenciesEqual(c.production)
+        c.test.assertDependenciesEqual(c.test, c.production, b.test, b.production, a.test, a.production)
     }
 
     private fun Module.addDependency(
@@ -160,8 +188,12 @@ class IdeaModuleInfoTest : ModuleTestCase() {
             exported: Boolean = false
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 
-    private val Module.source: ModuleProductionSourceInfo
+    private val Module.production: ModuleProductionSourceInfo
             get() = productionSourceInfo()
+
+    private val Module.test: ModuleTestSourceInfo
+            get() = testSourceInfo()
+
     private val Library.classes: LibraryInfo
             get() = LibraryInfo(getProject()!!, this)
 

@@ -16,7 +16,10 @@
   <item name='com.intellij.openapi.roots.OrderEnumerator com.intellij.openapi.roots.OrderEnumerator exportedOnly()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='com.intellij.openapi.roots.OrderEnumerator com.intellij.openapi.roots.OrderEnumerator recursively()'>
+    <item name='com.intellij.openapi.roots.OrderEnumerator com.intellij.openapi.roots.OrderEnumerator productionOnly()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.openapi.roots.OrderEnumerator com.intellij.openapi.roots.OrderEnumerator recursively()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item

@@ -35,18 +35,21 @@ import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.utils.emptyOrSingletonList
+import com.intellij.openapi.roots.OrderEnumerator
 
-private abstract class IdeaModuleInfo : ModuleInfo {
+public abstract class IdeaModuleInfo : ModuleInfo {
     abstract fun contentScope(): GlobalSearchScope
 }
 
-private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry): List<IdeaModuleInfo> {
+private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, productionOnly: Boolean): List<IdeaModuleInfo> {
+    fun Module.toInfos() = if (productionOnly) listOf(productionSourceInfo()) else listOf(testSourceInfo(), productionSourceInfo())
+
     return when (orderEntry) {
         is ModuleSourceOrderEntry -> {
-            listOf(orderEntry.getOwnerModule().toSourceInfo())
+            orderEntry.getOwnerModule().toInfos()
         }
         is ModuleOrderEntry -> {
-            emptyOrSingletonList(orderEntry.getModule()?.toSourceInfo())
+            orderEntry.getModule()?.toInfos().orEmpty()
         }
         is LibraryOrderEntry -> {
             val library = orderEntry.getLibrary() ?: return listOf()
@@ -62,27 +65,42 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry): Li
     }
 }
 
-//TODO: (module refactoring) there should be separate ModuleTestInfo
-private data class ModuleSourceInfo(val module: Module) : IdeaModuleInfo() {
-    override val name = Name.special("<sources for module ${module.getName()}>")
-
-    override fun contentScope() = GlobalSearchScope.moduleScope(module)
-
-    override fun dependencies(): List<IdeaModuleInfo> {
-        //NOTE: lib dependencies can be processed several times during recursive traversal
-        val result = LinkedHashSet<IdeaModuleInfo>()
-        ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly().forEach {
-            orderEntry ->
-            result.addAll(orderEntryToModuleInfo(module.getProject(), orderEntry!!))
-            true
-        }
-        return result.toList()
+fun ideaModelDependencies(module: Module, productionOnly: Boolean): List<IdeaModuleInfo> {
+    //NOTE: lib dependencies can be processed several times during recursive traversal
+    val result = LinkedHashSet<IdeaModuleInfo>()
+    val dependencyEnumerator = ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly()
+    if (productionOnly) {
+        dependencyEnumerator.productionOnly()
     }
+    dependencyEnumerator.forEach {
+        orderEntry ->
+        result.addAll(orderEntryToModuleInfo(module.getProject(), orderEntry!!, productionOnly))
+        true
+    }
+    return result.toList()
 }
 
-private fun Module.toSourceInfo() = ModuleSourceInfo(this)
+public data class ModuleProductionSourceInfo(val module: Module) : IdeaModuleInfo() {
+    override val name = Name.special("<production sources for module ${module.getName()}>")
 
-private data class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
+    override fun contentScope() = module.getModuleScope(false)
+
+    override fun dependencies() = ideaModelDependencies(module, productionOnly = true)
+}
+
+//TODO: (module refactoring) do not create ModuleTestSourceInfo when there are not test roots for module
+public data class ModuleTestSourceInfo(val module: Module) : IdeaModuleInfo() {
+    override val name = Name.special("<test sources for module ${module.getName()}>")
+
+    override fun contentScope() = module.getModuleScope().intersectWith(GlobalSearchScope.notScope(module.getModuleScope(false)))
+
+    override fun dependencies() = ideaModelDependencies(module, productionOnly = false)
+}
+
+public fun Module.productionSourceInfo(): ModuleProductionSourceInfo = ModuleProductionSourceInfo(this)
+public fun Module.testSourceInfo(): ModuleTestSourceInfo = ModuleTestSourceInfo(this)
+
+public data class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
     override val name: Name = Name.special("<library ${library.getName()}>")
 
     override fun contentScope() = LibraryWithoutSourceScope(project, library)
