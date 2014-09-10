@@ -58,7 +58,7 @@ JetFile: Properties_ERR.kt
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
-      PsiErrorElement:Expecting ']' to close an attribute annotation
+      PsiErrorElement:Expecting ']' to close an list of annotation
         <empty list>
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')

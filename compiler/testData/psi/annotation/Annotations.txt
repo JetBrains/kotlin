@@ -1,4 +1,4 @@
-JetFile: Attributes_ERR.kt
+JetFile: Annotations.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')
@@ -30,12 +30,6 @@ JetFile: Attributes_ERR.kt
       PsiElement(open)('open')
       PsiWhiteSpace('\n')
       PsiElement(abstract)('abstract')
-      PsiWhiteSpace('\n')
-      ANNOTATION
-        PsiElement(LBRACKET)('[')
-        PsiErrorElement:Expecting a list of attributes
-          <empty list>
-        PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n')
       PsiElement(private)('private')
       PsiWhiteSpace('\n')
@@ -79,8 +73,6 @@ JetFile: Attributes_ERR.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
-        PsiErrorElement:No commas needed to separate attributes
-          PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -160,34 +152,6 @@ JetFile: Attributes_ERR.kt
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('sdfsdf')
-        PsiWhiteSpace(' ')
-        PsiElement(RBRACKET)(']')
-      PsiWhiteSpace('\n')
-      ANNOTATION
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('s')
-        PsiWhiteSpace(' ')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('fd')
-        PsiWhiteSpace(' ')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('d')
-        PsiErrorElement:No commas needed to separate attributes
-          PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n')
       PsiElement(out)('out')
@@ -209,6 +173,86 @@ JetFile: Attributes_ERR.kt
           PsiElement(abstract)('abstract')
           PsiWhiteSpace('\n')
           PsiElement(open)('open')
+          PsiWhiteSpace('\n')
+          ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('sdfsdf')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACKET)(']')
+          PsiWhiteSpace('\n')
+          ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('sdfsdf')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(RPAR)(')')
+            PsiElement(RBRACKET)(']')
+          PsiWhiteSpace('\n')
+          ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('sdfsdf')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(RPAR)(')')
+            PsiElement(RBRACKET)(']')
           PsiWhiteSpace('\n')
           PsiElement(enum)('enum')
           PsiWhiteSpace('\n')

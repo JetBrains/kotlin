@@ -84,7 +84,7 @@ JetFile: fileAnnotationInWrongPlace.kt
         PsiErrorElement:File annotations are only allowed before package declaration
           PsiElement(file)('file')
           PsiElement(COLON)(':')
-        PsiErrorElement:Expecting a list of attributes
+        PsiErrorElement:Expecting a list of annotations
           <empty list>
         PsiElement(RBRACKET)(']')
     PsiWhiteSpace('\n')

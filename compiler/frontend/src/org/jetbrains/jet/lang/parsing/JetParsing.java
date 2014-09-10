@@ -385,7 +385,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * (modifier | attribute)*
+     * (modifier | annotation)*
      */
     boolean parseModifierList(
             @NotNull IElementType nodeType,
@@ -395,9 +395,9 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /**
-     * (modifier | attribute)*
+     * (modifier | annotation)*
      *
-     * Feeds modifiers (not attributes) into the passed consumer, if it is not null
+     * Feeds modifiers (not annotations) into the passed consumer, if it is not null
      */
     boolean parseModifierList(
             @NotNull IElementType nodeType,
@@ -492,23 +492,23 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             if (!at(IDENTIFIER)) {
-                error("Expecting a list of attributes");
+                error("Expecting a list of annotations");
             }
             else {
                 parseAnnotationEntry();
                 while (at(COMMA)) {
-                    errorAndAdvance("No commas needed to separate attributes");
+                    errorAndAdvance("No commas needed to separate annotations");
                 }
 
                 while (at(IDENTIFIER)) {
                     parseAnnotationEntry();
                     while (at(COMMA)) {
-                        errorAndAdvance("No commas needed to separate attributes");
+                        errorAndAdvance("No commas needed to separate annotations");
                     }
                 }
             }
 
-            expect(RBRACKET, "Expecting ']' to close an attribute annotation");
+            expect(RBRACKET, "Expecting ']' to close an list of annotation");
             myBuilder.restoreNewlinesState();
 
             annotation.done(ANNOTATION);
@@ -530,7 +530,7 @@ public class JetParsing extends AbstractJetParsing {
     private void parseAnnotationEntry() {
         assert _at(IDENTIFIER);
 
-        PsiBuilder.Marker attribute = mark();
+        PsiBuilder.Marker annotation = mark();
 
         PsiBuilder.Marker reference = mark();
         PsiBuilder.Marker typeReference = mark();
@@ -543,7 +543,7 @@ public class JetParsing extends AbstractJetParsing {
         if (at(LPAR)) {
             myExpressionParsing.parseValueArgumentList();
         }
-        attribute.done(ANNOTATION_ENTRY);
+        annotation.done(ANNOTATION_ENTRY);
     }
 
     /*
@@ -551,7 +551,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers ("class" | "trait") SimpleName
      *       typeParameters?
      *         modifiers ("(" primaryConstructorParameter{","} ")")?
-     *       (":" attributes delegationSpecifier{","})?
+     *       (":" annotations delegationSpecifier{","})?
      *       typeConstraints
      *       (classBody? | enumClassBody)
      *   ;
@@ -826,8 +826,8 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * initializer
-     *   : attributes "this" valueArguments
-     *   : attributes constructorInvocation // type parameters may (must?) be omitted
+     *   : annotations "this" valueArguments
+     *   : annotations constructorInvocation // type parameters may (must?) be omitted
      *   ;
      */
     private void parseInitializer() {
@@ -1132,7 +1132,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * function
      *   : modifiers "fun" typeParameters?
-     *       (type "." | attributes)?
+     *       (type "." | annotations)?
      *       SimpleName
      *       typeParameters? functionParameters (":" type)?
      *       typeConstraints
@@ -1201,7 +1201,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     *   (type "." | attributes)?
+     *   (type "." | annotations)?
      */
     private void parseReceiverType(String title, TokenSet nameFollow, int lastDot) {
         if (lastDot == -1) { // There's no explicit receiver type specified
@@ -1290,7 +1290,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * attributes delegationSpecifier
+     * annotations delegationSpecifier
      *
      * delegationSpecifier
      *   : constructorInvocation // type and constructor arguments
@@ -1397,8 +1397,8 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * typeConstraint
-     *   : attributes SimpleName ":" type
-     *   : attributes "class" "object" SimpleName ":" type
+     *   : annotations SimpleName ":" type
+     *   : annotations "class" "object" SimpleName ":" type
      *   ;
      */
     private void parseTypeConstraint() {
@@ -1456,7 +1456,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * type
-     *   : attributes typeDescriptor
+     *   : annotations typeDescriptor
      *
      * typeDescriptor
      *   : selfType

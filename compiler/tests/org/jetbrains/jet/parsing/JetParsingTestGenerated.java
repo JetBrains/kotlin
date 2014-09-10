@@ -525,21 +525,21 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
             
-            @TestMetadata("Attributes.kt")
-            public void testAttributes() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/Attributes.kt");
+            @TestMetadata("Annotations.kt")
+            public void testAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/Annotations.kt");
                 doParsingTest(fileName);
             }
             
-            @TestMetadata("AttributesOnPatterns.kt")
-            public void testAttributesOnPatterns() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/AttributesOnPatterns.kt");
+            @TestMetadata("AnnotationsOnPatterns.kt")
+            public void testAnnotationsOnPatterns() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/AnnotationsOnPatterns.kt");
                 doParsingTest(fileName);
             }
             
-            @TestMetadata("Attributes_ERR.kt")
-            public void testAttributes_ERR() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/Attributes_ERR.kt");
+            @TestMetadata("Annotations_ERR.kt")
+            public void testAnnotations_ERR() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/Annotations_ERR.kt");
                 doParsingTest(fileName);
             }
             
