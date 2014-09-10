@@ -86,9 +86,11 @@ public data class ModuleProductionSourceInfo(val module: Module) : IdeaModuleInf
     override fun contentScope() = module.getModuleScope(false)
 
     override fun dependencies() = ideaModelDependencies(module, productionOnly = true)
+
+    override fun friends() = listOf(module.testSourceInfo())
 }
 
-//TODO: (module refactoring) do not create ModuleTestSourceInfo when there are not test roots for module
+//TODO: (module refactoring) do not create ModuleTestSourceInfo when there are no test roots for module
 public data class ModuleTestSourceInfo(val module: Module) : IdeaModuleInfo() {
     override val name = Name.special("<test sources for module ${module.getName()}>")
 
