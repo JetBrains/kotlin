@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import kotlin.properties.Delegates
+import java.util.LinkedHashSet
 
 public class ModuleDescriptorImpl(
         moduleName: Name,
@@ -84,4 +85,14 @@ public class ModuleDescriptorImpl(
     }
 
     override fun getPackageFragmentProvider() = packageFragmentProviderForWholeModuleWithDependencies
+
+    private val friendModules = LinkedHashSet<ModuleDescriptor>()
+
+    override fun isFriend(other: ModuleDescriptor) = other == this || other in friendModules
+
+    public fun addFriend(friend: ModuleDescriptorImpl): Unit {
+        assert(friend != this, "Attempt to make module $id a friend to itself")
+        assert(!isSealed, "Attempt to add friend module ${friend.id} to sealed module $id")
+        friendModules.add(friend)
+    }
 }
