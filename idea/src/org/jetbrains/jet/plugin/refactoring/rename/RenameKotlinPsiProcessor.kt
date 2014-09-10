@@ -19,8 +19,6 @@ package org.jetbrains.jet.plugin.refactoring.rename
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {

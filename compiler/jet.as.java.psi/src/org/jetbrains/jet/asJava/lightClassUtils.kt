@@ -16,30 +16,12 @@
 
 package org.jetbrains.jet.asJava
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetParameter
+import com.intellij.psi.*
+import org.jetbrains.jet.lang.psi.*
 import java.util.Collections
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import com.intellij.psi.PsiParameter
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
-import org.jetbrains.jet.lang.psi.JetParameterList
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetTypeParameter
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import com.intellij.psi.PsiTypeParameter
 import java.util.ArrayList
-import org.jetbrains.jet.lang.psi.JetTypeParameterList
-import com.intellij.psi.PsiTypeParameterListOwner
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.PsiNamedElement
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
-import com.intellij.psi.PsiClass
 
 public fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
 

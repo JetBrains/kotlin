@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.jetAsJava;
+package org.jetbrains.jet.asJava
 
-import com.intellij.psi.PsiMethod;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import com.intellij.psi.PsiElement
 
-/** Java method created for Kotlin declaration to make it resolvable in Java */
-public trait KotlinLightMethod: PsiMethod, KotlinLightElement<JetDeclaration, PsiMethod>
+public trait KotlinLightElement<T : JetDeclaration, D : PsiElement> {
+    public val origin: T?
+    public val delegate: D
+}

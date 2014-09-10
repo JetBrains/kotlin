@@ -17,32 +17,19 @@
 package org.jetbrains.jet.plugin.search.usagesSearch
 
 import com.intellij.psi.PsiConstructorCall
-import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.psi.PsiReference
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.plugin.findUsages.JetUsageTypeProvider
 import com.intellij.usages.impl.rules.UsageType
 import org.jetbrains.jet.codegen.PropertyCodegen
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
-import org.jetbrains.jet.asJava.unwrapped
+import org.jetbrains.jet.asJava.KotlinLightMethod
 import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.jet.plugin.references.JetMultiReference
-import java.util.HashSet
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.plugin.references.JetReference
-import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.references.*
 
 val JetDeclaration.descriptor: DeclarationDescriptor?

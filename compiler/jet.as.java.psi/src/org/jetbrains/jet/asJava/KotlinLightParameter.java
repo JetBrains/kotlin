@@ -25,8 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.light.LightParameter;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.List;

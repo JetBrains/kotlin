@@ -26,8 +26,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.KotlinLightElement;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement;
 
 // Copied from com.intellij.psi.impl.light.LightField
 public abstract class KotlinLightField<T extends JetDeclaration, D extends PsiField> extends LightElement
