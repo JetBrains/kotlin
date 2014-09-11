@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxWithJava")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxWithJavaCodegenTestGenerated.PlatformStatic.class})
+@InnerTestClasses({BlackBoxWithJavaCodegenTestGenerated.PlatformStatic.class, BlackBoxWithJavaCodegenTestGenerated.Properties.class})
 @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithJava() throws Exception {
@@ -69,6 +69,23 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("object")
         public void testObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/object/");
+            doTestWithJava(fileName);
+        }
+        
+    }
+    
+    @TestMetadata("compiler/testData/codegen/boxWithJava/properties")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({})
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    public static class Properties extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInProperties() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/properties"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+        
+        @TestMetadata("classObjectProperties")
+        public void testClassObjectProperties() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/classObjectProperties/");
             doTestWithJava(fileName);
         }
         

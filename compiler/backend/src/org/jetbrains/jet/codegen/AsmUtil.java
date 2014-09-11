@@ -667,14 +667,17 @@ public class AsmUtil {
 
     public static boolean isPropertyWithBackingFieldCopyInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
         boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
-        return !propertyDescriptor.isVar() && !isExtensionProperty
-               && isClassObjectOfClassWithKind(propertyDescriptor.getContainingDeclaration(), ClassKind.TRAIT)
+        DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
+        return !propertyDescriptor.isVar()
+               && !isExtensionProperty
+               && isClassObject(propertyContainer) && isTrait(propertyContainer.getContainingDeclaration())
                && areBothAccessorDefault(propertyDescriptor)
                && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
 
     public static boolean isClassObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor classObject) {
-        return isClassObjectOfClassWithKind(classObject, ClassKind.CLASS);
+        DeclarationDescriptor containingClass = classObject.getContainingDeclaration();
+        return isClassObject(classObject) && (isClass(containingClass) || isEnumClass(containingClass));
     }
 
     private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -684,10 +687,6 @@ public class AsmUtil {
 
     private static boolean isAccessorWithEmptyBody(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
         return accessorDescriptor == null || !accessorDescriptor.hasBody();
-    }
-
-    private static boolean isClassObjectOfClassWithKind(@NotNull DeclarationDescriptor classObject, @NotNull ClassKind kind) {
-        return isClassObject(classObject) && isKindOf(classObject.getContainingDeclaration(), kind);
     }
 
     public static Type comparisonOperandType(Type left, Type right) {
