@@ -162,26 +162,33 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         assert constructor.getValueParameters().size() == primaryConstructorParameters.size()
                 : "From descriptor: " + constructor.getValueParameters().size() + " but from PSI: " + primaryConstructorParameters.size();
 
-        int componentIndex = 0;
-        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
-            if (parameter.getType().isError()) continue;
-            if (!primaryConstructorParameters.get(parameter.getIndex()).hasValOrVarNode()) continue;
+        if (DataClassUtilsPackage.isComponentLike(name)) {
+            int componentIndex = 0;
 
-            Set<VariableDescriptor> properties = getProperties(parameter.getName());
-            if (properties.isEmpty()) continue;
-            assert properties.size() == 1 : "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter;
-            PropertyDescriptor property = (PropertyDescriptor) properties.iterator().next();
-            if (property == null) continue;
+            for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
+                if (parameter.getType().isError()) continue;
+                if (!primaryConstructorParameters.get(parameter.getIndex()).hasValOrVarNode()) continue;
 
-            ++componentIndex;
+                Set<VariableDescriptor> properties = getProperties(parameter.getName());
+                if (properties.isEmpty()) continue;
 
-            if (name.equals(DataClassUtilsPackage.createComponentName(componentIndex))) {
-                SimpleFunctionDescriptor functionDescriptor = DescriptorResolver.createComponentFunctionDescriptor(
-                        componentIndex, property, parameter, thisDescriptor, trace);
-                result.add(functionDescriptor);
-                break;
+                assert properties.size() == 1 :
+                        "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter;
+
+                PropertyDescriptor property = (PropertyDescriptor) properties.iterator().next();
+                if (property == null) continue;
+
+                ++componentIndex;
+
+                if (name.equals(DataClassUtilsPackage.createComponentName(componentIndex))) {
+                    SimpleFunctionDescriptor functionDescriptor = DescriptorResolver.createComponentFunctionDescriptor(
+                            componentIndex, property, parameter, thisDescriptor, trace);
+                    result.add(functionDescriptor);
+                    break;
+                }
             }
         }
+
         if (name.equals(DescriptorResolver.COPY_METHOD_NAME)) {
             SimpleFunctionDescriptor copyFunctionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(
                     constructor.getValueParameters(),
