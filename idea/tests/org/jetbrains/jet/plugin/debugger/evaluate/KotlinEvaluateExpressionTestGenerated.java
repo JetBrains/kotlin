@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluateExpressionTest {
     @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({SingleBreakpoint.Frame.class})
+    @InnerTestClasses({SingleBreakpoint.Frame.class, SingleBreakpoint.Lambdas.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SingleBreakpoint extends AbstractKotlinEvaluateExpressionTest {
         @TestMetadata("abstractFunCall.kt")
@@ -51,6 +51,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("arrays.kt")
         public void testArrays() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/arrays.kt");
+            doSingleBreakpointTest(fileName);
+        }
+        
+        @TestMetadata("callableBug.kt")
+        public void testCallableBug() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/callableBug.kt");
             doSingleBreakpointTest(fileName);
         }
         
@@ -257,6 +263,46 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("frameThis0This0.kt")
             public void testFrameThis0This0() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameThis0This0.kt");
+                doSingleBreakpointTest(fileName);
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class Lambdas extends AbstractKotlinEvaluateExpressionTest {
+            public void testAllFilesPresentInLambdas() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("inlineLambda.kt")
+            public void testInlineLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/inlineLambda.kt");
+                doSingleBreakpointTest(fileName);
+            }
+            
+            @TestMetadata("lambdaOnSecondLine.kt")
+            public void testLambdaOnSecondLine() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/lambdaOnSecondLine.kt");
+                doSingleBreakpointTest(fileName);
+            }
+            
+            @TestMetadata("oneLineLambda.kt")
+            public void testOneLineLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/oneLineLambda.kt");
+                doSingleBreakpointTest(fileName);
+            }
+            
+            @TestMetadata("twoLambdasOnOneLineFirst.kt")
+            public void testTwoLambdasOnOneLineFirst() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/twoLambdasOnOneLineFirst.kt");
+                doSingleBreakpointTest(fileName);
+            }
+            
+            @TestMetadata("twoLambdasOnOneLineSecond.kt")
+            public void testTwoLambdasOnOneLineSecond() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/twoLambdasOnOneLineSecond.kt");
                 doSingleBreakpointTest(fileName);
             }
             

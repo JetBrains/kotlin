@@ -77,16 +77,11 @@ fun getFunctionForExtractedFragment(
 
         val originalFile = breakpointFile as JetFile
 
-        val lineStart = CodeInsightUtils.getStartLineOffset(originalFile, breakpointLine)
-        if (lineStart == null) return null
-
         val tmpFile = originalFile.createTempCopy { it }
         tmpFile.skipVisibilityCheck = true
 
-        val elementAtOffset = tmpFile.findElementAt(lineStart)
-        if (elementAtOffset == null) return null
-
-        val contextElement: PsiElement = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
+        val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.getContext(), breakpointLine)
+        if (contextElement == null) return null
 
         // Don't evaluate smth when breakpoint is on package directive (ex. for package classes)
         if (contextElement is JetFile) {
@@ -137,12 +132,62 @@ private fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
     }
 }
 
+private fun JetFile.getElementInCopy(e: PsiElement): PsiElement? {
+    val offset = e.getTextRange()?.getStartOffset()
+    if (offset == null) {
+        return null
+    }
+    var elementAt = this.findElementAt(offset)
+    while (elementAt == null || elementAt!!.getTextRange()?.getEndOffset() != e.getTextRange()?.getEndOffset()) {
+        elementAt = elementAt?.getParent()
+    }
+    return elementAt
+}
+
+private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextElement: PsiElement?, line: Int): PsiElement? {
+    if (contextElement == null) {
+        val lineStart = CodeInsightUtils.getStartLineOffset(tmpFile, line)
+        if (lineStart == null) return null
+
+        val elementAtOffset = tmpFile.findElementAt(lineStart)
+        if (elementAtOffset == null) return null
+
+        return CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
+    }
+
+    fun shouldStop(el: PsiElement?, p: PsiElement?) = p is JetBlockExpression || el is JetDeclaration
+
+    var elementAt = tmpFile.getElementInCopy(contextElement)
+
+    var parent = elementAt?.getParent()
+    if (shouldStop(elementAt, parent)) {
+        return elementAt
+    }
+
+    var parentOfParent = parent?.getParent()
+
+    while (parent != null && parentOfParent != null) {
+        if (shouldStop(parent, parentOfParent)) {
+            break
+        }
+
+        parent = parent?.getParent()
+        parentOfParent = parent?.getParent()
+    }
+
+    return parent
+}
+
 private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contextElement: PsiElement): JetExpression? {
     val psiFactory = JetPsiFactory(codeFragment)
 
     val elementBefore = when {
         contextElement is JetProperty && !contextElement.isLocal() -> {
             wrapInRunFun(contextElement.getDelegateExpressionOrInitializer()!!)
+        }
+        contextElement is JetFunctionLiteral -> {
+            val block = contextElement.getBodyExpression()!!
+            block.getStatements().first ?: block.getLastChild()
         }
         contextElement is JetDeclarationWithBody && !contextElement.hasBlockBody()-> {
             wrapInRunFun(contextElement.getBodyExpression()!!)

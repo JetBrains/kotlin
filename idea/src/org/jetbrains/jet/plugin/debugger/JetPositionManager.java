@@ -56,6 +56,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.util.DebuggerUtils;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -93,10 +94,46 @@ public class JetPositionManager implements PositionManager {
         }
 
         if (lineNumber >= 0) {
+            JetFunctionLiteral lambdaIfInside = getLambdaIfInside(location, (JetFile) psiFile, lineNumber);
+            if (lambdaIfInside != null) {
+                return SourcePosition.createFromElement(lambdaIfInside.getBodyExpression().getStatements().get(0));
+            }
             return SourcePosition.createFromLine(psiFile, lineNumber);
         }
 
         throw new NoDataException();
+    }
+
+    private JetFunctionLiteral getLambdaIfInside(@NotNull Location location, @NotNull JetFile file, int lineNumber) {
+        String currentLocationFqName = location.declaringType().name();
+        if (currentLocationFqName == null) return null;
+
+        Integer start = CodeInsightUtils.getStartLineOffset(file, lineNumber);
+        Integer end = CodeInsightUtils.getEndLineOffset(file, lineNumber);
+        if (start == null || end == null) return null;
+
+        PsiElement[] literals = CodeInsightUtils.findElementsOfClassInRange(file, start, end, JetFunctionLiteral.class);
+        if (literals == null || literals.length == 0) return null;
+
+        boolean isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null;
+        JetTypeMapper typeMapper = !isInLibrary
+                                    ? prepareTypeMapper(file)
+                                    : createTypeMapperForLibraryFile(file.findElementAt(start), file);
+
+        String currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(new FqName(currentLocationFqName)).getInternalName();
+        for (PsiElement literal : literals) {
+            JetFunctionLiteral functionLiteral = (JetFunctionLiteral) literal;
+            if (isInlinedLambda(functionLiteral, typeMapper.getBindingContext())) {
+                continue;
+            }
+
+            String internalClassName = getClassNameForElement(literal.getFirstChild(), typeMapper, file, isInLibrary);
+            if (internalClassName.equals(currentLocationClassName)) {
+                return functionLiteral;
+            }
+        }
+
+        return null;
     }
 
     @Nullable
@@ -142,7 +179,7 @@ public class JetPositionManager implements PositionManager {
             public void run() {
                 JetFile file = (JetFile) sourcePosition.getFile();
                 boolean isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null;
-                JetTypeMapper typeMapper = !isInLibrary ? prepareTypeMapper(file) : createTypeMapperForLibraryFile(sourcePosition);
+                JetTypeMapper typeMapper = !isInLibrary ? prepareTypeMapper(file) : createTypeMapperForLibraryFile(sourcePosition.getElementAt(), file);
                 result.set(getClassNameForElement(sourcePosition.getElementAt(), typeMapper, file, isInLibrary));
             }
 
@@ -217,11 +254,10 @@ public class JetPositionManager implements PositionManager {
         return typeMapper.mapClass(classDescriptor).getInternalName();
     }
 
-    private static JetTypeMapper createTypeMapperForLibraryFile(@NotNull SourcePosition position) {
-        JetElement element = getElementToCreateTypeMapperForLibraryFile(position.getElementAt());
+    private static JetTypeMapper createTypeMapperForLibraryFile(@Nullable PsiElement notPositionedElement, @NotNull JetFile file) {
+        JetElement element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement);
         ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession(element);
 
-        JetFile file = (JetFile) position.getFile();
         GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
                                                     resolveSession.getModuleDescriptor(),
                                                     resolveSession.resolveToElement(element),

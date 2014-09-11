@@ -59,7 +59,7 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.application.ModalityState
 
-public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestCase() {
+public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
 
     private val appender = object : AppenderSkeleton() {
@@ -73,7 +73,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
     private var oldLogLevel: Level? = null
 
     override fun setUp() {
-        super<KotlinDebuggerTestCase>.setUp()
+        super.setUp()
 
         oldLogLevel = logger.getLevel()
         logger.setLevel(Level.DEBUG)
@@ -84,7 +84,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
         logger.setLevel(oldLogLevel)
         logger.removeAppender(appender)
 
-        super<KotlinDebuggerTestCase>.tearDown()
+        super.tearDown()
     }
 
     fun doSingleBreakpointTest(path: String) {
@@ -101,6 +101,13 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
         val expectedBlockResults = blocks.map { InTextDirectivesUtils.findLinesWithPrefixesRemoved(it, "// RESULT: ").makeString("\n") }
 
         createDebugProcess(path)
+
+        val count = InTextDirectivesUtils.getPrefixedInt(fileText, "// STEP_INTO: ") ?: 0
+        if (count > 0) {
+            for (i in 1..count) {
+                onBreakpoint { stepInto() }
+            }
+        }
 
         onBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
@@ -273,19 +280,6 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
     private fun findFilesWithBlocks(mainFile: File): List<File> {
         val mainFileName = mainFile.getName()
         return mainFile.getParentFile()?.listFiles()?.filter { it.name.startsWith(mainFileName) && it.name != mainFileName } ?: Collections.emptyList()
-    }
-
-    private fun onBreakpoint(doOnBreakpoint: SuspendContextImpl.() -> Unit) {
-        super.onBreakpoint {
-            super.printContext(it)
-            it.doOnBreakpoint()
-        }
-    }
-
-    private fun finish() {
-        onBreakpoint {
-            resume(this)
-        }
     }
 
     private fun SuspendContextImpl.evaluate(text: String, codeFragmentKind: CodeFragmentKind, expectedResult: String) {
