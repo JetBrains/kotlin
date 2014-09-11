@@ -641,7 +641,7 @@ public class AsmUtil {
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
-        return isPropertyWithSpecialBackingField(propertyDescriptor.getContainingDeclaration(), ClassKind.CLASS);
+        return isClassObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
     }
 
     public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
@@ -668,13 +668,13 @@ public class AsmUtil {
     public static boolean isPropertyWithBackingFieldCopyInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
         boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
         return !propertyDescriptor.isVar() && !isExtensionProperty
-               && isPropertyWithSpecialBackingField(propertyDescriptor.getContainingDeclaration(), ClassKind.TRAIT)
+               && isClassObjectOfClassWithKind(propertyDescriptor.getContainingDeclaration(), ClassKind.TRAIT)
                && areBothAccessorDefault(propertyDescriptor)
                && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
 
     public static boolean isClassObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor classObject) {
-        return isPropertyWithSpecialBackingField(classObject, ClassKind.CLASS);
+        return isClassObjectOfClassWithKind(classObject, ClassKind.CLASS);
     }
 
     private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -686,7 +686,7 @@ public class AsmUtil {
         return accessorDescriptor == null || !accessorDescriptor.hasBody();
     }
 
-    private static boolean isPropertyWithSpecialBackingField(@NotNull DeclarationDescriptor classObject, ClassKind kind) {
+    private static boolean isClassObjectOfClassWithKind(@NotNull DeclarationDescriptor classObject, @NotNull ClassKind kind) {
         return isClassObject(classObject) && isKindOf(classObject.getContainingDeclaration(), kind);
     }
 

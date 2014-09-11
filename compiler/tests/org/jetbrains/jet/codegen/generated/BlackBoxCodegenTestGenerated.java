@@ -4654,6 +4654,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objects"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("anonymousObjectPropertyInitialization.kt")
+        public void testAnonymousObjectPropertyInitialization() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/anonymousObjectPropertyInitialization.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("flist.kt")
         public void testFlist() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/flist.kt");
@@ -4768,6 +4774,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("localFunctionInObjectInitializer_kt4516.kt")
+        public void testLocalFunctionInObjectInitializer_kt4516() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/localFunctionInObjectInitializer_kt4516.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("methodOnObject.kt")
         public void testMethodOnObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/methodOnObject.kt");
@@ -4786,6 +4798,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("objectInitialization_kt5523.kt")
+        public void testObjectInitialization_kt5523() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/objectInitialization_kt5523.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("objectLiteral.kt")
         public void testObjectLiteral() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/objectLiteral.kt");
@@ -4798,6 +4816,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("objectVsClassInitialization_kt5291.kt")
+        public void testObjectVsClassInitialization_kt5291() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/objectVsClassInitialization_kt5291.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("objectWithSuperclass.kt")
         public void testObjectWithSuperclass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/objectWithSuperclass.kt");
@@ -4807,6 +4831,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("objectWithSuperclassAndTrait.kt")
         public void testObjectWithSuperclassAndTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/objectWithSuperclassAndTrait.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("privateExtensionFromInitializer_kt4543.kt")
+        public void testPrivateExtensionFromInitializer_kt4543() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/privateExtensionFromInitializer_kt4543.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("privateFunctionFromClosureInInitializer_kt5582.kt")
+        public void testPrivateFunctionFromClosureInInitializer_kt5582() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/privateFunctionFromClosureInInitializer_kt5582.kt");
             doTest(fileName);
         }
         

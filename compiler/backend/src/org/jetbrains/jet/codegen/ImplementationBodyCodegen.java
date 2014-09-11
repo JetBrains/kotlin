@@ -1091,8 +1091,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         v.newField(OtherOrigin(original), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
-        if (!AsmUtil.isClassObjectWithBackingFieldsInOuter(fieldTypeDescriptor)) {
-            genInitSingleton(fieldTypeDescriptor, field);
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+
+        if (isObject(descriptor)) {
+            // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
+            InstructionAdapter v = createOrGetClInitCodegen().v;
+            v.anew(classAsmType);
+            v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
+        }
+        else if (!isClassObjectWithBackingFieldsInOuter(fieldTypeDescriptor)) {
+            generateClassObjectInitializer(fieldTypeDescriptor);
         }
     }
 
@@ -1142,16 +1150,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         field.store(field.type, codegen.v);
     }
 
-    private void genInitSingleton(ClassDescriptor fieldTypeDescriptor, StackValue.Field field) {
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            Collection<ConstructorDescriptor> constructors = fieldTypeDescriptor.getConstructors();
-            assert constructors.size() == 1 : "Class of singleton object must have only one constructor: " + constructors;
-
-            ExpressionCodegen codegen = createOrGetClInitCodegen();
-            FunctionDescriptor fd = codegen.accessibleFunctionDescriptor(constructors.iterator().next());
-            generateMethodCallTo(fd, codegen.v);
-            field.store(field.type, codegen.v);
-        }
+    private void generateClassObjectInitializer(@NotNull ClassDescriptor classObject) {
+        ExpressionCodegen codegen = createOrGetClInitCodegen();
+        FunctionDescriptor constructor = codegen.accessibleFunctionDescriptor(KotlinPackage.single(classObject.getConstructors()));
+        generateMethodCallTo(constructor, codegen.v);
+        StackValue.singleton(classObject, typeMapper).store(typeMapper.mapClass(classObject), codegen.v);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
@@ -1211,6 +1214,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor);
         }
 
+        if (isObject(descriptor)) {
+            iv.load(0, classAsmType);
+            StackValue.singleton(descriptor, typeMapper).store(classAsmType, iv);
+        }
+
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
             if (specifier instanceof JetDelegatorByExpressionSpecifier) {
                 genCallToDelegatorByExpressionSpecifier(iv, codegen, (JetDelegatorByExpressionSpecifier) specifier, fieldsInfo);
@@ -1232,18 +1240,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             curParam++;
         }
 
-        boolean generateInitializerInOuter = isClassObjectWithBackingFieldsInOuter(descriptor);
-        if (generateInitializerInOuter) {
+        if (isClassObjectWithBackingFieldsInOuter(descriptor)) {
             final ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
             //generate OBJECT$
-            parentCodegen.genInitSingleton(descriptor, StackValue.singleton(descriptor, typeMapper));
+            parentCodegen.generateClassObjectInitializer(descriptor);
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {
                     return parentCodegen.createOrGetClInitCodegen();
                 }
             });
-        } else {
+        }
+        else {
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {
