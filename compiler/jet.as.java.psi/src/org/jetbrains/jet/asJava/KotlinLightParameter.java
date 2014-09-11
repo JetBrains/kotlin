@@ -22,7 +22,6 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.light.LightParameter;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.plugin.JetLanguage;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.asJava.light
+package org.jetbrains.jet.asJava
 
 import com.intellij.psi.*
 import org.jetbrains.jet.lang.psi.JetEnumEntry

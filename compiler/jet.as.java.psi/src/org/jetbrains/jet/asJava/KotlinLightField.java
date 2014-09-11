@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.asJava.light;
+package org.jetbrains.jet.asJava;
 
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.TextRange;
@@ -26,7 +26,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightElement;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 
 // Copied from com.intellij.psi.impl.light.LightField

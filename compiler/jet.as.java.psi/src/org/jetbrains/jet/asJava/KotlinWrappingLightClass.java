@@ -28,8 +28,6 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.light.KotlinLightEnumConstant;
-import org.jetbrains.jet.asJava.light.KotlinLightFieldForDeclaration;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.List;
