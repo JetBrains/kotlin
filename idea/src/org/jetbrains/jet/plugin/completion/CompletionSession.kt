@@ -30,8 +30,8 @@ import org.jetbrains.jet.plugin.codeInsight.TipsManager
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
-import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
+import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -80,8 +80,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private val project = position.getProject()
     private val indicesHelper = KotlinIndicesHelper(project)
-    private val module = ModuleUtilCore.findModuleForPsiElement(parameters.getOriginalFile())
-    private val searchScope = if (module != null) GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module) else GlobalSearchScope.EMPTY_SCOPE
+    private val searchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: GlobalSearchScope.EMPTY_SCOPE
 
     public fun complete(): Boolean {
         assert(parameters.getCompletionType() == CompletionType.BASIC)

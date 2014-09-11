@@ -20,6 +20,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.PsiElement
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.roots.ModuleRootManager
 
 public fun SearchScope.and(otherScope: SearchScope): SearchScope = intersectWith(otherScope)
 public fun SearchScope.or(otherScope: SearchScope): SearchScope = union(otherScope)
@@ -31,3 +34,10 @@ public fun Project.allScope(): GlobalSearchScope = GlobalSearchScope.allScope(th
 public fun Project.projectScope(): GlobalSearchScope = GlobalSearchScope.projectScope(this)
 
 public fun PsiFile.fileScope(): GlobalSearchScope = GlobalSearchScope.fileScope(this)
+
+public fun searchScopeForSourceElementDependencies(element: PsiElement): GlobalSearchScope? {
+    val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
+    val virtualFile = element.getContainingFile()?.getVirtualFile() ?: return null
+    val isInTests = ModuleRootManager.getInstance(module).getFileIndex().isInTestSourceContent(virtualFile)
+    return GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, isInTests)
+}

@@ -20,7 +20,6 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.psi.PsiClass
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.Consumer
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.descriptors.ClassKind
@@ -33,16 +32,15 @@ import org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
-import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
+import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 
 class TypesCompletion(val parameters: CompletionParameters, val resolveSession: ResolveSessionForBodies, val prefixMatcher: PrefixMatcher) {
     fun addAllTypes(result: LookupElementsCollector) {
         result.addDescriptorElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses())
 
         val project = parameters.getOriginalFile().getProject()
-        val module = ModuleUtilCore.findModuleForPsiElement(parameters.getOriginalFile()) ?: return
-        val searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
+        val searchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: return
         result.addDescriptorElements(KotlinIndicesHelper(project).getClassDescriptors({ prefixMatcher.prefixMatches(it) }, resolveSession, searchScope))
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {

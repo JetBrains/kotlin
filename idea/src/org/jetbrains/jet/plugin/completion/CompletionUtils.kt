@@ -75,4 +75,3 @@ private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (de
     is PackageFragmentDescriptor -> DescriptorRenderer.SOURCE_CODE.renderFqName(descriptor.fqName)
     else -> null
 }
-

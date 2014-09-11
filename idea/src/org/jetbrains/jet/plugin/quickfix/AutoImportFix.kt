@@ -50,6 +50,7 @@ import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.jet.plugin.ProjectRootsUtil
 import org.jetbrains.jet.asJava.unwrapped
+import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -109,8 +110,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         val resolveSession = element.getLazyResolveSession()
 
-        val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return listOf()
-        val searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
+        val searchScope = searchScopeForSourceElementDependencies(file) ?: return listOf()
 
         val result = ArrayList<PrioritizedFqName>()
 
