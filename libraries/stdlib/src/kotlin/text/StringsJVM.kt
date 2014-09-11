@@ -102,7 +102,7 @@ public fun String.contentEquals(sb: StringBuffer): Boolean = (this as java.lang.
 
 public fun String.getBytes(charset: Charset): ByteArray = (this as java.lang.String).getBytes(charset)
 
-public fun String.getBytes(charsetName: String): ByteArray = (this as java.lang.String).getBytes(charsetName)
+public fun String.getBytes(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
 
 public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin: Int): Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
 
@@ -142,8 +142,6 @@ public fun CharSequence.toString(): String? = (this as java.lang.CharSequence).t
 
 public fun CharSequence.length(): Int = (this as java.lang.CharSequence).length()
 
-public fun String.toByteArray(encoding: Charset): ByteArray = (this as java.lang.String).getBytes(encoding)
-
 public fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
 public fun String.toShort(): Short = java.lang.Short.parseShort(this)
 public fun String.toInt(): Int = java.lang.Integer.parseInt(this)
@@ -155,7 +153,9 @@ public fun String.toCharList(): List<Char> = toCharArray().toList()
 
 public fun CharSequence.get(index: Int): Char = charAt(index)
 public fun CharSequence.get(start: Int, end: Int): CharSequence? = subSequence(start, end)
-public fun String.toByteArray(encoding: String = Charset.defaultCharset().name()): ByteArray = (this as java.lang.String).getBytes(encoding)
+
+public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
+public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
 /**
  * Returns a subsequence specified by given range.
@@ -163,7 +163,6 @@ public fun String.toByteArray(encoding: String = Charset.defaultCharset().name()
 public fun CharSequence.slice(range: IntRange): CharSequence {
     return subSequence(range.start, range.end + 1)!! // inclusive
 }
-
 
 /**
  * Converts the string into a regular expression [[Pattern]] optionally
