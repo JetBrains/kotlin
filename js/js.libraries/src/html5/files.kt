@@ -1,33 +1,33 @@
 package html5.files
 
 native
-class FileReader() {
-    var onloadend : ((FileReaderEvent)->Unit)? = js.noImpl //
-    fun readAsDataURL(blob : Blob) = js.noImpl
-    val result : File = js.noImpl
+public class FileReader() {
+    public var onloadend : ((FileReaderEvent)->Unit)? = js.noImpl //
+    public fun readAsDataURL(blob : Blob) = js.noImpl
+    public val result : File = js.noImpl
 }
 
 native
-class FileReaderEvent() {
-    val target : FileReader = js.noImpl
+public class FileReaderEvent() {
+    public val target : FileReader = js.noImpl
 }
 
 native
-class FileList() {
-    fun item(index : Int) : File? = js.noImpl
-    val length : Int = js.noImpl
+public class FileList() {
+    public fun item(index : Int) : File? = js.noImpl
+    public val length : Int = js.noImpl
 }
 
 native
-class File() : Blob() {
-    val name : String = js.noImpl
+public class File() : Blob() {
+    public val name : String = js.noImpl
    // readonly attribute Date lastModifiedDate;
 }
 
 native
-open class Blob() {
-    val size : Int = js.noImpl
-    val `type` : String = js.noImpl
+public open class Blob() {
+    public val size : Int = js.noImpl
+    public val `type` : String = js.noImpl
     //Blob slice(optional long long start,
     //optional long long end,
     //optional DOMString contentType);

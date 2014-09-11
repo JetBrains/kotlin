@@ -1,9 +1,10 @@
 package html5.localstorage
 
 native
-val localStorage : LocalStorageClass = js.noImpl
+public val localStorage : LocalStorageClass = js.noImpl
+
 native
-class LocalStorageClass() {
-    fun getItem(key : String) : Any? = js.noImpl
-    fun setItem(key : String, value : Any?) : Unit = js.noImpl
+public class LocalStorageClass() {
+    public fun getItem(key : String) : Any? = js.noImpl
+    public fun setItem(key : String, value : Any?) : Unit = js.noImpl
 }
