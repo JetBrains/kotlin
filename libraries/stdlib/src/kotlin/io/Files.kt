@@ -4,13 +4,12 @@ import java.io.*
 import java.nio.charset.*
 import java.util.*
 
-
 /**
  * Recursively process this file and all children with the given block
  */
 public fun File.recurse(block: (File) -> Unit): Unit {
     block(this)
-    val children = this.listFiles()
+    val children = listFiles()
     if (children != null) {
         for (child in children) {
             child.recurse(block)
@@ -22,7 +21,7 @@ public fun File.recurse(block: (File) -> Unit): Unit {
  * Returns this if the file is a directory or the parent if its a file inside a directory
  */
 public val File.directory: File
-    get() = if (this.isDirectory()) this else this.getParentFile()!!
+    get() = if (isDirectory()) this else getParentFile()!!
 
 /**
  * Returns the canonical path of the file
@@ -47,7 +46,7 @@ public val File.path: String
  */
 public val File.extension: String
     get() {
-        val text = this.name
+        val text = name
         val idx = text.lastIndexOf('.')
         return if (idx >= 0) {
             text.substring(idx + 1)
@@ -60,14 +59,14 @@ public val File.extension: String
  * Returns true if the given file is in the same directory or a descendant directory
  */
 public fun File.isDescendant(file: File): Boolean {
-    return file.directory.canonicalPath.startsWith(this.directory.canonicalPath)
+    return file.directory.canonicalPath.startsWith(directory.canonicalPath)
 }
 
 /**
  * Returns the relative path of the given descendant of this file if its a descendant
  */
 public fun File.relativePath(descendant: File): String {
-    val prefix = this.directory.canonicalPath
+    val prefix = directory.canonicalPath
     val answer = descendant.canonicalPath
     return if (answer.startsWith(prefix)) {
         val prefixSize = prefix.size
@@ -90,7 +89,7 @@ public fun File.reader(): FileReader = FileReader(this)
  * This method is not recommended on huge files.
  */
 public fun File.readBytes(): ByteArray {
-    return FileInputStream(this).use { it.readBytes(this.length().toInt()) }
+    return FileInputStream(this).use { it.readBytes(length().toInt()) }
 }
 
 /**
@@ -108,46 +107,45 @@ public fun File.appendBytes(data: ByteArray): Unit {
 }
 
 /**
- * Reads the entire content of the file as a String using the a character encoding.
+ * Reads the entire content of the file as a String using specified charset.
  *
  * This method is not recommended on huge files.
  */
-public fun File.readText(encoding: String = Charset.defaultCharset().name()): String = readBytes().toString(encoding)
+public fun File.readText(charset: String): String = readBytes().toString(charset)
 
 /**
- * Reads the entire content of the file as a String using a character encoding.
+ * Reads the entire content of the file as a String using UTF-8 or specified charset.
  *
  * This method is not recommended on huge files.
  */
-public fun File.readText(encoding: Charset): String = readBytes().toString(encoding)
+public fun File.readText(charset: Charset = Charsets.UTF_8): String = readBytes().toString(charset)
 
 /**
- * Writes the text as the contents of the file using the a
- * character encoding.
+ * Writes the text as the contents of the file using specified charset.
  */
-public fun File.writeText(text: String, encoding: String = Charset.defaultCharset().name()): Unit {
-    writeBytes(text.toByteArray(encoding))
+public fun File.writeText(text: String, charset: String): Unit {
+    writeBytes(text.toByteArray(charset))
 }
 
 /**
- * Writes the text as the contents of the file using a character encoding.
+ * Writes the text as the contents of the file using UTF-8 or specified charset.
  */
-public fun File.writeText(text: String, encoding: Charset): Unit {
-    writeBytes(text.toByteArray(encoding))
+public fun File.writeText(text: String, charset: Charset = Charsets.UTF_8): Unit {
+    writeBytes(text.toByteArray(charset))
 }
 
 /**
- * Appends text to the contents of the file using a given character encoding.
+ * Appends text to the contents of the file using UTF-8 or specified charset.
  */
-public fun File.appendText(text: String, encoding: Charset): Unit {
-    appendBytes(text.toByteArray(encoding))
+public fun File.appendText(text: String, charset: Charset = Charsets.UTF_8): Unit {
+    appendBytes(text.toByteArray(charset))
 }
 
 /**
- * Appends text to the contents of the file using a character encoding.
+ * Appends text to the contents of the file using specified charset.
  */
-public fun File.appendText(text: String, encoding: String = Charset.defaultCharset().name()): Unit {
-    appendBytes(text.toByteArray(encoding))
+public fun File.appendText(text: String, charset: String): Unit {
+    appendBytes(text.toByteArray(charset))
 }
 
 /**
@@ -189,11 +187,11 @@ public fun File.forEachBlock(closure: (ByteArray, Int) -> Unit): Unit {
 }
 
 /**
- * Reads file line by line. Default charset is UTF-8.
+ * Reads file line by line using specified [charset]. Default charset is UTF-8.
  *
  * You may use this function on huge files
  */
-public fun File.forEachLine(charset: String = "UTF-8", closure: (line: String) -> Unit): Unit {
+public fun File.forEachLine(charset: Charset = Charsets.UTF_8, closure: (line: String) -> Unit): Unit {
     val reader = BufferedReader(InputStreamReader(FileInputStream(this), charset))
     try {
         reader.forEachLine(closure)
@@ -203,18 +201,28 @@ public fun File.forEachLine(charset: String = "UTF-8", closure: (line: String) -
 }
 
 /**
+ * Reads file line by line using the specified [charset].
+ *
+ * You may use this function on huge files
+ */
+public fun File.forEachLine(charset: String, closure: (line: String) -> Unit): Unit = forEachLine(Charset.forName(charset), closure)
+
+/**
+ * Reads file content into list of lines using specified [charset]
+ *
+ * Do not use this function for huge files.
+ */
+public fun File.readLines(charset: String): List<String> = readLines(Charset.forName(charset))
+
+/**
  * Reads file content as strings list. By default uses UTF-8 charset.
  *
  * Do not use this function for huge files.
  */
-public fun File.readLines(charset: String = "UTF-8"): List<String> {
-    val rs = ArrayList<String>()
-
-    this.forEachLine(charset) {(line: String): Unit ->
-        rs.add(line);
-    }
-
-    return rs
+public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
+    val result = ArrayList<String>()
+    forEachLine(charset) { result.add(it); }
+    return result
 }
 
 /**
