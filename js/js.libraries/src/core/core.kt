@@ -1,4 +1,4 @@
-package kotlin.js;
+package kotlin.js
 
 import java.util.*;
 

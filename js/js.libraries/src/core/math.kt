@@ -1,4 +1,4 @@
-package kotlin.js;
+package kotlin.js
 
 //TODO: declare using number
 native
