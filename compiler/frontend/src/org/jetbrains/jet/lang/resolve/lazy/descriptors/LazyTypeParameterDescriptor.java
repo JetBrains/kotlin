@@ -65,12 +65,12 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
         JetTypeParameter jetTypeParameter = this.jetTypeParameter;
 
-        resolveUpperBoundsFromWhereClause(upperBounds);
-
         JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
         if (extendsBound != null) {
             upperBounds.add(resolveBoundType(extendsBound));
         }
+
+        resolveUpperBoundsFromWhereClause(upperBounds);
 
         if (upperBounds.isEmpty()) {
             upperBounds.add(KotlinBuiltIns.getInstance().getDefaultBound());
