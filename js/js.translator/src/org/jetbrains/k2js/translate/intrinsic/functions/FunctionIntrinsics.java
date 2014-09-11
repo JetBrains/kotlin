@@ -45,7 +45,7 @@ public final class FunctionIntrinsics {
         register(StringOperationFIF.INSTANCE);
         register(ArrayFIF.INSTANCE);
         register(TopLevelFIF.INSTANCE);
-        register(NumberConversionFIF.INSTANCE);
+        register(NumberConversionFIF.INSTANCE$);
     }
 
     private void register(@NotNull FunctionIntrinsicFactory instance) {

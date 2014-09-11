@@ -37,7 +37,6 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.intrinsic.functions.factories.NumberConversionFIF.INTEGER_NUMBER_TYPES;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
@@ -124,7 +123,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             return NUMBER_COMPARE_TO_INTRINSIC;
         }
 
-        if (pattern(INTEGER_NUMBER_TYPES + ".div").apply(descriptor)) {
+        if (pattern("Int|Short|Byte.div").apply(descriptor)) {
             JetType resultType = descriptor.getReturnType();
             if (!KotlinBuiltIns.getInstance().getFloatType().equals(resultType) &&
                 !KotlinBuiltIns.getInstance().getDoubleType().equals(resultType))
