@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lexer.JetSingleValueToken
-import java.util.regex.Pattern
+import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
 
 public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
         .builder<JetToken>()
@@ -48,8 +48,6 @@ public val INVOKE_OPERATION_NAME: Name = Name.identifier("invoke")
 
 public val ITERATOR_OPERATION_NAME: Name = Name.identifier("iterator")
 
-public val COMPONENT_OPERATION_PATTERN: Pattern = Pattern.compile("component\\d+")
-
 public val IN_OPERATIONS_TO_SEARCH: ImmutableSet<JetToken> = ImmutableSet.of(JetTokens.IN_KEYWORD)
 
 public val COMPARISON_OPERATIONS_TO_SEARCH: ImmutableSet<JetToken> = ImmutableSet.of<JetToken>(JetTokens.LT, JetTokens.GT)
@@ -65,7 +63,7 @@ public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
         in INDEXING_OPERATION_NAMES -> return ImmutableSet.of<JetToken>(JetTokens.LBRACKET)
     }
 
-    if (COMPONENT_OPERATION_PATTERN.matcher(asString()).matches()) return ImmutableSet.of<JetToken>(JetTokens.LPAR)
+    if (isComponentLike(this)) return ImmutableSet.of<JetToken>(JetTokens.LPAR)
 
     val unaryOp = UNARY_OPERATION_NAMES.inverse()[this]
     if (unaryOp != null) return ImmutableSet.of(unaryOp)

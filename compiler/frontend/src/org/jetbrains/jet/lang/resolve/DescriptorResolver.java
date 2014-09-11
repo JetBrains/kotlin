@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -63,7 +64,6 @@ import static org.jetbrains.jet.lexer.JetTokens.VARARG_KEYWORD;
 
 public class DescriptorResolver {
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");
-    public static final String COMPONENT_FUNCTION_NAME_PREFIX = "component";
     private static final Set<JetModifierKeywordToken> MODIFIERS_ILLEGAL_ON_PARAMETERS;
     static {
         MODIFIERS_ILLEGAL_ON_PARAMETERS = Sets.newHashSet();
@@ -382,13 +382,13 @@ public class DescriptorResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull BindingTrace trace
     ) {
-        String functionName = COMPONENT_FUNCTION_NAME_PREFIX + parameterIndex;
+        Name functionName = DataClassUtilsPackage.createComponentName(parameterIndex);
         JetType returnType = property.getType();
 
         SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
                 classDescriptor,
                 Annotations.EMPTY,
-                Name.identifier(functionName),
+                functionName,
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
                 parameter.getSource()
         );

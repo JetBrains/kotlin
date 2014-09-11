@@ -29,7 +29,7 @@ import java.util.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
-import org.jetbrains.jet.lang.resolve.name.isComponentFunctionName
+import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
 
 public fun buildDecompiledText(
         classFile: VirtualFile,
@@ -128,7 +128,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                     }
                     if (member is CallableMemberDescriptor
                             && member.getKind() != CallableMemberDescriptor.Kind.DECLARATION
-                            && !member.getName().isComponentFunctionName()) {
+                            && !isComponentLike(member.getName())) {
                         continue
                     }
 

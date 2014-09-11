@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
@@ -174,10 +175,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
             ++componentIndex;
 
-            if (name.equals(Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + componentIndex))) {
-                SimpleFunctionDescriptor functionDescriptor =
-                        DescriptorResolver.createComponentFunctionDescriptor(componentIndex, property,
-                                                                             parameter, thisDescriptor, trace);
+            if (name.equals(DataClassUtilsPackage.createComponentName(componentIndex))) {
+                SimpleFunctionDescriptor functionDescriptor = DescriptorResolver.createComponentFunctionDescriptor(
+                        componentIndex, property, parameter, thisDescriptor, trace);
                 result.add(functionDescriptor);
                 break;
             }
@@ -316,7 +316,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         // Generate componentN functions until there's no such function for some n
         int n = 1;
         while (true) {
-            Name componentName = Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + n);
+            Name componentName = DataClassUtilsPackage.createComponentName(n);
             Set<FunctionDescriptor> functions = getFunctions(componentName);
             if (functions.isEmpty()) break;
 

@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
@@ -87,7 +88,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
             getChangeInfo();
         }
         catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
-            assertEquals(JetRefactoringBundle.message("cannot.refactor.synthesized.function", "component1"), e.getMessage());
+            assertEquals(JetRefactoringBundle.message("cannot.refactor.synthesized.function", DataClassUtilsPackage.createComponentName(1).asString()), e.getMessage());
             return;
         }
         fail();

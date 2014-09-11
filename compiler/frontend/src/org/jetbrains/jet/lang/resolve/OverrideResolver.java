@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -598,8 +599,7 @@ public class OverrideResolver {
 
     private void checkOverrideForMember(@NotNull final CallableMemberDescriptor declared) {
         if (declared.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            // TODO: this should be replaced soon by a framework of synthesized member generation tools
-            if (declared.getName().asString().startsWith(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX)) {
+            if (DataClassUtilsPackage.isComponentLike(declared.getName())) {
                 checkOverrideForComponentFunction(declared);
             }
             return;

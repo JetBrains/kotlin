@@ -31,12 +31,12 @@ import org.jetbrains.jet.plugin.refactoring.getKotlinFqName
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.DescriptorResolver
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndBranch
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
@@ -58,8 +58,11 @@ public class JetSimpleNameReference(
         if (newElementName == null) return expression;
 
         // Do not rename if the reference corresponds to synthesized component function
-        if ((expression.getText() ?: "").startsWith(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX) && resolve() is JetParameter) {
-            return expression
+        val expressionText = expression.getText()
+        if (expressionText != null && Name.isValidIdentifier(expressionText)) {
+            if (isComponentLike(Name.identifier(expressionText)) && resolve() is JetParameter) {
+                return expression
+            }
         }
 
         val psiFactory = JetPsiFactory(expression)
