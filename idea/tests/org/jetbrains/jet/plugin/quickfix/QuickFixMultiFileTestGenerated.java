@@ -184,6 +184,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
         
+        @TestMetadata("sameModuleImportPriority.before.Main.kt")
+        public void testSameModuleImportPriority() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/sameModuleImportPriority.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+        
         @TestMetadata("timesAssign.before.Main.kt")
         public void testTimesAssign() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/timesAssign.before.Main.kt");

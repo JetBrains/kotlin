@@ -22,7 +22,6 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
@@ -35,7 +34,6 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.plugin.actions.JetAddImportAction
@@ -46,12 +44,18 @@ import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil
 import java.util.ArrayList
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import com.intellij.openapi.module.ModuleUtilCore
+import org.jetbrains.jet.plugin.ProjectRootsUtil
+import org.jetbrains.jet.asJava.unwrapped
 
 /**
  * Check possibility and perform fix for unresolved references.
  */
 public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<JetSimpleNameExpression>(element), HighPriorityAction {
+    private val module = ModuleUtilCore.findModuleForPsiElement(element)
 
     private val suggestions: Collection<FqName> = computeSuggestions(element)
 
@@ -108,7 +112,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return listOf()
         val searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
 
-        val result = ArrayList<FqName>()
+        val result = ArrayList<PrioritizedFqName>()
 
         if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
             result.addAll(getClassNames(referenceName, file, searchScope))
@@ -117,23 +121,38 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         result.addAll(getExtensions(referenceName, element, searchScope, resolveSession, file.getProject()))
 
-        return result.filter { ImportInsertHelper.needImport(ImportPath(it, false), file) }
+        return result
+                .filter { ImportInsertHelper.needImport(ImportPath(it.fqName, false), file) }
+                .sortBy { it.priority.ordinal() }
+                .map { it.fqName }
     }
 
-    private fun getTopLevelCallables(name: String, context: JetExpression, searchScope: GlobalSearchScope, resolveSession: ResolveSessionForBodies, project: Project): Collection<FqName>
+    private fun getTopLevelCallables(
+            name: String,
+            context: JetExpression,
+            searchScope: GlobalSearchScope,
+            resolveSession: ResolveSessionForBodies,
+            project: Project
+    ): Collection<PrioritizedFqName>
             = KotlinIndicesHelper(project).getTopLevelCallablesByName(name, context, resolveSession, searchScope)
-            .map { DescriptorUtils.getFqNameSafe(it) }
+            .map { PrioritizedFqName(it) }
             .toSet()
 
-    private fun getExtensions(name: String, expression: JetSimpleNameExpression, searchScope: GlobalSearchScope, resolveSession: ResolveSessionForBodies, project: Project): Collection<FqName>
+    private fun getExtensions(
+            name: String,
+            expression: JetSimpleNameExpression,
+            searchScope: GlobalSearchScope,
+            resolveSession: ResolveSessionForBodies,
+            project: Project
+    ): Collection<PrioritizedFqName>
             = KotlinIndicesHelper(project).getCallableExtensions({ it == name }, expression, resolveSession, searchScope)
-            .map { DescriptorUtils.getFqNameSafe(it) }
+            .map { PrioritizedFqName(it) }
             .toSet()
 
-    private fun getClassNames(name: String, file: JetFile, searchScope: GlobalSearchScope): Collection<FqName>
+    private fun getClassNames(name: String, file: JetFile, searchScope: GlobalSearchScope): Collection<PrioritizedFqName>
             = getShortNamesCache(file).getClassesByName(name, searchScope)
             .filter { JetPsiHeuristicsUtil.isAccessible(it, file) }
-            .map { FqName(it.getQualifiedName()!!) }
+            .map { PrioritizedFqName(it.unwrapped, FqName(it.getQualifiedName()!!)) }
             .toSet()
 
     private fun getShortNamesCache(jetFile: JetFile): PsiShortNamesCache {
@@ -142,6 +161,31 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             JetShortNamesCache.getKotlinInstance(jetFile.getProject())
         else
             PsiShortNamesCache.getInstance(jetFile.getProject())
+    }
+
+    private enum class Priority {
+        MODULE
+        PROJECT
+        OTHER
+    }
+    private data class PrioritizedFqName(val fqName: FqName, val priority: Priority)
+
+    private fun PrioritizedFqName(declaration: PsiElement?, fqName: FqName): PrioritizedFqName {
+        val priority = when {
+            declaration == null -> Priority.OTHER
+            ModuleUtilCore.findModuleForPsiElement(declaration) == module -> Priority.MODULE
+            ProjectRootsUtil.isInSource(declaration, false) -> Priority.PROJECT
+            else -> Priority.OTHER
+        }
+
+        return PrioritizedFqName(fqName, priority)
+    }
+
+    private fun PrioritizedFqName(descriptor: DeclarationDescriptor): PrioritizedFqName {
+        return PrioritizedFqName(
+                DescriptorToDeclarationUtil.getDeclaration(element.getContainingJetFile(), descriptor),
+                DescriptorUtils.getFqNameSafe(descriptor)
+        )
     }
 
     class object {
