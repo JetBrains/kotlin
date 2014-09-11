@@ -16,13 +16,10 @@
 
 package org.jetbrains.jet;
 
-import com.google.common.collect.Lists;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.junit.internal.MethodSorter;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Description;
@@ -121,20 +118,29 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
             }
         }
         else {
-            List<Class> classes = Lists.newArrayList();
-            classes.add(klass);
-            classes.addAll(unprocessedInnerClasses);
+            assert unprocessedInnerClasses.size() == innerClasses.size() :
+                    String.format("Some inner classes left unprocessed during creating runner for %s: %s",
+                                  klass.getCanonicalName(), unprocessedInnerClasses);
 
-            List<Class> filtered = KotlinPackage.filter(classes, new Function1<Class, Boolean>() {
-                @Override
-                public Boolean invoke(Class aClass) {
-                    boolean hasInnerClasses = aClass.getDeclaredClasses().length > 0;
-                    return !hasInnerClasses || hasTestMethods(aClass);
-                }
-            });
-
-            return new TestSuite(filtered.toArray(new Class[filtered.size()]));
+            return createTreeTestSuite(klass);
         }
+    }
+
+    private static Test createTreeTestSuite(Class root) {
+        Set<Class> classes = new LinkedHashSet<Class>(collectDeclaredClasses(root, true));
+        Map<Class, TestSuite> classSuites = new HashMap<Class, TestSuite>();
+
+        for (Class aClass : classes) {
+            classSuites.put(aClass, hasTestMethods(aClass) ? new TestSuite(aClass) : new TestSuite(aClass.getCanonicalName()));
+        }
+
+        for (Class aClass : classes) {
+            if (aClass.getEnclosingClass() != null && classes.contains(aClass.getEnclosingClass())) {
+                classSuites.get(aClass.getEnclosingClass()).addTest(classSuites.get(aClass));
+            }
+        }
+
+        return classSuites.get(root);
     }
 
     private static Set<Class> unprocessedClasses(Collection<Class> classes) {
