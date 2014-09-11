@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMapBuilder;
 
-/* package */ class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
+public class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
     private static CollectionClassMapping instance = null;
 
     @NotNull
