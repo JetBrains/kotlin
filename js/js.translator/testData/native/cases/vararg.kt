@@ -1,7 +1,5 @@
 package foo
 
-import js.*
-
 native
 fun paramCount(vararg a: Int): Int = js.noImpl
 

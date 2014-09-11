@@ -1,7 +1,5 @@
 package foo
 
-import js.*
-
 /*function g should return 0 if a parameter is undefined 1 if parameter is 1 and 3 if parameter is 3*/
 native
 fun f(g: (Int?) -> Int): Boolean = js.noImpl

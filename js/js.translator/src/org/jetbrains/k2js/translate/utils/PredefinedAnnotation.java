@@ -19,8 +19,8 @@ package org.jetbrains.k2js.translate.utils;
 import org.jetbrains.annotations.NotNull;
 
 public enum PredefinedAnnotation {
-    LIBRARY("js.library"),
-    NATIVE("js.native");
+    LIBRARY("kotlin.js.library"),
+    NATIVE("kotlin.js.native");
 
     PredefinedAnnotation(@NotNull String fqName) {
         this.fqName = fqName;

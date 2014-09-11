@@ -1,7 +1,5 @@
 package html5.files
 
-import js.native
-
 native
 class FileReader() {
     var onloadend : ((FileReaderEvent)->Unit)? = js.noImpl //

@@ -1,4 +1,4 @@
-package js
+package kotlin.js
 
 public inline fun String.lastIndexOf(ch : Char, fromIndex : Int) : Int = lastIndexOf(ch.toString(), fromIndex)
 public inline fun String.lastIndexOf(ch: Char) : Int = lastIndexOf(ch.toString())

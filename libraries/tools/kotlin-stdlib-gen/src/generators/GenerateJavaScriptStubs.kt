@@ -66,8 +66,6 @@ $imports
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
-import js.noImpl
-
 // Contains stub APIs for the W3C DOM API so we can delegate to the platform DOM instead
 
 """)
@@ -145,7 +143,7 @@ import js.noImpl
                     var counter = 0
                     val parameters = parameterTypes.map{ "arg${++counter}: ${parameterTypeName(it)}" }.makeString(", ")
                     val returnType = simpleTypeName(method.getReturnType())
-                    println("    public fun ${method.getName()}($parameters): $returnType = js.noImpl")
+                    println("    public fun ${method.getName()}($parameters): $returnType = noImpl")
                 }
             }
             val fields = klass.getDeclaredFields().sortBy { it.getName()!! }

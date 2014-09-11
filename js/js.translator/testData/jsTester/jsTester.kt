@@ -1,7 +1,6 @@
 package kotlin.test
 
 import kotlin.test.*
-import js.*
 
 public var asserter: Asserter = JsTestsAsserter()
 

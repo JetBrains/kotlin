@@ -1,7 +1,5 @@
 package foo
 
-import js.*
-
 native
 class A(val c: Int) {
     native

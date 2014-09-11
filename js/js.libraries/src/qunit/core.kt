@@ -1,7 +1,5 @@
 package QUnit
 
-import js.native
-
 /**
  * The [QUnit](http://qunitjs.com/) API
  */

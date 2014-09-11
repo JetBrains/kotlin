@@ -1,7 +1,6 @@
 package java.lang
 
 import java.io.IOException
-import js.library
 
 native("Error")
 open public class Exception(message: String? = null): Throwable() {}

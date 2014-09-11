@@ -1,7 +1,5 @@
 package foo
 
-import js.*
-
 native
 class A(b: Int) {
     fun g(): Int = js.noImpl

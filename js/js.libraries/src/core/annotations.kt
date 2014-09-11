@@ -1,4 +1,4 @@
-package js;
+package kotlin.js;
 
 native
 public annotation class native(name : String = "")

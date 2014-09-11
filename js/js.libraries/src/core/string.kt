@@ -1,4 +1,4 @@
-package js
+package kotlin.js
 
 native public fun String.startsWith(s: String): Boolean = noImpl
 native public fun String.endsWith(s: String): Boolean = noImpl

@@ -1,9 +1,6 @@
-package js;
+package kotlin.js;
 
-import js.library
-import js.native
 import java.util.*;
-import java.lang.*;
 
 native
 public val noImpl : Nothing = throw Exception()

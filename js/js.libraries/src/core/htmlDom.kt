@@ -1,4 +1,4 @@
-package js.dom.html
+package kotlin.js.dom.html
 
 import org.w3c.dom.*
 

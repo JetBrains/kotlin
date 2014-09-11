@@ -1,6 +1,4 @@
-package js
-
-import js.library
+package kotlin.js
 
 native public class Json() {
     fun get(propertyName: String): Any? = js.noImpl

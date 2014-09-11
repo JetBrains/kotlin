@@ -1,7 +1,5 @@
 package foo
 
-import js.*
-
 native
 val c: Any? = js.noImpl
 

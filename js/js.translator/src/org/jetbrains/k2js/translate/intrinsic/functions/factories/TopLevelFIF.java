@@ -170,13 +170,13 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin", "iterator").isExtensionOf("kotlin.Iterator"), RETURN_RECEIVER_INTRINSIC);
 
         add(pattern("kotlin", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
-        add(pattern("js", "set").isExtensionOf("kotlin.MutableMap"), NATIVE_MAP_SET);
+        add(pattern("kotlin.js", "set").isExtensionOf("kotlin.MutableMap"), NATIVE_MAP_SET);
 
         add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
         add(pattern("java.util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
 
-        add(pattern("js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
-        add(pattern("js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
+        add(pattern("kotlin.js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
+        add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
     }
 
     private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {

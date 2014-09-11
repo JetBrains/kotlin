@@ -5,7 +5,6 @@
 
 import java.util.*
 import java.util.Collections.max
-import js.*;
 
 /*
  * A field where cells live. Effectively immutable

@@ -1,7 +1,5 @@
 package html5.localstorage
 
-import js.native
-
 native
 val localStorage : LocalStorageClass = js.noImpl
 native

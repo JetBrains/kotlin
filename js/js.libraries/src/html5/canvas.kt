@@ -1,8 +1,6 @@
-package js.dom.html5
+package kotlin.js.dom.html5
 
-import js.native
-import js.noImpl
-import js.dom.html.HTMLElement
+import kotlin.js.dom.html.HTMLElement
 import org.w3c.dom.Element
 
 public native trait HTMLCanvasElement : HTMLElement {

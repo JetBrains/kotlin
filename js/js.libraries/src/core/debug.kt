@@ -1,6 +1,4 @@
-package js.debug
-
-import js.noImpl
+package kotlin.js
 
 // https://developer.mozilla.org/en/DOM/console
 native trait Console {

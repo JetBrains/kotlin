@@ -1,10 +1,8 @@
-package js.jquery.ui
+package jquery.ui
 
 
 //jquery UI
-import js.jquery.JQuery
-import js.native
-import js.Json
+import jquery.JQuery
 
 native
 fun JQuery.buttonset()  : JQuery = js.noImpl;
