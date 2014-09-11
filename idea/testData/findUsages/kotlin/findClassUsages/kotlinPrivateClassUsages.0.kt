@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetClass
 // OPTIONS: usages, constructorUsages
-package server;
+package server
 
 public open class Server() {
     private class <caret>Foo {

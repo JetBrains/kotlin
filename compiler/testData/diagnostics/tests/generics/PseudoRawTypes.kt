@@ -1,12 +1,12 @@
 // FILE: java/util/Collection.java
-package java.util;
+package java.util
 
 public class Collection {
   public void foo() {}
 }
 
 // FILE: test/Usage.java
-package test;
+package test
 
 import java.util.*;
 

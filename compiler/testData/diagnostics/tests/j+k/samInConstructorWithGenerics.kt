@@ -1,12 +1,12 @@
 // FILE: j/OnSubscribe.java
-package j;
+package j
 
 public interface OnSubscribe<T> {
     void f();
 }
 
 // FILE: j/Observable.java
-package j;
+package j
 
 public class Observable<T> {
 

@@ -1,5 +1,5 @@
 //FILE:_03_collections/CollectionTest.java
-package _03_collections;
+package _03_collections
 
 import java.util.List;
 

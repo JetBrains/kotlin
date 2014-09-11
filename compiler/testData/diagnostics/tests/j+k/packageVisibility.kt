@@ -1,5 +1,5 @@
 //FILE: a/MyJavaClass.java
-package a;
+package a
 
 class MyJavaClass {
     static int staticMethod() {

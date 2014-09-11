@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetProperty
 // OPTIONS: usages, skipRead
-package server;
+package server
 
 open class A<T> {
     open var <caret>foo: T

@@ -1,7 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetNamedFunction
 // GROUPING_RULES: org.jetbrains.jet.plugin.findUsages.KotlinDeclarationGroupRuleProvider$KotlinDeclarationGroupingRule
 // OPTIONS: usages
-package server;
+package server
 
 public open class Server() {
     open fun <caret>processRequest() = "foo"

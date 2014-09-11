@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetProperty
 // OPTIONS: usages
-package server;
+package server
 
 class A {
     class object {

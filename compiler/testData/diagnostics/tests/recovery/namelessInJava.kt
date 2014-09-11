@@ -1,6 +1,6 @@
 // FILE: p/Nameless.java
 
-package p;
+package p
 
 public class Nameless {
     void () {}

@@ -1,4 +1,4 @@
-package foo;
+package foo
 
 val Double.abs: Double
     get() = if (this > 0) this else -this

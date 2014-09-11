@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: p/Sam.java
 
-package p;
+package p
 
 public interface Sam {
     void sam();
@@ -9,7 +9,7 @@ public interface Sam {
 
 // FILE: p/Foo.java
 
-package p;
+package p
 
 public class Foo {
     public void foo(Sam sam);

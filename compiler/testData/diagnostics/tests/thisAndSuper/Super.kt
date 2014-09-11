@@ -1,4 +1,4 @@
-package example;
+package example
 
 trait T {
     fun foo() {}

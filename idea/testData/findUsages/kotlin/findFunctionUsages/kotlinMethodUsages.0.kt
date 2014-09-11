@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetNamedFunction
 // OPTIONS: usages
-package server;
+package server
 
 public open class Server() {
     open fun <caret>processRequest() = "foo"

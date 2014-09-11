@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetObjectDeclaration
 // OPTIONS: usages
-package server;
+package server
 
 public open class Server() {
     private object <caret>Foo {
