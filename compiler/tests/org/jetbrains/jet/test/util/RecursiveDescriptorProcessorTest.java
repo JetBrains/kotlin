@@ -24,6 +24,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
@@ -66,10 +67,12 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
 
     private static Class closestInterface(Class<?> aClass) {
         if (aClass == null) return null;
-        if (aClass.isInterface()) return aClass;
+        if (aClass.isInterface() && aClass != LazyEntity.class) return aClass;
 
         Class<?>[] interfaces = aClass.getInterfaces();
-        if (interfaces.length > 0) return interfaces[0];
+        for (Class<?> anInterface : interfaces) {
+            if (anInterface != LazyEntity.class) return anInterface;
+        }
 
         return closestInterface(aClass.getSuperclass());
     }
