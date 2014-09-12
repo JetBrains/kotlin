@@ -5,23 +5,17 @@ import org.w3c.dom.Node
 import org.w3c.dom.events.*
 
 /**
-* Turns an event handler function into an [EventListener]
-*/
+ * Turns an event handler function into an [EventListener]
+ */
 public fun eventHandler(handler: (Event) -> Unit): EventListener {
     return EventListenerHandler(handler)
 }
 
 private class EventListenerHandler(private val handler: (Event) -> Unit) : EventListener {
     public override fun handleEvent(e: Event) {
-        if (e != null) {
-            handler(e)
-        }
+        handler(e)
     }
-/*
-    TODO: needs KT-2507 fixed
-
-    public override fun toString(): String? = "EventListenerHandler($handler)"
-*/
+    public override fun toString(): String = "EventListenerHandler($handler)"
 }
 
 public fun mouseEventHandler(handler: (MouseEvent) -> Unit): EventListener {
@@ -56,16 +50,12 @@ private class CloseableEventListener(
         private val listener: EventListener,
         private val name: String,
         private val capture: Boolean
-) : Closeable {
+                                    ) : Closeable {
     public override fun close() {
         target.removeEventListener(name, listener, capture)
     }
 
-/*
-    TODO: needs KT-2507 fixed
-
-    public override fun toString(): String? = "CloseableEventListener($target, $name)"
-*/
+    public override fun toString(): String = "CloseableEventListener($target, $name)"
 }
 
 public fun Node?.onClick(capture: Boolean = false, handler: (MouseEvent) -> Unit): Closeable? {

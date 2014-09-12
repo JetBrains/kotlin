@@ -156,12 +156,12 @@ public fun Element.removeClass(cssClass: String): Boolean {
 
 /** Creates a new document with the given document builder*/
 public fun createDocument(builder: DocumentBuilder): Document {
-    return builder.newDocument()!!
+    return builder.newDocument()
 }
 
 /** Creates a new document with an optional DocumentBuilderFactory */
 public fun createDocument(builderFactory: DocumentBuilderFactory = defaultDocumentBuilderFactory()): Document {
-    return createDocument(builderFactory.newDocumentBuilder()!!)
+    return createDocument(builderFactory.newDocumentBuilder())
 }
 
 /**
@@ -175,7 +175,7 @@ public fun defaultDocumentBuilderFactory(): DocumentBuilderFactory {
  * Returns the default [[DocumentBuilder]]
  */
 public fun defaultDocumentBuilder(builderFactory: DocumentBuilderFactory = defaultDocumentBuilderFactory()): DocumentBuilder {
-    return builderFactory.newDocumentBuilder()!!
+    return builderFactory.newDocumentBuilder()
 }
 
 /**
