@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.java.lazy.withTypes
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.kotlin.util.inn
 import org.jetbrains.jet.lang.resolve.java.lazy.findClassInJava
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
@@ -42,20 +41,8 @@ public abstract class LazyJavaStaticScope(
         c: LazyJavaResolverContext,
         descriptor: ClassOrPackageFragmentDescriptor
 ) : LazyJavaMemberScope(c.withTypes(), descriptor) {
-    
-    protected val fqName: FqName = DescriptorUtils.getFqName(descriptor).toSafe()
 
     override fun getExpectedThisObject() = null
-
-    protected fun computeMemberIndexForSamConstructors(delegate: MemberIndex): MemberIndex = object : MemberIndex by delegate {
-        override fun getAllMethodNames(): Collection<Name> {
-            val jClass = c.findClassInJava(fqName).jClass
-            return delegate.getAllMethodNames() +
-                   // For SAM-constructors
-                   getAllClassNames() +
-                   jClass.inn({ jC -> jC.getInnerClasses().map { c -> c.getName() }}, listOf())
-        }
-    }
 
     // Package fragments are not nested
     override fun getPackage(name: Name) = null
@@ -95,7 +82,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
     // TODO: Storing references is a temporary hack until modules infrastructure is implemented.
     // See JetTypeMapperWithOutDirectories for details
     public val kotlinBinaryClass: KotlinJvmBinaryClass?
-            = c.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassFqName(fqName))
+            = c.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassFqName(packageFragment.fqName))
 
     private val deserializedPackageScope = c.storageManager.createLazyValue {
         val kotlinBinaryClass = kotlinBinaryClass
@@ -107,7 +94,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
         name ->
-        val fqName = fqName.child(SpecialNames.safeIdentifier(name))
+        val fqName = packageFragment.fqName.child(SpecialNames.safeIdentifier(name))
         val (jClass, kClass) = c.findClassInJava(fqName)
         if (kClass != null)
             kClass
@@ -130,7 +117,10 @@ public class LazyPackageFragmentScopeForJavaPackage(
         result.addAll(deserializedPackageScope().getAllDescriptors())
     }
 
-    override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(EMPTY_MEMBER_INDEX)
+    override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
+        // For SAM-constructors
+        override fun getAllMethodNames(): Collection<Name> = getAllClassNames()
+    }
 
     override fun computeAdditionalFunctions(name: Name) = listOf<SimpleFunctionDescriptor>()
 
@@ -166,7 +156,17 @@ public class LazyJavaStaticClassScope(
         descriptor: LazyJavaClassDescriptor
 ) : LazyJavaStaticScope(c, descriptor) {
 
-    override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(ClassMemberIndex(jClass, { m -> m.isStatic() }))
+    override fun computeMemberIndex(): MemberIndex {
+        val delegate = ClassMemberIndex(jClass) { m -> m.isStatic() }
+        return object : MemberIndex by delegate {
+            override fun getAllMethodNames(): Collection<Name> {
+                // Should be a super call, but KT-2860
+                return delegate.getAllMethodNames() +
+                       // For SAM-constructors
+                       jClass.getInnerClasses().map { c -> c.getName() }
+            }
+        }
+    }
 
     override fun getAllFunctionNames(): Collection<Name> {
         if (jClass.isEnum()) {
