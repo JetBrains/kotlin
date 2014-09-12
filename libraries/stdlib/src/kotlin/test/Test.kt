@@ -1,24 +1,24 @@
 /**
- * A number of helper methods for writing Kool unit tests
+ * A number of helper methods for writing unit tests
  */
 package kotlin.test
 
 /** Asserts that the given block returns true */
-public inline fun assertTrue(message: String, block: ()-> Boolean) {
+public inline fun assertTrue(message: String, block: () -> Boolean) {
     val actual = block()
     asserter.assertTrue(message, actual)
 }
 
 /** Asserts that the given block returns true */
-public inline fun assertTrue(block: ()-> Boolean) : Unit = assertTrue("expected true", block)
+public inline fun assertTrue(block: () -> Boolean): Unit = assertTrue("expected true", block)
 
 /** Asserts that the given block returns false */
-public inline fun assertNot(message: String, block: ()-> Boolean) {
-    assertTrue(message){ !block() }
+public inline fun assertNot(message: String, block: () -> Boolean) {
+    assertTrue(message) { !block() }
 }
 
 /** Asserts that the given block returns false */
-public fun assertNot(block: ()-> Boolean) : Unit = assertNot("expected false", block)
+public fun assertNot(block: () -> Boolean): Unit = assertNot("expected false", block)
 
 /** Asserts that the expression is true with an optional message */
 public fun assertTrue(actual: Boolean, message: String = "") {
@@ -36,19 +36,13 @@ public fun assertEquals(expected: Any?, actual: Any?, message: String = "") {
 }
 
 /** Asserts that the expression is not null, with an optional message */
-public fun <T> assertNotNull(actual: T?, message: String = ""): T {
+public fun <T : Any> assertNotNull(actual: T?, message: String = ""): T {
     asserter.assertNotNull(message, actual)
     return actual!!
 }
 
-//TODO merge with next via default (currently inline functions do not support default values)
 /** Asserts that the expression is not null, with an optional message and a function block to process the not-null value */
-public inline fun <T, R> assertNotNull(actual: T?, block: (T) -> R) {
-    assertNotNull(actual, "", block)
-}
-
-/** Asserts that the expression is not null, with an optional message and a function block to process the not-null value */
-public inline fun <T, R> assertNotNull(actual: T?, message: String, block: (T) -> R) {
+public inline fun <T : Any, R> assertNotNull(actual: T?, message: String = "", block: (T) -> R) {
     asserter.assertNotNull(message, actual)
     if (actual != null) {
         block(actual)
@@ -66,19 +60,19 @@ public fun fail(message: String = "") {
 }
 
 /** Asserts that given function block returns the given expected value */
-public inline fun <T> expect(expected: T, block: ()-> T) {
+public inline fun <T> expect(expected: T, block: () -> T) {
     expect(expected, "expected " + expected, block)
 }
 
 /** Asserts that given function block returns the given expected value and use the given message if it fails */
-public inline fun <T> expect(expected: T, message: String, block: ()-> T) {
+public inline fun <T> expect(expected: T, message: String, block: () -> T) {
     val actual = block()
     assertEquals(expected, actual, message)
 }
 
 /** Asserts that given function block fails by throwing an exception */
-public fun fails(block: ()-> Unit): Throwable? {
-    var thrown : Throwable? = null
+public fun fails(block: () -> Unit): Throwable? {
+    var thrown: Throwable? = null
     try {
         block()
     } catch (e: Throwable) {
