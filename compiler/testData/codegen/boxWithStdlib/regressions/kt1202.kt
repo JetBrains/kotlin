@@ -1,8 +1,6 @@
 package testeval
 
 import java.util.*
-import junit.framework.TestCase.*
-import junit.framework.Assert.* // TODO unnecessary import
 
 trait Expression
 class Num(val value : Int) : Expression
@@ -106,15 +104,13 @@ fun parseAtomic(tokens : Deque<Token>) : ParseResult<Expression> {
 
 fun parse(text : String) : ParseResult<Expression> = parseSum(tokenize(text))
 
-class EvalTest : junit.framework.TestCase() {
-    fun testEval() {
-        assertEquals(1, eval(Num(1)))
-        assertEquals(2, eval(Sum(Num(1), Num(1))))
-        assertEquals(3, eval(Mult(Num(3), Num(1))))
-        assertEquals(6, eval(Mult(Num(3), Sum(Num(1), Num(1)))))
-    }
+fun box(): String {
+    if (1 != eval(Num(1))) return "fail 1"
+    if (2 != eval(Sum(Num(1), Num(1)))) return "fail 2"
+    if (3 != eval(Mult(Num(3), Num(1)))) return "fail 3"
+    if (6 != eval(Mult(Num(3), Sum(Num(1), Num(1))))) return "fail 4"
 
-    fun testParse() {
-        assertEquals(1, eval(parse("1").value))
-    }
+    if (1 != eval(parse("1").value)) return "fail 5"
+
+    return "OK"
 }
