@@ -31,10 +31,10 @@ class LocalFileKotlinClass private(
     class object {
         fun create(file: File): LocalFileKotlinClass? {
             val fileContents = file.readBytes()
-            val nameAndHeader = FileBasedKotlinClass.readClassNameAndHeader(fileContents)
-            if (nameAndHeader == null) return null
-
-            return LocalFileKotlinClass(file, fileContents, nameAndHeader.first!!, nameAndHeader.second!!)
+            return FileBasedKotlinClass.create(fileContents) {
+                className, classHeader ->
+                LocalFileKotlinClass(file, fileContents, className, classHeader)
+            }
         }
     }
 
