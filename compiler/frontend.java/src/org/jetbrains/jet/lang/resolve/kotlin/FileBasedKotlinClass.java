@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import kotlin.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -45,7 +45,10 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     protected abstract byte[] getFileContents();
 
     @Nullable
-    public static Pair<JvmClassName, KotlinClassHeader> readClassNameAndHeader(@NotNull byte[] fileContents) {
+    protected static <T extends FileBasedKotlinClass> T create(
+            @NotNull byte[] fileContents,
+            @NotNull Function2<JvmClassName, KotlinClassHeader, T> factory
+    ) {
         final ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
         final Ref<JvmClassName> classNameRef = Ref.create();
         new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {
@@ -71,7 +74,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         KotlinClassHeader header = readHeaderVisitor.createHeader();
         if (header == null) return null;
 
-        return Pair.create(className, header);
+        return factory.invoke(className, header);
     }
 
     @NotNull

@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import com.intellij.ide.highlighter.JavaClassFileType;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
+import kotlin.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -39,14 +39,15 @@ public final class VirtualFileKotlinClass extends FileBasedKotlinClass {
     }
 
     @Nullable
-    /* package */ static VirtualFileKotlinClass create(@NotNull VirtualFile file) {
+    /* package */ static VirtualFileKotlinClass create(@NotNull final VirtualFile file) {
         assert file.getFileType() == JavaClassFileType.INSTANCE : "Trying to read binary data from a non-class file " + file;
         try {
-            byte[] fileContents = file.contentsToByteArray();
-            Pair<JvmClassName, KotlinClassHeader> nameAndHeader = readClassNameAndHeader(fileContents);
-            if (nameAndHeader == null) return null;
-
-            return new VirtualFileKotlinClass(file, nameAndHeader.first, nameAndHeader.second);
+            return create(file.contentsToByteArray(), new Function2<JvmClassName, KotlinClassHeader, VirtualFileKotlinClass>() {
+                @Override
+                public VirtualFileKotlinClass invoke(JvmClassName name, KotlinClassHeader header) {
+                    return new VirtualFileKotlinClass(file, name, header);
+                }
+            });
         }
         catch (Throwable e) {
             LOG.warn(renderFileReadingErrorMessage(file));
