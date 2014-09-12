@@ -37,6 +37,10 @@ public final class ClassId {
         this.relativeClassName = relativeClassName;
     }
 
+    public ClassId(@NotNull FqName packageFqName, @NotNull Name topLevelName) {
+        this(packageFqName, FqNameUnsafe.topLevel(topLevelName));
+    }
+
     @NotNull
     public FqName getPackageFqName() {
         return packageFqName;

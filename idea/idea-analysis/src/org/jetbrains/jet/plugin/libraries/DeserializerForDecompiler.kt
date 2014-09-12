@@ -64,8 +64,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
-        val packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
-        val binaryClassForPackageClass = localClassFinder.findKotlinClass(packageClassFqName)
+        val binaryClassForPackageClass = localClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFqName))
         val annotationData = binaryClassForPackageClass?.getClassHeader()?.annotationData
         if (annotationData == null) {
             LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassName()}")
@@ -79,16 +78,15 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         return membersScope.getAllDescriptors()
     }
 
-    private val localClassFinder = object: KotlinClassFinder {
-        override fun findKotlinClass(fqName: FqName) = findKotlinClass(fqName.toClassId())
-        override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.getFqName()!!)
+    private val localClassFinder = object : KotlinClassFinder {
+        override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.getFqName()!!.toClassId())
 
         override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
             if (classId.getPackageFqName() != directoryPackageFqName) {
                 return null
             }
             val segments = DeserializedResolverUtils.kotlinFqNameToJavaFqName(classId.getRelativeClassName()).pathSegments()
-            val targetName = segments.makeString("$", postfix = ".class")
+            val targetName = segments.joinToString("$", postfix = ".class")
             val virtualFile = packageDirectory.findChild(targetName)
             if (virtualFile != null && isKotlinCompiledFile(virtualFile)) {
                 return KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)

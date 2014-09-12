@@ -17,12 +17,9 @@
 package org.jetbrains.jet.lang.resolve.kotlin
 
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.descriptors.serialization.ClassId
 
 public trait KotlinClassFinder {
-    public fun findKotlinClass(fqName: FqName): KotlinJvmBinaryClass?
-
     public fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass?
 
     public fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass?

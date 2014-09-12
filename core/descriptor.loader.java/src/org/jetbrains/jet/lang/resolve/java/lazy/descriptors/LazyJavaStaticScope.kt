@@ -81,7 +81,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
     // TODO: Storing references is a temporary hack until modules infrastructure is implemented.
     // See JetTypeMapperWithOutDirectories for details
     public val kotlinBinaryClass: KotlinJvmBinaryClass?
-            = c.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassFqName(packageFragment.fqName))
+            = c.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFragment.fqName))
 
     private val deserializedPackageScope = c.storageManager.createLazyValue {
         val kotlinBinaryClass = kotlinBinaryClass
