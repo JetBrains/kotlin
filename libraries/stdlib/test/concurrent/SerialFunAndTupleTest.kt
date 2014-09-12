@@ -5,46 +5,70 @@ import java.io.ByteArrayOutputStream
 import java.io.ByteArrayInputStream
 import java.io.ObjectInputStream
 import java.io.Serializable
-import java.util.HashMap
 import junit.framework.TestCase
 import junit.framework.Assert
 
-class Serial(val a : String) : java.lang.Object(), Serializable {
-    override fun toString() = a
+private class Serial(val name: String) : Serializable {
+    override fun toString() = name
 }
 
-class SerialTest() : TestCase() {
-    fun testMe() {
-        val tuple = Triple("lala", "bbb", Serial("serial"))
-        val op = { -> tuple.toString() }
+private data class DataType(val name: String, val value: Int, val percent: Double) : Serializable
 
-        val baos = ByteArrayOutputStream()
-        val oos = ObjectOutputStream(baos)
-        oos.writeObject(op)
-        oos.close()
+class SerializableTest() : TestCase() {
+    fun testClosure() {
+        val tuple = Triple("Ivan", 12, Serial("serial"))
+        val fn = { tuple.toString() }
 
-        val bais = ByteArrayInputStream(baos.toByteArray())
-        val ins = ObjectInputStream(bais)
-        val ops = ins.readObject() as (() -> String)
+        val byteOutputStream = ByteArrayOutputStream()
+        val bytes = with(byteOutputStream) {
+            val objectStream = ObjectOutputStream(byteOutputStream)
+            objectStream.writeObject(fn)
+            objectStream.close()
+            toByteArray()
+        }
 
-        Assert.assertEquals(op (), ops())
+        val byteInputStream = ByteArrayInputStream(bytes)
+        val objectStream = ObjectInputStream(byteInputStream)
+        val deserialized = objectStream.readObject() as (() -> String)
+
+        Assert.assertEquals(fn(), deserialized())
     }
 
-    fun testComplex() {
+    fun testComplexClosure() {
         val y = 12
-        val op = { (x:Int) -> (x + y).toString() }
+        val fn1 = {(x: Int) -> (x + y).toString() }
+        val fn2: Int.(Int) -> String = { fn1(this + it) }
 
-        val op2 : Int.(Int) -> String = { op(this + it) }
+        val byteOutputStream = ByteArrayOutputStream()
+        val bytes = with(byteOutputStream) {
+            val objectStream = ObjectOutputStream(byteOutputStream)
+            objectStream.writeObject(fn2)
+            objectStream.close()
+            toByteArray()
+        }
 
-        val baos = ByteArrayOutputStream()
-        val oos = ObjectOutputStream(baos)
-        oos.writeObject(op2)
-        oos.close()
+        val byteInputStream = ByteArrayInputStream(bytes)
+        val objectStream = ObjectInputStream(byteInputStream)
+        val deserialized = objectStream.readObject() as (Int.(Int) -> String)
 
-        val bais = ByteArrayInputStream(baos.toByteArray())
-        val ins = ObjectInputStream(bais)
-        val ops = ins.readObject() as (Int.(Int) -> String)
+        Assert.assertEquals(5.fn2(10), 5.deserialized(10))
+    }
 
-        Assert.assertEquals("27", 5.ops(10))
+    fun testDataClass() {
+        val data = DataType("name", 176, 1.4)
+
+        val byteOutputStream = ByteArrayOutputStream()
+        val bytes = with(byteOutputStream) {
+            val objectStream = ObjectOutputStream(byteOutputStream)
+            objectStream.writeObject(data)
+            objectStream.close()
+            toByteArray()
+        }
+
+        val byteInputStream = ByteArrayInputStream(bytes)
+        val objectStream = ObjectInputStream(byteInputStream)
+        val deserialized = objectStream.readObject() as DataType
+
+        Assert.assertEquals(data, deserialized)
     }
 }
