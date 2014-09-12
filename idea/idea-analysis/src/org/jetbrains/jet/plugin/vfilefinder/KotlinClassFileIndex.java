@@ -57,10 +57,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
 
         @Override
         public boolean isEqual(FqName val1, FqName val2) {
-            if (val1 == null) {
-                return val2 == null;
-            }
-            return val1.equals(val1);
+            return val1 == null ? val2 == null : val1.equals(val2);
         }
     };
 
