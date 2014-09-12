@@ -1,0 +1,10 @@
+<root>
+    <item
+        name='com.intellij.debugger.ui.tree.render.ChildrenRenderer void buildChildren(com.sun.jdi.Value, com.intellij.debugger.ui.tree.render.ChildrenBuilder, com.intellij.debugger.engine.evaluation.EvaluationContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.debugger.ui.tree.render.ChildrenRenderer void buildChildren(com.sun.jdi.Value, com.intellij.debugger.ui.tree.render.ChildrenBuilder, com.intellij.debugger.engine.evaluation.EvaluationContext) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

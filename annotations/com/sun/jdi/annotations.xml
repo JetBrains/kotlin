@@ -14,10 +14,16 @@
   <item name='com.sun.jdi.Method java.util.List&lt;com.sun.jdi.Type&gt; argumentTypes()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='com.sun.jdi.ReferenceType com.sun.jdi.ClassObjectReference classObject()'>
+    <item name='com.sun.jdi.ObjectReference com.sun.jdi.ReferenceType referenceType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.ReferenceType com.sun.jdi.ClassObjectReference classObject()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='com.sun.jdi.ReferenceType java.util.List&lt;com.sun.jdi.Location&gt; allLineLocations()'>
+    <item name='com.sun.jdi.ReferenceType java.util.List&lt;com.sun.jdi.Field&gt; allFields()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.ReferenceType java.util.List&lt;com.sun.jdi.Location&gt; allLineLocations()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.sun.jdi.ReferenceType java.util.List&lt;com.sun.jdi.Method&gt; methodsByName(java.lang.String, java.lang.String)'>
@@ -41,7 +47,10 @@
   <item name='com.sun.jdi.TypeComponent com.sun.jdi.ReferenceType declaringType()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='com.sun.jdi.Value com.sun.jdi.Type type()'>
+    <item name='com.sun.jdi.TypeComponent java.lang.String name()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.Value com.sun.jdi.Type type()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.sun.jdi.VirtualMachine com.sun.jdi.BooleanValue mirrorOf(boolean)'>

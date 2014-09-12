@@ -1,0 +1,10 @@
+<root>
+    <item
+        name='com.intellij.debugger.ui.tree.NodeManager com.intellij.debugger.ui.tree.DebuggerTreeNode createMessageNode(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.debugger.ui.tree.NodeManager com.intellij.debugger.ui.tree.DebuggerTreeNode createNode(com.intellij.debugger.ui.tree.NodeDescriptor, com.intellij.debugger.engine.evaluation.EvaluationContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>
