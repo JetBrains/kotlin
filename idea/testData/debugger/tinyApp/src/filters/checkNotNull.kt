@@ -9,4 +9,4 @@ fun main(args: Array<String>) {
     val b = 1
 }
 
-// REPEAT: 3
+// STEP_INTO: 3

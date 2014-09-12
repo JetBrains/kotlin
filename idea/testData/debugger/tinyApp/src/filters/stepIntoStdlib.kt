@@ -7,5 +7,5 @@ fun main(args: Array<String>) {
     val b = 1
 }
 
-// REPEAT: 2
+// STEP_INTO: 2
 // TRACING_FILTERS_ENABLED: false
