@@ -19,6 +19,11 @@ package org.jetbrains.jet.plugin.debugger
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.MethodFilter
+import org.jetbrains.jet.plugin.refactoring.runReadAction
+import com.intellij.debugger.impl.PositionUtil
+import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.openapi.roots.libraries.LibraryUtil
+import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
@@ -41,7 +46,28 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected fun SuspendContextImpl.printContext() {
-        printContext(this)
+        runReadAction { (): Unit ->
+            if (this.getFrameProxy() == null) {
+                return@runReadAction println("Context thread is null", ProcessOutputTypes.SYSTEM)
+            }
+
+            val sourcePosition = PositionUtil.getSourcePosition(this)
+            if (sourcePosition == null) {
+                return@runReadAction println("SourcePosition is null", ProcessOutputTypes.SYSTEM)
+            }
+
+            val virtualFile = sourcePosition.getFile().getVirtualFile()
+            if (virtualFile == null) {
+                return@runReadAction println("VirtualFile for position is null", ProcessOutputTypes.SYSTEM)
+            }
+
+            val isInStdlib = LibraryUtil.findLibraryEntry(virtualFile, getProject())?.getPresentableName() == JetJdkAndLibraryProjectDescriptor.LIBRARY_NAME
+            if (isInStdlib) {
+                return@runReadAction println(virtualFile.getName(), ProcessOutputTypes.SYSTEM)
+            }
+
+            println(virtualFile.getName() + ":" + sourcePosition.getLine(), ProcessOutputTypes.SYSTEM)
+        }
     }
 
     protected fun finish() {

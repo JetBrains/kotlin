@@ -375,24 +375,6 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 doMultipleBreakpointsTest(fileName);
             }
             
-            @TestMetadata("stdlibDelegatedProperty.kt")
-            public void testStdlibDelegatedProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library/stdlibDelegatedProperty.kt");
-                doMultipleBreakpointsTest(fileName);
-            }
-            
-            @TestMetadata("stdlibRange.kt")
-            public void testStdlibRange() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library/stdlibRange.kt");
-                doMultipleBreakpointsTest(fileName);
-            }
-            
-            @TestMetadata("stdlibSlice.kt")
-            public void testStdlibSlice() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library/stdlibSlice.kt");
-                doMultipleBreakpointsTest(fileName);
-            }
-            
         }
         
     }
