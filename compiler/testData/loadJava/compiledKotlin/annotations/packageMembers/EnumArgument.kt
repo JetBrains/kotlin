@@ -3,7 +3,7 @@ package test
 
 import java.lang.annotation.ElementType
 
-annotation class Anno(t: ElementType)
+annotation class Anno(val t: ElementType)
 
 Anno(ElementType.METHOD) fun foo() {}
 
