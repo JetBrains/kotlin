@@ -41,12 +41,12 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
 
     private static final KeyDescriptor<FqName> KEY_DESCRIPTOR = new KeyDescriptor<FqName>() {
         @Override
-        public void save(DataOutput out, FqName value) throws IOException {
+        public void save(@NotNull DataOutput out, FqName value) throws IOException {
             out.writeUTF(value.asString());
         }
 
         @Override
-        public FqName read(DataInput in) throws IOException {
+        public FqName read(@NotNull DataInput in) throws IOException {
             return new FqName(in.readUTF());
         }
 
@@ -66,14 +66,14 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
 
     private static final FileBasedIndex.InputFilter INPUT_FILTER = new FileBasedIndex.InputFilter() {
         @Override
-        public boolean acceptInput(VirtualFile file) {
+        public boolean acceptInput(@NotNull VirtualFile file) {
             return file.getFileType() == JavaClassFileType.INSTANCE;
         }
     };
     public static final DataIndexer<FqName, Void, FileContent> INDEXER = new DataIndexer<FqName, Void, FileContent>() {
         @NotNull
         @Override
-        public Map<FqName, Void> map(FileContent inputData) {
+        public Map<FqName, Void> map(@NotNull FileContent inputData) {
             try {
                 KotlinJvmBinaryClass kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(inputData.getFile());
                 if (kotlinClass != null && kotlinClass.getClassHeader().getKind() != KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
@@ -99,11 +99,13 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
         return INDEXER;
     }
 
+    @NotNull
     @Override
     public KeyDescriptor<FqName> getKeyDescriptor() {
         return KEY_DESCRIPTOR;
     }
 
+    @NotNull
     @Override
     public FileBasedIndex.InputFilter getInputFilter() {
         return INPUT_FILTER;
