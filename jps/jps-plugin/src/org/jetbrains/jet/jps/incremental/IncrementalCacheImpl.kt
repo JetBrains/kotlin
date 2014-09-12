@@ -24,10 +24,8 @@ import com.intellij.util.io.IOUtil
 import java.io.DataInput
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.util.io.DataExternalizer
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.descriptors.serialization.BitEncoding
-import org.jetbrains.jet.utils.intellij.*
 import java.util.Arrays
 import org.jetbrains.org.objectweb.asm.*
 import com.intellij.util.io.EnumeratorStringDescriptor
@@ -37,7 +35,6 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache
 import java.util.HashMap
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
-import com.intellij.util.containers.MultiMap
 import com.intellij.openapi.util.io.FileUtil
 import java.security.MessageDigest
 import org.jetbrains.jps.incremental.storage.StorageOwner
@@ -62,11 +59,13 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
     private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
 
     public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
-        val fileBytes = classFile.readBytes()
-        val classNameAndHeader = VirtualFileKotlinClass.readClassNameAndHeader(fileBytes)
-        if (classNameAndHeader == null) return DO_NOTHING
+        val kotlinClass = LocalFileKotlinClass.create(classFile)
+        if (kotlinClass == null) return DO_NOTHING
 
-        val (className, header) = classNameAndHeader
+        val fileBytes = kotlinClass.getFileContents()
+        val className = kotlinClass.getClassName()
+        val header = kotlinClass.getClassHeader()
+
         val annotationDataEncoded = header.annotationData
         if (annotationDataEncoded != null) {
             val data = BitEncoding.decodeBytes(annotationDataEncoded)

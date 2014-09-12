@@ -35,7 +35,7 @@ import com.google.protobuf.ExtensionRegistry
 import java.io.ByteArrayInputStream
 import org.jetbrains.jet.descriptors.serialization.DebugProtoBuf
 import java.util.Arrays
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass
+import org.jetbrains.jet.jps.incremental.LocalFileKotlinClass
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
@@ -116,12 +116,10 @@ fun assertEqualDirectories(expected: File, actual: File) {
 fun classFileToString(classFile: File): String {
     val out = StringWriter()
 
-    val classBytes = classFile.readBytes()
-
     val traceVisitor = TraceClassVisitor(PrintWriter(out))
-    ClassReader(classBytes).accept(traceVisitor, 0)
+    ClassReader(classFile.readBytes()).accept(traceVisitor, 0)
 
-    val classHeader = VirtualFileKotlinClass.readClassHeader(classBytes)
+    val classHeader = LocalFileKotlinClass.create(classFile)?.getClassHeader()
 
     val annotationDataEncoded = classHeader?.annotationData
     if (annotationDataEncoded != null) {
