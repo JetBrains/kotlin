@@ -25,15 +25,16 @@ class LocalFileKotlinClass private(
         private val file: File,
         private val fileContents: ByteArray,
         className: JvmClassName,
-        classHeader: KotlinClassHeader
-) : FileBasedKotlinClass(className, classHeader) {
+        classHeader: KotlinClassHeader,
+        innerClasses: FileBasedKotlinClass.InnerClassesInfo
+) : FileBasedKotlinClass(className, classHeader, innerClasses) {
 
     class object {
         fun create(file: File): LocalFileKotlinClass? {
             val fileContents = file.readBytes()
             return FileBasedKotlinClass.create(fileContents) {
-                className, classHeader ->
-                LocalFileKotlinClass(file, fileContents, className, classHeader)
+                className, classHeader, innerClasses ->
+                LocalFileKotlinClass(file, fileContents, className, classHeader, innerClasses)
             }
         }
     }
