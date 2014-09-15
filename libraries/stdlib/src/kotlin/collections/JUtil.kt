@@ -22,6 +22,12 @@ public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size =
 /** Returns an empty read-only map */
 public fun mapOf<K, V>(): Map<K, V> = stdlib_emptyMap()
 
+/** Returns a new read-only set of given elements */
+public fun setOf<T>(vararg values: T): Set<T> = values.toCollection(LinkedHashSet<T>())
+
+/** Returns a new LinkedList with a variable number of initial elements */
+public fun linkedListOf<T>(vararg values: T): LinkedList<T> = values.toCollection(LinkedList<T>())
+
 /** Returns a new ArrayList with a variable number of initial elements */
 public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(ArrayList(values.size))
 
