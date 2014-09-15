@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import com.intellij.ide.highlighter.JavaClassFileType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
-import kotlin.Function2;
+import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -33,8 +33,13 @@ public final class VirtualFileKotlinClass extends FileBasedKotlinClass {
 
     private final VirtualFile file;
 
-    private VirtualFileKotlinClass(@NotNull VirtualFile file, @NotNull JvmClassName className, @NotNull KotlinClassHeader classHeader) {
-        super(className, classHeader);
+    private VirtualFileKotlinClass(
+            @NotNull VirtualFile file,
+            @NotNull JvmClassName className,
+            @NotNull KotlinClassHeader classHeader,
+            @NotNull InnerClassesInfo innerClasses
+    ) {
+        super(className, classHeader, innerClasses);
         this.file = file;
     }
 
@@ -42,12 +47,15 @@ public final class VirtualFileKotlinClass extends FileBasedKotlinClass {
     /* package */ static VirtualFileKotlinClass create(@NotNull final VirtualFile file) {
         assert file.getFileType() == JavaClassFileType.INSTANCE : "Trying to read binary data from a non-class file " + file;
         try {
-            return create(file.contentsToByteArray(), new Function2<JvmClassName, KotlinClassHeader, VirtualFileKotlinClass>() {
-                @Override
-                public VirtualFileKotlinClass invoke(JvmClassName name, KotlinClassHeader header) {
-                    return new VirtualFileKotlinClass(file, name, header);
-                }
-            });
+            return create(file.contentsToByteArray(),
+                          new Function3<JvmClassName, KotlinClassHeader, InnerClassesInfo, VirtualFileKotlinClass>() {
+                              @Override
+                              public VirtualFileKotlinClass invoke(
+                                      JvmClassName name, KotlinClassHeader header, InnerClassesInfo innerClasses
+                              ) {
+                                  return new VirtualFileKotlinClass(file, name, header, innerClasses);
+                              }
+                          });
         }
         catch (Throwable e) {
             LOG.warn(renderFileReadingErrorMessage(file));
