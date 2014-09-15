@@ -21,23 +21,16 @@ import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.jet.lang.resolve.kotlin.*
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.storage.LockBasedStorageManager
 import java.util.Collections
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorLoader
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
-import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage
-import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorLoader
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
@@ -78,7 +71,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     }
 
     private val localClassFinder = object : KotlinClassFinder {
-        override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.getFqName()!!.toClassId())
+        override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.classId)
 
         override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
             if (classId.getPackageFqName() != directoryPackageFqName) {
@@ -158,21 +151,11 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         return MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
     }
 
-    // we need a "magic" way to obtain ClassId from FqName
-    // the idea behind this function is that we need accurate class ids only for "neighbouring" classes (inner classes, class object, etc)
-    // for all others we can build any ClassId since it will resolve to MissingDependencyErrorClassDescriptor which only stores fqName
-    private fun FqName.toClassId(): ClassId {
-        val segments = pathSegments()
-        val packageSegmentsCount = directoryPackageFqName.pathSegments().size
-        if (segments.size <= packageSegmentsCount) {
-            return ClassId.topLevel(this)
+    private val JavaClass.classId: ClassId
+        get() {
+            val outer = getOuterClass()
+            return if (outer == null) ClassId.topLevel(getFqName()!!) else outer.classId.createNestedClassId(getName())
         }
-        val packageFqName = FqName.fromSegments(segments.subList(0, packageSegmentsCount) map { it.asString() })
-        if (packageFqName == directoryPackageFqName) {
-            return ClassId(packageFqName, FqNameUnsafe.fromSegments(segments.subList(packageSegmentsCount, segments.size)))
-        }
-        return ClassId.topLevel(this)
-    }
 
     class object {
         private val LOG = Logger.getInstance(javaClass<DeserializerForDecompiler>())
