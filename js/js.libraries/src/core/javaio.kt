@@ -7,3 +7,5 @@ library
 public trait Closeable {
     public open fun close() : Unit;
 }
+
+trait Serializable
