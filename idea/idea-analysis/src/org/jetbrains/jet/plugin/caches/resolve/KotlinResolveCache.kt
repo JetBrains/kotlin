@@ -73,22 +73,25 @@ public trait CacheExtension<T> {
 
 private class KotlinResolveCache(
         val project: Project,
-        setupProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
+        computeModuleResolverProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
 ) {
 
-    private val resolverCache = SynchronizedCachedValue(project, setupProvider, trackValue = false)
+    private val resolverCache = SynchronizedCachedValue(project, computeModuleResolverProvider, trackValue = false)
+
+    val moduleResolverProvider: ModuleResolverProvider
+        get() = resolverCache.getValue()
 
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
-        return resolverCache.getValue().resolveSessionForBodiesByModule(element.getModuleInfo())
+        return moduleResolverProvider.resolveSessionForBodiesByModule(element.getModuleInfo())
     }
 
     public fun <T> get(extension: CacheExtension<T>): T {
-        return extension.getData(resolverCache.getValue())
+        return extension.getData(moduleResolverProvider)
     }
 
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
     {
-        val resolverProvider = resolverCache.getValue()
+        val resolverProvider = moduleResolverProvider
         val results = object : SLRUCache<JetFile, PerFileAnalysisCache>(2, 3) {
             override fun createValue(file: JetFile?): PerFileAnalysisCache {
                 return PerFileAnalysisCache(file!!, resolverProvider.resolveSessionForBodiesByModule(file.getModuleInfo()))
