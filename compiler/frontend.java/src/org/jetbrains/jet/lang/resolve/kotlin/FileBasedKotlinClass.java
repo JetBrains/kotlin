@@ -21,7 +21,7 @@ import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -38,16 +38,16 @@ import static org.jetbrains.org.objectweb.asm.ClassReader.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ASM5;
 
 public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
-    private final JvmClassName className;
+    private final ClassId classId;
     private final KotlinClassHeader classHeader;
     private final InnerClassesInfo innerClasses;
 
     protected FileBasedKotlinClass(
-            @NotNull JvmClassName className,
+            @NotNull ClassId classId,
             @NotNull KotlinClassHeader classHeader,
             @NotNull InnerClassesInfo innerClasses
     ) {
-        this.className = className;
+        this.classId = classId;
         this.classHeader = classHeader;
         this.innerClasses = innerClasses;
     }
@@ -84,7 +84,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     @Nullable
     protected static <T extends FileBasedKotlinClass> T create(
             @NotNull byte[] fileContents,
-            @NotNull Function3<JvmClassName, KotlinClassHeader, InnerClassesInfo, T> factory
+            @NotNull Function3<ClassId, KotlinClassHeader, InnerClassesInfo, T> factory
     ) {
         final ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
         final Ref<String> classNameRef = Ref.create();
@@ -120,13 +120,13 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         if (header == null) return null;
 
         ClassId id = resolveNameByInternalName(className, innerClasses);
-        return factory.invoke(JvmClassName.byClassId(id), header, innerClasses);
+        return factory.invoke(id, header, innerClasses);
     }
 
     @NotNull
     @Override
-    public JvmClassName getClassName() {
-        return className;
+    public ClassId getClassId() {
+        return classId;
     }
 
     @NotNull
@@ -154,7 +154,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     private static org.jetbrains.org.objectweb.asm.AnnotationVisitor convertAnnotationVisitor(
             @NotNull AnnotationVisitor visitor, @NotNull String desc, @NotNull InnerClassesInfo innerClasses
     ) {
-        AnnotationArgumentVisitor v = visitor.visitAnnotation(JvmClassName.byClassId(resolveNameByDesc(desc, innerClasses)));
+        AnnotationArgumentVisitor v = visitor.visitAnnotation(resolveNameByDesc(desc, innerClasses));
         return v == null ? null : convertAnnotationVisitor(v, innerClasses);
     }
 
@@ -179,7 +179,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
                     @Override
                     public void visitEnum(String name, @NotNull String desc, @NotNull String value) {
-                        arv.visitEnum(JvmClassName.byClassId(resolveNameByDesc(desc, innerClasses)), Name.identifier(value));
+                        arv.visitEnum(resolveNameByDesc(desc, innerClasses), Name.identifier(value));
                     }
 
                     @Override
@@ -191,7 +191,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public void visitEnum(String name, @NotNull String desc, @NotNull String value) {
-                v.visitEnum(Name.identifier(name), JvmClassName.byClassId(resolveNameByDesc(desc, innerClasses)), Name.identifier(value));
+                v.visitEnum(Name.identifier(name), resolveNameByDesc(desc, innerClasses), Name.identifier(value));
             }
 
             @Override
@@ -235,7 +235,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
                     @Override
                     public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(int parameter, @NotNull String desc, boolean visible) {
-                        AnnotationArgumentVisitor av = v.visitParameterAnnotation(parameter, JvmClassName.byClassId(resolveNameByDesc(desc, innerClasses)));
+                        AnnotationArgumentVisitor av = v.visitParameterAnnotation(parameter, resolveNameByDesc(desc, innerClasses));
                         return av == null ? null : convertAnnotationVisitor(av, innerClasses);
                     }
 
@@ -257,6 +257,15 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
     @NotNull
     private static ClassId resolveNameByInternalName(@NotNull String name, @NotNull InnerClassesInfo innerClasses) {
+        if (!name.contains("$")) {
+            return ClassId.topLevel(new FqName(name.replace('/', '.')));
+        }
+
+        if (name.equals(JvmAnnotationNames.KotlinSyntheticClass.KIND_INTERNAL_NAME)) {
+            // TODO: this is a hack which can be dropped once JVM back-end begins to write InnerClasses attribute for all referenced classes
+            return JvmAnnotationNames.KotlinSyntheticClass.KIND_CLASS_ID;
+        }
+
         List<String> classes = new ArrayList<String>(1);
         
         while (true) {

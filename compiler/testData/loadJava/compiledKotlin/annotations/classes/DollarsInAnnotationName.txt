@@ -7,3 +7,11 @@ internal final annotation class $$$$$$ : kotlin.Annotation {
 test.$$$$$$() internal final class A {
     /*primary*/ public constructor A()
 }
+
+internal final annotation class Anno$tation : kotlin.Annotation {
+    /*primary*/ public constructor Anno$tation()
+}
+
+test.Anno$tation() internal final class Cla$s {
+    /*primary*/ public constructor Cla$s()
+}

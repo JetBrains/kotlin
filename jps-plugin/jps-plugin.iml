@@ -18,7 +18,7 @@
     <orderEntry type="module" module-name="descriptors" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="serialization.java" />
-    <orderEntry type="module" module-name="serialization" scope="TEST" />
+    <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
     <orderEntry type="library" name="asm" level="project" />
   </component>

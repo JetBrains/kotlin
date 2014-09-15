@@ -69,6 +69,11 @@ public class DeserializedResolverUtils {
     }
 
     @NotNull
+    public static ClassId javaClassIdToKotlinClassId(@NotNull ClassId javaClassId) {
+        return new ClassId(javaClassId.getPackageFqName(), javaFqNameToKotlinFqName(javaClassId.getRelativeClassName().toSafe()));
+    }
+
+    @NotNull
     public static ClassId getClassId(@NotNull ClassDescriptor descriptor) {
         DeclarationDescriptor owner = descriptor.getContainingDeclaration();
         if (owner instanceof PackageFragmentDescriptor) {

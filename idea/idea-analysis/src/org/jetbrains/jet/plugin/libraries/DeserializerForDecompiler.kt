@@ -48,8 +48,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val classFqName = kotlinClass!!.getClassName().getFqNameForClassNameWithoutDollars()
-    val packageFqName = classFqName.parent()
+    val packageFqName = kotlinClass!!.getClassId().getPackageFqName()
     return DeserializerForDecompiler(classFile.getParent()!!, packageFqName)
 }
 
@@ -60,14 +59,14 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), listOf(), PlatformToKotlinClassMap.EMPTY)
 
-    override fun resolveTopLevelClass(classFqName: FqName) = deserializationContext.classDeserializer.deserializeClass(classFqName.toClassId())
+    override fun resolveTopLevelClass(classId: ClassId) = deserializationContext.classDeserializer.deserializeClass(classId)
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
         val binaryClassForPackageClass = localClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFqName))
         val annotationData = binaryClassForPackageClass?.getClassHeader()?.annotationData
         if (annotationData == null) {
-            LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassName()}")
+            LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassId()}")
             return Collections.emptyList()
         }
         val membersScope = DeserializedPackageMemberScope(
@@ -122,7 +121,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             val binaryClass = localClassFinder.findKotlinClass(classId) ?: return null
             val data = binaryClass.getClassHeader().annotationData
             if (data == null) {
-                LOG.error("Annotation data missing for ${binaryClass.getClassName()}")
+                LOG.error("Annotation data missing for ${binaryClass.getClassId()}")
                 return null
             }
             return JavaProtoBufUtil.readClassDataFrom(data)
@@ -186,7 +185,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
                 LOG.error("Could not infer visibility for $descriptor")
             }
             override fun reportIncompatibleAbiVersion(kotlinClass: KotlinJvmBinaryClass, actualVersion: Int) {
-                LOG.error("Incompatible ABI version for class ${kotlinClass.getClassName()}, actual version: $actualVersion")
+                LOG.error("Incompatible ABI version for class ${kotlinClass.getClassId()}, actual version: $actualVersion")
             }
         }
     }

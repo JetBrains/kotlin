@@ -37,15 +37,15 @@ public fun buildDecompiledText(
 ): DecompiledText {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val classFqName = kotlinClass!!.getClassName().getFqNameForClassNameWithoutDollars()
+    val classId = kotlinClass!!.getClassId()
     val kind = kotlinClass.getClassHeader().kind
-    val packageFqName = classFqName.parent()
+    val packageFqName = classId.getPackageFqName()
 
     return if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
         buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
     }
     else if (kind == KotlinClassHeader.Kind.CLASS) {
-        buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classFqName)).filterNotNull())
+        buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull())
     }
     else {
         throw UnsupportedOperationException("Unknown header kind: " + kind)

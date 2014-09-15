@@ -28,12 +28,9 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
@@ -45,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
-import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaFqNameToKotlinFqName;
+import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaClassIdToKotlinClassId;
 
 public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements AnnotationLoader {
 
@@ -100,8 +97,8 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
         kotlinClass.loadClassAnnotations(new KotlinJvmBinaryClass.AnnotationVisitor() {
             @Nullable
             @Override
-            public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className) {
-                return resolveAnnotation(className, result, module);
+            public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
+                return resolveAnnotation(classId, result, module);
             }
 
             @Override
@@ -114,13 +111,13 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
 
     @Nullable
     public static KotlinJvmBinaryClass.AnnotationArgumentVisitor resolveAnnotation(
-            @NotNull JvmClassName className,
+            @NotNull ClassId classId,
             @NotNull final List<AnnotationDescriptor> result,
             @NotNull final ModuleDescriptor moduleDescriptor
     ) {
-        if (JvmAnnotationNames.isSpecialAnnotation(className)) return null;
+        if (JvmAnnotationNames.isSpecialAnnotation(classId)) return null;
 
-        final ClassDescriptor annotationClass = resolveClass(className, moduleDescriptor);
+        final ClassDescriptor annotationClass = resolveClass(classId, moduleDescriptor);
 
         return new KotlinJvmBinaryClass.AnnotationArgumentVisitor() {
             private final Map<ValueParameterDescriptor, CompileTimeConstant<?>> arguments = new HashMap<ValueParameterDescriptor, CompileTimeConstant<?>>();
@@ -133,8 +130,8 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
             }
 
             @Override
-            public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
-                setArgumentValueByName(name, enumEntryValue(enumClassName, enumEntryName));
+            public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+                setArgumentValueByName(name, enumEntryValue(enumClassId, enumEntryName));
             }
 
             @Nullable
@@ -149,8 +146,8 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
                     }
 
                     @Override
-                    public void visitEnum(@NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
-                        elements.add(enumEntryValue(enumClassName, enumEntryName));
+                    public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+                        elements.add(enumEntryValue(enumClassId, enumEntryName));
                     }
 
                     @Override
@@ -165,15 +162,15 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
             }
 
             @NotNull
-            private CompileTimeConstant<?> enumEntryValue(@NotNull JvmClassName enumClassName, @NotNull Name name) {
-                ClassDescriptor enumClass = resolveClass(enumClassName, moduleDescriptor);
+            private CompileTimeConstant<?> enumEntryValue(@NotNull ClassId enumClassId, @NotNull Name name) {
+                ClassDescriptor enumClass = resolveClass(enumClassId, moduleDescriptor);
                 if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
                     ClassifierDescriptor classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name);
                     if (classifier instanceof ClassDescriptor) {
                         return new EnumValue((ClassDescriptor) classifier, false);
                     }
                 }
-                return ErrorValue.create("Unresolved enum entry: " + enumClassName.getInternalName() + "." + name);
+                return ErrorValue.create("Unresolved enum entry: " + enumClassId + "." + name);
             }
 
             @Override
@@ -200,12 +197,10 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
     }
 
     @NotNull
-    private static ClassDescriptor resolveClass(@NotNull JvmClassName className, @NotNull ModuleDescriptor moduleDescriptor) {
-        FqName packageFqName = className.getPackageFqName();
-        FqNameUnsafe relativeClassName = javaFqNameToKotlinFqName(className.getHeuristicClassFqName());
-        ClassId classId = new ClassId(packageFqName, relativeClassName);
-        ClassDescriptor annotationClass = SerializationPackage.findClassAcrossModuleDependencies(moduleDescriptor, classId);
-        return annotationClass != null ? annotationClass : ErrorUtils.createErrorClass(className.getInternalName());
+    private static ClassDescriptor resolveClass(@NotNull ClassId javaClassId, @NotNull ModuleDescriptor moduleDescriptor) {
+        ClassId classId = javaClassIdToKotlinClassId(javaClassId);
+        ClassDescriptor classDescriptor = SerializationPackage.findClassAcrossModuleDependencies(moduleDescriptor, classId);
+        return classDescriptor != null ? classDescriptor : ErrorUtils.createErrorClass(classId.asSingleFqName().asString());
     }
 
     @NotNull

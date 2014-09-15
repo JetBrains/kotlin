@@ -22,7 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -35,7 +35,7 @@ public final class VirtualFileKotlinClass extends FileBasedKotlinClass {
 
     private VirtualFileKotlinClass(
             @NotNull VirtualFile file,
-            @NotNull JvmClassName className,
+            @NotNull ClassId className,
             @NotNull KotlinClassHeader classHeader,
             @NotNull InnerClassesInfo innerClasses
     ) {
@@ -48,10 +48,10 @@ public final class VirtualFileKotlinClass extends FileBasedKotlinClass {
         assert file.getFileType() == JavaClassFileType.INSTANCE : "Trying to read binary data from a non-class file " + file;
         try {
             return create(file.contentsToByteArray(),
-                          new Function3<JvmClassName, KotlinClassHeader, InnerClassesInfo, VirtualFileKotlinClass>() {
+                          new Function3<ClassId, KotlinClassHeader, InnerClassesInfo, VirtualFileKotlinClass>() {
                               @Override
                               public VirtualFileKotlinClass invoke(
-                                      JvmClassName name, KotlinClassHeader header, InnerClassesInfo innerClasses
+                                      ClassId name, KotlinClassHeader header, InnerClassesInfo innerClasses
                               ) {
                                   return new VirtualFileKotlinClass(file, name, header, innerClasses);
                               }

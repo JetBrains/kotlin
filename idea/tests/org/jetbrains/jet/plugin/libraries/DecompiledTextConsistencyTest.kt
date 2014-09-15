@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
+import org.jetbrains.jet.descriptors.serialization.ClassId
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -66,8 +67,9 @@ class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompile
                 module, null, null
         ).getModuleDescriptor()
     }
-    override fun resolveTopLevelClass(classFqName: FqName): ClassDescriptor? {
-        return module.resolveTopLevelClass(classFqName)
+
+    override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? {
+        return module.resolveTopLevelClass(classId.asSingleFqName().toSafe())
     }
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {

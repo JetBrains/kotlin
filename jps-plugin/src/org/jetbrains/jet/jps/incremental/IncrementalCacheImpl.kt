@@ -63,7 +63,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         if (kotlinClass == null) return DO_NOTHING
 
         val fileBytes = kotlinClass.getFileContents()
-        val className = kotlinClass.getClassName()
+        val className = JvmClassName.byClassId(kotlinClass.getClassId())
         val header = kotlinClass.getClassHeader()
 
         val annotationDataEncoded = header.annotationData
