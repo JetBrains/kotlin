@@ -37,8 +37,9 @@ public final class KotlinBinaryClassCache implements Disposable {
                     return new SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>>(2, 2) {
                         @NotNull
                         @Override
+                        @SuppressWarnings("deprecation")
                         public Ref<VirtualFileKotlinClass> createValue(VirtualFile virtualFile) {
-                            return Ref.create(VirtualFileKotlinClass.create(virtualFile));
+                            return Ref.create(VirtualFileKotlinClass.OBJECT$.create(virtualFile));
                         }
                     };
                 }

@@ -14,93 +14,57 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin;
+package org.jetbrains.jet.lang.resolve.kotlin
 
-import com.intellij.ide.highlighter.JavaClassFileType;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.VirtualFile;
-import kotlin.Function3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.ClassId;
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
-import org.jetbrains.jet.utils.UtilsPackage;
+import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.jet.descriptors.serialization.ClassId
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
+import org.jetbrains.jet.utils.*
 
-import java.io.IOException;
+import java.io.IOException
 
-public final class VirtualFileKotlinClass extends FileBasedKotlinClass {
-    private final static Logger LOG = Logger.getInstance(FileBasedKotlinClass.class);
+public class VirtualFileKotlinClass private(
+        public val file: VirtualFile,
+        className: ClassId,
+        classHeader: KotlinClassHeader,
+        innerClasses: FileBasedKotlinClass.InnerClassesInfo
+) : FileBasedKotlinClass(className, classHeader, innerClasses) {
 
-    private final VirtualFile file;
-
-    private VirtualFileKotlinClass(
-            @NotNull VirtualFile file,
-            @NotNull ClassId className,
-            @NotNull KotlinClassHeader classHeader,
-            @NotNull InnerClassesInfo innerClasses
-    ) {
-        super(className, classHeader, innerClasses);
-        this.file = file;
-    }
-
-    @Nullable
-    /* package */ static VirtualFileKotlinClass create(@NotNull final VirtualFile file) {
-        assert file.getFileType() == JavaClassFileType.INSTANCE : "Trying to read binary data from a non-class file " + file;
+    override fun getFileContents(): ByteArray {
         try {
-            return create(file.contentsToByteArray(),
-                          new Function3<ClassId, KotlinClassHeader, InnerClassesInfo, VirtualFileKotlinClass>() {
-                              @Override
-                              public VirtualFileKotlinClass invoke(
-                                      ClassId name, KotlinClassHeader header, InnerClassesInfo innerClasses
-                              ) {
-                                  return new VirtualFileKotlinClass(file, name, header, innerClasses);
-                              }
-                          });
+            return file.contentsToByteArray()
         }
-        catch (Throwable e) {
-            LOG.warn(renderFileReadingErrorMessage(file));
-            return null;
+        catch (e: IOException) {
+            LOG.error(renderFileReadingErrorMessage(file), e)
+            throw rethrow(e)
         }
     }
 
-    @NotNull
-    public VirtualFile getFile() {
-        return file;
-    }
+    override fun equals(other: Any?) = other is VirtualFileKotlinClass && other.file == file
+    override fun hashCode() = file.hashCode()
+    override fun toString() = "${javaClass.getSimpleName()}: $file"
 
-    @NotNull
-    @Override
-    protected byte[] getFileContents() {
-        try {
-            return file.contentsToByteArray();
+    class object {
+        private val LOG = Logger.getInstance(javaClass<VirtualFileKotlinClass>())
+
+        deprecated("Use KotlinBinaryClassCache")
+        fun create(file: VirtualFile): VirtualFileKotlinClass? {
+            assert(file.getFileType() == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
+            try {
+                return FileBasedKotlinClass.create(file.contentsToByteArray()) {
+                    name, header, innerClasses ->
+                    VirtualFileKotlinClass(file, name, header, innerClasses)
+                }
+            }
+            catch (e: Throwable) {
+                LOG.warn(renderFileReadingErrorMessage(file))
+                return null
+            }
         }
-        catch (IOException e) {
-            LOG.error(renderFileReadingErrorMessage(file), e);
-            // Seems to be a bug in IDEA inspection
-            //noinspection Contract
-            throw UtilsPackage.rethrow(e);
-        }
-    }
 
-    @NotNull
-    private static String renderFileReadingErrorMessage(@NotNull VirtualFile file) {
-        return "Could not read file: " + file.getPath() + "; "
-               + "size in bytes: " + file.getLength() + "; "
-               + "file type: " + file.getFileType().getName();
-    }
-
-    @Override
-    public int hashCode() {
-        return file.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof VirtualFileKotlinClass && ((VirtualFileKotlinClass) obj).file.equals(file);
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ": " + file.toString();
+        private fun renderFileReadingErrorMessage(file: VirtualFile): String =
+                "Could not read file: ${file.getPath()}; size in bytes: ${file.getLength()}; file type: ${file.getFileType().getName()}"
     }
 }
