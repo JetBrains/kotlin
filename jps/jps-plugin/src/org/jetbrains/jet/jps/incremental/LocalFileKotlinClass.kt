@@ -17,14 +17,14 @@
 package org.jetbrains.jet.jps.incremental
 
 import org.jetbrains.jet.lang.resolve.kotlin.FileBasedKotlinClass
-import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
+import org.jetbrains.jet.descriptors.serialization.ClassId
 import java.io.File
 
 class LocalFileKotlinClass private(
         private val file: File,
         private val fileContents: ByteArray,
-        className: JvmClassName,
+        className: ClassId,
         classHeader: KotlinClassHeader,
         innerClasses: FileBasedKotlinClass.InnerClassesInfo
 ) : FileBasedKotlinClass(className, classHeader, innerClasses) {
