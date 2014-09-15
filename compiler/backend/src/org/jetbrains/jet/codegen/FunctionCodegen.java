@@ -39,6 +39,8 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.ResolvePackage;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -151,7 +153,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         generateBridges(functionDescriptor);
 
 
-        if (JvmCodegenUtil.isPlatformStaticInClassObject(functionDescriptor)) {
+        if (AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor)) {
             MemberCodegen<?> codegen = getParentCodegen().getParentCodegen();
             ((ImplementationBodyCodegen) codegen).addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
         }

@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava;
+import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
@@ -92,6 +93,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final DeserializationGlobalContextForJava deserializationGlobalContextForJava;
+    private final AdditionalCheckerProvider additionalCheckerProvider;
     private final GlobalSearchScope globalSearchScope;
     private final JavaClassFinderImpl javaClassFinder;
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
@@ -173,6 +175,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.annotationDescriptorLoader = new AnnotationDescriptorLoader();
         this.constantDescriptorLoader = new ConstantDescriptorLoader();
         this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(storageManager, getModuleDescriptor(), javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
+        this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider.INSTANCE$;
         this.globalSearchScope = com.intellij.psi.search.GlobalSearchScope.allScope(project);
         this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();
@@ -205,6 +208,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.scriptHeaderResolver = new ScriptHeaderResolver();
         this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager);
 
+        this.topDownAnalyzer.setAdditionalCheckerProvider(additionalCheckerProvider);
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
         this.topDownAnalyzer.setLazyTopDownAnalyzer(lazyTopDownAnalyzer);
@@ -270,6 +274,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
+        expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
         expressionTypingComponents.setCallResolver(callResolver);
         expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
@@ -302,6 +307,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         controlFlowAnalyzer.setTrace(bindingTrace);
 
+        declarationsChecker.setAdditionalCheckerProvider(additionalCheckerProvider);
         declarationsChecker.setDescriptorResolver(descriptorResolver);
         declarationsChecker.setTrace(bindingTrace);
 

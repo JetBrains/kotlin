@@ -41,7 +41,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Annotations.AnnotationApplicability.class, Annotations.AnnotationParameterMustBeConstant.class})
+    @InnerTestClasses({Annotations.AnnotationApplicability.class, Annotations.AnnotationParameterMustBeConstant.class, Annotations.PlatformStatic.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInAnnotations() throws Exception {
@@ -105,6 +105,28 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             @TestMetadata("vararg.kt")
             public void testVararg() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant/vararg.kt");
+                doTest(fileName);
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class PlatformStatic extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInPlatformStatic() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("functions.kt")
+            public void testFunctions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/functions.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("property.kt")
+            public void testProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/property.kt");
                 doTest(fileName);
             }
             

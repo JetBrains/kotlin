@@ -25,6 +25,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -1129,7 +1130,7 @@ public abstract class StackValue {
             ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
             int depth = 0;
             if (thisObject.exists()) {
-                if (!JvmCodegenUtil.isPlatformStaticInObject(descriptor)) {
+                if (!AnnotationsPackage.isPlatformStaticInObject(descriptor)) {
                     if (receiverArgument.exists()) {
                         //noinspection ConstantConditions
                         Type resultType =

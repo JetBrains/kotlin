@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -70,7 +71,8 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         final ResolveSession resolveSession = new InjectorForLazyResolve(
                 getProject(), globalContext, lazyModule,
                 new FileBasedDeclarationProviderFactory(globalContext.getStorageManager(), files),
-                new BindingTraceContext()).getResolveSession();
+                new BindingTraceContext(),
+                JavaDeclarationCheckerProvider.INSTANCE$).getResolveSession();
         lazyModule.initialize(resolveSession.getPackageFragmentProvider());
 
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();

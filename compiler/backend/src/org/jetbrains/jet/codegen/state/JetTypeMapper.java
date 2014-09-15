@@ -31,10 +31,8 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
@@ -445,7 +443,7 @@ public class JetTypeMapper {
             else {
                 if (isStaticDeclaration(functionDescriptor) ||
                     isAccessor(functionDescriptor) ||
-                    isPlatformStaticInObject(functionDescriptor)) {
+                    AnnotationsPackage.isPlatformStaticInObject(functionDescriptor)) {
                     invokeOpcode = INVOKESTATIC;
                 }
                 else if (isInterface) {

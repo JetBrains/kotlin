@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -2308,7 +2309,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (isSingleton) {
             if (context.hasThisDescriptor() &&
                 context.getThisDescriptor().equals(calleeContainingClass) &&
-                !isPlatformStaticInObject(context.getContextDescriptor())) {
+                !AnnotationsPackage.isPlatformStaticInObject(context.getContextDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
             else {

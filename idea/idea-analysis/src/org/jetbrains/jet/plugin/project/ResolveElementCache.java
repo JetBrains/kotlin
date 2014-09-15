@@ -25,7 +25,10 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ElementResolver;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.storage.LazyResolveStorageManager;
@@ -65,5 +68,15 @@ public class ResolveElementCache extends ElementResolver {
     @Override
     public BindingContext getElementAdditionalResolve(@NotNull JetElement jetElement) {
         return additionalResolveCache.getValue().invoke(jetElement);
+    }
+
+    @NotNull
+    @Override
+    public AdditionalCheckerProvider getAdditionalCheckerProvider(@NotNull JetFile jetFile) {
+        TargetPlatform platform = TargetPlatformDetector.getPlatform(jetFile);
+        if (platform == TargetPlatform.JS) {
+            return AdditionalCheckerProvider.Empty.INSTANCE$;
+        }
+        return JavaDeclarationCheckerProvider.INSTANCE$;
     }
 }

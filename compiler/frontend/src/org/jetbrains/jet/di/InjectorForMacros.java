@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
@@ -53,6 +54,7 @@ public class InjectorForMacros {
     private final CallResolver callResolver;
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
+    private final AdditionalCheckerProvider additionalCheckerProvider;
     private final AnnotationResolver annotationResolver;
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
@@ -80,6 +82,7 @@ public class InjectorForMacros {
         this.callResolver = new CallResolver();
         this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.storageManager = globalContext.getStorageManager();
+        this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider.Empty.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
@@ -103,6 +106,7 @@ public class InjectorForMacros {
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 
+        this.expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
         this.expressionTypingComponents.setCallResolver(callResolver);
         this.expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
         this.expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);

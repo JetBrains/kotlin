@@ -49,7 +49,7 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
 
-public class ElementResolver {
+public abstract class ElementResolver {
 
     protected final ResolveSession resolveSession;
 
@@ -260,7 +260,7 @@ public class ElementResolver {
         parameterDescriptor.forceResolveAllContents();
     }
 
-    private static void delegationSpecifierAdditionalResolve(
+    private void delegationSpecifierAdditionalResolve(
             ResolveSession resolveSession,
             JetDelegationSpecifierList specifier, BindingTrace trace, JetFile file) {
 
@@ -277,7 +277,7 @@ public class ElementResolver {
                                                     descriptor.getScopeForMemberDeclarationResolution());
     }
 
-    private static void propertyAdditionalResolve(final ResolveSession resolveSession, final JetProperty jetProperty, BindingTrace trace, JetFile file) {
+    private void propertyAdditionalResolve(final ResolveSession resolveSession, final JetProperty jetProperty, BindingTrace trace, JetFile file) {
         JetScope propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty);
 
         BodyResolveContextForLazy bodyResolveContext = new BodyResolveContextForLazy(
@@ -310,7 +310,7 @@ public class ElementResolver {
         }
     }
 
-    private static void functionAdditionalResolve(
+    private void functionAdditionalResolve(
             ResolveSession resolveSession,
             JetNamedFunction namedFunction,
             BindingTrace trace,
@@ -323,7 +323,7 @@ public class ElementResolver {
         bodyResolver.resolveFunctionBody(createEmptyContext(resolveSession), trace, namedFunction, functionDescriptor, scope);
     }
 
-    private static void constructorAdditionalResolve(
+    private void constructorAdditionalResolve(
             ResolveSession resolveSession,
             JetClass klass,
             BindingTrace trace,
@@ -340,7 +340,7 @@ public class ElementResolver {
                                                                             constructorDescriptor, scope);
     }
 
-    private static boolean initializerAdditionalResolve(
+    private boolean initializerAdditionalResolve(
             ResolveSession resolveSession,
             JetClassInitializer classInitializer,
             BindingTrace trace,
@@ -355,12 +355,13 @@ public class ElementResolver {
         return true;
     }
 
-    private static BodyResolver createBodyResolver(ResolveSession resolveSession, BindingTrace trace, JetFile file) {
+    private BodyResolver createBodyResolver(ResolveSession resolveSession, BindingTrace trace, JetFile file) {
         InjectorForBodyResolve bodyResolve = new InjectorForBodyResolve(
                 file.getProject(),
                 createParameters(resolveSession),
                 trace,
-                resolveSession.getModuleDescriptor()
+                resolveSession.getModuleDescriptor(),
+                getAdditionalCheckerProvider(file)
         );
         return bodyResolve.getBodyResolver();
     }
@@ -457,6 +458,9 @@ public class ElementResolver {
 
         return null;
     }
+
+    @NotNull
+    protected abstract AdditionalCheckerProvider getAdditionalCheckerProvider(@NotNull JetFile jetFile);
 
     private static class BodyResolveContextForLazy implements BodiesResolveContext {
 

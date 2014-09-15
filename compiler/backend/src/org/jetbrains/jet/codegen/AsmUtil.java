@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
@@ -169,7 +170,7 @@ public class AsmUtil {
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
         return isStaticKind(kind) ||
                JetTypeMapper.isAccessor(functionDescriptor) ||
-               JvmCodegenUtil.isPlatformStaticInObject(functionDescriptor);
+               AnnotationsPackage.isPlatformStaticInObject(functionDescriptor);
     }
 
     public static boolean isStaticKind(OwnerKind kind) {
