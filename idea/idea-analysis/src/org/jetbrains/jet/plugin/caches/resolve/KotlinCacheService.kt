@@ -33,13 +33,9 @@ import org.jetbrains.jet.plugin.project.TargetPlatform.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
 import org.jetbrains.jet.lang.psi.JetCodeFragment
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
-import com.intellij.psi.PsiElement
 import org.jetbrains.jet.utils.keysToMap
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
@@ -68,6 +64,7 @@ public class KotlinCacheService(val project: Project) {
 
     fun globalResolveSessionProvider(
             platform: TargetPlatform,
+            dependencies: Collection<Any>,
             reuseDataFromCache: KotlinResolveCache? = null,
             syntheticFiles: Collection<JetFile> = listOf(),
             moduleFilter: (IdeaModuleInfo) -> Boolean = { true }
@@ -75,24 +72,24 @@ public class KotlinCacheService(val project: Project) {
         val analyzerFacade = AnalyzerFacadeProvider.getAnalyzerFacade(platform)
         val delegateResolverProvider = reuseDataFromCache?.moduleResolverProvider ?: EmptyModuleResolverProvider
         val moduleResolverProvider = createModuleResolverProvider(project, analyzerFacade, syntheticFiles, delegateResolverProvider, moduleFilter)
-        CachedValueProvider.Result.create(
-                moduleResolverProvider,
-                PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
-                moduleResolverProvider.exceptionTracker
-        )
+        val allDependencies = dependencies + listOf(moduleResolverProvider.exceptionTracker)
+        CachedValueProvider.Result.create(moduleResolverProvider, allDependencies)
     }
 
     private val globalCachesPerPlatform = listOf(JVM, JS).keysToMap { platform -> GlobalCache(platform) }
 
     private inner class GlobalCache(platform: TargetPlatform) {
         val librariesCache = KotlinResolveCache(
-                project, globalResolveSessionProvider(platform, moduleFilter = { it.isLibraryClasses() })
+                project, globalResolveSessionProvider(platform,
+                                                      moduleFilter = { it.isLibraryClasses() },
+                                                      dependencies = listOf(ProjectRootModificationTracker.getInstance(project)))
         )
 
         val modulesCache = KotlinResolveCache(
                 project, globalResolveSessionProvider(platform,
                                                       reuseDataFromCache = librariesCache,
-                                                      moduleFilter = { !it.isLibraryClasses() })
+                                                      moduleFilter = { !it.isLibraryClasses() },
+                                                      dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT))
         )
     }
 
@@ -107,7 +104,8 @@ public class KotlinCacheService(val project: Project) {
                             targetPlatform,
                             syntheticFiles = listOf(file),
                             reuseDataFromCache = globalCachesPerPlatform[targetPlatform]!!.librariesCache,
-                            moduleFilter = { !it.isLibraryClasses() }
+                            moduleFilter = { !it.isLibraryClasses() },
+                            dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
                     )
             )
         }
