@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 import com.intellij.psi.PsiElement
+import org.jetbrains.jet.utils.keysToMap
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
@@ -65,22 +66,37 @@ public class KotlinCacheService(val project: Project) {
         public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
     }
 
-    private fun globalResolveSessionProvider(platform: TargetPlatform, syntheticFiles: Collection<JetFile> = listOf()):
-            () -> CachedValueProvider.Result<ModuleResolverProvider> = {
+    fun globalResolveSessionProvider(
+            platform: TargetPlatform,
+            reuseDataFromCache: KotlinResolveCache? = null,
+            syntheticFiles: Collection<JetFile> = listOf(),
+            moduleFilter: (IdeaModuleInfo) -> Boolean = { true }
+    ): () -> CachedValueProvider.Result<ModuleResolverProvider> = {
         val analyzerFacade = AnalyzerFacadeProvider.getAnalyzerFacade(platform)
-        val moduleMapping = createModuleResolverProvider(project, analyzerFacade, syntheticFiles)
+        val delegateResolverProvider = reuseDataFromCache?.moduleResolverProvider ?: EmptyModuleResolverProvider
+        val moduleResolverProvider = createModuleResolverProvider(project, analyzerFacade, syntheticFiles, delegateResolverProvider, moduleFilter)
         CachedValueProvider.Result.create(
-                moduleMapping,
+                moduleResolverProvider,
                 PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
-                moduleMapping.exceptionTracker
+                moduleResolverProvider.exceptionTracker
         )
-
     }
 
-    private val globalCachesPerPlatform = mapOf(
-            JVM to KotlinResolveCache(project, globalResolveSessionProvider(JVM)),
-            JS to KotlinResolveCache(project, globalResolveSessionProvider(JS))
-    )
+    private val globalCachesPerPlatform = listOf(JVM, JS).keysToMap { platform -> GlobalCache(platform) }
+
+    private inner class GlobalCache(platform: TargetPlatform) {
+        val librariesCache = KotlinResolveCache(
+                project, globalResolveSessionProvider(platform, moduleFilter = { it.isLibraryClasses() })
+        )
+
+        val modulesCache = KotlinResolveCache(
+                project, globalResolveSessionProvider(platform,
+                                                      reuseDataFromCache = librariesCache,
+                                                      moduleFilter = { !it.isLibraryClasses() })
+        )
+    }
+
+    private fun getGlobalCache(platform: TargetPlatform) = globalCachesPerPlatform[platform]!!.modulesCache
 
     private val syntheticFileCaches = object : SLRUCache<JetFile, KotlinResolveCache>(2, 3) {
         override fun createValue(file: JetFile?): KotlinResolveCache {
@@ -88,7 +104,7 @@ public class KotlinCacheService(val project: Project) {
                     project,
                     globalResolveSessionProvider(
                             TargetPlatformDetector.getPlatform(file!!),
-                            listOf(file)
+                            syntheticFiles = listOf(file)
                     )
             )
         }
@@ -101,7 +117,7 @@ public class KotlinCacheService(val project: Project) {
     }
 
     public fun getGlobalLazyResolveSession(file: JetFile, platform: TargetPlatform): ResolveSessionForBodies {
-        return globalCachesPerPlatform[platform]!!.getLazyResolveSession(file)
+        return getGlobalCache(platform).getLazyResolveSession(file)
     }
 
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
@@ -121,8 +137,7 @@ public class KotlinCacheService(val project: Project) {
             return getCacheForSyntheticFile(firstFile).getAnalysisResultsForElements(elements)
         }
 
-        val resolveCache = globalCachesPerPlatform[TargetPlatformDetector.getPlatform(firstFile)]!!
-        return resolveCache.getAnalysisResultsForElements(elements)
+        return getGlobalCache(TargetPlatformDetector.getPlatform(firstFile)).getAnalysisResultsForElements(elements)
     }
 
     private fun isFileInScope(jetFile: JetFile): Boolean {
@@ -138,6 +153,6 @@ public class KotlinCacheService(val project: Project) {
     }
 
     public fun <T> get(extension: CacheExtension<T>): T {
-        return globalCachesPerPlatform[extension.platform]!![extension]
+        return getGlobalCache(extension.platform)[extension]
     }
 }

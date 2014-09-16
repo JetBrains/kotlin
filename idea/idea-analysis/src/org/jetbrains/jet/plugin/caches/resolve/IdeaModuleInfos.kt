@@ -152,3 +152,5 @@ private data class LibraryWithoutSourceScope(project: Project, private val libra
 //TODO: (module refactoring) android sdk has modified scope
 private data class SdkScope(project: Project, private val sdk: Sdk) :
         LibraryScopeBase(project, sdk.getRootProvider().getFiles(OrderRootType.CLASSES), array<VirtualFile>())
+
+private fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo
