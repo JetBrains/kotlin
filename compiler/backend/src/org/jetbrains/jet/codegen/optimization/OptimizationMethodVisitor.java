@@ -35,7 +35,8 @@ import java.util.List;
 public class OptimizationMethodVisitor extends MethodVisitor {
     private static final int MEMORY_LIMIT_BY_METHOD_MB = 50;
     private static final MethodTransformer[] TRANSFORMERS = new MethodTransformer[]{
-            new RedundantNullCheckMethodTransformer(), new RedundantBoxingMethodTransformer()
+            new RedundantNullCheckMethodTransformer(), new RedundantBoxingMethodTransformer(),
+            new RedundantGotoMethodTransformer()
     };
 
     private final MethodNode methodNode;
