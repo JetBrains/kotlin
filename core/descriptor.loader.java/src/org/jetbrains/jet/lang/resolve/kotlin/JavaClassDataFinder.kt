@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.jet.descriptors.serialization.ClassId
+import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
 import org.jetbrains.jet.descriptors.serialization.ClassData
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil

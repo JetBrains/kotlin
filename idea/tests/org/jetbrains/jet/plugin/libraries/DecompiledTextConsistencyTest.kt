@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.descriptors.serialization.ClassId
+import org.jetbrains.jet.lang.resolve.name.ClassId
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 

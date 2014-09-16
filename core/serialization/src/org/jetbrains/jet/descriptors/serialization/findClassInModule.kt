@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.name.SpecialNames
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.name.ClassId
 
 private fun findInnerClass(classDescriptor: ClassDescriptor, name: Name): ClassDescriptor? {
     return if (SpecialNames.isClassObjectName(name)) {

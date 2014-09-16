@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.resolve.DescriptorFactory.*
-import org.jetbrains.jet.descriptors.serialization.ClassId
 
 public abstract class LazyJavaStaticScope(
         c: LazyJavaResolverContext,

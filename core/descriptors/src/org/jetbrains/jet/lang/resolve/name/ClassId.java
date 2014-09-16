@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.descriptors.serialization;
+package org.jetbrains.jet.lang.resolve.name;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 public final class ClassId {
-
     @NotNull
     public static ClassId topLevel(@NotNull FqName topLevelFqName) {
         return new ClassId(topLevelFqName.parent(), topLevelFqName.shortName());

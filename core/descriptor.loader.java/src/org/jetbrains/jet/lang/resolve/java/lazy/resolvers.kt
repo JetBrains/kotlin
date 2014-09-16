@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParamete
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.jet.descriptors.serialization.ClassId
+import org.jetbrains.jet.lang.resolve.name.ClassId
 
 //TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
 trait LazyJavaClassResolver {

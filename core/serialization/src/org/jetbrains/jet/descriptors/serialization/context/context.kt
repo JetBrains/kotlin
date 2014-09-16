@@ -30,7 +30,7 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeP
 import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.descriptors.serialization.ClassId
+import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.descriptors.serialization.ClassDeserializer
 
 public open class DeserializationGlobalContext(
