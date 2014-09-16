@@ -90,53 +90,54 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         return "res/";
     }
 
-    class LightAndroidProjectDescriptor extends JetLightProjectDescriptor {
-        @Override
-        public Sdk getSdk() {
-            androidSdk = createAndroidSdk(getTestSdkPath(), getPlatformDir());
-            return androidSdk;
-        }
-
-        @Override
-        public void configureModule(
-                Module module, ModifiableRootModel model, ContentEntry contentEntry
-        ) {
-            NewLibraryEditor editor = new NewLibraryEditor();
-            editor.setName("android.jar");
-            editor.addRoot(androidSdk.getSdkModificator().getRoots(OrderRootType.CLASSES)[0], OrderRootType.CLASSES);
-
-            ConfigLibraryUtil.addLibrary(editor, model);
-        }
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        // this will throw an exception if we don't have a full Android SDK, so we need to do this first thing before any other setup
         String sdkPath = getTestSdkPath();
 
-
-        IdeaTestFixtureFactory factory = IdeaTestFixtureFactory.getFixtureFactory();
-        //TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder(JetLightProjectDescriptor.INSTANCE);
-        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder(new LightAndroidProjectDescriptor());
-        //final TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder(getName());
-        final IdeaProjectTestFixture fixture = fixtureBuilder.getFixture();
-        myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(fixture, new LightTempDirTestFixtureImpl(true));
-
+        final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder =
+                IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName());
+        myFixture = JavaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
+        final JavaModuleFixtureBuilder moduleFixtureBuilder = projectBuilder.addModule(JavaModuleFixtureBuilder.class);
         final String dirPath = myFixture.getTempDirPath() + getContentRootPath();
         final File dir = new File(dirPath);
 
         if (!dir.exists()) {
             assertTrue(dir.mkdirs());
         }
+        tuneModule(moduleFixtureBuilder, dirPath);
+
+        final ArrayList<MyAdditionalModuleData> modules = new ArrayList<MyAdditionalModuleData>();
+        configureAdditionalModules(projectBuilder, modules);
 
         myFixture.setUp();
         myFixture.setTestDataPath(getTestDataPath());
+        myModule = moduleFixtureBuilder.getFixture().getModule();
 
-        myModule = myFixture.getModule();
-
+        // Must be done before addAndroidFacet, and must always be done, even if !myCreateManifest.
+        // We will delete it at the end of setUp; this is needed when unit tests want to rewrite
+        // the manifest on their own.
         createManifest();
 
+        androidSdk = createAndroidSdk(getTestSdkPath(), getPlatformDir());
         myFacet = addAndroidFacet(myModule, sdkPath, getPlatformDir(), isToAddSdk());
+        myFixture.copyDirectoryToProject(getResDir(), "res");
+
+        myAdditionalModules = new ArrayList<Module>();
+
+        for (MyAdditionalModuleData data : modules) {
+            final Module additionalModule = data.myModuleFixtureBuilder.getFixture().getModule();
+            myAdditionalModules.add(additionalModule);
+            final AndroidFacet facet = addAndroidFacet(additionalModule, sdkPath, getPlatformDir());
+            facet.setLibraryProject(data.myLibrary);
+            final String rootPath = getContentRootPath(data.myDirName);
+            myFixture.copyDirectoryToProject("res", rootPath + "/res");
+            myFixture.copyFileToProject(SdkConstants.FN_ANDROID_MANIFEST_XML,
+                                        rootPath + '/' + SdkConstants.FN_ANDROID_MANIFEST_XML);
+            ModuleRootModificationUtil.addDependency(myModule, additionalModule);
+        }
 
         if (!myCreateManifest) {
             deleteManifest();
