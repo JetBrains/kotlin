@@ -6,8 +6,7 @@ import java.io.File
 
 
 public class MyActivity : Activity() {
-    override fun onCreate(savedInstanceState: <caret>Bundle?) {}
-    //val button = login
-    val shit = File("")
+    override fun onCreate(savedInstanceState: Bundle?) {}
+    val button = login<caret>
 }
 
