@@ -20,7 +20,7 @@ import com.intellij.openapi.util.ModificationTracker
 import java.util.concurrent.atomic.AtomicLong
 import org.jetbrains.jet.utils.rethrow
 
-public class ExceptionTracker : ModificationTracker, LockBasedStorageManager.ExceptionHandlingStrategy {
+public open class ExceptionTracker : ModificationTracker, LockBasedStorageManager.ExceptionHandlingStrategy {
     private val cancelledTracker: AtomicLong = AtomicLong()
 
     override fun handleException(throwable: Throwable): RuntimeException {
