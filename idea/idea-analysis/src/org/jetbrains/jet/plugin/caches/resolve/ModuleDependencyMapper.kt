@@ -44,7 +44,7 @@ fun createModuleResolverProvider(
 
     val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
 
-    val globalContext = GlobalContext()
+    val globalContext = (delegateProvider as? ModuleResolverProviderImpl)?.globalContext ?: GlobalContext()
 
     fun createResolverForProject(): ResolverForProject<IdeaModuleInfo, ResolverForModule> {
         val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
@@ -76,7 +76,7 @@ fun createModuleResolverProvider(
     return ModuleResolverProviderImpl(
             resolverForProject,
             moduleToBodiesResolveSession,
-            globalContext.exceptionTracker,
+            globalContext,
             delegateProvider
     )
 }
@@ -127,9 +127,11 @@ object EmptyModuleResolverProvider: ModuleResolverProvider {
 class ModuleResolverProviderImpl(
         override val resolverForProject: ResolverForProject<IdeaModuleInfo, ResolverForModule>,
         private val bodiesResolveByModule: Map<IdeaModuleInfo, ResolveSessionForBodies>,
-        override val exceptionTracker: ExceptionTracker,
+        val globalContext: GlobalContext,
         val delegateProvider: ModuleResolverProvider = EmptyModuleResolverProvider
 ): ModuleResolverProvider {
+    override val exceptionTracker: ExceptionTracker = globalContext.exceptionTracker
+
     override fun resolveSessionForBodiesByModule(module: IdeaModuleInfo): ResolveSessionForBodies =
             bodiesResolveByModule[module] ?:
             delegateProvider.resolveSessionForBodiesByModule(module)
