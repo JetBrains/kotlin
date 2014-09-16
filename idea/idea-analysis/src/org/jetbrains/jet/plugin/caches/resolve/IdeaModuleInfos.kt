@@ -36,6 +36,7 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.utils.emptyOrSingletonList
 import com.intellij.openapi.roots.OrderEnumerator
+import java.util.HashSet
 
 public abstract class IdeaModuleInfo : ModuleInfo {
     abstract fun contentScope(): GlobalSearchScope
@@ -152,3 +153,20 @@ private data class LibraryWithoutSourceScope(project: Project, private val libra
 //TODO: (module refactoring) android sdk has modified scope
 private data class SdkScope(project: Project, private val sdk: Sdk) :
         LibraryScopeBase(project, sdk.getRootProvider().getFiles(OrderRootType.CLASSES), array<VirtualFile>())
+
+private fun IdeaModuleInfo.dependsOn(other: IdeaModuleInfo): Boolean {
+    val processed = HashSet<ModuleInfo>()
+    val toProcess = arrayListOf<ModuleInfo>(this)
+    while (toProcess.notEmpty) {
+        val elem = toProcess.remove(0)
+
+        if (elem in processed) continue
+
+        if (elem == other) return true
+
+        toProcess.addAll(elem.dependencies())
+
+        processed.add(elem)
+    }
+    return false
+}
