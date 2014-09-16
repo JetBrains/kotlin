@@ -170,3 +170,5 @@ private fun IdeaModuleInfo.dependsOn(other: IdeaModuleInfo): Boolean {
     }
     return false
 }
+
+private fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo

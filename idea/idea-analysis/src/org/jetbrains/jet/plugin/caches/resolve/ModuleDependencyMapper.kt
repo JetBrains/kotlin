@@ -39,17 +39,20 @@ fun createModuleResolverProvider(
         project: Project,
         analyzerFacade: AnalyzerFacade<ResolverForModule, JvmPlatformParameters>,
         syntheticFiles: Collection<JetFile>,
-        delegateProvider: ModuleResolverProvider = EmptyModuleResolverProvider
+        delegateProvider: ModuleResolverProvider,
+        moduleFilter: (IdeaModuleInfo) -> Boolean
 ): ModuleResolverProvider {
 
     val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
 
     val globalContext = (delegateProvider as? ModuleResolverProviderImpl)?.globalContext ?: GlobalContext()
 
-    fun createResolverForProject(): ResolverForProject<IdeaModuleInfo, ResolverForModule> {
-        val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
-        allModuleInfos.addAll(syntheticFilesByModule.keySet())
+    val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
+    allModuleInfos.addAll(syntheticFilesByModule.keySet())
 
+    val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
+
+    fun createResolverForProject(): ResolverForProject<IdeaModuleInfo, ResolverForModule> {
         val modulesContent = {(module: IdeaModuleInfo) ->
             ModuleContent(syntheticFilesByModule[module] ?: listOf(), module.contentScope())
         }
@@ -61,14 +64,14 @@ fun createModuleResolverProvider(
         }
 
         val resolverForProject = analyzerFacade.setupResolverForProject(
-                globalContext, project, allModuleInfos, modulesContent, jvmPlatformParameters, delegateProvider.resolverForProject
+                globalContext, project, modulesToCreateResolversFor, modulesContent, jvmPlatformParameters, delegateProvider.resolverForProject
         )
         return resolverForProject
     }
 
     val resolverForProject = createResolverForProject()
 
-    val moduleToBodiesResolveSession = allModuleInfos.keysToMap {
+    val moduleToBodiesResolveSession = modulesToCreateResolversFor.keysToMap {
         module ->
         val analyzer = resolverForProject.resolverForModule(module)
         ResolveSessionForBodies(project, analyzer.lazyResolveSession)
