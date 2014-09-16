@@ -40,7 +40,7 @@ fun createModuleResolverProvider(
         analyzerFacade: AnalyzerFacade<ResolverForModule, JvmPlatformParameters>,
         syntheticFiles: Collection<JetFile>,
         delegateProvider: ModuleResolverProvider,
-        moduleFilter: (IdeaModuleInfo) -> Boolean
+        moduleFilter: (IdeaModuleInfo, modulesWithSyntheticFiles: Collection<IdeaModuleInfo>) -> Boolean
 ): ModuleResolverProvider {
 
     val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
@@ -48,9 +48,12 @@ fun createModuleResolverProvider(
     val globalContext = (delegateProvider as? ModuleResolverProviderImpl)?.globalContext ?: GlobalContext()
 
     val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
-    allModuleInfos.addAll(syntheticFilesByModule.keySet())
+    val syntheticFilesModules = syntheticFilesByModule.keySet()
+    allModuleInfos.addAll(syntheticFilesModules)
 
-    val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
+    val modulesToCreateResolversFor = allModuleInfos.filter {
+        moduleFilter(it, syntheticFilesModules)
+    }
 
     fun createResolverForProject(): ResolverForProject<IdeaModuleInfo, ResolverForModule> {
         val modulesContent = {(module: IdeaModuleInfo) ->

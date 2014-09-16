@@ -65,9 +65,9 @@ public class KotlinCacheService(val project: Project) {
     fun globalResolveSessionProvider(
             platform: TargetPlatform,
             dependencies: Collection<Any>,
+            moduleFilter: (IdeaModuleInfo, modulesWithSyntheticFiles: Collection<IdeaModuleInfo>) -> Boolean,
             reuseDataFromCache: KotlinResolveCache? = null,
             syntheticFiles: Collection<JetFile> = listOf(),
-            moduleFilter: (IdeaModuleInfo) -> Boolean = { true }
     ): () -> CachedValueProvider.Result<ModuleResolverProvider> = {
         val analyzerFacade = AnalyzerFacadeProvider.getAnalyzerFacade(platform)
         val delegateResolverProvider = reuseDataFromCache?.moduleResolverProvider ?: EmptyModuleResolverProvider
@@ -81,14 +81,14 @@ public class KotlinCacheService(val project: Project) {
     private inner class GlobalCache(platform: TargetPlatform) {
         val librariesCache = KotlinResolveCache(
                 project, globalResolveSessionProvider(platform,
-                                                      moduleFilter = { it.isLibraryClasses() },
+                                                      moduleFilter = { (module, _) -> module.isLibraryClasses() },
                                                       dependencies = listOf(ProjectRootModificationTracker.getInstance(project)))
         )
 
         val modulesCache = KotlinResolveCache(
                 project, globalResolveSessionProvider(platform,
                                                       reuseDataFromCache = librariesCache,
-                                                      moduleFilter = { !it.isLibraryClasses() },
+                                                      moduleFilter = { (module, _) -> !module.isLibraryClasses() },
                                                       dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT))
         )
     }
@@ -103,8 +103,12 @@ public class KotlinCacheService(val project: Project) {
                     globalResolveSessionProvider(
                             targetPlatform,
                             syntheticFiles = listOf(file),
-                            reuseDataFromCache = globalCachesPerPlatform[targetPlatform]!!.librariesCache,
-                            moduleFilter = { !it.isLibraryClasses() },
+                            reuseDataFromCache = getGlobalCache(targetPlatform),
+                            moduleFilter = { (module, modulesWithSyntheticFiles) ->
+                                modulesWithSyntheticFiles.any {
+                                    moduleWithSyntheticFiles -> module.dependsOn(moduleWithSyntheticFiles)
+                                }
+                            },
                             dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
                     )
             )
