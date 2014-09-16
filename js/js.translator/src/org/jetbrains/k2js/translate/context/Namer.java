@@ -339,7 +339,6 @@ public final class Namer {
             case CLASS_OBJECT:
                 return objectCreationMethodReference();
             case ANNOTATION_CLASS:
-                throw new IllegalStateException("Can't create annotation class instance: " + descriptor);
             case CLASS:
                 return DescriptorUtils.isAnonymousObject(descriptor)
                        ? objectCreationMethodReference()
