@@ -26,7 +26,6 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.roots.JdkOrderEntry
-import org.jetbrains.kotlin.util.sure
 import org.jetbrains.jet.analyzer.AnalyzerFacade
 import org.jetbrains.jet.analyzer.ResolverForModule
 import org.jetbrains.jet.lang.psi.*
@@ -34,13 +33,13 @@ import org.jetbrains.jet.storage.ExceptionTracker
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.analyzer.ResolverForProject
 import org.jetbrains.jet.analyzer.ModuleContent
-import org.jetbrains.jet.analyzer.PlatformAnalysisParameters
-import org.jetbrains.jet.plugin.caches.resolve
+import org.jetbrains.jet.analyzer.EmptyResolverForProject
 
 fun createModuleResolverProvider(
         project: Project,
         analyzerFacade: AnalyzerFacade<ResolverForModule, JvmPlatformParameters>,
-        syntheticFiles: Collection<JetFile>
+        syntheticFiles: Collection<JetFile>,
+        delegateProvider: ModuleResolverProvider = EmptyModuleResolverProvider
 ): ModuleResolverProvider {
 
     val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
@@ -62,7 +61,7 @@ fun createModuleResolverProvider(
         }
 
         val resolverForProject = analyzerFacade.setupResolverForProject(
-                globalContext, project, allModuleInfos, modulesContent, jvmPlatformParameters
+                globalContext, project, allModuleInfos, modulesContent, jvmPlatformParameters, delegateProvider.resolverForProject
         )
         return resolverForProject
     }
@@ -74,10 +73,11 @@ fun createModuleResolverProvider(
         val analyzer = resolverForProject.resolverForModule(module)
         ResolveSessionForBodies(project, analyzer.lazyResolveSession)
     }
-    return ModuleResolverProvider(
+    return ModuleResolverProviderImpl(
             resolverForProject,
             moduleToBodiesResolveSession,
-            globalContext.exceptionTracker
+            globalContext.exceptionTracker,
+            delegateProvider
     )
 }
 
@@ -106,14 +106,31 @@ private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModul
     return collectAllModuleInfos
 }
 
-class ModuleResolverProvider(
-        private val resolverForProject: ResolverForProject<IdeaModuleInfo, *>,
-        private val bodiesResolveByModule: Map<IdeaModuleInfo, ResolveSessionForBodies>,
-        val exceptionTracker: ExceptionTracker
-) {
+trait ModuleResolverProvider {
+    val exceptionTracker: ExceptionTracker
     fun resolverByModule(module: IdeaModuleInfo): ResolverForModule = resolverForProject.resolverForModule(module)
+    fun resolveSessionForBodiesByModule(module: IdeaModuleInfo): ResolveSessionForBodies
+    val resolverForProject: ResolverForProject<IdeaModuleInfo, ResolverForModule>
+}
 
-    fun resolveSessionForBodiesByModule(module: IdeaModuleInfo) =
-            //NOTE: if this assert fails in production, additional information can be obtained by logging on the call site
-            bodiesResolveByModule[module] ?: throw AssertionError("Requested data for $module not contained in this resolver.")
+object EmptyModuleResolverProvider: ModuleResolverProvider {
+    override val exceptionTracker: ExceptionTracker
+        get() = throw IllegalStateException("Should not be called")
+
+    override fun resolveSessionForBodiesByModule(module: IdeaModuleInfo): ResolveSessionForBodies
+            = throw IllegalStateException("Trying to obtain resolve session for unknown $module")
+
+    override val resolverForProject: ResolverForProject<IdeaModuleInfo, ResolverForModule> = EmptyResolverForProject()
+
+}
+
+class ModuleResolverProviderImpl(
+        override val resolverForProject: ResolverForProject<IdeaModuleInfo, ResolverForModule>,
+        private val bodiesResolveByModule: Map<IdeaModuleInfo, ResolveSessionForBodies>,
+        override val exceptionTracker: ExceptionTracker,
+        val delegateProvider: ModuleResolverProvider = EmptyModuleResolverProvider
+): ModuleResolverProvider {
+    override fun resolveSessionForBodiesByModule(module: IdeaModuleInfo): ResolveSessionForBodies =
+            bodiesResolveByModule[module] ?:
+            delegateProvider.resolveSessionForBodiesByModule(module)
 }
