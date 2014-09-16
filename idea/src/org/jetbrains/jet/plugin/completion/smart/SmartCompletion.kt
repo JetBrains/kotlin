@@ -37,15 +37,17 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
                       val originalFile: JetFile) {
-
     private val bindingContext = resolveSession.resolveToElement(expression)
     private val moduleDescriptor = resolveSession.getModuleDescriptor()
     private val project = expression.getProject()
 
-    public fun buildLookupElements(referenceVariants: Iterable<DeclarationDescriptor>): Collection<LookupElement>? {
-        return buildLookupElementsInternal(referenceVariants)?.map {
-            if (it.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) == null) {
-                object : LookupElementDecorator<LookupElement>(it) {
+    public data class Result(val declarationFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?,
+                             val additionalItems: Collection<LookupElement>)
+
+    public fun execute(): Result? {
+        fun postProcess(item: LookupElement): LookupElement {
+            return if (item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) == null) {
+                object : LookupElementDecorator<LookupElement>(item) {
                     override fun handleInsert(context: InsertionContext) {
                         if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
                             val offset = context.getOffsetMap().getOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET)
@@ -59,14 +61,23 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 }
             }
             else {
-                it
+                item
             }
         }
+
+        val result = executeInternal() ?: return null
+        // TODO: code could be more simple, see KT-5726
+        val additionalItems = result.additionalItems.map(::postProcess)
+        val filter = result.declarationFilter
+        return if (filter != null)
+            Result({ filter(it).map(::postProcess) }, additionalItems)
+        else
+            Result(null, additionalItems)
     }
 
-    private fun buildLookupElementsInternal(referenceVariants: Iterable<DeclarationDescriptor>): Collection<LookupElement>? {
-        val elements = buildForAsTypePosition()
-        if (elements != null) return elements
+    private fun executeInternal(): Result? {
+        val asTypePositionResult = buildForAsTypePosition()
+        if (asTypePositionResult != null) return asTypePositionResult
 
         val parent = expression.getParent()
         val expressionWithType: JetExpression
@@ -90,46 +101,47 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         else
             filteredExpectedInfos
 
-        val result = ArrayList<LookupElement>()
-
         val typesWithAutoCasts: (DeclarationDescriptor) -> Iterable<JetType> = TypesWithAutoCasts(bindingContext).calculate(expressionWithType, receiver)
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
         val functionExpectedInfos = expectedInfos.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it.`type`) }
 
-        for (descriptor in referenceVariants) {
-            if (itemsToSkip.contains(descriptor)) continue
+        fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
+            val result = ArrayList<LookupElement>()
+            if (!itemsToSkip.contains(descriptor)) {
+                val types = typesWithAutoCasts(descriptor)
+                val nonNullTypes = types.map { it.makeNotNullable() }
+                val classifier = { (expectedInfo: ExpectedInfo) ->
+                    when {
+                        types.any { it.isSubtypeOf(expectedInfo.`type`) } -> ExpectedInfoClassification.MATCHES
+                        nonNullTypes.any { it.isSubtypeOf(expectedInfo.`type`) } -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
+                        else -> ExpectedInfoClassification.NOT_MATCHES
+                    }
+                }
+                result.addLookupElements(expectedInfos, classifier, { createLookupElement(descriptor, resolveSession) })
 
-            val types = typesWithAutoCasts(descriptor)
-            val nonNullTypes = types.map { it.makeNotNullable() }
-            val classifier = { (expectedInfo: ExpectedInfo) ->
-                when {
-                    types.any { it.isSubtypeOf(expectedInfo.`type`) } -> ExpectedInfoClassification.MATCHES
-                    nonNullTypes.any { it.isSubtypeOf(expectedInfo.`type`) } -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
-                    else -> ExpectedInfoClassification.NOT_MATCHES
+                if (receiver == null) {
+                    toFunctionReferenceLookupElement(descriptor, functionExpectedInfos)?.let { result.add(it) }
                 }
             }
-            result.addLookupElements(expectedInfos, classifier, { createLookupElement(descriptor, resolveSession) })
-
-            if (receiver == null) {
-                toFunctionReferenceLookupElement(descriptor, functionExpectedInfos)?.let { result.add(it) }
-            }
+            return result
         }
 
+        val additionalItems = ArrayList<LookupElement>()
         if (receiver == null) {
-            TypeInstantiationItems(resolveSession, visibilityFilter).addToCollection(result, expectedInfos)
+            TypeInstantiationItems(resolveSession, visibilityFilter).addToCollection(additionalItems, expectedInfos)
 
-            StaticMembers(bindingContext, resolveSession).addToCollection(result, expectedInfos, expression, itemsToSkip)
+            StaticMembers(bindingContext, resolveSession).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
 
-            ThisItems(bindingContext).addToCollection(result, expressionWithType, expectedInfos)
+            ThisItems(bindingContext).addToCollection(additionalItems, expressionWithType, expectedInfos)
 
-            LambdaItems.addToCollection(result, functionExpectedInfos)
+            LambdaItems.addToCollection(additionalItems, functionExpectedInfos)
 
-            KeywordValues.addToCollection(result, filteredExpectedInfos/* use filteredExpectedInfos to not include null after == */, expressionWithType)
+            KeywordValues.addToCollection(additionalItems, filteredExpectedInfos/* use filteredExpectedInfos to not include null after == */, expressionWithType)
         }
 
-        return result
+        return Result(::filterDeclaration, additionalItems)
     }
 
     private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo>? {
@@ -258,26 +270,23 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         return null
     }
 
-    private fun buildForAsTypePosition(): Collection<LookupElement>? {
+    private fun buildForAsTypePosition(): Result? {
         val binaryExpression = ((expression.getParent() as? JetUserType)
                 ?.getParent() as? JetTypeReference)
                     ?.getParent() as? JetBinaryExpressionWithTypeRHS
-        if (binaryExpression != null) {
-            val elementType = binaryExpression.getOperationReference().getReferencedNameElementType()
-            if (elementType == JetTokens.AS_KEYWORD || elementType == JetTokens.AS_SAFE) {
-                val expectedInfos = calcExpectedInfos(binaryExpression) ?: return null
+                        ?: return null
+        val elementType = binaryExpression.getOperationReference().getReferencedNameElementType()
+        if (elementType != JetTokens.AS_KEYWORD && elementType != JetTokens.AS_SAFE) return null
+        val expectedInfos = calcExpectedInfos(binaryExpression) ?: return null
 
-                val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.`type`.makeNotNullable() }
+        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.`type`.makeNotNullable() }
 
-                val result = ArrayList<LookupElement>()
-                for ((jetType, infos) in expectedInfosGrouped) {
-                    val lookupElement = lookupElementForType(jetType) ?: continue
-                    result.add(lookupElement.addTail(infos))
-                }
-                return result
-            }
+        val items = ArrayList<LookupElement>()
+        for ((jetType, infos) in expectedInfosGrouped) {
+            val lookupElement = lookupElementForType(jetType) ?: continue
+            items.add(lookupElement.addTail(infos))
         }
-        return null
+        return Result(null, items)
     }
 
     private fun lookupElementForType(jetType: JetType): LookupElement? {

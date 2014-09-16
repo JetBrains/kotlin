@@ -1,0 +1,7 @@
+package first
+
+import second.extensionProp
+
+fun foo() {
+    "".extensionProp<caret>
+}

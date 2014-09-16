@@ -83,4 +83,8 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
             elements.add(element)
         }
     }
+
+    public fun addElements(elements: Iterable<LookupElement>) {
+        elements.forEach { addElement(it) }
+    }
 }

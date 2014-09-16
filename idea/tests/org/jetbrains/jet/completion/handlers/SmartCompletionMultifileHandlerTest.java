@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,58 +16,37 @@
 
 package org.jetbrains.jet.completion.handlers;
 
+import com.intellij.codeInsight.completion.CompletionType;
 import org.jetbrains.jet.plugin.KotlinCompletionTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 
-public class CompletionMultifileHandlerTest extends KotlinCompletionTestCase {
-    public void testExtensionFunctionImport() throws Exception {
+public class SmartCompletionMultifileHandlerTest extends KotlinCompletionTestCase {
+    public void testImportExtensionFunction() throws Exception {
         doTest();
     }
 
-    public void testExtensionPropertyImport() throws Exception {
+    public void testImportExtensionProperty() throws Exception {
         doTest();
     }
 
-    public void testImportAlreadyImportedObject() throws Exception {
-        doTest();
-    }
-
-    public void testJetClassCompletionImport() throws Exception {
-        doTest();
-    }
-
-    public void testTopLevelFunctionImport() throws Exception {
-        doTest();
-    }
-
-    public void testTopLevelFunctionInQualifiedExpr() throws Exception {
-        doTest();
-    }
-
-    public void testTopLevelPropertyImport() throws Exception {
-        doTest();
-    }
-
-    public void testNoParenthesisInImports() throws Exception {
-        doTest();
-    }
-
-    public void testKeywordExtensionFunctionName() throws Exception {
-        doTest();
+    @Override
+    protected void setUp() throws Exception {
+        setType(CompletionType.SMART);
+        super.setUp();
     }
 
     public void doTest() throws Exception {
         String fileName = getTestName(false);
 
         configureByFiles(null, fileName + "-1.kt", fileName + "-2.kt");
-        complete(2);
+        complete(1);
         checkResultByFile(fileName + ".kt.after");
     }
 
     @Override
     protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/multifile/").getPath() + File.separator;
+        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/multifile/smart/").getPath() + File.separator;
     }
 }

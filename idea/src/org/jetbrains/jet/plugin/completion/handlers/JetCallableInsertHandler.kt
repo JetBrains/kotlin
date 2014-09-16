@@ -28,7 +28,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
@@ -36,6 +35,46 @@ import com.intellij.openapi.editor.Document
 import org.jetbrains.jet.lang.types.JetType
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.plugin.completion.DeclarationLookupObject
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+
+public abstract class JetCallableInsertHandler : BaseDeclarationInsertHandler() {
+    public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        super.handleInsert(context, item)
+
+        addImport(context, item)
+    }
+
+    private fun addImport(context : InsertionContext, item : LookupElement) {
+        PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
+
+        ApplicationManager.getApplication()?.runReadAction { () : Unit ->
+            val startOffset = context.getStartOffset()
+            val element = context.getFile().findElementAt(startOffset)
+
+            if (element == null) return@runReadAction
+
+            val file = context.getFile()
+            val o = item.getObject()
+            if (file is JetFile && o is DeclarationLookupObject) {
+                val descriptor = o.descriptor as? CallableDescriptor
+                if (descriptor != null) {
+                    if (PsiTreeUtil.getParentOfType(element, javaClass<JetQualifiedExpression>()) != null &&
+                        descriptor.getReceiverParameter() == null) {
+                        return@runReadAction
+                    }
+
+                    if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+                        ApplicationManager.getApplication()?.runWriteAction {
+                            ImportInsertHelper.addImportDirectiveIfNeeded(DescriptorUtils.getFqNameSafe(descriptor), file)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+public object JetPropertyInsertHandler : JetCallableInsertHandler()
 
 public enum class CaretPosition {
     IN_BRACKETS
@@ -44,7 +83,7 @@ public enum class CaretPosition {
 
 public data class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
-public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : BaseDeclarationInsertHandler() {
+public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : JetCallableInsertHandler() {
     {
         if (caretPosition == CaretPosition.AFTER_BRACKETS && lambdaInfo != null) {
             throw IllegalArgumentException("CaretPosition.AFTER_BRACKETS with lambdaInfo != null combination is not supported")
@@ -54,7 +93,10 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
-        PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
+        val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
+        psiDocumentManager.commitAllDocuments()
+        psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.getDocument())
+
         if (context.getCompletionChar() == '(') {
             context.setAddCompletionChar(false)
         }
@@ -62,13 +104,9 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
         val startOffset = context.getStartOffset()
         val element = context.getFile().findElementAt(startOffset)
 
-        if (element == null) return
-
-        if (shouldAddBrackets(element)) {
+        if (element != null && shouldAddBrackets(element)) {
             addBrackets(context, element)
         }
-
-        addImports(context, item)
     }
 
     private fun addBrackets(context : InsertionContext, offsetElement : PsiElement) {
@@ -145,36 +183,8 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
             return -1
         }
 
-        private open fun isInsertSpacesInOneLineFunctionEnabled(project : Project)
+        private fun isInsertSpacesInOneLineFunctionEnabled(project : Project)
                 = CodeStyleSettingsManager.getSettings(project)
                       .getCustomSettings(javaClass<JetCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
-
-        private open fun addImports(context : InsertionContext, item : LookupElement) {
-            ApplicationManager.getApplication()?.runReadAction { () : Unit ->
-                val startOffset = context.getStartOffset()
-                val element = context.getFile().findElementAt(startOffset)
-
-                if (element == null) return@runReadAction
-
-                val file = context.getFile()
-                val o = item.getObject()
-                if (file is JetFile && o is DeclarationLookupObject) {
-                    val descriptor = o.descriptor as? SimpleFunctionDescriptor
-                    if (descriptor != null) {
-                        if (PsiTreeUtil.getParentOfType(element, javaClass<JetQualifiedExpression>()) != null &&
-                                descriptor.getReceiverParameter() == null) {
-                            return@runReadAction
-                        }
-
-                        if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-                            ApplicationManager.getApplication()?.runWriteAction {
-                                val fqn = DescriptorUtils.getFqNameSafe(descriptor)
-                                ImportInsertHelper.addImportDirectiveIfNeeded(fqn, file)
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }

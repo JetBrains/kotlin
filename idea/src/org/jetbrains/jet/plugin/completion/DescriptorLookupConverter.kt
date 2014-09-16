@@ -33,6 +33,7 @@ import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.completion.handlers.BaseDeclarationInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.JetPropertyInsertHandler
 
 public object DescriptorLookupConverter {
     public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, declaration: PsiElement?): LookupElement {
@@ -99,6 +100,8 @@ public object DescriptorLookupConverter {
                     else -> JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER
                 }
             }
+
+            is PropertyDescriptor -> JetPropertyInsertHandler
 
             is ClassDescriptor -> JetClassInsertHandler
 

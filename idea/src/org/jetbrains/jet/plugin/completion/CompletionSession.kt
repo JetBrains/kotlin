@@ -31,7 +31,9 @@ import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
-import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.module.Module
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -44,7 +46,6 @@ fun CompletionSessionConfiguration(parameters: CompletionParameters) = Completio
 abstract class CompletionSessionBase(protected val configuration: CompletionSessionConfiguration,
                                      protected val parameters: CompletionParameters,
                                      resultSet: CompletionResultSet) {
-
     protected val position: PsiElement = parameters.getPosition()
     protected val jetReference: JetSimpleNameReference? = position.getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
     protected val resolveSession: ResolveSessionForBodies = (position.getContainingFile() as JetFile).getLazyResolveSession()
@@ -59,6 +60,14 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
+    protected var anythingAdded: Boolean = false
+
+    protected val project: Project = position.getProject()
+    protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project)
+    protected val module: Module? = ModuleUtilCore.findModuleForPsiElement(parameters.getOriginalFile())
+    protected val searchScope: GlobalSearchScope = if (module != null) GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module) else GlobalSearchScope.EMPTY_SCOPE
+
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (configuration.completeNonAccessibleDeclarations) return true
 
@@ -68,6 +77,46 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
         return true
     }
+
+    protected fun flushToResultSet() {
+        if (!collector.isEmpty) {
+            anythingAdded = true
+        }
+        collector.flushToResultSet(resultSet)
+    }
+
+    public fun complete(): Boolean {
+        doComplete()
+        flushToResultSet()
+        return anythingAdded
+    }
+
+    protected abstract fun doComplete()
+
+    protected fun shouldRunTopLevelCompletion(): Boolean {
+        if (!configuration.completeNonImportedDeclarations) return false
+
+        if (position.getNode()!!.getElementType() == JetTokens.IDENTIFIER) {
+            val parent = position.getParent()
+            if (parent is JetSimpleNameExpression && !JetPsiUtil.isSelectorInQualified(parent)) return true
+        }
+
+        return false
+    }
+
+    protected fun shouldRunExtensionsCompletion(): Boolean {
+        return configuration.completeNonImportedDeclarations || prefixMatcher.getPrefix().length >= 3
+    }
+
+    protected fun getKotlinTopLevelDeclarations(): Collection<DeclarationDescriptor> {
+        val filter = { (name: String) -> prefixMatcher.prefixMatches(name) }
+        return indicesHelper.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope) +
+                   indicesHelper.getTopLevelObjects(filter, resolveSession, searchScope)
+    }
+
+    protected fun getKotlinExtensions(): Collection<CallableDescriptor> {
+        return indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope)
+    }
 }
 
 class BasicCompletionSession(configuration: CompletionSessionConfiguration,
@@ -75,14 +124,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
-    private val collector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
-    private var anythingAdded = false
-
-    private val project = position.getProject()
-    private val indicesHelper = KotlinIndicesHelper(project)
-    private val searchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: GlobalSearchScope.EMPTY_SCOPE
-
-    public fun complete(): Boolean {
+    override fun doComplete() {
         assert(parameters.getCompletionType() == CompletionType.BASIC)
 
         if (!NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
@@ -111,16 +153,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         NamedParametersCompletion.complete(position, collector)
-
-        flushToResultSet()
-        return anythingAdded
-    }
-
-    private fun flushToResultSet() {
-        if (!collector.isEmpty) {
-            anythingAdded = true
-        }
-        collector.flushToResultSet(resultSet)
     }
 
     private fun addNonImported() {
@@ -137,11 +169,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         if (shouldRunTopLevelCompletion()) {
             TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
-            addKotlinTopLevelDeclarations()
+            collector.addDescriptorElements(getKotlinTopLevelDeclarations())
         }
 
         if (shouldRunExtensionsCompletion()) {
-            addKotlinExtensions()
+            collector.addDescriptorElements(getKotlinExtensions())
         }
     }
 
@@ -162,16 +194,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
     }
 
-    private fun addKotlinTopLevelDeclarations() {
-        val filter = { (name: String) -> prefixMatcher.prefixMatches(name) }
-        collector.addDescriptorElements(indicesHelper.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope))
-        collector.addDescriptorElements(indicesHelper.getTopLevelObjects(filter, resolveSession, searchScope))
-    }
-
-    private fun addKotlinExtensions() {
-        collector.addDescriptorElements(indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope))
-    }
-
     private fun shouldRunOnlyTypeCompletion(): Boolean {
         // Check that completion in the type annotation context and if there's a qualified
         // expression we are at first of it
@@ -184,21 +206,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         return false
     }
 
-    private fun shouldRunTopLevelCompletion(): Boolean {
-        if (!configuration.completeNonImportedDeclarations) return false
-
-        if (position.getNode()!!.getElementType() == JetTokens.IDENTIFIER) {
-            val parent = position.getParent()
-            if (parent is JetSimpleNameExpression && !JetPsiUtil.isSelectorInQualified(parent)) return true
-        }
-
-        return false
-    }
-
-    private fun shouldRunExtensionsCompletion(): Boolean {
-        return configuration.completeNonImportedDeclarations || prefixMatcher.getPrefix().length >= 3
-    }
-
     private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean = { true }) {
         val descriptors = TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!)
         collector.addDescriptorElements(descriptors.filter { filterCondition(it) })
@@ -207,11 +214,43 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
 class SmartCompletionSession(configuration: CompletionSessionConfiguration, parameters: CompletionParameters, resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
-    public fun complete() {
+
+    override fun doComplete() {
         if (jetReference != null) {
-            val descriptors = TipsManager.getReferenceVariants(jetReference.expression, bindingContext!!)
             val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile)
-            completion.buildLookupElements(descriptors)?.forEach { resultSet.addElement(it) }
+            val result = completion.execute()
+            if (result != null) {
+                collector.addElements(result.additionalItems)
+
+                val filter = result.declarationFilter
+                if (filter != null) {
+                    TipsManager.getReferenceVariants(jetReference.expression, bindingContext!!)
+                            .forEach { collector.addElements(filter(it)) }
+
+                    flushToResultSet()
+
+                    processNonImported { collector.addElements(filter(it)) }
+                }
+            }
+        }
+    }
+
+    private fun processNonImported(processor: (DeclarationDescriptor) -> Unit) {
+        val prefix = prefixMatcher.getPrefix()
+
+        // Try to avoid computing not-imported descriptors for empty prefix
+        if (prefix.isEmpty()) {
+            if (!configuration.completeNonImportedDeclarations) return
+
+            if (PsiTreeUtil.getParentOfType(jetReference!!.expression, javaClass<JetDotQualifiedExpression>()) == null) return
+        }
+
+        if (shouldRunTopLevelCompletion()) {
+            getKotlinTopLevelDeclarations().forEach(processor)
+        }
+
+        if (shouldRunExtensionsCompletion()) {
+            getKotlinExtensions().forEach(processor)
         }
     }
 }
