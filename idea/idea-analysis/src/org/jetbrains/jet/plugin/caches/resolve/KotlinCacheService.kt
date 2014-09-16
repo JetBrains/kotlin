@@ -100,11 +100,14 @@ public class KotlinCacheService(val project: Project) {
 
     private val syntheticFileCaches = object : SLRUCache<JetFile, KotlinResolveCache>(2, 3) {
         override fun createValue(file: JetFile?): KotlinResolveCache {
+            val targetPlatform = TargetPlatformDetector.getPlatform(file!!)
             return KotlinResolveCache(
                     project,
                     globalResolveSessionProvider(
-                            TargetPlatformDetector.getPlatform(file!!),
-                            syntheticFiles = listOf(file)
+                            targetPlatform,
+                            syntheticFiles = listOf(file),
+                            reuseDataFromCache = globalCachesPerPlatform[targetPlatform]!!.librariesCache,
+                            moduleFilter = { !it.isLibraryClasses() }
                     )
             )
         }
