@@ -5,5 +5,5 @@ package QUnit
  */
 
 native
-public fun ok(actual: Boolean, message: String): Unit = js.noImpl;
+public fun ok(actual: Boolean, message: String): Unit = noImpl;
 

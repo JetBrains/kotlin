@@ -23,4 +23,4 @@ public class JsTestsAsserter() : Asserter {
 }
 
 native("JsTests.assert")
-public fun assert(value: Boolean, message: String): Unit = js.noImpl
+public fun assert(value: Boolean, message: String): Unit = noImpl

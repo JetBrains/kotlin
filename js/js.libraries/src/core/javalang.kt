@@ -45,10 +45,10 @@ public trait Appendable {
 
 library
 public class StringBuilder() : Appendable {
-    override fun append(c: Char): StringBuilder = js.noImpl
-    override fun append(csq: CharSequence?): StringBuilder = js.noImpl
-    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder = js.noImpl
-    public fun append(obj: Any?): StringBuilder = js.noImpl
-    public fun reverse(): StringBuilder = js.noImpl
-    override fun toString(): String = js.noImpl
+    override fun append(c: Char): StringBuilder = noImpl
+    override fun append(csq: CharSequence?): StringBuilder = noImpl
+    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder = noImpl
+    public fun append(obj: Any?): StringBuilder = noImpl
+    public fun reverse(): StringBuilder = noImpl
+    override fun toString(): String = noImpl
 }

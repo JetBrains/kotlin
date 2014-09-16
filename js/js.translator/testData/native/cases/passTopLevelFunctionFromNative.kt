@@ -1,7 +1,7 @@
 package foo
 
 native
-fun nativeFun(i:Int, s:String): String = js.noImpl
+fun nativeFun(i:Int, s:String): String = noImpl
 
 fun bar(funRef: (Int, String) -> String): String = funRef(4, "boo")
 

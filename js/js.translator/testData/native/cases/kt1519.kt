@@ -2,12 +2,12 @@ package foo
 
 native
 class Wow() {
-    val x: Int = js.noImpl
-    val y: Int = js.noImpl
+    val x: Int = noImpl
+    val y: Int = noImpl
 }
 
 native
-fun Wow.sum(): Int = js.noImpl
+fun Wow.sum(): Int = noImpl
 
 fun Wow.dblSum(): Int {
     return 2 * sum()

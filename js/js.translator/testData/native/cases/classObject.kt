@@ -4,8 +4,8 @@ native
 class A(val c: Int) {
     native
     class object {
-        val g: Int = js.noImpl
-        val c: String = js.noImpl
+        val g: Int = noImpl
+        val c: String = noImpl
     }
 }
 
