@@ -3,7 +3,7 @@ package kotlin.js
 import java.util.*;
 
 native
-public val noImpl : Nothing = throw Exception()
+public val <T> noImpl: T = throw Exception()
 
 // Drop this after KT-2093 will be fixed and restore MutableMap.set in Maps.kt from MapsJVM.kt
 /** Provides [] access to maps */
@@ -17,8 +17,8 @@ public fun println(s : Any?) {}
 library("print")
 public fun print(s : Any?) {}
 //TODO: consistent parseInt
-native public fun parseInt(s: String, radix: Int = 10): Int = js.noImpl
+native public fun parseInt(s: String, radix: Int = 10): Int = noImpl
 library
-public fun safeParseInt(s : String) : Int? = js.noImpl
+public fun safeParseInt(s : String) : Int? = noImpl
 library
-public fun safeParseDouble(s : String) : Double? = js.noImpl
+public fun safeParseDouble(s : String) : Double? = noImpl
