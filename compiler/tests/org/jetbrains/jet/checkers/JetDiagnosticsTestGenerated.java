@@ -5667,6 +5667,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("noInlineAnnotation.kt")
+                public void testNoInlineAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonLocalReturns/noInlineAnnotation.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("noInlineLambda.kt")
                 public void testNoInlineLambda() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonLocalReturns/noInlineLambda.kt");
