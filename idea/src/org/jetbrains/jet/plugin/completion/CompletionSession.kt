@@ -148,6 +148,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             KeywordCompletion().complete(parameters, collector)
 
             if (completeReference && !shouldRunOnlyTypeCompletion()) {
+                flushToResultSet()
                 addNonImported()
             }
         }
@@ -156,17 +157,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun addNonImported() {
-        val prefix = prefixMatcher.getPrefix()
-
-        // Try to avoid computing not-imported descriptors for empty prefix
-        if (prefix.isEmpty()) {
-            if (!configuration.completeNonImportedDeclarations) return
-
-            if (PsiTreeUtil.getParentOfType(jetReference!!.expression, javaClass<JetDotQualifiedExpression>()) == null) return
-        }
-
-        flushToResultSet()
-
         if (shouldRunTopLevelCompletion()) {
             TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
             collector.addDescriptorElements(getKotlinTopLevelDeclarations())
@@ -236,15 +226,6 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     }
 
     private fun processNonImported(processor: (DeclarationDescriptor) -> Unit) {
-        val prefix = prefixMatcher.getPrefix()
-
-        // Try to avoid computing not-imported descriptors for empty prefix
-        if (prefix.isEmpty()) {
-            if (!configuration.completeNonImportedDeclarations) return
-
-            if (PsiTreeUtil.getParentOfType(jetReference!!.expression, javaClass<JetDotQualifiedExpression>()) == null) return
-        }
-
         if (shouldRunTopLevelCompletion()) {
             getKotlinTopLevelDeclarations().forEach(processor)
         }
