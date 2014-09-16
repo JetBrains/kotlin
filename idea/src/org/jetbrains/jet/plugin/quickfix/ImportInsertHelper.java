@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.references.JetReference;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 
 import java.util.List;
@@ -84,8 +85,9 @@ public class ImportInsertHelper {
 
                 if (!same) {
                     Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+                    assert document != null;
                     TextRange refRange = reference.getElement().getTextRange();
-                    document.replaceString(refRange.getStartOffset(), refRange.getEndOffset(), importFqn.asString());
+                    document.replaceString(refRange.getStartOffset(), refRange.getEndOffset(), DescriptorRenderer.SOURCE_CODE.renderFqName(importFqn));
                 }
                 return;
             }
