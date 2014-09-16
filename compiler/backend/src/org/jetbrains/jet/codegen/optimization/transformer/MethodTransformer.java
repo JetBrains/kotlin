@@ -21,11 +21,6 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.*;
 
 public abstract class MethodTransformer {
-    private final MethodTransformer delegate;
-
-    protected MethodTransformer(MethodTransformer delegate) {
-        this.delegate = delegate;
-    }
 
     protected static <V extends Value> Frame<V>[] runAnalyzer(
             @NotNull Analyzer<V> analyzer,
@@ -47,9 +42,5 @@ public abstract class MethodTransformer {
         return runAnalyzer(new Analyzer<V>(interpreter), internalClassName, node);
     }
 
-    public void transform(@NotNull String internalClassName, @NotNull MethodNode methodNode) {
-        if (delegate != null) {
-            delegate.transform(internalClassName, methodNode);
-        }
-    }
+    abstract public void transform(@NotNull String internalClassName, @NotNull MethodNode methodNode);
 }

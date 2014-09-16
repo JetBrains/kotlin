@@ -31,9 +31,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame;
 import java.util.*;
 
 public class RedundantBoxingMethodTransformer extends MethodTransformer {
-    public RedundantBoxingMethodTransformer(MethodTransformer methodTransformer) {
-        super(methodTransformer);
-    }
 
     @Override
     public void transform(@NotNull String internalClassName, @NotNull MethodNode node) {
@@ -55,8 +52,6 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
 
             adaptInstructionsForBoxedValues(node, valuesToOptimize);
         }
-
-        super.transform(internalClassName, node);
     }
 
     private static void interpretPopInstructionsForBoxedValues(

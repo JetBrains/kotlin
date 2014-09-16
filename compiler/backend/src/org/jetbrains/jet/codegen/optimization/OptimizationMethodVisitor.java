@@ -34,9 +34,9 @@ import java.util.List;
 
 public class OptimizationMethodVisitor extends MethodVisitor {
     private static final int MEMORY_LIMIT_BY_METHOD_MB = 50;
-    private static final MethodTransformer MAIN_METHOD_TRANSFORMER = new RedundantNullCheckMethodTransformer(
-            new RedundantBoxingMethodTransformer(null)
-    );
+    private static final MethodTransformer[] TRANSFORMERS = new MethodTransformer[]{
+            new RedundantNullCheckMethodTransformer(), new RedundantBoxingMethodTransformer()
+    };
 
     private final MethodNode methodNode;
     private final MethodVisitor delegate;
@@ -66,7 +66,9 @@ public class OptimizationMethodVisitor extends MethodVisitor {
         super.visitEnd();
 
         if (canBeAnalyzed(methodNode)) {
-            MAIN_METHOD_TRANSFORMER.transform("fake", methodNode);
+            for (MethodTransformer transformer : TRANSFORMERS) {
+                transformer.transform("fake", methodNode);
+            }
         }
 
         methodNode.accept(new EndIgnoringMethodVisitorDecorator(Opcodes.ASM5, delegate));
