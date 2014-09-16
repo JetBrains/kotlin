@@ -53,7 +53,6 @@ import org.jetbrains.jet.lang.psi.JetLabelReferenceExpression
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.lang.types.ErrorUtils
 import com.intellij.lang.ASTNode
 import com.intellij.util.containers.MultiMap
@@ -63,38 +62,30 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.jet.lang.psi.JetThisExpression
 import org.jetbrains.jet.lang.psi.JetStringTemplateEntryWithExpression
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Empty
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetMultiDeclaration
 import org.jetbrains.jet.lang.psi.JetFunction
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetWithExpressionInitializer
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.psi.JetMultiDeclarationEntry
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.JetClassObject
-import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.psi.JetTypeParameter
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.types.fqName
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetClassInitializer
-import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner
 import org.jetbrains.jet.lang.psi.doNotAnalyze
+import org.jetbrains.jet.lang.psi.JetReturnExpression
+import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier
 
@@ -115,9 +106,17 @@ public trait UnificationResult {
         override val status: Status get() = UNMATCHED
     }
 
-    public class Matched(val substitution: Map<UnifierParameter, JetExpression>): UnificationResult {
+    trait Matched: UnificationResult {
+        val substitution: Map<UnifierParameter, JetExpression>
         override val status: Status get() = MATCHED
     }
+
+    class StronglyMatched(override val substitution: Map<UnifierParameter, JetExpression>): Matched
+
+    class WeaklyMatched(
+            override val substitution: Map<UnifierParameter, JetExpression>,
+            val weakMatches: Map<JetElement, JetElement>
+    ): Matched
 
     val status: Status
     val matched: Boolean get() = status != UNMATCHED
@@ -129,7 +128,8 @@ public class UnifierParameter(
 )
 
 public class JetPsiUnifier(
-        parameters: Collection<UnifierParameter> = Collections.emptySet()
+        parameters: Collection<UnifierParameter> = Collections.emptySet(),
+        val allowWeakMatches: Boolean = false
 ) {
     class object {
         val DEFAULT = JetPsiUnifier()
@@ -141,6 +141,7 @@ public class JetPsiUnifier(
     ) {
         val substitution = HashMap<UnifierParameter, JetExpression>()
         val declarationPatternsToTargets = MultiMap<DeclarationDescriptor, DeclarationDescriptor>()
+        val weakMatches = HashMap<JetElement, JetElement>()
         var checkEquivalence: Boolean = false
 
         private fun matchDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
@@ -720,6 +721,35 @@ public class JetPsiUnifier(
         private fun ASTNode.getChildrenRange(): JetPsiRange =
                 getChildren(null).map { it.getPsi() }.filterNotNull().toRange()
 
+        private fun PsiElement.unwrapWeakly(): JetElement? {
+            return when {
+                this is JetReturnExpression -> getReturnedExpression()
+                this is JetProperty -> getInitializer()
+                JetPsiUtil.isOrdinaryAssignment(this) -> (this as JetBinaryExpression).getRight()
+                this is JetExpression && this !is JetDeclaration -> this
+                else -> null
+            }
+        }
+
+        private fun doUnifyWeakly(
+                targetElement: JetElement,
+                patternElement: JetElement
+        ): Status {
+            if (!allowWeakMatches) return UNMATCHED
+
+            val targetElementUnwrapped = targetElement.unwrapWeakly()
+            val patternElementUnwrapped = patternElement.unwrapWeakly()
+            if (targetElementUnwrapped == null || patternElementUnwrapped == null) return UNMATCHED
+            if (targetElementUnwrapped == targetElement && patternElementUnwrapped == patternElement) return UNMATCHED
+
+            val status = doUnify(targetElementUnwrapped, patternElementUnwrapped)
+            if (status == MATCHED && allowWeakMatches) {
+                weakMatches[patternElement] = targetElement
+            }
+
+            return status
+        }
+
         fun doUnify(
                 targetElement: PsiElement?,
                 patternElement: PsiElement?
@@ -761,9 +791,16 @@ public class JetPsiUnifier(
             if (targetNode == null || patternNode == null) return UNMATCHED
 
             val resolvedStatus = matchResolvedInfo(targetElementUnwrapped, patternElementUnwrapped)
-            if (resolvedStatus != null) return resolvedStatus
+            if (resolvedStatus == MATCHED) return resolvedStatus
+
+            if (targetElementUnwrapped is JetElement && patternElementUnwrapped is JetElement) {
+                val weakStatus = doUnifyWeakly(targetElementUnwrapped, patternElementUnwrapped)
+                if (weakStatus != UNMATCHED) return weakStatus
+            }
 
             if (targetNode.getElementType() != patternNode.getElementType()) return UNMATCHED
+
+            if (resolvedStatus != null) return resolvedStatus
 
             val targetChildren = targetNode.getChildrenRange()
             val patternChildren = patternNode.getChildrenRange()
@@ -798,7 +835,7 @@ public class JetPsiUnifier(
                 substitution.size != descriptorToParameter.size ->
                     Unmatched
                 status == MATCHED ->
-                    Matched(substitution)
+                    if (weakMatches.isEmpty()) StronglyMatched(substitution) else WeaklyMatched(substitution, weakMatches)
                 else ->
                     Unmatched
             }
