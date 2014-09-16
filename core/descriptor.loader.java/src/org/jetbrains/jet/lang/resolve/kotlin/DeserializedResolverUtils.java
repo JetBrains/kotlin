@@ -77,7 +77,7 @@ public class DeserializedResolverUtils {
     public static ClassId getClassId(@NotNull ClassDescriptor descriptor) {
         DeclarationDescriptor owner = descriptor.getContainingDeclaration();
         if (owner instanceof PackageFragmentDescriptor) {
-            return new ClassId(((PackageFragmentDescriptor) owner).getFqName(), FqNameUnsafe.topLevel(descriptor.getName()));
+            return new ClassId(((PackageFragmentDescriptor) owner).getFqName(), descriptor.getName());
         }
         return getClassId((ClassDescriptor) owner).createNestedClassId(descriptor.getName());
     }

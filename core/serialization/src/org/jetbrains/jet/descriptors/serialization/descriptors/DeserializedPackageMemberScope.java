@@ -65,7 +65,7 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
     @Nullable
     @Override
     protected ClassDescriptor getClassDescriptor(@NotNull Name name) {
-        return ContextPackage.deserializeClass(context, new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
+        return ContextPackage.deserializeClass(context, new ClassId(packageFqName, name));
     }
 
     @Override

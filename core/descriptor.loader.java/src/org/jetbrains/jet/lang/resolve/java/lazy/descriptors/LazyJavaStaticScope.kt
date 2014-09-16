@@ -93,7 +93,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
         name ->
-        val classId = ClassId(packageFragment.fqName, FqNameUnsafe.topLevel(SpecialNames.safeIdentifier(name)))
+        val classId = ClassId(packageFragment.fqName, SpecialNames.safeIdentifier(name))
         val (jClass, kClass) = c.findClassInJava(classId)
         if (kClass != null)
             kClass

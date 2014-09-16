@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public final class PackageClassUtils {
@@ -50,7 +49,7 @@ public final class PackageClassUtils {
 
     @NotNull
     public static ClassId getPackageClassId(@NotNull FqName packageFQN) {
-        return new ClassId(packageFQN, FqNameUnsafe.topLevel(Name.identifier(getPackageClassName(packageFQN))));
+        return new ClassId(packageFQN, Name.identifier(getPackageClassName(packageFQN)));
     }
 
     @NotNull

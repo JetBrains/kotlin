@@ -25,7 +25,7 @@ public final class ClassId {
 
     @NotNull
     public static ClassId topLevel(@NotNull FqName topLevelFqName) {
-        return new ClassId(topLevelFqName.parent(), FqNameUnsafe.topLevel(topLevelFqName.shortName()));
+        return new ClassId(topLevelFqName.parent(), topLevelFqName.shortName());
     }
 
     private final FqName packageFqName;
