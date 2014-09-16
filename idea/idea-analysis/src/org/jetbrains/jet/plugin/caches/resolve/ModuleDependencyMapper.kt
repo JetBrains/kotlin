@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.analyzer.ResolverForProject
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.analyzer.EmptyResolverForProject
+import org.jetbrains.jet.context.GlobalContextImpl
 
 fun createModuleResolverProvider(
         project: Project,
@@ -45,7 +46,9 @@ fun createModuleResolverProvider(
 
     val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
 
-    val globalContext = (delegateProvider as? ModuleResolverProviderImpl)?.globalContext ?: GlobalContext()
+    val globalContext =
+            (delegateProvider as? ModuleResolverProviderImpl)?.globalContext?.withCompositeExceptionTrackerUnderSameLock()
+            ?: GlobalContext()
 
     val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
     val syntheticFilesModules = syntheticFilesByModule.keySet()
@@ -131,7 +134,7 @@ object EmptyModuleResolverProvider: ModuleResolverProvider {
 class ModuleResolverProviderImpl(
         override val resolverForProject: ResolverForProject<IdeaModuleInfo, ResolverForModule>,
         private val bodiesResolveByModule: Map<IdeaModuleInfo, ResolveSessionForBodies>,
-        val globalContext: GlobalContext,
+        val globalContext: GlobalContextImpl,
         val delegateProvider: ModuleResolverProvider = EmptyModuleResolverProvider
 ): ModuleResolverProvider {
     override val exceptionTracker: ExceptionTracker = globalContext.exceptionTracker
