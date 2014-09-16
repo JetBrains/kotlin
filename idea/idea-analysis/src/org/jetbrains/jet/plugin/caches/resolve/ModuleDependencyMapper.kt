@@ -48,7 +48,8 @@ fun createModuleResolverProvider(
     val globalContext = (delegateProvider as? ModuleResolverProviderImpl)?.globalContext ?: GlobalContext()
 
     val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
-    allModuleInfos.addAll(syntheticFilesByModule.keySet())
+    val syntheticFilesModules = syntheticFilesByModule.keySet()
+    allModuleInfos.addAll(syntheticFilesModules)
 
     val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
 

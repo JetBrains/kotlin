@@ -65,9 +65,9 @@ public class KotlinCacheService(val project: Project) {
     fun globalResolveSessionProvider(
             platform: TargetPlatform,
             dependencies: Collection<Any>,
+            moduleFilter: (IdeaModuleInfo) -> Boolean,
             reuseDataFromCache: KotlinResolveCache? = null,
-            syntheticFiles: Collection<JetFile> = listOf(),
-            moduleFilter: (IdeaModuleInfo) -> Boolean = { true }
+            syntheticFiles: Collection<JetFile> = listOf()
     ): () -> CachedValueProvider.Result<ModuleResolverProvider> = {
         val analyzerFacade = AnalyzerFacadeProvider.getAnalyzerFacade(platform)
         val delegateResolverProvider = reuseDataFromCache?.moduleResolverProvider ?: EmptyModuleResolverProvider
@@ -94,20 +94,43 @@ public class KotlinCacheService(val project: Project) {
     }
 
     private fun getGlobalCache(platform: TargetPlatform) = globalCachesPerPlatform[platform]!!.modulesCache
+    private fun getGlobalLibrariesCache(platform: TargetPlatform) = globalCachesPerPlatform[platform]!!.librariesCache
 
     private val syntheticFileCaches = object : SLRUCache<JetFile, KotlinResolveCache>(2, 3) {
         override fun createValue(file: JetFile?): KotlinResolveCache {
             val targetPlatform = TargetPlatformDetector.getPlatform(file!!)
-            return KotlinResolveCache(
-                    project,
-                    globalResolveSessionProvider(
-                            targetPlatform,
-                            syntheticFiles = listOf(file),
-                            reuseDataFromCache = globalCachesPerPlatform[targetPlatform]!!.librariesCache,
-                            moduleFilter = { !it.isLibraryClasses() },
-                            dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+            val syntheticFileModule = file.getModuleInfo()
+            return when {
+                syntheticFileModule is ModuleSourceInfo -> {
+                    val dependentModules = syntheticFileModule.getDependentModules()
+                    KotlinResolveCache(
+                            project,
+                            globalResolveSessionProvider(
+                                    targetPlatform,
+                                    syntheticFiles = listOf(file),
+                                    reuseDataFromCache = getGlobalCache(targetPlatform),
+                                    moduleFilter = { it in dependentModules },
+                                    dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                            )
                     )
-            )
+                }
+                else -> {
+                    if (syntheticFileModule.isLibraryClasses()) {
+                        LOG.error("Creating cache with synthetic file ($file) in classes of library $syntheticFileModule")
+                    }
+                    KotlinResolveCache(
+                            project,
+                            globalResolveSessionProvider(
+                                    targetPlatform,
+                                    syntheticFiles = listOf(file),
+                                    reuseDataFromCache = getGlobalLibrariesCache(targetPlatform),
+                                    moduleFilter = { it == syntheticFileModule },
+                                    dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                            )
+                    )
+                }
+            }
+
         }
     }
 
