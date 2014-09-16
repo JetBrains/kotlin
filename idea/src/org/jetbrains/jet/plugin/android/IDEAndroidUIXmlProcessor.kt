@@ -31,14 +31,14 @@ class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project
     override var androidAppPackage: String = ""
         get() = resourceManager.readManifest()._package
 
-    override val resourceManager: AndroidResourceManager = IDEAndroidResourceManager(project, searchPath)
+    override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(project, searchPath)
 
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
-        if (!ApplicationManager.getApplication()!!.isUnitTestMode()) (resourceManager as IDEAndroidResourceManager).resetAttributeCache()
+        resourceManager.resetAttributeCache()
         file.accept(AndroidXmlVisitor(resourceManager, { id, wClass, valueElement ->
             ids.add(AndroidWidget(id, wClass))
-            if (!ApplicationManager.getApplication()!!.isUnitTestMode()) (resourceManager as IDEAndroidResourceManager).addMapping(id, valueElement)
+            resourceManager.addMapping(id, valueElement)
         }))
         return produceKotlinProperties(KotlinStringWriter(), ids).toString()
     }

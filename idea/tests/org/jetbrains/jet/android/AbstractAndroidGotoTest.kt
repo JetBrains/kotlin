@@ -21,6 +21,8 @@ import com.android.SdkConstants
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import kotlin.test.fail
+import kotlin.test.assertEquals
+import org.jetbrains.jet.lang.psi.JetProperty
 
 public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
 
@@ -41,11 +43,13 @@ public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
     override fun requireRecentSdk() = true
 
     public fun doTest(path: String) {
-        myFixture!!.copyDirectoryToProject(getResDir()!!, "res")
-        myFixture!!.configureByFile(path + getTestName(true) + ".kt");
+        val f = myFixture!!
+        f.copyDirectoryToProject(getResDir()!!, "res")
+        f.configureByFile(path + getTestName(true) + ".kt");
 
-        val asf = GotoDeclarationAction.findTargetElement(myFixture!!.getProject(), myFixture!!.getEditor(), myFixture!!.getCaretOffset())
-        myFixture!!.getEditor().toString()
-        fail("this test doesn't work yet")
+        val resolved = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
+        if (f.getElementAtCaret() !is JetProperty) fail("resolved element must be a property, not a ${f.getElementAtCaret().javaClass}")
+        assertEquals("\"@+id/${(f.getElementAtCaret() as JetProperty).getName()}\"", resolved?.getText())
+
     }
 }

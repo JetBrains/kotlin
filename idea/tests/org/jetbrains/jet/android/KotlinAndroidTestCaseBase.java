@@ -31,6 +31,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -57,6 +58,7 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
     protected CodeInsightTestFixture myFixture;
 
     protected Sdk androidSdk;
+    protected VirtualFile androidJar;
 
     protected KotlinAndroidTestCaseBase() {
         IdeaTestCase.initPlatformPrefix();
@@ -148,16 +150,15 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
         SdkModificator sdkModificator = sdk.getSdkModificator();
         sdkModificator.setHomePath(sdkPath);
 
-        VirtualFile androidJar;
         if (platformDir.equals(getDefaultPlatformDir())) {
             // Compatibility: the unit tests were using android.jar outside the sdk1.5 install;
             // we need to use that one, rather than the real one in sdk1.5, in order for the
             // tests to pass. Longer term, we should switch the unit tests over to all using
             // a valid SDK.
             String androidJarPath = sdkPath + "/../android.jar!/";
-            androidJar = JarFileSystem.getInstance().findFileByPath(androidJarPath);
+            androidJar = VirtualFileManager.getInstance().findFileByUrl("jar://" + androidJarPath);
         } else {
-            androidJar = LocalFileSystem.getInstance().findFileByPath(sdkPath + "/platforms/" + platformDir + "/android.jar");
+            androidJar = VirtualFileManager.getInstance().findFileByUrl("jar://" + sdkPath + "/platforms/" + platformDir + "/android.jar!/");
         }
         sdkModificator.addRoot(androidJar, OrderRootType.CLASSES);
 
@@ -187,11 +188,6 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
         }
         assertNotNull(target);
         data.setBuildTarget(target);
-        data.setJavaSdk(PluginTestCaseBase.fullJdk());
-        // Srsly, WTF? Why do i have to manually add jdk classes to android sdk roots? Even with setJavaSdk(PluginTestCaseBase.fullJdk())
-        for (VirtualFile f : PluginTestCaseBase.fullJdk().getRootProvider().getFiles(OrderRootType.CLASSES)) {
-            sdkModificator.addRoot(f, OrderRootType.CLASSES);
-        }
         sdkModificator.setSdkAdditionalData(data);
         sdkModificator.commitChanges();
         return sdk;
