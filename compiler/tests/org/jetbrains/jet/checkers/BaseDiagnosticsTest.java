@@ -248,7 +248,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                 });
     }
 
-    protected static class TestModule {
+    protected static class TestModule implements Comparable<TestModule> {
         private final String name;
         private final List<TestModule> dependencies = new ArrayList<TestModule>();
 
@@ -264,6 +264,11 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
         @NotNull
         public List<TestModule> getDependencies() {
             return dependencies;
+        }
+
+        @Override
+        public int compareTo(@NotNull TestModule module) {
+            return name.compareTo(module.getName());
         }
     }
 

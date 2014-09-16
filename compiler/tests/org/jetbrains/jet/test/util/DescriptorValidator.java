@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.test.util;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,18 +56,29 @@ public class DescriptorValidator {
     }
 
     public static class ValidationVisitor implements DeclarationDescriptorVisitor<Boolean, DiagnosticCollector> {
-        public static final ValidationVisitor FORBID_ERROR_TYPES = new ValidationVisitor(false);
-        public static final ValidationVisitor ALLOW_ERROR_TYPES = new ValidationVisitor(true);
+        public static final ValidationVisitor FORBID_ERROR_TYPES = new ValidationVisitor(
+                false, Predicates.<DeclarationDescriptor>alwaysTrue());
+        public static final ValidationVisitor ALLOW_ERROR_TYPES = new ValidationVisitor(
+                true, Predicates.<DeclarationDescriptor>alwaysTrue());
 
         private final boolean allowErrorTypes;
+        private final Predicate<DeclarationDescriptor> recursiveFilter;
 
-        private ValidationVisitor(boolean allowErrorTypes) {
+        private ValidationVisitor(boolean allowErrorTypes, @NotNull Predicate<DeclarationDescriptor> recursiveFilter) {
             this.allowErrorTypes = allowErrorTypes;
+            this.recursiveFilter = recursiveFilter;
         }
 
-        private static void validateScope(@NotNull JetScope scope, @NotNull DiagnosticCollector collector) {
+        @NotNull
+        public ValidationVisitor withStepIntoFilter(@NotNull Predicate<DeclarationDescriptor> filter) {
+            return new ValidationVisitor(allowErrorTypes, filter);
+        }
+
+        private void validateScope(@NotNull JetScope scope, @NotNull DiagnosticCollector collector) {
             for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
-                descriptor.accept(new ScopeValidatorVisitor(collector), scope);
+                if (recursiveFilter.apply(descriptor)) {
+                    descriptor.accept(new ScopeValidatorVisitor(collector), scope);
+                }
             }
         }
 
@@ -173,9 +186,9 @@ public class DescriptorValidator {
         }
 
         @Override
-        public Boolean visitPackageViewDescriptor(
-                PackageViewDescriptor descriptor, DiagnosticCollector collector
-        ) {
+        public Boolean visitPackageViewDescriptor(PackageViewDescriptor descriptor, DiagnosticCollector collector) {
+            if (!recursiveFilter.apply(descriptor)) return false;
+
             validateScope(descriptor.getMemberScope(), collector);
             return true;
         }
@@ -259,9 +272,9 @@ public class DescriptorValidator {
             visitFunctionDescriptor(constructorDescriptor, collector);
 
             assertEqualTypes(constructorDescriptor, collector,
-                         "return type",
-                         constructorDescriptor.getContainingDeclaration().getDefaultType(),
-                         constructorDescriptor.getReturnType());
+                             "return type",
+                             constructorDescriptor.getContainingDeclaration().getDefaultType(),
+                             constructorDescriptor.getReturnType());
 
             return true;
         }

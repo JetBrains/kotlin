@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.BaseDiagnosticsTest;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -55,13 +56,14 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends BaseDiagnostics
         final Set<Name> names = LazyResolveTestUtil.getTopLevelPackagesFromFileList(jetFiles);
         validateAndCompareDescriptors(
                 expected, actual,
-                RECURSIVE.filterRecursion(new Predicate<FqName>() {
+                RECURSIVE.filterRecursion(new Predicate<DeclarationDescriptor>() {
                     @Override
-                    public boolean apply(FqName fqName) {
-                        if (fqName.isRoot()) return true;
-                        if (fqName.parent().isRoot()) {
-                            return names.contains(fqName.shortName());
+                    public boolean apply(DeclarationDescriptor descriptor) {
+                        if (descriptor instanceof PackageViewDescriptor) {
+                            FqName fqName = ((PackageViewDescriptor) descriptor).getFqName();
+                            return fqName.isRoot() || !fqName.parent().isRoot() || names.contains(fqName.shortName());
                         }
+
                         return true;
                     }
                 }),

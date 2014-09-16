@@ -26,6 +26,7 @@ import com.intellij.util.Consumer;
 import kotlin.Function0;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -77,10 +78,14 @@ public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTes
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
                 packageViewDescriptor,
                 RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
-                        new Predicate<FqName>() {
+                        new Predicate<DeclarationDescriptor>() {
                             @Override
-                            public boolean apply(FqName fqName) {
-                                return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
+                            public boolean apply(DeclarationDescriptor descriptor) {
+                                if (descriptor instanceof PackageViewDescriptor) {
+                                    return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+                                            .equals(((PackageViewDescriptor) descriptor).getFqName());
+                                }
+                                return true;
                             }
                         }
                 )

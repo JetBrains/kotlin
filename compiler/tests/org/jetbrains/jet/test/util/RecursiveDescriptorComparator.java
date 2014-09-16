@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -51,31 +52,36 @@ public class RecursiveDescriptorComparator {
             .setVerbose(true).build();
 
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, 
-                                                                                         Predicates.<FqName>alwaysTrue(),
+                                                                                         Predicates.<DeclarationDescriptor>alwaysTrue(),
                                                                                          FORBID_ERROR_TYPES, DEFAULT_RENDERER);
     public static final Configuration RECURSIVE = new Configuration(false, false, true, 
-                                                                    Predicates.<FqName>alwaysTrue(),
+                                                                    Predicates.<DeclarationDescriptor>alwaysTrue(),
                                                                     FORBID_ERROR_TYPES, DEFAULT_RENDERER);
 
     public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, 
-                                                                        Predicates.<FqName>alwaysTrue(),
+                                                                        Predicates.<DeclarationDescriptor>alwaysTrue(),
                                                                         FORBID_ERROR_TYPES, DEFAULT_RENDERER);
 
     private static final ImmutableSet<String> KOTLIN_ANY_METHOD_NAMES = ImmutableSet.of("equals", "hashCode", "toString");
 
     private final Configuration conf;
 
-    private RecursiveDescriptorComparator(@NotNull Configuration conf) {
+    public RecursiveDescriptorComparator(@NotNull Configuration conf) {
         this.conf = conf;
     }
 
-    private String serializeRecursively(@NotNull DeclarationDescriptor declarationDescriptor) {
+    public String serializeRecursively(@NotNull DeclarationDescriptor declarationDescriptor) {
         StringBuilder result = new StringBuilder();
-        appendDeclarationRecursively(declarationDescriptor, new Printer(result, 1), true);
+        appendDeclarationRecursively(declarationDescriptor, DescriptorUtils.getContainingModule(declarationDescriptor), new Printer(result, 1), true);
         return result.toString();
     }
 
-    private void appendDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull Printer printer, boolean topLevel) {
+    private void appendDeclarationRecursively(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull ModuleDescriptor module,
+            @NotNull Printer printer,
+            boolean topLevel
+    ) {
         if ((descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) && !topLevel) {
             printer.println();
         }
@@ -94,20 +100,23 @@ public class RecursiveDescriptorComparator {
 
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor klass = (ClassDescriptor) descriptor;
-                appendSubDescriptors(klass.getDefaultType().getMemberScope(), getConstructorsAndClassObject(klass), printer);
+                appendSubDescriptors(descriptor, module,
+                                     klass.getDefaultType().getMemberScope(), getConstructorsAndClassObject(klass), printer);
                 JetScope staticScope = klass.getStaticScope();
                 if (!staticScope.getAllDescriptors().isEmpty()) {
                     printer.println();
                     printer.println("// Static members");
-                    appendSubDescriptors(staticScope, Collections.<DeclarationDescriptor>emptyList(), printer);
+                    appendSubDescriptors(descriptor, module, staticScope, Collections.<DeclarationDescriptor>emptyList(), printer);
                 }
             }
             else if (descriptor instanceof PackageFragmentDescriptor) {
-                appendSubDescriptors(((PackageFragmentDescriptor) descriptor).getMemberScope(),
+                appendSubDescriptors(descriptor, module,
+                                     ((PackageFragmentDescriptor) descriptor).getMemberScope(),
                                      Collections.<DeclarationDescriptor>emptyList(), printer);
             }
             else if (descriptor instanceof PackageViewDescriptor) {
-                appendSubDescriptors(((PackageViewDescriptor) descriptor).getMemberScope(),
+                appendSubDescriptors(descriptor, module,
+                                     ((PackageViewDescriptor) descriptor).getMemberScope(),
                                      Collections.<DeclarationDescriptor>emptyList(), printer);
             }
 
@@ -145,20 +154,24 @@ public class RecursiveDescriptorComparator {
     }
 
     private boolean shouldSkip(@NotNull DeclarationDescriptor subDescriptor) {
-        return subDescriptor.getContainingDeclaration() instanceof ClassDescriptor
-                && subDescriptor instanceof FunctionDescriptor
-                && KOTLIN_ANY_METHOD_NAMES.contains(subDescriptor.getName().asString())
-                && !conf.includeMethodsOfKotlinAny
-            ||
-                subDescriptor instanceof PackageViewDescriptor
-                && !conf.recurseIntoPackage.apply(((PackageViewDescriptor) subDescriptor).getFqName());
+        boolean isFunctionFromAny = subDescriptor.getContainingDeclaration() instanceof ClassDescriptor
+                                    && subDescriptor instanceof FunctionDescriptor
+                                    && KOTLIN_ANY_METHOD_NAMES.contains(subDescriptor.getName().asString());
+        return (isFunctionFromAny && !conf.includeMethodsOfKotlinAny) || !conf.recursiveFilter.apply(subDescriptor);
     }
 
     private void appendSubDescriptors(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull ModuleDescriptor module,
             @NotNull JetScope memberScope,
             @NotNull Collection<DeclarationDescriptor> extraSubDescriptors,
             @NotNull Printer printer
     ) {
+        if (!module.equals(DescriptorUtils.getContainingModule(descriptor))) {
+            printer.println(String.format("// -- Module: %s --", DescriptorUtils.getContainingModule(descriptor).getName()));
+            return;
+        }
+
         List<DeclarationDescriptor> subDescriptors = Lists.newArrayList();
 
         subDescriptors.addAll(memberScope.getAllDescriptors());
@@ -168,7 +181,7 @@ public class RecursiveDescriptorComparator {
 
         for (DeclarationDescriptor subDescriptor : subDescriptors) {
             if (!shouldSkip(subDescriptor)) {
-                appendDeclarationRecursively(subDescriptor, printer, false);
+                appendDeclarationRecursively(subDescriptor, module, printer, false);
             }
         }
     }
@@ -239,7 +252,7 @@ public class RecursiveDescriptorComparator {
         private final boolean checkPrimaryConstructors;
         private final boolean checkPropertyAccessors;
         private final boolean includeMethodsOfKotlinAny;
-        private final Predicate<FqName> recurseIntoPackage;
+        private final Predicate<DeclarationDescriptor> recursiveFilter;
         private final DescriptorRenderer renderer;
 
         private final DescriptorValidator.ValidationVisitor validationStrategy;
@@ -248,45 +261,45 @@ public class RecursiveDescriptorComparator {
                 boolean checkPrimaryConstructors,
                 boolean checkPropertyAccessors,
                 boolean includeMethodsOfKotlinAny,
-                Predicate<FqName> recurseIntoPackage,
+                Predicate<DeclarationDescriptor> recursiveFilter,
                 DescriptorValidator.ValidationVisitor validationStrategy,
                 DescriptorRenderer renderer
         ) {
             this.checkPrimaryConstructors = checkPrimaryConstructors;
             this.checkPropertyAccessors = checkPropertyAccessors;
             this.includeMethodsOfKotlinAny = includeMethodsOfKotlinAny;
-            this.recurseIntoPackage = recurseIntoPackage;
-            this.validationStrategy = validationStrategy;
+            this.recursiveFilter = recursiveFilter;
+            this.validationStrategy = validationStrategy.withStepIntoFilter(recursiveFilter);
             this.renderer = renderer;
         }
 
-        public Configuration filterRecursion(@NotNull Predicate<FqName> recurseIntoPackage) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
+        public Configuration filterRecursion(@NotNull Predicate<DeclarationDescriptor> stepIntoFilter) {
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, stepIntoFilter,
                                      validationStrategy, renderer);
         }
 
         public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
                                      validationStrategy, renderer);
         }
 
         public Configuration checkPropertyAccessors(boolean checkPropertyAccessors) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
                                      validationStrategy, renderer);
         }
 
         public Configuration includeMethodsOfKotlinAny(boolean includeMethodsOfKotlinAny) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
                                      validationStrategy, renderer);
         }
 
         public Configuration withValidationStrategy(@NotNull DescriptorValidator.ValidationVisitor validationStrategy) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
                                      validationStrategy, renderer);
         }
 
         public Configuration withRenderer(@NotNull DescriptorRenderer renderer) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recurseIntoPackage,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
                                      validationStrategy, renderer);
         }
     }

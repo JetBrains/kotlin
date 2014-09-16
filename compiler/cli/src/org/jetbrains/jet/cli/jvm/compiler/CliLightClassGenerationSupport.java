@@ -98,6 +98,12 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @TestOnly
+    @Nullable
+    public ModuleDescriptorImpl getLightClassModule() {
+        return module;
+    }
+
+    @TestOnly
     public void setModule(@NotNull ModuleDescriptorImpl module) {
         assert this.module == null : "module already configured: " + module;
         this.module = module;
