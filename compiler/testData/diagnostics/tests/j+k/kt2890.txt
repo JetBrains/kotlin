@@ -1,0 +1,15 @@
+package
+
+package _03_collections {
+    internal fun test(): kotlin.Unit
+
+    public open class CollectionTest {
+        public constructor CollectionTest()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public open fun add(/*0*/ ints: kotlin.List<kotlin.Int>?): kotlin.Unit
+    }
+}

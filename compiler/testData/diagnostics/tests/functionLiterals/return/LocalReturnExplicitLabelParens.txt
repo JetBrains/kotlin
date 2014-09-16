@@ -1,0 +1,5 @@
+package
+
+internal fun </*0*/ T> run(/*0*/ f: () -> T): T
+internal fun test(): kotlin.Unit
+internal fun test1(): kotlin.Unit

@@ -1,0 +1,43 @@
+package
+
+internal final class Outer : Trait {
+    public constructor Outer()
+    internal open override /*1*/ /*fake_override*/ fun bar(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal final inner class Inner {
+        public constructor Inner()
+        internal final val s: kotlin.Int
+        internal final val t: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Nested {
+        public constructor Nested()
+        internal final val s: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+        internal final val t: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal final inner class NestedInner {
+            public constructor NestedInner()
+            internal final val s: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+            internal final val t: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+internal trait Trait {
+    internal open fun bar(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,0 +1,14 @@
+package
+
+package kt657 {
+    internal fun cond1(): kotlin.Boolean
+    internal fun cond2(): kotlin.Boolean
+    internal fun foo(): kotlin.Int
+
+    internal final class Pair</*0*/ A, /*1*/ B> {
+        public constructor Pair</*0*/ A, /*1*/ B>(/*0*/ a: A, /*1*/ b: B)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

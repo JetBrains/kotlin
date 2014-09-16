@@ -1,0 +1,4 @@
+package
+
+internal val closure: () -> kotlin.Unit
+internal fun f(): kotlin.Unit

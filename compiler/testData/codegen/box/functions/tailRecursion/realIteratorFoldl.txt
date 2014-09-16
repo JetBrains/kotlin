@@ -1,0 +1,4 @@
+package
+
+internal fun box(): kotlin.String
+kotlin.tailRecursive() internal fun </*0*/ T, /*1*/ A> kotlin.Iterator<T>.foldl(/*0*/ acc: A, /*1*/ foldFunction: (T, A) -> A): A

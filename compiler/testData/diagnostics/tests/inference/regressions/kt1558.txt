@@ -1,0 +1,7 @@
+package
+
+package j {
+    internal fun testArrays(/*0*/ ci: kotlin.List<kotlin.Int?>, /*1*/ cii: kotlin.List<kotlin.Int?>?): kotlin.Unit
+    internal fun </*0*/ T : kotlin.Any> T?.sure(): T
+    internal fun </*0*/ E> kotlin.List<kotlin.Any?>.toArray(/*0*/ ar: kotlin.Array<E>): kotlin.Array<E>
+}

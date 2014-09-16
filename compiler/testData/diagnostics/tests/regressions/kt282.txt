@@ -1,0 +1,13 @@
+package
+
+internal fun f(): kotlin.Unit
+internal fun kotlin.Int?.contains(/*0*/ x: kotlin.Int): kotlin.Boolean
+internal fun Set?.plus(/*0*/ x: kotlin.Int): kotlin.Int
+
+internal final class Set {
+    public constructor Set()
+    internal final fun contains(/*0*/ x: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,0 +1,27 @@
+package
+
+internal val </*0*/ T> topProp: kotlin.Int = 12
+
+internal final annotation class A1 : kotlin.Annotation {
+    public constructor A1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final annotation class A2 : kotlin.Annotation {
+    public constructor A2(/*0*/ some: kotlin.Int = ...)
+    internal final val some: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class SomeClass {
+    public constructor SomeClass()
+    internal final val </*0*/ T> field: kotlin.Int = 12
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

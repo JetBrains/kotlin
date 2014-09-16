@@ -1,0 +1,19 @@
+package
+
+package kt352 {
+    internal val f: (kotlin.Any) -> kotlin.Unit
+    internal val g: () -> kotlin.Unit
+    internal val h: () -> kotlin.Unit
+    internal val testIt: (kotlin.Any) -> kotlin.Unit
+    internal fun doSmth(): kotlin.Int
+    internal fun doSmth(/*0*/ a: kotlin.String): kotlin.Unit
+    internal fun foo(): kotlin.Unit
+
+    internal final class A {
+        public constructor A()
+        internal final val f: (kotlin.Any) -> kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

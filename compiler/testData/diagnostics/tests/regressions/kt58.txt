@@ -1,0 +1,13 @@
+package
+
+package kt58 {
+    internal fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit
+    internal fun </*0*/ T> lock(/*0*/ lock: java.util.concurrent.locks.Lock, /*1*/ body: () -> T): T
+    internal fun t1(): kotlin.Int
+    internal fun t2(): kotlin.Int
+    internal fun t3(): kotlin.Int
+    internal fun t4(): kotlin.Int
+    internal fun t5(): kotlin.Int
+    internal fun t6(): kotlin.Int
+    internal fun t7(): kotlin.Int
+}

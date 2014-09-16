@@ -1,0 +1,4 @@
+package
+
+internal fun foo(/*0*/ x: kotlin.Int, /*1*/ list: kotlin.List<kotlin.Int>?): kotlin.Unit
+internal fun whenWithoutSubject(/*0*/ x: kotlin.Int, /*1*/ list: kotlin.List<kotlin.Int>?): kotlin.Unit

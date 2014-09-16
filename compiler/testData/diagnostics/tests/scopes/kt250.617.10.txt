@@ -1,0 +1,131 @@
+package
+
+package kt_250_617_10 {
+
+    internal open class A {
+        public constructor A(/*0*/ x: kotlin.Int)
+        internal final val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class B : kt_250_617_10.A {
+        public constructor B(/*0*/ y: kotlin.Int)
+        internal final override /*1*/ /*fake_override*/ val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Body : kt_250_617_10.BodyTag {
+        public constructor Body()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<kt_250_617_10.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class Body1 : kt_250_617_10.BodyTag {
+        public constructor Body1()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<kt_250_617_10.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal open class BodyTag : kt_250_617_10.TagWithText {
+        public constructor BodyTag(/*0*/ name: kotlin.String)
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<kt_250_617_10.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal open class Element {
+        public constructor Element()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal open class M {
+        public constructor M(/*0*/ p: kotlin.Int)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class N : kt_250_617_10.A {
+        public constructor N(/*0*/ p: kotlin.Int)
+        internal final val p: kotlin.Int
+        internal final override /*1*/ /*fake_override*/ val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class Tag {
+        public constructor Tag(/*0*/ name: kotlin.String)
+        internal final val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final val children: java.util.ArrayList<kt_250_617_10.Element>
+        internal final val name: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class TagWithText : kt_250_617_10.Tag {
+        public constructor TagWithText(/*0*/ name: kotlin.String)
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<kt_250_617_10.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class TextElement : kt_250_617_10.Element {
+        public constructor TextElement(/*0*/ name: kotlin.String)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal open class X {
+        public constructor X(/*0*/ p: kotlin.Int, /*1*/ r: kotlin.Int)
+        internal final val s: kotlin.String = "s"
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Y : kt_250_617_10.X {
+        public constructor Y(/*0*/ i: kotlin.Int)
+        internal final val rrr: kotlin.Int = 3
+        internal final override /*1*/ /*fake_override*/ val s: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Z : kt_250_617_10.X {
+        public constructor Z(/*0*/ i: kotlin.Int)
+        internal final val i: kotlin.Int
+        internal final override /*1*/ /*fake_override*/ val s: kotlin.String
+        internal final val x: kotlin.Int = 2
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

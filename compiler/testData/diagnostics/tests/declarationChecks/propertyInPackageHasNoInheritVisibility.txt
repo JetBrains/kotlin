@@ -1,0 +1,6 @@
+package
+
+package d {
+    internal val f: () -> kotlin.Int
+    internal fun test(): kotlin.Unit
+}

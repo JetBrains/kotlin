@@ -1,0 +1,7 @@
+package
+
+internal fun bar(): kotlin.Unit
+internal fun testDoWhile(): kotlin.Unit
+internal fun testFor(): kotlin.Unit
+internal fun testWhile(): kotlin.Unit
+internal fun todo(): kotlin.Nothing

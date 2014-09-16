@@ -1,0 +1,20 @@
+package
+
+internal final class A {
+    public constructor A(/*0*/ a: kotlin.Int)
+    internal final val a: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal final inner class B {
+        public constructor B()
+        internal final val x: A.B
+        internal final val y: A
+        internal final val z: A.B
+        internal final val kotlin.Int.xx: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

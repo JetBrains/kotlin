@@ -1,0 +1,18 @@
+package
+
+internal final class B {
+    public constructor B()
+    internal final val c: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Delegate</*0*/ T : kotlin.Any> {
+    public constructor Delegate</*0*/ T : kotlin.Any>(/*0*/ init: T)
+    internal final val init: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun get(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

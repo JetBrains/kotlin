@@ -1,0 +1,7 @@
+package
+
+package a {
+    internal fun bar(/*0*/ l: kotlin.Long): kotlin.Long
+    internal fun foo(/*0*/ i: kotlin.Int): kotlin.Int
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+}

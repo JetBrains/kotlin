@@ -1,0 +1,25 @@
+package
+
+internal fun T.bar(): kotlin.Unit
+internal fun T.buzz(): kotlin.Unit
+internal fun T.buzz1(): kotlin.Unit
+
+internal final class C : T {
+    public constructor C()
+    internal open override /*1*/ /*fake_override*/ fun buzz(): kotlin.Unit
+    internal open override /*1*/ /*fake_override*/ fun buzz1(/*0*/ i: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait T {
+    internal open fun buzz(): kotlin.Unit
+    internal open fun buzz1(/*0*/ i: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

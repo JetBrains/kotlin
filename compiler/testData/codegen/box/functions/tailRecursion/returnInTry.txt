@@ -1,0 +1,4 @@
+package
+
+internal fun box(): kotlin.String
+kotlin.tailRecursive() internal fun test(/*0*/ counter: kotlin.Int): kotlin.Int

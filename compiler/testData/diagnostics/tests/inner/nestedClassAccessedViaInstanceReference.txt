@@ -1,0 +1,258 @@
+package
+
+internal fun test(/*0*/ with: WithClassObject, /*1*/ without: WithoutClassObject, /*2*/ obj: Obj): kotlin.Unit
+
+internal trait N {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open fun foo(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal object Obj {
+    private constructor Obj()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public class object <class-object-for-Obj> : Obj {
+        private constructor <class-object-for-Obj>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Nested {
+        public constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final enum class NestedEnum : kotlin.Enum<Obj.NestedEnum> {
+        private constructor NestedEnum()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public enum entry A : Obj.NestedEnum {
+            private constructor A()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public class object <class-object-for-A> : Obj.NestedEnum.A {
+                private constructor <class-object-for-A>()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Obj.NestedEnum
+        public final /*synthesized*/ fun values(): kotlin.Array<Obj.NestedEnum>
+    }
+
+    internal object NestedObj : N {
+        private constructor NestedObj()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun invoke(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-NestedObj> : Obj.NestedObj {
+            private constructor <class-object-for-NestedObj>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            internal final override /*1*/ /*fake_override*/ fun invoke(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class NestedWithClassObject {
+        public constructor NestedWithClassObject()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal class object <class-object-for-NestedWithClassObject> : N {
+            private constructor <class-object-for-NestedWithClassObject>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+internal final class WithClassObject {
+    public constructor WithClassObject()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal class object <class-object-for-WithClassObject> {
+        private constructor <class-object-for-WithClassObject>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Nested {
+        public constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final enum class NestedEnum : kotlin.Enum<WithClassObject.NestedEnum> {
+        private constructor NestedEnum()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public enum entry A : WithClassObject.NestedEnum {
+            private constructor A()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public class object <class-object-for-A> : WithClassObject.NestedEnum.A {
+                private constructor <class-object-for-A>()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): WithClassObject.NestedEnum
+        public final /*synthesized*/ fun values(): kotlin.Array<WithClassObject.NestedEnum>
+    }
+
+    internal object NestedObj : N {
+        private constructor NestedObj()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun invoke(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-NestedObj> : WithClassObject.NestedObj {
+            private constructor <class-object-for-NestedObj>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            internal final override /*1*/ /*fake_override*/ fun invoke(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class NestedWithClassObject {
+        public constructor NestedWithClassObject()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal class object <class-object-for-NestedWithClassObject> : N {
+            private constructor <class-object-for-NestedWithClassObject>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+internal final class WithoutClassObject {
+    public constructor WithoutClassObject()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal final class Nested {
+        public constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final enum class NestedEnum : kotlin.Enum<WithoutClassObject.NestedEnum> {
+        private constructor NestedEnum()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public enum entry A : WithoutClassObject.NestedEnum {
+            private constructor A()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public class object <class-object-for-A> : WithoutClassObject.NestedEnum.A {
+                private constructor <class-object-for-A>()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): WithoutClassObject.NestedEnum
+        public final /*synthesized*/ fun values(): kotlin.Array<WithoutClassObject.NestedEnum>
+    }
+
+    internal object NestedObj : N {
+        private constructor NestedObj()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun invoke(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-NestedObj> : WithoutClassObject.NestedObj {
+            private constructor <class-object-for-NestedObj>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            internal final override /*1*/ /*fake_override*/ fun invoke(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class NestedWithClassObject {
+        public constructor NestedWithClassObject()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal class object <class-object-for-NestedWithClassObject> : N {
+            private constructor <class-object-for-NestedWithClassObject>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

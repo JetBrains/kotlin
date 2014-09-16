@@ -1,0 +1,15 @@
+package
+
+package bar {
+
+    internal final class Test {
+        public constructor Test()
+        internal final val foo: kotlin.Int? = null
+        internal final fun bar(/*0*/ a: bar.Test, /*1*/ b: bar.Test): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(/*0*/ o: bar.Test): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final fun useInt(/*0*/ i: kotlin.Int): kotlin.Int
+    }
+}

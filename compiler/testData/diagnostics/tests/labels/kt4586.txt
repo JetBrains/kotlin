@@ -1,0 +1,4 @@
+package
+
+internal val str: kotlin.String
+internal fun string(/*0*/ init: java.lang.StringBuilder.() -> kotlin.Unit): kotlin.String

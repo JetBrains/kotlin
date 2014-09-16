@@ -1,0 +1,4 @@
+package
+
+internal fun test1(): kotlin.Unit
+internal fun test2(/*0*/ l: kotlin.List<[ERROR : AA]>): kotlin.Unit

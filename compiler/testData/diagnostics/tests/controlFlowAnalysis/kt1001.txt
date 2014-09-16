@@ -1,0 +1,8 @@
+package
+
+package kt1001 {
+    internal fun doSmth(): kotlin.Unit
+    internal fun foo(/*0*/ c: kotlin.Array<kotlin.Int>): kotlin.Unit
+    internal fun t1(): kotlin.Int
+    internal fun t2(): kotlin.Int
+}

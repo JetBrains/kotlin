@@ -1,0 +1,5 @@
+package
+
+java.lang.Deprecated() internal fun a(): kotlin.Unit
+java.util.ArrayList<kotlin.Int>() internal fun b(): kotlin.Unit
+[ERROR : Xoo]() internal fun c(): kotlin.Unit

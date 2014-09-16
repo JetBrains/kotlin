@@ -1,0 +1,13 @@
+package
+
+internal val p1: kotlin.Int = -1
+internal val p2: kotlin.Long = -1.toLong()
+internal val p3: kotlin.Byte = -1.toByte()
+internal val p4: kotlin.Int = -1
+internal val p5: kotlin.Short = -1.toShort()
+internal val p6: kotlin.Long = -1111111111111111111.toLong()
+internal fun fooByte(/*0*/ p: kotlin.Byte): kotlin.Byte
+internal fun fooInt(/*0*/ p: kotlin.Int): kotlin.Int
+internal fun fooLong(/*0*/ p: kotlin.Long): kotlin.Long
+internal fun fooShort(/*0*/ p: kotlin.Short): kotlin.Short
+internal fun test(): kotlin.Unit

@@ -1,0 +1,3 @@
+package
+
+internal fun ff(/*0*/ c: kotlin.MutableCollection<kotlin.String>): kotlin.MutableList<kotlin.String>

@@ -1,0 +1,16 @@
+package
+
+internal val x: () -> ???
+internal val z: [ERROR : Type for z]
+internal fun bar1(): () -> ???
+internal fun bar2(): () -> kotlin.Unit
+internal fun bar3(): kotlin.Unit
+internal fun block(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+
+internal final class A {
+    public constructor A()
+    internal final val x: () -> ???
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,0 +1,4 @@
+package
+
+internal fun box(): kotlin.String
+kotlin.tailRecursive() internal fun kotlin.String.repeat(/*0*/ num: kotlin.Int, /*1*/ acc: java.lang.StringBuilder = ...): kotlin.String

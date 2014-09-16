@@ -1,0 +1,13 @@
+package
+
+internal val items: java.util.ArrayList<Item>
+internal fun test(/*0*/ room: java.lang.Object): kotlin.Unit
+
+internal abstract class Item {
+    public constructor Item(/*0*/ room: java.lang.Object)
+    internal abstract val name: kotlin.String
+    internal final val room: java.lang.Object
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

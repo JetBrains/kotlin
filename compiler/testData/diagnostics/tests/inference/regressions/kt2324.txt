@@ -1,0 +1,9 @@
+package
+
+package i {
+    internal fun </*0*/ T> arrayList(/*0*/ vararg values: T /*kotlin.Array<T>*/): java.util.ArrayList<T>
+    internal fun assertEquals(/*0*/ expected: kotlin.Any?, /*1*/ actual: kotlin.Any?, /*2*/ message: kotlin.String = ...): kotlin.Unit
+    internal fun </*0*/ T, /*1*/ K> someFunction(/*0*/ list: kotlin.List<T>, /*1*/ transform: (T) -> K): kotlin.List<K>
+    internal fun testSomeFunction(): kotlin.Unit
+    internal fun </*0*/ T, /*1*/ C : kotlin.MutableCollection<in T>> kotlin.Array<T>.toCollection(/*0*/ result: C): C
+}

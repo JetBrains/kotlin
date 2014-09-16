@@ -1,0 +1,22 @@
+package
+
+package f {
+    internal fun foo(/*0*/ sup: f.Super, /*1*/ sub: f.Sub): kotlin.Unit
+    internal fun println(/*0*/ message: kotlin.Any?): kotlin.Unit
+
+    internal final class Sub : f.Super {
+        public constructor Sub(/*0*/ str: kotlin.String)
+        internal final override /*1*/ /*fake_override*/ val property: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal open class Super {
+        public constructor Super(/*0*/ property: kotlin.String)
+        internal final val property: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -1,0 +1,17 @@
+package
+
+package n {
+    internal fun </*0*/ T : kotlin.Any> kotlin.Iterable<T>.find(/*0*/ predicate: (T) -> kotlin.Boolean): T?
+
+    internal abstract class Buggy {
+        public constructor Buggy()
+        internal final val anotherThree: kotlin.Int
+        internal abstract val coll: kotlin.Collection<kotlin.Int>
+        internal final val extendedGetter: kotlin.Int
+        internal final val yetAnotherThree: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun getThree(): kotlin.Int?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

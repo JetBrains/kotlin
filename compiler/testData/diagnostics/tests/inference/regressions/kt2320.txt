@@ -1,0 +1,19 @@
+package
+
+package i {
+    internal fun </*0*/ B, /*1*/ C> i.NotMap<B>.mapValuesOnly(/*0*/ f: (B) -> C): i.NotMap<C>
+    internal fun </*0*/ V, /*1*/ R> i.NotMap<V>.mapValuesOriginal(/*0*/ ff: (i.Entry<V>) -> R): i.NotMap<R>
+
+    internal trait Entry</*0*/ B> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun getValue(): B
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal trait NotMap</*0*/ B> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

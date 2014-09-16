@@ -1,0 +1,5 @@
+package
+
+package kt1680 {
+    internal fun foo(): kotlin.Unit
+}

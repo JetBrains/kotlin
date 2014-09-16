@@ -1,0 +1,4 @@
+package
+
+internal fun doWhileWithBreak(/*0*/ x: kotlin.Int?, /*1*/ y0: kotlin.Int): kotlin.Unit
+internal fun simpleDoWhile(/*0*/ x: kotlin.Int?, /*1*/ y0: kotlin.Int): kotlin.Unit

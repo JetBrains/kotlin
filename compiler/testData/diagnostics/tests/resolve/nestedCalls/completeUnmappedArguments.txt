@@ -1,0 +1,6 @@
+package
+
+package c {
+    internal fun test(): kotlin.Unit
+    internal fun zzz(/*0*/ i: kotlin.Int, /*1*/ f: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+}

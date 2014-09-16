@@ -1,0 +1,12 @@
+package
+
+internal fun </*0*/ T : kotlin.Any> foo(/*0*/ v: kotlin.Any): T?
+internal fun </*0*/ T : A> fooA(/*0*/ v: kotlin.Any): T?
+internal fun </*0*/ R : kotlin.Any> unescape(/*0*/ value: kotlin.Any): R?
+internal fun </*0*/ R : A> unescapeA(/*0*/ value: kotlin.Any): R?
+
+internal trait A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

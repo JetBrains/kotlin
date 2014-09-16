@@ -1,0 +1,5 @@
+package
+
+internal fun </*0*/ A> main(/*0*/ tp: A, /*1*/ any: kotlin.Any): kotlin.Unit
+internal fun </*0*/ reified T> T.invoke(): T
+internal fun </*0*/ reified T> T.plus(/*0*/ p: T): T

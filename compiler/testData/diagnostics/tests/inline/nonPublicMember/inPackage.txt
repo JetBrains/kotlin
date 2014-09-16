@@ -1,0 +1,10 @@
+package
+
+internal val internalProperty: kotlin.Int = 11
+private val privateProperty: kotlin.Int = 11
+internal fun internalFun(): kotlin.Unit
+private fun privateFun(): kotlin.Unit
+kotlin.inline() public fun test(): kotlin.Unit
+kotlin.inline() public fun test2(): kotlin.Unit
+kotlin.inline() internal fun test2Internal(): kotlin.Unit
+kotlin.inline() internal fun testInternal(): kotlin.Unit

@@ -1,0 +1,30 @@
+package
+
+package foo {
+    internal val foo.A.e: kotlin.Int
+    internal val foo.B.r: kotlin.Int
+
+    internal open class A {
+        public constructor A()
+        internal final val foo.B.w: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class B {
+        public constructor B()
+        internal final val foo.A.f: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class MyProperty</*0*/ R : foo.A, /*1*/ T> {
+        public constructor MyProperty</*0*/ R : foo.A, /*1*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun get(/*0*/ thisRef: R, /*1*/ desc: kotlin.PropertyMetadata): T
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

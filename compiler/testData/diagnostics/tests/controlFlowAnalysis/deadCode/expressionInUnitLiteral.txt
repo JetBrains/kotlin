@@ -1,0 +1,4 @@
+package
+
+internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+internal fun </*0*/ T> T.run(/*0*/ f: (T) -> kotlin.Unit): kotlin.Unit

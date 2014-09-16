@@ -1,0 +1,6 @@
+package
+
+package g {
+    internal fun </*0*/ T, /*1*/ C : kotlin.Collection<T>> convert(/*0*/ src: kotlin.Collection<T>, /*1*/ dest: C): C
+    internal fun test(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.Unit
+}

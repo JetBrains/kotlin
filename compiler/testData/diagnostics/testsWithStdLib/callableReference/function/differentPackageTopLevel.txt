@@ -1,0 +1,11 @@
+package
+
+package first {
+    internal fun bar(/*0*/ x: kotlin.Int): kotlin.Unit
+    internal fun baz(): kotlin.String
+    internal fun foo(): kotlin.Unit
+}
+
+package other {
+    internal fun main(): kotlin.Unit
+}

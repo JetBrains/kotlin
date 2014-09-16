@@ -1,0 +1,8 @@
+package
+
+internal val t: [ERROR : Type for testFun()]
+internal fun testFun(): kotlin.Int
+
+package test {
+    internal fun testFun(): kotlin.Int
+}

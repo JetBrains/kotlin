@@ -1,0 +1,17 @@
+package
+
+internal open class AL {
+    public constructor AL()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun get(/*0*/ i: kotlin.Int): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait ALE</*0*/ T> : AL {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final override /*1*/ /*fake_override*/ fun get(/*0*/ i: kotlin.Int): kotlin.Any?
+    internal open fun getOrNull(/*0*/ index: kotlin.Int, /*1*/ value: T): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

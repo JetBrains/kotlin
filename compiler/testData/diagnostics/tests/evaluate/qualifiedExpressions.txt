@@ -1,0 +1,9 @@
+package
+
+package example {
+    internal val x: kotlin.Int
+
+    package example.ns {
+        internal val y: kotlin.Any? = 2
+    }
+}

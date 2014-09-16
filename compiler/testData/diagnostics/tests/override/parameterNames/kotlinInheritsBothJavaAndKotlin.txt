@@ -1,0 +1,25 @@
+package
+
+public/*package*/ /*synthesized*/ fun JavaInterface(/*0*/ function: (kotlin.Int) -> kotlin.Unit): JavaInterface
+
+internal final class BothTraitsSubclass : JavaInterface, KotlinTrait {
+    public constructor BothTraitsSubclass()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun foo(/*0*/ someOtherName: kotlin.Int): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ trait JavaInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait KotlinTrait {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ someOtherName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

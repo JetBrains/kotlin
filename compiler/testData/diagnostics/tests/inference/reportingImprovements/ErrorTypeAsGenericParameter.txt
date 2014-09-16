@@ -1,0 +1,6 @@
+package
+
+package a {
+    internal fun </*0*/ T, /*1*/ R, /*2*/ S> foo(/*0*/ block: (T) -> R, /*1*/ second: (T) -> S): (T) -> R
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+}

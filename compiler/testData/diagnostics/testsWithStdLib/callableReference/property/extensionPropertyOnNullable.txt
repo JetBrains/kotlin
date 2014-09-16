@@ -1,0 +1,4 @@
+package
+
+internal val kotlin.Any?.meaning: kotlin.Int
+internal fun test(): kotlin.Unit

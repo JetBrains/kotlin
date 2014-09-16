@@ -1,0 +1,5 @@
+package
+
+package n {
+    internal fun bar(): kotlin.Iterator<kotlin.Int>?
+}

@@ -1,0 +1,14 @@
+package
+
+package kt1078 {
+    internal fun foo(): kt1078.B
+    internal fun test(): kt1078.B
+
+    internal final class B {
+        public constructor B()
+        internal final fun bar(): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

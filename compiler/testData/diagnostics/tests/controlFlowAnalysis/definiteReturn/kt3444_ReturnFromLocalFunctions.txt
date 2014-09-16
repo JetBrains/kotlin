@@ -1,0 +1,6 @@
+package
+
+package f {
+    internal fun box(): kotlin.Int
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+}

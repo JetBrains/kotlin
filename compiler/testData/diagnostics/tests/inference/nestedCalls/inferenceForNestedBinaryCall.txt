@@ -1,0 +1,7 @@
+package
+
+package aaa {
+    internal fun a(): kotlin.Unit
+    internal fun </*0*/ T> id(/*0*/ t: T): T
+    internal fun </*0*/ T> T.foo(/*0*/ t: T): T
+}

@@ -1,0 +1,7 @@
+package
+
+package kt1219 {
+    internal fun foo(): kotlin.Unit
+    internal fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.fold(/*0*/ a: R, /*1*/ op: (T, R) -> R): R
+    internal fun </*0*/ T> kotlin.Iterable<T>.foreach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit
+}

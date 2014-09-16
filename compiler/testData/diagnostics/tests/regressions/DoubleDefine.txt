@@ -1,0 +1,7 @@
+package
+
+internal fun evaluate(/*0*/ expr: java.lang.StringBuilder, /*1*/ numbers: java.util.ArrayList<kotlin.Int>): kotlin.Int
+internal fun evaluateAdd(/*0*/ expr: java.lang.StringBuilder, /*1*/ numbers: java.util.ArrayList<kotlin.Int>): kotlin.Int
+internal fun evaluateArg(/*0*/ expr: kotlin.CharSequence, /*1*/ numbers: java.util.ArrayList<kotlin.Int>): kotlin.Int
+internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+internal fun takeFirst(/*0*/ expr: java.lang.StringBuilder): kotlin.Char

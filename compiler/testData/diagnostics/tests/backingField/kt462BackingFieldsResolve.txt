@@ -1,0 +1,66 @@
+package
+
+package kt462 {
+    internal val topLevelVar: kotlin.Int = 11
+
+    internal final class T {
+        public constructor T()
+        internal final val a: kotlin.Any
+        internal final var r: kotlin.Int
+        internal final var x: kotlin.Int
+        internal final val z: kotlin.Int
+        internal final fun bar(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class TestBackingFieldsVisibility {
+        public constructor TestBackingFieldsVisibility()
+        internal final var a: kotlin.Int
+        internal abstract val w: kotlin.Int = 11
+        internal final val x: kotlin.Int = 11
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        internal final fun foo(/*0*/ a: kt462.TestBackingFieldsVisibility): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal final inner class Inner {
+            public constructor Inner()
+            internal final val z: kotlin.Int = 11
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal abstract class TestInitializationThroughBackingField {
+        public constructor TestInitializationThroughBackingField()
+        internal abstract var abstractVar: kotlin.Int
+        internal final var finalDefaultVar: kotlin.Int
+        internal open var openVar: kotlin.Int
+        internal final val valWithBackingField: kotlin.Int
+        internal final val valWithoutBackingField: kotlin.Int
+        internal final var varWithCustomSetter: kotlin.Int
+        internal final var varWithoutBackingField: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class TestInitializationWithoutBackingField {
+        public constructor TestInitializationWithoutBackingField()
+        internal abstract var abstractVar: kotlin.Int
+        internal final var finalDefaultVar: kotlin.Int
+        internal open var openVar: kotlin.Int
+        internal final val valWithBackingField: kotlin.Int
+        internal final val valWithoutBackingField: kotlin.Int
+        internal final var varWithCustomSetter: kotlin.Int
+        internal final var varWithoutBackingField: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

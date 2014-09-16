@@ -1,0 +1,7 @@
+package
+
+package kt1066 {
+    internal fun foo(/*0*/ excluded: kotlin.Set<kotlin.Char>): kotlin.Unit
+    internal fun randomDigit(): kotlin.Char
+    internal fun test(): kotlin.Unit
+}

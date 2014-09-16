@@ -1,0 +1,13 @@
+package
+
+package bar {
+    internal val java.io.File.name: kotlin.String
+    internal fun foo(/*0*/ f: java.io.File, /*1*/ c: bar.Customer): kotlin.Unit
+
+    internal final class Customer {
+        public constructor Customer(/*0*/ name: kotlin.String)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

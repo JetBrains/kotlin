@@ -1,0 +1,30 @@
+package
+
+package localObjects {
+    internal val bb: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+    internal fun test(): kotlin.Unit
+
+    internal object A {
+        private constructor A()
+        internal final val x: kotlin.Int = 0
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-A> : localObjects.A {
+            private constructor <class-object-for-A>()
+            internal final override /*1*/ /*fake_override*/ val x: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal open class Foo {
+        public constructor Foo()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

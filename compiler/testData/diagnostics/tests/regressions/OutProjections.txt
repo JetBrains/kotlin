@@ -1,0 +1,27 @@
+package
+
+internal fun </*0*/ T> f(/*0*/ expression: T): G<out T>
+internal fun foo(): G<Point>
+internal fun fooout(): Out<Point>
+internal fun </*0*/ T> fout(/*0*/ expression: T): Out<out T>
+
+internal final class G</*0*/ T> {
+    public constructor G</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Out</*0*/ out T> {
+    public constructor Out</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Point {
+    public constructor Point()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

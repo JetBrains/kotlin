@@ -1,0 +1,5 @@
+package
+
+internal fun </*0*/ reified T> f(): T
+internal fun </*0*/ T> id(/*0*/ p: T): T
+internal fun </*0*/ A> main(): kotlin.Unit

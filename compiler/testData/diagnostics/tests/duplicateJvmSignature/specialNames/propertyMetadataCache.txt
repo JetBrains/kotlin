@@ -1,0 +1,14 @@
+package
+
+internal val `$propertyMetadata`: kotlin.Array<kotlin.PropertyMetadata>
+internal val x: kotlin.Any
+internal fun kotlin.Any.get(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any): kotlin.Any
+
+internal final class C {
+    public constructor C()
+    internal final val `$propertyMetadata`: kotlin.Array<kotlin.PropertyMetadata>
+    internal final val x: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

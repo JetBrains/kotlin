@@ -1,0 +1,13 @@
+package
+
+package foo {
+    internal fun f(): kotlin.Int.() -> kotlin.Unit
+    internal fun foo2(): (() -> kotlin.Unit) -> kotlin.Unit
+    internal fun </*0*/ T> fooT1(/*0*/ t: T): () -> T
+    internal fun </*0*/ T> fooT2(): (T) -> T
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    internal fun main1(): kotlin.Unit
+    internal fun test(): kotlin.Unit
+    internal fun kotlin.Any.foo(): () -> kotlin.Unit
+    internal fun kotlin.Any.foo1(): (kotlin.Int) -> kotlin.Unit
+}

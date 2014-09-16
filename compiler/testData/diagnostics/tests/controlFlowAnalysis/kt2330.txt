@@ -1,0 +1,26 @@
+package
+
+package a {
+    internal fun foo(): kotlin.Unit
+    internal fun test(): kotlin.Unit
+
+    internal final class P {
+        public constructor P()
+        internal final val other: a.P
+        internal final val testInGetter: kotlin.Int
+        internal final var x: kotlin.Int
+        internal final var y: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class R {
+        public constructor R()
+        internal final val p: a.P
+        internal final val testInGetterInOtherClass: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

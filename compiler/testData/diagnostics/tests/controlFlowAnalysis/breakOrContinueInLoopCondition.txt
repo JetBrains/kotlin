@@ -1,0 +1,4 @@
+package
+
+internal fun test(): kotlin.Unit
+internal fun test2(/*0*/ b: kotlin.Boolean): kotlin.Unit

@@ -1,0 +1,8 @@
+package
+
+kotlin.inline() internal fun inlineFunNoInline(/*0*/ kotlin.noinline() s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunWrongExtension(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun testExtension(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun (kotlin.Int) -> kotlin.Unit.inlineExt(): kotlin.Unit
+kotlin.inline() internal fun (kotlin.Int) -> kotlin.Unit.inlineExt2(/*0*/ p: kotlin.Int): kotlin.Unit
+internal fun (kotlin.Int) -> kotlin.Unit.noInlineExt(/*0*/ p: kotlin.Int): kotlin.Unit

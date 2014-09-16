@@ -1,0 +1,6 @@
+package
+
+internal fun b(): kotlin.Boolean
+internal fun foo1(): [ERROR : Error function type]
+internal fun foo2(): [ERROR : Error function type]
+internal fun foo3(): kotlin.Int

@@ -1,0 +1,5 @@
+package
+
+package e {
+    internal fun main(): kotlin.Unit
+}

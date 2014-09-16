@@ -1,0 +1,3 @@
+package
+
+internal val a: kotlin.String

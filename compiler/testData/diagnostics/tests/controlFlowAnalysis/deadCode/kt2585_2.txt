@@ -1,0 +1,5 @@
+package
+
+internal fun bar(): kotlin.Unit
+internal fun cond(): kotlin.Boolean
+internal fun foo(): kotlin.Unit

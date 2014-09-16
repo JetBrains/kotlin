@@ -1,0 +1,10 @@
+package
+
+internal abstract class Bar {
+    public constructor Bar()
+    internal abstract var bar: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

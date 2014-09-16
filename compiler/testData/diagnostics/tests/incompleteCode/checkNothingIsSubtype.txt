@@ -1,0 +1,13 @@
+package
+
+package d {
+    internal fun </*0*/ T> infer(/*0*/ a: d.A<T>): T
+    internal fun sum(/*0*/ a: kotlin.IntArray): kotlin.Int
+    internal fun test(/*0*/ nothing: kotlin.Nothing?): kotlin.Unit
+
+    internal trait A</*0*/ T> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

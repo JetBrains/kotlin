@@ -1,0 +1,6 @@
+package
+
+package kotlin1 {
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    internal fun test(/*0*/ a: kotlin.List<kotlin.Int>, /*1*/ m: kotlin.Map<kotlin.String, kotlin.Int>): kotlin.Unit
+}

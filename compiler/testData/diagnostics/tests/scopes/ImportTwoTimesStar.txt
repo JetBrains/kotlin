@@ -1,0 +1,9 @@
+package
+
+package myApp {
+    internal fun needUmbrella(): kotlin.Boolean
+}
+
+package weatherForecast {
+    internal fun weatherToday(): kotlin.String
+}

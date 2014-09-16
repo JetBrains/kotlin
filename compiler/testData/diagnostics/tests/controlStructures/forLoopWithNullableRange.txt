@@ -1,0 +1,20 @@
+package
+
+internal fun test(/*0*/ c: Coll?): kotlin.Unit
+
+internal final class Coll {
+    public constructor Coll()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun iterator(): It
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class It {
+    public constructor It()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun next(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

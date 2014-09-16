@@ -1,0 +1,16 @@
+package
+
+package d {
+    internal val a: kotlin.Int = 1
+    internal val c: kotlin.Int = 1
+    internal abstract fun baz(): kotlin.Int
+    internal fun foo(): kotlin.Int
+    internal open fun d.T.bar(): kotlin.Int
+
+    internal final class T {
+        public constructor T()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

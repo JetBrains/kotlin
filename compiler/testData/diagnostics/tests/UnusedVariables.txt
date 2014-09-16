@@ -1,0 +1,41 @@
+package
+
+package unused_variables {
+    internal fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit
+    internal fun testBackingFieldsNotMarked(): kotlin.Unit
+    internal fun testFunctionLiterals(): kotlin.Unit
+    internal fun testInnerFunctions(): kotlin.Unit
+    internal fun testObject(): unused_variables.Trait
+    internal fun testSimpleCases(): kotlin.Unit
+
+    internal final class IncDec {
+        public constructor IncDec()
+        internal final fun dec(): unused_variables.IncDec
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun inc(): unused_variables.IncDec
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class MyTest {
+        public constructor MyTest()
+        internal final var a: kotlin.String
+        internal final fun doSmth(/*0*/ a: kotlin.Any): kotlin.Unit
+        internal final fun doSmth(/*0*/ s: kotlin.String): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun testFor(): kotlin.Unit
+        internal final fun testIf(): kotlin.Unit
+        internal final fun testIncDec(): kotlin.Unit
+        internal final fun testSimple(): kotlin.Unit
+        internal final fun testWhile(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal trait Trait {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

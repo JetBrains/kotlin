@@ -1,0 +1,4 @@
+package
+
+internal val x: java.lang.Runnable
+internal fun Runnable(/*0*/ f: () -> kotlin.Unit): java.lang.Runnable

@@ -1,0 +1,8 @@
+package
+
+internal fun doSmth(/*0*/ a: kotlin.Any?): kotlin.Any?
+internal fun test1(): kotlin.Unit
+internal fun test2(): kotlin.Unit
+internal fun test3(): kotlin.Unit
+internal fun test4(): kotlin.Unit
+internal fun test5(): kotlin.Unit

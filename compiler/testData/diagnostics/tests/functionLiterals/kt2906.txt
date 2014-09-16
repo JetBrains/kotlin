@@ -1,0 +1,9 @@
+package
+
+package bug {
+    public fun foo1(/*0*/ bar: () -> kotlin.Unit): kotlin.Unit
+    public fun foo2(/*0*/ bar: () -> kotlin.Unit): kotlin.Unit
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    internal fun println(/*0*/ s: kotlin.String): kotlin.String
+    internal fun </*0*/ T> run(/*0*/ f: () -> T): T
+}

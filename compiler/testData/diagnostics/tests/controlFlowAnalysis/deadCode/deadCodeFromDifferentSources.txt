@@ -1,0 +1,17 @@
+package
+
+package c {
+    internal fun bar(): kotlin.Unit
+    internal fun test1(): kotlin.Unit
+    internal fun test2(/*0*/ a: c.A): kotlin.Unit
+    internal fun test3(): kotlin.Unit
+    internal fun throwNPE(): kotlin.Nothing
+
+    internal final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun plus(/*0*/ a: c.A): kotlin.Nothing
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

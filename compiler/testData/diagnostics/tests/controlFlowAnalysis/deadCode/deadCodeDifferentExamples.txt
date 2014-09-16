@@ -1,0 +1,25 @@
+package
+
+internal fun blockAndAndMismatch(): kotlin.Boolean
+internal fun fail(): kotlin.Nothing
+internal fun failtest(/*0*/ a: kotlin.Int): kotlin.Int
+internal fun foo(/*0*/ a: kotlin.Nothing): kotlin.Unit
+internal fun nullIsNotNothing(): kotlin.Unit
+internal fun returnInWhile(/*0*/ a: kotlin.Int): kotlin.Unit
+internal fun t1(): kotlin.Int
+internal fun t1a(): kotlin.Int
+internal fun t1b(): kotlin.Int
+internal fun t1c(): kotlin.Int
+internal fun t2(): kotlin.Int
+internal fun t2a(): kotlin.Int
+internal fun t3(): kotlin.Any
+internal fun t4(/*0*/ a: kotlin.Boolean): kotlin.Int
+internal fun t4break(/*0*/ a: kotlin.Boolean): kotlin.Int
+internal fun t5(): kotlin.Int
+internal fun t6(): kotlin.Int
+internal fun t6break(): kotlin.Int
+internal fun t7(): kotlin.Int
+internal fun t7(/*0*/ b: kotlin.Int): kotlin.Int
+internal fun t7break(/*0*/ b: kotlin.Int): kotlin.Int
+internal fun t8(): kotlin.Int
+internal fun tf(): kotlin.Int

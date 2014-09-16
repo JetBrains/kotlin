@@ -1,0 +1,3 @@
+package
+
+internal fun test(): kotlin.Unit

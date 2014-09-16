@@ -1,0 +1,79 @@
+package
+
+internal val a: [ERROR : Return not allowed]
+internal fun bbb(): kotlin.Unit
+internal fun blockAndAndMismatch(): kotlin.Int
+internal fun blockAndAndMismatch1(): kotlin.Int
+internal fun blockAndAndMismatch2(): kotlin.Int
+internal fun blockAndAndMismatch3(): kotlin.Int
+internal fun blockAndAndMismatch4(): kotlin.Int
+internal fun blockAndAndMismatch5(): kotlin.Int
+internal fun blockNoReturnIfEmptyIf(): kotlin.Int
+internal fun blockNoReturnIfUnitInOneBranch(): kotlin.Int
+internal fun blockNoReturnIfValDeclaration(): kotlin.Int
+internal fun blockReturnUnitMismatch(): kotlin.Int
+internal fun blockReturnValueTypeMatch(): kotlin.Int
+internal fun blockReturnValueTypeMatch1(): kotlin.Int
+internal fun blockReturnValueTypeMatch10(): kotlin.Int
+internal fun blockReturnValueTypeMatch11(): kotlin.Int
+internal fun blockReturnValueTypeMatch12(): kotlin.Int
+internal fun blockReturnValueTypeMatch2(): kotlin.Int
+internal fun blockReturnValueTypeMatch3(): kotlin.Int
+internal fun blockReturnValueTypeMatch4(): kotlin.Int
+internal fun blockReturnValueTypeMatch5(): kotlin.Int
+internal fun blockReturnValueTypeMatch6(): kotlin.Int
+internal fun blockReturnValueTypeMatch7(): kotlin.Int
+internal fun blockReturnValueTypeMatch8(): kotlin.Int
+internal fun blockReturnValueTypeMatch9(): kotlin.Int
+internal fun blockReturnValueTypeMismatch(): kotlin.Int
+internal fun blockReturnValueTypeMismatchUnit(): kotlin.Int
+internal fun f(): kotlin.Int
+internal fun f1(): kotlin.Int
+public fun f2(): kotlin.Int
+internal fun foo(/*0*/ expr: java.lang.StringBuilder): kotlin.Int
+internal fun illegalConstantBlock(): kotlin.String
+internal fun illegalConstantBody(): kotlin.Int
+internal fun illegalIfBlock(): kotlin.Boolean
+internal fun illegalIfBody(): kotlin.Int
+internal fun illegalReturnIf(): kotlin.Char
+internal fun intBlock(): kotlin.Int
+internal fun intBlock1(): kotlin.Int
+internal fun intEmpty(): kotlin.Int
+internal fun intFunctionLiteral(): kotlin.Int
+internal fun intShort(): kotlin.Int
+internal fun intShortInfer(): kotlin.Int
+internal fun intString(): kotlin.Int
+internal fun nonBlockNoReturnIfUnitInOneBranch(): kotlin.Int
+internal fun nonBlockReturnIfEmptyIf(): kotlin.Int
+internal fun none(): kotlin.Unit
+internal fun returnNothing(): kotlin.Nothing
+internal fun test1(): kotlin.Any
+internal fun test2(): kotlin.Any
+internal fun test3(): kotlin.Any
+internal fun test4(): () -> kotlin.Unit
+internal fun test5(): kotlin.Any
+internal fun test6(): kotlin.Any
+internal fun testFunctionLiterals(): kotlin.Unit
+internal fun unitEmpty(): kotlin.Unit
+internal fun unitEmptyInfer(): kotlin.Unit
+internal fun unitEmptyReturn(): kotlin.Unit
+internal fun unitIntReturn(): kotlin.Unit
+internal fun unitShort(): kotlin.Unit
+internal fun unitShortConv(): kotlin.Unit
+internal fun unitShortNull(): kotlin.Unit
+internal fun unitUnitReturn(): kotlin.Unit
+
+internal final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected final fun f(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

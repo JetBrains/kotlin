@@ -1,0 +1,56 @@
+package
+
+internal fun bar(): kotlin.Array<E>
+internal fun baz(): E
+internal fun foo(): E
+
+internal final enum class E : kotlin.Enum<E> {
+    private constructor E()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    internal final fun oof(): E
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    internal final fun rab(): kotlin.Array<E>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final fun zab(): E
+
+    internal class object <class-object-for-E> {
+        private constructor <class-object-for-E>()
+        internal final val valuez: kotlin.Array<E>
+        internal final fun bar(): kotlin.Array<E>
+        internal final fun baz(): E
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): E
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public enum entry ENTRY : E {
+        private constructor ENTRY()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun oof(): E
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        internal final override /*1*/ /*fake_override*/ fun rab(): kotlin.Array<E>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun zab(): E
+
+        public class object <class-object-for-ENTRY> : E.ENTRY {
+            private constructor <class-object-for-ENTRY>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            internal final override /*1*/ /*fake_override*/ fun oof(): E
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            internal final override /*1*/ /*fake_override*/ fun rab(): kotlin.Array<E>
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            internal final override /*1*/ /*fake_override*/ fun zab(): E
+        }
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
+    public final /*synthesized*/ fun values(): kotlin.Array<E>
+}

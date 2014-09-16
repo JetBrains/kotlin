@@ -1,0 +1,21 @@
+package
+
+private final class Z2 {
+    public constructor Z2()
+    private final val privateProperty: kotlin.Int = 11
+    public final val publicProperty: kotlin.Int = 12
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    private final fun privateFun(): kotlin.Unit
+    public final fun publicFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    private final inner class ZInner {
+        public constructor ZInner()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        kotlin.inline() public final fun test(): kotlin.Unit
+        kotlin.inline() internal final fun testInternal(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

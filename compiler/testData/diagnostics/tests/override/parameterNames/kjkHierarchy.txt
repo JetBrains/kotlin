@@ -1,0 +1,25 @@
+package
+
+public/*package*/ /*synthesized*/ fun Sub(/*0*/ function: (kotlin.Int) -> kotlin.Unit): Sub
+
+public/*package*/ trait Sub : Super {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ superName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class SubSub : Sub {
+    public constructor SubSub()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ fun foo(/*0*/ subName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Super {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal abstract fun foo(/*0*/ superName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

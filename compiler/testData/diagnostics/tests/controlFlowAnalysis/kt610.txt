@@ -1,0 +1,5 @@
+package
+
+package kt610 {
+    internal fun foo(): kotlin.Unit
+}

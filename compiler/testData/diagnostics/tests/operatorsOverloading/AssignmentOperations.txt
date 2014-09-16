@@ -1,0 +1,29 @@
+package
+
+internal fun testExpr(): kotlin.Unit
+internal fun testVal(): kotlin.Unit
+internal fun testWrong(): kotlin.Unit
+
+internal final class A {
+    public constructor A()
+    internal final fun divAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun minusAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    internal final fun modAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    internal final fun plusAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    internal final fun timesAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B {
+    public constructor B()
+    internal final fun div(/*0*/ x: kotlin.Int): B
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun minus(/*0*/ x: kotlin.Int): B
+    internal final fun mod(/*0*/ x: kotlin.Int): B
+    internal final fun plus(/*0*/ x: kotlin.Int): B
+    internal final fun times(/*0*/ x: kotlin.Int): B
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

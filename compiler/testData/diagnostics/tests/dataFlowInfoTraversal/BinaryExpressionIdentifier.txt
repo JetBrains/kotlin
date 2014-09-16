@@ -1,0 +1,4 @@
+package
+
+internal fun bar(/*0*/ a: kotlin.Number): kotlin.Int
+internal fun foo(/*0*/ a: kotlin.Number): kotlin.Int

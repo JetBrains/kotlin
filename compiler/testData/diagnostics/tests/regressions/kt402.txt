@@ -1,0 +1,6 @@
+package
+
+package kt402 {
+    internal fun f(): (kotlin.Any) -> kotlin.Boolean
+    internal fun getTypeChecker(): (kotlin.Any) -> kotlin.Boolean
+}

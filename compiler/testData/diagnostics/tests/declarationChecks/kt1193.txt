@@ -1,0 +1,58 @@
+package
+
+package kt1193 {
+
+    internal final enum class MyEnum : kotlin.Enum<kt1193.MyEnum> {
+        private constructor MyEnum(/*0*/ i: kotlin.Int)
+        internal final val i: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public enum entry A : kt1193.MyEnum {
+            private constructor A()
+            internal final override /*1*/ /*fake_override*/ val i: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public class object <class-object-for-A> : kt1193.MyEnum.A {
+                private constructor <class-object-for-A>()
+                internal final override /*1*/ /*fake_override*/ val i: kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        public enum entry B : kt1193.MyEnum {
+            private constructor B()
+            internal final override /*1*/ /*fake_override*/ val i: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public class object <class-object-for-B> : kt1193.MyEnum.B {
+                private constructor <class-object-for-B>()
+                internal final override /*1*/ /*fake_override*/ val i: kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt1193.MyEnum
+        public final /*synthesized*/ fun values(): kotlin.Array<kt1193.MyEnum>
+    }
+}

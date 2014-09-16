@@ -1,0 +1,12 @@
+package
+
+internal fun df(/*0*/ del: Del): Del
+internal fun test(/*0*/ del: kotlin.Any?): kotlin.Unit
+
+internal final class Del {
+    public constructor Del()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun get(/*0*/ _this: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

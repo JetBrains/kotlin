@@ -1,0 +1,4 @@
+package
+
+internal fun bar(/*0*/ a: kotlin.Any): kotlin.Unit
+kotlin.platform.platformName(name = "bar": kotlin.String) internal fun foo(/*0*/ a: kotlin.Any): kotlin.Unit

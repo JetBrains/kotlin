@@ -1,0 +1,9 @@
+package
+
+package b {
+    internal fun bar(/*0*/ i: kotlin.Int): kotlin.Int
+    internal fun test(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?, /*2*/ c: kotlin.Int?): kotlin.Unit
+    internal fun test(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Any?, /*2*/ c: kotlin.Int?): kotlin.Unit
+    internal fun test(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int?): kotlin.Unit
+    internal fun test(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int?, /*2*/ c: kotlin.Int?): kotlin.Unit
+}

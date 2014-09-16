@@ -1,0 +1,12 @@
+package
+
+package h {
+    internal fun </*0*/ T> both(/*0*/ t1: T, /*1*/ t2: T): T
+    internal fun </*0*/ R> elem(/*0*/ t: kotlin.List<R>): R
+    internal fun </*0*/ R> elemAndList(/*0*/ r: R, /*1*/ t: kotlin.List<R>): R
+    internal fun </*0*/ T> id(/*0*/ t: T): T
+    internal fun </*0*/ T> id1(/*0*/ t: T): T
+    internal fun </*0*/ T> list(/*0*/ value: T): java.util.ArrayList<T>
+    internal fun </*0*/ S> newList(): java.util.ArrayList<S>
+    internal fun test1(): kotlin.Unit
+}

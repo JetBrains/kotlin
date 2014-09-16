@@ -1,0 +1,5 @@
+package
+
+kotlin.inline() internal fun doCall(/*0*/ block: () -> kotlin.String): kotlin.String
+internal fun test1(): kotlin.String
+internal fun test2(/*0*/ nonLocal: kotlin.String, /*1*/ b: kotlin.Boolean): kotlin.String

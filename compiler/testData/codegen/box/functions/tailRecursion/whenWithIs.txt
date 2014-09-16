@@ -1,0 +1,4 @@
+package
+
+internal fun box(): kotlin.String
+kotlin.tailRecursive() internal fun withWhen(/*0*/ counter: kotlin.Int, /*1*/ d: kotlin.Any): kotlin.Int

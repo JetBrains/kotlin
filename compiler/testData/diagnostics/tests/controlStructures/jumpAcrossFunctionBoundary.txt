@@ -1,0 +1,5 @@
+package
+
+internal fun call(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+internal fun f1(): kotlin.Unit
+internal fun f2(): kotlin.Unit

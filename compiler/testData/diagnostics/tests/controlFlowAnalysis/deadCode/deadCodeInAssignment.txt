@@ -1,0 +1,6 @@
+package
+
+internal fun testAssignment(): kotlin.Unit
+internal fun testPlusAssign(): kotlin.Unit
+internal fun testVariableDeclaration(): kotlin.Unit
+internal fun todo(): kotlin.Nothing

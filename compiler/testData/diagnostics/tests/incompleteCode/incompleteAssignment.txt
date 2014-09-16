@@ -1,0 +1,8 @@
+package
+
+package sum {
+    internal fun </*0*/ T : kotlin.Any> assertEquals(/*0*/ actual: T?, /*1*/ expected: T?, /*2*/ message: kotlin.Any? = ...): kotlin.Unit
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    internal fun sum(/*0*/ a: kotlin.IntArray): kotlin.Int
+    internal fun test(/*0*/ expectedSum: kotlin.Int, /*1*/ vararg data: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+}

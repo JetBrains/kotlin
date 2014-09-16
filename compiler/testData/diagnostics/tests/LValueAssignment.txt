@@ -1,0 +1,74 @@
+package
+
+package lvalue_assignment {
+    internal fun canBe(/*0*/ i0: kotlin.Int, /*1*/ j: kotlin.Int): kotlin.Unit
+    internal fun canBe2(/*0*/ j: kotlin.Int): kotlin.Unit
+    internal fun cannotBe(): kotlin.Unit
+    internal fun foo(): kotlin.Unit
+    internal fun getInt(): kotlin.Int
+    internal fun kotlin.Array<kotlin.Int>.checkThis(): kotlin.Unit
+
+    internal final class A {
+        public constructor A()
+        internal final var a: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class Ab {
+        public constructor Ab()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun getArray(): kotlin.Array<kotlin.Int>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal open class B {
+        public constructor B()
+        internal final var b: kotlin.Int
+        internal final val c: kotlin.Int = 34
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class C : lvalue_assignment.B {
+        public constructor C()
+        internal final override /*1*/ /*fake_override*/ var b: kotlin.Int
+        internal final override /*1*/ /*fake_override*/ val c: kotlin.Int
+        internal final var x: kotlin.Int
+        internal final fun bar(/*0*/ c: lvalue_assignment.C): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(/*0*/ c: lvalue_assignment.C): kotlin.Unit
+        internal final fun foo1(/*0*/ c: lvalue_assignment.C): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class D {
+        public constructor D()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal final inner class B {
+            public constructor B()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal final fun foo(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class Test {
+        public constructor Test()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun testArrays(/*0*/ a: kotlin.Array<kotlin.Int>, /*1*/ ab: lvalue_assignment.Ab): kotlin.Unit
+        internal final fun testIllegalValues(): kotlin.Unit
+        internal final fun testVariables(): kotlin.Unit
+        internal final fun testVariables1(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

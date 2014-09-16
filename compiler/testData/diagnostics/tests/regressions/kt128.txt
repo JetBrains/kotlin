@@ -1,0 +1,4 @@
+package
+
+internal fun div(/*0*/ c: kotlin.String = ..., /*1*/ f: () -> kotlin.Unit): kotlin.Unit
+internal fun f(): kotlin.Unit

@@ -1,0 +1,3 @@
+package
+
+internal fun foo(/*0*/ x: kotlin.Number, /*1*/ y: kotlin.String?): kotlin.String

@@ -1,0 +1,13 @@
+package
+
+internal fun </*0*/ U : kotlin.Any> bar(): [ERROR : Error function type]
+internal fun </*0*/ T> foo(): [ERROR : Error function type]
+
+internal final class A</*0*/ T, /*1*/ U : kotlin.Any> {
+    public constructor A</*0*/ T, /*1*/ U : kotlin.Any>()
+    internal final fun bar(): [ERROR : Error function type]
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): [ERROR : Error function type]
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

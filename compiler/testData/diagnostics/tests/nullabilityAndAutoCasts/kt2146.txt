@@ -1,0 +1,11 @@
+package
+
+package kt2146 {
+    internal fun f1(/*0*/ s: kotlin.Int?): kotlin.Int
+    internal fun f2(/*0*/ s: kotlin.Int?): kotlin.Int
+    internal fun f3(/*0*/ s: kotlin.Int?): kotlin.Int
+    internal fun f4(/*0*/ s: kotlin.Int?): kotlin.Int
+    internal fun f5(/*0*/ s: kotlin.Int?): kotlin.Int
+    internal fun f6(/*0*/ s: kotlin.Int?): kotlin.Int
+    internal fun f7(/*0*/ s: kotlin.Int?): kotlin.Int
+}

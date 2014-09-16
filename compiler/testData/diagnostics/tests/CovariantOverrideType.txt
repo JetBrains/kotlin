@@ -1,0 +1,30 @@
+package
+
+internal trait A {
+    internal abstract val a: kotlin.Int
+    internal abstract val a1: kotlin.Int
+    internal abstract val </*0*/ T> g: kotlin.Iterator<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open fun foo(): kotlin.Int
+    internal open fun foo1(): kotlin.Int
+    internal open fun foo2(): kotlin.Int
+    internal abstract fun </*0*/ T> g(): T
+    internal abstract fun </*0*/ T> g1(): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal abstract class B : A {
+    public constructor B()
+    internal open override /*1*/ val a: kotlin.Double = 1.0.toDouble()
+    internal open override /*1*/ val a1: kotlin.Double = 1.0.toDouble()
+    internal abstract override /*1*/ val </*0*/ X> g: kotlin.Iterator<kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ fun foo(): kotlin.Unit
+    internal open override /*1*/ /*fake_override*/ fun foo1(): kotlin.Int
+    internal open override /*1*/ fun foo2(): kotlin.Unit
+    internal abstract override /*1*/ fun </*0*/ X> g(): kotlin.Int
+    internal abstract override /*1*/ fun </*0*/ X> g1(): kotlin.List<X>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

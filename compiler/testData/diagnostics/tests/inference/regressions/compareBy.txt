@@ -1,0 +1,13 @@
+package
+
+internal fun </*0*/ T : kotlin.Any> compareBy(/*0*/ a: T?, /*1*/ b: T?, /*2*/ vararg functions: T.() -> kotlin.Comparable<out kotlin.Any?>? /*kotlin.Array<T.() -> kotlin.Comparable<out kotlin.Any?>?>*/): kotlin.Int
+
+internal final class Item : kotlin.Comparable<Item> {
+    public constructor Item(/*0*/ name: kotlin.String, /*1*/ rating: kotlin.Int)
+    internal final val name: kotlin.String
+    internal final val rating: kotlin.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: Item): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

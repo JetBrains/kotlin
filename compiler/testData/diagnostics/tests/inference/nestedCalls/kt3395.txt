@@ -1,0 +1,18 @@
+package
+
+package b {
+    internal fun </*0*/ T> foo(/*0*/ t: T): T
+    internal fun </*0*/ K, /*1*/ V> mapOf(/*0*/ vararg values: b.Pair<K, V> /*kotlin.Array<b.Pair<K, V>>*/): kotlin.Map<K, V>
+    internal fun println(/*0*/ message: kotlin.Any?): kotlin.Unit
+    public fun </*0*/ T> query(/*0*/ t: T, /*1*/ args: kotlin.Map<kotlin.String, kotlin.Any>): kotlin.List<T>
+    internal fun test(/*0*/ pair: b.Pair<kotlin.String, kotlin.Int>): kotlin.Unit
+    internal fun test(/*0*/ t: kotlin.String): kotlin.Unit
+    internal fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): b.Pair<A, B>
+
+    internal final class Pair</*0*/ out A, /*1*/ out B> {
+        public constructor Pair</*0*/ out A, /*1*/ out B>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

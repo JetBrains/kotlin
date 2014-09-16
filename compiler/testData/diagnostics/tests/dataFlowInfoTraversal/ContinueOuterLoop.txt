@@ -1,0 +1,5 @@
+package
+
+internal fun doWhileLoop(/*0*/ x: kotlin.Int?): kotlin.Unit
+internal fun whileLoop(/*0*/ x: kotlin.Int?): kotlin.Unit
+internal fun whileLoopContinueInnerOuter(/*0*/ x: kotlin.Int?): kotlin.Unit

@@ -1,0 +1,19 @@
+package
+
+package a {
+    internal fun doInt(/*0*/ i: kotlin.Int): kotlin.Int
+    internal fun doList(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
+    internal fun </*0*/ T : a.A> emptyListOfA(): kotlin.List<T>
+    internal fun getList(): kotlin.List<kotlin.Int>?
+    internal fun </*0*/ T> strangeList(/*0*/ f: (T) -> kotlin.Unit): kotlin.List<T>
+    internal fun testDataFlowInfo1(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int?): kotlin.Unit
+    internal fun testDataFlowInfo2(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int?): kotlin.Unit
+    internal fun testElvis(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int?): kotlin.Unit
+    internal fun testTypeMismatch(/*0*/ a: kotlin.String?, /*1*/ b: kotlin.Any): kotlin.Unit
+
+    internal trait A {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

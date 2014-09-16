@@ -1,0 +1,36 @@
+package
+
+package a {
+    internal val foo: [ERROR : Error function type]
+    internal fun bar(): [ERROR : Error function type]
+}
+
+package b {
+    internal fun bar(): [ERROR : Error function type]
+    internal fun foo(): [ERROR : Error function type]
+}
+
+package c {
+    internal fun bar(): [ERROR : Error function type]
+    internal fun bazz(): [ERROR : Error function type]
+    internal fun foo(): [ERROR : Error function type]
+}
+
+package ok {
+
+    package ok.a {
+        internal val foo: kotlin.Int
+        internal fun bar(): kotlin.Int
+    }
+
+    package ok.b {
+        internal fun bar(): kotlin.Int
+        internal fun foo(): kotlin.Int
+    }
+
+    package ok.c {
+        internal fun bar(): kotlin.Int
+        internal fun bazz(): kotlin.Int
+        internal fun foo(): kotlin.Int
+    }
+}

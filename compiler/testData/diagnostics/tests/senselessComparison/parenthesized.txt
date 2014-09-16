@@ -1,0 +1,6 @@
+package
+
+internal fun testEquals(/*0*/ x: kotlin.Int): kotlin.Unit
+internal fun testEqualsFlipped(/*0*/ x: kotlin.Int): kotlin.Unit
+internal fun testNotEquals(/*0*/ x: kotlin.Int): kotlin.Unit
+internal fun testNotEqualsFlipped(/*0*/ x: kotlin.Int): kotlin.Unit

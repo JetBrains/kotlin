@@ -1,0 +1,7 @@
+package
+
+package typeConstructorMismatch {
+    internal fun </*0*/ R> elemAndList(/*0*/ r: R, /*1*/ t: kotlin.List<R>): R
+    internal fun test(/*0*/ set: kotlin.Set<kotlin.String>): kotlin.Unit
+    internal fun </*0*/ R> R.elemAndListWithReceiver(/*0*/ r: R, /*1*/ t: kotlin.List<R>): R
+}

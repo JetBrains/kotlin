@@ -1,0 +1,4 @@
+package
+
+internal val f: () -> kotlin.Int
+internal val i: kotlin.Int = 17

@@ -1,0 +1,28 @@
+package
+
+package j {
+    internal fun foo(/*0*/ a: j.A): kotlin.Unit
+    internal fun </*0*/ R> id(/*0*/ r: R): R
+
+    internal final class A {
+        public constructor A(/*0*/ b: j.B)
+        internal final val b: j.B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class B {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun </*0*/ T> invoke(/*0*/ f: (T) -> T): j.MyFunc<T>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal trait MyFunc</*0*/ T> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -1,0 +1,8 @@
+package
+
+package a {
+    internal fun foo(/*0*/ a: kotlin.Any?): kotlin.Any?
+    internal fun test(/*0*/ s: kotlin.String?, /*1*/ l: kotlin.MutableList<kotlin.String>): kotlin.Unit
+    internal fun </*0*/ T> T.fff(/*0*/ l: kotlin.MutableList<T>): kotlin.Boolean
+    internal fun </*0*/ T : kotlin.Any> T.test(): T
+}

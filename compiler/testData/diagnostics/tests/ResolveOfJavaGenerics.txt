@@ -1,0 +1,7 @@
+package
+
+internal fun test(): kotlin.Unit
+internal fun test(/*0*/ a: java.lang.Class<kotlin.Int>): kotlin.Unit
+internal fun test(/*0*/ a: java.lang.Comparable<kotlin.Int>): kotlin.Unit
+internal fun test(/*0*/ a: java.lang.annotation.RetentionPolicy): kotlin.Unit
+internal fun test(/*0*/ a: java.util.ArrayList<kotlin.Int>): kotlin.Unit

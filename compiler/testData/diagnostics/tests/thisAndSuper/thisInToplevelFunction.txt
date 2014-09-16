@@ -1,0 +1,3 @@
+package
+
+internal fun foo1(): kotlin.Unit

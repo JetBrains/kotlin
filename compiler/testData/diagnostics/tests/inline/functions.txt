@@ -1,0 +1,5 @@
+package
+
+internal fun getFun(/*0*/ s: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Int
+kotlin.inline() internal fun getInlineFun(/*0*/ s: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Int
+kotlin.inline() internal fun testExtension(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit

@@ -1,0 +1,31 @@
+package
+
+package kt235 {
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+
+    internal final class MyArray {
+        public constructor MyArray()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun get(/*0*/ i: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun set(/*0*/ i: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class MyArray1 {
+        public constructor MyArray1()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun get(/*0*/ i: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun set(/*0*/ i: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class MyNumber {
+        public constructor MyNumber()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun inc(): kt235.MyNumber
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

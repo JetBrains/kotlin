@@ -1,0 +1,24 @@
+package
+
+package c {
+
+    public final class Pair</*0*/ out A, /*1*/ out B> {
+        public constructor Pair</*0*/ out A, /*1*/ out B>(/*0*/ first: A, /*1*/ second: B)
+        public final val first: A
+        public final val second: B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public abstract class TestBug1 {
+        public constructor TestBug1()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        private abstract fun m1(): c.Pair<kotlin.Int, kotlin.Int>
+        public final fun m3(/*0*/ position: kotlin.Int): kotlin.Unit
+        public final fun m4(/*0*/ position: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+        private final fun position(/*0*/ p: kotlin.Int): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

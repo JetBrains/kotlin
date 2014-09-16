@@ -1,0 +1,23 @@
+package
+
+kotlin.platform.platformName(name = "c": kotlin.String) internal val px: kotlin.Int = 1
+internal val valx: kotlin.Int
+internal var vardef: kotlin.Int
+internal var varx: kotlin.Int
+kotlin.platform.platformName(name = "d": kotlin.String) internal val kotlin.Any.px: kotlin.Int
+kotlin.platform.platformName(name = "a": kotlin.String) internal fun foo(): kotlin.Unit
+internal fun foo1(): kotlin.Unit
+kotlin.platform.platformName(name = "b": kotlin.String) internal fun kotlin.Any.foo(): kotlin.Unit
+
+kotlin.platform.platformName(name = "C": kotlin.String) internal final class C {
+    public constructor C()
+    kotlin.platform.platformName(name = "c": kotlin.String) internal final val px: kotlin.Int = 1
+    internal final val valx: kotlin.Int
+    internal final var varx: kotlin.Int
+    kotlin.platform.platformName(name = "d": kotlin.String) internal final val kotlin.Any.px: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    kotlin.platform.platformName(name = "a": kotlin.String) internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    kotlin.platform.platformName(name = "b": kotlin.String) internal final fun kotlin.Any.foo(): kotlin.Unit
+}

@@ -1,0 +1,17 @@
+package
+
+internal fun bar(/*0*/ f: (kotlin.Int, kotlin.Int) -> kotlin.Int): kotlin.Unit
+internal fun bar1(/*0*/ f: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+internal fun bar2(/*0*/ f: () -> kotlin.Int): kotlin.Unit
+internal fun text(): kotlin.Unit
+internal fun kotlin.String.on(/*0*/ predicate: (URI) -> kotlin.Boolean): URI
+internal fun kotlin.String.to(/*0*/ dest: kotlin.String): kotlin.Unit
+
+internal final class URI {
+    public constructor URI(/*0*/ body: kotlin.Any)
+    internal final val body: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun to(/*0*/ dest: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

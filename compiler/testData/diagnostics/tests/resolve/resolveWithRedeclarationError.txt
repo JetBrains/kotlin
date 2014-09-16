@@ -1,0 +1,39 @@
+package
+
+package c {
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun x(): kotlin.Unit
+    internal fun z(/*0*/ view: () -> kotlin.Unit): kotlin.Unit
+
+    internal final class x {
+        public constructor x()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

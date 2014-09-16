@@ -1,0 +1,8 @@
+package
+
+kotlin.inline() internal fun inlineFun(/*0*/ s: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Unit
+kotlin.inline() internal fun inlineFun2(/*0*/ s: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Unit
+kotlin.inline() internal fun inlineFunWithExt(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Int.(kotlin.Int) -> kotlin.Unit
+kotlin.inline() internal fun inlineFunWithExt2(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Int.(kotlin.Int) -> kotlin.Unit
+kotlin.inline() internal fun (kotlin.Int) -> kotlin.Unit.inlineExt(): (kotlin.Int) -> kotlin.Unit
+kotlin.inline() internal fun (kotlin.Int) -> kotlin.Unit.inlineExt2(): (kotlin.Int) -> kotlin.Unit

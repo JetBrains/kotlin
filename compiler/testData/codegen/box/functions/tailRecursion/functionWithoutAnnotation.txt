@@ -1,0 +1,4 @@
+package
+
+internal fun box(): kotlin.String
+internal fun withoutAnnotation(/*0*/ x: kotlin.Int): kotlin.Int

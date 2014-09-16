@@ -1,0 +1,10 @@
+package
+
+internal final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.String)
+    internal final val a: kotlin.Int
+    internal final var b: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

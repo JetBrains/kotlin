@@ -1,0 +1,8 @@
+package
+
+kotlin.inline() internal fun inlineFunNoInline(/*0*/ kotlin.noinline() s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunNoInline(/*0*/ kotlin.noinline() ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunWrongUsage(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunWrongUsageExt(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunWrongUsageInClosure(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunWrongUsageInClosureExt(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit

@@ -1,0 +1,18 @@
+package
+
+internal fun TestBug(): kotlin.Unit
+
+public trait Bug {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun </*0*/ RET : Bug?> save(): RET?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class SubBug : Bug {
+    public constructor SubBug()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun save(): SubBug?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

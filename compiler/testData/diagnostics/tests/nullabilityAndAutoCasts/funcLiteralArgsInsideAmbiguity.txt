@@ -1,0 +1,7 @@
+package
+
+package d {
+    internal fun bar(): kotlin.Unit
+    internal fun doSmth1(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+    internal fun doSmth1(/*0*/ g: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+}

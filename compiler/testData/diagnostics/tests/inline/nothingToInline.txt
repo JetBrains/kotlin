@@ -1,0 +1,9 @@
+package
+
+kotlin.inline() internal fun test(): kotlin.Unit
+kotlin.inline() internal fun test2(/*0*/ s: ((kotlin.Int) -> kotlin.Int)?): kotlin.Unit
+kotlin.inline() internal fun test2(/*0*/ s: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+kotlin.inline() internal fun test3(/*0*/ kotlin.noinline() s: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+kotlin.inline() internal fun test4(/*0*/ kotlin.noinline() s: kotlin.Int.() -> kotlin.Int): kotlin.Unit
+kotlin.inline() internal fun ((kotlin.Int) -> kotlin.Int)?.test5(): kotlin.Unit
+kotlin.inline() internal fun ((kotlin.Int) -> kotlin.Int)?.test6(): kotlin.Unit

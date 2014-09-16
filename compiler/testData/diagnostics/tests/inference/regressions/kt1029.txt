@@ -1,0 +1,7 @@
+package
+
+package i {
+    internal fun a(): kotlin.Unit
+    public fun </*0*/ T> from(/*0*/ yielder: () -> kotlin.Iterable<T>): kotlin.Iterable<T>
+    public fun </*0*/ T> kotlin.Iterable<T>.where(/*0*/ predicate: (T) -> kotlin.Boolean): () -> kotlin.Iterable<T>
+}

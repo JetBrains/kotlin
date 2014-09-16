@@ -1,0 +1,12 @@
+package
+
+internal fun bar(): kotlin.Unit
+internal fun returnInBinary1(): kotlin.Boolean
+internal fun returnInBinary2(): kotlin.Boolean
+internal fun testAnd1(/*0*/ b: kotlin.Boolean): kotlin.Unit
+internal fun testAnd2(/*0*/ b: kotlin.Boolean): kotlin.Unit
+internal fun testBinary1(): kotlin.Unit
+internal fun testBinary2(): kotlin.Unit
+internal fun testElvis1(): kotlin.Unit
+internal fun testElvis2(/*0*/ s: kotlin.String?): kotlin.Unit
+internal fun todo(): kotlin.Nothing

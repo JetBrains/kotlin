@@ -1,0 +1,4 @@
+package
+
+internal fun foo(/*0*/ s: java.lang.String): kotlin.Unit
+internal fun foo(/*0*/ s: kotlin.String): kotlin.Unit

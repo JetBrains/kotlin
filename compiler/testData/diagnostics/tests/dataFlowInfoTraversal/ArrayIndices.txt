@@ -1,0 +1,4 @@
+package
+
+internal fun foo1(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Array<kotlin.Array<kotlin.Int>>): kotlin.Unit
+internal fun foo2(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Array<kotlin.Array<kotlin.Int>>): kotlin.Unit

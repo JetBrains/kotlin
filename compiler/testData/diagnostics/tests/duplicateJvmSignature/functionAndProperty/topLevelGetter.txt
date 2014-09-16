@@ -1,0 +1,4 @@
+package
+
+internal val x: kotlin.Int
+internal fun getX(): kotlin.Int

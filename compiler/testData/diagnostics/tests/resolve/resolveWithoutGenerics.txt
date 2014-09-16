@@ -1,0 +1,18 @@
+package
+
+package c {
+    internal fun foo(/*0*/ a: c.A, /*1*/ b: c.A): c.A
+    internal fun foo(/*0*/ a: c.A, /*1*/ b: c.A, /*2*/ i: kotlin.Int): c.A
+    internal fun foo(/*0*/ a: c.A, /*1*/ b: c.A, /*2*/ s: kotlin.String): c.A
+    internal fun foo(/*0*/ a: c.A, /*1*/ b: kotlin.Any): c.A
+    internal fun foo(/*0*/ a: kotlin.Any): kotlin.Any
+    internal fun test(/*0*/ a: c.A): kotlin.Unit
+
+    internal final class A {
+        public constructor A()
+        internal final val testVal: c.A
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

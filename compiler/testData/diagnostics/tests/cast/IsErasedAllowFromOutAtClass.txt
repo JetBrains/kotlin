@@ -1,0 +1,3 @@
+package
+
+internal fun f(/*0*/ a: kotlin.List<kotlin.Number>): kotlin.Boolean

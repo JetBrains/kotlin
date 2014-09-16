@@ -1,0 +1,8 @@
+package
+
+internal fun testFun(): kotlin.Int
+
+package test {
+    internal val t: kotlin.Int
+    internal fun testFun(): kotlin.Int
+}

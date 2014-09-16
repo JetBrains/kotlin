@@ -1,0 +1,13 @@
+package
+
+internal fun A.test(): kotlin.Unit
+
+internal final class A {
+    public constructor A()
+    internal final var bar: kotlin.String
+    internal final val foo: kotlin.Unit
+    internal final var self: A
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

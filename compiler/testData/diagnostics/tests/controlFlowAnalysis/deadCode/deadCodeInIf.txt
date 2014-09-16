@@ -1,0 +1,6 @@
+package
+
+internal fun bar(): kotlin.Unit
+internal fun testIf(): kotlin.Unit
+internal fun testIf1(/*0*/ b: kotlin.Boolean): kotlin.Unit
+internal fun todo(): kotlin.Nothing

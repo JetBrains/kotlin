@@ -1,0 +1,9 @@
+package
+
+package a {
+    internal fun </*0*/ T> bar(/*0*/ a: T, /*1*/ b: kotlin.Map<T, kotlin.String>): kotlin.String?
+    internal fun </*0*/ T> foo(/*0*/ a: T, /*1*/ b: kotlin.Map<T, kotlin.String>?): kotlin.String?
+    internal fun test(/*0*/ a: kotlin.Int): kotlin.Unit
+    internal fun test1(/*0*/ a: kotlin.Int): kotlin.Unit
+    internal fun test2(/*0*/ a: kotlin.Int): kotlin.Unit
+}

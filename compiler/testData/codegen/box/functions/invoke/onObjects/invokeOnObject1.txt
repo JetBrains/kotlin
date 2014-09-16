@@ -1,0 +1,18 @@
+package
+
+internal fun box(): kotlin.String
+internal fun A.invoke(/*0*/ i: kotlin.Int): kotlin.Int
+
+internal object A {
+    private constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public class object <class-object-for-A> : A {
+        private constructor <class-object-for-A>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

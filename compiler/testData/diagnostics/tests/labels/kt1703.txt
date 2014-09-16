@@ -1,0 +1,5 @@
+package
+
+internal fun test(): kotlin.Unit
+internal fun use(/*0*/ a: kotlin.Any?): kotlin.Any?
+internal fun </*0*/ T> kotlin.Array<out T>.forEach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit

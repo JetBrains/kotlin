@@ -1,0 +1,6 @@
+package
+
+package demo {
+    internal fun </*0*/ T> filter(/*0*/ list: kotlin.Array<T>, /*1*/ filter: (T) -> kotlin.Boolean): kotlin.List<T>
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+}

@@ -1,0 +1,32 @@
+package
+
+package baz {
+    internal fun test(): kotlin.Unit
+
+    internal final class C : foo.Bar {
+        public constructor C()
+        internal final override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package foo {
+
+    internal object Bar {
+        private constructor Bar()
+        internal final fun bar(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-Bar> : foo.Bar {
+            private constructor <class-object-for-Bar>()
+            internal final override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

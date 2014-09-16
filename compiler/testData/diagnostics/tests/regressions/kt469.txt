@@ -1,0 +1,16 @@
+package
+
+package kt469 {
+    internal fun bar(/*0*/ list: kotlin.MutableList<kotlin.Int>): kotlin.Unit
+    internal fun foo(): kotlin.Unit
+    internal fun </*0*/ T> kotlin.MutableList<T>.plusAssign(/*0*/ t: T): kotlin.Unit
+
+    internal final class MyNumber {
+        public constructor MyNumber(/*0*/ i: kotlin.Int)
+        internal final var i: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun minusAssign(/*0*/ m: kt469.MyNumber): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

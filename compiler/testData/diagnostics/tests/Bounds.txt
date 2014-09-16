@@ -1,0 +1,72 @@
+package
+
+internal fun </*0*/ T : kotlin.Int?> bar(): kotlin.Unit
+internal fun </*0*/ T : kotlin.Any> foo(): kotlin.Unit
+internal fun test(): kotlin.Unit
+internal fun </*0*/ T : kotlin.Int> kotlin.Int.buzz(): kotlin.Unit
+
+internal open class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal open class B</*0*/ T : A> {
+    public constructor B</*0*/ T : A>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal abstract class C</*0*/ T : B<kotlin.Int>, /*1*/ X : (B<kotlin.Char>) -> Pair<B<kotlin.Any>, B<A>>> : B<kotlin.Any> {
+    public constructor C</*0*/ T : B<kotlin.Int>, /*1*/ X : (B<kotlin.Char>) -> Pair<B<kotlin.Any>, B<A>>>()
+    internal final val a: B<kotlin.Char>
+    internal abstract val x: (B<kotlin.Char>) -> B<kotlin.Any>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Pair</*0*/ A, /*1*/ B> {
+    public constructor Pair</*0*/ A, /*1*/ B>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package boundsWithSubstitutors {
+    internal val a: boundsWithSubstitutors.B<boundsWithSubstitutors.C>
+    internal val a1: boundsWithSubstitutors.B<kotlin.Int>
+    internal val b: boundsWithSubstitutors.X<kotlin.Any, boundsWithSubstitutors.X<boundsWithSubstitutors.A<boundsWithSubstitutors.C>, boundsWithSubstitutors.C>>
+    internal val b0: boundsWithSubstitutors.X<kotlin.Any, kotlin.Any?>
+    internal val b1: boundsWithSubstitutors.X<kotlin.Any, boundsWithSubstitutors.X<boundsWithSubstitutors.A<boundsWithSubstitutors.C>, kotlin.String>>
+
+    internal open class A</*0*/ T> {
+        public constructor A</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class B</*0*/ X : boundsWithSubstitutors.A<X>> {
+        public constructor B</*0*/ X : boundsWithSubstitutors.A<X>>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class C : boundsWithSubstitutors.A<boundsWithSubstitutors.C> {
+        public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class X</*0*/ A, /*1*/ B : A> {
+        public constructor X</*0*/ A, /*1*/ B : A>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

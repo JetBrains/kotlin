@@ -1,0 +1,12 @@
+package
+
+internal var a: kotlin.Int
+
+internal final class Delegate {
+    public constructor Delegate()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun get(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun set(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata, /*2*/ i: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

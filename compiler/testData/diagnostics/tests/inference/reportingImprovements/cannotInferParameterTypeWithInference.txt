@@ -1,0 +1,8 @@
+package
+
+package aa {
+    internal fun bar(/*0*/ f: ([ERROR : A]) -> kotlin.Unit): kotlin.Unit
+    internal fun </*0*/ T, /*1*/ R> foo(/*0*/ block: (T) -> R): (T) -> R
+    internal fun test1(): kotlin.Unit
+    internal fun test2(): kotlin.Unit
+}

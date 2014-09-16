@@ -1,0 +1,65 @@
+package
+
+package foobar {
+    internal val x1: java.util.List<kotlin.Int>? = null
+    internal val y1: kotlin.List<kotlin.Int>? = null
+    internal fun </*0*/ O> done(/*0*/ result: O): foobar.Iteratee<kotlin.Any?, O>
+
+    internal abstract class Collection</*0*/ E> : kotlin.Iterable<E> {
+        public constructor Collection</*0*/ E>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun </*0*/ O> iterate(/*0*/ iteratee: foobar.Iteratee<E, O>): O
+        public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.Iterator<E>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class Foo</*0*/ T> {
+        public constructor Foo</*0*/ T>()
+        internal abstract val x: T
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class Iteratee</*0*/ in I, /*1*/ out O> {
+        public constructor Iteratee</*0*/ in I, /*1*/ out O>()
+        internal abstract val isDone: kotlin.Boolean
+        internal abstract val result: O
+        internal abstract fun done(): O
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal abstract fun process(/*0*/ item: I): foobar.Iteratee<I, O>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class StrangeIterateeImpl</*0*/ in I, /*1*/ out O> : foobar.Iteratee<I, O> {
+        public constructor StrangeIterateeImpl</*0*/ in I, /*1*/ out O>(/*0*/ obj: O)
+        internal open override /*1*/ val isDone: kotlin.Boolean = true
+        internal final val obj: O
+        internal open override /*1*/ val result: O
+        internal open override /*1*/ fun done(): O
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal open override /*1*/ fun process(/*0*/ item: I): foobar.Iteratee<I, O>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class Sum : foobar.Iteratee<kotlin.Int, kotlin.Int> {
+        public constructor Sum()
+        internal abstract override /*1*/ val isDone: kotlin.Boolean
+        internal abstract override /*1*/ val result: kotlin.Int
+        internal abstract override /*1*/ fun done(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal open override /*1*/ fun process(/*0*/ item: kotlin.Int): foobar.Iteratee<kotlin.Int, kotlin.Int>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    package foobar.a {
+        internal val a: java.util.List<kotlin.Int>? = null
+        internal val a1: [ERROR : ArrayList<Int>]?
+        internal val b: kotlin.List<kotlin.Int>? = null
+        internal val b1: [ERROR : util.List<Int>]?
+    }
+}
