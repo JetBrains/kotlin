@@ -1,0 +1,22 @@
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
+// PARAM_DESCRIPTOR: value-parameter val a: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: value-parameter val b: kotlin.Int defined in foo
+
+// SIBLING:
+fun foo(a: Int, b: Int) {
+    unit(a, b)
+}
+
+private fun unit(a: Int, b: Int) {
+    println("a = $a")
+    println("b = $b")
+    println(a + b * a)
+}
+
+fun bar() {
+    val x = 1
+    val y = 2
+
+    unit(x, y)
+}

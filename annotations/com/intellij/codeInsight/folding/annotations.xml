@@ -1,0 +1,10 @@
+<root>
+  <item
+      name='com.intellij.codeInsight.folding.CodeFoldingManager com.intellij.codeInsight.folding.CodeFoldingManager getInstance(com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.folding.CodeFoldingManager com.intellij.openapi.editor.FoldRegion[] getFoldRegionsAtOffset(com.intellij.openapi.editor.Editor, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

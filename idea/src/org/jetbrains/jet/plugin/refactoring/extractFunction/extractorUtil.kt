@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import java.util.LinkedHashMap
 import java.util.Collections
-import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.lang.psi.psiUtil.isFunctionLiteralOutsideParentheses
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
@@ -53,6 +52,16 @@ import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.plugin.refactoring.isMultiLine
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsTuple
+import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier
+import org.jetbrains.jet.plugin.util.psi.patternMatching.UnifierParameter
+import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult
+import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Match
+import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.Status
+import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.WeaklyMatched
+import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.StronglyMatched
 
 fun ExtractableCodeDescriptor.getDeclarationText(
         options: ExtractionGeneratorOptions = ExtractionGeneratorOptions.DEFAULT,
@@ -108,6 +117,227 @@ fun createNameCounterpartMap(from: JetElement, to: JetElement): Map<JetSimpleNam
     )
 
     return map
+}
+
+class DuplicateInfo(
+        val range: JetPsiRange,
+        val controlFlow: ControlFlow,
+        val arguments: List<String>
+)
+
+fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
+    fun processWeakMatch(match: Match, newControlFlow: ControlFlow): Boolean {
+        val valueCount = controlFlow.outputValues.size
+
+        val weakMatches = HashMap((match.result as WeaklyMatched).weakMatches)
+        val currentValuesToNew = HashMap<OutputValue, OutputValue>()
+
+        fun matchValues(currentValue: OutputValue, newValue: OutputValue): Boolean {
+            if ((currentValue is Jump) != (newValue is Jump)) return false
+            if (currentValue.originalExpressions.zip(newValue.originalExpressions).all { weakMatches[it.first] == it.second }) {
+                currentValuesToNew[currentValue] = newValue
+                weakMatches.keySet().removeAll(currentValue.originalExpressions)
+                return true
+            }
+            return false
+        }
+
+        if (valueCount == 1) {
+            matchValues(controlFlow.outputValues.first(), newControlFlow.outputValues.first())
+        } else {
+            @outer
+            for (currentValue in controlFlow.outputValues)
+                for (newValue in newControlFlow.outputValues) {
+                    if ((currentValue is ExpressionValue) != (newValue is ExpressionValue)) continue
+                    if (matchValues(currentValue, newValue)) continue @outer
+                }
+        }
+
+        return currentValuesToNew.size == valueCount && weakMatches.isEmpty()
+    }
+
+    fun getControlFlowIfMatched(match: Match): ControlFlow? {
+        val analysisResult = extractionData.copy(originalRange = match.range).performAnalysis()
+        if (analysisResult.status != AnalysisResult.Status.SUCCESS) return null
+
+        val newControlFlow = analysisResult.descriptor!!.controlFlow
+        if (newControlFlow.outputValues.isEmpty()) return newControlFlow
+        if (controlFlow.outputValues.size != newControlFlow.outputValues.size) return null
+
+        val matched = when (match.result) {
+            is StronglyMatched -> true
+            is WeaklyMatched -> processWeakMatch(match, newControlFlow)
+            else -> throw AssertionError("Unexpected unification result: ${match.result}")
+        }
+
+        return if (matched) newControlFlow else null
+    }
+
+    val unifierParameters = parameters.map { UnifierParameter(it.originalDescriptor, it.parameterType) }
+
+    val unifier = JetPsiUnifier(unifierParameters, true)
+
+    val scopeElement = extractionData.targetSibling.getParent() ?: return Collections.emptyList()
+    val originalTextRange = extractionData.originalRange.getTextRange()
+    return extractionData
+            .originalRange
+            .match(scopeElement, unifier)
+            .stream()
+            .filter { !(it.range.getTextRange() intersects originalTextRange) }
+            .map { match ->
+                val controlFlow = getControlFlowIfMatched(match)
+                controlFlow?.let { DuplicateInfo(match.range, it, unifierParameters.map { match.result.substitution[it]!!.getText()!! }) }
+            }
+            .filterNotNull()
+            .toList()
+}
+
+private fun makeCall(
+        name: String,
+        declaration: JetNamedDeclaration,
+        controlFlow: ControlFlow,
+        rangeToReplace: JetPsiRange,
+        arguments: List<String>) {
+    fun insertCall(anchor: PsiElement, wrappedCall: JetExpression) {
+        val firstExpression = rangeToReplace.elements.firstOrNull { it is JetExpression } as? JetExpression
+        if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
+            val functionLiteralArgument = PsiTreeUtil.getParentOfType(firstExpression, javaClass<JetFunctionLiteralArgument>())!!
+            //todo use the right binding context
+            functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, BindingContext.EMPTY)
+            return
+        }
+        anchor.replace(wrappedCall)
+    }
+
+    if (rangeToReplace !is JetPsiRange.ListRange) return
+
+    val anchor = rangeToReplace.startElement
+    val anchorParent = anchor.getParent()!!
+
+    anchor.getNextSibling()?.let { from ->
+        val to = rangeToReplace.endElement
+        if (to != anchor) {
+            anchorParent.deleteChildRange(from, to);
+        }
+    }
+
+    val callText = when (declaration) {
+        is JetNamedFunction ->
+            arguments.joinToString(separator = ", ", prefix = "${name}(", postfix = ")")
+        else -> name
+    }
+
+    val anchorInBlock = stream(anchor) { it.getParent() }.firstOrNull { it.getParent() is JetBlockExpression }
+    val block = (anchorInBlock?.getParent() as? JetBlockExpression) ?: anchorParent
+
+    val psiFactory = JetPsiFactory(anchor.getProject())
+    val newLine = psiFactory.createNewLine()
+
+    if (controlFlow.outputValueBoxer is AsTuple && controlFlow.outputValues.size > 1 && controlFlow.outputValues.all { it is Initializer }) {
+        val declarationsToMerge = controlFlow.outputValues.map { (it as Initializer).initializedDeclaration }
+        val isVar = declarationsToMerge.first().isVar()
+        if (declarationsToMerge.all { it.isVar() == isVar }) {
+            controlFlow.declarationsToCopy.subtract(declarationsToMerge).forEach {
+                block.addBefore(psiFactory.createDeclaration<JetDeclaration>(it.getText()!!), anchorInBlock) as JetDeclaration
+                block.addBefore(newLine, anchorInBlock)
+            }
+
+            val entries = declarationsToMerge.map { p -> p.getName() + (p.getTypeRef()?.let { ": ${it.getText()}" } ?: "") }
+            anchorInBlock?.replace(
+                    psiFactory.createDeclaration("${if (isVar) "var" else "val"} (${entries.joinToString()}) = $callText")
+            )
+
+            return
+        }
+    }
+
+    val inlinableCall = controlFlow.outputValues.size <= 1
+    val unboxingExpressions =
+            if (inlinableCall) {
+                controlFlow.outputValueBoxer.getUnboxingExpressions(callText)
+            }
+            else {
+                val varNameValidator = JetNameValidatorImpl(block, anchorInBlock, JetNameValidatorImpl.Target.PROPERTIES)
+                val resultVal = JetNameSuggester.suggestNames(controlFlow.outputValueBoxer.returnType, varNameValidator, null).first()
+                block.addBefore(psiFactory.createDeclaration("val $resultVal = $callText"), anchorInBlock)
+                block.addBefore(newLine, anchorInBlock)
+                controlFlow.outputValueBoxer.getUnboxingExpressions(resultVal)
+            }
+
+    val copiedDeclarations = HashMap<JetDeclaration, JetDeclaration>()
+    for (decl in controlFlow.declarationsToCopy) {
+        val declCopy = psiFactory.createDeclaration<JetDeclaration>(decl.getText()!!)
+        copiedDeclarations[decl] = block.addBefore(declCopy, anchorInBlock) as JetDeclaration
+        block.addBefore(newLine, anchorInBlock)
+    }
+
+    if (controlFlow.outputValues.isEmpty()) {
+        anchor.replace(psiFactory.createExpression(callText))
+        return
+    }
+
+    fun wrapCall(outputValue: OutputValue, callText: String): List<PsiElement> {
+        return when (outputValue) {
+            is OutputValue.ExpressionValue ->
+                Collections.singletonList(
+                        if (outputValue.callSiteReturn) psiFactory.createReturn(callText) else psiFactory.createExpression(callText)
+                )
+
+            is ParameterUpdate ->
+                Collections.singletonList(
+                        psiFactory.createExpression("${outputValue.parameter.argumentText} = $callText")
+                )
+
+            is Jump -> {
+                if (outputValue.conditional) {
+                    Collections.singletonList(
+                            psiFactory.createExpression("if ($callText) ${outputValue.elementToInsertAfterCall.getText()}")
+                    )
+                }
+                else {
+                    listOf(
+                            psiFactory.createExpression(callText),
+                            newLine,
+                            psiFactory.createExpression(outputValue.elementToInsertAfterCall.getText()!!)
+                    )
+                }
+            }
+
+            is Initializer -> {
+                val newProperty = copiedDeclarations[outputValue.initializedDeclaration] as JetProperty
+                newProperty.replace(DeclarationUtils.changePropertyInitializer(newProperty, psiFactory.createExpression(callText)))
+                Collections.emptyList()
+            }
+
+            else -> throw IllegalArgumentException("Unknown output value: $outputValue")
+        }
+    }
+
+    val defaultValue = controlFlow.defaultOutputValue
+
+    controlFlow.outputValues
+            .filter { it != defaultValue }
+            .flatMap { wrapCall(it, unboxingExpressions[it]!!) }
+            .withIndices()
+            .forEach {
+                val (i, e) = it
+
+                if (i > 0) {
+                    block.addBefore(newLine, anchorInBlock)
+                }
+                block.addBefore(e, anchorInBlock)
+            }
+
+    defaultValue?.let {
+        if (!inlinableCall) {
+            block.addBefore(newLine, anchorInBlock)
+        }
+        insertCall(anchor, wrapCall(it, unboxingExpressions[it]!!).first() as JetExpression)
+    }
+
+    if (anchor.isValid()) {
+        anchor.delete()
+    }
 }
 
 fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOptions): ExtractionResult{
@@ -275,156 +505,16 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
         }
     }
 
-    fun insertCall(anchor: PsiElement, wrappedCall: JetExpression) {
-        val firstExpression = extractionData.getExpressions().firstOrNull()
-        if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
-            val functionLiteralArgument = PsiTreeUtil.getParentOfType(firstExpression, javaClass<JetFunctionLiteralArgument>())!!
-            //todo use the right binding context
-            functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, BindingContext.EMPTY)
-            return
-        }
-        anchor.replace(wrappedCall)
-    }
-
-    fun makeCall(declaration: JetNamedDeclaration) {
-        val anchor = extractionData.originalElements.first
-        if (anchor == null) return
-
-        val anchorParent = anchor.getParent()!!
-
-        anchor.getNextSibling()?.let { from ->
-            val to = extractionData.originalElements.last
-            if (to != anchor) {
-                anchorParent.deleteChildRange(from, to);
-            }
-        }
-
-        val callText = when (declaration) {
-            is JetNamedFunction ->
-                parameters
-                        .map { it.argumentText }
-                        .joinToString(separator = ", ", prefix = "${name}(", postfix = ")")
-            else -> name
-        }
-
-        val anchorInBlock = stream(anchor) { it.getParent() }.firstOrNull { it.getParent() is JetBlockExpression }
-        val block = (anchorInBlock?.getParent() as? JetBlockExpression) ?: anchorParent
-
-        val newLine = psiFactory.createNewLine()
-
-        if (controlFlow.outputValueBoxer is AsTuple && controlFlow.outputValues.size > 1 && controlFlow.outputValues.all { it is Initializer }) {
-            val declarationsToMerge = controlFlow.outputValues.map { (it as Initializer).initializedDeclaration }
-            val isVar = declarationsToMerge.first().isVar()
-            if (declarationsToMerge.all { it.isVar() == isVar }) {
-                controlFlow.declarationsToCopy.subtract(declarationsToMerge).forEach {
-                    block.addBefore(psiFactory.createDeclaration<JetDeclaration>(it.getText()!!), anchorInBlock) as JetDeclaration
-                    block.addBefore(newLine, anchorInBlock)
-                }
-
-                val entries = declarationsToMerge.map { p -> p.getName() + (p.getTypeRef()?.let { ": ${it.getText()}" } ?: "") }
-                anchorInBlock?.replace(
-                        psiFactory.createDeclaration("${if (isVar) "var" else "val"} (${entries.joinToString()}) = $callText")
-                )
-
-                return
-            }
-        }
-
-        val inlinableCall = controlFlow.outputValues.size <= 1
-        val unboxingExpressions =
-                if (inlinableCall) {
-                    controlFlow.outputValueBoxer.getUnboxingExpressions(callText)
-                }
-                else {
-                    val varNameValidator = JetNameValidatorImpl(block, anchorInBlock, JetNameValidatorImpl.Target.PROPERTIES)
-                    val resultVal = JetNameSuggester.suggestNames(controlFlow.outputValueBoxer.returnType, varNameValidator, null).first()
-                    block.addBefore(psiFactory.createDeclaration("val $resultVal = $callText"), anchorInBlock)
-                    block.addBefore(newLine, anchorInBlock)
-                    controlFlow.outputValueBoxer.getUnboxingExpressions(resultVal)
-                }
-
-        val copiedDeclarations = HashMap<JetDeclaration, JetDeclaration>()
-        for (decl in controlFlow.declarationsToCopy) {
-            val declCopy = psiFactory.createDeclaration<JetDeclaration>(decl.getText()!!)
-            copiedDeclarations[decl] = block.addBefore(declCopy, anchorInBlock) as JetDeclaration
-            block.addBefore(newLine, anchorInBlock)
-        }
-
-        if (controlFlow.outputValues.isEmpty()) {
-            anchor.replace(psiFactory.createExpression(callText))
-            return
-        }
-
-        fun wrapCall(outputValue: OutputValue, callText: String): List<PsiElement> {
-            return when (outputValue) {
-                is OutputValue.ExpressionValue ->
-                    Collections.singletonList(
-                            if (outputValue.callSiteReturn) psiFactory.createReturn(callText) else psiFactory.createExpression(callText)
-                    )
-
-                is ParameterUpdate ->
-                    Collections.singletonList(
-                            psiFactory.createExpression("${outputValue.parameter.argumentText} = $callText")
-                    )
-
-                is Jump -> {
-                    if (outputValue.conditional) {
-                        Collections.singletonList(
-                                psiFactory.createExpression("if ($callText) ${outputValue.elementToInsertAfterCall.getText()}")
-                        )
-                    }
-                    else {
-                        listOf(
-                                psiFactory.createExpression(callText),
-                                newLine,
-                                psiFactory.createExpression(outputValue.elementToInsertAfterCall.getText()!!)
-                        )
-                    }
-                }
-
-                is Initializer -> {
-                    val newProperty = copiedDeclarations[outputValue.initializedDeclaration] as JetProperty
-                    newProperty.replace(DeclarationUtils.changePropertyInitializer(newProperty, psiFactory.createExpression(callText)))
-                    Collections.emptyList()
-                }
-
-                else -> throw IllegalArgumentException("Unknown output value: $outputValue")
-            }
-        }
-
-        val defaultValue = controlFlow.defaultOutputValue
-
-        controlFlow.outputValues
-                .filter { it != defaultValue }
-                .flatMap { wrapCall(it, unboxingExpressions[it]!!) }
-                .withIndices()
-                .forEach {
-                    val (i, e) = it
-
-                    if (i > 0) {
-                        block.addBefore(newLine, anchorInBlock)
-                    }
-                    block.addBefore(e, anchorInBlock)
-                }
-
-        defaultValue?.let {
-            if (!inlinableCall) {
-                block.addBefore(newLine, anchorInBlock)
-            }
-            insertCall(anchor, wrapCall(it, unboxingExpressions[it]!!).first() as JetExpression)
-        }
-
-        if (anchor.isValid()) {
-            anchor.delete()
-        }
-    }
+    val duplicates = if (options.inTempFile) Collections.emptyList() else findDuplicates()
 
     val declaration = createDeclaration().let { if (options.inTempFile) it else insertDeclaration(it) }
     adjustDeclarationBody(declaration)
 
-    if (options.inTempFile) return ExtractionResult(declaration, nameByOffset)
+    if (options.inTempFile) return ExtractionResult(declaration, Collections.emptyMap(), nameByOffset)
 
-    makeCall(declaration)
-    ShortenReferences.process(declaration)
-    return ExtractionResult(declaration, nameByOffset)
+    makeCall(name, declaration, controlFlow, extractionData.originalRange, parameters.map { it.argumentText })
+    ShortenReferences.process(declaration)    
+
+    val duplicateReplacers = duplicates.map { it.range to { makeCall(name, declaration, it.controlFlow, it.range, it.arguments) } }.toMap()
+    return ExtractionResult(declaration, duplicateReplacers, nameByOffset)
 }

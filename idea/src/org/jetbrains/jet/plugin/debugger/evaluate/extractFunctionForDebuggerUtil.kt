@@ -24,7 +24,6 @@ import org.jetbrains.jet.plugin.refactoring.createTempCopy
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionData
-import java.util.Collections
 import org.jetbrains.jet.plugin.refactoring.extractFunction.performAnalysis
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
@@ -37,6 +36,7 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.generateDeclaration
+import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
 
@@ -97,7 +97,7 @@ fun getFunctionForExtractedFragment(
         if (targetSibling == null) return null
 
         val analysisResult = ExtractionData(
-                tmpFile, Collections.singletonList(newDebugExpression), targetSibling, ExtractionOptions(false, true)
+                tmpFile, newDebugExpression.toRange(), targetSibling, ExtractionOptions(false, true)
         ).performAnalysis()
         if (analysisResult.status != Status.SUCCESS) {
             throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))

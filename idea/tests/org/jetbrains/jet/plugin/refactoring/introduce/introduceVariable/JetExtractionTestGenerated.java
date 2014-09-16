@@ -175,7 +175,8 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         
         @TestMetadata("OccurrencesInStringTemplate.kt")
         public void testOccurrencesInStringTemplate() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/OccurrencesInStringTemplate.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/OccurrencesInStringTemplate.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("OneExplicitReceiver.kt")
@@ -216,7 +217,8 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         
         @TestMetadata("UnresolvedOccurrences.kt")
         public void testUnresolvedOccurrences() throws Exception {
-            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/UnresolvedOccurrences.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/UnresolvedOccurrences.kt");
+            doIntroduceVariableTest(fileName);
         }
         
         @TestMetadata("WhenAddBlock.kt")
@@ -259,7 +261,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
     
     @TestMetadata("idea/testData/refactoring/extractFunction")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({ExtractFunction.AsProperty.class, ExtractFunction.Basic.class, ExtractFunction.ControlFlow.class, ExtractFunction.DefaultContainer.class, ExtractFunction.Delegation.class, ExtractFunction.Initializers.class, ExtractFunction.Parameters.class, ExtractFunction.TypeParameters.class})
+    @InnerTestClasses({ExtractFunction.AsProperty.class, ExtractFunction.Basic.class, ExtractFunction.ControlFlow.class, ExtractFunction.DefaultContainer.class, ExtractFunction.Delegation.class, ExtractFunction.Duplicates.class, ExtractFunction.Initializers.class, ExtractFunction.Parameters.class, ExtractFunction.TypeParameters.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class ExtractFunction extends AbstractJetExtractionTest {
         public void testAllFilesPresentInExtractFunction() throws Exception {
@@ -1046,6 +1048,58 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("delegationBySuperCall.kt")
             public void testDelegationBySuperCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/delegation/delegationBySuperCall.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/refactoring/extractFunction/duplicates")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class Duplicates extends AbstractJetExtractionTest {
+            public void testAllFilesPresentInDuplicates() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/duplicates"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("branchingMatch1.kt")
+            public void testBranchingMatch1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/branchingMatch1.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
+            @TestMetadata("branchingMatch2.kt")
+            public void testBranchingMatch2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/branchingMatch2.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
+            @TestMetadata("defaultCF.kt")
+            public void testDefaultCF() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/defaultCF.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
+            @TestMetadata("multipleOutputValuesMatching.kt")
+            public void testMultipleOutputValuesMatching() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/multipleOutputValuesMatching.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
+            @TestMetadata("outputValueAndUnitMatching.kt")
+            public void testOutputValueAndUnitMatching() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/outputValueAndUnitMatching.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
+            @TestMetadata("outputValueMatching.kt")
+            public void testOutputValueMatching() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/outputValueMatching.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
+            @TestMetadata("singleExpression.kt")
+            public void testSingleExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/singleExpression.kt");
                 doExtractFunctionTest(fileName);
             }
             

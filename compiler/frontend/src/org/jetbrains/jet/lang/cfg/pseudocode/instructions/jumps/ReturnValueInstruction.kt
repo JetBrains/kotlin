@@ -49,7 +49,5 @@ public class ReturnValueInstruction(
         return ReturnValueInstruction((element as JetExpression), lexicalScope, newLabel, returnedValue)
     }
 
-    public val resultExpression: JetExpression =
-            element.let{ if (it is JetReturnExpression) it.getReturnedExpression()!! else element as JetExpression }
     public val returnExpressionIfAny: JetReturnExpression? = element as? JetReturnExpression
 }

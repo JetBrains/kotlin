@@ -66,6 +66,8 @@ import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.openapi.util.Computable
+import com.intellij.openapi.ui.DialogWrapper
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -188,6 +190,12 @@ public fun runWriteAction<T: Any>(action: () -> T?): T? {
 
 public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
     CommandProcessor.getInstance().executeCommand(this, { runWriteAction(command) }, name, null)
+}
+
+public fun <T: Any> Project.executeWriteCommand(name: String, command: () -> T): T {
+    var result: T? = null
+    CommandProcessor.getInstance().executeCommand(this, { result = runWriteAction(command) }, name, null)
+    return result!!
 }
 
 public fun <T : PsiElement> getPsiElementPopup(

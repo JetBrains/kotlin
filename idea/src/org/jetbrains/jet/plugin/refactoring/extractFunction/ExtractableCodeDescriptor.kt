@@ -64,6 +64,8 @@ import kotlin.properties.Delegates
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.psi.JetCallElement
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.jet.lang.resolve.BindingContext
 
 trait Parameter {
     val argumentText: String
@@ -123,29 +125,37 @@ class FqNameReplacement(val fqName: FqName): Replacement {
 }
 
 trait OutputValue {
+    val originalExpressions: List<JetExpression>
     val valueType: JetType
 
     class ExpressionValue(
             val callSiteReturn: Boolean,
+            override val originalExpressions: List<JetExpression>,
             override val valueType: JetType
     ): OutputValue
 
     class Jump(
-            val elementsToReplace: List<JetElement>,
+            val elementsToReplace: List<JetExpression>,
             val elementToInsertAfterCall: JetElement,
             val conditional: Boolean
     ): OutputValue {
+        override val originalExpressions: List<JetExpression> get() = elementsToReplace
         override val valueType: JetType = with(KotlinBuiltIns.getInstance()) { if (conditional) getBooleanType() else getUnitType() }
     }
 
-    class ParameterUpdate(val parameter: Parameter): OutputValue {
+    class ParameterUpdate(
+            val parameter: Parameter,
+            override val originalExpressions: List<JetExpression>
+    ): OutputValue {
         override val valueType: JetType get() = parameter.parameterType
     }
 
     class Initializer(
             val initializedDeclaration: JetProperty,
             override val valueType: JetType
-    ): OutputValue
+    ): OutputValue {
+        override val originalExpressions: List<JetExpression> get() = Collections.singletonList(initializedDeclaration)
+    }
 }
 
 abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
@@ -315,6 +325,7 @@ data class ExtractionGeneratorOptions(
 
 data class ExtractionResult(
         val declaration: JetNamedDeclaration,
+        val duplicateReplacers: Map<JetPsiRange, () -> Unit>,
         val nameByOffset: Map<Int, JetElement>
 )
 

@@ -66,6 +66,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
 import org.jetbrains.jet.lang.psi.JetMultiDeclaration
 
 public open class ExtractKotlinFunctionHandlerHelper {
@@ -81,6 +82,15 @@ public open class ExtractKotlinFunctionHandlerHelper {
 public class ExtractKotlinFunctionHandler(
         public val allContainersEnabled: Boolean = false,
         private val helper: ExtractKotlinFunctionHandlerHelper = ExtractKotlinFunctionHandlerHelper.DEFAULT) : RefactoringActionHandler {
+    private fun adjustElements(elements: List<PsiElement>): List<PsiElement> {
+        if (elements.size != 1) return elements
+
+        val e = elements.first()
+        if (e is JetBlockExpression && e.getParent() is JetFunctionLiteral) return e.getStatements()
+
+        return elements
+    }
+
     fun doInvoke(
             editor: Editor,
             file: JetFile,
@@ -89,7 +99,9 @@ public class ExtractKotlinFunctionHandler(
     ) {
         val project = file.getProject()
 
-        val analysisResult = helper.adjustExtractionData(ExtractionData(file, elements, targetSibling)).performAnalysis()
+        val analysisResult = helper.adjustExtractionData(
+                ExtractionData(file, adjustElements(elements).toRange(false), targetSibling)
+        ).performAnalysis()
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode() && analysisResult.status != Status.SUCCESS) {
             throw ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
@@ -98,7 +110,8 @@ public class ExtractKotlinFunctionHandler(
         fun doRefactor(descriptor: ExtractableCodeDescriptor, generatorOptions: ExtractionGeneratorOptions) {
             val adjustedDescriptor = helper.adjustDescriptor(descriptor)
             val adjustedGeneratorOptions = helper.adjustGeneratorOptions(generatorOptions)
-            project.executeWriteCommand(EXTRACT_FUNCTION) { adjustedDescriptor.generateDeclaration(adjustedGeneratorOptions) }
+            val result = project.executeWriteCommand<ExtractionResult>(EXTRACT_FUNCTION) { adjustedDescriptor.generateDeclaration(adjustedGeneratorOptions) }
+            processDuplicates(result.duplicateReplacers, project, editor)
         }
 
         fun validateAndRefactor() {

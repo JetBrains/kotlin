@@ -232,7 +232,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             OutputValue outputValue = outputValues.get(i);
             if (outputValue instanceof OutputValue.ParameterUpdate) {
                 OutputValue.ParameterUpdate parameterUpdate = (OutputValue.ParameterUpdate) outputValue;
-                outputValues.set(i, new OutputValue.ParameterUpdate(oldToNewParameters.get(parameterUpdate.getParameter())));
+                outputValues.set(i, new OutputValue.ParameterUpdate(oldToNewParameters.get(parameterUpdate.getParameter()), parameterUpdate.getOriginalExpressions()));
             }
         }
         controlFlow = new ControlFlow(outputValues, controlFlow.getBoxerFactory(), controlFlow.getDeclarationsToCopy());
