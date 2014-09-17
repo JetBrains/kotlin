@@ -22,7 +22,6 @@ import junit.framework.TestSuite;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.junit.Ignore;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -34,6 +33,24 @@ import java.util.regex.Pattern;
 public class AndroidGotoTestGenerated extends AbstractAndroidGotoTest {
     public void testAllFilesPresentInGoto() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/goto"), Pattern.compile("^([^\\.]+)$"), false);
+    }
+    
+    @TestMetadata("fqNameInAttr")
+    public void testFqNameInAttr() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/android/goto/fqNameInAttr/");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("fqNameInTag")
+    public void testFqNameInTag() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/android/goto/fqNameInTag/");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("multiFile")
+    public void testMultiFile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/android/goto/multiFile/");
+        doTest(fileName);
     }
     
     @TestMetadata("simple")
