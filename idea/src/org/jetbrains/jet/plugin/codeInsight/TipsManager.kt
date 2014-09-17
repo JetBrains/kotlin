@@ -99,10 +99,7 @@ public object TipsManager{
     private fun MutableSet<DeclarationDescriptor>.excludeNotCallableExtensions(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo) {
         val implicitReceivers = scope.getImplicitReceiversHierarchy()
         removeAll(JetScopeUtils.getAllExtensions(scope).filter { callable ->
-            if (callable.getReceiverParameter() == null)
-                false
-            else
-                implicitReceivers.none { ExpressionTypingUtils.checkIsExtensionCallable(it.getValue(), callable, context, dataFlowInfo) }
+            implicitReceivers.none { ExpressionTypingUtils.checkIsExtensionCallable(it.getValue(), callable, context, dataFlowInfo) }
         })
     }
 
