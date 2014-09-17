@@ -36,6 +36,7 @@ import java.util.Set;
 public final class JetScopeUtils {
     private JetScopeUtils() {}
 
+    @NotNull
     public static List<ReceiverValue> getImplicitReceiversHierarchyValues(@NotNull JetScope scope) {
         Collection<ReceiverParameterDescriptor> hierarchy = scope.getImplicitReceiversHierarchy();
 
@@ -56,6 +57,7 @@ public final class JetScopeUtils {
      * @param scope Scope for query extensions.
      * @return extension descriptors.
      */
+    @NotNull
     public static Collection<CallableDescriptor> getAllExtensions(@NotNull JetScope scope) {
         Set<CallableDescriptor> result = Sets.newHashSet();
 

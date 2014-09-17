@@ -87,7 +87,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 
         List<JetNamedDeclaration> declarations = new ArrayList<JetNamedDeclaration>();
-        for (DeclarationDescriptor declarationDescriptor : TipsManager.excludeNotCallableExtensions(filteredDescriptors, scope, bindingContext, dataFlowInfo)) {
+        for (DeclarationDescriptor declarationDescriptor : TipsManager.INSTANCE$.excludeNotCallableExtensions(filteredDescriptors, scope, bindingContext, dataFlowInfo)) {
             PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor);
             assert declaration == null || declaration instanceof PsiNamedElement;
 

@@ -389,7 +389,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             placeDescriptor = scope.getContainingDeclaration();
         }
 
-        Collection<DeclarationDescriptor> variants = TipsManager.getReferenceVariants(callNameExpression, bindingContext);
+        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(callNameExpression, bindingContext);
 
         Name refName = callNameExpression.getReferencedNameAsName();
 
