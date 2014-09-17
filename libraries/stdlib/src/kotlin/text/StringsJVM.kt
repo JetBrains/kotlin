@@ -32,8 +32,6 @@ public fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase
 
 public fun String.length(): Int = (this as java.lang.String).length()
 
-public fun String.getBytes(): ByteArray = (this as java.lang.String).getBytes()
-
 public fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
 
 public fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
@@ -70,9 +68,9 @@ public fun String(bytes: ByteArray, charsetName: String): String = java.lang.Str
 
 public fun String(bytes: ByteArray, charset: Charset): String = java.lang.String(bytes, charset) as String
 
-public fun String(bytes: ByteArray, i: Int, i1: Int): String = java.lang.String(bytes, i, i1) as String
+public fun String(bytes: ByteArray, i: Int, i1: Int): String = java.lang.String(bytes, i, i1, Charsets.UTF_8) as String
 
-public fun String(bytes: ByteArray): String = java.lang.String(bytes) as String
+public fun String(bytes: ByteArray): String = java.lang.String(bytes, Charsets.UTF_8) as String
 
 public fun String(chars: CharArray): String = java.lang.String(chars) as String
 
@@ -99,10 +97,6 @@ public fun String.concat(str: String): String = (this as java.lang.String).conca
 public fun String.contentEquals(cs: CharSequence): Boolean = (this as java.lang.String).contentEquals(cs)
 
 public fun String.contentEquals(sb: StringBuffer): Boolean = (this as java.lang.String).contentEquals(sb)
-
-public fun String.getBytes(charset: Charset): ByteArray = (this as java.lang.String).getBytes(charset)
-
-public fun String.getBytes(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
 
 public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin: Int): Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
 
