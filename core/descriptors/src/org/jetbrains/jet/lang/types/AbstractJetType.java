@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class AbstractJetType implements JetType {
+public abstract class AbstractJetType extends InflexibleType {
     @Override
     public final int hashCode() {
         int result = getConstructor().hashCode();

@@ -22,19 +22,12 @@ public trait NullAwareType {
     public fun makeNullableAsSpecified(nullable: Boolean): JetType
 }
 
-public trait FlexibleType : JetType {
-    public val lowerBound: JetType
-    public val upperBound: JetType
-}
-
-public fun JetType.isFlexible(): Boolean = this is FlexibleType
-
-public fun JetType.lowerIfFlexible(): JetType = if (this is FlexibleType) lowerBound else this
+public fun JetType.lowerIfFlexible(): JetType = if (this.isFlexible()) getLowerBound() else this
 
 public open class DelegatingFlexibleType protected (
-        override val lowerBound: JetType,
-        override val upperBound: JetType
-) : DelegatingType(), FlexibleType, NullAwareType {
+        private val _lowerBound: JetType,
+        private val _upperBound: JetType
+) : DelegatingType(), NullAwareType {
     class object {
         public fun create(lowerBound: JetType, upperBound: JetType): JetType {
             if (lowerBound == upperBound) return lowerBound
@@ -43,23 +36,27 @@ public open class DelegatingFlexibleType protected (
     }
 
     {
-        assert (!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
-        assert (!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
-        assert (lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }
-        assert (JetTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
-            "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
+        assert (!_lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $_lowerBound" }
+        assert (!_upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $_upperBound" }
+        assert (_lowerBound != _upperBound) { "Lower and upper bounds are equal: $_lowerBound == $_upperBound" }
+        assert (JetTypeChecker.DEFAULT.isSubtypeOf(_lowerBound, _upperBound)) {
+            "Lower bound $_lowerBound of a flexible type must be a subtype of the upper bound $_upperBound"
         }
     }
+
+    override fun isFlexible(): Boolean = true
+    override fun getUpperBound(): JetType = _upperBound
+    override fun getLowerBound(): JetType = _lowerBound
 
     protected open fun create(lowerBound: JetType, upperBound: JetType): JetType {
         return DelegatingFlexibleType.create(lowerBound, upperBound)
     }
 
     override fun makeNullableAsSpecified(nullable: Boolean): JetType {
-        return create(TypeUtils.makeNullableAsSpecified(lowerBound, nullable), TypeUtils.makeNullableAsSpecified(upperBound, nullable))
+        return create(TypeUtils.makeNullableAsSpecified(_lowerBound, nullable), TypeUtils.makeNullableAsSpecified(_upperBound, nullable))
     }
 
-    override fun getDelegate() = lowerBound
+    override fun getDelegate() = _lowerBound
 
-    override fun toString() = "('$lowerBound'..'$upperBound')"
+    override fun toString() = "('$_lowerBound'..'$_upperBound')"
 }

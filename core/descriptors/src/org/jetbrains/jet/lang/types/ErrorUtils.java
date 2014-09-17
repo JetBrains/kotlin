@@ -378,7 +378,7 @@ public class ErrorUtils {
         );
     }
 
-    private static class ErrorTypeImpl implements JetType {
+    private static class ErrorTypeImpl extends InflexibleType implements JetType {
         private final TypeConstructor constructor;
         private final JetScope memberScope;
 

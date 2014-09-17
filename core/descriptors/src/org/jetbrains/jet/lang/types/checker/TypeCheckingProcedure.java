@@ -69,18 +69,15 @@ public class TypeCheckingProcedure {
     }
 
     public boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2) {
-        if (type1 instanceof FlexibleType) {
-            FlexibleType flexibleType1 = (FlexibleType) type1;
-            if (type2 instanceof FlexibleType) {
-                FlexibleType flexibleType2 = (FlexibleType) type2;
-                return equalTypes(flexibleType1.getLowerBound(), flexibleType2.getLowerBound())
-                        && equalTypes(flexibleType1.getUpperBound(), flexibleType2.getUpperBound());
+        if (type1.isFlexible()) {
+            if (type2.isFlexible()) {
+                return equalTypes(type1.getLowerBound(), type2.getLowerBound())
+                        && equalTypes(type1.getUpperBound(), type2.getUpperBound());
             }
-            return heterogeneousEquivalence(type2, flexibleType1);
+            return heterogeneousEquivalence(type2, type1);
         }
-        else if (type2 instanceof FlexibleType) {
-            FlexibleType flexibleType2 = (FlexibleType) type2;
-            return heterogeneousEquivalence(type1, flexibleType2);
+        else if (type2.isFlexible()) {
+            return heterogeneousEquivalence(type1, type2);
         }
 
         if (type1.isNullable() != type2.isNullable()) {
@@ -121,9 +118,9 @@ public class TypeCheckingProcedure {
         return true;
     }
 
-    private boolean heterogeneousEquivalence(JetType inflexibleType, FlexibleType flexibleType) {
+    private boolean heterogeneousEquivalence(JetType inflexibleType, JetType flexibleType) {
         // This is to account for the case when we have Collection<X> vs (Mutable)Collection<X>! or K(java.util.Collection<? extends X>)
-        assert !TypesPackage.isFlexible(inflexibleType) : "Only inflexible types are allowed here: " + inflexibleType;
+        assert !inflexibleType.isFlexible() : "Only inflexible types are allowed here: " + inflexibleType;
         return isSubtypeOf(flexibleType.getLowerBound(), inflexibleType) && isSubtypeOf(inflexibleType, flexibleType.getUpperBound());
     }
 
@@ -183,11 +180,11 @@ public class TypeCheckingProcedure {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
-        if (subtype instanceof FlexibleType) {
-            return isSubtypeOf(((FlexibleType) subtype).getLowerBound(), supertype);
+        if (subtype.isFlexible()) {
+            return isSubtypeOf(subtype.getLowerBound(), supertype);
         }
-        if (supertype instanceof FlexibleType) {
-            return isSubtypeOf(subtype, ((FlexibleType) supertype).getUpperBound());
+        if (supertype.isFlexible()) {
+            return isSubtypeOf(subtype, supertype.getUpperBound());
         }
         if (subtype.isError() || supertype.isError()) {
             return true;

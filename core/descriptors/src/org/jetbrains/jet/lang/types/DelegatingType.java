@@ -31,6 +31,23 @@ public abstract class DelegatingType implements JetType {
         return getDelegate().getConstructor();
     }
 
+    @Override
+    @NotNull
+    public JetType getUpperBound() {
+        return getDelegate().getUpperBound();
+    }
+
+    @Override
+    @NotNull
+    public JetType getLowerBound() {
+        return getDelegate().getLowerBound();
+    }
+
+    @Override
+    public boolean isFlexible() {
+        return getDelegate().isFlexible();
+    }
+
     @NotNull
     @Override
     public List<TypeProjection> getArguments() {

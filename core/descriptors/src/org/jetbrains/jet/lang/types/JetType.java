@@ -43,4 +43,14 @@ public interface JetType extends Annotated {
 
     @Override
     boolean equals(Object other);
+
+    // lowerBound is a subtype of upperBound
+    @NotNull
+    JetType getUpperBound();
+
+    @NotNull
+    JetType getLowerBound();
+
+    // isFlexible() == false <=> getLowerBound() == getUpperBound()
+    boolean isFlexible();
 }

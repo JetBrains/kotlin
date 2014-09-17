@@ -81,11 +81,10 @@ public class CommonSupertypes {
         List<JetType> upper = new ArrayList<JetType>(types.size());
         List<JetType> lower = new ArrayList<JetType>(types.size());
         for (JetType type : types) {
-            if (TypesPackage.isFlexible(type)) {
+            if (type.isFlexible()) {
                 hasFlexible = true;
-                FlexibleType flexibleType = (FlexibleType) type;
-                upper.add(flexibleType.getUpperBound());
-                lower.add(flexibleType.getLowerBound());
+                upper.add(type.getUpperBound());
+                lower.add(type.getLowerBound());
             }
             else {
                 upper.add(type);
@@ -112,7 +111,7 @@ public class CommonSupertypes {
         for (Iterator<JetType> iterator = typeSet.iterator(); iterator.hasNext();) {
             JetType type = iterator.next();
             assert type != null;
-            assert !TypesPackage.isFlexible(type) : "Flexible type " + type + " passed to commonSuperTypeForInflexible";
+            assert !type.isFlexible() : "Flexible type " + type + " passed to commonSuperTypeForInflexible";
             if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type)) {
                 iterator.remove();
             }

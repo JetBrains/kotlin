@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.CollectionClassMapping
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.types.FlexibleType
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
@@ -35,8 +34,8 @@ fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
 fun JetType.isUnit(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
 
 public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true): JetType {
-    if (jetType is FlexibleType) {
-        val lowerClass = jetType.lowerBound.getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
+    if (jetType.isFlexible()) {
+        val lowerClass = jetType.getLowerBound().getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
         val isCollection = lowerClass != null && CollectionClassMapping.getInstance().isMutableCollection(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
@@ -44,9 +43,9 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
         // Foo<Bar!>! -> Foo<Bar>?
         val approximation =
                 if (isCollection)
-                    TypeUtils.makeNullableAsSpecified(if (jetType.isMarkedReadOnly()) jetType.upperBound else jetType.lowerBound, outermost)
+                    TypeUtils.makeNullableAsSpecified(if (jetType.isMarkedReadOnly()) jetType.getUpperBound() else jetType.getLowerBound(), outermost)
                 else
-                    if (outermost) jetType.upperBound else jetType.lowerBound
+                    if (outermost) jetType.getUpperBound() else jetType.getLowerBound()
         val approximated = approximateFlexibleTypes(approximation)
         return if (jetType.isMarkedNotNull()) approximated.makeNotNullable() else approximated
     }

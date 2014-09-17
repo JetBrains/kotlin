@@ -44,7 +44,7 @@ public class TypeUtils {
 
     public static final JetType CANT_INFER_LAMBDA_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
 
-    public static class SpecialType implements JetType {
+    public static class SpecialType extends InflexibleType implements JetType {
         private final String name;
 
         public SpecialType(String name) {
@@ -424,7 +424,7 @@ public class TypeUtils {
         if (type.isNullable()) {
             return true;
         }
-        if (TypesPackage.isFlexible(type) && isNullableType(((FlexibleType) type).getUpperBound())) {
+        if (type.isFlexible() && isNullableType(type.getUpperBound())) {
             return true;
         }
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {

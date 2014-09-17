@@ -421,7 +421,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         //   Foo? <: T!
         //   Foo >: T!
         // both Foo and Foo? transform to Foo! here
-        if (TypesPackage.isFlexible(parameterType)) {
+        if (parameterType.isFlexible()) {
             if (parameterType instanceof CustomTypeVariable) {
                 CustomTypeVariable typeVariable = (CustomTypeVariable) parameterType;
                 if (typeVariable.getIsTypeVariable()) {
