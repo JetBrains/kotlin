@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.caches.resolve
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.context.GlobalContext
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.module.ModuleManager
 import org.jetbrains.jet.utils.keysToMap
@@ -38,6 +37,7 @@ import org.jetbrains.jet.context.GlobalContextImpl
 
 fun createModuleResolverProvider(
         project: Project,
+        globalContext: GlobalContextImpl,
         analyzerFacade: AnalyzerFacade<ResolverForModule, JvmPlatformParameters>,
         syntheticFiles: Collection<JetFile>,
         delegateProvider: ModuleResolverProvider,
@@ -45,10 +45,6 @@ fun createModuleResolverProvider(
 ): ModuleResolverProvider {
 
     val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
-
-    val globalContext =
-            (delegateProvider as? ModuleResolverProviderImpl)?.globalContext?.withCompositeExceptionTrackerUnderSameLock()
-            ?: GlobalContext()
 
     val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
     val syntheticFilesModules = syntheticFilesByModule.keySet()

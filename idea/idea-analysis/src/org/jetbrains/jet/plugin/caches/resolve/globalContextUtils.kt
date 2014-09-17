@@ -19,6 +19,8 @@ package org.jetbrains.jet.plugin.caches.resolve
 import org.jetbrains.jet.context.GlobalContextImpl
 import org.jetbrains.jet.storage.LockBasedStorageManager
 import org.jetbrains.jet.storage.ExceptionTracker
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.diagnostic.Logger
 
 fun GlobalContextImpl.withCompositeExceptionTrackerUnderSameLock(): GlobalContextImpl {
     val newExceptionTracker = CompositeExceptionTracker(this.exceptionTracker)
@@ -26,8 +28,27 @@ fun GlobalContextImpl.withCompositeExceptionTrackerUnderSameLock(): GlobalContex
     return GlobalContextImpl(newStorageManager, newExceptionTracker)
 }
 
-private class CompositeExceptionTracker(val delegate: ExceptionTracker): ExceptionTracker() {
+private class CompositeExceptionTracker(val delegate: ExceptionTracker) : ExceptionTracker() {
     override fun getModificationCount(): Long {
-        return super<ExceptionTracker>.getModificationCount() + delegate.getModificationCount()
+        return super.getModificationCount() + delegate.getModificationCount()
     }
+}
+
+private class ExceptionTrackerWithProcessCanceledReport() : ExceptionTracker() {
+    override fun handleException(throwable: Throwable): RuntimeException {
+        if (throwable is ProcessCanceledException) {
+            LOG.info("ProcessCancelException was thrown while analyzing libraries. Cache has to be rebuilt.")
+        }
+        throw super.handleException(throwable)
+    }
+
+
+    class object {
+        val LOG = Logger.getInstance(javaClass<ExceptionTrackerWithProcessCanceledReport>())
+    }
+}
+
+public fun GlobalContext(logProcessCanceled: Boolean): GlobalContextImpl {
+    val tracker = if (logProcessCanceled) ExceptionTrackerWithProcessCanceledReport() else ExceptionTracker()
+    return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
 }
