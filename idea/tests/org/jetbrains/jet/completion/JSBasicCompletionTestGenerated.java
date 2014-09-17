@@ -390,6 +390,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
         
+        @TestMetadata("NameWithDollars.kt")
+        public void testNameWithDollars() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NameWithDollars.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("NamedObject.kt")
         public void testNamedObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NamedObject.kt");
