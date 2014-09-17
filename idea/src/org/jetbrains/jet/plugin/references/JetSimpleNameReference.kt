@@ -105,9 +105,11 @@ public class JetSimpleNameReference(
     }
 
     // By default reference binding is delayed
-    override fun bindToElement(element: PsiElement): PsiElement {
-        return element.getKotlinFqName()?.let { fqName -> bindToFqName(fqName) } ?: expression
-    }
+    override fun bindToElement(element: PsiElement): PsiElement =
+            bindToElement(element, ShorteningMode.DELAYED_SHORTENING)
+
+    fun bindToElement(element: PsiElement, shorteningMode: ShorteningMode): PsiElement =
+            element.getKotlinFqName()?.let { fqName -> bindToFqName(fqName, shorteningMode) } ?: expression
 
     public fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING): PsiElement {
         if (fqName.isRoot()) return expression

@@ -101,7 +101,7 @@ public object ShortenReferences {
             ImportInsertHelper.optimizeImportsIfNeeded(file)
 
             // first resolve all qualified references - optimization
-            val referenceToContext = JetFileReferencesResolver.resolve(file, fileElements, visitShortNames = false)
+            val referenceToContext = JetFileReferencesResolver.resolve(file, fileElements, resolveShortNames = false)
 
             val shortenTypesVisitor = ShortenTypesVisitor(file, elementFilter, referenceToContext)
             processElements(fileElements, shortenTypesVisitor)

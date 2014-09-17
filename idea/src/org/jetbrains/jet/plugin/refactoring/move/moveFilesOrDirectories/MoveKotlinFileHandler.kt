@@ -25,7 +25,6 @@ import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.jet.lang.psi.JetFile
 import java.util.ArrayList
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
@@ -39,7 +38,6 @@ import org.jetbrains.jet.lang.psi.psiUtil.getPackage
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.asJava.toLightElements
 import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetPsiUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.psi.JetClassOrObject
@@ -48,12 +46,12 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.refactoring.util.TextOccurrencesUtil
 import java.util.Collections
 import org.jetbrains.jet.plugin.refactoring.move.PackageNameInfo
-import org.jetbrains.jet.plugin.refactoring.move.updateInternalReferencesOnPackageNameChange
 import org.jetbrains.jet.plugin.search.projectScope
 import org.jetbrains.jet.plugin.search.fileScope
-import org.jetbrains.jet.plugin.search.not
-import org.jetbrains.jet.plugin.search.and
 import org.jetbrains.jet.plugin.search.minus
+import org.jetbrains.jet.plugin.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
+import org.jetbrains.jet.plugin.refactoring.move.postProcessMoveUsages
+import org.jetbrains.jet.plugin.codeInsight.addToShorteningWaitSet
 
 public class MoveKotlinFileHandler : MoveFileHandler() {
     class object {
@@ -181,7 +179,8 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         val packageNameInfo = file.getAndRemoveCopyableUserData(PACKAGE_NAME_INFO_KEY)
         if (packageNameInfo == null) return
 
-        file.updateInternalReferencesOnPackageNameChange(packageNameInfo, updateImportedReferences = false)
+        val usages = file.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
+        postProcessMoveUsages(usages)
 
         val packageRef = file.getPackageDirective()?.getLastReferenceExpression()?.getReference() as? JetSimpleNameReference
         packageRef?.bindToFqName(packageNameInfo.newPackageName)

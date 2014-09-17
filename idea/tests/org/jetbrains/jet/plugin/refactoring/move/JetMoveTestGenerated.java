@@ -212,6 +212,12 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest(fileName);
     }
     
+    @TestMetadata("kotlin/moveFile/internalReferences/internalReferences.test")
+    public void testKotlin_moveFile_internalReferences_InternalReferences() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/internalReferences/internalReferences.test");
+        doTest(fileName);
+    }
+    
     @TestMetadata("kotlin/moveFile/moveFileToFile/moveFileToFile.test")
     public void testKotlin_moveFile_moveFileToFile_MoveFileToFile() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/moveFileToFile/moveFileToFile.test");
@@ -233,6 +239,12 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
     @TestMetadata("kotlin/movePackage/movePackage/movePackage.test")
     public void testKotlin_movePackage_movePackage_MovePackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/movePackage/movePackage/movePackage.test");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/internalReferences/internalReferences.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_internalReferences_InternalReferences() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/internalReferences/internalReferences.test");
         doTest(fileName);
     }
     
