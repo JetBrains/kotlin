@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import org.jetbrains.jet.utils.Printer;
@@ -61,6 +62,16 @@ public class RecursiveDescriptorComparator {
     public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, 
                                                                         Predicates.<DeclarationDescriptor>alwaysTrue(),
                                                                         FORBID_ERROR_TYPES, DEFAULT_RENDERER);
+
+    public static final Predicate<DeclarationDescriptor> SKIP_BUILT_INS_PACKAGES = new Predicate<DeclarationDescriptor>() {
+        @Override
+        public boolean apply(DeclarationDescriptor descriptor) {
+            if (descriptor instanceof PackageViewDescriptor) {
+                return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageViewDescriptor) descriptor).getFqName());
+            }
+            return true;
+        }
+    };
 
     private static final ImmutableSet<String> KOTLIN_ANY_METHOD_NAMES = ImmutableSet.of("equals", "hashCode", "toString");
 

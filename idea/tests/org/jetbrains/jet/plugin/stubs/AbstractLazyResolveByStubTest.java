@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.stubs;
 
-import com.google.common.base.Predicate;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -26,12 +25,10 @@ import com.intellij.util.Consumer;
 import kotlin.Function0;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService;
@@ -77,18 +74,8 @@ public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTes
 
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
                 packageViewDescriptor,
-                RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
-                        new Predicate<DeclarationDescriptor>() {
-                            @Override
-                            public boolean apply(DeclarationDescriptor descriptor) {
-                                if (descriptor instanceof PackageViewDescriptor) {
-                                    return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
-                                            .equals(((PackageViewDescriptor) descriptor).getFqName());
-                                }
-                                return true;
-                            }
-                        }
-                )
+                RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+                        .filterRecursion(RecursiveDescriptorComparator.SKIP_BUILT_INS_PACKAGES)
                         .checkPrimaryConstructors(checkPrimaryConstructors)
                         .checkPropertyAccessors(checkPropertyAccessors)
                         .withValidationStrategy(FORBID_ERROR_TYPES),
