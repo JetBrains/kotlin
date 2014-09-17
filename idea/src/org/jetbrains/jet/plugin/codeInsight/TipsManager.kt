@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.codeInsight
 
-import com.google.common.base.Predicate
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.psi.psiUtil.*
@@ -37,11 +36,11 @@ public object TipsManager{
     public fun getReferenceVariants(expression: JetSimpleNameExpression, context: BindingContext): Collection<DeclarationDescriptor> {
         val receiverExpression = expression.getReceiverExpression()
         val parent = expression.getParent()
+        val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
+
         val inPositionForCompletionWithReceiver = parent is JetCallExpression || parent is JetQualifiedExpression
         if (receiverExpression != null && inPositionForCompletionWithReceiver) {
             // Process as call expression
-            val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
-
             val descriptors = HashSet<DeclarationDescriptor>()
 
             val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
@@ -53,29 +52,20 @@ public object TipsManager{
             val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression]
             if (expressionType != null && !expressionType.isError()) {
                 val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
+                val dataFlowInfo = context.getDataFlowInfo(expression)
 
-                val info = context.getDataFlowInfo(expression)
-
-                val variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiverValue, context, info)
-
-                for (variant in variantsForExplicitReceiver) {
+                for (variant in AutoCastUtils.getAutoCastVariants(receiverValue, context, dataFlowInfo)) {
                     descriptors.addAll(variant.getMemberScope().getAllDescriptors())
                 }
 
-                descriptors.addAll(externalCallableExtensions(resolutionScope, receiverValue, context, info))
+                JetScopeUtils.getAllExtensions(resolutionScope).filterTo(descriptors) {
+                    ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, context, dataFlowInfo)
+                }
             }
 
             return descriptors
         }
-        else {
-            return getVariantsNoReceiver(expression, context)
-        }
-    }
-
-    public fun getVariantsNoReceiver(expression: JetExpression, context: BindingContext): Collection<DeclarationDescriptor> {
-        val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
-        val parent = expression.getParent()
-        if (parent is JetImportDirective || parent is JetPackageDirective) {
+        else if (parent is JetImportDirective || parent is JetPackageDirective) {
             return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors())
         }
         else {
@@ -89,7 +79,9 @@ public object TipsManager{
 
             descriptorsSet.addAll(resolutionScope.getAllDescriptors())
 
-            return excludeNotCallableExtensions(descriptorsSet, resolutionScope, context, context.getDataFlowInfo(expression))
+            descriptorsSet.excludeNotCallableExtensions(resolutionScope, context, context.getDataFlowInfo(expression))
+
+            return descriptorsSet
         }
     }
 
@@ -99,16 +91,19 @@ public object TipsManager{
     }
 
     public fun excludeNotCallableExtensions(descriptors: Collection<DeclarationDescriptor>, scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): Collection<DeclarationDescriptor> {
-        val implicitReceivers = scope.getImplicitReceiversHierarchy()
+        val set = HashSet(descriptors)
+        set.excludeNotCallableExtensions(scope, context, dataFlowInfo)
+        return set
+    }
 
-        val descriptorsSet = HashSet(descriptors)
-        descriptorsSet.removeAll(JetScopeUtils.getAllExtensions(scope).filter { callable ->
+    private fun MutableSet<DeclarationDescriptor>.excludeNotCallableExtensions(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo) {
+        val implicitReceivers = scope.getImplicitReceiversHierarchy()
+        removeAll(JetScopeUtils.getAllExtensions(scope).filter { callable ->
             if (callable.getReceiverParameter() == null)
                 false
             else
                 implicitReceivers.none { ExpressionTypingUtils.checkIsExtensionCallable(it.getValue(), callable, context, dataFlowInfo) }
         })
-        return descriptorsSet
     }
 
     private fun excludeNonPackageDescriptors(descriptors: Collection<DeclarationDescriptor>): Collection<DeclarationDescriptor> {
@@ -123,11 +118,5 @@ public object TipsManager{
                     false
                 }
             }
-    }
-
-    private fun externalCallableExtensions(externalScope: JetScope, receiverValue: ReceiverValue, context: BindingContext, dataFlowInfo: DataFlowInfo): Collection<CallableDescriptor> {
-        return JetScopeUtils.getAllExtensions(externalScope).filter {
-            ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, context, dataFlowInfo)
-        }
     }
 }
