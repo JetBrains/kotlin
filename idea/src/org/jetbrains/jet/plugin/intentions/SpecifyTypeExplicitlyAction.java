@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
+import org.jetbrains.jet.plugin.util.UtilPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -172,12 +173,12 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         ) {
             @Override
             protected String getLookupString(JetType element) {
-                return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(element);
+                return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(UtilPackage.approximateFlexibleTypes(element, true));
             }
 
             @Override
             protected String getResult(JetType element) {
-                return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(element);
+                return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(UtilPackage.approximateFlexibleTypes(element, true));
             }
         };
 

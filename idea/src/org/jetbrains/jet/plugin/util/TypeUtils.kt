@@ -19,6 +19,13 @@ package org.jetbrains.jet.plugin.util
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.types.JetTypeImpl
+import org.jetbrains.jet.lang.types.TypeProjectionImpl
+import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.CollectionClassMapping
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.types.FlexibleType
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
@@ -26,3 +33,31 @@ fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
 fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
 
 fun JetType.isUnit(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
+
+public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true): JetType {
+    if (jetType is FlexibleType) {
+        val lowerClass = jetType.lowerBound.getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
+        val isCollection = lowerClass != null && CollectionClassMapping.getInstance().isMutableCollection(lowerClass)
+        // (Mutable)Collection<T>! -> MutableCollection<T>?
+        // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
+        // Foo! -> Foo?
+        // Foo<Bar!>! -> Foo<Bar>?
+        val approximation =
+                if (isCollection)
+                    TypeUtils.makeNullableAsSpecified(if (jetType.isMarkedReadOnly()) jetType.upperBound else jetType.lowerBound, outermost)
+                else
+                    if (outermost) jetType.upperBound else jetType.lowerBound
+        val approximated = approximateFlexibleTypes(approximation)
+        return if (jetType.isMarkedNotNull()) approximated.makeNotNullable() else approximated
+    }
+    return JetTypeImpl(
+            jetType.getAnnotations(),
+            jetType.getConstructor(),
+            jetType.isNullable(),
+            jetType.getArguments().map { TypeProjectionImpl(it.getProjectionKind(), approximateFlexibleTypes(it.getType(), false)) },
+            ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
+    )
+}
+
+private fun JetType.isMarkedReadOnly() = getAnnotations().findAnnotation(JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION) != null
+private fun JetType.isMarkedNotNull() = getAnnotations().findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null

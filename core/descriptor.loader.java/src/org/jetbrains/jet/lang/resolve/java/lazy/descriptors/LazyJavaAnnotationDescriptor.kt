@@ -37,6 +37,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName
+import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 
 private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
     override val name: Name? = null
@@ -45,7 +46,7 @@ private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
 
 fun LazyJavaResolverContextWithTypes.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
     val classId = annotation.getClassId()
-    if (classId == null || JvmAnnotationNames.isSpecialAnnotation(classId)) return null
+    if (classId == null || JvmAnnotationNames.isSpecialAnnotation(classId, !PLATFORM_TYPES)) return null
     return LazyJavaAnnotationDescriptor(this, annotation)
 }
 

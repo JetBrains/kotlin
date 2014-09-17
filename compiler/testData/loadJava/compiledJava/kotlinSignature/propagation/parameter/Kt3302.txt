@@ -4,7 +4,7 @@ public trait Kt3302 {
 
     public trait BSONObject {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun put(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Any!): kotlin.Any!
+        public abstract fun put(/*0*/ org.jetbrains.annotations.NotNull() p0: kotlin.String!, /*1*/ org.jetbrains.annotations.NotNull() p1: kotlin.Any!): kotlin.Any!
     }
 
     public trait BasicBSONObject : test.Kt3302.LinkedHashMap<kotlin.String!, kotlin.Any!>, test.Kt3302.BSONObject {

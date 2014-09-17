@@ -119,7 +119,7 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
             @NotNull final List<AnnotationDescriptor> result,
             @NotNull final ModuleDescriptor moduleDescriptor
     ) {
-        if (JvmAnnotationNames.isSpecialAnnotation(classId)) return null;
+        if (JvmAnnotationNames.isSpecialAnnotation(classId, true)) return null;
 
         final ClassDescriptor annotationClass = resolveClass(classId, moduleDescriptor);
 

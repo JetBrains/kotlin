@@ -33,6 +33,10 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 import org.jetbrains.jet.lang.resolve.java.lazy.types.Flexibility.*
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
@@ -262,6 +266,8 @@ class LazyJavaTypeResolver(
             }
         }
         override fun isNullable(): Boolean = _nullable()
+
+        override fun getAnnotations() = attr.annotations
     }
 
     public open class FlexibleJavaClassifierType protected (
@@ -312,6 +318,7 @@ trait JavaTypeAttributes {
         get() = INFLEXIBLE
     val allowFlexible: Boolean
         get() = true
+    val annotations: Annotations
 }
 
 fun JavaTypeAttributes.isFlexible() = flexibility != INFLEXIBLE
@@ -326,16 +333,23 @@ class LazyJavaTypeAttributes(
         c: LazyJavaResolverContext,
         val annotationOwner: JavaAnnotationOwner,
         override val howThisTypeIsUsed: TypeUsage,
-        override val allowFlexible: Boolean = true,
-        computeHowThisTypeIsUsedAccordingToAnnotations: () -> TypeUsage = {howThisTypeIsUsed}
+        override val annotations: Annotations,
+        override val allowFlexible: Boolean = true
 ): JavaTypeAttributes {
 
-    override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage by c.storageManager.createLazyValue(
-        computeHowThisTypeIsUsedAccordingToAnnotations
-    )
+    override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage by c.storageManager.createLazyValue {
+        if (annotations.isMarkedReadOnly() && !annotations.isMarkedMutable())
+            TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
+        else
+            TypeUsage.MEMBER_SIGNATURE_COVARIANT
+    }
 
     override val isMarkedNotNull: Boolean by c.storageManager.createLazyValue { c.hasNotNullAnnotation(annotationOwner) }
 }
+
+private fun Annotations.isMarkedReadOnly() = findAnnotation(JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION) != null
+private fun Annotations.isMarkedMutable() = findAnnotation(JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION) != null
+private fun Annotations.isMarkedNotNull() = findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null
 
 fun TypeUsage.toAttributes(allowFlexible: Boolean = true) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
@@ -343,6 +357,8 @@ fun TypeUsage.toAttributes(allowFlexible: Boolean = true) = object : JavaTypeAtt
             get() = howThisTypeIsUsed
     override val isMarkedNotNull: Boolean = false
     override val allowFlexible: Boolean = allowFlexible
+
+    override val annotations: Annotations = Annotations.EMPTY
 }
 
 fun JavaTypeAttributes.toFlexible(flexibility: Flexibility) =

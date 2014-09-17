@@ -9,7 +9,7 @@ public trait SubclassFromGenericAndNot {
 
     public trait NonGeneric {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(/*0*/ p0: kotlin.String!): kotlin.Unit
+        public abstract fun foo(/*0*/ org.jetbrains.annotations.NotNull() p0: kotlin.String!): kotlin.Unit
     }
 
     public trait Sub : test.SubclassFromGenericAndNot.NonGeneric, test.SubclassFromGenericAndNot.Generic<kotlin.String!> {

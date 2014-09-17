@@ -9,6 +9,6 @@ public trait TypeParamOfFun {
 
     public trait Super {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun </*0*/ T> foo(): T!
+        org.jetbrains.annotations.NotNull() public abstract fun </*0*/ T> foo(): T!
     }
 }
